@@ -156,7 +156,7 @@ QVector<QLocale> Translator::findTranslationFilesInternal(const QString& path)
   QVector<QLocale> retval;
   for(const QFileInfo& fi : dir.entryInfoList())
   {
-    atools::checkFile(fi, true /* warn */);
+    atools::checkFile(Q_FUNC_INFO, fi, true /* warn */);
 
     // Use C locale as invalid
     QLocale locale(QLocale::C);

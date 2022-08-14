@@ -54,7 +54,7 @@ void ManifestJson::read(const QString& filename)
   bool warn = true;
 #endif
 
-  if(atools::checkFile(filename, warn))
+  if(atools::checkFile(Q_FUNC_INFO, filename, warn))
   {
     QFile file(filename);
     if(file.open(QIODevice::ReadOnly))

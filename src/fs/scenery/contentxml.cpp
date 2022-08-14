@@ -76,7 +76,7 @@ void ContentXml::read(const QString& filename)
   areaIndex.clear();
   curPriority = 5;
 
-  if(atools::checkFile(filename))
+  if(atools::checkFile(Q_FUNC_INFO, filename))
   {
     QFile xmlFile(filename);
     if(xmlFile.open(QIODevice::ReadOnly))

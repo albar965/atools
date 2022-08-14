@@ -245,8 +245,8 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, 
     QString baseSteam = buildPathNoCase({filepath, "Official", "Steam", "fs-base"});
     QString baseNavSteam = buildPathNoCase({filepath, "Official", "Steam", "fs-base-nav"});
 
-    bool hasMs = checkDir(baseMs) && checkDir(baseNavMs);
-    bool hasSteam = checkDir(baseSteam) && checkDir(baseNavSteam);
+    bool hasMs = checkDir(Q_FUNC_INFO, baseMs) && checkDir(Q_FUNC_INFO, baseNavMs);
+    bool hasSteam = checkDir(Q_FUNC_INFO, baseSteam) && checkDir(Q_FUNC_INFO, baseNavSteam);
 
     if(!hasMs && !hasSteam)
     {
@@ -1449,18 +1449,18 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
   // Steam: %APPDATA%\Microsoft Flight Simulator\Content.xml"
   QString contentXmlPath = options->getBasepath() % SEP % "Content.xml";
-  if(!atools::checkFile(contentXmlPath, false /* warn */))
+  if(!atools::checkFile(Q_FUNC_INFO, contentXmlPath, false /* warn */))
   {
     // Not found - try MS installation
     // Marketplace: %LOCALAPPDATA%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Content.xml"
     contentXmlPath = QFileInfo(options->getBasepath() % SEP % ".." % SEP % "Content.xml").canonicalFilePath();
-    if(!atools::checkFile(contentXmlPath, false /* warn */))
+    if(!atools::checkFile(Q_FUNC_INFO, contentXmlPath, false /* warn */))
       // Not found
       contentXmlPath.clear();
   }
 
   // Print warnings, if any
-  atools::checkFile(contentXmlPath);
+  atools::checkFile(Q_FUNC_INFO, contentXmlPath);
 
   scenery::ManifestJson manifest;
 

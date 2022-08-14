@@ -29,7 +29,6 @@
 #include <QJsonObject>
 #include <QDir>
 
-
 namespace atools {
 namespace fs {
 namespace scenery {
@@ -57,7 +56,7 @@ void LanguageJson::readFromFile(const QString& filename, const QStringList& keyP
 {
   clear();
 
-  if(atools::checkFile(filename))
+  if(atools::checkFile(Q_FUNC_INFO, filename))
   {
     QFile file(filename);
     if(file.open(QIODevice::ReadOnly))

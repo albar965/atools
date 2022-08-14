@@ -145,7 +145,7 @@ public:
   static atools::fs::FsPaths::SimulatorType stringToType(const QString& typeStr);
 
   /* Array of all four valid types */
-  static const QSet<atools::fs::FsPaths::SimulatorType>& getAllSimulatorTypes();
+  static const QVector<atools::fs::FsPaths::SimulatorType>& getAllSimulatorTypes();
 
 private:
   /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed.

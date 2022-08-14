@@ -863,23 +863,23 @@ QString checkFileMsg(const QFileInfo& file, int maxLength, bool warn)
   return QString();
 }
 
-bool checkDir(const QString& dir, bool warn)
+bool checkDir(const QString& funcInfo, const QString& dir, bool warn)
 {
-  return checkDir(QFileInfo(dir), warn);
+  return checkDir(funcInfo, QFileInfo(dir), warn);
 }
 
-bool checkDir(const QFileInfo& dir, bool warn)
+bool checkDir(const QString& funcInfo, const QFileInfo& dir, bool warn)
 {
   if(dir.filePath().isEmpty())
   {
     if(warn)
-      qWarning() << Q_FUNC_INFO << "Dir is empty";
+      qWarning() << funcInfo << "checkDir:" << "Dir is empty";
     return false;
   }
   else if(!dir.exists())
   {
     if(warn)
-      qWarning() << Q_FUNC_INFO << "Directory" << dir.absoluteFilePath() << "does not exist";
+      qWarning() << funcInfo << "checkDir:" << "Directory" << dir.absoluteFilePath() << "does not exist";
     return false;
   }
   else
@@ -887,36 +887,36 @@ bool checkDir(const QFileInfo& dir, bool warn)
     if(!dir.isDir())
     {
       if(warn)
-        qWarning() << Q_FUNC_INFO << "File" << dir.absoluteFilePath() << "is not a directory";
+        qWarning() << funcInfo << "checkDir:" << "File" << dir.absoluteFilePath() << "is not a directory";
       return false;
     }
     else if(!dir.isReadable())
     {
       if(warn)
-        qWarning() << Q_FUNC_INFO << "Directory" << dir.absoluteFilePath() << "is not readable";
+        qWarning() << funcInfo << "checkDir:" << "Directory" << dir.absoluteFilePath() << "is not readable";
       return false;
     }
   }
   return true;
 }
 
-bool checkFile(const QString& file, bool warn)
+bool checkFile(const QString& funcInfo, const QString& file, bool warn)
 {
-  return checkFile(QFileInfo(file), warn);
+  return checkFile(funcInfo, QFileInfo(file), warn);
 }
 
-bool checkFile(const QFileInfo& file, bool warn)
+bool checkFile(const QString& funcInfo, const QFileInfo& file, bool warn)
 {
   if(file.filePath().isEmpty())
   {
     if(warn)
-      qWarning() << Q_FUNC_INFO << "Filepath is empty";
+      qWarning() << funcInfo << "checkFile:" << "Filepath is empty";
     return false;
   }
   else if(!file.exists())
   {
     if(warn)
-      qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "does not exist";
+      qWarning() << funcInfo << "checkFile:" << "File" << file.absoluteFilePath() << "does not exist";
     return false;
   }
   else
@@ -924,19 +924,19 @@ bool checkFile(const QFileInfo& file, bool warn)
     if(!file.isFile())
     {
       if(warn)
-        qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "is a directory";
+        qWarning() << funcInfo << "checkFile:" << "File" << file.absoluteFilePath() << "is a directory";
       return false;
     }
     else if(!file.isReadable())
     {
       if(warn)
-        qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "is not readable";
+        qWarning() << funcInfo << "checkFile:" << "File" << file.absoluteFilePath() << "is not readable";
       return false;
     }
     else if(file.size() == 0)
     {
       if(warn)
-        qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "is empty";
+        qWarning() << funcInfo << "checkFile:" << "File" << file.absoluteFilePath() << "is empty";
       return false;
     }
   }
