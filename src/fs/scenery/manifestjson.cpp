@@ -88,8 +88,7 @@ bool ManifestJson::isScenery() const
   // Instead exclude obvious known types
   return contentType.compare("AIRCRAFT", Qt::CaseInsensitive) != 0 &&
          contentType.compare("INSTRUMENTS", Qt::CaseInsensitive) != 0 &&
-         contentType.compare("LIVERY", Qt::CaseInsensitive) != 0 &&
-         contentType.compare("MISSION", Qt::CaseInsensitive) != 0;
+         contentType.compare("LIVERY", Qt::CaseInsensitive) != 0;
 }
 
 void ManifestJson::clear()
