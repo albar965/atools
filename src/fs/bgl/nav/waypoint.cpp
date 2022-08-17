@@ -99,8 +99,7 @@ Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *bs)
   if(region.isEmpty() && !isDisabled())
     qWarning().nospace().noquote() << "Waypoint at " << position << " ident " << ident << " has no region";
 
-  if(ident.isEmpty() && type != nav::UNNAMED && !isDisabled() &&
-     options->getSimulatorType() != atools::fs::FsPaths::MSFS)
+  if(ident.isEmpty() && type != nav::UNNAMED && !isDisabled() && options->getSimulatorType() != atools::fs::FsPaths::MSFS)
     qWarning().nospace().noquote() << "Waypoint at " << position << " region " << region << " has no ident";
 
   // Read airways if desired by configuration
