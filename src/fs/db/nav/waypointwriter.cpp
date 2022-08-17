@@ -36,8 +36,22 @@ void WaypointWriter::writeObject(const Waypoint *type)
   if(type->getIdent().isEmpty())
   {
     if(getOptions().getSimulatorType() != atools::fs::FsPaths::MSFS)
-      qWarning() << Q_FUNC_INFO << "Found waypoint with empty ident in file"
-                 << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+      qWarning() << Q_FUNC_INFO << "Found waypoint with empty ident in file" << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    return;
+  }
+
+  if(type->getRegion().isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "Found waypoint" << type->getIdent() << "with empty region in file"
+               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    return;
+  }
+
+  QString waypointType = bgl::Waypoint::waypointTypeToStr(type->getType());
+  if(waypointType.isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "Found waypoint" << type->getIdent() << "with invalid type" << type->getType() << "in file"
+               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
     return;
   }
 
@@ -46,7 +60,7 @@ void WaypointWriter::writeObject(const Waypoint *type)
   bindNullInt(":nav_id");
   bind(":ident", type->getIdent());
   bind(":region", type->getRegion());
-  bind(":type", bgl::Waypoint::waypointTypeToStr(type->getType()));
+  bind(":type", waypointType);
 
   bindNullInt(":airport_id");
   bind(":airport_ident", type->getAirportIdent());
