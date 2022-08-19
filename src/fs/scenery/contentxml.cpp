@@ -171,12 +171,12 @@ bool ContentXml::isDisabled(const QString& areaPath) const
   return false;
 }
 
-int ContentXml::getPriority(const QString& areaPath) const
+int ContentXml::getPriority(const QString& areaPath, int defaultPriority) const
 {
   if(areaIndex.contains(areaPath.toLower()))
     return areaEntries.at(areaIndex.value(areaPath.toLower())).getAreaNumber();
 
-  return 0;
+  return defaultPriority;
 }
 
 void ContentXml::priorityTitleNavdata(const QString& name, int& priority, QString& title, bool& navdata)

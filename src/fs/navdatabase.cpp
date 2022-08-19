@@ -1173,8 +1173,7 @@ bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWrit
 
   // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
   // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/fs-base/scenery/Base/scenery/magdec.bgl
-  fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getMsfsOfficialPath(), "fs-base", "scenery", "Base", "scenery",
-                                                "magdec.bgl"}));
+  fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getMsfsOfficialPath(), "fs-base", "scenery", "Base", "scenery", "magdec.bgl"}));
   if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
     errors->sceneryErrors.append(err);
 
@@ -1444,6 +1443,14 @@ bool NavDatabase::runScript(ProgressHandler *progress, const QString& scriptFile
 
 void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 {
+  // Force well known layer piority to avoid mess up due to not documented "Content.xml"
+  const static int LAYER_NUM_BASE = -1000;
+  const static int LAYER_NUM_GENERIC_AIRPORTS = -1001;
+  const static int LAYER_NUM_BASE_NAV = -1002;
+
+  // Default for all other layers/packages
+  const static int LAYER_NUM_DEFAULT = 0;
+
   // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
   // content.read(options->getSceneryFile());
 
@@ -1469,8 +1476,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     contentXml.read(contentXmlPath);
 
   // fs-base ======================================================
-  int areaNum = 0;
-  SceneryArea areaBase(areaNum++, tr("Base Airports"), "fs-base");
+  SceneryArea areaBase(LAYER_NUM_BASE, tr("Base"), "fs-base");
   areaBase.setActive(true);
 
   // Get version numbers from manifest - needed to determine record changes for SID and STAR
@@ -1482,7 +1488,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   cfg.appendArea(areaBase);
 
   // fs-base-genericairports ======================================================
-  SceneryArea areaGeneric(areaNum++, tr("Generic Airports"), "fs-base-genericairports");
+  SceneryArea areaGeneric(LAYER_NUM_GENERIC_AIRPORTS, tr("Generic Airports"), "fs-base-genericairports");
   areaGeneric.setActive(true);
 
   // Get version numbers from manifest - needed to determine record changes for SID and STAR
@@ -1497,7 +1503,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   }
 
   // fs-base-nav ======================================================
-  SceneryArea areaNav(areaNum++, tr("Base Navigation"), "fs-base-nav");
+  SceneryArea areaNav(LAYER_NUM_BASE_NAV, tr("Base Navigation"), "fs-base-nav");
   // areaNav.setActive(!contentXml.isDisabled("fs-base-nav"));
   areaNav.setActive(true);
 
@@ -1528,7 +1534,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     }
 
     if(name == "fs-base-nav" || name == "fs-base" || name == "fs-base-genericairports")
-      // Already read before
+      // Already read before - do not touch name or priority
       continue;
 
     // Read manifest to check type
@@ -1541,7 +1547,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
       layout.clear();
       layout.read(fileinfo.filePath() % SEP % "layout.json");
 
-      SceneryArea addonArea(areaNum++, baseName, name);
+      SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), baseName, name);
       if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
         errors->sceneryErrors.append(
           NavDatabaseErrors::SceneryErrors(addonArea, tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
@@ -1549,7 +1555,6 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
       if(!layout.getBglPaths().isEmpty())
       {
-
         // Indicate add-on in official path
         addonArea.setAddOn(true);
 
@@ -1586,7 +1591,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
       layout.clear();
       layout.read(fileinfo.filePath() % SEP % "layout.json");
 
-      SceneryArea addonArea(areaNum++, tr("Community"), name);
+      SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), tr("Community"), name);
       addonArea.setCommunity(true);
       if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
         errors->sceneryErrors.append(
@@ -1595,7 +1600,6 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
       if(!layout.getBglPaths().isEmpty())
       {
-
         // Detect Navigraph navdata update packages for special handling
         addonArea.setNavigraphNavdataUpdate(checkNavigraphNavdataUpdate(manifest));
 

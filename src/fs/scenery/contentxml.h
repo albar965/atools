@@ -54,7 +54,7 @@ public:
   bool isDisabled(const QString& areaPath) const;
 
   /* Priority. lower numbers are read first. Synonym with SceneryArea::layer and SceneryArea::areaNumber */
-  int getPriority(const QString& areaPath) const;
+  int getPriority(const QString& areaPath, int defaultPriority = 0) const;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::ContentXml& cfg);
