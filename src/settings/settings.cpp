@@ -24,22 +24,50 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QDateTime>
+#include <QApplication>
 
 namespace atools {
 namespace settings {
 
 Settings *Settings::settingsInstance = nullptr;
 QString Settings::overrideOrganisation;
+QString Settings::overridePath;
 
 Settings::Settings()
 {
-  qSettings = new QSettings(QSettings::IniFormat, QSettings::UserScope, orgNameForDirs(), appNameForFiles());
+  if(!overridePath.isEmpty())
+  {
+    // Override full path
+    QDir dir(overridePath);
+    if(dir.isAbsolute())
+    {
+      // Create all paths for absolute
+      if(!dir.mkpath("."))
+        throw Exception(QString("Cannot create settings path \"%1\"").arg(overridePath));
+    }
+    else
+    {
+      // Create path based on relative path to application
+      QDir appDir(QApplication::applicationDirPath());
+      if(!appDir.exists(overridePath))
+      {
+        if(!appDir.mkpath(overridePath))
+          throw Exception(QString("Cannot create settings path \"%1\"").arg(overridePath));
+      }
+    }
 
-  QString p = QFileInfo(qSettings->fileName()).path();
-  if(!QFileInfo::exists(p))
+    // qSettings object is used to determine paths
+    qSettings = new QSettings(overridePath + QDir::separator() + appNameForFiles(), QSettings::IniFormat);
+  }
+  else
+    // Default settings path in roaming or other well known paths
+    qSettings = new QSettings(QSettings::IniFormat, QSettings::UserScope, orgNameForDirs(), appNameForFiles());
+
+  QString path = QFileInfo(qSettings->fileName()).path();
+  if(!QFileInfo::exists(path))
     // Create directory so getConfigFilename() does not fail
-    if(!QDir().mkpath(p))
-      throw Exception(QString("Cannot create settings path \"%1\"").arg(p));
+    if(!QDir().mkpath(path))
+      throw Exception(QString("Cannot create settings path \"%1\"").arg(path));
 
   if(qSettings->status() != QSettings::NoError)
     throw Exception(QString("Error creating settings file \"%1\" reason %2").
