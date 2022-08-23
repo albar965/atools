@@ -23,11 +23,6 @@
 namespace atools {
 namespace gui {
 
-SignalBlocker::SignalBlocker(QList<QObject *> objectList)
-{
-  add(objectList);
-}
-
 SignalBlocker::~SignalBlocker()
 {
   for(QObject *object : objects)
