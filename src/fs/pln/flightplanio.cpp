@@ -4368,6 +4368,9 @@ QString FlightplanIO::flightplanTypeToString(FlightplanType type)
 {
   switch(type)
   {
+    case atools::fs::pln::NO_TYPE:
+      return "NONE";
+
     case atools::fs::pln::IFR:
       return "IFR";
 

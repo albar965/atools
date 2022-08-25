@@ -84,6 +84,7 @@ enum FileFormat
 
 enum FlightplanType
 {
+  NO_TYPE,
   IFR,
   VFR
 };
