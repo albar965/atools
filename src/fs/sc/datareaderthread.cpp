@@ -29,13 +29,18 @@
 #include <QCoreApplication>
 #include <QDir>
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::hex;
+using Qt::dec;
+using Qt::endl;
+#endif
+
 namespace atools {
 namespace fs {
 namespace sc {
 
 void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& dataPacket)
 {
-  using Qt::endl;
   static QDateTime last;
 
   // VATSIM
