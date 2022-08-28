@@ -613,12 +613,6 @@ void XpDataCompiler::close()
   delete airportWriter;
   airportWriter = nullptr;
 
-  delete airportMsaWriter;
-  airportMsaWriter = nullptr;
-
-  delete holdingWriter;
-  holdingWriter = nullptr;
-
   delete airwayPostProcess;
   airwayPostProcess = nullptr;
 

@@ -1463,10 +1463,6 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
       layout.read(fileinfo.filePath() % SEP % "layout.json");
 
       SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), baseName, name);
-      if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
-        errors->sceneryErrors.append(
-          NavDatabaseErrors::SceneryErrors(addonArea, tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
-                                           true /* isWarning */));
 
       if(!layout.getBglPaths().isEmpty())
       {
@@ -1508,10 +1504,6 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
       SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), tr("Community"), name);
       addonArea.setCommunity(true);
-      if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
-        errors->sceneryErrors.append(
-          NavDatabaseErrors::SceneryErrors(addonArea, tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
-                                           true /* isWarning */));
 
       if(!layout.getBglPaths().isEmpty())
       {
