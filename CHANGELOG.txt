@@ -3,6 +3,29 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.20
+
+* Added suffix to airport parking. This is only used by MSFS.
+* Changed handling for MSFS Content.xml file for SU10. Priorities for known base folders are now
+  forced to lowest values to ensure the correct loading order. Other folders are loaded without any
+  special order.
+* Now ignoring waypoints with empty ICAO region code and invalid type as they appear in some MSFS
+  add-on sceneries.
+* Reduced logging for invalid MSFS BGL files.
+* Now allowing BGL files from missions to catch respective airports.
+* Fixed issue where using export options resulted in missing waypoint names for pseudo waypoints in
+  FMS export. #902
+* More acronyms to convert airspace names to correct case.
+* Adapted reading of MSFS Content.xml to changes in SU10 (1.27.11.0).
+* Fixed database connection leak when compiling X-Plane scenery library.
+* More keywords to keep upper cases in airspace names.
+* Fix for X-Plane FMS export using long airport ids.
+* Fixed issue where SimConnectData::write() used the wrong date. Now corrected to use toSecsSinceEpoch().
+* Fixed weather downloader to emit error message on empty METAR list for pages incorrectly not
+  returning 404.
+
+===============================================================================
+
 # Version 3.6.19
 
 * Corrections to function `normalizeStr` to replace some missing characters.
