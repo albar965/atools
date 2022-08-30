@@ -18,6 +18,8 @@
 #ifndef ATOOLS_FS_DB_DATABASEMETA_H
 #define ATOOLS_FS_DB_DATABASEMETA_H
 
+#include "util/properties.h"
+
 #include <QDateTime>
 
 namespace atools {
@@ -30,6 +32,7 @@ class SqlDatabase;
 namespace fs {
 namespace db {
 
+const static QLatin1String PROPERTYNAME_MSFS_NAVIGRAPH_FOUND("NavigraphUpdate");
 /*
  * Maintains versions and load time for a navdatabases
  */
@@ -91,9 +94,11 @@ public:
   bool isDatabaseCompatible() const;
   bool isDatabaseCompatible(int major) const;
 
-  /* Update the version information in the database */
+  /* Update the version information in the database and insert first row. */
   void updateVersion(int majorVer, int minorVer);
   void updateVersion();
+
+  /* Update the version information in the database */
   void updateAiracCycle(const QString& cycle, const QString& fromTo);
   void updateAiracCycle();
   void updateDataSource(const QString& src);
@@ -108,10 +113,17 @@ public:
   /* Remove database connection. Use only const methods to access saved values. */
   void deInit();
 
-  /* Navdata cycle year and month - Not for FSX/P3D only */
+  /* Navdata cycle year and cycle number (e.g. "2201" to "2213") - Not for FSX/P3D.
+   * See https://www.nm.eurocontrol.int/RAD/common/airac_dates.html for dates. */
   const QString& getAiracCycle() const
   {
     return airacCycle;
+  }
+
+  /* Navdata cycle year and cycle number as int (e.g. 2201 to 2213) - Not for FSX/P3D */
+  int getAiracCycleInt() const
+  {
+    return airacCycle.leftRef(2).toInt() * 100 + airacCycle.rightRef(2).toInt();
   }
 
   const QString& getValidThrough() const
@@ -137,6 +149,9 @@ public:
 
   void updateCompilerVersion();
   void updateCompilerVersion(const QString& versionStr);
+
+  void updateProperties();
+  void updateProperties(const util::Properties& props);
 
   const QString& getCompilerVersion() const
   {
@@ -178,6 +193,31 @@ public:
   bool hasBoundary() const
   {
     return boundary;
+  }
+
+  const atools::util::Properties& getProperties() const
+  {
+    return properties;
+  }
+
+  void addProperty(const QString& name, const QString& value = QString())
+  {
+    properties.setPropertyStr(name, value);
+  }
+
+  bool hasProperty(const QString& name)
+  {
+    return properties.contains(name);
+  }
+
+  QString getPropertyValue(const QString& name)
+  {
+    return properties.value(name);
+  }
+
+  void clearProperties()
+  {
+    properties.clear();
   }
 
 private:
@@ -241,6 +281,7 @@ private:
   QDateTime lastLoadTime;
   bool valid = false, sidStar = false, routeType = false, data = false, schema = false, script = false, boundary = false;
   QString airacCycle, validThrough, dataSource, compilerVersion;
+  atools::util::Properties properties;
 };
 
 } // namespace db

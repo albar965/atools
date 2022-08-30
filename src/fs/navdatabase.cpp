@@ -840,6 +840,9 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   // Update the metadata in the database
   atools::fs::db::DatabaseMeta databaseMetadata(db);
 
+  if(sim == atools::fs::FsPaths::MSFS && result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
+    databaseMetadata.addProperty(atools::fs::db::PROPERTYNAME_MSFS_NAVIGRAPH_FOUND);
+
   if(!xpDataCompiler.isNull())
     databaseMetadata.setAiracCycle(xpDataCompiler->getAiracCycle());
   if(!dfdCompiler.isNull())
