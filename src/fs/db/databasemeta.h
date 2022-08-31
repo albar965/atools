@@ -205,12 +205,12 @@ public:
     properties.setPropertyStr(name, value);
   }
 
-  bool hasProperty(const QString& name)
+  bool hasProperty(const QString& name) const
   {
     return properties.contains(name);
   }
 
-  QString getPropertyValue(const QString& name)
+  QString getPropertyValue(const QString& name) const
   {
     return properties.value(name);
   }
