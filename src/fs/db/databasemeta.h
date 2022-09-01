@@ -268,8 +268,9 @@ private:
    *    Added "has_vertical_angle" and "has_rnp" to table "approach".
    * 25 Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in wrong search results.
    * 26 Added parking suffix for MSFS.
+   * 27 Columns "metadata.properties" added.
    */
-  static const int DB_VERSION_MINOR = 26;
+  static const int DB_VERSION_MINOR = 27;
 
   /* Update the last loaded timestamp in the database and set it to now */
   void updateTimestamp();
