@@ -36,7 +36,7 @@ install:
     - export CXX=g++-9
 
 before_script:
-    # Clone atoolstest VERSION_NUMBER - atoolstest
+    # Clone atoolstest - atoolstest VERSION_NUMBER_TODO
     - git clone --branch=release/3.8 https://github.com/albar965/atoolstest.git ../atoolstest
 
     # Download and extract needed files for the tests

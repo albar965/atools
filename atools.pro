@@ -49,8 +49,8 @@
 # End of configuration documentation
 # =============================================================================
 
-# Define program version here
-VERSION_NUMBER=3.7.11.develop
+# Define program version here VERSION_NUMBER_TODO
+VERSION_NUMBER=3.8.3.beta
 
 QT += sql xml svg core widgets network
 QT -= gui
