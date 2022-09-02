@@ -44,7 +44,7 @@ public:
   /*
    * @param parentWidget widget for all dialogs
    */
-  ErrorHandler(QWidget *parentWidget)
+  explicit ErrorHandler(QWidget *parentWidget)
     : parent(parentWidget)
   {
   }

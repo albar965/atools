@@ -27,6 +27,7 @@
 #include <QFontDatabase>
 #include <QLabel>
 #include <QItemSelectionModel>
+#include <QAction>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -216,6 +217,11 @@ QList<int> selectedRows(QItemSelectionModel *model, bool reverse)
   }
 
   return rows;
+}
+
+bool checked(const QAction *action)
+{
+  return action->isEnabled() && action->isChecked();
 }
 
 } // namespace gui

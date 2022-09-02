@@ -552,13 +552,20 @@ float AircraftPerf::getAlternateFuelFlowGal() const
 
 bool AircraftPerf::isAircraftTypeValid(const QString& type)
 {
-  const static QRegularExpression AIRCRAFT_TYPE("^[A-Z][A-Z0-9]{1,4}$");
+  const static QRegularExpression AIRCRAFT_TYPE("^[A-Z0-9]{2,4}$");
   return AIRCRAFT_TYPE.match(type).hasMatch();
 }
 
-bool AircraftPerf::isAircraftTypeValid() const
+float AircraftPerf::toFuelLbs(float fuelGalLbs) const
 {
-  return isAircraftTypeValid(getAircraftType());
+  // Convert to lbs if this perf is volume based
+  return volume ? ageo::fromGalToLbs(jetFuel, fuelGalLbs) : fuelGalLbs;
+}
+
+float AircraftPerf::toFuelGal(float fuelGalLbs) const
+{
+  // Convert to gal if this perf is weight based
+  return volume ? fuelGalLbs : ageo::fromLbsToGal(jetFuel, fuelGalLbs);
 }
 
 void AircraftPerf::readFromSettings(const QSettings& settings)

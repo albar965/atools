@@ -18,6 +18,8 @@
 #ifndef ATOOLS_FS_DB_DATABASEMETA_H
 #define ATOOLS_FS_DB_DATABASEMETA_H
 
+#include "util/properties.h"
+
 #include <QDateTime>
 
 namespace atools {
@@ -30,6 +32,7 @@ class SqlDatabase;
 namespace fs {
 namespace db {
 
+const static QLatin1String PROPERTYNAME_MSFS_NAVIGRAPH_FOUND("NavigraphUpdate");
 /*
  * Maintains versions and load time for a navdatabases
  */
@@ -91,9 +94,11 @@ public:
   bool isDatabaseCompatible() const;
   bool isDatabaseCompatible(int major) const;
 
-  /* Update the version information in the database */
+  /* Update the version information in the database and insert first row. */
   void updateVersion(int majorVer, int minorVer);
   void updateVersion();
+
+  /* Update the version information in the database */
   void updateAiracCycle(const QString& cycle, const QString& fromTo);
   void updateAiracCycle();
   void updateDataSource(const QString& src);
@@ -108,10 +113,17 @@ public:
   /* Remove database connection. Use only const methods to access saved values. */
   void deInit();
 
-  /* Navdata cycle year and month - Not for FSX/P3D only */
+  /* Navdata cycle year and cycle number (e.g. "2201" to "2213") - Not for FSX/P3D.
+   * See https://www.nm.eurocontrol.int/RAD/common/airac_dates.html for dates. */
   const QString& getAiracCycle() const
   {
     return airacCycle;
+  }
+
+  /* Navdata cycle year and cycle number as int (e.g. 2201 to 2213) - Not for FSX/P3D */
+  int getAiracCycleInt() const
+  {
+    return airacCycle.leftRef(2).toInt() * 100 + airacCycle.rightRef(2).toInt();
   }
 
   const QString& getValidThrough() const
@@ -137,6 +149,9 @@ public:
 
   void updateCompilerVersion();
   void updateCompilerVersion(const QString& versionStr);
+
+  void updateProperties();
+  void updateProperties(const util::Properties& props);
 
   const QString& getCompilerVersion() const
   {
@@ -180,9 +195,35 @@ public:
     return boundary;
   }
 
+  const atools::util::Properties& getProperties() const
+  {
+    return properties;
+  }
+
+  void addProperty(const QString& name, const QString& value = QString())
+  {
+    properties.setPropertyStr(name, value);
+  }
+
+  bool hasProperty(const QString& name) const
+  {
+    return properties.contains(name);
+  }
+
+  QString getPropertyValue(const QString& name) const
+  {
+    return properties.value(name);
+  }
+
+  void clearProperties()
+  {
+    properties.clear();
+  }
+
 private:
   /* This defines the database schema version of the application and should be updated for every incompatible
-   * schema or content change
+   * schema or content change.
+   * Changing this requires a reload of a database.
    */
   static const int DB_VERSION_MAJOR = 14;
 
@@ -221,12 +262,15 @@ private:
    * 22 Rho and theta in approach and transition legs can now be null
    * 23 Table approach_leg.rnp, approach.aircraft_category and path points in DFD compiler.
    * 24 Fixed issues with magnetic variation and inbound course in DFD and X-Plane compiler.
-   *    Added transition level. Converted airport.transition_altitude to double.
-   *    Corrected issues with true course runways like in BGTL for X-Plane and DFD compiler.
-   *    Approaches were missing runway assignments.
+   *    Added transition level to airport.
+   *    Converted airport.transition_altitude to double.
+   *    Corrected issues with true course runways like in BGTL for X-Plane and DFD compiler. Approaches were missing runway assignments.
    *    Added "has_vertical_angle" and "has_rnp" to table "approach".
+   * 25 Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in wrong search results.
+   * 26 Added parking suffix for MSFS.
+   * 27 Columns "metadata.properties" added.
    */
-  static const int DB_VERSION_MINOR = 24;
+  static const int DB_VERSION_MINOR = 27;
 
   /* Update the last loaded timestamp in the database and set it to now */
   void updateTimestamp();
@@ -238,6 +282,7 @@ private:
   QDateTime lastLoadTime;
   bool valid = false, sidStar = false, routeType = false, data = false, schema = false, script = false, boundary = false;
   QString airacCycle, validThrough, dataSource, compilerVersion;
+  atools::util::Properties properties;
 };
 
 } // namespace db

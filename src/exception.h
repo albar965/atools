@@ -18,6 +18,7 @@
 #ifndef ATOOLS_EXCEPTION_H
 #define ATOOLS_EXCEPTION_H
 
+#include <QException>
 #include <QString>
 
 namespace atools {
@@ -26,7 +27,7 @@ namespace atools {
  * Exception that will be thrown by most atools in case of error.
  */
 class Exception :
-  public std::exception
+  public QException
 {
 public:
   Exception(const QString& messageStr);
@@ -37,6 +38,10 @@ public:
   {
     return message;
   }
+
+  virtual void raise() const override;
+
+  virtual Exception *clone() const override;
 
 protected:
   QString message;

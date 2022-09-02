@@ -55,8 +55,7 @@ public:
   /* Read file content given in string and store results in database. Commit is executed when done.
    * Reads either "whazzup.txt" format or VATSIM JSON format depending on "streamFormat".
    * Returns true if the file was read and is more recent than lastUpdate. */
-  bool read(QString file, atools::fs::online::Format streamFormat,
-            const QDateTime& lastUpdate);
+  bool read(QString file, atools::fs::online::Format streamFormat, const QDateTime& lastUpdate);
 
   /* Read VATSIM transceivers-data.json and stores map in this object. Call before calling "read". */
   void readTransceivers(const QString& file);
@@ -156,6 +155,7 @@ private:
     QSet<int> frequency;
     atools::geo::Pos pos;
   };
+
   QMultiHash<QString, Transceiver> transceiverMap;
 
   // Keep a map of callsign to row id in the database to reuse the ids for the same centers and clients

@@ -17,9 +17,10 @@
 
 #include "fs/scenery/languagejson.h"
 
+#include "atools.h"
+#include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
-#include "atools.h"
 
 #include <QFile>
 #include <QDebug>
@@ -27,8 +28,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QDir>
-
-#include <sql/sqldatabase.h>
 
 namespace atools {
 namespace fs {
@@ -57,7 +56,7 @@ void LanguageJson::readFromFile(const QString& filename, const QStringList& keyP
 {
   clear();
 
-  if(atools::checkFile(filename))
+  if(atools::checkFile(Q_FUNC_INFO, filename))
   {
     QFile file(filename);
     if(file.open(QIODevice::ReadOnly))

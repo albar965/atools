@@ -150,7 +150,7 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
       {
         // Found line containing date like "2017/10/29 11:45"
         lastTimestamp = QDateTime::fromString(line, "yyyy/MM/dd hh:mm");
-        lastTimestamp.setTimeZone(QTimeZone::utc());
+        lastTimestamp.setTimeZone(QTimeZone::utc()); // Does not change date and time numbers
         lineNum++;
         continue;
       }

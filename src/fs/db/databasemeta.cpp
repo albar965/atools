@@ -98,6 +98,9 @@ void DatabaseMeta::init()
         validThrough = rec.valueStr("valid_through", QString());
         dataSource = rec.valueStr("data_source", QString());
         compilerVersion = rec.valueStr("compiler_version", QString());
+
+        properties.clear();
+        properties.readString(rec.valueStr("properties", QString()));
         valid = true;
       }
       query.finish();
@@ -190,6 +193,25 @@ void DatabaseMeta::updateCompilerVersion(const QString& versionStr)
   db->commit();
 }
 
+void DatabaseMeta::updateProperties()
+{
+  updateProperties(properties);
+}
+
+void DatabaseMeta::updateProperties(const atools::util::Properties& props)
+{
+  if(db == nullptr)
+    throw atools::Exception("Database is null");
+
+  properties = props;
+
+  SqlQuery query(db);
+  query.prepare("update metadata set properties = :props");
+  query.bindValue(":props", properties.writeString());
+  query.exec();
+  db->commit();
+}
+
 void DatabaseMeta::updateCompilerVersion()
 {
   updateCompilerVersion(compilerVersion);
@@ -237,6 +259,7 @@ void DatabaseMeta::updateAll()
   updateAiracCycle();
   updateDataSource();
   updateCompilerVersion();
+  updateProperties();
 }
 
 bool DatabaseMeta::isDatabaseCompatible() const

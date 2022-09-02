@@ -30,4 +30,14 @@ const char *Exception::what() const Q_DECL_NOEXCEPT
   return whatMessage.constData();
 }
 
+void Exception::raise() const
+{
+  throw *this;
+}
+
+Exception *Exception::clone() const
+{
+  return new Exception(*this);
+}
+
 } // namespace atools

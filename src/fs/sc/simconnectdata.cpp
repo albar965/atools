@@ -79,7 +79,11 @@ bool SimConnectData::read(QIODevice *ioDevice)
     status = VERSION_MISMATCH;
     return false;
   }
-  in >> packetId >> packetTs;
+  in >> packetId;
+
+  quint32 ts;
+  in >> ts;
+  packetTs = QDateTime::fromSecsSinceEpoch(ts, Qt::UTC);
 
   quint8 hasUser = 0;
   in >> hasUser;
@@ -130,7 +134,7 @@ int SimConnectData::write(QIODevice *ioDevice)
   out.setVersion(QDataStream::Qt_5_5);
   out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-  out << MAGIC_NUMBER_DATA << packetSize << DATA_VERSION << packetId << packetTs;
+  out << MAGIC_NUMBER_DATA << packetSize << DATA_VERSION << packetId << static_cast<quint32>(packetTs.toSecsSinceEpoch());
 
   bool userValid = userAircraft.getPosition().isValid();
   out << static_cast<quint8>(userValid);
@@ -151,7 +155,7 @@ int SimConnectData::write(QIODevice *ioDevice)
     const MetarResult& result = metarResults.at(i);
     writeString(out, result.requestIdent);
     out << result.requestPos.getLonX() << result.requestPos.getLatY() << result.requestPos.getAltitude()
-        << static_cast<quint32>(result.timestamp.currentMSecsSinceEpoch() / 1000);
+        << static_cast<quint32>(result.timestamp.toSecsSinceEpoch());
     writeLongString(out, result.metarForStation);
     writeLongString(out, result.metarForNearest);
     writeLongString(out, result.metarForInterpolated);
@@ -163,6 +167,22 @@ int SimConnectData::write(QIODevice *ioDevice)
   out << static_cast<quint32>(size);
 
   return SimConnectDataBase::writeBlock(ioDevice, block, status);
+}
+
+SimConnectAircraft *SimConnectData::getAiAircraftById(int id)
+{
+  if(aiAircraftIndex.contains(id))
+    return &aiAircraft[aiAircraftIndex.value(id)];
+  else
+    return nullptr;
+}
+
+const SimConnectAircraft *SimConnectData::getAiAircraftConstById(int id) const
+{
+  if(aiAircraftIndex.contains(id))
+    return &aiAircraft.at(aiAircraftIndex.value(id));
+  else
+    return nullptr;
 }
 
 SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
@@ -180,14 +200,16 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   if(lastPos.isValid())
   {
     headingTrue = !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10M) ? lastPos.angleDegTo(pos) : 0.f;
-    data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueAirspeedKts = tas;
+    data.userAircraft.indicatedSpeedKts = tas;
+    data.userAircraft.trueAirspeedKts = tas + 10;
+    data.userAircraft.groundSpeedKts = tas + 20;
   }
 
   data.userAircraft.trackMagDeg = atools::geo::normalizeCourse(headingTrue - magVar);
   data.userAircraft.trackTrueDeg = atools::geo::normalizeCourse(headingTrue);
   data.userAircraft.headingMagDeg = atools::geo::normalizeCourse(headingTrue - magVar);
   data.userAircraft.headingTrueDeg = atools::geo::normalizeCourse(headingTrue);
-  data.userAircraft.magVarDeg= magVar;
+  data.userAircraft.magVarDeg = magVar;
 
   data.userAircraft.pitotIcePercent = static_cast<quint8>(ice);
   data.userAircraft.structuralIcePercent = static_cast<quint8>(ice / 2);
@@ -238,6 +260,21 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.debug = true;
 
   return data;
+}
+
+void SimConnectData::updateIndexesAndKeys()
+{
+  userAircraft.updateAirplaneRegistrationKey();
+
+  aiAircraftIndex.clear();
+  for(int i = 0; i < aiAircraft.size(); i++)
+  {
+    atools::fs::sc::SimConnectAircraft& aircraft = aiAircraft[i];
+
+    aircraft.updateAirplaneRegistrationKey();
+    aiAircraftIndex.insert(aircraft.getId(), i);
+  }
+
 }
 
 } // namespace sc

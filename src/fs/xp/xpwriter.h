@@ -72,8 +72,7 @@ protected:
       return line.at(index);
     else
       // Have to stop reading the file since the rest can be corrupted
-      throw atools::Exception(ctx->messagePrefix() +
-                              QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+      throw atools::Exception(ctx->messagePrefix() + QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
   }
 
   /* Returns empty string for airport ident ENRT (enroute) */
@@ -86,8 +85,7 @@ protected:
     }
     else
       // Have to stop reading the file since the rest can be corrupted
-      throw atools::Exception(ctx->messagePrefix() +
-                              QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+      throw atools::Exception(ctx->messagePrefix() + QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
   }
 
   QString mid(const QStringList& line, int index, bool ignoreError = false)
@@ -96,8 +94,7 @@ protected:
       return line.mid(index).join(" ");
     else if(!ignoreError)
       // Have to stop reading the file since the rest can be corrupted
-      throw atools::Exception(ctx->messagePrefix() +
-                              QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+      throw atools::Exception(ctx->messagePrefix() + QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
     return QString();
   }
 

@@ -45,7 +45,7 @@ public:
   /*
    * @param parentWidget widget for all dialogs
    */
-  Dialog(QWidget *parentWidget)
+  explicit Dialog(QWidget *parentWidget)
     : parent(parentWidget)
   {
   }

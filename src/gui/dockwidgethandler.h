@@ -66,9 +66,11 @@ public:
   DockWidgetHandler(const DockWidgetHandler& other) = delete;
   DockWidgetHandler& operator=(const DockWidgetHandler& other) = delete;
 
-  /* Raise all dock windows having floating state */
-  void raiseFloatingWindows();
-  static void raiseFloatingWindow(QDockWidget *dockWidget);
+  /* Raise all dock windows having floating state as well as non-modal dialogs */
+  void raiseWindows();
+
+  /* Raise on dock widget */
+  static void raiseFloatingDockWidget(QDockWidget *dockWidget);
 
   /* Connect all internally */
   void connectDockWindows();
@@ -107,9 +109,9 @@ public:
   /* Set to true to enable handler */
   void setHandleDockViews(bool value);
 
-  /* Raise floating dock windows when mouse enters window */
-  bool isAutoRaiseDockWindows() const;
-  void setAutoRaiseDockWindows(bool value);
+  /* Raise floating dock windows and non-modal dialogs when mouse enters window */
+  bool isAutoRaiseWindows() const;
+  void setAutoRaiseWindows(bool value);
 
   /* Raise main window when mouse enters window */
   bool isAutoRaiseMainWindow() const;
@@ -176,6 +178,13 @@ public:
     return delayedFullscreen;
   }
 
+  /* Extra non-modal dialogs which are used for auto raise. */
+  void addDialogWidget(QDialog *dialogWidget);
+  void removeDialogWidget(QDialog *dialogWidget);
+
+  /* Closes all widgets and removes them from the list afterwards */
+  void closeAllDialogWidgets();
+
   /* Calls qRegisterMetaTypeStreamOperators for needed classes. */
   static void registerMetaTypes();
 
@@ -196,7 +205,7 @@ private:
 
   void dockVisibilityChanged(bool visible);
 
-  void connectDockWindow(QDockWidget *dockWidget);
+  void connectDockWidget(QDockWidget *dockWidget);
 
   /* Stacks are only rememberd if this is true */
   bool handleDockViews = false;
@@ -209,6 +218,7 @@ private:
 
   /* All handled docks and tool bars */
   QList<QDockWidget *> dockWidgets;
+  QList<QDialog *> dialogWidgets;
   QList<QToolBar *> toolBars;
 
   /* Event filter to detect leave and enter events for auto raise */

@@ -25,6 +25,15 @@ class QTextStream;
 namespace atools {
 namespace util {
 
+/*
+ * Simple properties class similar to the Java Properties which also allows to save the content into a similar file format.
+ * Values are not escaped.
+ *
+ * Format is:
+ * # Comment
+ * Key=Value
+ * Key2=Value2
+ */
 class Properties :
   public QHash<QString, QString>
 {
@@ -39,6 +48,9 @@ public:
 
   void write(QTextStream& stream) const;
   void read(QTextStream& stream);
+
+  QString writeString() const;
+  void readString(QString string);
 
   QString getPropertyStr(const QString& name, const QString& defaultValue = QString()) const
   {

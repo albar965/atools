@@ -75,14 +75,14 @@ public:
   }
 
   /* Packet creating timestamp in seconds since epoch */
-  int getPacketTimestamp() const
+  QDateTime getPacketTimestamp() const
   {
-    return static_cast<int>(packetTs);
+    return packetTs;
   }
 
-  void setPacketTimestamp(unsigned int value)
+  void setPacketTimestamp(QDateTime value)
   {
-    packetTs = static_cast<quint32>(value);
+    packetTs = value;
   }
 
   /*
@@ -115,6 +115,16 @@ public:
     return aiAircraft;
   }
 
+  void clearAiAircraft()
+  {
+    aiAircraft.clear();
+    aiAircraftIndex.clear();
+  }
+
+  /* Get aircraft by object ID */
+  atools::fs::sc::SimConnectAircraft *getAiAircraftById(int id);
+  const atools::fs::sc::SimConnectAircraft *getAiAircraftConstById(int id) const;
+
   const QVector<atools::fs::weather::MetarResult>& getMetars() const
   {
     return metarResults;
@@ -132,12 +142,16 @@ public:
   }
 
   static SimConnectData buildDebugForPosition(const atools::geo::Pos& pos, const atools::geo::Pos& lastPos, bool ground,
-                                              float vertSpeed, float tas, float fuelflow, float totalFuel, float ice, float flightplanAlt, float magVar);
+                                              float vertSpeed, float tas, float fuelflow, float totalFuel, float ice, float flightplanAlt,
+                                              float magVar);
 
   bool isUserAircraftValid() const
   {
     return userAircraft.position.isValid();
   }
+
+  /* Update short registration keys which can be used for cross referencing */
+  void updateIndexesAndKeys();
 
 private:
   friend class atools::fs::sc::SimConnectHandler;
@@ -146,16 +160,21 @@ private:
   const static quint32 MAGIC_NUMBER_DATA = 0xF75E0AF3;
   const static quint32 DATA_VERSION = 11;
 
-  quint32 packetId = 0, packetTs = 0;
+  quint32 packetId = 0;
+  QDateTime packetTs;
   quint32 magicNumber = 0, packetSize = 0, version = 0;
 
   atools::fs::sc::SimConnectUserAircraft userAircraft;
   QVector<atools::fs::sc::SimConnectAircraft> aiAircraft;
 
+  // Maps objectId to index in vector aiAircraft - not transferred
+  QHash<int, int> aiAircraftIndex;
+
   QVector<atools::fs::weather::MetarResult> metarResults;
 };
 
-const atools::fs::sc::SimConnectData EMPTY_SIMCONNECT_DATA;
+const static atools::fs::sc::SimConnectData EMPTY_SIMCONNECT_DATA;
+const static atools::fs::sc::SimConnectAircraft EMPTY_SIMCONNECT_AIRCRAFT;
 
 } // namespace sc
 } // namespace fs

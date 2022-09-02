@@ -110,6 +110,37 @@ enum ParkingName
   GATE_Z = 0x25
 };
 
+enum ParkingNameSuffix
+{
+  SUFFIX_NONE = 0x00,
+  SUFFIX_A = 0x0c,
+  SUFFIX_B = 0x0d,
+  SUFFIX_C = 0x0e,
+  SUFFIX_D = 0x0f,
+  SUFFIX_E = 0x10,
+  SUFFIX_F = 0x11,
+  SUFFIX_G = 0x12,
+  SUFFIX_H = 0x13,
+  SUFFIX_I = 0x14,
+  SUFFIX_J = 0x15,
+  SUFFIX_K = 0x16,
+  SUFFIX_L = 0x17,
+  SUFFIX_M = 0x18,
+  SUFFIX_N = 0x19,
+  SUFFIX_O = 0x1a,
+  SUFFIX_P = 0x1b,
+  SUFFIX_Q = 0x1c,
+  SUFFIX_R = 0x1d,
+  SUFFIX_S = 0x1e,
+  SUFFIX_T = 0x1f,
+  SUFFIX_U = 0x20,
+  SUFFIX_V = 0x21,
+  SUFFIX_W = 0x22,
+  SUFFIX_X = 0x23,
+  SUFFIX_Y = 0x24,
+  SUFFIX_Z = 0x25
+};
+
 } // namespace ap
 
 /*
@@ -188,6 +219,11 @@ public:
     return pushBack;
   }
 
+  atools::fs::bgl::ap::ParkingNameSuffix getSuffix() const
+  {
+    return suffix;
+  }
+
   /*
    * @return true if jetway is available
    */
@@ -207,6 +243,7 @@ public:
   static QString parkingTypeToStr(atools::fs::bgl::ap::ParkingType type);
   static QString parkingNameToStr(atools::fs::bgl::ap::ParkingName type);
   static QString pushBackToStr(atools::fs::bgl::ap::PushBack type);
+  static QString parkingSuffixToStr(atools::fs::bgl::ap::ParkingNameSuffix type);
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Parking& record);
@@ -216,6 +253,8 @@ private:
   atools::fs::bgl::ap::ParkingType type = atools::fs::bgl::ap::UNKNOWN;
   atools::fs::bgl::ap::ParkingName name = atools::fs::bgl::ap::NO_PARKING;
   atools::fs::bgl::ap::PushBack pushBack = atools::fs::bgl::ap::NONE;
+  atools::fs::bgl::ap::ParkingNameSuffix suffix = atools::fs::bgl::ap::SUFFIX_NONE;
+
   int number = 0;
   float radius = 0.f, heading = 0.f;
   atools::fs::bgl::BglPosition position;

@@ -70,9 +70,11 @@ class SpatialIndexPrivate
 /*
  * Spatial index wrapping the nanoflann library which uses KD-tree for nearest neighbor search.
  *
- * Changing the underlying vector needs a call of buildIndex() afterwards.
+ * Changing the underlying vector needs a call of updateIndex() afterwards.
  *
  * Note that squared distance is used internally for lookup and resulting distances are therefore not accurate.
+ *
+ * T needs a method const atools::geo::Pos& getPosition() const .
  */
 template<typename T>
 class SpatialIndex :

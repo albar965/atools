@@ -26,10 +26,11 @@ namespace fs {
 /* Result flags for navdatabase creation */
 enum ResultFlag
 {
-  NONE = 0,
-  COMPILE_BASIC_VALIDATION_ERROR = 1 << 0,
-  COMPILE_MSFS_NAVIGRAPH_FOUND = 1 << 1,
-  COMPILE_ABORTED = 1 << 2,
+  COMPILE_NONE = 0,
+  COMPILE_BASIC_VALIDATION_ERROR = 1 << 0, /* Basic validation enabled and found error */
+  COMPILE_MSFS_NAVIGRAPH_FOUND = 1 << 1, /* Found MSFS Navigraph installation during compilation */
+  COMPILE_CANCELED = 1 << 2, /* User clicked cancel on progress */
+  COMPILE_FAILED = 1 << 3, /* Caught exception */
 };
 
 Q_DECLARE_FLAGS(ResultFlags, ResultFlag);

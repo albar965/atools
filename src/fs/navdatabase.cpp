@@ -81,23 +81,29 @@ using atools::fs::scenery::AddOnComponent;
 using atools::fs::scenery::AddOnPackage;
 using atools::buildPathNoCase;
 
-NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb,
-                         NavDatabaseErrors *databaseErrors, const QString& revision)
+NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb, NavDatabaseErrors *databaseErrors,
+                         const QString& revision)
   : db(sqlDb), errors(databaseErrors), options(readerOptions), gitRevision(revision)
 {
 
 }
 
-atools::fs::ResultFlags NavDatabase::create(const QString& codec)
+atools::fs::ResultFlags NavDatabase::compileDatabase()
 {
   if(options != nullptr)
     qDebug() << Q_FUNC_INFO << *options;
 
-  atools::fs::ResultFlags result = createInternal(codec);
+  QString sceneryCfgCodec;
+
+  if(options != nullptr)
+    sceneryCfgCodec = (options->getSimulatorType() == atools::fs::FsPaths::P3D_V4 ||
+                       options->getSimulatorType() == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
+
+  atools::fs::ResultFlags result = createInternal(sceneryCfgCodec);
   if(aborted)
   {
     // Remove all (partial) changes
-    result |= COMPILE_ABORTED;
+    result |= COMPILE_CANCELED;
     db->rollback();
   }
   else
@@ -239,8 +245,8 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, 
     QString baseSteam = buildPathNoCase({filepath, "Official", "Steam", "fs-base"});
     QString baseNavSteam = buildPathNoCase({filepath, "Official", "Steam", "fs-base-nav"});
 
-    bool hasMs = checkDir(baseMs) && checkDir(baseNavMs);
-    bool hasSteam = checkDir(baseSteam) && checkDir(baseNavSteam);
+    bool hasMs = checkDir(Q_FUNC_INFO, baseMs) && checkDir(Q_FUNC_INFO, baseNavMs);
+    bool hasSteam = checkDir(Q_FUNC_INFO, baseSteam) && checkDir(Q_FUNC_INFO, baseNavSteam);
 
     if(!hasMs && !hasSteam)
     {
@@ -571,7 +577,7 @@ int NavDatabase::countMsSimSteps()
 
 atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfigCodec)
 {
-  atools::fs::ResultFlags result = atools::fs::NONE;
+  atools::fs::ResultFlags result = atools::fs::COMPILE_NONE;
   SceneryCfg sceneryCfg(sceneryConfigCodec);
 
   QElapsedTimer timer;
@@ -833,6 +839,9 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   // =====================================================================
   // Update the metadata in the database
   atools::fs::db::DatabaseMeta databaseMetadata(db);
+
+  if(sim == atools::fs::FsPaths::MSFS && result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
+    databaseMetadata.addProperty(atools::fs::db::PROPERTYNAME_MSFS_NAVIGRAPH_FOUND);
 
   if(!xpDataCompiler.isNull())
     databaseMetadata.setAiracCycle(xpDataCompiler->getAiracCycle());
@@ -1167,8 +1176,7 @@ bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWrit
 
   // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
   // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/fs-base/scenery/Base/scenery/magdec.bgl
-  fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getMsfsOfficialPath(), "fs-base", "scenery", "Base", "scenery",
-                                                "magdec.bgl"}));
+  fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getMsfsOfficialPath(), "fs-base", "scenery", "Base", "scenery", "magdec.bgl"}));
   if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
     errors->sceneryErrors.append(err);
 
@@ -1438,23 +1446,31 @@ bool NavDatabase::runScript(ProgressHandler *progress, const QString& scriptFile
 
 void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 {
+  // Force well known layer piority to avoid mess up due to not documented "Content.xml"
+  const static int LAYER_NUM_BASE = -1000;
+  const static int LAYER_NUM_GENERIC_AIRPORTS = -1001;
+  const static int LAYER_NUM_BASE_NAV = -1002;
+
+  // Default for all other layers/packages
+  const static int LAYER_NUM_DEFAULT = 0;
+
   // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
   // content.read(options->getSceneryFile());
 
   // Steam: %APPDATA%\Microsoft Flight Simulator\Content.xml"
   QString contentXmlPath = options->getBasepath() % SEP % "Content.xml";
-  if(!atools::checkFile(contentXmlPath, false /* warn */))
+  if(!atools::checkFile(Q_FUNC_INFO, contentXmlPath, false /* warn */))
   {
     // Not found - try MS installation
     // Marketplace: %LOCALAPPDATA%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Content.xml"
     contentXmlPath = QFileInfo(options->getBasepath() % SEP % ".." % SEP % "Content.xml").canonicalFilePath();
-    if(!atools::checkFile(contentXmlPath, false /* warn */))
+    if(!atools::checkFile(Q_FUNC_INFO, contentXmlPath, false /* warn */))
       // Not found
       contentXmlPath.clear();
   }
 
   // Print warnings, if any
-  atools::checkFile(contentXmlPath);
+  atools::checkFile(Q_FUNC_INFO, contentXmlPath);
 
   scenery::ManifestJson manifest;
 
@@ -1463,8 +1479,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     contentXml.read(contentXmlPath);
 
   // fs-base ======================================================
-  int areaNum = 0;
-  SceneryArea areaBase(areaNum++, tr("Base Airports"), "fs-base");
+  SceneryArea areaBase(LAYER_NUM_BASE, tr("Base"), "fs-base");
   areaBase.setActive(true);
 
   // Get version numbers from manifest - needed to determine record changes for SID and STAR
@@ -1476,7 +1491,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   cfg.appendArea(areaBase);
 
   // fs-base-genericairports ======================================================
-  SceneryArea areaGeneric(areaNum++, tr("Generic Airports"), "fs-base-genericairports");
+  SceneryArea areaGeneric(LAYER_NUM_GENERIC_AIRPORTS, tr("Generic Airports"), "fs-base-genericairports");
   areaGeneric.setActive(true);
 
   // Get version numbers from manifest - needed to determine record changes for SID and STAR
@@ -1491,7 +1506,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   }
 
   // fs-base-nav ======================================================
-  SceneryArea areaNav(areaNum++, tr("Base Navigation"), "fs-base-nav");
+  SceneryArea areaNav(LAYER_NUM_BASE_NAV, tr("Base Navigation"), "fs-base-nav");
   // areaNav.setActive(!contentXml.isDisabled("fs-base-nav"));
   areaNav.setActive(true);
 
@@ -1522,23 +1537,27 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     }
 
     if(name == "fs-base-nav" || name == "fs-base" || name == "fs-base-genericairports")
-      // Already read before
+      // Already read before - do not touch name or priority
       continue;
 
     // Read manifest to check type
     manifest.clear();
     manifest.read(fileinfo.filePath() % SEP % "manifest.json");
 
-    if(manifest.isScenery() && !checkNavigraphNavdataExclude(manifest))
+    if(manifest.isAnyScenery() && !checkNavigraphNavdataExclude(manifest))
     {
       // Read BGL and material file locations from layout file
       layout.clear();
       layout.read(fileinfo.filePath() % SEP % "layout.json");
 
+      SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), baseName, name);
+      if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
+        errors->sceneryErrors.append(
+          NavDatabaseErrors::SceneryErrors(addonArea, tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
+                                           true /* isWarning */));
+
       if(!layout.getBglPaths().isEmpty())
       {
-        SceneryArea addonArea(areaNum++, baseName, name);
-
         // Indicate add-on in official path
         addonArea.setAddOn(true);
 
@@ -1569,17 +1588,21 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     manifest.clear();
     manifest.read(fileinfo.filePath() % SEP % "manifest.json");
 
-    if(manifest.isScenery() && !checkNavigraphNavdataExclude(manifest))
+    if(manifest.isAnyScenery() && !checkNavigraphNavdataExclude(manifest))
     {
       // Read BGL and material file locations from layout file
       layout.clear();
       layout.read(fileinfo.filePath() % SEP % "layout.json");
 
+      SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), tr("Community"), name);
+      addonArea.setCommunity(true);
+      if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
+        errors->sceneryErrors.append(
+          NavDatabaseErrors::SceneryErrors(addonArea, tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
+                                           true /* isWarning */));
+
       if(!layout.getBglPaths().isEmpty())
       {
-        SceneryArea addonArea(areaNum++, tr("Community"), name);
-        addonArea.setCommunity(true);
-
         // Detect Navigraph navdata update packages for special handling
         addonArea.setNavigraphNavdataUpdate(checkNavigraphNavdataUpdate(manifest));
 
@@ -1599,7 +1622,7 @@ bool NavDatabase::checkNavigraphNavdataUpdate(atools::fs::scenery::ManifestJson&
   // ..
   // }
 
-  return manifest.isScenery() &&
+  return manifest.isAnyScenery() &&
          manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
          (manifest.getTitle().contains("AIRAC", Qt::CaseInsensitive) ||
           manifest.getTitle().contains("Cycle", Qt::CaseInsensitive));
@@ -1615,7 +1638,7 @@ bool NavDatabase::checkNavigraphNavdataExclude(scenery::ManifestJson& manifest)
   // ...
   // }
 
-  return manifest.isScenery() &&
+  return manifest.isAnyScenery() &&
          manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
          (manifest.getTitle().contains("Maintenance", Qt::CaseInsensitive) ||
           manifest.getTitle().contains("AIRAC Cycle Base", Qt::CaseInsensitive));

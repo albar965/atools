@@ -125,7 +125,7 @@ QString strFromFile(const QString& filename);
 /* Unicode normalizes string and replaces special characters like ö->o.
  * Removes all diacritics.
  * Omits characters if they cannot be transformed to ASCII. */
-QString normalizeStr(const QString& str);
+QString normalizeStr(QString str);
 
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);
@@ -447,6 +447,7 @@ QDateTime correctDate(int day, int hour, int minute);
 /* Determines timezone offset by seconds of day and creates local time from incomplete values based on current year.
  * Time can be converted to UTC which might also roll over the date. */
 QDateTime correctDateLocal(int dayOfYear, int secondsOfDayLocal, int secondsOfDayUtc);
+QDateTime correctDateLocalF(int dayOfYear, float secondsOfDayLocal, float secondsOfDayUtc);
 
 template<typename TYPE>
 Q_DECL_CONSTEXPR int sign(TYPE t)
@@ -528,6 +529,21 @@ template<>
 Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long long epsilon)
 {
   return !almostEqual<long long>(f1, f2, epsilon);
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR bool isValid(TYPE value)
+{
+  // max float (3.4028235 * 10^38) is used for all floating point numerical invalid values.
+  // Divide by four to catch conversions of invalid value
+  return value < std::numeric_limits<float>::max() / 4;
+}
+
+template<>
+Q_DECL_CONSTEXPR bool isValid<int>(int value)
+{
+  // 2 147 483 647
+  return value < std::numeric_limits<int>::max() / 4;
 }
 
 /* Allocates array and fills with 0 */
@@ -720,11 +736,12 @@ QString checkFileMsg(const QFileInfo& file, int maxLength = 80, bool warn = true
 QString checkDirMsg(const QString& dir, int maxLength = 80, bool warn = true);
 QString checkFileMsg(const QString& file, int maxLength = 80, bool warn = true);
 
-/* Same as above but prints warnings into the log if flag is set and returns false if something is not ok */
-bool checkFile(const QFileInfo& file, bool warn = true);
-bool checkDir(const QFileInfo& dir, bool warn = true);
-bool checkFile(const QString& file, bool warn = true);
-bool checkDir(const QString& dir, bool warn = true);
+/* Same as above but prints warnings into the log if flag is set and returns false if something is not ok.
+ *  Use the Q_FUNC_INFO macro as parameter for funcInfo. */
+bool checkFile(const QString& funcInfo, const QFileInfo& file, bool warn = true);
+bool checkDir(const QString& funcInfo, const QFileInfo& dir, bool warn = true);
+bool checkFile(const QString& funcInfo, const QString& file, bool warn = true);
+bool checkDir(const QString& funcInfo, const QString& dir, bool warn = true);
 
 /* Calculates a simple reproducible hash for all lines in the text file ignoring line endings.
  * Uses always the same seed and ignores empty lines. To be used for testing. */

@@ -32,7 +32,7 @@ class ClickToolTipHandler :
   public QObject
 {
 public:
-  ClickToolTipHandler(QLabel *parentLabel);
+  explicit ClickToolTipHandler(QLabel *parentLabel);
   virtual ~ClickToolTipHandler() override;
 
 private:

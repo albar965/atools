@@ -59,5 +59,19 @@ void Properties::read(QTextStream& stream)
   }
 }
 
+QString Properties::writeString() const
+{
+  QString string;
+  QTextStream stream(&string, QIODevice::WriteOnly);
+  write(stream);
+  return string;
+}
+
+void Properties::readString(QString string)
+{
+  QTextStream stream(&string, QIODevice::ReadOnly);
+  read(stream);
+}
+
 } // namespace util
 } // namespace atools

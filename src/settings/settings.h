@@ -61,6 +61,12 @@ public:
     overrideOrganisation = value;
   }
 
+  /* Overrides the whole path if not empty */
+  static void setOverridePath(const QString& value)
+  {
+    overridePath = value;
+  }
+
   /*
    * Get an application specific filename plus extension. The file will be
    * stored in the organization settings directory and have a name based on
@@ -143,7 +149,7 @@ private:
 
   QSettings *qSettings;
 
-  static QString overrideOrganisation;
+  static QString overrideOrganisation, overridePath;
 
   static Settings *settingsInstance;
   static QString appNameForFiles();

@@ -20,16 +20,33 @@
 namespace atools {
 namespace fs {
 
-NavDatabaseErrors::NavDatabaseErrors()
+int NavDatabaseErrors::getTotal() const
 {
-
+  int total = 0;
+  for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr :  sceneryErrors)
+    total += scErr.fileErrors.size() + scErr.sceneryErrorsMessages.size();
+  return total;
 }
 
 int NavDatabaseErrors::getTotalErrors() const
 {
   int total = 0;
   for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr :  sceneryErrors)
-    total += scErr.fileErrors.size() + scErr.sceneryErrorsMessages.size();
+  {
+    if(!scErr.warning)
+      total += scErr.fileErrors.size() + scErr.sceneryErrorsMessages.size();
+  }
+  return total;
+}
+
+int NavDatabaseErrors::getTotalWarnings() const
+{
+  int total = 0;
+  for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr :  sceneryErrors)
+  {
+    if(scErr.warning)
+      total += scErr.fileErrors.size() + scErr.sceneryErrorsMessages.size();
+  }
   return total;
 }
 

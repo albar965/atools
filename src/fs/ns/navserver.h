@@ -43,7 +43,7 @@ class NavServer :
   Q_OBJECT
 
 public:
-  NavServer(QObject *parent, atools::fs::ns::NavServerOptions optionFlags, int inetPort);
+  explicit NavServer(QObject *parent, atools::fs::ns::NavServerOptions optionFlags, int inetPort);
   virtual ~NavServer() override;
 
   NavServer(const NavServer& other) = delete;

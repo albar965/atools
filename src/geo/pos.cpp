@@ -264,19 +264,6 @@ float Pos::distanceSimpleTo(const Pos& otherPos) const
     return std::abs(lonX - otherPos.lonX) + std::abs(latY - otherPos.latY);
 }
 
-float Pos::distanceMeterTo(const Pos& otherPos) const
-{
-  if(!isValid() || !otherPos.isValid())
-    return INVALID_VALUE;
-  else if(*this == otherPos)
-    return 0.f;
-  else
-    return static_cast<float>(distanceRad(toRadians(static_cast<double>(lonX)),
-                                          toRadians(static_cast<double>(latY)),
-                                          toRadians(static_cast<double>(otherPos.lonX)),
-                                          toRadians(static_cast<double>(otherPos.latY))) * EARTH_RADIUS_METER_DOUBLE);
-}
-
 double Pos::distanceMeterToDouble(const Pos& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
@@ -288,6 +275,20 @@ double Pos::distanceMeterToDouble(const Pos& otherPos) const
                        toRadians(static_cast<double>(latY)),
                        toRadians(static_cast<double>(otherPos.lonX)),
                        toRadians(static_cast<double>(otherPos.latY))) * EARTH_RADIUS_METER_DOUBLE;
+}
+
+double Pos::distanceMeterTo3dDouble(const Pos& otherPos, double altitudeWeight) const
+{
+  double distMeter = distanceMeterToDouble(otherPos);
+
+  if(altitude < INVALID_VALUE / 2. && otherPos.altitude < INVALID_VALUE / 2.)
+  {
+    double altDiffMeter = feetToMeter(std::abs(altitude - otherPos.altitude)) * altitudeWeight;
+
+    if(atools::almostNotEqual(altDiffMeter, 0.))
+      return std::sqrt(distMeter * distMeter + altDiffMeter * altDiffMeter);
+  }
+  return distMeter;
 }
 
 void Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, LineDistance& result) const

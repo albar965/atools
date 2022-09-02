@@ -32,7 +32,7 @@ namespace scenery {
 AddOnPackage::AddOnPackage(const QString& file)
 {
   filename = file;
-  if(atools::checkFile(file))
+  if(atools::checkFile(Q_FUNC_INFO, file))
   {
     baseDirectory = QFileInfo(filename).path();
 

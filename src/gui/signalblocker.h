@@ -30,7 +30,20 @@ namespace gui {
 class SignalBlocker
 {
 public:
-  SignalBlocker(QList<QObject *> objectList);
+  SignalBlocker(QList<QObject *> objectList)
+  {
+    add(objectList);
+  }
+
+  template<typename TYPE> SignalBlocker(QList<TYPE *> objectList);
+  template<typename TYPE> SignalBlocker(QVector<TYPE *> objectList);
+
+  template<typename TYPE>
+  SignalBlocker(TYPE *object)
+  {
+    add(object);
+  }
+
   ~SignalBlocker();
 
   void add(QObject *object);
@@ -44,6 +57,18 @@ public:
 private:
   QList<QObject *> objects;
 };
+
+template<typename TYPE>
+SignalBlocker::SignalBlocker(QList<TYPE *> objectList)
+{
+  add(objectList);
+}
+
+template<typename TYPE>
+SignalBlocker::SignalBlocker(QVector<TYPE *> objectList)
+{
+  add(objectList);
+}
 
 template<typename TYPE>
 void SignalBlocker::add(QList<TYPE *> objectList)

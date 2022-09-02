@@ -127,6 +127,14 @@ void SimConnectAircraft::write(QDataStream& out) const
       << static_cast<quint8>(category) << static_cast<quint8>(engineType) << transponderCode << properties;
 }
 
+int SimConnectAircraft::getId() const
+{
+  if(objectId > std::numeric_limits<int>::max())
+    qWarning() << Q_FUNC_INFO << "Object id" << objectId << "exceeds maximum";
+
+  return static_cast<int>(objectId);
+}
+
 bool SimConnectAircraft::isSameAircraft(const SimConnectAircraft& other) const
 {
   return airplaneTitle == other.airplaneTitle &&

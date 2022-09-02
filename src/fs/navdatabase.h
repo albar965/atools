@@ -76,7 +76,7 @@ public:
 
   /* Read all BGL or X-Plane files and load data into database. atools::Exception is thrown in case of error.
    * @param codec Scenery.cfg codec only applies to FSX/P3D */
-  atools::fs::ResultFlags create(const QString& codec);
+  atools::fs::ResultFlags compileDatabase();
 
   /* Does not load anything and only creates the empty database schema.
    * Configuration is not used and can be null. atools::Exception is thrown in case of error.

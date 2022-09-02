@@ -32,6 +32,7 @@
 #include <QDesktopServices>
 #include <QRegularExpression>
 #include <QSslSocket>
+#include <QProcess>
 
 namespace atools {
 namespace gui {
@@ -112,7 +113,17 @@ void HelpHandler::openFile(QWidget *parent, const QString& filepath)
   qDebug() << Q_FUNC_INFO << filepath;
 
   if(QFile::exists(filepath))
+  {
+#if defined(DEBUG_OPEN_FILE) && defined(Q_OS_LINUX)
+    // Workaround for a KDE bug which does not open files from the build folder
+    if(filepath.endsWith(".lnmpln") || filepath.endsWith(".lnmperf") || filepath.endsWith(".pln") || filepath.endsWith(".fms"))
+      QProcess::startDetached("/usr/bin/kate", {QDir::toNativeSeparators(filepath)});
+    else
+      openUrl(parent, QUrl::fromLocalFile(QDir::toNativeSeparators(filepath)));
+#else
     openUrl(parent, QUrl::fromLocalFile(QDir::toNativeSeparators(filepath)));
+#endif
+  }
   else
     atools::gui::Dialog::warning(parent, tr("Help file \"%1\" not found").arg(filepath));
 }

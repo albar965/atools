@@ -75,14 +75,14 @@ public:
   }
 
   /* Packet creating timestamp in seconds since epoch */
-  int getPacketTimestamp() const
+  QDateTime getPacketTimestamp() const
   {
-    return static_cast<int>(packetTs);
+    return packetTs;
   }
 
-  void setPacketTimestamp(unsigned int value)
+  void setPacketTimestamp(QDateTime value)
   {
-    packetTs = static_cast<quint32>(value);
+    packetTs = value;
   }
 
   /*
@@ -125,8 +125,9 @@ private:
   const static quint32 MAGIC_NUMBER_REPLY = 0x33ED8272;
   const static quint32 REPLY_VERSION = 5;
 
-  quint32 packetId = 0, packetTs = 0;
-  atools::fs::sc::SimConnectStatus status = OK;
+  quint32 packetId = 0;
+  QDateTime packetTs;
+  atools::fs::sc::SimConnectStatus replyStatus = OK;
   quint32 magicNumber = 0, packetSize = 0, version = 2;
   Command command;
   atools::fs::sc::WeatherRequest weatherRequest;

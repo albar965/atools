@@ -49,6 +49,9 @@
 # End of configuration documentation
 # =============================================================================
 
+# Define program version here
+VERSION_NUMBER=3.7.11.develop
+
 QT += sql xml svg core widgets network
 QT -= gui
 CONFIG += build_all c++14 staticlib
@@ -103,12 +106,15 @@ macx {
 }
 
 isEmpty(GIT_PATH) {
-  GIT_REVISION='\\"UNKNOWN\\"'
+  GIT_REVISION=UNKNOWN
+  GIT_REVISION_FULL=UNKNOWN
 } else {
-  GIT_REVISION='\\"$$system('$$GIT_PATH' rev-parse --short HEAD)\\"'
+  GIT_REVISION=$$system('$$GIT_PATH' rev-parse --short HEAD)
+  GIT_REVISION_FULL=$$system('$$GIT_PATH' rev-parse HEAD)
 }
 
-DEFINES += GIT_REVISION_ATOOLS=$$GIT_REVISION
+DEFINES += VERSION_NUMBER_ATOOLS='\\"$$VERSION_NUMBER\\"'
+DEFINES += GIT_REVISION_ATOOLS='\\"$$GIT_REVISION\\"'
 DEFINES += QT_NO_CAST_FROM_BYTEARRAY
 DEFINES += QT_NO_CAST_TO_ASCII
 
@@ -132,8 +138,10 @@ exists($$PWD/../build_options.pro) {
 
 !isEqual(QUIET, "true") {
 message(-----------------------------------)
-message(GIT_PATH: $$GIT_PATH)
+message(VERSION_NUMBER: $$VERSION_NUMBER)
 message(GIT_REVISION: $$GIT_REVISION)
+message(GIT_REVISION_FULL: $$GIT_REVISION_FULL)
+message(GIT_PATH: $$GIT_PATH)
 message(ATOOLS_NO_FS: $$ATOOLS_NO_FS)
 message(ATOOLS_NO_GRIB: $$ATOOLS_NO_GRIB)
 message(SIMCONNECT_PATH: $$SIMCONNECT_PATH)
@@ -202,6 +210,7 @@ HEADERS += \
   src/geo/rect.h \
   src/geo/spatialindex.h \
   src/grib/windquery.h \
+  src/gui/actionbuttonhandler.h \
   src/gui/actionstatesaver.h \
   src/gui/actiontextsaver.h \
   src/gui/actiontool.h \
@@ -342,6 +351,7 @@ SOURCES += \
   src/geo/rect.cpp \
   src/geo/spatialindex.cpp \
   src/grib/windquery.cpp \
+  src/gui/actionbuttonhandler.cpp \
   src/gui/actionstatesaver.cpp \
   src/gui/actiontextsaver.cpp \
   src/gui/actiontool.cpp \
@@ -831,6 +841,8 @@ unix:!macx {
   deploy.commands = rm -Rfv $$DEPLOY_DIR &&
   deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB &&
   deploy.commands += mkdir -pv $$DEPLOY_DIR_INCLUDE &&
+  deploy.commands += echo $$VERSION_NUMBER > $$DEPLOY_DIR/version.txt &&
+  deploy.commands += echo $$GIT_REVISION_FULL > $$DEPLOY_DIR/revision.txt &&
   deploy.commands += $$copyHeaderFilesCommands($$DEPLOY_DIR_INCLUDE)
   deploy.commands += cp -Rvf $$PWD/atools*.qm $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/libatools.a $$DEPLOY_DIR_LIB &&
@@ -863,6 +875,8 @@ win32 {
   deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/lib) &&
   deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/include) &&
+  deploy.commands += echo $$VERSION_NUMBER > $$p($$DEPLOY_BASE/$$TARGET_NAME/version.txt) &&
+  deploy.commands += echo $$GIT_REVISION_FULL > $$p($$DEPLOY_BASE/$$TARGET_NAME/revision.txt) &&
   deploy.commands += xcopy /T /E $$p($$PWD/src) $$p($$DEPLOY_BASE/$$TARGET_NAME/include) &&
   deploy.commands += $$copyHeaderFilesCommands($$DEPLOY_BASE/$$TARGET_NAME/include)
   deploy.commands += xcopy $$p($$OUT_PWD/libatools.a) $$p($$DEPLOY_BASE/$$TARGET_NAME/lib) &&

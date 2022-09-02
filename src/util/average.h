@@ -69,7 +69,8 @@ public:
 
   /* Methods for single values */
   void addSample(float value1, qint64 timestampMs);
-  float getAverage() const;
+  float getAverage1() const;
+  float getAverage2() const;
 
   void reset()
   {

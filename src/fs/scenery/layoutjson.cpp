@@ -60,7 +60,7 @@ void LayoutJson::read(const QString& filename)
   bool warn = true;
 #endif
 
-  if(atools::checkFile(filename, warn))
+  if(atools::checkFile(Q_FUNC_INFO, filename, warn))
   {
     QFile file(filename);
     if(file.open(QIODevice::ReadOnly))
@@ -74,6 +74,10 @@ void LayoutJson::read(const QString& filename)
       for(int i = 0; i < arr.count(); i++)
       {
         QString path = arr.at(i).toObject().value("path").toString();
+
+        if(path.endsWith(".fsarchive", Qt::CaseInsensitive))
+          fsArchiveFound = true;
+
         if(path.endsWith(".bgl", Qt::CaseInsensitive))
           bglPaths.append(path);
         else if(path.endsWith("Library.xml", Qt::CaseInsensitive))

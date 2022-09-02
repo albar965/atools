@@ -87,18 +87,18 @@ void AirspaceReaderBase::resetNumRead()
 
 AirspaceReaderBase::Format AirspaceReaderBase::detectFileFormat(const QString& file)
 {
-  const QStringList& probe = atools::probeFile(file);
+  QString probe = atools::probeFile(file).constFirst();
 
   // Check if file is IVAO JSON which starts with an array at top level
-  if(probe.value(0).startsWith('['))
+  if(probe.startsWith('['))
     return IVAO_JSON;
 
   // Check if file is a GeoJSON which starts with an object at top level
-  if(probe.value(0).startsWith('{'))
+  if(probe.startsWith('{'))
     return VATSIM_GEO_JSON;
 
   // OpenAir starts with a comment "*" or an upper case letter
-  if(probe.value(0).startsWith('*') || atools::charAt(probe.value(0), 0).isUpper())
+  if(atools::strStartsWith({"*", "ac", "an", "ah", "al"}, probe))
     return OPEN_AIR;
 
   return UNKNOWN;

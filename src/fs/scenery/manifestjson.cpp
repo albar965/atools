@@ -54,7 +54,7 @@ void ManifestJson::read(const QString& filename)
   bool warn = true;
 #endif
 
-  if(atools::checkFile(filename, warn))
+  if(atools::checkFile(Q_FUNC_INFO, filename, warn))
   {
     QFile file(filename);
     if(file.open(QIODevice::ReadOnly))
@@ -82,6 +82,12 @@ void ManifestJson::read(const QString& filename)
 
 bool ManifestJson::isScenery() const
 {
+  // "content_type": "SCENERY"
+  return contentType.compare("SCENERY", Qt::CaseInsensitive) == 0;
+}
+
+bool ManifestJson::isAnyScenery() const
+{
   // "content_type": "AIRCRAFT"
   // "content_type": "CORE"
   // "content_type": "INSTRUMENTS"
@@ -94,8 +100,7 @@ bool ManifestJson::isScenery() const
   // Instead exclude obvious known types
   return contentType.compare("AIRCRAFT", Qt::CaseInsensitive) != 0 &&
          contentType.compare("INSTRUMENTS", Qt::CaseInsensitive) != 0 &&
-         contentType.compare("LIVERY", Qt::CaseInsensitive) != 0 &&
-         contentType.compare("MISSION", Qt::CaseInsensitive) != 0;
+         contentType.compare("LIVERY", Qt::CaseInsensitive) != 0;
 }
 
 void ManifestJson::clear()

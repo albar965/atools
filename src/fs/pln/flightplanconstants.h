@@ -78,11 +78,13 @@ enum FileFormat
   FLIGHTGEAR, /* FlightGear XML format - load and save  */
   LNM_PLN, /* Little Navmap's own flight plan format  */
   GARMIN_FPL, /* Garmin FPL - XML format */
-  MSFS_PLN /* MSFS PLN  */
+  MSFS_PLN, /* MSFS PLN  */
+  GARMIN_GFP /* Garmin GFP - One line text format prefixed with "FPN/RI:..." */
 };
 
 enum FlightplanType
 {
+  NO_TYPE,
   IFR,
   VFR
 };
@@ -113,8 +115,8 @@ enum RouteType
  * Keys that describe procedures */
 
 /* SID, runway and transiton */
-const QLatin1String SIDAPPR("sidappr");
-const QLatin1String SIDAPPRRW("sidapprrw");
+const QLatin1String SID("sidappr");
+const QLatin1String SIDRW("sidapprrw");
 const QLatin1String SIDTRANS("sidtrans");
 const QLatin1String SIDTYPE("sidtype");
 

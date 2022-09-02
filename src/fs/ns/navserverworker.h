@@ -42,7 +42,7 @@ class NavServerWorker :
   Q_OBJECT
 
 public:
-  NavServerWorker(qintptr socketDescriptor, NavServer *parent, atools::fs::ns::NavServerOptions optionFlags);
+  explicit NavServerWorker(qintptr socketDescriptor, NavServer *parent, atools::fs::ns::NavServerOptions optionFlags);
   virtual ~NavServerWorker() override;
 
   NavServerWorker(const NavServerWorker& other) = delete;

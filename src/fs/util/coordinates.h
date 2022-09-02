@@ -72,8 +72,8 @@ atools::geo::Pos fromDegMinSecFormat(const QString& str);
 /* Degrees and minutes in pair "N6500 W08000" or "N6500/W08000" */
 atools::geo::Pos fromDegMinPairFormat(const QString& str);
 
-/* NAT type 5020N */
-atools::geo::Pos fromNatFormat(const QString& str);
+/* ARINC full degree points 57N30 5730N 5730E 57E30 57W30 5730W 5730S 57S30 */
+atools::geo::Pos fromArincFormat(const QString& str);
 
 /* OpenAir airspace format
 *  50:40:42 N 003:13:30 E

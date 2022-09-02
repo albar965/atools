@@ -247,10 +247,8 @@ int LogdataManager::importCsv(const QString& filepath)
       if(!at(values, csv::DEPARTURE_ALT).isEmpty())
         insertQuery.bindValue(":departure_alt", atFloat(values, csv::DEPARTURE_ALT, true));
 
-      insertQuery.bindValue(":departure_time",
-                            QDateTime::fromString(at(values, csv::DEPARTURE_TIME, true), Qt::ISODate));
-      insertQuery.bindValue(":departure_time_sim",
-                            QDateTime::fromString(at(values, csv::DEPARTURE_TIME_SIM, true), Qt::ISODate));
+      insertQuery.bindValue(":departure_time", QDateTime::fromString(at(values, csv::DEPARTURE_TIME, true), Qt::ISODate));
+      insertQuery.bindValue(":departure_time_sim", QDateTime::fromString(at(values, csv::DEPARTURE_TIME_SIM, true), Qt::ISODate));
 
       // Destination ===============================================================
       insertQuery.bindValue(":destination_ident", at(values, csv::DESTINATION_IDENT));
@@ -270,10 +268,8 @@ int LogdataManager::importCsv(const QString& filepath)
       if(!at(values, csv::DESTINATION_ALT).isEmpty())
         insertQuery.bindValue(":destination_alt", atFloat(values, csv::DESTINATION_ALT, true));
 
-      insertQuery.bindValue(":destination_time",
-                            QDateTime::fromString(at(values, csv::DESTINATION_TIME, true), Qt::ISODate));
-      insertQuery.bindValue(":destination_time_sim",
-                            QDateTime::fromString(at(values, csv::DESTINATION_TIME_SIM, true), Qt::ISODate));
+      insertQuery.bindValue(":destination_time", QDateTime::fromString(at(values, csv::DESTINATION_TIME, true), Qt::ISODate));
+      insertQuery.bindValue(":destination_time_sim", QDateTime::fromString(at(values, csv::DESTINATION_TIME_SIM, true), Qt::ISODate));
 
       // Other ===============================================================
       insertQuery.bindValue(":route_string", at(values, csv::ROUTE_STRING));
@@ -281,12 +277,9 @@ int LogdataManager::importCsv(const QString& filepath)
       insertQuery.bindValue(":description", at(values, csv::DESCRIPTION));
 
       // Add files as Gzipped BLOBS ===========================================
-      insertQuery.bindValue(":flightplan", atools::zip::gzipCompress(at(values, csv::FLIGHTPLAN,
-                                                                        true /* nowarn */).toUtf8()));
-      insertQuery.bindValue(":aircraft_perf", atools::zip::gzipCompress(at(values, csv::AIRCRAFT_PERF,
-                                                                           true /* nowarn */).toUtf8()));
-      insertQuery.bindValue(":aircraft_trail", atools::zip::gzipCompress(at(values, csv::AIRCRAFT_TRAIL,
-                                                                            true /* nowarn */).toUtf8()));
+      insertQuery.bindValue(":flightplan", atools::zip::gzipCompress(at(values, csv::FLIGHTPLAN, true /* nowarn */).toUtf8()));
+      insertQuery.bindValue(":aircraft_perf", atools::zip::gzipCompress(at(values, csv::AIRCRAFT_PERF, true /* nowarn */).toUtf8()));
+      insertQuery.bindValue(":aircraft_trail", atools::zip::gzipCompress(at(values, csv::AIRCRAFT_TRAIL, true /* nowarn */).toUtf8()));
 
       // Fill null fields with empty strings to avoid issues when searching
       // Also turn empty BLOBs to NULL
@@ -616,7 +609,9 @@ void LogdataManager::loadGpx(int id)
   if(!cache.contains(id))
   {
     LogEntryGeometry *entry = new LogEntryGeometry;
-    atools::fs::pln::FlightplanIO().loadGpxGz(&entry->route, &entry->names, &entry->tracks, &entry->timestamps,
+
+    // Do not load timestamps
+    atools::fs::pln::FlightplanIO().loadGpxGz(&entry->route, &entry->names, &entry->tracks, nullptr /* timestampsMs */,
                                               getValue(id, "aircraft_trail").toByteArray());
     entry->routeRect = entry->route.boundingRect();
 

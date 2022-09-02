@@ -252,6 +252,7 @@ bool WhazzupTextParser::readInternalJson(const QString& file, const QDateTime& l
       // This is older than the last update - bail out
       return false;
 
+    update.setTimeSpec(Qt::UTC);
     updateTimestamp = update;
   }
 
@@ -929,6 +930,7 @@ bool WhazzupTextParser::readInternalDelimited(QTextStream& stream, const QDateTi
             // This is older than the last update - bail out
             return false;
 
+          update.setTimeSpec(Qt::UTC);
           updateTimestamp = update;
         }
       }
@@ -943,8 +945,7 @@ bool WhazzupTextParser::readInternalDelimited(QTextStream& stream, const QDateTi
         parseSection(line.split(':'), false /*ATC*/, true /* prefile */, false /* isJson */);
       else if(curSection == "SERVERS")
         parseServersSection(line.split(':'));
-      else if(curSection == "VOICE" || curSection == "VOICE_SERVERS" || curSection == "VOICE SERVERS" ||
-              curSection == "AIRPORTS")
+      else if(curSection == "VOICE" || curSection == "VOICE_SERVERS" || curSection == "VOICE SERVERS" || curSection == "AIRPORTS")
         parseVoiceSection(line.split(':'));
     }
   }
@@ -964,9 +965,9 @@ QDateTime WhazzupTextParser::parseGeneralSection(const QStringList& line)
   QDateTime update;
   if(key == "VERSION")
     version = value.toInt();
-  else if(key == "RELOAD")
+  else if(key == "RELOAD") // RELOAD  is time in minutes this file will be updated
     reload = value.toInt();
-  else if(key == "UPDATE")
+  else if(key == "UPDATE") // UPDATE is the last date and time this file has been updated. Format is yyyymmddhhnnss
     update = QDateTime::fromString(value, "yyyyMMddhhmmss");
   // else if(key == "ATIS ALLOW MIN")
   // atisAllowMin = value.toInt();
@@ -1225,8 +1226,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
     }
     else
     {
-      insertQuery->bindValue(":flightplan_2nd_alternate_aerodrome",
-                             at(line, i::FLIGHTPLAN_2ND_ALTERNATE_AERODROME, error));
+      insertQuery->bindValue(":flightplan_2nd_alternate_aerodrome", at(line, i::FLIGHTPLAN_2ND_ALTERNATE_AERODROME, error));
       insertQuery->bindValue(":flightplan_type_of_flight", at(line, i::FLIGHTPLAN_TYPE_OF_FLIGHT, error));
       insertQuery->bindValue(":flightplan_persons_on_board", atInt(line, i::FLIGHTPLAN_PERSONS_ON_BOARD, error));
       insertQuery->bindValue(":heading", atInt(line, i::HEADING, error));
@@ -1244,8 +1244,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
     if(atc)
     {
       insertQuery->bindValue(":atis", convertAtisText(at(line, v::ATIS_MESSAGE, error)));
-      insertQuery->bindValue(":atis_time",
-                             parseDateTime(line, v::TIME_LAST_ATIS_RECEIVED, format == VATSIM_JSON3 /* jsonFormat */));
+      insertQuery->bindValue(":atis_time", parseDateTime(line, v::TIME_LAST_ATIS_RECEIVED, format == VATSIM_JSON3 /* jsonFormat */));
     }
     else
     {

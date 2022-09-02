@@ -39,8 +39,9 @@ void ParkingWriter::writeObject(const Parking *type)
   bind(":parking_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(Parking::parkingTypeToStr, type->getType()));
+  bind(":suffix", bgl::util::enumToStr(Parking::parkingSuffixToStr, type->getSuffix()));
   bind(":pushback", bgl::util::enumToStr(Parking::pushBackToStr, type->getPushBack()));
-  bind(":name", bgl::util::enumToStr(Parking::parkingNameToStr, type->getName()));
+  bind(":name", Parking::parkingNameToStr(type->getName())); // Also allow NONE and UNKNOWN
   bind(":number", type->getNumber());
   bind(":airline_codes", type->getAirlineCodes().join(","));
   bind(":radius", roundToInt(meterToFeet(type->getRadius())));

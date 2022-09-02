@@ -38,7 +38,8 @@ class GridDelegate;
  * A configurable dialog that shows the user a tree widget with checkboxes.
  * Uses one of two colums.
  *
- * Allows to use simple enumerations for item ids.
+ * Allows to use simple enumerations for item ids which have to be unique. Otherwise an exception is thown on insert.
+ * Ids have to fit into an int.
  *
  * Allows only one tree level. Means: No branches in branches.
  */
@@ -83,22 +84,28 @@ public:
 
   /* Add an item to a branch or root. Has always a checkbox in the first column. */
   template<typename TYPE>
-  QTreeWidgetItem *addItem(QTreeWidgetItem *parent, TYPE type, const QStringList& text, const QString& tooltip, bool checked = true)
+  QTreeWidgetItem *addItem(QTreeWidgetItem *parent, TYPE id, const QStringList& text, const QString& tooltip, bool checked = true)
   {
-    return addItemInt(parent, static_cast<int>(type), text, tooltip, checked);
+    return addItemInt(parent, static_cast<int>(id), text, tooltip, checked);
   }
 
   template<typename TYPE>
-  QTreeWidgetItem *addItem1(QTreeWidgetItem *parent, TYPE type, const QString& text1, const QString& tooltip, bool checked = true)
+  QTreeWidgetItem *addItem(QTreeWidgetItem *parent, TYPE id, const QStringList& text, bool checked = true)
   {
-    return addItemInt(parent, static_cast<int>(type), {text1}, tooltip, checked);
+    return addItemInt(parent, static_cast<int>(id), text, QString(), checked);
   }
 
   template<typename TYPE>
-  QTreeWidgetItem *addItem2(QTreeWidgetItem *parent, TYPE type, const QString& text1, const QString& text2, const QString& tooltip,
+  QTreeWidgetItem *addItem2(QTreeWidgetItem *parent, TYPE id, const QString& text1, const QString& text2, const QString& tooltip,
                             bool checked = true)
   {
-    return addItemInt(parent, static_cast<int>(type), {text1, text2}, tooltip, checked);
+    return addItemInt(parent, static_cast<int>(id), {text1, text2}, tooltip, checked);
+  }
+
+  template<typename TYPE>
+  QTreeWidgetItem *addItem2(QTreeWidgetItem *parent, TYPE id, const QString& text1, const QString& text2, bool checked = true)
+  {
+    return addItemInt(parent, static_cast<int>(id), {text1, text2}, QString(), checked);
   }
 
   /* True if the item with the given type exists and has check state checked */
@@ -113,6 +120,20 @@ public:
   void setItemChecked(TYPE id, bool checked = true)
   {
     setCheckedInt(static_cast<int>(id), checked);
+  }
+
+  /* True if the item with the given type exists and has check state checked */
+  template<typename TYPE>
+  bool isItemDisabled(TYPE id) const
+  {
+    return isDisabledInt(static_cast<int>(id));
+  }
+
+  /* Set item state to enabled or disabled. Ignored if item does not exist. */
+  template<typename TYPE>
+  void setItemDisabled(TYPE id, bool disabled = true)
+  {
+    setDisabledInt(static_cast<int>(id), disabled);
   }
 
   /* Set all item states to checked or unchecked */
@@ -136,13 +157,21 @@ public:
     helpLanguageOnline = value;
   }
 
+signals:
+  /* Emitted once a checkbox state has changed. */
+  void itemToggled(atools::gui::TreeDialog *treeDialog, int id, bool checked);
+
 private:
   void buttonBoxClicked(QAbstractButton *button);
+  void dataChanged(const QModelIndex& topLeft, const QModelIndex&, const QVector<int>& roles = QVector<int>());
 
   /* Untyped methods used after converting an enum to int */
-  QTreeWidgetItem *addItemInt(QTreeWidgetItem *parent, int type, const QStringList& text, const QString& tooltip, bool checked);
+  QTreeWidgetItem *addItemInt(QTreeWidgetItem *parent, int id, const QStringList& text, const QString& tooltip, bool checked);
   bool isCheckedInt(int id) const;
   void setCheckedInt(int id, bool checked);
+
+  bool isDisabledInt(int id) const;
+  void setDisabledInt(int id, bool disabled);
 
   /* Save header, expand state and size */
   void saveStateDialog(bool saveExpandState);

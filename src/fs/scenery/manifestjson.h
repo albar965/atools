@@ -48,7 +48,10 @@ class ManifestJson
 public:
   void read(const QString& filename);
 
-  /* Might be scenery or core */
+  /* Might be scenery or core. Only excludes known types which are not scenery. */
+  bool isAnyScenery() const;
+
+  /* Checks for type "SCENERY". */
   bool isScenery() const;
 
   const QString& getContentType() const

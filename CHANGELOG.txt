@@ -4,7 +4,80 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
-# Version 3.8.3
+Version 3.7.11.develop
+
+* Added option to change full path to settings using an absolute or a relative folder.
+* Changed handling for MSFS file `Content.xml` for SU10. Priorities for known base folders are now
+  forced to lowest values to ensure the correct loading order. Other folders are loaded without any
+  special order.
+* Now ignoring waypoints with empty ICAO region code and invalid type as they appear in some MSFS
+  add-on sceneries. #910
+* Reduced logging for invalid MSFS BGL files.
+* Now allowing BGL files from missions to catch respective airports for MSFS.
+* Better logging in fspaths and other parts to find malformed simulator installations earlier.
+* Community path for MSFS is now optional for detection but will throw an error on loading.
+* Changed GPX loading and saving to use millisecond accuracy. Fixed timezone issues when loading and
+  saving GPX. Changed SimConnecthandler to fetch fractional seconds from simulator. Replaced 32-bit
+  second timestamp with 64-bit millisecond variables. #907
+* Added reading code for Garmin GFP flight plan files.
+* Added sample radius function to GlobeReader and increased sample size for lines to get more accuracy.
+* Fixed issue where using export options resulted in missing waypoint names for pseudo waypoints in
+  X-Plane FMS export. #902
+* Added action button handler to take care of none/all/selection actions in toolbar buttons. #762
+* More acronyms to convert airspace names to correct case.
+* Increased database minor version to 26 for parking suffix change.
+* Added suffix to airport parking. This is only used by MSFS but still MSFS cannot load its own plans
+  saved with a suffix.
+* Adapted reading of MSFS file `Content.xml` to changes in SU10 (1.27.11.0).
+* Better error handling in navdatabase.
+* Derived Exception from QException to allow passing exceptions across thread boundaries.
+* Fixed database connection leak when compiling X-Plane scenery library.
+* Added new methods in DockWidgetHandler to support non-modal dialogs.
+* Added more altitude pressure equivalent layers for GRIB download for more wind accuracy at lower
+  levels: 850 mbar (rounded to 4000 ft), 925 mbar (rounded to 2000 ft).
+* Added fuel conversion functions. #892
+* Messages for MSFS encrypted airports are now delivered as less alarming warnings.
+* Fix for X-Plane FMS export using long airport ids.
+* Fixed issue where SimConnectData::write() used the wrong date. Now corrected to use
+  toSecsSinceEpoch().
+* Fixed weather downloader to emit error message on empty METAR list for pages not returning a 404 error.
+* Added option to DataReaderThread to save and update whazzup file during replay for tests.
+  Corrected update time for all whazzup/JSON variants to use UTC. #761
+* Added options to disable endless sim replay to generated whazzup from Navconnect replay. #761 and #754
+* Reduced log spamming from SimConnectHandler.
+* Now decreasing connection rate for long running sessions using autoconnect to avoid loss of
+  internal SimConnect handles. After 30 minutes, an attempt is made to connect every 30 seconds, and
+  after one hour, every minute. Workaround for #891 which is most likely a SimConnect issue.
+* Merge pull request #17 from colingeniet/master Improve Flightgear flightplan IO.
+
+===============================================================================
+
+Version 3.7.10.develop
+
+* Added push request #16 of @flpduarte. Fixed bug in which Little Navmap would only read and
+  display a single transition from addon (Community) SIDs and STARs, despite these procedures
+  actually having more than one transition. This happens when using the latest MSFS SDK (SU9 or later).
+* Moved version number to variable in file `atools.pro` instead of coding into sources.
+* Now writing files `version.txt` and `revision.txt` files into deployment folder allowing
+  deployment scripts to automatically name archives.
+* Added warning messages for encrypted MSFS add-ons when reading scenery library.
+* Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in
+  wrong search results.
+* Updated database minor version to 25. Reloading is advised.
+* Allowing to set flags for HTML warning, error and note messages now. albar965/littlenavmap#656
+* Extended tree dialog to allow disabling of items. Added signal handler for checkbox changes.
+  albar965/littlenavmap#656
+* Extended waypoint coordinate parser for all ARINC 424 Code Convention full degree waypoint
+  formats.
+* Now saving invalid and null parking names from MSFS with indicator `NONE` into the database to
+  allow handling in flight plans.
+* Now skipping empty X-Plane `apt.dat` files to avoid program freezing in an empty loop for
+  malformed files.
+* Fixed issue where OpenAir airspace files were not recognized as OpenAir format in some cases.
+
+===============================================================================
+
+Version 3.7.9.develop
 
 * Corrected closed airport logic for MSFS. Now fully relying on closed airport flag for MSFS. This
   can result in closed airports having open runways and open airports having all runways open. #876

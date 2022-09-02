@@ -31,10 +31,15 @@ namespace fs {
 class NavDatabaseErrors
 {
 public:
-  NavDatabaseErrors();
+  NavDatabaseErrors()
+  {
+
+  }
 
   /* Get total number of errors across all scenery areas */
+  int getTotal() const;
   int getTotalErrors() const;
+  int getTotalWarnings() const;
 
   /* Initialize with a single area */
   void init(const scenery::SceneryArea& area);
@@ -47,12 +52,28 @@ public:
 
   struct SceneryErrors
   {
+    SceneryErrors()
+    {
+    }
+
+    SceneryErrors(const scenery::SceneryArea& area, const QString& message, const QList<NavDatabaseErrors::SceneryFileError>& errors)
+      : scenery(area), sceneryErrorsMessages({message}), fileErrors(errors)
+    {
+    }
+
+    SceneryErrors(const scenery::SceneryArea& area, const QString& message, bool isWarning)
+      : scenery(area), sceneryErrorsMessages({message}), warning(isWarning)
+    {
+    }
+
     atools::fs::scenery::SceneryArea scenery;
     QStringList sceneryErrorsMessages;
+    bool warning = false;
     QList<atools::fs::NavDatabaseErrors::SceneryFileError> fileErrors;
   };
 
   QList<atools::fs::NavDatabaseErrors::SceneryErrors> sceneryErrors;
+
 };
 
 } // namespace fs

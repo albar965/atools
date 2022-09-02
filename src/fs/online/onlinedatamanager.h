@@ -125,10 +125,14 @@ public:
   void resetForNewOptions();
 
   /* Fill from a record based on table client */
-  static void fillFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
+  static void fillFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record,
+                             const sc::SimConnectAircraft& simShadowAircraft);
 
-  /* Get aircraft from table client by id and fill data into aircraft class. */
-  void getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int clientId);
+  /* Get aircraft from table client by id. */
+  atools::fs::sc::SimConnectAircraft  getClientAircraftById(int clientId);
+
+  /* Get aircraft from table client by id and fill additional data from simAircraft into aircraft class. */
+  atools::fs::sc::SimConnectAircraft getClientAircraft(const atools::fs::sc::SimConnectAircraft& simAircraft);
 
   /* Get all rows for a client_id */
   atools::sql::SqlRecord getClientRecordById(int clientId);
@@ -137,7 +141,7 @@ public:
   atools::sql::SqlRecordList getClientRecordsByCallsign(const QString& callsign);
 
   /* Fill the map with callsign as key and position as value. Used for online/simulator deduplication. */
-  void getClientCallsignAndPosMap(QHash<QString, geo::Pos>& clientMap);
+  QVector<atools::fs::online::OnlineAircraft> getClientCallsignAndPosMap();
 
   /* Number of client aircraft in client table */
   int getNumClients() const;

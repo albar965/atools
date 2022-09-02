@@ -26,6 +26,7 @@
 #include <cmath>
 #include <QDataStream>
 #include <QDir>
+#include <QHash>
 
 using atools::geo::Pos;
 using atools::geo::Line;
@@ -134,11 +135,65 @@ void GlobeReader::closeFiles()
     closeFile(i);
 }
 
-float GlobeReader::getElevation(const atools::geo::Pos& pos)
+float GlobeReader::getElevation(const atools::geo::Pos& pos, float sampleRadiusMeter)
 {
+  if(sampleRadiusMeter > 0.f)
+    // Get maximum around pos
+    return elevationMax(pos, sampleRadiusMeter);
+  else
+  {
+    int fileIndex;
+    qint64 fileOffset = calcFileOffset(pos.getLonX(), pos.getLatY(), fileIndex);
+    return elevationFromIndexAndOffset(fileIndex, fileOffset);
+  }
+}
+
+float GlobeReader::elevationMax(const geo::Pos& pos, float sampleRadiusMeter)
+{
+
+  // Collect file indexes and offsets - use set to remove duplicates
+  QSet<std::pair<int, qint64> > indexes;
+  // Center point
   int fileIndex;
   qint64 fileOffset = calcFileOffset(pos.getLonX(), pos.getLatY(), fileIndex);
+  indexes.insert(std::make_pair(fileIndex, fileOffset));
 
+  // Build a rectangle around the position
+  atools::geo::Rect rect(pos, sampleRadiusMeter);
+
+  // Get split if crossing anti-meridian
+  for(const atools::geo::Rect& r : rect.splitAtAntiMeridian())
+  {
+    // Top left
+    fileOffset = calcFileOffset(r.getTopLeft().getLonX(), r.getTopLeft().getLatY(), fileIndex);
+    indexes.insert(std::make_pair(fileIndex, fileOffset));
+
+    // Top right
+    fileOffset = calcFileOffset(r.getTopRight().getLonX(), r.getTopRight().getLatY(), fileIndex);
+    indexes.insert(std::make_pair(fileIndex, fileOffset));
+
+    // Bottom right
+    fileOffset = calcFileOffset(r.getBottomRight().getLonX(), r.getBottomRight().getLatY(), fileIndex);
+    indexes.insert(std::make_pair(fileIndex, fileOffset));
+
+    // Bottom left
+    fileOffset = calcFileOffset(r.getBottomLeft().getLonX(), r.getBottomLeft().getLatY(), fileIndex);
+    indexes.insert(std::make_pair(fileIndex, fileOffset));
+  }
+
+  // Calculate maximum from up to five samples
+  float maxAlt = 0.f;
+  for(const std::pair<int, qint64>& index : indexes)
+  {
+    float elevation = elevationFromIndexAndOffset(index.first, index.second);
+    if(elevation > atools::fs::common::OCEAN && elevation < atools::fs::common::INVALID)
+      maxAlt = std::max(elevation, maxAlt);
+  }
+  return maxAlt;
+}
+
+float GlobeReader::elevationFromIndexAndOffset(int fileIndex, qint64 fileOffset)
+{
   openFile(fileIndex);
   QFile *dataFile = dataFiles[fileIndex];
 
@@ -155,13 +210,13 @@ float GlobeReader::getElevation(const atools::geo::Pos& pos)
     return INVALID;
 }
 
-void GlobeReader::getElevations(atools::geo::LineString& elevations, const atools::geo::LineString& linestring)
+void GlobeReader::getElevations(atools::geo::LineString& elevations, const atools::geo::LineString& linestring, float sampleRadiusMeter)
 {
   if(linestring.isEmpty())
     return;
 
   if(linestring.size() == 1)
-    elevations.append(linestring.constFirst().alt(getElevation(linestring.constFirst())));
+    elevations.append(linestring.constFirst().alt(getElevation(linestring.constFirst(), sampleRadiusMeter)));
   else
   {
     LineString positions;
@@ -172,16 +227,16 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
       float length = line.lengthMeter();
 
       positions.clear();
-      line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH), positions);
+      line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH_M), positions);
 
       Pos lastDropped;
       for(const Pos& pos : positions)
       {
-        float elevation = getElevation(pos);
+        float elevation = getElevation(pos, sampleRadiusMeter);
 
         if(!elevations.isEmpty())
         {
-          if(atools::almostEqual(elevations.constLast().getAltitude(), elevation, SAME_ELEVATION_EPSILON))
+          if(atools::almostEqual(elevations.constLast().getAltitude(), elevation, SAME_ELEVATION_EPSILON_M))
           {
             // Drop points with similar altitude
             lastDropped = pos;
@@ -202,7 +257,7 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
 
     elevations.append(linestring.constLast());
     if(!elevations.isEmpty())
-      elevations.last().setAltitude(getElevation(elevations.constLast()));
+      elevations.last().setAltitude(getElevation(elevations.constLast(), sampleRadiusMeter));
   }
 }
 

@@ -33,6 +33,8 @@ const QColor HtmlBuilder::COLOR_BACKGROUND_ERROR("#ff0000");
 const QColor HtmlBuilder::COLOR_FOREGROUND_WARNING("#ff2000");
 const QColor HtmlBuilder::COLOR_BACKGROUND_WARNING(Qt::transparent);
 
+const html::Flags HtmlBuilder::MSG_FLAGS = html::BOLD | html::NO_ENTITIES;
+
 // Matches "http://blah" and "https://www.example.com/blah" links
 static const QRegularExpression LINK_REGEXP("\\b((http[s]?|ftp|file)://[a-zA-Z0-9\\./:_\\?\\&=\\-\\$\\+\\!\\*'\\(\\),;%#\\[\\]@]+)\\b");
 
@@ -205,69 +207,69 @@ int HtmlBuilder::getMark() const
   return markIndex;
 }
 
-HtmlBuilder& HtmlBuilder::error(const QString& str)
+HtmlBuilder& HtmlBuilder::error(const QString& str, html::Flags flags)
 {
-  htmlText.append(HtmlBuilder::errorMessage(str));
+  htmlText.append(HtmlBuilder::errorMessage(str, flags));
   return *this;
 }
 
-QString HtmlBuilder::errorMessage(const QStringList& stringList, const QString& separator)
+QString HtmlBuilder::errorMessage(const QStringList& stringList, const QString& separator, html::Flags flags)
 {
   QStringList errList;
   for(const QString& str : stringList)
-    errList.append(errorMessage(str));
+    errList.append(errorMessage(str, flags));
   return errList.join(separator);
 }
 
-QString HtmlBuilder::errorMessage(const QString& str)
+QString HtmlBuilder::errorMessage(const QString& str, html::Flags flags)
 {
   if(!str.isEmpty())
-    return textMessage(str, html::BOLD | html::NO_ENTITIES, COLOR_FOREGROUND_ERROR, COLOR_BACKGROUND_ERROR);
+    return textMessage(str, flags, COLOR_FOREGROUND_ERROR, COLOR_BACKGROUND_ERROR);
 
   return str;
 }
 
-HtmlBuilder& HtmlBuilder::warning(const QString& str)
+HtmlBuilder& HtmlBuilder::warning(const QString& str, html::Flags flags)
 {
-  htmlText.append(HtmlBuilder::warningMessage(str));
+  htmlText.append(HtmlBuilder::warningMessage(str, flags));
   return *this;
 }
 
-QString HtmlBuilder::warningMessage(const QString& str)
+QString HtmlBuilder::warningMessage(const QString& str, html::Flags flags)
 {
   if(!str.isEmpty())
-    return textMessage(str, html::BOLD | html::NO_ENTITIES, COLOR_FOREGROUND_WARNING, COLOR_BACKGROUND_WARNING);
+    return textMessage(str, flags, COLOR_FOREGROUND_WARNING, COLOR_BACKGROUND_WARNING);
 
   return str;
 }
 
-QString HtmlBuilder::warningMessage(const QStringList& stringList, const QString& separator)
+QString HtmlBuilder::warningMessage(const QStringList& stringList, const QString& separator, html::Flags flags)
 {
   QStringList warnList;
   for(const QString& str : stringList)
-    warnList.append(warningMessage(str));
+    warnList.append(warningMessage(str, flags));
   return warnList.join(separator);
 }
 
-HtmlBuilder& HtmlBuilder::note(const QString& str)
+HtmlBuilder& HtmlBuilder::note(const QString& str, html::Flags flags)
 {
-  htmlText.append(HtmlBuilder::noteMessage(str));
+  htmlText.append(HtmlBuilder::noteMessage(str, flags));
   return *this;
 }
 
-QString HtmlBuilder::noteMessage(const QString& str)
+QString HtmlBuilder::noteMessage(const QString& str, html::Flags flags)
 {
   if(!str.isEmpty())
-    return textMessage(str, html::BOLD | html::NO_ENTITIES, QColor("#00aa00"));
+    return textMessage(str, flags, QColor("#00aa00"));
 
   return str;
 }
 
-QString HtmlBuilder::noteMessage(const QStringList& stringList, const QString& separator)
+QString HtmlBuilder::noteMessage(const QStringList& stringList, const QString& separator, html::Flags flags)
 {
   QStringList warnList;
   for(const QString& str : stringList)
-    warnList.append(noteMessage(str));
+    warnList.append(noteMessage(str, flags));
   return warnList.join(separator);
 }
 

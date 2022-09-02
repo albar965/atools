@@ -32,7 +32,9 @@ create table metadata
   airac_cycle varchar(10),            -- AIRAC cycle (not FSX/P3D)
   valid_through varchar(10),          -- AIRAC cycle valid through (not FSX/P3D/XP11)
   data_source varchar(10),            -- Data source, FSX, FSXSE, P3DV2, P3DV3, P3DV3, XP11 or NG (Navigraph)
-  compiler_version varchar(1000)      -- Compiler program version and revision string
+  compiler_version varchar(1000),     -- Compiler program version and revision string
+  properties varchar(2000)            -- Key=value pairs in Java properties file format.
+                                      -- Used to store attributes detected while loading database.
 );
 
 -- **************************************************

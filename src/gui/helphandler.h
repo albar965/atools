@@ -34,7 +34,7 @@ class HelpHandler :
   Q_OBJECT
 
 public:
-  HelpHandler(QWidget *parent, const QString& aboutMessage, const QString& gitRevision);
+  explicit HelpHandler(QWidget *parent, const QString& aboutMessage, const QString& gitRevision);
 
   /*
    * Get a help file where the ${LANG} variable in filepath will replaced with the

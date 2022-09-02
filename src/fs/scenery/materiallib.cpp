@@ -79,7 +79,7 @@ void MaterialLib::read(const QString& filename)
   if(options->isIncludedDirectoryGui(QFileInfo(filename).absolutePath()) &&
      options->isIncludedFilePathGui(QFileInfo(filename).absoluteFilePath()))
   {
-    if(atools::checkFile(filename))
+    if(atools::checkFile(Q_FUNC_INFO, filename))
     {
       QStringList probe = atools::probeFile(filename, 10);
 

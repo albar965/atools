@@ -36,6 +36,16 @@ SqlException::SqlException(const QString& message, const QString& message2)
   createSqlMessage();
 }
 
+void SqlException::raise() const
+{
+  throw *this;
+}
+
+SqlException *SqlException::clone() const
+{
+  return new SqlException(*this);
+}
+
 void SqlException::createSqlMessage()
 {
   QString msg;

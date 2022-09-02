@@ -117,7 +117,7 @@ void atools::util::MovingAverageTime::getAverages(float& average1, float& averag
   }
 }
 
-float MovingAverageTime::getAverage() const
+float MovingAverageTime::getAverage1() const
 {
   if(samples.isEmpty())
     return 0.f;
@@ -128,6 +128,19 @@ float MovingAverageTime::getAverage() const
     return total1 / totalDuration;
   else
     return total1;
+}
+
+float MovingAverageTime::getAverage2() const
+{
+  if(samples.isEmpty())
+    return 0.f;
+
+  qint64 totalDuration = samples.constLast().timestamp - beforeFirstTimestampMs;
+
+  if(totalDuration > 0)
+    return total2 / totalDuration;
+  else
+    return total2;
 }
 
 } // namespace util

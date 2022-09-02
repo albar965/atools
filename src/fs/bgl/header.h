@@ -128,8 +128,7 @@ private:
 
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Header& header);
 
-  unsigned int magicNumber1 = 0, headerSize = 0, lowDateTime = 0, highDateTime = 0, magicNumber2 = 0,
-               numSections = 0;
+  unsigned int magicNumber1 = 0, headerSize = 0, lowDateTime = 0, highDateTime = 0, magicNumber2 = 0, numSections = 0;
   time_t creationTimestamp = 0;
   bool validMagicNumber = true, validSize = true, read = false;
 };

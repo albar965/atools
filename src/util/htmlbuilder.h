@@ -123,20 +123,23 @@ public:
   /* Appends raw data without conversion */
   atools::util::HtmlBuilder& append(const QString& other);
 
+  /* Default flags for error, warning and note messages. Combine these with any other flags if needed. */
+  const static html::Flags MSG_FLAGS; /* html::BOLD | html::NO_ENTITIES */
+
   /* Error message. Bold white text on red background. */
-  HtmlBuilder& error(const QString& str);
-  static QString errorMessage(const QString& str);
-  static QString errorMessage(const QStringList& stringList, const QString& separator = "<br/>");
+  HtmlBuilder& error(const QString& str, html::Flags flags = MSG_FLAGS);
+  static QString errorMessage(const QString& str, html::Flags flags = MSG_FLAGS);
+  static QString errorMessage(const QStringList& stringList, const QString& separator = "<br/>", html::Flags flags = MSG_FLAGS);
 
   /* Warning message. Orange bold text. */
-  HtmlBuilder& warning(const QString& str);
-  static QString warningMessage(const QString& str);
-  static QString warningMessage(const QStringList& stringList, const QString& separator = "<br/>");
+  HtmlBuilder& warning(const QString& str, html::Flags flags = MSG_FLAGS);
+  static QString warningMessage(const QString& str, html::Flags flags = MSG_FLAGS);
+  static QString warningMessage(const QStringList& stringList, const QString& separator = "<br/>", html::Flags flags = MSG_FLAGS);
 
   /* Hint message. Dark green bold text. */
-  HtmlBuilder& note(const QString& str);
-  static QString noteMessage(const QString& str);
-  static QString noteMessage(const QStringList& stringList, const QString& separator = "<br/>");
+  HtmlBuilder& note(const QString& str, html::Flags flags = MSG_FLAGS);
+  static QString noteMessage(const QString& str, html::Flags flags = MSG_FLAGS);
+  static QString noteMessage(const QStringList& stringList, const QString& separator = "<br/>", html::Flags flags = MSG_FLAGS);
 
   /* Message.  */
   HtmlBuilder& message(const QString& str, html::Flags flags = html::NONE,
