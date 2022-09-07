@@ -112,11 +112,16 @@ void SceneryPacks::read(const QString& basePath)
         }
         else
         {
-          // Global Airports are excluded and read separately
           QString pathstr = line.section(' ', 1);
-          if(pathstr.toLower() == "custom scenery/global airports/" ||
-             pathstr.toLower() == "custom scenery/global airports")
-            continue;
+
+          // Detect Global Airports and mark them
+          pack.globalAirports =
+            pathstr.startsWith("Custom Scenery/Global Airports", Qt::CaseInsensitive) == 0 || // XP11
+            pathstr.startsWith("Global Scenery/Global Airports", Qt::CaseInsensitive) == 0 || // XP12
+            pathstr == "*GLOBAL_AIRPORTS*"; // XP12
+
+          if(pathstr == "*GLOBAL_AIRPORTS*")
+            pathstr = "Global Scenery/Global Airports";
 
           // SCENERY_PACK Custom Scenery/X-Plane Landmarks - Chicago/  ================
           pack.disabled = key != "SCENERY_PACK";

@@ -211,7 +211,7 @@ bool XpDataCompiler::compileEarthAirway()
 bool XpDataCompiler::postProcessEarthAirway()
 {
   bool aborted = false;
-  if((aborted = progress->reportOther(tr("Post procecssing Airways"))))
+  if((aborted = progress->reportOther(tr("Post processing Airways"))))
     return true;
 
   aborted = airwayPostProcess->postProcessEarthAirway();
@@ -315,7 +315,9 @@ bool XpDataCompiler::compileCifp()
 
       if((row % rowsPerStep) == 0)
       {
-        progress->reportOther(tr("Reading: %1").arg(file));
+        if(progress->reportOther(tr("Reading: %1").arg(file)))
+          return true;
+
         steps++;
       }
       row++;
@@ -806,7 +808,8 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
       return 0;
 
     // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat ===================
-    if(checkFile(Q_FUNC_INFO, buildPathNoCase({opts.getBasepath(), "Resources", "default scenery", "default apt dat", "Earth nav data", "apt.dat"})))
+    if(checkFile(Q_FUNC_INFO,
+                 buildPathNoCase({opts.getBasepath(), "Resources", "default scenery", "default apt dat", "Earth nav data", "apt.dat"})))
       reportCount += NUM_REPORT_STEPS;
 
     if((aborted = progress->reportOtherMsg(tr("Counting files for Custom Scenery/Global Airports ..."))))
@@ -877,14 +880,21 @@ QStringList XpDataCompiler::loadFilepathsFromSceneryPacks(const NavDatabaseOptio
   {
     if(pack.valid)
     {
-      if(!pack.disabled)
+      if(pack.disabled)
       {
-        QFileInfo fileInfo(pack.filepath);
-        if(includeFile(opts, fileInfo))
-          entryMap.append(fileInfo.filePath());
-      }
-      else
         qInfo() << "Disabled path" << pack.filepath;
+        continue;
+      }
+
+      if(pack.globalAirports)
+      {
+        qInfo() << "Global airports path" << pack.filepath;
+        continue;
+      }
+
+      QFileInfo fileInfo(pack.filepath);
+      if(includeFile(opts, fileInfo))
+        entryMap.append(fileInfo.filePath());
     }
     else
     {

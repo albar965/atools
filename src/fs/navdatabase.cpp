@@ -141,49 +141,23 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
 
   SqlScript script(db, true /* options->isVerbose()*/);
 
+  // Drop all ==============================================
   if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Views"))))
+  {
+    if((aborted = progress->reportOtherInc(tr("Cleaning Database"), 7)))
       return;
+  }
 
   script.executeScript(":/atools/resources/sql/fs/db/drop_view.sql");
-
-  if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Routing and Search"))))
-      return;
-
   script.executeScript(":/atools/resources/sql/fs/db/drop_routing_search.sql");
-
-  if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Navigation Aids"))))
-      return;
-
   script.executeScript(":/atools/resources/sql/fs/db/drop_nav.sql");
-
-  if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Airport Facilites"))))
-      return;
-
   script.executeScript(":/atools/resources/sql/fs/db/drop_airport_facilities.sql");
-
-  if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Approaches"))))
-      return;
-
   script.executeScript(":/atools/resources/sql/fs/db/drop_approach.sql");
-
-  if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Airports"))))
-      return;
-
   script.executeScript(":/atools/resources/sql/fs/db/drop_airport.sql");
-
-  if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Metadata"))))
-      return;
-
   script.executeScript(":/atools/resources/sql/fs/db/drop_meta.sql");
   transaction.commit();
 
+  // Create schema ==============================================
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Creating Database Schema"))))
       return;

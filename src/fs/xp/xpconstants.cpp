@@ -56,8 +56,14 @@ QString surfaceToDb(Surface value, const XpWriterContext *context)
       return "SN";
 
   }
+  // New unknown in XP12 20 22 23 24 25 26 27 29 30 31 33 34 36 37 38 50 51 52 53 54 55 56 57
+
+#ifdef DEBUG_INFORMATION
   qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown surface value" << value;
-  return QString();
+#endif
+
+  // Fall back to asphalt
+  return "A";
 }
 
 bool isSurfaceHard(Surface value)

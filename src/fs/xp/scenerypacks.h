@@ -32,7 +32,8 @@ struct SceneryPack
           errorText /* Error message to display if base path is not valid */;
 
   bool disabled /* Disable by SCENERY_PACK_DISABLED */,
-       valid /* File exists */;
+       valid /* File exists */,
+       globalAirports /* Read order for global airports */;
 
   int errorLine /* Line number in file */;
 };
@@ -43,6 +44,7 @@ struct SceneryPack
  *
  * X-Plane 11/Custom Scenery/scenery_packs.ini
  *
+ * XP11 ================================
  * I
  * 1000 Version
  * SCENERY
@@ -55,6 +57,22 @@ struct SceneryPack
  *
  * Listing the pack as SCENERY_PACK_DISABLED disables loading entirely.
  * Global Airports are excluded and read separately
+ *
+ * XP12 ================================
+ * I
+ * 1000 Version
+ * SCENERY
+ *
+ * SCENERY_PACK Custom Scenery/X-Plane Landmarks - Berlin and Frankfurt/
+ * SCENERY_PACK Custom Scenery/X-Plane Landmarks - Budapest/
+ * SCENERY_PACK Custom Scenery/X-Plane Landmarks - Chicago/
+ * SCENERY_PACK Custom Scenery/X-Plane Landmarks - Dubai/
+ * SCENERY_PACK Custom Scenery/X-Plane Landmarks - Saint Louis/
+ * SCENERY_PACK Custom Scenery/X-Plane Landmarks - San Francisco/
+ * SCENERY_PACK Custom Scenery/X-Plane Landmarks - Sydney/
+ * SCENERY_PACK Custom Scenery/X-Plane Landmarks - Washington DC/
+ * SCENERY_PACK *GLOBAL_AIRPORTS*
+ *
  */
 class SceneryPacks
 {
