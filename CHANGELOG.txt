@@ -4,16 +4,20 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
-# Version 2.8.3.beta
+# Version 3.8.4.beta
 
-* Minor version of database changed to 27 to indicate change in metadata table.
-* Added general properties column to the database metadata table. Now storing in properties if
-  navdata update was found for MSFS to allow later database validation.
 * Fixed error message when reading XP12 scenery packs file.
 * Now falling back to Asphalt for undocumented, unknown or invalid surface types in XP12.
 
-## Changes from 3.7.7.develop to 3.7.11.develop also covering changes from 2.8.0.beta.
+===============================================================================
 
+# Version 3.8.3.beta
+
+## Changes from 3.7.7.develop to 3.8.3.beta
+
+* Added general properties column to the database metadata table. Now storing in properties if
+  navdata update was found for MSFS to allow later database validation.
+* Minor version of database changed to 27 to indicate change in metadata table.
 * Added option to change full path to settings using an absolute or a relative folder.
 * Changed handling for MSFS file `Content.xml` for SU10. Priorities for known base folders are now
   forced to lowest values to ensure the correct loading order. Other folders are loaded without any

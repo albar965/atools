@@ -50,7 +50,7 @@
 # =============================================================================
 
 # Define program version here VERSION_NUMBER_TODO
-VERSION_NUMBER=3.8.3.beta
+VERSION_NUMBER=3.8.4.beta
 
 QT += sql xml svg core widgets network
 QT -= gui
