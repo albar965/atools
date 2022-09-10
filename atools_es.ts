@@ -86,10 +86,6 @@
 <context>
     <name>ContentXml</name>
     <message>
-        <source>Base Airports</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Base Navigation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -99,6 +95,10 @@
     </message>
     <message>
         <source>Generic Airports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -838,7 +838,7 @@ Atrapada excepción
     <name>Navdatabase</name>
     <message>
         <source>Removing Metadata</source>
-        <translation>Removiendo Metadata</translation>
+        <translation type="vanished">Removiendo Metadata</translation>
     </message>
     <message>
         <source>Dropping All Indexes</source>
@@ -854,7 +854,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Removing Routing and Search</source>
-        <translation>Removiendo Enrutado y Búsqueda</translation>
+        <translation type="vanished">Removiendo Enrutado y Búsqueda</translation>
     </message>
     <message>
         <source>Basic Validation</source>
@@ -886,15 +886,15 @@ Atrapada excepción
     </message>
     <message>
         <source>Removing Navigation Aids</source>
-        <translation>Removiendo Ayudas de Navegación</translation>
+        <translation type="vanished">Removiendo Ayudas de Navegación</translation>
     </message>
     <message>
         <source>Removing Approaches</source>
-        <translation>Removiendo Aproximaciones</translation>
+        <translation type="vanished">Removiendo Aproximaciones</translation>
     </message>
     <message>
         <source>Removing Views</source>
-        <translation>Removiendo Vistas</translation>
+        <translation type="vanished">Removiendo Vistas</translation>
     </message>
     <message>
         <source>Creating indexes for search</source>
@@ -930,7 +930,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Removing Airport Facilites</source>
-        <translation>Removiendo Instalaciones Aeroportuarias</translation>
+        <translation type="vanished">Removiendo Instalaciones Aeroportuarias</translation>
     </message>
     <message>
         <source>X-Plane</source>
@@ -954,7 +954,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Removing Airports</source>
-        <translation>Removiendo Aeropuertos</translation>
+        <translation type="vanished">Removiendo Aeropuertos</translation>
     </message>
     <message>
         <source>Merging VOR and TACAN to VORTAC</source>
@@ -1033,10 +1033,6 @@ Atrapada excepción
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Base Airports</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Base Navigation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1066,6 +1062,18 @@ Atrapada excepción
     </message>
     <message>
         <source>Generic Airports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cleaning Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1785,7 +1793,7 @@ Asegúrese que pueden encontrarse las rutas de earth_fix.dat y earth_nav.dat.</t
     </message>
     <message>
         <source>Post procecssing Airways</source>
-        <translation>Post procesando rutas aéreas</translation>
+        <translation type="vanished">Post procesando rutas aéreas</translation>
     </message>
     <message>
         <source>Cannot find valid files for X-Plane navdata in either
@@ -1817,6 +1825,10 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
     <message>
         <source>Counting files for Global Scenery/Global Airports ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post processing Airways</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2082,6 +2094,10 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <source>Install the latest version of &lt;i&gt;Little Xpconnect&lt;/i&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Writing to &quot;%1&quot; in VATSIM format every %2 seconds.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>atools::fs::scenery::IniReader</name>
@@ -2136,6 +2152,13 @@ Night time: %5</source>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation type="unfinished">No puedo abrir archivo &quot;%1&quot;. Motivo: %2.</translation>
+    </message>
+</context>
+<context>
+    <name>atools::fs::weather::WeatherNetDownload</name>
+    <message>
+        <source>No METARs found in download.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2309,6 +2332,13 @@ Night time: %5</source>
     </message>
     <message>
         <source>&amp;Close all Tabs except Current</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::gui::TreeDialog</name>
+    <message>
+        <source>Duplicate id %1 found while adding item in TreeDialog</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

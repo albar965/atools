@@ -88,7 +88,7 @@
     <name>ContentXml</name>
     <message>
         <source>Base Airports</source>
-        <translation>Basis - Fluglätze</translation>
+        <translation type="vanished">Basis - Fluglätze</translation>
     </message>
     <message>
         <source>Base Navigation</source>
@@ -100,6 +100,10 @@
     </message>
     <message>
         <source>Generic Airports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -880,31 +884,31 @@ Datei: &quot;%2&quot;
     <name>Navdatabase</name>
     <message>
         <source>Removing Views</source>
-        <translation>Entferne Sichten</translation>
+        <translation type="vanished">Entferne Sichten</translation>
     </message>
     <message>
         <source>Removing Routing and Search</source>
-        <translation>Entferne Routen- und Suchdaten</translation>
+        <translation type="vanished">Entferne Routen- und Suchdaten</translation>
     </message>
     <message>
         <source>Removing Navigation Aids</source>
-        <translation>Entferne Navigationsdaten</translation>
+        <translation type="vanished">Entferne Navigationsdaten</translation>
     </message>
     <message>
         <source>Removing Airport Facilites</source>
-        <translation>Entferne Flugplatzeinrichtungen</translation>
+        <translation type="vanished">Entferne Flugplatzeinrichtungen</translation>
     </message>
     <message>
         <source>Removing Approaches</source>
-        <translation>Entferne Prozeduren</translation>
+        <translation type="vanished">Entferne Prozeduren</translation>
     </message>
     <message>
         <source>Removing Airports</source>
-        <translation>Entferne Flugplätze</translation>
+        <translation type="vanished">Entferne Flugplätze</translation>
     </message>
     <message>
         <source>Removing Metadata</source>
-        <translation>Entferne Metadaten</translation>
+        <translation type="vanished">Entferne Metadaten</translation>
     </message>
     <message>
         <source>Creating Database Schema</source>
@@ -1080,7 +1084,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Base Airports</source>
-        <translation>Basis - Fluglätze</translation>
+        <translation type="vanished">Basis - Fluglätze</translation>
     </message>
     <message>
         <source>Base Navigation</source>
@@ -1112,6 +1116,18 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Generic Airports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cleaning Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1826,7 +1842,7 @@ Importieren gestoppt.</translation>
     </message>
     <message>
         <source>Post procecssing Airways</source>
-        <translation>Nachbearbeitung der Luftstraßen</translation>
+        <translation type="vanished">Nachbearbeitung der Luftstraßen</translation>
     </message>
     <message>
         <source>Reading: %1</source>
@@ -1890,6 +1906,10 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Counting files for Global Scenery/Global Airports ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post processing Airways</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2155,6 +2175,10 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
         <source>Install the latest version of &lt;i&gt;Little Xpconnect&lt;/i&gt;.</source>
         <translation>Bitte die neueste Version von &lt;i&gt;Little Xpconnect&lt;/i&gt; installieren.</translation>
     </message>
+    <message>
+        <source>Writing to &quot;%1&quot; in VATSIM format every %2 seconds.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>atools::fs::scenery::IniReader</name>
@@ -2217,6 +2241,13 @@ Nachtzeit: %5</translation>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
+    </message>
+</context>
+<context>
+    <name>atools::fs::weather::WeatherNetDownload</name>
+    <message>
+        <source>No METARs found in download.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2402,6 +2433,13 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>&amp;Close all Tabs except Current</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::gui::TreeDialog</name>
+    <message>
+        <source>Duplicate id %1 found while adding item in TreeDialog</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
