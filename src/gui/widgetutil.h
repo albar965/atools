@@ -27,6 +27,7 @@ class QObject;
 class QTextEdit;
 class QColor;
 class QMenu;
+class QLabel;
 class QItemSelectionModel;
 
 namespace atools {
@@ -74,6 +75,9 @@ bool noneChecked(const QList<const QAction *>& actions);
 
 /* Add a "* " to an action text or remove it */
 void changeStarIndication(QAction *action, bool changed);
+
+/* Remember text, clear label and set text again to force update after style changes */
+void labelForcedUpdate(QLabel *label);
 
 } // namespace util
 } // namespace gui

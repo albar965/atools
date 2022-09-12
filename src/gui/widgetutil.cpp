@@ -29,6 +29,7 @@
 #include <QScrollBar>
 #include <QMenu>
 #include <QItemSelectionModel>
+#include <QLabel>
 
 namespace atools {
 namespace gui {
@@ -187,6 +188,13 @@ QVector<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionMod
 
   }
   return indexes;
+}
+
+void labelForcedUpdate(QLabel *label)
+{
+  QString text = label->text();
+  label->clear();
+  label->setText(text);
 }
 
 } // namespace util
