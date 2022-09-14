@@ -19,11 +19,10 @@
 #define ATOOLS_GRIB_WINDQUERY_H
 
 #include "grib/gribcommon.h"
+#include "atools.h"
+#include "fs/weather/weathertypes.h"
 
 #include <QObject>
-
-#include "geo/pos.h"
-#include "atools.h"
 
 class QObject;
 
@@ -164,7 +163,7 @@ public:
   void initFromUrl(const QString& baseUrl = QString());
 
   /* Read data from file and start watching for changes - terminates downloads */
-  void initFromFile(const QString& filename);
+  void initFromPath(const QString& filenames, atools::fs::weather::XpWeatherType type);
 
   /* Create a fixed model assuming zero wind at 0 altitude and given values at given altitude.
    *  Dir in degrees true, speed in knots and altutude in feet. */
@@ -249,13 +248,19 @@ private:
 
   void gribDownloadFinished(const atools::grib::GribDatasetVector& datasets, QString downloadUrl);
   void gribDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
-  void gribFileUpdated(const QString& filename);
+
+  /* Called from FileSystemWatcher */
+  void gribFileUpdated(const QStringList& filenames);
+  void gribDirUpdated(const QString& dir);
 
   /* get interpolated wind for two sets at two altitudes */
   WindData interpolateWind(const WindData& w0, const WindData& w1, float alt0, float alt1, float alt) const;
 
   /* Get average wind for a line between two points. Uses only U and V components */
   WindData windAverageForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
+
+  QString collectGribFiles();
+  static QDateTime xpFilenameToDate(const QString& filename);
 
   /* Surfaces to download from NOAA. Negative value denotes AGL in ft and positive is millibar level.
    *
@@ -291,6 +296,11 @@ private:
   /* Maps rounded altitude to wind layer data. Sorted by altitude. */
   QMap<int, WindAltLayer> windLayers;
   QDateTime analyisTime;
+
+  QString weatherPath; // Folder or file depending on simulator
+  QString currentGribFile; // Latest from a collected list from folder (XP12)
+
+  atools::fs::weather::XpWeatherType weatherType = atools::fs::weather::WEATHER_XP_UNKNOWN;
 };
 
 QDebug operator<<(QDebug out, const atools::grib::Wind& wind);

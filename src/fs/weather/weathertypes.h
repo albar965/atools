@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,14 @@
 namespace atools {
 namespace fs {
 namespace weather {
+
+/* X-Plane types to read weather files */
+enum XpWeatherType
+{
+  WEATHER_XP_UNKNOWN,
+  WEATHER_XP11,
+  WEATHER_XP12
+};
 
 enum MetarFormat
 {

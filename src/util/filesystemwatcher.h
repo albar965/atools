@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define ATOOLS_UTIL_FILESYSTEMWATCHER_H
 
 #include <QDateTime>
+#include <QSet>
 #include <QTimer>
 
 class QFileSystemWatcher;
@@ -44,13 +45,12 @@ public:
   FileSystemWatcher(const FileSystemWatcher& other) = delete;
   FileSystemWatcher& operator=(const FileSystemWatcher& other) = delete;
 
-  QString getFileName() const
-  {
-    return filename;
-  }
-
   /* Set file and start watching. Does not emit an initial message. */
-  void setFilenameAndStart(const QString& value);
+  void setFilenameAndStart(const QString& path);
+
+  /* Set files and start watching. Does not emit an initial message.
+   * All files have to be in the same folder which will be watched too. */
+  void setFilenamesAndStart(const QStringList& pathList);
 
   /* Stop all notifications and watching */
   void stopWatching();
@@ -78,35 +78,69 @@ public:
   }
 
 signals:
-  void fileUpdated(const QString& filename);
+  /* Emitted once files are updated */
+  void filesUpdated(const QStringList& filenames);
+
+  /* Emitted once the parent folder of the files is updated */
+  void dirUpdated(const QString& dirname);
 
 private:
   void deleteFsWatcher();
   void createFsWatcher();
-  void pathOrFileChanged();
-  void fileUpdatedDelayed();
-  void setPaths(bool update);
+
+  /* Called on directory or file change and periodicCheckTimer event */
+  void pathChanged();
+
+  /* Called by delayTimer event */
+  void pathUpdatedDelayed();
+
+  void setPathsToFsWatcher(bool update);
   bool warn();
 
-  QString filename;
-  QDateTime fileTimestampLastRead;
-  qint64 lastFileSizeRead = 0;
+  /* Combines all information around a watched file or directory */
+  struct PathInfo
+  {
+    PathInfo()
+    {
+    }
+
+    PathInfo(const QString& pathParam, const QDateTime& timestampLastReadParam, qint64 sizeLastReadParam)
+      : path(pathParam), timestampLastRead(timestampLastReadParam), sizeLastRead(std::move(sizeLastReadParam))
+    {
+    }
+
+    QString path;
+    QDateTime timestampLastRead;
+    qint64 sizeLastRead = 0L;
+  };
+
+  friend QDebug operator<<(QDebug out, const PathInfo& record);
+
+  // All watched files and their parent directory
+  QVector<PathInfo> paths;
+
+  // Indexes into above paths for pathUpdatedDelayed() filled by pathChanged() if changed
+  QSet<int> changedPathIndexes;
+
   QFileSystemWatcher *fsWatcher = nullptr;
-  QTimer periodicCheckTimer, delayTimer;
+
+  QTimer periodicCheckTimer, // Calls pathChanged()
+         delayTimer; // pathUpdatedDelayed()
 
   /* Need at least one megabyte to be valid */
   int minFileSize = 1024 * 1024;
 
-  /* Delay event about two seconds to catch intermediate changes renamed files, etc. */
+  /* Delay event about two seconds to catch intermediate changes, renamed files, etc. */
   int delayMs = 2000;
 
-  /* Additionally check every ten seconds for changes */
+  /* Additionally check every ten seconds for changes to avoid lost events */
   int checkMs = 10000;
 
   bool verbose;
+
+  // Limit maximum number of warning messages
   int numWarnings = 0;
   const static int MAX_WARNINGS = 20;
-
 };
 
 } // namespace util

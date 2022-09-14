@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 
 #ifndef ATOOLS_XPWEATHERREADER_H
 #define ATOOLS_XPWEATHERREADER_H
+
+#include "fs/weather/weathertypes.h"
 
 #include <QObject>
 #include <functional>
@@ -36,7 +38,7 @@ struct MetarResult;
 class MetarIndex;
 
 /*
- * Reads the X-Plane METAR.rwx the watches the file for changes.
+ * Reads the X-Plane 11 METAR.rwx or X-Plane 12 folder and watches the files/folder for changes.
  */
 class XpWeatherReader
   : public QObject
@@ -50,13 +52,12 @@ public:
   XpWeatherReader(const XpWeatherReader& other) = delete;
   XpWeatherReader& operator=(const XpWeatherReader& other) = delete;
 
-  /* Get METAR for airport ICAO or empty string if file or airport is not available */
-
-  /* Get station and/or nearest METAR */
+  /* Get METAR for airport ICAO or empty string if file or airport is not available.
+   * Get station and/or nearest METAR */
   atools::fs::weather::MetarResult getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
 
-  /* File is loaded on demand on first access */
-  void setWeatherFile(const QString& file);
+  /* File is loaded on demand on first call here. X-Plane 11 uses a file and X-Plane 12 a folder. */
+  void setWeatherPath(const QString& path, atools::fs::weather::XpWeatherType type);
 
   /* Remove METARs and stop watching the file */
   void clear();
@@ -68,19 +69,27 @@ signals:
   void weatherUpdated();
 
 private:
-  /* Read METAR.rwx and watch the file if needed */
-  void readWeatherFile();
-
   void deleteFsWatcher();
   void createFsWatcher();
-  void pathChanged(const QString& filename);
-  bool read();
+  bool read(const QStringList& filenames);
+
+  /* Called from fsWatcher */
+  void filesUpdated(const QStringList& filenames);
+  void dirUpdated(const QString& dir);
+
+  /* Get all METAR files from parent folder */
+  QStringList collectWeatherFiles();
 
   atools::fs::weather::MetarIndex *metarIndex = nullptr;
-  atools::util::FileSystemWatcher *fsWatcher = nullptr;
-  QString weatherFile;
+  atools::util::FileSystemWatcher *fileWatcher = nullptr;
+
+  QString weatherPath; // Folder or file depending on simulator
+  QStringList currentMetarFiles; // Set file or collected files from folder
 
   bool verbose;
+
+  atools::fs::weather::XpWeatherType weatherType = atools::fs::weather::WEATHER_XP_UNKNOWN;
+
 };
 
 } // namespace weather

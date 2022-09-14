@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "util/filesystemwatcher.h"
 #include "fs/weather/metarindex.h"
 
+#include <QDir>
 #include <QFileInfo>
 
 namespace atools {
@@ -40,37 +41,37 @@ XpWeatherReader::~XpWeatherReader()
   delete metarIndex;
 }
 
-void XpWeatherReader::setWeatherFile(const QString& file)
+void XpWeatherReader::setWeatherPath(const QString& path, XpWeatherType type)
 {
   clear();
-  weatherFile = file;
+  weatherPath = path;
+  weatherType = type;
 }
 
-void XpWeatherReader::readWeatherFile()
+atools::fs::weather::MetarResult XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
-  // File set and not watching a file already
-  if(!weatherFile.isEmpty() && fsWatcher == nullptr)
+  if(fileWatcher == nullptr && !weatherPath.isEmpty())
   {
-    qDebug() << Q_FUNC_INFO << weatherFile;
-
     metarIndex->clear();
-    deleteFsWatcher();
+    currentMetarFiles = collectWeatherFiles();
+
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << weatherPath << currentMetarFiles;
 
     createFsWatcher();
-
-    QFileInfo fileinfo(weatherFile);
-    if(fileinfo.exists() && fileinfo.isFile())
-      read();
-    // else wait for file created
   }
+
+  return metarIndex->getMetar(station, pos);
 }
 
 void XpWeatherReader::clear()
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
   deleteFsWatcher();
   metarIndex->clear();
-  weatherFile.clear();
+  weatherPath.clear();
+  currentMetarFiles.clear();
 }
 
 void XpWeatherReader::setFetchAirportCoords(const std::function<geo::Pos(const QString&)>& value)
@@ -78,78 +79,104 @@ void XpWeatherReader::setFetchAirportCoords(const std::function<geo::Pos(const Q
   metarIndex->setFetchAirportCoords(value);
 }
 
-bool XpWeatherReader::read()
+bool XpWeatherReader::read(const QStringList& filenames)
 {
-  QFile file(weatherFile);
-  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+  // Read and merge all changed filenames into the METAR index
+  for(const QString& filename : filenames)
   {
-    qDebug() << Q_FUNC_INFO << weatherFile;
-    QTextStream stream(&file);
-    stream.setCodec("UTF-8");
-    metarIndex->read(stream, weatherFile, false /* merge */);
-    file.close();
+    QFile file(filename);
+    if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << filename;
+      QTextStream stream(&file);
+      stream.setCodec("UTF-8");
+
+      // Read and merge into current METAR entries
+      metarIndex->read(stream, filename, true /* merge */);
+      file.close();
+    }
+    else
+      qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
   }
-  else
-    qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
-  return metarIndex->size();
+  return !metarIndex->isEmpty();
 }
 
-atools::fs::weather::MetarResult XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
-{
-  readWeatherFile();
-  return metarIndex->getMetar(station, pos);
-}
-
-void XpWeatherReader::pathChanged(const QString& filename)
+void XpWeatherReader::dirUpdated(const QString& dir)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << filename;
+    qDebug() << Q_FUNC_INFO << dir;
 
-  QFileInfo fileinfo(weatherFile);
-  if(fileinfo.exists() && fileinfo.isFile())
+  // Update list of files and reload weather if this has changed
+  QStringList metarFiles = collectWeatherFiles();
+  if(metarFiles != currentMetarFiles)
   {
-    if(verbose)
-      qDebug() << Q_FUNC_INFO << "File exists" << fileinfo.exists()
-               << "size" << fileinfo.size() << "last modified" << fileinfo.lastModified();
-
-    qDebug() << Q_FUNC_INFO << "reading" << weatherFile;
-    if(read())
-      emit weatherUpdated();
-    else if(verbose)
-      qDebug() << Q_FUNC_INFO << "File not changed";
+    currentMetarFiles = metarFiles;
+    createFsWatcher();
   }
-  else
-    // File was deleted - keep current weather information
-    qDebug() << Q_FUNC_INFO << "File does not exist. Index empty:" << metarIndex->isEmpty();
+}
+
+void XpWeatherReader::filesUpdated(const QStringList& filenames)
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << filenames;
+
+  if(read(filenames))
+    emit weatherUpdated();
+  else if(verbose)
+    qDebug() << Q_FUNC_INFO << "File not changed";
+}
+
+QStringList XpWeatherReader::collectWeatherFiles()
+{
+  QStringList metarFiles;
+  if(weatherType == atools::fs::weather::WEATHER_XP11)
+    // METAR.rwx
+    metarFiles.append(weatherPath);
+  else if(weatherType == atools::fs::weather::WEATHER_XP12)
+  {
+    // METAR-2022-9-6-19.00-ZULU.txt, METAR-2022-9-6-20.00-ZULU.txt
+    QDir weatherDir(weatherPath, "METAR-*-*-*-*.*-ZULU.txt", QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
+    for(QFileInfo entry : weatherDir.entryInfoList())
+      metarFiles.append(entry.absoluteFilePath());
+  }
+
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << metarFiles;
+
+  metarFiles.sort();
+  return metarFiles;
 }
 
 void XpWeatherReader::deleteFsWatcher()
 {
-  if(fsWatcher != nullptr)
+  if(fileWatcher != nullptr)
   {
-    fsWatcher->disconnect(fsWatcher, &FileSystemWatcher::fileUpdated, this, &XpWeatherReader::pathChanged);
-    fsWatcher->deleteLater();
-    fsWatcher = nullptr;
+    atools::util::FileSystemWatcher::disconnect(fileWatcher, &FileSystemWatcher::filesUpdated, this, &XpWeatherReader::filesUpdated);
+    atools::util::FileSystemWatcher::disconnect(fileWatcher, &FileSystemWatcher::dirUpdated, this, &XpWeatherReader::dirUpdated);
+    fileWatcher->deleteLater();
+    fileWatcher = nullptr;
   }
 }
 
 void XpWeatherReader::createFsWatcher()
 {
-  if(fsWatcher == nullptr)
+  if(fileWatcher == nullptr)
   {
     // Watch file for changes and directory too to catch file deletions
-    fsWatcher = new FileSystemWatcher(this, verbose);
+    fileWatcher = new FileSystemWatcher(this, verbose);
 
     // Set to smaller value to deal with ASX weather files
-    fsWatcher->setMinFileSize(1000);
-    fsWatcher->connect(fsWatcher, &FileSystemWatcher::fileUpdated, this, &XpWeatherReader::pathChanged);
+    fileWatcher->setMinFileSize(1000);
+    atools::util::FileSystemWatcher::connect(fileWatcher, &FileSystemWatcher::filesUpdated, this, &XpWeatherReader::filesUpdated);
+    atools::util::FileSystemWatcher::connect(fileWatcher, &FileSystemWatcher::dirUpdated, this, &XpWeatherReader::dirUpdated);
   }
 
   // Load initially
-  pathChanged(weatherFile);
+  filesUpdated(currentMetarFiles);
 
   // Start watching for changes
-  fsWatcher->setFilenameAndStart(weatherFile);
+  fileWatcher->setFilenamesAndStart(currentMetarFiles);
 }
 
 } // namespace weather

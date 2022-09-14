@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,16 @@
 #include "atools.h"
 
 #include <QFileInfo>
-#include <QRegularExpression>
-#include <QTextStream>
-#include <QDebug>
 #include <QFileSystemWatcher>
 
 namespace atools {
 namespace util {
+
+QDebug operator<<(QDebug out, const FileSystemWatcher::PathInfo& record)
+{
+  out.nospace() << "PathInfo[" << record.path << ", " << record.timestampLastRead << ", " << record.sizeLastRead << "]";
+  return out;
+}
 
 FileSystemWatcher::FileSystemWatcher(QObject *parent, bool verboseLogging)
   : QObject(parent), verbose(verboseLogging)
@@ -34,7 +37,7 @@ FileSystemWatcher::FileSystemWatcher(QObject *parent, bool verboseLogging)
   qDebug() << Q_FUNC_INFO;
 
   delayTimer.setSingleShot(true);
-  delayTimer.connect(&delayTimer, &QTimer::timeout, this, &FileSystemWatcher::fileUpdatedDelayed);
+  QTimer::connect(&delayTimer, &QTimer::timeout, this, &FileSystemWatcher::pathUpdatedDelayed);
 }
 
 FileSystemWatcher::~FileSystemWatcher()
@@ -47,99 +50,192 @@ FileSystemWatcher::~FileSystemWatcher()
 void FileSystemWatcher::stopWatching()
 {
   deleteFsWatcher();
-  filename.clear();
+  paths.clear();
+  changedPathIndexes.clear();
 }
 
-/* Called on directory or file change and QTimer event */
-void FileSystemWatcher::pathOrFileChanged()
+void FileSystemWatcher::pathChanged()
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO;
 
+  // Stop all timers - one of the other will be started later
   periodicCheckTimer.stop();
+  delayTimer.stop();
 
-  QFileInfo fileinfo(filename);
-  if(fileinfo.exists())
+  for(int i = 0; i < paths.size(); i++)
   {
-    if(fileinfo.isFile())
+    const PathInfo& info = paths.at(i);
+
+    QFileInfo fileinfo(info.path);
+    if(fileinfo.exists())
     {
-      if(fileinfo.size() > minFileSize)
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << "Path" << info.path
+                 << "file" << fileinfo.isFile()
+                 << "exists" << fileinfo.exists()
+                 << "size" << fileinfo.size()
+                 << "last modified" << fileinfo.lastModified().toString(Qt::DefaultLocaleShortDate);
+
+      if(fileinfo.isFile())
       {
-        if(verbose)
-          qDebug() << Q_FUNC_INFO << "File" << filename
-                   << "exists" << fileinfo.exists()
-                   << "size" << fileinfo.size()
-                   << "last modified" << fileinfo.lastModified().toString(Qt::DefaultLocaleShortDate);
-
-        // File exists - first call or older than two minutes or file differs
-        if(!fileTimestampLastRead.isValid() ||
-           atools::almostNotEqual(fileinfo.lastModified().toSecsSinceEpoch(), fileTimestampLastRead.toSecsSinceEpoch(),
-                                  static_cast<qint64>(1)) || lastFileSizeRead != fileinfo.size())
+        if(fileinfo.size() > minFileSize)
         {
-          // Timestamp of file has changed
-          if(verbose)
-            qDebug() << Q_FUNC_INFO << "changed" << filename;
+          // File exists - first call or older than one second or file differs
+          if(!info.timestampLastRead.isValid() || std::abs(fileinfo.lastModified().msecsTo(info.timestampLastRead)) > 1000L ||
+             info.sizeLastRead != fileinfo.size())
+          {
+            // Timestamp of file has changed
+            if(verbose)
+              qDebug() << Q_FUNC_INFO << "=== File changed" << info.path;
 
+            // Start or extend the delayed notification
+            changedPathIndexes.insert(i);
+          }
+          else
+          {
+            if(verbose)
+              qDebug() << Q_FUNC_INFO << "File not changed" << info.path;
+          }
+        } // if(fileinfo.size() > minFileSize)
+        else
+        {
+          // File is being updated - keep current file
+          if(warn())
+            qWarning() << Q_FUNC_INFO << "File" << info.path << "smaller than" << minFileSize << "bytes";
+        }
+      } // if(fileinfo.isFile())
+      else if(fileinfo.isDir())
+      {
+        // Notification on dir change - keep current file
+        if(!info.timestampLastRead.isValid() || std::abs(fileinfo.lastModified().msecsTo(info.timestampLastRead)) > 1000L)
+        {
+          if(verbose)
+            qDebug() << Q_FUNC_INFO << "=== Dir changed" << info.path;
           // Start or extend the delayed notification
-          delayTimer.start(delayMs);
+          changedPathIndexes.insert(i);
         }
         else
         {
           if(verbose)
-            qDebug() << Q_FUNC_INFO << "File" << filename << "not changed";
-          periodicCheckTimer.start(checkMs);
+            qDebug() << Q_FUNC_INFO << "Dir not changed" << info.path;
         }
       }
-      else
+    } // if(fileinfo.exists())
+    else
+    {
+      // File was deleted - keep current file and do not send a notification
+      if(warn())
+        qWarning() << Q_FUNC_INFO << "File" << info.path << "does not exist";
+    }
+  } // for(int i = 0; i < paths.size(); i++)
+
+  if(!changedPathIndexes.isEmpty())
+  {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "Update - starting delayed update";
+
+    // Start or extend the delayed notification to pathUpdatedDelayed()
+    delayTimer.start(delayMs);
+  }
+  else
+  {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "No update - starting timer";
+
+    // Start timer to check periodically pathChanged()
+    periodicCheckTimer.start(checkMs);
+  }
+
+  setPathsToFsWatcher(true);
+}
+
+void FileSystemWatcher::pathUpdatedDelayed()
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << changedPathIndexes;
+
+  // Collect existing changed files and the parent directory if changed
+  QStringList updatedFiles, updatedDirs;
+  for(int index : changedPathIndexes)
+  {
+    if(!atools::inRange(paths, index))
+    {
+      if(warn())
+        qWarning() << Q_FUNC_INFO << "invalid index" << index << "size" << paths.size();
+      continue;
+    }
+
+    PathInfo& info = paths[index];
+
+    QFileInfo fileinfo(info.path);
+    if(fileinfo.exists())
+    {
+      // Either file with sufficient size of directory
+      if((fileinfo.isFile() && fileinfo.size() > minFileSize) || fileinfo.isDir())
       {
-        // File was deleted - keep current weather information
-        if(warn())
-          qWarning() << Q_FUNC_INFO << "File" << filename << "smaller than" << minFileSize << "bytes";
-        periodicCheckTimer.start(checkMs);
+        // Remember file size and timestamp of the file
+        info.timestampLastRead = fileinfo.lastModified();
+        info.sizeLastRead = fileinfo.size();
+
+        if(fileinfo.isDir())
+          updatedDirs.append(info.path);
+        else
+          updatedFiles.append(info.path);
       }
     }
     else
     {
-      // File was deleted - keep current weather information
+      // File was deleted
       if(warn())
-        qWarning() << Q_FUNC_INFO << "File" << filename << "is not a file";
-      periodicCheckTimer.start(checkMs);
+        qWarning() << Q_FUNC_INFO << "File" << info.path << "does not exist";
     }
   }
-  else
+  changedPathIndexes.clear();
+
+  if(!updatedDirs.isEmpty())
   {
-    // File was deleted - keep current weather information
-    if(warn())
-      qWarning() << Q_FUNC_INFO << "File" << filename << "does not exist";
-    periodicCheckTimer.start(checkMs);
-  }
-  setPaths(true);
-}
-
-void FileSystemWatcher::fileUpdatedDelayed()
-{
-  if(verbose)
-    qDebug() << Q_FUNC_INFO;
-
-  QFileInfo fileinfo(filename);
-  if(fileinfo.exists() && fileinfo.isFile() && fileinfo.size() > minFileSize)
-  {
-    // Remember file size and timestamp of the file
-    fileTimestampLastRead = fileinfo.lastModified();
-    lastFileSizeRead = fileinfo.size();
-
-    emit fileUpdated(filename);
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "Updated dirs" << updatedDirs;
+    emit dirUpdated(updatedDirs.first());
   }
 
+  if(!updatedFiles.isEmpty())
+  {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "Updated files" << updatedFiles;
+
+    emit filesUpdated(updatedFiles);
+  }
+
+  // pathChanged()
   periodicCheckTimer.start(checkMs);
 }
 
-void FileSystemWatcher::setFilenameAndStart(const QString& value)
+void FileSystemWatcher::setFilenameAndStart(const QString& path)
 {
-  qDebug() << Q_FUNC_INFO << value;
+  setFilenamesAndStart({path});
+}
+
+void FileSystemWatcher::setFilenamesAndStart(const QStringList& pathList)
+{
+  qDebug() << Q_FUNC_INFO << pathList;
 
   stopWatching();
-  filename = value;
+
+  // Get all files
+  for(const QString& path : pathList)
+  {
+    QFileInfo fileinfo(path);
+    paths.append(PathInfo(path, fileinfo.lastModified(), fileinfo.size()));
+  }
+
+  // Get parent folder of first file
+  if(!paths.isEmpty())
+  {
+    QFileInfo fileinfo(paths.constFirst().path);
+    paths.append(PathInfo(fileinfo.path(), fileinfo.lastModified(), fileinfo.size()));
+  }
 
   createFsWatcher();
 }
@@ -148,13 +244,13 @@ void FileSystemWatcher::deleteFsWatcher()
 {
   delayTimer.stop();
   periodicCheckTimer.stop();
-  periodicCheckTimer.disconnect(&periodicCheckTimer, &QTimer::timeout, this, &FileSystemWatcher::pathOrFileChanged);
+
+  QTimer::disconnect(&periodicCheckTimer, &QTimer::timeout, this, &FileSystemWatcher::pathChanged);
 
   if(fsWatcher != nullptr)
   {
-    fsWatcher->disconnect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &FileSystemWatcher::pathOrFileChanged);
-    fsWatcher->disconnect(fsWatcher, &QFileSystemWatcher::directoryChanged, this,
-                          &FileSystemWatcher::pathOrFileChanged);
+    QFileSystemWatcher::disconnect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &FileSystemWatcher::pathChanged);
+    QFileSystemWatcher::disconnect(fsWatcher, &QFileSystemWatcher::directoryChanged, this, &FileSystemWatcher::pathChanged);
     fsWatcher->deleteLater();
     fsWatcher = nullptr;
   }
@@ -162,61 +258,57 @@ void FileSystemWatcher::deleteFsWatcher()
 
 void FileSystemWatcher::createFsWatcher()
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << paths;
+
   if(fsWatcher == nullptr)
   {
     // Watch file for changes and directory too to catch file deletions
     fsWatcher = new QFileSystemWatcher(this);
-    fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &FileSystemWatcher::pathOrFileChanged);
-    fsWatcher->connect(fsWatcher, &QFileSystemWatcher::directoryChanged, this, &FileSystemWatcher::pathOrFileChanged);
+    QFileSystemWatcher::connect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &FileSystemWatcher::pathChanged);
+    QFileSystemWatcher::connect(fsWatcher, &QFileSystemWatcher::directoryChanged, this, &FileSystemWatcher::pathChanged);
   }
 
-  setPaths(false);
+  setPathsToFsWatcher(false);
 
   // Initialize size and timestamp which will omit the first update signal - user has to do the initial load
-  QFileInfo fileinfo(filename);
-  if(fileinfo.exists() && fileinfo.isFile())
+  for(PathInfo& info : paths)
   {
-    fileTimestampLastRead = fileinfo.lastModified();
-    lastFileSizeRead = fileinfo.size();
+    QFileInfo fileinfo(info.path);
+    if(fileinfo.exists())
+    {
+      info.timestampLastRead = fileinfo.lastModified();
+      info.sizeLastRead = fileinfo.size();
+    }
   }
-
   // Check every ten seconds since the watcher is unreliable
-  periodicCheckTimer.connect(&periodicCheckTimer, &QTimer::timeout, this, &FileSystemWatcher::pathOrFileChanged);
+  QTimer::connect(&periodicCheckTimer, &QTimer::timeout, this, &FileSystemWatcher::pathChanged);
   periodicCheckTimer.start(checkMs);
 }
 
-void FileSystemWatcher::setPaths(bool update)
+void FileSystemWatcher::setPathsToFsWatcher(bool update)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << filename << "files" << fsWatcher->files() << "dirs" << fsWatcher->directories();
+    qDebug() << Q_FUNC_INFO << paths << "files" << fsWatcher->files() << "dirs" << fsWatcher->directories();
 
   if(fsWatcher == nullptr)
     return;
 
-  // Watch file to get changes
-  if(!fsWatcher->files().contains(filename))
+  QStringList files = fsWatcher->files();
+  QStringList directories = fsWatcher->directories();
+  for(const PathInfo& info : paths)
   {
-    if(update && verbose)
-      qWarning() << "dropped file" << filename << fsWatcher->files();
-
-    if(!fsWatcher->addPath(filename))
+    // Watch file to get changes
+    if(!files.contains(info.path) && !directories.contains(info.path))
     {
-      if(warn())
-        qWarning() << "cannot watch file" << filename;
-    }
-  }
+      if(update && verbose && warn())
+        qWarning() << "dropped path" << info.path << files << directories;
 
-  // Watch directory to get added or removed file changes
-  QString dir = QFileInfo(filename).canonicalPath();
-  if(!fsWatcher->directories().contains(dir))
-  {
-    if(update && verbose)
-      qWarning() << "dropped dir" << dir << fsWatcher->directories();
-
-    if(!fsWatcher->addPath(dir))
-    {
-      if(warn())
-        qWarning() << "cannot watch dir" << dir;
+      if(!fsWatcher->addPath(info.path))
+      {
+        if(warn())
+          qWarning() << "cannot watch file" << info.path;
+      }
     }
   }
 }

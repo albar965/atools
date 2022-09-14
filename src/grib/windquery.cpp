@@ -17,15 +17,18 @@
 
 #include "grib/windquery.h"
 
+#include "atools.h"
+#include "exception.h"
+#include "geo/calculations.h"
+#include "geo/line.h"
+#include "geo/linestring.h"
+#include "geo/rect.h"
 #include "grib/gribdownloader.h"
 #include "grib/gribreader.h"
-#include "geo/calculations.h"
-#include "geo/rect.h"
-#include "geo/linestring.h"
-#include "atools.h"
 #include "util/filesystemwatcher.h"
-#include "exception.h"
-#include "geo/line.h"
+
+#include <QDir>
+#include <QRegularExpression>
 
 using atools::grib::GribDownloader;
 using atools::geo::Rect;
@@ -55,7 +58,10 @@ struct WindData
   float u, v;
 
   /* Convert to wind with speed and direction */
-  Wind toWind() const;
+  Wind toWind() const
+  {
+    return {atools::geo::windDirectionFromUV(u, v), atools::geo::windSpeedFromUV(u, v)};
+  }
 
   void init()
   {
@@ -200,7 +206,8 @@ WindQuery::WindQuery(QObject *parentObject, bool logVerbose)
   fileWatcher = new atools::util::FileSystemWatcher(parentObject, logVerbose);
   fileWatcher->setMinFileSize(180000); // Do not accept smaller files
   fileWatcher->setDelayMs(10000); // Delay notification for 10 seconds to avoid incomplete files
-  connect(fileWatcher, &atools::util::FileSystemWatcher::fileUpdated, this, &WindQuery::gribFileUpdated);
+  connect(fileWatcher, &atools::util::FileSystemWatcher::dirUpdated, this, &WindQuery::gribDirUpdated);
+  connect(fileWatcher, &atools::util::FileSystemWatcher::filesUpdated, this, &WindQuery::gribFileUpdated);
 }
 
 WindQuery::~WindQuery()
@@ -220,15 +227,67 @@ void WindQuery::initFromUrl(const QString& baseUrl)
     qWarning() << Q_FUNC_INFO << "URL is empty. Wind download suspended.";
 }
 
-void WindQuery::initFromFile(const QString& filename)
+void WindQuery::initFromPath(const QString& path, atools::fs::weather::XpWeatherType type)
 {
   deinit();
 
-  // Inital load
-  gribFileUpdated(filename);
+  weatherPath = path;
+  weatherType = type;
+  currentGribFile = collectGribFiles();
 
-  // Start checking for changes
-  fileWatcher->setFilenameAndStart(filename);
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << weatherPath << currentGribFile;
+
+  // Inital load
+  gribFileUpdated({currentGribFile});
+
+  // Start checking file and parent folder for changes
+  fileWatcher->setFilenameAndStart(currentGribFile);
+}
+
+QString WindQuery::collectGribFiles()
+{
+  QFileInfoList gribFiles;
+  if(weatherType == atools::fs::weather::WEATHER_XP11)
+    // global_winds.grib
+    gribFiles.append(QFileInfo(weatherPath));
+  else if(weatherType == atools::fs::weather::WEATHER_XP12)
+  {
+    // GRIB-2022-9-6-21.00-ZULU-wind.grib
+    QDir weatherDir(weatherPath, "GRIB-*-*-*-*.*-ZULU-wind.grib", QDir::Unsorted, QDir::Files | QDir::NoDotAndDotDot);
+    for(QFileInfo entry : weatherDir.entryInfoList())
+      gribFiles.append(entry);
+
+    // const QDateTime now = QDateTime::currentDateTimeUtc();
+    // Sort by timestamp - put latest at begin of list
+    if(gribFiles.size() > 1)
+      std::sort(gribFiles.begin(), gribFiles.end(), [](const QFileInfo& file1, const QFileInfo& file2)->bool {
+            return xpFilenameToDate(file1.fileName()) > xpFilenameToDate(file2.fileName());
+          });
+  }
+
+  QStringList files;
+  for(QFileInfo entry : gribFiles)
+    files.append(entry.absoluteFilePath());
+
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << gribFiles;
+
+  // Return first and latest file since GRIB cannot be merged like METAR
+  return files.value(0);
+}
+
+QDateTime WindQuery::xpFilenameToDate(const QString& filename)
+{
+  // GRIB-2022-9-6-21.00-ZULU-wind.grib
+  const static QRegularExpression GRIB_REGEXP("GRIB-(\\d+)-(\\d+)-(\\d+)-(\\d+).(\\d+)-ZULU-wind\\.grib$");
+  QRegularExpressionMatch match = GRIB_REGEXP.match(filename);
+
+  if(match.hasMatch())
+    return QDateTime(QDate(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt()),
+                     QTime(match.captured(4).toInt(), match.captured(5).toInt()), Qt::UTC);
+  else
+    return QDateTime();
 }
 
 void WindQuery::initFromFixedModel(float dir, float speed, float altitude)
@@ -263,6 +322,8 @@ void WindQuery::deinit()
   windLayers.clear();
   downloader->stopDownload();
   fileWatcher->stopWatching();
+  weatherPath.clear();
+  currentGribFile.clear();
 }
 
 Wind WindQuery::getWindForPos(const Pos& pos, bool interpolateValue) const
@@ -593,28 +654,48 @@ void WindQuery::gribDownloadFailed(const QString& error, int errorCode, QString 
   emit windDownloadFailed(error, errorCode);
 }
 
-void WindQuery::gribFileUpdated(const QString& filename)
+void WindQuery::gribDirUpdated(const QString& dir)
 {
-  qDebug() << Q_FUNC_INFO << filename;
-  try
-  {
-    GribReader reader(verbose);
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << dir;
 
-    reader.readFile(filename);
-    convertDataset(reader.getDatasets());
-  }
-  catch(atools::Exception& e)
+  QString gribFile = collectGribFiles();
+  if(gribFile != currentGribFile)
   {
-    emit windDownloadFailed(e.getMessage(), 0);
-    return;
+    // Read file(s) again if updated and the list has changed
+    currentGribFile = gribFile;
+    gribFileUpdated({currentGribFile});
   }
-  catch(...)
-  {
-    emit windDownloadFailed(tr("Unknown error."), 0);
-    return;
-  }
+}
 
-  emit windDataUpdated();
+void WindQuery::gribFileUpdated(const QStringList& filenames)
+{
+  QString filename = filenames.value(0);
+
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << filename;
+
+  if(!filename.isEmpty())
+  {
+    try
+    {
+      GribReader reader(verbose);
+      reader.readFile(filename);
+      convertDataset(reader.getDatasets());
+    }
+    catch(atools::Exception& e)
+    {
+      emit windDownloadFailed(e.getMessage(), 0);
+      return;
+    }
+    catch(...)
+    {
+      emit windDownloadFailed(tr("Unknown error."), 0);
+      return;
+    }
+
+    emit windDataUpdated();
+  }
 }
 
 // Required GRIB parameters:
@@ -693,11 +774,6 @@ WindData WindQuery::interpolateWind(const WindData& w0, const WindData& w1, floa
     w.v = interpolate(w0.v, w1.v, alt0, alt1, alt);
     return w;
   }
-}
-
-Wind WindData::toWind() const
-{
-  return {atools::geo::windDirectionFromUV(u, v), atools::geo::windSpeedFromUV(u, v)};
 }
 
 } // namespace grib
