@@ -29,6 +29,7 @@ namespace xp {
 struct SceneryPack
 {
   QString filepath /* File path to apt.dat if exists or base directory if not valid */,
+          pathstr /* Short name as read from the ini file */,
           errorText /* Error message to display if base path is not valid */;
 
   bool disabled /* Disable by SCENERY_PACK_DISABLED */,
@@ -37,6 +38,8 @@ struct SceneryPack
 
   int errorLine /* Line number in file */;
 };
+
+QDebug operator<<(QDebug out, const SceneryPack& type);
 
 /*
  * Reads X-Plane scenery_packs.ini and returns a list with missing paths for error reports and valid

@@ -26,6 +26,21 @@ namespace atools {
 namespace fs {
 namespace xp {
 
+QDebug operator<<(QDebug out, const SceneryPack& type)
+{
+  QDebugStateSaver saver(out);
+
+  out.nospace() << "SceneryPack["
+                << "pathstr " << type.pathstr
+                << ", filepath " << type.filepath
+                << ", errorText " << type.errorText
+                << ", disabled " << type.disabled
+                << ", valid " << type.valid
+                << ", globalAirports " << type.globalAirports << "]";
+
+  return out;
+}
+
 SceneryPacks::SceneryPacks()
 {
 
@@ -100,6 +115,8 @@ void SceneryPacks::read(const QString& basePath)
       if(!line.isEmpty())
       {
         SceneryPack pack;
+        pack.pathstr = line.section(' ', 1).replace('\\', '/');
+
         QString key = line.section(' ', 0, 0).toUpper();
         if(key != "SCENERY_PACK" && key != "SCENERY_PACK_DISABLED")
         {
@@ -112,21 +129,18 @@ void SceneryPacks::read(const QString& basePath)
         }
         else
         {
-          QString pathstr = line.section(' ', 1);
-
           // Detect Global Airports and mark them
-          pack.globalAirports =
-            pathstr.startsWith("Custom Scenery/Global Airports", Qt::CaseInsensitive) == 0 || // XP11
-            pathstr.startsWith("Global Scenery/Global Airports", Qt::CaseInsensitive) == 0 || // XP12
-            pathstr == "*GLOBAL_AIRPORTS*"; // XP12
+          pack.globalAirports = pack.pathstr.startsWith("Custom Scenery/Global Airports", Qt::CaseInsensitive) || // XP11
+                                pack.pathstr.startsWith("Global Scenery/Global Airports", Qt::CaseInsensitive) || // XP12
+                                pack.pathstr == "*GLOBAL_AIRPORTS*"; // XP12
 
-          if(pathstr == "*GLOBAL_AIRPORTS*")
-            pathstr = "Global Scenery/Global Airports";
+          if(pack.pathstr == "*GLOBAL_AIRPORTS*")
+            pack.pathstr = "Global Scenery/Global Airports";
 
           // SCENERY_PACK Custom Scenery/X-Plane Landmarks - Chicago/  ================
           pack.disabled = key != "SCENERY_PACK";
 
-          QFileInfo fileinfoBase, fileinfoPath(pathstr);
+          QFileInfo fileinfoBase, fileinfoPath(pack.pathstr);
 
           if(fileinfoPath.isAbsolute())
             // Use absolute path as given

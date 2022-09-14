@@ -46,6 +46,7 @@ class AirportIndex;
 
 namespace xp {
 
+class SceneryPack;
 class XpFixWriter;
 class XpMoraWriter;
 class XpAirportMsaWriter;
@@ -251,7 +252,7 @@ private:
 
   /* FInd custom apt.dat like X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat */
   static QStringList findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts,
-                                           NavDatabaseErrors *navdatabaseErrors, ProgressHandler *progressHandler);
+                                           NavDatabaseErrors *navdatabaseErrors, ProgressHandler *progressHandler, bool verbose);
 
   /* Find CIFP files like X-Plane 11/Resources/default data/CIFP/KSEA.dat */
   static QStringList findCifpFiles(const atools::fs::NavDatabaseOptions& opts);
@@ -269,10 +270,10 @@ private:
   bool includeFile(const QFileInfo& fileinfo);
   static bool includeFile(const atools::fs::NavDatabaseOptions& opts, const QFileInfo& fileinfo);
 
-  /* Read X-Plane 11/Custom Scenery/scenery_packs.ini */
-  static QStringList loadFilepathsFromSceneryPacks(const NavDatabaseOptions& opts,
-                                                   atools::fs::ProgressHandler *progressHandler,
-                                                   atools::fs::NavDatabaseErrors *navdatabaseErrors);
+  /* Read X-Plane 11/Custom Scenery/scenery_packs.ini Returns all airports including disabled but excluding "Global Airports" */
+  static QVector<atools::fs::xp::SceneryPack> loadFilepathsFromSceneryPacks(const NavDatabaseOptions& opts,
+                                                                            atools::fs::ProgressHandler *progressHandler,
+                                                                            atools::fs::NavDatabaseErrors *navdatabaseErrors);
 
   int curFileId = 0, curSceneryId = 0;
   QString basePath; /* base for earth_fix.dat earth_awy.dat and earth_nav.dat */

@@ -238,7 +238,7 @@ bool XpDataCompiler::compileCustomApt()
 {
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
-  QStringList localFindCustomAptDatFiles = findCustomAptDatFiles(options, errors, progress);
+  QStringList localFindCustomAptDatFiles = findCustomAptDatFiles(options, errors, progress, true /* verbose */);
   for(const QString& aptdat : localFindCustomAptDatFiles)
   {
     // Only one progress report per file
@@ -301,6 +301,7 @@ bool XpDataCompiler::compileDefaultApt()
 bool XpDataCompiler::compileCifp()
 {
   QStringList cifpFiles = findCifpFiles(options);
+  cifpFiles.sort();
 
   int rowsPerStep =
     static_cast<int>(std::ceil(static_cast<float>(cifpFiles.size()) / static_cast<float>(NUM_REPORT_STEPS_CIFP)));
@@ -710,37 +711,61 @@ void XpDataCompiler::close()
 
 QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts,
                                                   atools::fs::NavDatabaseErrors *navdatabaseErrors,
-                                                  atools::fs::ProgressHandler *progressHandler)
+                                                  atools::fs::ProgressHandler *progressHandler, bool verbose)
 {
-  QStringList retval;
+  // Read only apt.dat from scenery_packs.ini - Global Airports are excluded and read separately, disabled are included
+  QVector<SceneryPack> packs = loadFilepathsFromSceneryPacks(opts, progressHandler, navdatabaseErrors);
 
-  if(!opts.isReadInactive())
-    // Read only apt.dat from scenery_packs.ini - Global Airports are excluded and read separately
-    retval = loadFilepathsFromSceneryPacks(opts, progressHandler, navdatabaseErrors);
-  else
+  if(verbose)
   {
-    // Read all apt.dat files in the directory structure
-
-    // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
-    // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
-    QDir customApt(buildPathNoCase({opts.getBasepath(), "Custom Scenery"}));
-
-    QStringList dirs = customApt.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
-
-    for(const QString& dir : dirs)
-    {
-      if(dir.toLower() == "global airports")
-        continue;
-
-      QFileInfo aptDat(buildPathNoCase({customApt.path(), dir, "Earth nav data", "apt.dat"}));
-
-      if(!includeFile(opts, aptDat))
-        continue;
-
-      if(aptDat.exists() && aptDat.isFile())
-        retval.append(aptDat.filePath());
-    }
+    qDebug() << Q_FUNC_INFO << "scenery_packs.ini";
+    for(const SceneryPack& pack : packs)
+      qDebug() << pack;
   }
+
+  // Create index for packs
+  QHash<QString, int> pathToPackIndex;
+  for(int i = 0; i < packs.size(); i++)
+    pathToPackIndex.insert(packs.at(i).pathstr.toLower().remove("custom scenery/").remove('/'), i);
+
+  // Read all apt.dat files in the directory structure and exclude if disabled in scenery_packs.ini if flag is set
+  // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
+  // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
+  QStringList retval;
+  QDir customApt(buildPathNoCase({opts.getBasepath(), "Custom Scenery"}), QString(), QDir::Name, QDir::Dirs | QDir::NoDotAndDotDot);
+  for(const QString& dir : customApt.entryList())
+  {
+    // dir:
+    // KSEA Demo Area
+    // LFPG Paris - Charles de Gaulle
+
+    if(dir.toLower() == "global airports") // Should normally not appear here
+      continue;
+
+    // Exclude if disabled and user set read inactive - entries missing in the list are included
+    if(!opts.isReadInactive())
+    {
+      int idx = pathToPackIndex.value(dir.toLower(), -1);
+      if(idx != -1 && packs.at(idx).disabled == true)
+        continue;
+    }
+
+    QFileInfo aptDat(buildPathNoCase({customApt.path(), dir, "Earth nav data", "apt.dat"}));
+
+    if(!includeFile(opts, aptDat))
+      continue;
+
+    if(aptDat.exists() && aptDat.isFile())
+      retval.append(aptDat.filePath());
+  }
+
+  if(verbose)
+  {
+    qDebug() << Q_FUNC_INFO << "All enabled custom scenery";
+    for(const QString& str : retval)
+      qDebug() << str;
+  }
+
   return retval;
 }
 
@@ -846,7 +871,7 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
 
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
-  reportCount += findCustomAptDatFiles(opts, nullptr, nullptr).count();
+  reportCount += findCustomAptDatFiles(opts, nullptr, nullptr, false /* verbose */).count();
 
   // earth_nav.dat localizers $X-Plane/Custom Scenery/Global Airports/Earth nav data/
   if(checkFile(Q_FUNC_INFO, buildPathNoCase({opts.getBasepath(), "Custom Scenery", "Global Airports", "Earth nav data", "earth_nav.dat"})))
@@ -865,12 +890,12 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
   return reportCount;
 }
 
-QStringList XpDataCompiler::loadFilepathsFromSceneryPacks(const NavDatabaseOptions& opts,
-                                                          ProgressHandler *progressHandler,
-                                                          NavDatabaseErrors *navdatabaseErrors)
+QVector<SceneryPack> XpDataCompiler::loadFilepathsFromSceneryPacks(const NavDatabaseOptions& opts,
+                                                                   ProgressHandler *progressHandler,
+                                                                   NavDatabaseErrors *navdatabaseErrors)
 {
   qDebug() << Q_FUNC_INFO << "Reading scenery_packs.ini";
-  QStringList entryMap;
+  QVector<SceneryPack> entryMap;
 
   // Read X-Plane 11/Custom Scenery/scenery_packs.ini
   SceneryPacks sceneryPacks;
@@ -880,12 +905,6 @@ QStringList XpDataCompiler::loadFilepathsFromSceneryPacks(const NavDatabaseOptio
   {
     if(pack.valid)
     {
-      if(pack.disabled)
-      {
-        qInfo() << "Disabled path" << pack.filepath;
-        continue;
-      }
-
       if(pack.globalAirports)
       {
         qInfo() << "Global airports path" << pack.filepath;
@@ -894,7 +913,7 @@ QStringList XpDataCompiler::loadFilepathsFromSceneryPacks(const NavDatabaseOptio
 
       QFileInfo fileInfo(pack.filepath);
       if(includeFile(opts, fileInfo))
-        entryMap.append(fileInfo.filePath());
+        entryMap.append(pack);
     }
     else
     {
