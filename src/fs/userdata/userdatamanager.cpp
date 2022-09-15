@@ -452,7 +452,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
   return numExported;
 }
 
-int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags)
+int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags, bool xp12)
 {
   if(flags & APPEND)
   {
@@ -512,10 +512,10 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
     if(!(flags & APPEND))
     {
       // Add file header
-      stream << "I" << endl << "1100 Version - "
+      stream << "I" << endl << (xp12 ? "1200" : "1100") << " Version - "
              << "data cycle " << QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyMM") << ", "
              << "build " << QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyyyMMdd") << ", "
-             << "metadata FixXP1100. "
+             << "metadata FixXP" << (xp12 ? "1200" : "1100") << ". "
              << atools::programFileInfoNoDate() << "." << endl << endl;
     }
 
@@ -534,8 +534,12 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
              << " " << QString::number(query.query.valueDouble("lonx"), 'f', 8)
              << " " << atools::fs::util::adjustIdent(query.query.valueStr("ident"), 5, query.query.valueInt(idColumnName))
              << " " << "ENRT" // Ignore airport here
-             << " " << (region.isEmpty() ? "ZZ" : atools::fs::util::adjustRegion(region))
-             << endl;
+             << " " << (region.isEmpty() ? "ZZ" : atools::fs::util::adjustRegion(region));
+
+      if(xp12)
+        stream << " " << query.query.valueStr("name");
+
+      stream << endl;
       numExported++;
     }
 

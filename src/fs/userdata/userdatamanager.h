@@ -68,8 +68,7 @@ public:
 
   /* Import and export user_fix.dat file from X-Plane */
   int importXplane(const QString& filepath);
-  int exportXplane(const QString& filepath, const QVector<int>& ids = QVector<int>(),
-                   atools::fs::userdata::Flags flags = atools::fs::userdata::NONE);
+  int exportXplane(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags, bool xp12);
 
   /* Import and export Garmin GTN user waypoint database */
   int importGarmin(const QString& filepath);
