@@ -137,6 +137,10 @@ void FileHistoryHandler::updateMenu()
     fileAction->setToolTip(filepath);
     fileAction->setStatusTip(filepath);
     fileAction->setData(filepath);
+
+    if(i == 1 && !firstItemShortcut.isEmpty())
+      fileAction->setShortcut(firstItemShortcut);
+
     i++;
   }
 

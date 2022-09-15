@@ -81,6 +81,11 @@ public:
     return filePaths.isEmpty();
   }
 
+  void setFirstItemShortcut(const QString& value)
+  {
+    firstItemShortcut = value;
+  }
+
 signals:
   /* Emitted when the user selects a recent file action */
   void fileSelected(const QString& filename);
@@ -101,6 +106,8 @@ private:
 
   /* Name prefix for settings file */
   QString settings;
+
+  QString firstItemShortcut;
 
   int maxEntries = 30;
 };
