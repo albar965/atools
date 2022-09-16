@@ -68,27 +68,27 @@
     <message>
         <location filename="src/io/binarystream.cpp" line="238"/>
         <source>Unknown</source>
-        <translation type="unfinished">Sconosciuto</translation>
+        <translation>Sconosciuto</translation>
     </message>
     <message>
         <location filename="src/io/binarystream.cpp" line="242"/>
         <source>No error</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun errore</translation>
     </message>
     <message>
         <location filename="src/io/binarystream.cpp" line="245"/>
         <source>Read past file end</source>
-        <translation type="unfinished"></translation>
+        <translation>Leggi la fine dell&apos;ultimo file</translation>
     </message>
     <message>
         <location filename="src/io/binarystream.cpp" line="248"/>
         <source>Read corrupted data</source>
-        <translation type="unfinished"></translation>
+        <translation>Leggi i dati corrotti</translation>
     </message>
     <message>
         <location filename="src/io/binarystream.cpp" line="251"/>
         <source>Write failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore di scrittura</translation>
     </message>
 </context>
 <context>
@@ -96,7 +96,7 @@
     <message>
         <location filename="src/gui/choicedialog.ui" line="14"/>
         <source>Little Navmap - </source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - </translation>
     </message>
 </context>
 <context>
@@ -108,12 +108,12 @@
     <message>
         <location filename="src/fs/scenery/contentxml.cpp" line="188"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Base</translation>
     </message>
     <message>
         <location filename="src/fs/scenery/contentxml.cpp" line="194"/>
         <source>Generic Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>Aeroporti Generici</translation>
     </message>
     <message>
         <location filename="src/fs/scenery/contentxml.cpp" line="201"/>
@@ -286,12 +286,12 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="116"/>
         <source>Pattern contains invalid characters, double spaces or is longer than %1 characters.%2Not allowed are: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Lo schema contiene caratteri non validi, doppi spazi o è più lungo di %1 caratteri. %2Non consentiti sono: %3</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="126"/>
         <source>Pattern is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lo schema è vuoto.</translation>
     </message>
 </context>
 <context>
@@ -1192,7 +1192,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="147"/>
         <source>Cleaning Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Pulizia del Database</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="189"/>
@@ -1376,7 +1376,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1456"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Base</translation>
     </message>
     <message>
         <source>Base Airports</source>
@@ -1385,7 +1385,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1468"/>
         <source>Generic Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>Aeroporti Generici</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1483"/>
@@ -1396,7 +1396,7 @@ File: &quot;%2&quot;
         <location filename="src/fs/navdatabase.cpp" line="1530"/>
         <location filename="src/fs/navdatabase.cpp" line="1575"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Trovato il componente aggiuntivo criptato &quot;%1&quot;. Il componente aggiuntivo potrebbe non essere visualizzato correttamente.</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1571"/>
@@ -1520,7 +1520,7 @@ File: &quot;%2&quot;
         <location filename="src/atools.cpp" line="369"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
-        <translation type="unfinished"></translation>
+        <translation>.</translation>
     </message>
     <message>
         <location filename="src/atools.cpp" line="402"/>
@@ -2130,32 +2130,32 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/gui/treedialog.ui" line="14"/>
         <source>Little Navmap - </source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - </translation>
     </message>
     <message>
         <location filename="src/gui/treedialog.ui" line="70"/>
         <source>Text Display Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opzioni di Visualizzazione del Testo</translation>
     </message>
     <message>
         <location filename="src/gui/treedialog.ui" line="101"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Seleziona Tutto</translation>
     </message>
     <message>
         <location filename="src/gui/treedialog.ui" line="108"/>
         <source>Select &amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleziona &amp;Nessuno</translation>
     </message>
     <message>
         <location filename="src/gui/treedialog.ui" line="115"/>
         <source>&amp;Expand All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Espandi Tutto</translation>
     </message>
     <message>
         <location filename="src/gui/treedialog.ui" line="122"/>
         <source>&amp;Collapse All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Riduci Tutto</translation>
     </message>
 </context>
 <context>
@@ -2235,19 +2235,19 @@ Importazione interrotta.</translation>
         <location filename="src/util/version.cpp" line="41"/>
         <source>%1.%2%3%4%5</source>
         <comment>Used to build a version string like 1.2.33.beta1</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1.%2%3%4%5</translation>
     </message>
     <message>
         <location filename="src/util/version.cpp" line="44"/>
         <source>.%1</source>
         <comment>Patchlevel in version string</comment>
-        <translation type="unfinished"></translation>
+        <translation>.%1</translation>
     </message>
     <message>
         <location filename="src/util/version.cpp" line="45"/>
         <source>.%1</source>
         <comment>Name like &quot;beta&quot; in version string</comment>
-        <translation type="unfinished"></translation>
+        <translation>.%1</translation>
     </message>
 </context>
 <context>
@@ -2277,7 +2277,7 @@ Importazione interrotta.</translation>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="214"/>
         <source>Post processing Airways</source>
         <oldsource>Post procecssing Airways</oldsource>
-        <translation type="unfinished">Processamento Aerovie</translation>
+        <translation>Processamento Aerovie</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="318"/>
@@ -2298,7 +2298,7 @@ Importazione interrotta.</translation>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="828"/>
         <source>Counting files for Global Scenery/Global Airports ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Conteggio dei file di Scenario Globale/Aeroporti Globali ...</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="839"/>
@@ -2638,7 +2638,7 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="70"/>
         <source>Writing to &quot;%1&quot; in VATSIM format every %2 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrivere su &quot;%1&quot; in formato Vatsim ogni %2 secondi.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="413"/>
@@ -2710,7 +2710,7 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     <message>
         <location filename="src/fs/userdata/airspacereaderivao.cpp" line="226"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation type="unfinished">Impossibile aprire il file &quot;%1&quot;. Causa: %2 (%3)</translation>
+        <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -2726,7 +2726,7 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     <message>
         <location filename="src/fs/userdata/airspacereadervatsim.cpp" line="293"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation type="unfinished">Impossibile aprire il file &quot;%1&quot;. Causa: %2 (%3)</translation>
+        <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -2777,7 +2777,7 @@ Ore Notturne: %5</translation>
     <message>
         <location filename="src/fs/weather/weathernetdownload.cpp" line="54"/>
         <source>No METARs found in download.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nessun METAR trovato in download.</translation>
     </message>
 </context>
 <context>
@@ -2938,7 +2938,7 @@ Ore Notturne: %5</translation>
         <location filename="src/gui/tabwidgethandler.cpp" line="61"/>
         <source>&amp;Open all Tabs</source>
         <oldsource>&amp;Open All</oldsource>
-        <translation type="unfinished">&amp;Apri Tutti</translation>
+        <translation>&amp;Apri tutte le Schede</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="62"/>
@@ -2949,7 +2949,7 @@ Ore Notturne: %5</translation>
         <location filename="src/gui/tabwidgethandler.cpp" line="68"/>
         <source>&amp;Close all Tabs except Current</source>
         <oldsource>&amp;Close All Except Current</oldsource>
-        <translation type="unfinished">&amp;Chiudi Tutto Tranne Corrente</translation>
+        <translation>&amp;Chiudi tutte le Schede tranne quella Corrente</translation>
     </message>
     <message>
         <source>Close all tabs except the current tab</source>
@@ -3001,7 +3001,7 @@ Ore Notturne: %5</translation>
     <message>
         <location filename="src/gui/treedialog.cpp" line="180"/>
         <source>Duplicate id %1 found while adding item in TreeDialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Duplicato ID %1 trovato durante l&apos;aggiunta dell&apos;oggetto in TreeDialog</translation>
     </message>
 </context>
 <context>
@@ -3013,7 +3013,7 @@ Ore Notturne: %5</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">La Longitudine non è un numero valido nella riga
+        <translation>La Longitudine non è un numero valido nella riga
 
 &quot;%1&quot;
 
@@ -3026,7 +3026,7 @@ Importazione interrotta.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">La Latitudine non è un numero valido nella riga
+        <translation>La Latitudine non è un numero valido nella riga
 
 &quot;%1&quot;
 
@@ -3039,7 +3039,7 @@ Importazione interrotta.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Coordinate non valide nella riga
+        <translation>Coordinate non valide nella riga
 
 &quot;%1&quot;
 
@@ -3052,7 +3052,7 @@ Importazione interrotta.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Le Coordinate sono nulle nella riga
+        <translation>Le Coordinate sono nulle nella riga
 
 &quot;%1&quot;
 
@@ -3065,7 +3065,7 @@ Importazione interrotta.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Le Coordinate non sono in un intervallo valido nella riga
+        <translation>Le Coordinate non sono in un intervallo valido nella riga
 
 &quot;%1&quot;
 
@@ -3074,79 +3074,79 @@ Importazione interrotta.</translation>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="518"/>
         <source>preUndoBulkInsert() not called</source>
-        <translation type="unfinished"></translation>
+        <translation>preUndoBulkInsert() non chiamato</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="617"/>
         <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tentativo di modifica della tabella &quot;%1&quot; bypassando la funzione attiva di annullamento.</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="707"/>
         <location filename="src/sql/datamanagerbase.cpp" line="713"/>
         <source>&amp;%1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;%1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="707"/>
         <source>&amp;Undo%1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annulla%1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="713"/>
         <source>&amp;Redo%1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rifare%1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="777"/>
         <source>no %1</source>
-        <translation type="unfinished"></translation>
+        <translation>nessun %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="779"/>
         <source>one %1</source>
-        <translation type="unfinished"></translation>
+        <translation>uno %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="781"/>
         <source>two %1</source>
-        <translation type="unfinished"></translation>
+        <translation>due %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="783"/>
         <source>%1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 %2</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="785"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Annulla</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="785"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Rifare</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="791"/>
         <source>%1 adding of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 aggiunta di %2</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="794"/>
         <source>%1 editing of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 modifica di %2</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="797"/>
         <source>%1 deleting of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 cancellazione di %2</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="836"/>
         <location filename="src/sql/datamanagerbase.cpp" line="848"/>
         <source>Table undo_current is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>La tabella undo_current è vuota.</translation>
     </message>
 </context>
 <context>
