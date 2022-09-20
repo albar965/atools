@@ -46,7 +46,7 @@ class AirportIndex;
 
 namespace xp {
 
-class SceneryPack;
+struct SceneryPack;
 class XpFixWriter;
 class XpMoraWriter;
 class XpAirportMsaWriter;

@@ -672,7 +672,7 @@ void DeleteProcessor::copyAirportValues(const QStringList& copyAirportColumns)
       // Assign values to this current/new airport
       insert.prepare("update airport set " + bindCols.join(", ") + " where airport_id = :aptid");
       insert.bindValue(":aptid", currentAirportId);
-      SqlUtil(db).copyRowValues(query, insert);
+      SqlUtil::copyRowValues(query, insert);
       insert.exec();
       if(insert.numRowsAffected() <= 0)
         qWarning() << "Noting inserted for airport update" << ident << currentAirportId;

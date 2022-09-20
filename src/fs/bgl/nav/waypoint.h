@@ -55,7 +55,7 @@ class Waypoint :
 {
 public:
   Waypoint(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Waypoint();
+  virtual ~Waypoint() override;
 
   /*
    * @return airport ICAO ident if available

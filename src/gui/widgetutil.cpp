@@ -122,7 +122,7 @@ bool anyWidgetChanged(const QList<const QObject *>& widgets)
       else if(const QSpinBox *sb = dynamic_cast<const QSpinBox *>(widget))
         changed |= sb->value() != sb->maximum() && sb->value() != sb->minimum();
       else if(const QDoubleSpinBox *dsb = dynamic_cast<const QDoubleSpinBox *>(widget))
-        changed |= dsb->value() != dsb->maximum() && dsb->value() != dsb->minimum();
+        changed |= dsb->value() < dsb->maximum() && dsb->value() > dsb->minimum();
       else if(const QComboBox *cb = dynamic_cast<const QComboBox *>(widget))
         changed |= cb->currentIndex() != 0;
     }

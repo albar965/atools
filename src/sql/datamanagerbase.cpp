@@ -560,7 +560,7 @@ void DataManagerBase::preUndoDeleteAll()
     selectQuery.exec();
     while(selectQuery.next())
     {
-      util->copyRowValues(selectQuery, *queryInsertUndoData);
+      SqlUtil::copyRowValues(selectQuery, *queryInsertUndoData);
 
       queryInsertUndoData->bindValue(":undo_data_id", ++currentUndoId);
       queryInsertUndoData->bindValue(":undo_group_id", currentUndoGroupId);
@@ -591,7 +591,7 @@ void DataManagerBase::preUndoCopyInternal(const QVector<int>& ids, UndoAction ac
     wrapped.exec();
     while(wrapped.next())
     {
-      util->copyRowValues(wrapped.query, *queryInsertUndoData);
+      SqlUtil::copyRowValues(wrapped.query, *queryInsertUndoData);
 
       queryInsertUndoData->bindValue(":undo_data_id", ++currentUndoId);
       queryInsertUndoData->bindValue(":undo_group_id", currentUndoGroupId);

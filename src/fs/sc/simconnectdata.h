@@ -48,6 +48,7 @@ class SimConnectData :
 public:
   SimConnectData();
   SimConnectData(const SimConnectData& other);
+  virtual ~SimConnectData() override;
 
   /*
    * Read from IO device.

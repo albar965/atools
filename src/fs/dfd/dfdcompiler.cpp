@@ -1688,11 +1688,10 @@ void DfdCompiler::updateTreeLetterAirportCodes(const QHash<QString, QString>& co
   SqlQuery update(db);
   update.prepare("update " + table + " set " + column + " = :code3 where " + column + " = :code4");
 
-  for(const QString& code4 :codeMap.keys())
+  for(auto it = codeMap.constBegin(); it != codeMap.constEnd(); ++it)
   {
-    QString code3 = codeMap.value(code4);
-    update.bindValue(":code4", code4);
-    update.bindValue(":code3", code3);
+    update.bindValue(":code4", it.key());
+    update.bindValue(":code3", it.value());
     update.exec();
   }
 }

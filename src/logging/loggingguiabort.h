@@ -38,7 +38,7 @@ public:
 
 private:
   /* Connected to signal guiAbortSignal to allow GUI handling */
-  void guiAbortFunction(const QString& msg);
+  Q_NORETURN void guiAbortFunction(const QString& msg);
 
   static atools::logging::LoggingGuiAbortHandler *instance;
 };

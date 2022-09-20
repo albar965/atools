@@ -42,7 +42,7 @@ class NavBase :
 {
 public:
   NavBase(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~NavBase();
+  virtual ~NavBase() override;
 
   /*
    * @return optional airport ICAO ident

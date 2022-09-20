@@ -93,8 +93,8 @@ LoggingConfig::~LoggingConfig()
 
 void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelMap& channelMap)
 {
-  for(ChannelVector channelVector : channelMap.values())
-    closeStreams(channels, channelVector);
+  for(auto it = channelMap.constBegin(); it != channelMap.constEnd(); ++it)
+    closeStreams(channels, it.value());
 }
 
 void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelVector& channelVector)
@@ -141,13 +141,13 @@ QStringList LoggingConfig::getLogFiles()
   collectFileNames(filenames, criticalStreamsCat);
   collectFileNames(filenames, fatalStreamsCat);
   collectFileNames(filenames, emptyStreamsCat);
-  return filenames.toList();
+  return QStringList(filenames.begin(), filenames.end());
 }
 
 void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap)
 {
-  for(const ChannelVector& channel : channelMap.values())
-    collectFileNames(filenames, {channel});
+  for(auto it = channelMap.constBegin(); it != channelMap.constEnd(); ++it)
+    collectFileNames(filenames, {it.value()});
 }
 
 void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelVector& channelVector)
@@ -394,7 +394,7 @@ void LoggingConfig::readLevels(QSettings *settings, QHash<QString, Channel *>& c
   for(QString levelName : settings->allKeys())
   {
     // Split the "level.channel" string
-    QStringList levelList = levelName.split(".", QString::SkipEmptyParts);
+    QStringList levelList = levelName.split('.', QString::SkipEmptyParts);
     QString level = levelList.at(0);
 
     // Use default if category is not given

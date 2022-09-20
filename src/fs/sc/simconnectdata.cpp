@@ -38,6 +38,11 @@ SimConnectData::SimConnectData(const SimConnectData& other)
   *this = other;
 }
 
+SimConnectData::~SimConnectData()
+{
+
+}
+
 bool SimConnectData::read(QIODevice *ioDevice)
 {
   status = OK;

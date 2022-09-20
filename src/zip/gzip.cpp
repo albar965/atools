@@ -198,6 +198,13 @@ bool gzipDecompress(const QByteArray& input, QByteArray& output)
         // Determine decompressed size
         int have = (GZIP_CHUNK_SIZE - strm.avail_out);
 
+        if(have < 0 || have > GZIP_CHUNK_SIZE)
+        {
+          qWarning() << Q_FUNC_INFO << "Invalid value \"have\" while decompressing" << have;
+          output.clear();
+          return false;
+        }
+
         // Cumulate result
         if(have > 0)
           output.append((char *)out, have);

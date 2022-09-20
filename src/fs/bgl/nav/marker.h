@@ -45,7 +45,7 @@ class Marker :
 {
 public:
   Marker(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Marker();
+  virtual ~Marker() override;
 
   const QString& getIdent() const
   {

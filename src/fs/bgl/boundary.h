@@ -88,7 +88,7 @@ public:
    * optional COM frequency
    */
   Boundary(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Boundary();
+  virtual ~Boundary() override;
 
   const QString& getName() const
   {

@@ -37,7 +37,7 @@ public:
    * Read arrival/departure and all subrecords.
    */
   SidStar(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~SidStar();
+  virtual ~SidStar() override;
 
   const QHash<QString, QList<atools::fs::bgl::ApproachLeg> >& getEnrouteTransitions() const
   {

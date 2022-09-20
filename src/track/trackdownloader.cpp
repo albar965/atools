@@ -246,8 +246,8 @@ const atools::track::TrackVectorType& TrackDownloader::getTracks(TrackType type)
 
 void TrackDownloader::clearTracks()
 {
-  for(atools::track::TrackType key : trackList.keys())
-    trackList[key].clear();
+  for(auto it = trackList.begin(); it != trackList.end(); ++it)
+    it.value().clear();
 }
 
 bool TrackDownloader::hasAnyTracks()
@@ -266,8 +266,8 @@ bool TrackDownloader::hasTracks(TrackType type)
 int TrackDownloader::removeInvalid()
 {
   int num = 0;
-  for(atools::track::TrackType key : trackList.keys())
-    num += TrackReader::removeInvalid(trackList[key]);
+  for(auto it = trackList.begin(); it != trackList.end(); ++it)
+    num += TrackReader::removeInvalid(it.value());
   return num;
 }
 

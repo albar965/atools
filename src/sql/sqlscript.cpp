@@ -50,14 +50,16 @@ void SqlScript::executeScript(const QString& filename)
     if(verbose)
     {
       qDebug() << "-- Running script ------------------------------------------";
-      qDebug() << "--" << scriptFile.fileName() << "--";
+      qDebug() << "--" << filename << "--";
     }
+
     executeScript(scriptStream);
+
+    if(verbose)
+      qDebug() << "-- Done ----------------------------------------------------";
   }
   else
-    throw SqlException(
-            QString("Cannot open script file \"%1\". Reason: %2.").
-            arg(scriptFile.fileName()).arg(scriptFile.errorString()));
+    throw SqlException(QString("Cannot open script file \"%1\". Reason: %2.").arg(scriptFile.fileName()).arg(scriptFile.errorString()));
   scriptFile.close();
 }
 
@@ -67,15 +69,20 @@ void SqlScript::executeScript(QTextStream& script)
   parseSqlScript(script, statements);
 
   SqlQuery query(db);
-  for(ScriptCmd cmd : statements)
+  for(const ScriptCmd& cmd : statements)
   {
     if(verbose)
       qDebug().nospace() << cmd.lineNumber << ": " << QString(cmd.sql).replace('\n', ' ');
+
     query.exec(cmd.sql);
+
     if(verbose)
     {
-      qDebug().nospace() << "[" << query.numRowsAffected() << "]";
+      // Print affected rows if any ==============
+      if(query.numRowsAffected() > 0)
+        qDebug().nospace() << "[" << query.numRowsAffected() << "]";
 
+      // Print query results ==============
       if(query.isSelect())
       {
         int row = 0;
@@ -113,9 +120,6 @@ void SqlScript::executeScript(QTextStream& script)
     }
   }
   query.finish();
-
-  if(verbose)
-    qDebug() << "-- Done Running script ------------------------------------------";
 }
 
 void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements)

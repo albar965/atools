@@ -176,8 +176,8 @@ QVector<QLocale> Translator::findTranslationFilesInternal(const QString& path)
     if(locale.language() != QLocale::C)
     {
       qInfo() << Q_FUNC_INFO << fi.filePath() << "name" << locale.name() << "bcp47Name" << locale.bcp47Name()
-              << "country" << locale.countryToString(locale.country()) << "native" << locale.nativeCountryName()
-              << "language" << locale.languageToString(locale.language()) << "native" << locale.nativeLanguageName();
+              << "country" << QLocale::countryToString(locale.country()) << "native" << locale.nativeCountryName()
+              << "language" << QLocale::languageToString(locale.language()) << "native" << locale.nativeLanguageName();
       retval.append(locale);
     }
     else

@@ -201,8 +201,9 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
   }
 
   // Copy only valid updates that have a version
-  for(Update& upd : map.values())
+  for(auto it = map.begin(); it != map.end(); ++it)
   {
+    Update& upd = it.value();
     if(!upd.version.isEmpty())
     {
       // Remove line breaks and multiple spaces
