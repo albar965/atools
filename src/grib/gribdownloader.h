@@ -103,6 +103,9 @@ public:
    * downloadSslErrors is emitted in case of SSL errors. */
   void setIgnoreSslErrors(bool value);
 
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
+
 signals:
   /* Sent if download finished successfully */
   void gribDownloadFinished(const atools::grib::GribDatasetVector& datasets, QString downloadUrl);

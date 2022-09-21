@@ -73,6 +73,11 @@ public:
 
   void remove(const KEY& key);
 
+  int size() const
+  {
+    return hash.size();
+  }
+
 private:
   struct Entry
   {

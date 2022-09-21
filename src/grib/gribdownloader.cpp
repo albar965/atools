@@ -184,5 +184,14 @@ void GribDownloader::setIgnoreSslErrors(bool value)
   downloader->setIgnoreSslErrors(value);
 }
 
+void GribDownloader::debugDumpContainerSizes() const
+{
+  if(downloader != nullptr)
+    downloader->debugDumpContainerSizes();
+  qDebug() << Q_FUNC_INFO << "surfaces.size()" << surfaces.size();
+  qDebug() << Q_FUNC_INFO << "parameters.size()" << parameters.size();
+  qDebug() << Q_FUNC_INFO << "datasets.size()" << datasets.size();
+}
+
 } // namespace grib
 } // namespace atools

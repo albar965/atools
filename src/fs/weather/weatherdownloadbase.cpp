@@ -123,6 +123,14 @@ void WeatherDownloadBase::setHeaderParameters(const QHash<QString, QString>& val
   downloader->setHeaderParameters(value);
 }
 
+void WeatherDownloadBase::debugDumpContainerSizes() const
+{
+  if(downloader != nullptr)
+    downloader->debugDumpContainerSizes();
+  if(metarIndex != nullptr)
+    qDebug() << Q_FUNC_INFO << "metarIndex.size()" << metarIndex->size();
+}
+
 } // namespace weather
 } // namespace fs
 } // namespace atools

@@ -86,6 +86,9 @@ public:
   const QHash<QString, QString>& getHeaderParameters() const;
   void setHeaderParameters(const QHash<QString, QString>& value);
 
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
+
 signals:
   /* Emitted when file was downloaded and udpated */
   void weatherUpdated();

@@ -246,6 +246,12 @@ void HttpDownloader::setDefaultUserAgentShort(const QString& extension)
               arg(extension);
 }
 
+void HttpDownloader::debugDumpContainerSizes() const
+{
+  if(dataCache != nullptr)
+    qDebug() << Q_FUNC_INFO << "dataCache->size()" << dataCache->size();
+}
+
 void HttpDownloader::deleteReply()
 {
   if(reply != nullptr)

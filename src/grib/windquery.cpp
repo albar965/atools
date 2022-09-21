@@ -499,6 +499,12 @@ void WindQuery::getValidity(QDateTime& from, QDateTime& to) const
   to = analyisTime.addSecs(3600 * 6);
 }
 
+void WindQuery::debugDumpContainerSizes() const
+{
+  if(downloader != nullptr)
+    downloader->debugDumpContainerSizes();
+}
+
 WindData WindQuery::windForLayer(const WindAltLayer& layer, const QPoint& point) const
 {
   return layer.isValid() ? layer.winds.at(point.x() + point.y() * 360) : EMPTY_WIND_DATA;

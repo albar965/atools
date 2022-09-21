@@ -179,6 +179,12 @@ void XpWeatherReader::createFsWatcher()
   fileWatcher->setFilenamesAndStart(currentMetarFiles);
 }
 
+void XpWeatherReader::debugDumpContainerSizes() const
+{
+  qDebug() << Q_FUNC_INFO << "currentMetarFiles.size()" << currentMetarFiles.size();
+  qDebug() << Q_FUNC_INFO << "metarIndex.size()" << metarIndex->size();
+}
+
 } // namespace weather
 } // namespace fs
 } // namespace atools

@@ -218,6 +218,9 @@ public:
   /* Validity period */
   void getValidity(QDateTime& from, QDateTime& to) const;
 
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
+
 signals:
   /* Download successfully finished. Emitted for all init methods. */
   void windDataUpdated();

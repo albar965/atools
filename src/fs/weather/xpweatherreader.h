@@ -65,6 +65,9 @@ public:
   /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
   void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value);
 
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
+
 signals:
   void weatherUpdated();
 
