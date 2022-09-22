@@ -58,30 +58,30 @@
     <name>BinaryStream</name>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Unbekannt</translation>
+        <translation>Unbekannt</translation>
     </message>
     <message>
         <source>No error</source>
-        <translation type="unfinished"></translation>
+        <translation>Kein Fehler</translation>
     </message>
     <message>
         <source>Read past file end</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach Dateiende gelesen</translation>
     </message>
     <message>
         <source>Read corrupted data</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehlerhafte Daten gelesen</translation>
     </message>
     <message>
         <source>Write failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibfehler</translation>
     </message>
 </context>
 <context>
     <name>ChoiceDialog</name>
     <message>
         <source>Little Navmap - </source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - </translation>
     </message>
 </context>
 <context>
@@ -100,11 +100,11 @@
     </message>
     <message>
         <source>Generic Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>Allgemeine Flugplätze</translation>
     </message>
     <message>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Basis</translation>
     </message>
 </context>
 <context>
@@ -188,11 +188,11 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Pattern contains invalid characters, double spaces or is longer than %1 characters.%2Not allowed are: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Muster enthält ungültige Zeichen, doppelte Leerzeichen oder ist länger als %1 Zeichen.%2Nicht erlaubt sind: %3</translation>
     </message>
     <message>
         <source>Pattern is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Muster ist leer.</translation>
     </message>
 </context>
 <context>
@@ -1116,19 +1116,19 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Generic Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>Allgemeine Flugplätze</translation>
     </message>
     <message>
         <source>Cleaning Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Bereinige Datenbank</translation>
     </message>
     <message>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Basis</translation>
     </message>
     <message>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschlüsseltes Add-on &quot;%1&quot; gefunden. Add-on wird möglicherweise nicht korrekt angezeigt.</translation>
     </message>
 </context>
 <context>
@@ -1175,7 +1175,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation>&lt;b&gt;Ein fataler Fehler ist aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Klicken Sie OK, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Ein fataler Fehler ist aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Klicken Sie OK, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
     </message>
     <message>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
@@ -1667,6 +1667,10 @@ Datei: &quot;%2&quot;
     <message>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
+        <translation>.</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1711,27 +1715,27 @@ Datei: &quot;%2&quot;
     <name>TreeDialog</name>
     <message>
         <source>Little Navmap - </source>
-        <translation type="unfinished"></translation>
+        <translation>Little Navmap - </translation>
     </message>
     <message>
         <source>Text Display Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Einstellungen zur Textanzeige</translation>
     </message>
     <message>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Alle Auswählen</translation>
     </message>
     <message>
         <source>Select &amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Keine Auswählen</translation>
     </message>
     <message>
         <source>&amp;Expand All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Alle ausklappen</translation>
     </message>
     <message>
         <source>&amp;Collapse All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle &amp;einklappen</translation>
     </message>
 </context>
 <context>
@@ -1810,17 +1814,17 @@ Importieren gestoppt.</translation>
     <message>
         <source>%1.%2%3%4%5</source>
         <comment>Used to build a version string like 1.2.33.beta1</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1.%2%3%4%5</translation>
     </message>
     <message>
         <source>.%1</source>
         <comment>Patchlevel in version string</comment>
-        <translation type="unfinished"></translation>
+        <translation>.%1</translation>
     </message>
     <message>
         <source>.%1</source>
         <comment>Name like &quot;beta&quot; in version string</comment>
-        <translation type="unfinished"></translation>
+        <translation>.%1</translation>
     </message>
 </context>
 <context>
@@ -1906,11 +1910,11 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Counting files for Global Scenery/Global Airports ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zähle Dateien für Global Scenery bzw. Global Airports ...</translation>
     </message>
     <message>
         <source>Post processing Airways</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachbearbeitung der Luftstraßen</translation>
     </message>
 </context>
 <context>
@@ -2161,7 +2165,7 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</source>
-        <translation>Zu viele Fehler beim Lesen vom Simulator. Verbindung getrennt. &lt;i&gt;%1&lt;/i&gt; für weitere Versuche neu starten.</translation>
+        <translation type="vanished">Zu viele Fehler beim Lesen vom Simulator. Verbindung getrennt. &lt;i&gt;%1&lt;/i&gt; für weitere Versuche neu starten.</translation>
     </message>
     <message>
         <source>Error reading from simulator: %1. Disconnected. Restart &lt;i&gt;%2&lt;/i&gt; to try again.</source>
@@ -2177,6 +2181,10 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Writing to &quot;%1&quot; in VATSIM format every %2 seconds.</source>
+        <translation>Schreibe alle %2 Sekunden &quot;%1&quot; im VATSIM-Format.</translation>
+    </message>
+    <message>
+        <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2195,7 +2203,7 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <name>atools::fs::userdata::AirspaceReaderIvao</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation type="unfinished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
+        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -2209,7 +2217,7 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <name>atools::fs::userdata::AirspaceReaderVatsim</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation type="unfinished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
+        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -2247,7 +2255,7 @@ Nachtzeit: %5</translation>
     <name>atools::fs::weather::WeatherNetDownload</name>
     <message>
         <source>No METARs found in download.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine METAR-Berichte im Download gefunden.</translation>
     </message>
 </context>
 <context>
@@ -2300,11 +2308,15 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation>&lt;b&gt;Wenn der Fehler weiterhin besteht oder während des Programmstarts auftritt, löschen Sie alle Einstellungen und Datenbankdateien von &lt;i&gt;%1&lt;/i&gt; und versuchen Sie es erneut.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Wenn Sie diesen Fehler melden wollen, hängen Sie die Log- und Konfigurationsdateien an Ihren Bericht an, fügen alle anderen verfügbaren Informationen hinzu und senden alles an eine der unten genannten Kontaktadressen.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Wenn der Fehler weiterhin besteht oder während des Programmstarts auftritt, löschen Sie alle Einstellungen und Datenbankdateien von &lt;i&gt;%1&lt;/i&gt; und versuchen Sie es erneut.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Wenn Sie diesen Fehler melden wollen, hängen Sie die Log- und Konfigurationsdateien an Ihren Bericht an, fügen alle anderen verfügbaren Informationen hinzu und senden alles an eine der unten genannten Kontaktadressen.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
         <translation>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Kontakt und Support&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2429,18 +2441,18 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>&amp;Open all Tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Alle Reiter öffnen</translation>
     </message>
     <message>
         <source>&amp;Close all Tabs except Current</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließe alle &amp;Reiter außer dem aktiven</translation>
     </message>
 </context>
 <context>
     <name>atools::gui::TreeDialog</name>
     <message>
         <source>Duplicate id %1 found while adding item in TreeDialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Doppelte ID %1 beim Hinzufügen zur Baumansicht gefunden</translation>
     </message>
 </context>
 <context>
@@ -2451,7 +2463,7 @@ Nachtzeit: %5</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Längengrad ist eine ungültige Zahl in Zeile
+        <translation>Längengrad ist eine ungültige Zahl in Zeile
 
 &quot;%1&quot;
 
@@ -2463,7 +2475,7 @@ Importieren gestoppt.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Breitengrad ist eine ungültige Zahl in Zeile
+        <translation>Breitengrad ist eine ungültige Zahl in Zeile
 
 &quot;%1&quot;
 
@@ -2475,7 +2487,7 @@ Importieren gestoppt.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Koordinaten sind ungültig in Zeile
+        <translation>Koordinaten sind ungültig in Zeile
 
 &quot;%1&quot;
 
@@ -2487,7 +2499,7 @@ Importieren gestoppt.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Koordinaten sind Null in Zeile
+        <translation>Koordinaten sind Null in Zeile
 
 &quot;%1&quot;
 
@@ -2499,7 +2511,7 @@ Importieren gestoppt.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Koordinaten sind außerhalb des gültigen Bereichs in Zeile
+        <translation>Koordinaten sind außerhalb des gültigen Bereichs in Zeile
 
 &quot;%1&quot;
 
@@ -2507,63 +2519,63 @@ Importieren gestoppt.</translation>
     </message>
     <message>
         <source>preUndoBulkInsert() not called</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabelle ohne Undo/Redo modifiziert &quot;%1&quot;.</translation>
     </message>
     <message>
         <source>&amp;%1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;%1</translation>
     </message>
     <message>
         <source>&amp;Undo%1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rückgängig%1</translation>
     </message>
     <message>
         <source>&amp;Redo%1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Wiederherstellen%1</translation>
     </message>
     <message>
         <source>no %1</source>
-        <translation type="unfinished"></translation>
+        <translation>keinen %1</translation>
     </message>
     <message>
         <source>one %1</source>
-        <translation type="unfinished"></translation>
+        <translation>einen %1</translation>
     </message>
     <message>
         <source>two %1</source>
-        <translation type="unfinished"></translation>
+        <translation>zwei %1</translation>
     </message>
     <message>
         <source>%1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 %2</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Rückgängig</translation>
     </message>
     <message>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiederherstellen</translation>
     </message>
     <message>
         <source>%1 adding of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinzufügen von %2 %1</translation>
     </message>
     <message>
         <source>%1 editing of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Bearbeiten von %2 %1</translation>
     </message>
     <message>
         <source>%1 deleting of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen von %2 %1</translation>
     </message>
     <message>
         <source>Table undo_current is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabelle undo_current ist leer.</translation>
     </message>
 </context>
 <context>

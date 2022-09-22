@@ -40,7 +40,7 @@ void LoggingGuiAbortHandler::guiAbortFunction(const QString& msg)
   if(atools::gui::Application::isShowExceptionDialog())
     QMessageBox::warning(LoggingHandler::parentWidget, QApplication::applicationName(),
                          QObject::tr("<b>A fatal error has occured.</b><br/><br/>"
-                                     "<i>%1</i><br/><br/>"
+                                     "%1<br/><br/>"
                                      "%2"
                                      "<hr/>%3"
                                        "<hr/>%4<br/>"

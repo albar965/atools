@@ -1459,8 +1459,9 @@ File: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/logging/loggingguiabort.cpp" line="42"/>
-        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation>&lt;b&gt;Incontrato un errore fatale.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Premere OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
+        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <oldsource>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;Incontrato un errore fatale.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Premere OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="src/atools.cpp" line="93"/>
@@ -2280,58 +2281,58 @@ Importazione interrotta.</translation>
         <translation>Processamento Aerovie</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="318"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="418"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="319"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="419"/>
         <source>Reading: %1</source>
         <translation>Leggendo: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="807"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="832"/>
         <source>Counting files for Resources ...</source>
         <translation>Conteggio dei file delle Risorse ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="815"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="840"/>
         <source>Counting files for Custom Scenery/Global Airports ...</source>
         <translation>Conteggio dei file di Scenari Personalizzati/Aeroporti Globali ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="828"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="853"/>
         <source>Counting files for Global Scenery/Global Airports ...</source>
         <translation>Conteggio dei file di Scenario Globale/Aeroporti Globali ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="839"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="864"/>
         <source>Counting files for Airspaces ...</source>
         <translation>Conteggio dei file degli Spazi aerei ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="844"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="869"/>
         <source>Counting files for Custom Scenery ...</source>
         <translation>Conteggio dei file degli Scenari Personalizzati ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="855"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="880"/>
         <source>Counting files for Custom Data ...</source>
         <translation>Conteggio dei file dei Dari Personalizzati ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="925"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="944"/>
         <source>AIRAC cycle in file is empty.</source>
         <translation>Il ciclo AIRAC nel file è vuoto.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="933"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="952"/>
         <source>Found different AIRAC cycles across navdata files. %1 and %2</source>
         <translation>Trovati differenti cicli AIRAC nei file navdata. %1 e %2</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="943"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="962"/>
         <source>AIRAC cycle not found in file.</source>
         <translation>Ciclo AIRAC non trovato nel file.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="982"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1001"/>
         <source>Cannot find valid files for X-Plane navdata in either
 &quot;%1&quot; or
 &quot;%2&quot;
@@ -2371,57 +2372,57 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
         <translation type="vanished">Il File non esiste</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="69"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="84"/>
         <source>Cannot open file &quot;%1&quot;. Not a scenery_packs.ini file. %2.</source>
         <translation>Impossibile aprire il file &quot;%1&quot;. Non è una file scenery_packs.ini. %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="74"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="89"/>
         <source>Intital &quot;I&quot; or &quot;A&quot; missing</source>
         <translation>&quot;I&quot; o &quot;A&quot; iniziali mancanti</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="79"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="94"/>
         <source>&quot;Version&quot; missing</source>
         <translation>&quot;Versione&quot; mancante</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="84"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="99"/>
         <source>Version number not valid</source>
         <translation>Numero Versione non valido</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="89"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="104"/>
         <source>&quot;SCENERY&quot; missing</source>
         <translation>&quot;SCENERY&quot; mancante</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="94"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="109"/>
         <source>Empty line after &quot;SCENERY&quot; missing</source>
         <translation>Linea vuota dopo &quot;SCENERY&quot; mancante</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="109"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="126"/>
         <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
         <translation>Voce non valida alla riga %1 in &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="154"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="168"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
         <translation>&quot;%1&quot; alla riga %2 in &quot;%3&quot; non esiste.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="157"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="171"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
         <translation>&quot;%1&quot; alla riga %2 in &quot;%3&quot; non è una cartella.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="160"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="174"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
         <translation>&quot;%1&quot; alla riga %2 in &quot;%3&quot; non leggibile.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="186"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="200"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
     </message>
@@ -2642,8 +2643,9 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="413"/>
-        <source>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</source>
-        <translation>Troppi errori leggendo dal simulatore. Disconnesso. Riavvia &lt;i&gt;%1&lt;/i&gt; per riprovare.</translation>
+        <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
+        <oldsource>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</oldsource>
+        <translation type="unfinished">Troppi errori leggendo dal simulatore. Disconnesso. Riavvia &lt;i&gt;%1&lt;/i&gt; per riprovare.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="432"/>
@@ -2766,8 +2768,8 @@ Ore Notturne: %5</translation>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="451"/>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="493"/>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="497"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="547"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="591"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="551"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="595"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
     </message>
@@ -2791,7 +2793,7 @@ Ore Notturne: %5</translation>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="613"/>
+        <location filename="src/grib/windquery.cpp" line="699"/>
         <source>Unknown error.</source>
         <translation>Errore sconosciuto.</translation>
     </message>
@@ -2800,9 +2802,9 @@ Ore Notturne: %5</translation>
     <name>atools::gui::Application</name>
     <message>
         <location filename="src/gui/application.cpp" line="97"/>
-        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
-        <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</oldsource>
-        <translation>&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di &lt;i&gt;%1&lt;/i&gt; e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
+        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
+        <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di &lt;i&gt;%1&lt;/i&gt; e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>

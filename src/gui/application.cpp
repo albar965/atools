@@ -95,10 +95,10 @@ catch(...)
 QString Application::generalErrorMessage()
 {
   return tr("<b>If the problem persists or occurs during startup "
-              "delete all settings and database files of <i>%1</i> and try again.</b><br/><br/>"
+              "delete all settings and database files of %1 and try again.</b><br/><br/>"
               "<b>If you wish to report this error attach the log and configuration files "
-                "to your report, add all other available information and send it to one "
-                "of the contact addresses below.</b><br/>").arg(QApplication::applicationName());
+                "to your report, add all other available information and send it to "
+                "the contact address below.</b><br/>").arg(QApplication::applicationName());
 }
 
 void Application::setTooltipsDisabled(const QList<QObject *>& exceptions)

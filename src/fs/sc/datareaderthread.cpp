@@ -411,7 +411,7 @@ void DataReaderThread::run()
         {
           numErrors = 0;
           emit postLogMessage(tr("Too many errors reading from simulator. Disconnected. "
-                                 "Restart <i>%1</i> to try again.").
+                                 "Restart %1 to try again.").
                               arg(QCoreApplication::applicationName()), false, true);
           break;
         }

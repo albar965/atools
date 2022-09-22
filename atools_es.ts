@@ -1113,7 +1113,7 @@ Atrapada excepción
     </message>
     <message>
         <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation>&lt;b&gt;Ha ocurrido un error fatal. &lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Presione OK para salir de la aplicación. &lt;/h3&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Ha ocurrido un error fatal. &lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Presione OK para salir de la aplicación. &lt;/h3&gt;</translation>
     </message>
     <message>
         <source>Version mismatch</source>
@@ -1608,6 +1608,10 @@ Atrapada excepción
         <comment>Dot used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
@@ -2079,10 +2083,6 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <translation>Error leyendo &quot;%1&quot;: %2.</translation>
     </message>
     <message>
-        <source>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Error reading from simulator: %1. Disconnected. Restart &lt;i&gt;%2&lt;/i&gt; to try again.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2096,6 +2096,10 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
     <message>
         <source>Writing to &quot;%1&quot; in VATSIM format every %2 seconds.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2210,11 +2214,11 @@ Night time: %5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
+        <source>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
+        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

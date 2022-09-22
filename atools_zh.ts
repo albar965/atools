@@ -1956,8 +1956,9 @@ File: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/logging/loggingguiabort.cpp" line="42"/>
-        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation>&lt;b&gt;发生了一个致命错误。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;点击 OK 以退出此程序。&lt;/h3&gt;</translation>
+        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <oldsource>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;发生了一个致命错误。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;点击 OK 以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="src/track/tracktypes.cpp" line="61"/>
@@ -2163,58 +2164,58 @@ Import stopped.</source>
         <translation type="unfinished">后期处理航路</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="318"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="418"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="319"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="419"/>
         <source>Reading: %1</source>
         <translation>读取：%1</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="807"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="832"/>
         <source>Counting files for Resources ...</source>
         <translation>正在资源文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="815"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="840"/>
         <source>Counting files for Custom Scenery/Global Airports ...</source>
         <translation>正在自定义地景/全球机场文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="828"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="853"/>
         <source>Counting files for Global Scenery/Global Airports ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="839"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="864"/>
         <source>Counting files for Airspaces ...</source>
         <translation>正在空域文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="844"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="869"/>
         <source>Counting files for Custom Scenery ...</source>
         <translation>正在自定义地景文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="855"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="880"/>
         <source>Counting files for Custom Data ...</source>
         <translation>正在自定义数据文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="925"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="944"/>
         <source>AIRAC cycle in file is empty.</source>
         <translation>文件里的 AIRAC 周期是空的。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="933"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="952"/>
         <source>Found different AIRAC cycles across navdata files. %1 and %2</source>
         <translation>导航数据文件里找到了不同的 AIRAC 周期。 %1 及 %2</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="943"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="962"/>
         <source>AIRAC cycle not found in file.</source>
         <translation>文件里没有找到 AIRAC 周期。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="982"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1001"/>
         <source>Cannot find valid files for X-Plane navdata in either
 &quot;%1&quot; or
 &quot;%2&quot;
@@ -2242,57 +2243,57 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <translation type="vanished">文件不存在</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="69"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="84"/>
         <source>Cannot open file &quot;%1&quot;. Not a scenery_packs.ini file. %2.</source>
         <translation>无法打开文件“%1”。%2 不是一个 scenery_packs.ini 文件。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="74"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="89"/>
         <source>Intital &quot;I&quot; or &quot;A&quot; missing</source>
         <translation>开头的“I”或者“A”丢失了</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="79"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="94"/>
         <source>&quot;Version&quot; missing</source>
         <translation>“version”丢失</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="84"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="99"/>
         <source>Version number not valid</source>
         <translation>版本号无效</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="89"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="104"/>
         <source>&quot;SCENERY&quot; missing</source>
         <translation>“SCENERY”丢失</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="94"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="109"/>
         <source>Empty line after &quot;SCENERY&quot; missing</source>
         <translation>“SCENERY”后的空行丢失</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="109"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="126"/>
         <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
         <translation>“%2”的第“%1”行是无效的条目。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="154"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="168"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
         <translation>“%3”里第“%2”行的“%1”不存在。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="157"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="171"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
         <translation>“%3”里第“%2”行的“%1”不是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="160"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="174"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
         <translation>“%3”里第“%2”行的“%1”不可读。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="186"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="200"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>无法打开文件“%1”。原因是：%2。</translation>
     </message>
@@ -2510,8 +2511,9 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="413"/>
-        <source>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</source>
-        <translation>从模拟器读取时有太多错误。已断开。重启&lt;i&gt;%1&lt;/i&gt;再试。</translation>
+        <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
+        <oldsource>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</oldsource>
+        <translation type="unfinished">从模拟器读取时有太多错误。已断开。重启&lt;i&gt;%1&lt;/i&gt;再试。</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="432"/>
@@ -2634,8 +2636,8 @@ Night time: %5</source>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="451"/>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="493"/>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="497"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="547"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="591"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="551"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="595"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>无法打开文件“%1”。原因是：%2。</translation>
     </message>
@@ -2659,7 +2661,7 @@ Night time: %5</source>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="613"/>
+        <location filename="src/grib/windquery.cpp" line="699"/>
         <source>Unknown error.</source>
         <translation>未知错误。</translation>
     </message>
@@ -2668,9 +2670,9 @@ Night time: %5</source>
     <name>atools::gui::Application</name>
     <message>
         <location filename="src/gui/application.cpp" line="97"/>
-        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
-        <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</oldsource>
-        <translation>&lt;b&gt;如在启动时此问题持续或再次发生，删除 %1 里的所有设置和数据库再试一次。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;如您希望报告这个错误，附上日志及配置文件到您的报告，以及其他信息一起发生到一下任意一个联系地址。&lt;/b&gt;&lt;br/&gt;</translation>
+        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
+        <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;如在启动时此问题持续或再次发生，删除 %1 里的所有设置和数据库再试一次。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;如您希望报告这个错误，附上日志及配置文件到您的报告，以及其他信息一起发生到一下任意一个联系地址。&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="122"/>
