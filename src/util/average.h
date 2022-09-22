@@ -79,6 +79,14 @@ public:
     beforeFirstTimestampMs = 0;
   }
 
+  int size() const
+  {
+    return samples.size();
+  }
+
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
+
   struct Sample
   {
     Sample()

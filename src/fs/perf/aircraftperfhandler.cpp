@@ -192,15 +192,15 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
   }
 
   // Remember segment dependent sample time to allow averaging =============
-  qint64 now = QDateTime::currentMSecsSinceEpoch();
+  qint64 aircraftZuluTime = simulatorData.getUserAircraftConst().getZuluTime().toMSecsSinceEpoch();
   if(flightSegment != currentFlightSegment)
   {
     if(flightSegment == CLIMB)
-      lastClimbSampleTimeMs = now;
+      lastClimbSampleTimeMs = aircraftZuluTime;
     else if(flightSegment == CRUISE)
-      lastCruiseSampleTimeMs = now;
+      lastCruiseSampleTimeMs = aircraftZuluTime;
     else if(flightSegment == DESCENT)
-      lastDescentSampleTimeMs = now;
+      lastDescentSampleTimeMs = aircraftZuluTime;
   }
 
   // Sum up taxi fuel  ========================================================
@@ -208,10 +208,10 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
     perf->setTaxiFuel(startFuel - curSimAircraft->getFuelTotalWeightLbs());
 
   // Sample every 500 ms ========================================
-  if(now > lastSampleTimeMs + SAMPLE_TIME_MS)
+  if(aircraftZuluTime > lastSampleTimeMs + SAMPLE_TIME_MS)
   {
-    samplePhase(flightSegment, now, now - lastSampleTimeMs);
-    lastSampleTimeMs = now;
+    samplePhase(flightSegment, aircraftZuluTime, aircraftZuluTime - lastSampleTimeMs);
+    lastSampleTimeMs = aircraftZuluTime;
   }
 
   // Send message is flight segment has changed  ========================

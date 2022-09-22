@@ -143,5 +143,10 @@ float MovingAverageTime::getAverage2() const
     return total2;
 }
 
+void MovingAverageTime::debugDumpContainerSizes() const
+{
+  qDebug() << Q_FUNC_INFO << "samples.size()" << samples.size();
+}
+
 } // namespace util
 } // namespace atools
