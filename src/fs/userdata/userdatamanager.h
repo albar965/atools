@@ -66,7 +66,7 @@ public:
                 atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,
                 QChar separator = ',', QChar escape = '"') const;
 
-  /* Import and export user_fix.dat file from X-Plane */
+  /* Import and export user_fix.dat file from X-Plane. Export adds name field and uses first tag as airport field */
   int importXplane(const QString& filepath);
   int exportXplane(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags, bool xp12);
 

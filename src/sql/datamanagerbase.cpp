@@ -421,7 +421,7 @@ SqlRecord DataManagerBase::getEmptyRecord() const
   return rec;
 }
 
-atools::geo::Pos DataManagerBase::validateCoordinates(const QString& line, const QString& lonx, const QString& laty)
+atools::geo::Pos DataManagerBase::validateCoordinates(const QString& line, const QString& lonx, const QString& laty, bool checkNull)
 {
   bool lonxOk = true, latyOk = true;
   Pos pos(lonx.toFloat(&lonxOk), laty.toFloat(&latyOk));
@@ -435,7 +435,7 @@ atools::geo::Pos DataManagerBase::validateCoordinates(const QString& line, const
   if(!pos.isValid())
     throw Exception(tr("Coordinates are not valid in line\n\n\"%1\"\n\nImport stopped.").arg(line));
 
-  if(pos.isNull())
+  if(checkNull && pos.isNull())
     throw Exception(tr("Coordinates are null in line\n\n\"%1\"\n\nImport stopped.").arg(line));
 
   if(!pos.isValidRange())

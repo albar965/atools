@@ -149,6 +149,14 @@ bool speedAndAltitudeMatch(const QString& item);
 /* Gives always NXXXAXXX for altitude < 18000 ft or NXXXFXXX for altitude > 18000 */
 QString createSpeedAndAltitude(float speedKnots, float altFeet);
 
+/* Converts ARINC 424.18 field type definition 5.42 to 32 bit representation
+ * E.g. "V  " to "2105430" */
+QString waypointFlagsToXplane(QString flags, const QString& defaultValue = QString());
+
+/* Converts 32 bit representation to ARINC 424.18 field type definition 5.42
+ * E.g. "2105430" to "V  " */
+QString waypointFlagsFromXplane(const QString& flags, const QString& defaultValue = QString());
+
 } // namespace util
 } // namespace fs
 } // namespace atools

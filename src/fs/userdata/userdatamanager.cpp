@@ -17,16 +17,16 @@
 
 #include "fs/userdata/userdatamanager.h"
 
-#include "sql/sqlutil.h"
-#include "sql/sqlexport.h"
-#include "sql/sqldatabase.h"
-#include "sql/sqltransaction.h"
-#include "util/csvreader.h"
 #include "atools.h"
-#include "geo/pos.h"
+#include "exception.h"
 #include "fs/common/magdecreader.h"
 #include "fs/util/fsutil.h"
-#include "exception.h"
+#include "geo/pos.h"
+#include "sql/sqldatabase.h"
+#include "sql/sqlexport.h"
+#include "sql/sqltransaction.h"
+#include "sql/sqlutil.h"
+#include "util/csvreader.h"
 
 #include <QDir>
 #include <QRegularExpression>
@@ -81,7 +81,8 @@ enum Index
   IDENT = 2,
   AIRPORT = 3,
   REGION = 4,
-  FLAGS = 5
+  FLAGS = 5,
+  NAME = 6
 };
 
 }
@@ -169,7 +170,7 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
 
       if(lineNum == 0)
       {
-        QString header = QString(line).replace(" ", QString()).toLower();
+        QString header = QString(line).replace(' ', QString()).toLower();
         if(flags & CSV_HEADER || header.startsWith("type,name,ident,latitude,longitude,elevation"))
         {
           lineNum++;
@@ -214,7 +215,7 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
 
       insertQuery.bindValue(":altitude", at(values, csv::ALT));
 
-      validateCoordinates(line, at(values, csv::LONX), at(values, csv::LATY));
+      validateCoordinates(line, at(values, csv::LONX), at(values, csv::LATY), false /* checkNull */);
       insertQuery.bindValue(":lonx", atFloat(values, csv::LONX, true));
       insertQuery.bindValue(":laty", atFloat(values, csv::LATY, true));
       insertQuery.exec();
@@ -242,8 +243,7 @@ int UserdataManager::importXplane(const QString& filepath)
 {
   SqlTransaction transaction(db);
   preUndoBulkInsert();
-  QString insert = SqlUtil(db).buildInsertStatement(tableName,
-                                                    QString(), {idColumnName, "description", "altitude"}, true);
+  QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(), {idColumnName, "description", "altitude"}, true);
   SqlQuery insertQuery(db);
   insertQuery.prepare(insert);
 
@@ -262,7 +262,7 @@ int UserdataManager::importXplane(const QString& filepath)
       throw atools::Exception("File is not an X-Plane user_fix.dat file.");
 
     line = stream.readLine().simplified();
-    if(!line.startsWith("11"))
+    if(!line.startsWith("11") && !line.startsWith("12"))
       throw atools::Exception("File is not an X-Plane user_fix.dat file.");
 
     line = stream.readLine().simplified();
@@ -278,18 +278,26 @@ int UserdataManager::importXplane(const QString& filepath)
       if(line == "99")
         break;
 
-      QStringList cols = line.split(" ");
+      QStringList cols = line.split(' ');
+
+      // XP12 "51.801667   -8.573889  VP001 ENRT EI 2105430 HALFWAY ROUTE"
+      // XP11 "46.646819444 -123.722388889 AAYRR KSEA  K1 4530263"
+      QStringList tags;
+      tags.append(at(cols, xp::AIRPORT, true /* nowarn */));
+      tags.append(atools::fs::util::waypointFlagsFromXplane(at(cols, xp::FLAGS, true /* nowarn */)).replace(' ', '_'));
+      tags.removeAll(QString());
 
       insertQuery.bindValue(":type", "Waypoint");
       insertQuery.bindValue(":ident", at(cols, xp::IDENT));
       insertQuery.bindValue(":region", at(cols, xp::REGION));
-      insertQuery.bindValue(":tags", at(cols, xp::AIRPORT));
+      insertQuery.bindValue(":tags", tags.join(' '));
+      insertQuery.bindValue(":name", cols.mid(xp::NAME).join(' ')); // Get rest of line as name
       insertQuery.bindValue(":last_edit_timestamp", now.toString(Qt::ISODate));
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
       insertQuery.bindValue(":temp", 0);
 
-      validateCoordinates(line, at(cols, xp::LONX), at(cols, xp::LATY));
+      validateCoordinates(line, at(cols, xp::LONX), at(cols, xp::LATY), false /* checkNull */);
       insertQuery.bindValue(":lonx", at(cols, xp::LONX));
       insertQuery.bindValue(":laty", at(cols, xp::LATY));
       insertQuery.exec();
@@ -364,7 +372,7 @@ int UserdataManager::importGarmin(const QString& filepath)
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
       insertQuery.bindValue(":temp", 0);
 
-      validateCoordinates(line, at(cols, gm::LONX), at(cols, gm::LATY));
+      validateCoordinates(line, at(cols, gm::LONX), at(cols, gm::LATY), false /* checkNull */);
       insertQuery.bindValue(":lonx", at(cols, gm::LONX));
       insertQuery.bindValue(":laty", at(cols, gm::LATY));
       insertQuery.exec();
@@ -520,11 +528,25 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
     }
 
     QueryWrapper query(
-      "select " + idColumnName + ", ident, name, tags, laty, lonx, altitude, tags, region from " + tableName,
-      db, ids, idColumnName);
+      "select " + idColumnName + ", ident, name, tags, laty, lonx, altitude, tags, region from " + tableName, db, ids, idColumnName);
+
+    // X-Plane 11
+    // I
+    // 1101 Version - data cycle 1704, build 20170325, metadata FixXP1101.
+    //
+    // 48.90000000 15.30833300 PABFO PABFO ZZ
     // 50.88166700    12.58666700  PACEC PACEC ZZ
     // 46.646819444 -123.722388889 AAYRR KSEA  K1 4530263
     // 37.770908333 -122.082811111 AAAME ENRT  K2 4530263
+
+    // X-Plane 12
+    // I
+    // 1200 Version - data cycle 1234, build 1234, metadata FixXP1200. blah blah blah
+    //
+    // 51.801667   -8.573889  VP001 ENRT EI 2105430 HALFWAY ROUTE
+    // 51.816389   -8.390833  VP002 ENRT EI 2105430 CARRIGALINE
+    // 99
+
     query.exec();
     while(query.next())
     {
@@ -532,12 +554,26 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
 
       stream << QString::number(query.query.valueDouble("laty"), 'f', 8)
              << " " << QString::number(query.query.valueDouble("lonx"), 'f', 8)
-             << " " << atools::fs::util::adjustIdent(query.query.valueStr("ident"), 5, query.query.valueInt(idColumnName))
-             << " " << "ENRT" // Ignore airport here
-             << " " << (region.isEmpty() ? "ZZ" : atools::fs::util::adjustRegion(region));
+             << " " << atools::fs::util::adjustIdent(query.query.valueStr("ident"), 5, query.query.valueInt(idColumnName));
 
       if(xp12)
+      {
+        QString airportIdent = query.query.valueStr("tags").section(' ', 0, 0);
+        if(airportIdent.isEmpty())
+          airportIdent = "ENRT"; // En-route
+        stream << " " << airportIdent;
+      }
+      else
+        stream << " " << "ENRT"; // Ignore airport here
+
+      stream << " " << (region.isEmpty() ? "ZZ" : atools::fs::util::adjustRegion(region));
+
+      if(xp12)
+      {
+        // Use VFR waypoint as default if nothing given
+        stream << " " << atools::fs::util::waypointFlagsToXplane(query.query.valueStr("tags").section(' ', 1, 1), "2105430");
         stream << " " << query.query.valueStr("name");
+      }
 
       stream << endl;
       numExported++;

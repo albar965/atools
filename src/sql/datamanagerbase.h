@@ -284,7 +284,7 @@ private:
   QString at(const QStringList& line, int index, bool nowarn = false);
 
   /* throws an exception if the coodinates are not valid */
-  geo::Pos validateCoordinates(const QString& line, const QString& lonx, const QString& laty);
+  geo::Pos validateCoordinates(const QString& line, const QString& lonx, const QString& laty, bool checkNull = true);
 
   /* Add column with given name and type to table and undo table if not already present.
    * Returns true if table was changed. */

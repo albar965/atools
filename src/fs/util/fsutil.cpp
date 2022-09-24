@@ -927,6 +927,61 @@ void sidStarMultiRunways(const QStringList& runwayNames, QString arincName, cons
   }
 }
 
+QString waypointFlagsToXplane(QString flags, const QString& defaultValue)
+{
+  // Allow underscore as space replacement and quotes
+  flags.replace('_', ' ').remove('\"');
+
+  if(flags.size() != 3)
+    return defaultValue;
+  else
+  {
+    // 32bit representation of the 3-byte field defined by ARINC
+    // 424.18 field type definition 5.42, with the 4th byte set to 0 in
+    // Little Endian byte order. This field can be empty ONLY for user
+    // waypoints in user_fix.dat
+    union
+    {
+      quint32 intValue;
+      unsigned char byteValue[4];
+    } u;
+
+    u.byteValue[0] = atools::strToUChar(flags, 0); // Col 27: "V" = "VFR Waypoint", "I" = Unnamed Charted Intersection, "R" = Named Intersection
+    u.byteValue[1] = atools::strToUChar(flags, 1); // Col 28
+    u.byteValue[2] = atools::strToUChar(flags, 2); // Col 29
+    u.byteValue[3] = 0; // Fourth is null
+    return QString::number(u.intValue);
+  }
+}
+
+QString waypointFlagsFromXplane(const QString& flags, const QString& defaultValue)
+{
+  // 32bit representation of the 3-byte field defined by ARINC
+  // 424.18 field type definition 5.42, with the 4th byte set to 0 in
+  // Little Endian byte order. This field can be empty ONLY for user
+  // waypoints in user_fix.dat
+  union
+  {
+    quint32 intValue;
+    unsigned char byteValue[4];
+  } u;
+  bool ok;
+  u.intValue = flags.toUInt(&ok); // Always little endian
+  QString arincTypeStr(defaultValue);
+  if(ok)
+  {
+    if(u.byteValue[0] > 0)
+      arincTypeStr.append(QChar(u.byteValue[0]));
+    if(u.byteValue[1] > 1)
+      arincTypeStr.append(QChar(u.byteValue[1]));
+    if(u.byteValue[2] > 2)
+      arincTypeStr.append(QChar(u.byteValue[2]));
+    if(u.byteValue[3] > 3)
+      arincTypeStr.append(QChar(u.byteValue[3]));
+  }
+  return arincTypeStr;
+}
+
 } // namespace util
 } // namespace fs
 } // namespace atools

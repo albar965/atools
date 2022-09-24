@@ -18,9 +18,10 @@
 #include "fs/xp/xpfixwriter.h"
 
 #include "fs/common/airportindex.h"
-#include "fs/xp/xpconstants.h"
-#include "fs/progresshandler.h"
 #include "fs/common/magdecreader.h"
+#include "fs/progresshandler.h"
+#include "fs/util/fsutil.h"
+#include "fs/xp/xpconstants.h"
 #include "geo/pos.h"
 
 #include "sql/sqlutil.h"
@@ -75,22 +76,9 @@ void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
   insertWaypointQuery->bindValue(":region", at(line, REGION)); // ZZ for no region
   insertWaypointQuery->bindValue(":type", "WN"); // All named waypoints
 
-  if(!line.value(ARINC_TYPE).isEmpty())
-  {
-    // 32bit representation of the 3-byte field defined by ARINC
-    // 424.18 field type definition 5.42, with the 4th byte set to 0 in
-    // Little Endian byte order. This field can be empty ONLY for user
-    // waypoints in user_fix.dat
-    union
-    {
-      quint32 intValue;
-      unsigned char byteValue[4];
-    } u;
-    u.intValue = at(line, ARINC_TYPE).toUInt(); // Always little endian
-    QString arincTypeStr;
-    arincTypeStr.append(QChar(u.byteValue[0])).append(QChar(u.byteValue[1])).append(QChar(u.byteValue[2])).append(QChar(u.byteValue[3]));
-    insertWaypointQuery->bindValue(":arinc_type", arincTypeStr);
-  }
+  QString arincType = atools::fs::util::waypointFlagsFromXplane(line.value(ARINC_TYPE));
+  if(!arincType.isEmpty())
+    insertWaypointQuery->bindValue(":arinc_type", arincType);
   else
     insertWaypointQuery->bindNullStr(":arinc_type");
 
