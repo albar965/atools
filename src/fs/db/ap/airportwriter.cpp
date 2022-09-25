@@ -41,6 +41,8 @@
 #include "atools.h"
 #include "exception.h"
 
+#include <QFileInfo>
+
 namespace atools {
 namespace fs {
 namespace db {
@@ -148,7 +150,7 @@ void AirportWriter::writeObject(const Airport *type)
       isRealAddon = getOptions().isAddonLocalPath(sceneryAreaWriter->getCurrentSceneryLocalPath());
 
     // This is the shown add-on status - can be changed by filter in GUI
-    isAddon = getOptions().isAddonDirectory(bglFileWriter->getCurrentFilepath()) && isRealAddon;
+    isAddon = getOptions().isAddonGui(QFileInfo(bglFileWriter->getCurrentFilepath())) && isRealAddon;
 
     // Third party navdata update or MSFS stock airport in official - not an addon
     if(currentArea.isNavigraphNavdataUpdate())

@@ -29,6 +29,7 @@
 
 class QSettings;
 class QStringList;
+class QFileInfo;
 
 namespace atools {
 namespace fs {
@@ -285,12 +286,11 @@ public:
   /* Set progress callback function/method */
   void setProgressCallback(ProgressCallbackType func);
 
-  /* Exclude absolute directories and file paths. Used by the GUI options dialog. */
-  void addToDirectoryExcludesGui(const QStringList& filter);
-  void addToFilePathExcludesGui(const QStringList& filter);
+  /* Exclude absolute directories and file paths. Used by the GUI options dialog. Not saved. */
+  void addExcludeGui(const QFileInfo& path);
 
-  /* Exclude absolute directories from add-on recognition. Used by the GUI options dialog. */
-  void addToAddonDirectoryExcludes(const QStringList& filter);
+  /* Exclude absolute directories from add-on recognition. Used by the GUI options dialog. Not saved. */
+  void addAddonExcludeGui(const QFileInfo& path);
 
   void setSimulatorType(const atools::fs::FsPaths::SimulatorType& value)
   {
@@ -414,14 +414,13 @@ public:
   bool isIncludedAirportIdent(const QString& icao) const;
 
   /* Options that are not saved with the object and are set via GUI */
-  bool isIncludedDirectoryGui(const QString& dirpath) const;
-  bool isIncludedFilePathGui(const QString& filepath) const;
+  bool isIncludedGui(const QFileInfo& filepath) const;
+  bool isAddonGui(const QFileInfo& filepath) const;
 
   /* If true scenery will be added to end of list */
   bool isHighPriority(const QString& filepath) const;
 
   bool isAddonLocalPath(const QString& filepath) const;
-  bool isAddonDirectory(const QString& filepath) const;
 
   bool isIncludedNavDbObject(atools::fs::type::NavDbObjectType type) const;
 
@@ -480,14 +479,19 @@ private:
 
   void addToHighPriorityFiltersInc(const QStringList& filters);
 
-  void addToFilter(const QStringList& filters, QList<QRegExp>& filterList);
+  void addToFilterList(const QStringList& filters, QList<QRegExp>& filterList);
+  void addToFilter(const QString& filter, QList<QRegExp>& filterList);
   bool includeObject(const QString& string, const QList<QRegExp>& filterListInc, const QList<QRegExp>& filterListExcl) const;
 
   void addToBglObjectFilter(const QStringList& filters, QSet<atools::fs::type::NavDbObjectType>& filterList);
-  QString adaptPath(const QString& filepath) const;
-  QStringList fromNativeSeparators(const QStringList& paths) const;
+
+  QString adaptDir(const QString& filepath) const;
+
+  QStringList fromNativeSeparatorList(const QStringList& paths) const;
   QString fromNativeSeparator(const QString& path) const;
-  QStringList createFilterList(const QStringList& pathList);
+  QString createDirFilter(const QString& path);
+
+  bool includedGui(const QFileInfo& filepath, const QList<QRegExp>& fileExclude, const QList<QRegExp>& dirExclude) const;
 
   QString sceneryFile, basepath, msfsCommunityPath, msfsOfficialPath, sourceDatabase, language = "en-US";
 
@@ -496,10 +500,11 @@ private:
   QMap<QString, int> basicValidationTables;
   QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,
-                 highPriorityFiltersInc,
-                 dirExcludesGui /* Not loaded from config file */,
-                 filePathExcludesGui /* Not loaded from config file */,
-                 addonDirExcludes /* Not loaded from config file */;
+                 highPriorityFiltersInc;
+
+  /* Elements set from GUI. Not loaded from config file */
+  QList<QRegExp> dirExcludesGui, fileExcludesGui, dirAddonExcludesGui, fileAddonExcludesGui;
+
   QSet<atools::fs::type::NavDbObjectType> navDbObjectTypeFiltersInc, navDbObjectTypeFiltersExcl;
   ProgressCallbackType progressCallback = nullptr;
 

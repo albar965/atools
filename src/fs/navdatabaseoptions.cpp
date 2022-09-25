@@ -16,7 +16,6 @@
 *****************************************************************************/
 
 #include "fs/navdatabaseoptions.h"
-#include "scenery/sceneryarea.h"
 
 #include <QDebug>
 #include <QFileInfo>
@@ -26,6 +25,8 @@
 
 namespace atools {
 namespace fs {
+
+const static QList<QRegExp> EMPTY_REGEXP_LIST;
 
 void NavDatabaseOptions::setProgressCallback(ProgressCallbackType func)
 {
@@ -44,39 +45,74 @@ void NavDatabaseOptions::setLanguage(const QString& value)
   language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
 }
 
-void NavDatabaseOptions::addToDirectoryExcludesGui(const QStringList& filter)
+void NavDatabaseOptions::addExcludeGui(const QFileInfo& path)
 {
-  addToFilter(createFilterList(filter), dirExcludesGui);
+  if(path.exists())
+  {
+    if(path.isDir())
+      addToFilter(createDirFilter(path.canonicalFilePath()), dirExcludesGui);
+    else if(path.isFile())
+      addToFilter(fromNativeSeparator(path.canonicalFilePath()), fileExcludesGui);
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Exclusion path does not exist" << path;
 }
 
-void NavDatabaseOptions::addToFilePathExcludesGui(const QStringList& filter)
+void NavDatabaseOptions::addAddonExcludeGui(const QFileInfo& path)
 {
-  addToFilter(fromNativeSeparators(filter), filePathExcludesGui);
-}
-
-void NavDatabaseOptions::addToAddonDirectoryExcludes(const QStringList& filter)
-{
-  addToFilter(createFilterList(filter), addonDirExcludes);
+  if(path.exists())
+  {
+    if(path.isDir())
+      addToFilter(createDirFilter(path.canonicalFilePath()), dirAddonExcludesGui);
+    else if(path.isFile())
+      addToFilter(fromNativeSeparator(path.canonicalFilePath()), fileAddonExcludesGui);
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Addon exclusion path does not exist" << path;
 }
 
 bool NavDatabaseOptions::isIncludedLocalPath(const QString& filepath) const
 {
-  return includeObject(adaptPath(filepath), pathFiltersInc, pathFiltersExcl);
+  return includeObject(adaptDir(filepath), pathFiltersInc, pathFiltersExcl);
 }
 
 bool NavDatabaseOptions::isAddonLocalPath(const QString& filepath) const
 {
-  return includeObject(adaptPath(filepath), addonFiltersInc, addonFiltersExcl);
+  return includeObject(adaptDir(filepath), addonFiltersInc, addonFiltersExcl);
 }
 
-bool NavDatabaseOptions::isIncludedDirectoryGui(const QString& dirpath) const
+bool NavDatabaseOptions::isIncludedGui(const QFileInfo& filepath) const
 {
-  return includeObject(adaptPath(dirpath), QList<QRegExp>(), dirExcludesGui);
+  return includedGui(filepath, fileExcludesGui, dirExcludesGui);
 }
 
-bool NavDatabaseOptions::isIncludedFilePathGui(const QString& filepath) const
+bool NavDatabaseOptions::isAddonGui(const QFileInfo& filepath) const
 {
-  return includeObject(fromNativeSeparator(filepath), QList<QRegExp>(), filePathExcludesGui);
+  return includedGui(filepath, dirAddonExcludesGui, fileAddonExcludesGui);
+}
+
+bool NavDatabaseOptions::includedGui(const QFileInfo& filepath, const QList<QRegExp>& fileExclude, const QList<QRegExp>& dirExclude) const
+{
+  if(fileExclude.isEmpty() && dirExclude.isEmpty())
+    return true;
+
+  if(filepath.isDir())
+  {
+    if(!includeObject(adaptDir(filepath.canonicalFilePath()), EMPTY_REGEXP_LIST, dirExclude))
+      return false;
+  }
+  else if(filepath.isFile())
+  {
+    // First check path to file
+    if(!includeObject(adaptDir(filepath.canonicalPath()), EMPTY_REGEXP_LIST, dirExclude))
+      return false;
+
+    // Check file name
+    if(!includeObject(fromNativeSeparator(filepath.canonicalFilePath()), EMPTY_REGEXP_LIST, fileExclude))
+      return false;
+  }
+
+  return true;
 }
 
 bool NavDatabaseOptions::isHighPriority(const QString& filepath) const
@@ -84,12 +120,7 @@ bool NavDatabaseOptions::isHighPriority(const QString& filepath) const
   if(highPriorityFiltersInc.isEmpty())
     return false;
 
-  return includeObject(adaptPath(filepath), highPriorityFiltersInc, QList<QRegExp>());
-}
-
-bool NavDatabaseOptions::isAddonDirectory(const QString& filepath) const
-{
-  return includeObject(adaptPath(filepath), QList<QRegExp>(), addonDirExcludes);
+  return includeObject(adaptDir(filepath), highPriorityFiltersInc, EMPTY_REGEXP_LIST);
 }
 
 bool NavDatabaseOptions::isIncludedFilename(const QString& filename) const
@@ -105,42 +136,42 @@ bool NavDatabaseOptions::isIncludedAirportIdent(const QString& icao) const
 
 void NavDatabaseOptions::addToFilenameFilterInclude(const QStringList& filter)
 {
-  addToFilter(filter, fileFiltersInc);
+  addToFilterList(filter, fileFiltersInc);
 }
 
 void NavDatabaseOptions::addToAirportIcaoFilterInclude(const QStringList& filter)
 {
-  addToFilter(filter, airportIcaoFiltersInc);
+  addToFilterList(filter, airportIcaoFiltersInc);
 }
 
 void NavDatabaseOptions::addToPathFilterInclude(const QStringList& filter)
 {
-  addToFilter(fromNativeSeparators(filter), pathFiltersInc);
+  addToFilterList(fromNativeSeparatorList(filter), pathFiltersInc);
 }
 
 void NavDatabaseOptions::addToAddonFilterInclude(const QStringList& filter)
 {
-  addToFilter(fromNativeSeparators(filter), addonFiltersInc);
+  addToFilterList(fromNativeSeparatorList(filter), addonFiltersInc);
 }
 
 void NavDatabaseOptions::addToFilenameFilterExclude(const QStringList& filter)
 {
-  addToFilter(filter, fileFiltersExcl);
+  addToFilterList(filter, fileFiltersExcl);
 }
 
 void NavDatabaseOptions::addToAirportIcaoFilterExclude(const QStringList& filter)
 {
-  addToFilter(filter, airportIcaoFiltersExcl);
+  addToFilterList(filter, airportIcaoFiltersExcl);
 }
 
 void NavDatabaseOptions::addToPathFilterExclude(const QStringList& filter)
 {
-  addToFilter(fromNativeSeparators(filter), pathFiltersExcl);
+  addToFilterList(fromNativeSeparatorList(filter), pathFiltersExcl);
 }
 
 void NavDatabaseOptions::addToAddonFilterExclude(const QStringList& filter)
 {
-  addToFilter(fromNativeSeparators(filter), addonFiltersExcl);
+  addToFilterList(fromNativeSeparatorList(filter), addonFiltersExcl);
 }
 
 void NavDatabaseOptions::addToBglObjectFilterInclude(const QStringList& filters)
@@ -155,15 +186,17 @@ void NavDatabaseOptions::addToBglObjectFilterExclude(const QStringList& filters)
 
 void NavDatabaseOptions::addToHighPriorityFiltersInc(const QStringList& filters)
 {
-  addToFilter(filters, highPriorityFiltersInc);
+  addToFilterList(filters, highPriorityFiltersInc);
 }
 
 void NavDatabaseOptions::addToBglObjectFilter(const QStringList& filters,
                                               QSet<atools::fs::type::NavDbObjectType>& filterList)
 {
   for(const QString& f : filters)
+  {
     if(!f.isEmpty())
       filterList.insert(type::stringToNavDbObjectType(f));
+  }
 }
 
 bool NavDatabaseOptions::isIncludedNavDbObject(type::NavDbObjectType type) const
@@ -186,20 +219,14 @@ bool NavDatabaseOptions::isIncludedNavDbObject(type::NavDbObjectType type) const
   }
 }
 
-QStringList NavDatabaseOptions::createFilterList(const QStringList& pathList)
+QString NavDatabaseOptions::createDirFilter(const QString& path)
 {
-  QStringList retval;
-
-  for(const QString& path : pathList)
-  {
-    QDir dir(path);
-    QString newPath = dir.absolutePath().trimmed().replace("\\", "/");
-    if(!newPath.endsWith("/"))
-      newPath.append("/");
-    newPath.append("*");
-    retval.append(newPath);
-  }
-  return retval;
+  QDir dir(path);
+  QString filter = dir.absolutePath().trimmed().replace('\\', '/');
+  if(!filter.endsWith("/"))
+    filter.append("/");
+  filter.append("*");
+  return filter;
 }
 
 void NavDatabaseOptions::loadFromSettings(QSettings& settings)
@@ -287,22 +314,24 @@ bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegEx
   }
 }
 
-void NavDatabaseOptions::addToFilter(const QStringList& filters, QList<QRegExp>& filterList)
+void NavDatabaseOptions::addToFilterList(const QStringList& filters, QList<QRegExp>& filterList)
 {
-  for(QString f : filters)
-  {
-    QString newFilter = f.trimmed();
-    if(!newFilter.isEmpty())
-      filterList.append(QRegExp(newFilter, Qt::CaseInsensitive, QRegExp::Wildcard));
-  }
+  for(QString filter : filters)
+    addToFilter(filter, filterList);
 }
 
-QString NavDatabaseOptions::adaptPath(const QString& filepath) const
+void NavDatabaseOptions::addToFilter(const QString& filter, QList<QRegExp>& filterList)
+{
+  if(!filter.isEmpty())
+    filterList.append(QRegExp(filter.trimmed(), Qt::CaseInsensitive, QRegExp::Wildcard));
+}
+
+QString NavDatabaseOptions::adaptDir(const QString& filepath) const
 {
   // make sure that backslashes are replaced and path is suffixed with a slash
   QString newFilename = fromNativeSeparator(filepath);
-  if(!filepath.endsWith("/"))
-    newFilename.append("/");
+  if(!filepath.endsWith('/'))
+    newFilename.append('/');
 
   return newFilename;
 }
@@ -310,10 +339,10 @@ QString NavDatabaseOptions::adaptPath(const QString& filepath) const
 QString NavDatabaseOptions::fromNativeSeparator(const QString& path) const
 {
   // make sure that backslashes are replaced
-  return QString(path).replace("\\", "/");
+  return QString(path).replace('\\', '/');
 }
 
-QStringList NavDatabaseOptions::fromNativeSeparators(const QStringList& paths) const
+QStringList NavDatabaseOptions::fromNativeSeparatorList(const QStringList& paths) const
 {
   QStringList retval;
   for(const QString& p : paths)
@@ -344,8 +373,9 @@ QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
   out << ", addonFiltersExcl [" << patternStr(opts.addonFiltersExcl) << "]";
   out << ", highPriorityFiltersInc [" << patternStr(opts.highPriorityFiltersInc) << "]";
   out << ", dirExcludesGui [" << patternStr(opts.dirExcludesGui) << "]";
-  out << ", filePathExcludesGui [" << patternStr(opts.filePathExcludesGui) << "]";
-  out << ", addonDirExcludes [" << patternStr(opts.addonDirExcludes) << "]";
+  out << ", fileExcludesGui [" << patternStr(opts.fileExcludesGui) << "]";
+  out << ", dirAddonExcludesGui [" << patternStr(opts.dirAddonExcludesGui) << "]";
+  out << ", fileAddonExcludesGui [" << patternStr(opts.fileAddonExcludesGui) << "]";
 
   out << ", navDbObjectTypeFiltersInc [";
   for(type::NavDbObjectType type : opts.navDbObjectTypeFiltersInc)

@@ -422,7 +422,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
   if(!includeFile(fileinfo))
     return false;
 
-  if(!options.isAddonDirectory(fileinfo.absolutePath()))
+  if(!options.isAddonGui(fileinfo))
     // Clear add-on flag if directory is excluded
     flags &= ~atools::fs::xp::IS_ADDON;
 
@@ -1040,19 +1040,8 @@ bool XpDataCompiler::includeFile(const NavDatabaseOptions& opts, const QFileInfo
     // Excluded in configuration file
     return false;
 
-  // Excluded in the GUI
-  if(fileinfo.isDir())
-  {
-    if(!opts.isIncludedDirectoryGui(fileinfo.absoluteFilePath()))
-      return false;
-  }
-  else if(fileinfo.isFile())
-  {
-    // Check if file is included from config file and GUI options
-    if(!opts.isIncludedDirectoryGui(fileinfo.absolutePath()) ||
-       !opts.isIncludedFilePathGui(fileinfo.absoluteFilePath()))
-      return false;
-  }
+  if(!opts.isIncludedGui(fileinfo))
+    return false;
 
   return true;
 }
