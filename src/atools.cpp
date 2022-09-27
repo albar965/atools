@@ -30,6 +30,25 @@
 #include <QStandardPaths>
 #include <QFontMetrics>
 
+#ifdef Q_OS_WIN
+extern "C" {
+
+#undef WINVER
+#define WINVER 0x0A00
+
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0A00
+
+#include <Windows.h>
+#include <tchar.h>
+#include <stdio.h>
+#include <strsafe.h>
+#include <fileapi.h>
+#include <winioctl.h>
+
+}
+#endif
+
 namespace atools {
 
 const static QChar SEP(QDir::separator());
@@ -1143,6 +1162,120 @@ QString strFromCryptFile(const QString& filename, quint64 key)
     qWarning() << Q_FUNC_INFO << "Cannot open file" << file.fileName() << "Reason" << file.errorString();
 
   return decrypted;
+}
+
+QString linkTarget(const QFileInfo& path)
+{
+  QString target;
+#ifdef Q_OS_WIN
+  if(path.isJunction())
+  {
+    QString str = QDir::toNativeSeparators(path.absoluteFilePath());
+    wchar_t *filepathW = new wchar_t[str.size() + 1];
+    str.toWCharArray(filepathW);
+    filepathW[str.size()] = 0;
+    const int BUFFER_SIZE = 4096;
+
+    wchar_t junctionPathW[BUFFER_SIZE];
+    HANDLE hFile = CreateFileW(filepathW, FILE_READ_ATTRIBUTES,
+                               FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, 0, OPEN_EXISTING,
+                               FILE_FLAG_BACKUP_SEMANTICS, 0);
+
+    if(hFile == INVALID_HANDLE_VALUE)
+      qWarning() << Q_FUNC_INFO << "Could not open file (error" << GetLastError() << ")";
+    else
+    {
+      DWORD dwRet = GetFinalPathNameByHandleW(hFile, junctionPathW, BUFFER_SIZE, VOLUME_NAME_DOS);
+
+      if(dwRet < BUFFER_SIZE)
+      {
+        target = QString::fromWCharArray(junctionPathW);
+        target.remove("\\\\?\\");
+      }
+
+      CloseHandle(hFile);
+    }
+
+    delete[] filepathW;
+  }
+  else
+#endif
+  if(path.isSymbolicLink() || path.isShortcut())
+    target = path.symLinkTarget();
+
+  return QDir::cleanPath(target);
+}
+
+QString canonicalPath(const QFileInfo& path)
+{
+  return canonicalFilePath(path.path());
+}
+
+QString canonicalFilePath(const QFileInfo& path)
+{
+#ifdef Q_OS_WIN
+  // Copy from QFileSystemEngine::slowCanonicalized()
+  // and extended to consider shortcuts and symbolic links on Windows
+
+  QFileInfo fileinfo;
+
+  const QChar slash(QLatin1Char('/'));
+  QString tmpPath = path.absoluteFilePath();
+  int separatorPos = 0;
+  QSet<QString> nonSymlinks;
+  QSet<QString> known;
+  known.insert(path.absoluteFilePath());
+
+  do
+  {
+    if(separatorPos == 0)
+    {
+      if(tmpPath.size() >= 2 && tmpPath.at(0) == slash && tmpPath.at(1) == slash)
+        // UNC, skip past the first two elements
+        separatorPos = tmpPath.indexOf(slash, 2);
+      else if(tmpPath.size() >= 3 && tmpPath.at(1) == QLatin1Char(':') && tmpPath.at(2) == slash)
+        // volume root, skip since it can not be a symlink
+        separatorPos = 2;
+    }
+
+    if(separatorPos != -1)
+      separatorPos = tmpPath.indexOf(slash, separatorPos + 1);
+
+    QString prefix = separatorPos == -1 ? tmpPath : tmpPath.left(separatorPos);
+    if(!nonSymlinks.contains(prefix))
+    {
+      fileinfo.setFile(prefix);
+
+      // Get link target from symlink, junction or shortcut
+      QString target = atools::linkTarget(fileinfo);
+
+      // Check if this is any link
+      if(!target.isEmpty())
+      {
+        if(separatorPos != -1)
+        {
+          if(fileinfo.isDir() && !target.endsWith(slash))
+            target.append(slash);
+          target.append(tmpPath.midRef(separatorPos));
+        }
+        tmpPath = QDir::cleanPath(target);
+        separatorPos = 0;
+        if(known.contains(tmpPath))
+          return QString();
+
+        known.insert(tmpPath);
+      }
+      else
+        nonSymlinks.insert(prefix);
+    }
+  } while(separatorPos != -1);
+
+  return QDir::cleanPath(tmpPath);
+
+#else
+  return QDir::cleanPath(path.canonicalFilePath());
+
+#endif
 }
 
 } // namespace atools

@@ -47,6 +47,15 @@ QString programFileInfoNoDate();
  *  An Exception is thrown if the file cannot be opened */
 bool fileEndsWithEol(const QString& filepath);
 
+/* Get the target of a symbolic link (all OS), a Windows shortcut (.lnk) or a Windows junction.
+ * Returns a cleaned path with '/' as separators. */
+QString linkTarget(const QFileInfo& path);
+
+/* Get canonical path also considering symbolic links, Windows shortcuts or a Windows junctions.
+ * Returns a cleaned path with '/' as separators. */
+QString canonicalFilePath(const QFileInfo& path);
+QString canonicalPath(const QFileInfo& path);
+
 /* Return true if one of the elements in list is equal to str */
 bool contains(const QString& name, const std::initializer_list<QString>& list);
 bool contains(const QString& name, const std::initializer_list<const char *>& list);
@@ -657,8 +666,10 @@ QSet<TYPE> strListToNumSet(const QStringList& strings, bool *ok = nullptr)
 }
 
 QStringList floatVectorToStrList(const QVector<float>& vector);
+
 QVector<float> strListToFloatVector(const QStringList& strings, bool *ok = nullptr);
 QStringList floatSetToStrList(const QSet<float>& set);
+
 QSet<float> strListToFloatSet(const QStringList& strings, bool *ok = nullptr);
 
 /* Functions to convert integer/float/string maps and hashes to string lists and back.
@@ -736,8 +747,10 @@ QMap<int, QString> strListToNumStrMap(const QStringList& strings, bool *ok = nul
 }
 
 QStringList floatStrHashToStrList(const QHash<float, QString>& hash);
+
 QHash<float, QString> strListToFloatStrHash(const QStringList& strings, bool *ok = nullptr);
 QStringList floatStrMapToStrList(const QMap<float, QString>& map);
+
 QMap<float, QString> strListToFloatStrMap(const QStringList& strings, bool *ok = nullptr);
 
 /* Get well known system folders from QStandardPaths. */
