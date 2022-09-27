@@ -1671,7 +1671,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Ein fataler Fehler ist aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Klicken Sie OK, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
     </message>
 </context>
 <context>
@@ -2185,7 +2185,7 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu viele Fehler beim Lesen vom Simulator. Verbindung getrennt. %1 für weitere Versuche neu starten.</translation>
     </message>
 </context>
 <context>
@@ -2316,7 +2316,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Wenn der Fehler weiterhin besteht oder während des Programmstarts auftritt, löschen Sie alle Einstellungen und Datenbankdateien von %1 und versuchen Sie es erneut.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Wenn Sie diesen Fehler melden wollen, hängen Sie die Log- und Konfigurationsdateien an Ihren Bericht an, fügen alle anderen verfügbaren Informationen hinzu und senden alles an die unten genannte Kontaktadresse.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
 </context>
 <context>
@@ -2531,11 +2531,11 @@ Importieren gestoppt.</translation>
     </message>
     <message>
         <source>&amp;Undo%1</source>
-        <translation>&amp;Rückgängig%1</translation>
+        <translation type="vanished">&amp;Rückgängig%1</translation>
     </message>
     <message>
         <source>&amp;Redo%1</source>
-        <translation>&amp;Wiederherstellen%1</translation>
+        <translation type="vanished">&amp;Wiederherstellen%1</translation>
     </message>
     <message>
         <source>no %1</source>
@@ -2576,6 +2576,14 @@ Importieren gestoppt.</translation>
     <message>
         <source>Table undo_current is empty.</source>
         <translation>Tabelle undo_current ist leer.</translation>
+    </message>
+    <message>
+        <source>&amp;Undo %1</source>
+        <translation>&amp;Rückgängig %1</translation>
+    </message>
+    <message>
+        <source>&amp;Redo %1</source>
+        <translation>&amp;Wiederherstellen %1</translation>
     </message>
 </context>
 <context>

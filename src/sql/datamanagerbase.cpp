@@ -704,13 +704,13 @@ void DataManagerBase::updateUndoRedoActions()
     if(undoAction != nullptr)
     {
       undoAction->setEnabled(undo);
-      undoAction->setText(undo ? tr("&%1").arg(undoStepName()) : tr("&Undo%1").arg(textSuffixSingular));
+      undoAction->setText(undo ? tr("&%1").arg(undoStepName()) : tr("&Undo %1").arg(textSuffixSingular));
     }
 
     if(redoAction != nullptr)
     {
       redoAction->setEnabled(redo);
-      redoAction->setText(redo ? tr("&%1").arg(redoStepName()) : tr("&Redo%1").arg(textSuffixSingular));
+      redoAction->setText(redo ? tr("&%1").arg(redoStepName()) : tr("&Redo %1").arg(textSuffixSingular));
     }
   }
 }
