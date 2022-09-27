@@ -100,7 +100,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
       scenery::LayoutJson layout;
 
       // get all scenery directories - normally only one
-      for(QFileInfo scenery : sceneryDirs)
+      for(const QFileInfo& scenery : sceneryDirs)
       {
         if(scenery.isDir())
         {

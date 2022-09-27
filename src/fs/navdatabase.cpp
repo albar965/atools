@@ -579,7 +579,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     total = countMsfsSteps(&progress, sceneryCfg);
 
     // Check for Navigraph packages to report back to caller
-    for(const SceneryArea& area:sceneryCfg.getAreas())
+    for(const SceneryArea& area : sceneryCfg.getAreas())
     {
       if(area.isNavigraphNavdataUpdate())
       {
@@ -1176,16 +1176,20 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
       NavDatabaseErrors::SceneryErrors err = NavDatabaseErrors::SceneryErrors();
       fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
 
+      QFileInfo fileinfo(area.getLocalPath());
+      if(!fileinfo.isAbsolute())
+      {
+        if(area.isCommunity())
+          fileinfo.setFile(options->getMsfsCommunityPath() % SEP % area.getLocalPath());
+        else if(area.isAddOn())
+          fileinfo.setFile(options->getMsfsOfficialPath() % SEP % area.getLocalPath());
+      }
+
       if(options->getSimulatorType() == atools::fs::FsPaths::MSFS && (area.isAddOn() || area.isCommunity()))
       {
         // Load package specific material library for MSFS
         materialLib.clear();
-
-        if(area.isCommunity())
-          materialLib.readCommunity(options->getMsfsCommunityPath() % SEP % area.getLocalPath());
-        else if(area.isAddOn())
-          materialLib.readCommunity(options->getMsfsOfficialPath() % SEP % area.getLocalPath());
-
+        materialLib.readCommunity(fileinfo.absoluteFilePath());
         fsDataWriter->setMaterialLibScenery(&materialLib);
       }
 
@@ -1496,12 +1500,13 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   scenery::LayoutJson layout;
 
   // Read add-on packages in official ===============================
-  QDir dir(options->getMsfsOfficialPath(), QString(),
-           QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
-  QString baseName = dir.dirName();
-  for(const QFileInfo& fileinfo : dir.entryInfoList())
+  const QDir dirOfficial(options->getMsfsOfficialPath(), QString(),
+                         QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+  QString baseName = dirOfficial.dirName();
+  for(QFileInfo fileinfo : dirOfficial.entryInfoList())
   {
     QString name = fileinfo.fileName();
+    fileinfo.setFile(atools::canonicalFilePath(fileinfo));
 
     if(contentXml.isDisabled(name))
     {
@@ -1524,7 +1529,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
       layout.clear();
       layout.read(fileinfo.filePath() % SEP % "layout.json");
 
-      SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), baseName, name);
+      SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), baseName, atools::canonicalFilePath(fileinfo));
       if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
         errors->sceneryErrors.append(
           NavDatabaseErrors::SceneryErrors(addonArea, tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
@@ -1545,12 +1550,13 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
   // Read community packages ===============================
   // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
-  dir = QDir(options->getMsfsCommunityPath(), QString(),
-             QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+  const QDir dirCommunity(options->getMsfsCommunityPath(), QString(),
+                          QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
-  for(const QFileInfo& fileinfo : dir.entryInfoList())
+  for(QFileInfo fileinfo : dirCommunity.entryInfoList())
   {
     QString name = fileinfo.fileName();
+    fileinfo.setFile(atools::canonicalFilePath(fileinfo));
 
     if(contentXml.isDisabled(name))
     {
@@ -1568,7 +1574,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
       layout.clear();
       layout.read(fileinfo.filePath() % SEP % "layout.json");
 
-      SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), tr("Community"), name);
+      SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), tr("Community"), atools::canonicalFilePath(fileinfo));
       addonArea.setCommunity(true);
       if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
         errors->sceneryErrors.append(
@@ -1717,13 +1723,13 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
         AddOnCfg addonConfigProgramData("utf-8");
         addonConfigProgramData.read(addonsCfg);
 
-        for(const AddOnCfgEntry& entry:addonConfigProgramData.getEntriesDiscovery())
+        for(const AddOnCfgEntry& entry : addonConfigProgramData.getEntriesDiscovery())
         {
           if(entry.active || readInactive)
             addonDiscoveryPaths.append(QFileInfo(entry.path).canonicalFilePath());
         }
 
-        for(const AddOnCfgEntry& entry:addonConfigProgramData.getEntries())
+        for(const AddOnCfgEntry& entry : addonConfigProgramData.getEntries())
         {
           if(entry.active || readInactive)
             readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));

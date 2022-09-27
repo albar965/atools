@@ -440,14 +440,21 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
       context.fileVersion = fileVersion;
       context.magDecReader = magDecReader;
 
-      if(flags & READ_SHORT_REPORT && numReportSteps > 0)
+#ifdef DEBUG_INFORMATION
+      if(!flags.testFlag(READ_CIFP))
+        qDebug() << Q_FUNC_INFO
+                 << "context.filePath" << context.filePath
+                 << "context.localPath" << context.localPath;
+#endif
+
+      if(flags.testFlag(READ_SHORT_REPORT) && numReportSteps > 0)
       {
         // One progress report per file - otherwise numReportSteps
         if(progress->reportOther(progressMsg))
           return true;
       }
 
-      if(flags & READ_CIFP)
+      if(flags.testFlag(READ_CIFP))
       {
         QString ident = QFileInfo(filepath).baseName().toUpper();
         if(!CIFP_MATCH.match(ident).hasMatch())
@@ -480,7 +487,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
       {
         line = stream.readLine().trimmed();
 
-        if(!(flags & READ_SHORT_REPORT) && numReportSteps > 0)
+        if(!flags.testFlag(READ_SHORT_REPORT) && numReportSteps > 0)
         {
           if((row++ % rowsPerStep) == 0)
           {
@@ -496,14 +503,14 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
           }
         }
 
-        if(flags & READ_AIRSPACE && !line.startsWith("AN"))
+        if(flags.testFlag(READ_AIRSPACE) && !line.startsWith("AN"))
         {
           // Strip OpenAirport file comments except for airport names
           int idx = line.indexOf("*");
           if(idx != -1)
             line = line.left(line.indexOf("*"));
         }
-        else if(!(flags & READ_CIFP))
+        else if(!flags.testFlag(READ_CIFP))
         {
           // Strip dat-file comments
           if(line.startsWith("#"))
@@ -512,14 +519,14 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
 
         if(!line.isEmpty())
         {
-          if(flags & READ_CIFP)
+          if(flags.testFlag(READ_CIFP))
             fields = line.split(",");
           else
             fields = line.simplified().split(" ");
 
           if(fields.size() >= minColumns)
           {
-            if(flags & READ_CIFP)
+            if(flags.testFlag(READ_CIFP))
             {
               // Extract colon separated row code
               QString first = fields.takeFirst();
@@ -543,7 +550,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
 
       file.close();
 
-      if(!(flags & READ_SHORT_REPORT) && numReportSteps > 0)
+      if(!flags.testFlag(READ_SHORT_REPORT) && numReportSteps > 0)
         // Eat up any remaining progress steps
         progress->increaseCurrent(numReportSteps - steps);
     }
@@ -730,25 +737,29 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseO
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
   QStringList retval;
-  QDir customApt(buildPathNoCase({opts.getBasepath(), "Custom Scenery"}), QString(), QDir::Name, QDir::Dirs | QDir::NoDotAndDotDot);
-  for(const QString& dir : customApt.entryList())
+  QDir customApt(buildPathNoCase({opts.getBasepath(), "Custom Scenery"}), QString(), QDir::Name,
+                 QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+  for(QFileInfo fileinfo : customApt.entryInfoList())
   {
+    QString name = fileinfo.fileName();
+    fileinfo.setFile(atools::canonicalFilePath(fileinfo));
+
     // dir:
     // KSEA Demo Area
     // LFPG Paris - Charles de Gaulle
 
-    if(dir.toLower() == "global airports") // Should normally not appear here
+    if(name.toLower() == "global airports") // Should normally not appear here
       continue;
 
     // Exclude if disabled and user set read inactive - entries missing in the list are included
     if(!opts.isReadInactive())
     {
-      int idx = pathToPackIndex.value(dir.toLower(), -1);
+      int idx = pathToPackIndex.value(name.toLower(), -1);
       if(idx != -1 && packs.at(idx).disabled == true)
         continue;
     }
 
-    QFileInfo aptDat(buildPathNoCase({customApt.path(), dir, "Earth nav data", "apt.dat"}));
+    QFileInfo aptDat(buildPathNoCase({fileinfo.absoluteFilePath(), "Earth nav data", "apt.dat"}));
 
     if(!includeFile(opts, aptDat))
       continue;
@@ -823,11 +834,9 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
   // earth_fix.dat earth_awy.dat earth_nav.dat earth_mora.dat
   reportCount += 4 * NUM_REPORT_STEPS_SMALL;
 
-  bool aborted = false;
-
   if(sim == atools::fs::FsPaths::XPLANE_11)
   {
-    if((aborted = progress->reportOtherMsg(tr("Counting files for Resources ..."))))
+    if(progress->reportOtherMsg(tr("Counting files for Resources ...")))
       return 0;
 
     // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat ===================
@@ -835,7 +844,7 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
                  buildPathNoCase({opts.getBasepath(), "Resources", "default scenery", "default apt dat", "Earth nav data", "apt.dat"})))
       reportCount += NUM_REPORT_STEPS;
 
-    if((aborted = progress->reportOtherMsg(tr("Counting files for Custom Scenery/Global Airports ..."))))
+    if(progress->reportOtherMsg(tr("Counting files for Custom Scenery/Global Airports ...")))
       return 0;
 
     // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat ===================
@@ -848,7 +857,7 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
     // =========================================
     // As of X-Plane 12, the airport data is located in "$X-Plane/Global Scenery/Global Airports/Earth nav data/apt.dat"
     // and is the one and only source for both scenery and GPS data
-    if((aborted = progress->reportOtherMsg(tr("Counting files for Global Scenery/Global Airports ..."))))
+    if(progress->reportOtherMsg(tr("Counting files for Global Scenery/Global Airports ...")))
       return 0;
 
     // X-Plane 12/Global Scenery/Global Airports/Earth nav data/apt.dat
@@ -859,12 +868,12 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
   // Default or custom CIFP/$ICAO.dat - required from either "Resources" or "Custom Data"
   reportCount += NUM_REPORT_STEPS_CIFP;
 
-  if((aborted = progress->reportOtherMsg(tr("Counting files for Airspaces ..."))))
+  if(progress->reportOtherMsg(tr("Counting files for Airspaces ...")))
     return 0;
 
   reportCount += findAirspaceFiles(opts).count();
 
-  if((aborted = progress->reportOtherMsg(tr("Counting files for Custom Scenery ..."))))
+  if(progress->reportOtherMsg(tr("Counting files for Custom Scenery ...")))
     return 0;
 
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
@@ -875,7 +884,7 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
   if(checkFile(Q_FUNC_INFO, buildPathNoCase({opts.getBasepath(), "Custom Scenery", "Global Airports", "Earth nav data", "earth_nav.dat"})))
     reportCount++;
 
-  if((aborted = progress->reportOtherMsg(tr("Counting files for Custom Data ..."))))
+  if(progress->reportOtherMsg(tr("Counting files for Custom Data ...")))
     return 0;
 
   // user_nav.dat user_fix.dat $X-Plane/Custom Data/
@@ -920,8 +929,8 @@ QVector<SceneryPack> XpDataCompiler::loadFilepathsFromSceneryPacks(const NavData
       if(navdatabaseErrors != nullptr)
         navdatabaseErrors->sceneryErrors.first().fileErrors.append({pack.filepath, pack.errorText, pack.errorLine});
 
-      qWarning() << Q_FUNC_INFO << "Error in file" << pack.filepath << "line" << pack.errorLine << ":" <<
-        pack.errorText;
+      qWarning() << Q_FUNC_INFO << "Error in file" << pack.filepath << "line" << pack.errorLine << ":"
+                 << pack.errorText;
     }
   }
   return entryMap;
@@ -937,8 +946,8 @@ void XpDataCompiler::updateAiracCycleFromHeader(const QString& header, const QSt
     if(c.isEmpty())
     {
       progress->reportError();
-      qWarning() << Q_FUNC_INFO << "Error in file" << filepath << "line" << lineNum <<
-        ": AIRAC cycle in file is empty.";
+      qWarning() << Q_FUNC_INFO << "Error in file" << filepath << "line" << lineNum
+                 << ": AIRAC cycle in file is empty.";
       errors->sceneryErrors.first().fileErrors.append({filepath, tr("AIRAC cycle in file is empty."), lineNum});
     }
     else if(airacCycle.isEmpty())

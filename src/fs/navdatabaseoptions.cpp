@@ -17,6 +17,8 @@
 
 #include "fs/navdatabaseoptions.h"
 
+#include "atools.h"
+
 #include <QDebug>
 #include <QFileInfo>
 #include <QList>
@@ -50,9 +52,9 @@ void NavDatabaseOptions::addExcludeGui(const QFileInfo& path)
   if(path.exists())
   {
     if(path.isDir())
-      addToFilter(createDirFilter(path.canonicalFilePath()), dirExcludesGui);
+      addToFilter(createDirFilter(atools::canonicalFilePath(path)), dirExcludesGui);
     else if(path.isFile())
-      addToFilter(fromNativeSeparator(path.canonicalFilePath()), fileExcludesGui);
+      addToFilter(atools::canonicalFilePath(path), fileExcludesGui);
   }
   else
     qWarning() << Q_FUNC_INFO << "Exclusion path does not exist" << path;
@@ -63,9 +65,9 @@ void NavDatabaseOptions::addAddonExcludeGui(const QFileInfo& path)
   if(path.exists())
   {
     if(path.isDir())
-      addToFilter(createDirFilter(path.canonicalFilePath()), dirAddonExcludesGui);
+      addToFilter(createDirFilter(atools::canonicalFilePath(path)), dirAddonExcludesGui);
     else if(path.isFile())
-      addToFilter(fromNativeSeparator(path.canonicalFilePath()), fileAddonExcludesGui);
+      addToFilter(atools::canonicalFilePath(path), fileAddonExcludesGui);
   }
   else
     qWarning() << Q_FUNC_INFO << "Addon exclusion path does not exist" << path;
@@ -91,24 +93,24 @@ bool NavDatabaseOptions::isAddonGui(const QFileInfo& filepath) const
   return includedGui(filepath, dirAddonExcludesGui, fileAddonExcludesGui);
 }
 
-bool NavDatabaseOptions::includedGui(const QFileInfo& filepath, const QList<QRegExp>& fileExclude, const QList<QRegExp>& dirExclude) const
+bool NavDatabaseOptions::includedGui(const QFileInfo& path, const QList<QRegExp>& fileExclude, const QList<QRegExp>& dirExclude) const
 {
   if(fileExclude.isEmpty() && dirExclude.isEmpty())
     return true;
 
-  if(filepath.isDir())
+  if(path.isDir())
   {
-    if(!includeObject(adaptDir(filepath.canonicalFilePath()), EMPTY_REGEXP_LIST, dirExclude))
+    if(!includeObject(adaptDir(atools::canonicalFilePath(path)), EMPTY_REGEXP_LIST, dirExclude))
       return false;
   }
-  else if(filepath.isFile())
+  else if(path.isFile())
   {
     // First check path to file
-    if(!includeObject(adaptDir(filepath.canonicalPath()), EMPTY_REGEXP_LIST, dirExclude))
+    if(!includeObject(adaptDir(atools::canonicalPath(path)), EMPTY_REGEXP_LIST, dirExclude))
       return false;
 
     // Check file name
-    if(!includeObject(fromNativeSeparator(filepath.canonicalFilePath()), EMPTY_REGEXP_LIST, fileExclude))
+    if(!includeObject(atools::canonicalFilePath(path), EMPTY_REGEXP_LIST, fileExclude))
       return false;
   }
 
@@ -316,7 +318,7 @@ bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegEx
 
 void NavDatabaseOptions::addToFilterList(const QStringList& filters, QList<QRegExp>& filterList)
 {
-  for(QString filter : filters)
+  for(const QString& filter : filters)
     addToFilter(filter, filterList);
 }
 
@@ -329,24 +331,18 @@ void NavDatabaseOptions::addToFilter(const QString& filter, QList<QRegExp>& filt
 QString NavDatabaseOptions::adaptDir(const QString& filepath) const
 {
   // make sure that backslashes are replaced and path is suffixed with a slash
-  QString newFilename = fromNativeSeparator(filepath);
+  QString newFilename = QDir::cleanPath(filepath);
   if(!filepath.endsWith('/'))
     newFilename.append('/');
 
   return newFilename;
 }
 
-QString NavDatabaseOptions::fromNativeSeparator(const QString& path) const
-{
-  // make sure that backslashes are replaced
-  return QString(path).replace('\\', '/');
-}
-
 QStringList NavDatabaseOptions::fromNativeSeparatorList(const QStringList& paths) const
 {
   QStringList retval;
   for(const QString& p : paths)
-    retval.append(fromNativeSeparator(p));
+    retval.append(QDir::cleanPath(p));
   return retval;
 }
 

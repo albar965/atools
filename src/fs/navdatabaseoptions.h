@@ -488,10 +488,9 @@ private:
   QString adaptDir(const QString& filepath) const;
 
   QStringList fromNativeSeparatorList(const QStringList& paths) const;
-  QString fromNativeSeparator(const QString& path) const;
   QString createDirFilter(const QString& path);
 
-  bool includedGui(const QFileInfo& filepath, const QList<QRegExp>& fileExclude, const QList<QRegExp>& dirExclude) const;
+  bool includedGui(const QFileInfo& path, const QList<QRegExp>& fileExclude, const QList<QRegExp>& dirExclude) const;
 
   QString sceneryFile, basepath, msfsCommunityPath, msfsOfficialPath, sourceDatabase, language = "en-US";
 
