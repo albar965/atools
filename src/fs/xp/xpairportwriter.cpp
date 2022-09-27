@@ -22,7 +22,6 @@
 #include "sql/sqldatabase.h"
 #include "geo/calculations.h"
 #include "fs/util/fsutil.h"
-#include "fs/bgl/surface.h"
 #include "fs/progresshandler.h"
 #include "fs/common/airportindex.h"
 #include "fs/common/magdecreader.h"

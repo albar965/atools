@@ -22,7 +22,6 @@
 
 #include "geo/rect.h"
 #include "geo/line.h"
-#include "fs/xp/xpconstants.h"
 #include "fs/common/xpgeometry.h"
 #include "sql/sqlrecord.h"
 #include "sql/sqltypes.h"

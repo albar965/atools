@@ -16,7 +16,6 @@
 *****************************************************************************/
 
 #include "fs/db/meta/sceneryareawriter.h"
-#include "fs/db/datawriter.h"
 #include "fs/navdatabaseoptions.h"
 
 #include <QDebug>

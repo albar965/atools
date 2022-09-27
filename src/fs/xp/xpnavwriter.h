@@ -18,7 +18,6 @@
 #ifndef ATOOLS_FS_XP_NAVWRITER_H
 #define ATOOLS_FS_XP_NAVWRITER_H
 
-#include "fs/xp/xpconstants.h"
 #include "fs/xp/xpwriter.h"
 
 namespace atools {

@@ -18,7 +18,6 @@
 #ifndef ATOOLS_XPGEOMETRY_H
 #define ATOOLS_XPGEOMETRY_H
 
-#include "fs/xp/xpconstants.h"
 #include "geo/pos.h"
 
 namespace atools {

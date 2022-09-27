@@ -33,8 +33,6 @@
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
 #include "settings/settings.h"
-#include "geo/pos.h"
-#include "geo/calculations.h"
 #include "fs/xp/airwaypostprocess.h"
 #include "fs/progresshandler.h"
 #include "exception.h"
