@@ -1200,7 +1200,8 @@ QString linkTarget(const QFileInfo& path)
   }
   else
 #endif
-  if(path.isSymbolicLink() || path.isShortcut())
+  if(path.isSymLink())
+    // Symbolic link or Windows shortcut
     target = path.symLinkTarget();
 
   return QDir::cleanPath(target);
