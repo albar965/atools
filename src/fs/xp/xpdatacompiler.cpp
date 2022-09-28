@@ -924,13 +924,16 @@ QVector<SceneryPack> XpDataCompiler::loadFilepathsFromSceneryPacks(const NavData
     }
     else
     {
-      if(progressHandler != nullptr)
-        progressHandler->reportError();
-      if(navdatabaseErrors != nullptr)
-        navdatabaseErrors->sceneryErrors.first().fileErrors.append({pack.filepath, pack.errorText, pack.errorLine});
+      // Disable error reporting for X-Plane 12 now since more changes can happen
+      if(opts.getSimulatorType() == atools::fs::FsPaths::XPLANE_11)
+      {
+        if(progressHandler != nullptr)
+          progressHandler->reportError();
+        if(navdatabaseErrors != nullptr)
+          navdatabaseErrors->sceneryErrors.first().fileErrors.append({pack.filepath, pack.errorText, pack.errorLine});
+      }
 
-      qWarning() << Q_FUNC_INFO << "Error in file" << pack.filepath << "line" << pack.errorLine << ":"
-                 << pack.errorText;
+      qWarning() << Q_FUNC_INFO << "Error in file" << pack.filepath << "line" << pack.errorLine << ":" << pack.errorText;
     }
   }
   return entryMap;
