@@ -142,22 +142,24 @@ void UserdataManager::clearTemporary()
 int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Flags flags, QChar separator,
                                QChar escape)
 {
-  SqlTransaction transaction(db);
-
-  preUndoBulkInsert();
-
-  // Autogenerate id
-  QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(), {idColumnName}, true);
-  SqlQuery insertQuery(db);
-  insertQuery.prepare(insert);
-
-  QString absfilepath = QFileInfo(filepath).absoluteFilePath();
-  QDateTime now = QDateTime::currentDateTime();
-
   int numImported = 0;
   QFile file(filepath);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
+    SqlTransaction transaction(db);
+
+    int id = getCurrentId() + 1;
+    preUndoBulkInsert(id);
+    QString idBinding(":" + idColumnName);
+
+    // Autogenerate id
+    QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(), QStringList(), true /* namedBindings */);
+    SqlQuery insertQuery(db);
+    insertQuery.prepare(insert);
+
+    QString absfilepath = QFileInfo(filepath).absoluteFilePath();
+    QDateTime now = QDateTime::currentDateTime();
+
     atools::util::CsvReader reader(separator, escape, true /* trim */);
 
     QTextStream stream(&file);
@@ -190,6 +192,7 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
 
       const QStringList& values = reader.getValues();
 
+      insertQuery.bindValue(idBinding, id++);
       insertQuery.bindValue(":type", at(values, csv::TYPE));
       insertQuery.bindValue(":name", at(values, csv::NAME));
       insertQuery.bindValue(":ident", at(values, csv::IDENT));
@@ -223,12 +226,12 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
       numImported++;
     }
     file.close();
+
+    postUndoBulkInsert();
+    transaction.commit();
   }
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
-
-  postUndoBulkInsert();
-  transaction.commit();
 
   return numImported;
 }
@@ -241,33 +244,37 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
 // 37.770908333 -122.082811111 AAAME ENRT  K2 4530263
 int UserdataManager::importXplane(const QString& filepath)
 {
-  SqlTransaction transaction(db);
-  preUndoBulkInsert();
-  QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(), {idColumnName, "description", "altitude"}, true);
-  SqlQuery insertQuery(db);
-  insertQuery.prepare(insert);
-
-  QString absfilepath = QFileInfo(filepath).absoluteFilePath();
-  QDateTime now = QDateTime::currentDateTime();
-
   int numImported = 0;
   QFile file(filepath);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
+    SqlTransaction transaction(db);
+
+    int id = getCurrentId() + 1;
+    preUndoBulkInsert(id);
+    QString idBinding(":" + idColumnName);
+
+    QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(), {"description", "altitude"}, true /* namedBindings */);
+    SqlQuery insertQuery(db);
+    insertQuery.prepare(insert);
+
+    QString absfilepath = QFileInfo(filepath).absoluteFilePath();
+    QDateTime now = QDateTime::currentDateTime();
+
     QTextStream stream(&file);
     stream.setCodec("UTF-8");
 
     QString line = stream.readLine().simplified();
     if(line != "I" && line != "A")
-      throw atools::Exception("File is not an X-Plane user_fix.dat file.");
+      throw atools::Exception(tr("File is not an X-Plane user_fix.dat file."));
 
     line = stream.readLine().simplified();
     if(!line.startsWith("11") && !line.startsWith("12"))
-      throw atools::Exception("File is not an X-Plane user_fix.dat file.");
+      throw atools::Exception(tr("File is not an X-Plane user_fix.dat file."));
 
     line = stream.readLine().simplified();
     if(!line.isEmpty())
-      throw atools::Exception("File is not an X-Plane user_fix.dat file.");
+      throw atools::Exception(tr("File is not an X-Plane user_fix.dat file."));
 
     int lineNum = 0;
     while(!stream.atEnd())
@@ -287,6 +294,7 @@ int UserdataManager::importXplane(const QString& filepath)
       tags.append(atools::fs::util::waypointFlagsFromXplane(at(cols, xp::FLAGS, true /* nowarn */)).replace(' ', '_'));
       tags.removeAll(QString());
 
+      insertQuery.bindValue(idBinding, id++);
       insertQuery.bindValue(":type", "Waypoint");
       insertQuery.bindValue(":ident", at(cols, xp::IDENT));
       insertQuery.bindValue(":region", at(cols, xp::REGION));
@@ -305,11 +313,12 @@ int UserdataManager::importXplane(const QString& filepath)
       numImported++;
     }
     file.close();
+
+    postUndoBulkInsert();
+    transaction.commit();
   }
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
-  postUndoBulkInsert();
-  transaction.commit();
   return numImported;
 }
 
@@ -336,22 +345,23 @@ int UserdataManager::importXplane(const QString& filepath)
 // OCEAN,,32.687356725,-51.45543634
 int UserdataManager::importGarmin(const QString& filepath)
 {
-  SqlTransaction transaction(db);
-  preUndoBulkInsert();
-
-  QString insert = SqlUtil(db).buildInsertStatement(tableName,
-                                                    QString(), {idColumnName, "description", "altitude", "region"},
-                                                    true);
-  SqlQuery insertQuery(db);
-  insertQuery.prepare(insert);
-
-  QString absfilepath = QFileInfo(filepath).absoluteFilePath();
-  QDateTime now = QDateTime::currentDateTime();
-
   int numImported = 0;
   QFile file(filepath);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
+    SqlTransaction transaction(db);
+    int id = getCurrentId() + 1;
+    preUndoBulkInsert(id);
+    QString idBinding(":" + idColumnName);
+
+    QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(),
+                                                      {"description", "altitude", "region"}, true /* namedBindings */);
+    SqlQuery insertQuery(db);
+    insertQuery.prepare(insert);
+
+    QString absfilepath = QFileInfo(filepath).absoluteFilePath();
+    QDateTime now = QDateTime::currentDateTime();
+
     QTextStream stream(&file);
     stream.setCodec("UTF-8");
 
@@ -364,6 +374,7 @@ int UserdataManager::importGarmin(const QString& filepath)
 
       QStringList cols = line.split(",");
 
+      insertQuery.bindValue(idBinding, id++);
       insertQuery.bindValue(":type", "Waypoint");
       insertQuery.bindValue(":name", at(cols, gm::NAME));
       insertQuery.bindValue(":ident", at(cols, gm::IDENT));
@@ -380,11 +391,12 @@ int UserdataManager::importGarmin(const QString& filepath)
       numImported++;
     }
     file.close();
+
+    postUndoBulkInsert();
+    transaction.commit();
   }
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
-  postUndoBulkInsert();
-  transaction.commit();
   return numImported;
 }
 

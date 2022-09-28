@@ -159,11 +159,13 @@ int LogdataManager::importCsv(const QString& filepath)
 {
   SqlTransaction transaction(db);
 
-  preUndoBulkInsert();
+  int id = getCurrentId() + 1;
+  preUndoBulkInsert(id);
+  QString idBinding(":" + idColumnName);
 
   // Autogenerate id - exclude logbook_id from insert
   SqlQuery insertQuery(db);
-  insertQuery.prepare(SqlUtil(db).buildInsertStatement(tableName, QString(), {idColumnName}, true));
+  insertQuery.prepare(SqlUtil(db).buildInsertStatement(tableName, QString(), QStringList(), true /* namedBindings */));
 
   int numImported = 0;
   QFile file(filepath);
@@ -200,6 +202,8 @@ int LogdataManager::importCsv(const QString& filepath)
         continue;
 
       const QStringList& values = reader.getValues();
+
+      insertQuery.bindValue(idBinding, id++);
 
       // Aircraft ===============================================================
       insertQuery.bindValue(":aircraft_name", at(values, csv::AIRCRAFT_NAME));
@@ -355,11 +359,13 @@ int LogdataManager::importXplane(const QString& filepath,
   };
 
   SqlTransaction transaction(db);
-  preUndoBulkInsert();
+  int id = getCurrentId() + 1;
+  preUndoBulkInsert(id);
+  QString idBinding(":" + idColumnName);
 
   // Autogenerate id
   SqlQuery insertQuery(db);
-  insertQuery.prepare(SqlUtil(db).buildInsertStatement(tableName, QString(), {idColumnName}, true));
+  insertQuery.prepare(SqlUtil(db).buildInsertStatement(tableName, QString(), QStringList(), true /* namedBindings */));
 
   int numImported = 0;
   QFile file(filepath);
@@ -399,6 +405,8 @@ int LogdataManager::importXplane(const QString& filepath,
 
         // Get name and coordinates from database
         fetchAirport(departurePos, departureName, departure);
+
+        insertQuery.bindValue(idBinding, id++);
 
         // Departure =====================================================
         insertQuery.bindValue(":departure_ident", departure);

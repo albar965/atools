@@ -219,7 +219,7 @@ public:
   }
 
   /* Call this before doing a bulk insert like CSV import. The method will remember the currently used rowid. */
-  void preUndoBulkInsert();
+  void preUndoBulkInsert(int idFrom);
 
   /* Call this after doing a bulk insert like CSV import. The method will store all rows in the undo
    * table between previously remembered and current rowid. */
@@ -233,6 +233,18 @@ public:
 
   void initQueries();
   void deInitQueries();
+
+  /* Get number of available undo steps or 0 if none */
+  int getUndoStepCount() const
+  {
+    return undoRedoStepCount(true /* undo */, nullptr);
+  }
+
+  /* Get number of available redo steps or 0 if none */
+  int getRedoStepCount() const
+  {
+    return undoRedoStepCount(false /* undo */, nullptr);
+  }
 
 protected:
   /*
@@ -275,6 +287,7 @@ private:
   /* Used to remember the change type in the table "undo_data.undo_type" */
   enum UndoAction
   {
+    UNDO_INVALID = '\0',
     UNDO_INSERT = 'I',
     UNDO_UPDATE = 'U',
     UNDO_DELETE = 'D',
@@ -334,6 +347,8 @@ private:
   /* Copy currentUndoGroupId from or to table undo_current */
   void syncCurrentUndoGroupFromDb();
   void syncCurrentUndoGroupToDb();
+
+  int undoRedoStepCount(bool undo, UndoAction *action) const;
 
   QString createScript, createUndoScript, dropScript, textSuffixSingular, textSuffixPlural;
 

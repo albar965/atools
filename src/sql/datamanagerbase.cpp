@@ -499,14 +499,14 @@ void DataManagerBase::preUndoInsert(sql::SqlRecordList records)
   }
 }
 
-void DataManagerBase::preUndoBulkInsert()
+void DataManagerBase::preUndoBulkInsert(int idFrom)
 {
   if(undoActive)
   {
     truncateUndoIf();
 
     // Remember current id
-    preBulkInsertId = currentId;
+    preBulkInsertId = currentId = idFrom;
   }
 }
 
@@ -683,7 +683,9 @@ void DataManagerBase::undoRedo(bool undo)
           else
             // Delete again - keep copy in undo table for undo
             deleteRowsInternal({id});
+          break;
 
+        case atools::sql::DataManagerBase::UNDO_INVALID:
           break;
       }
     }
@@ -757,20 +759,42 @@ void DataManagerBase::canUndoRedo(bool& undo, bool& redo) const
   }
 }
 
-QString DataManagerBase::undoRedoStepName(bool undo) const
+int DataManagerBase::undoRedoStepCount(bool undo, UndoAction *action) const
 {
-  QString text;
+  int num = 0;
   if(undoActive)
   {
     // Get row count for current undo/redo step
+    // select undo_type, count(1) from undo_data where undo_group_id = ? group by undo_group_id
     querySelectUndoByGroup->bindValue(0, undo ? currentUndoGroupId : currentUndoGroupId + 1);
     querySelectUndoByGroup->exec();
 
     if(querySelectUndoByGroup->next())
     {
       // Use number of modified/added/deleted rows in text
-      int num = querySelectUndoByGroup->valueInt(1);
+      num = querySelectUndoByGroup->valueInt(1);
 
+      if(action != nullptr)
+        *action = static_cast<UndoAction>(atools::strToChar(querySelectUndoByGroup->valueStr(0)));
+    }
+    querySelectUndoByGroup->finish();
+
+  }
+  return num;
+}
+
+QString DataManagerBase::undoRedoStepName(bool undo) const
+{
+  QString text;
+  if(undoActive)
+  {
+    // Get row count for current undo/redo step
+    UndoAction action = UNDO_INVALID;
+    int num = undoRedoStepCount(undo, &action);
+
+    if(num > 0)
+    {
+      // Use number of modified/added/deleted rows in text
       // Build number text
       QString numText;
       if(num == 0)
@@ -784,15 +808,20 @@ QString DataManagerBase::undoRedoStepName(bool undo) const
 
       QString undoRedoText(undo ? tr("Undo") : tr("Redo"));
 
-      UndoAction action = static_cast<UndoAction>(atools::strToChar(querySelectUndoByGroup->valueStr(0)));
       switch(action)
       {
+        case atools::sql::DataManagerBase::UNDO_INVALID:
+          text = tr("Invalid undo action");
+          break;
+
         case atools::sql::DataManagerBase::UNDO_INSERT:
           text = tr("%1 adding of %2").arg(undoRedoText).arg(numText);
           break;
+
         case atools::sql::DataManagerBase::UNDO_UPDATE:
           text = tr("%1 editing of %2").arg(undoRedoText).arg(numText);
           break;
+
         case atools::sql::DataManagerBase::UNDO_DELETE:
           text = tr("%1 deleting of %2").arg(undoRedoText).arg(numText);
           break;
