@@ -81,13 +81,13 @@ public:
   /* true if all two undo tables are present */
   bool hasUndoSchema() const;
 
-  /* Undo last change. Call canUndo() before running this to check if steps are available */
+  /* Undo last change. Call canUndo() before running this to check if steps are available. */
   void undo()
   {
     undoRedo(true);
   }
 
-  /* Redo last change. Call canRedo() before running this to check if steps are available */
+  /* Redo last change. Call canRedo() before running this to check if steps are available. */
   void redo()
   {
     undoRedo(false);
@@ -246,6 +246,14 @@ public:
     return undoRedoStepCount(false /* undo */, nullptr);
   }
 
+  /* return false to stop calculation. */
+  typedef std::function<bool (int totalNumber, int currentNumber)> UndoRedoCallbackType;
+
+  void setProgressCallback(UndoRedoCallbackType progressCallback)
+  {
+    callback = progressCallback;
+  }
+
 protected:
   /*
    * Simple SqlQuery wrapper which can be used to export all rows or a list of rows by id
@@ -349,6 +357,7 @@ private:
   void syncCurrentUndoGroupToDb();
 
   int undoRedoStepCount(bool undo, UndoAction *action) const;
+  bool invokeCallback(int totalNumber, int currentNumber);
 
   QString createScript, createUndoScript, dropScript, textSuffixSingular, textSuffixPlural;
 
@@ -366,6 +375,8 @@ private:
                         *selectUndoByGroup = nullptr, *queryInsertUndoData = nullptr, *queryDeleteRowById = nullptr,
                         *queryInsertRecords = nullptr, *querySelectById = nullptr;
 
+  UndoRedoCallbackType callback;
+  qint64 callbackTime = 0L;
 };
 
 } // namespace sql

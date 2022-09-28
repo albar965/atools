@@ -17,16 +17,14 @@
 
 #include "sql/datamanagerbase.h"
 
-#include "sql/sqlutil.h"
+#include "atools.h"
+#include "exception.h"
+#include "sql/sqlrecord.h"
+#include "geo/pos.h"
+#include "sql/sqldatabase.h"
 #include "sql/sqlscript.h"
 #include "sql/sqltransaction.h"
-#include "sql/sqlexport.h"
-#include "geo/pos.h"
-#include "atools.h"
-#include "settings/settings.h"
-#include "io/fileroller.h"
-#include "exception.h"
-#include "sql/sqldatabase.h"
+#include "sql/sqlutil.h"
 
 #include <QDir>
 #include <QStringBuilder>
@@ -619,14 +617,19 @@ void DataManagerBase::checkUndoTable(const QString& table)
 
 void DataManagerBase::undoRedo(bool undo)
 {
+  bool canceled = false;
+  int undoGroupId = currentUndoGroupId;
+
   if(undoActive)
   {
     if(!undo)
       // Increment before for redo
-      currentUndoGroupId++;
+      undoGroupId++;
+
+    int total = undoRedoStepCount(undo, nullptr), current = 0;
 
     // Get all records from the undo table for the current step to undo/redo
-    selectUndoByGroup->bindValue(":id", currentUndoGroupId);
+    selectUndoByGroup->bindValue(":id", undoGroupId);
     selectUndoByGroup->exec();
 
     while(selectUndoByGroup->next())
@@ -688,11 +691,24 @@ void DataManagerBase::undoRedo(bool undo)
         case atools::sql::DataManagerBase::UNDO_INVALID:
           break;
       }
+
+      if(!invokeCallback(total, current++))
+      {
+        canceled = true;
+        break;
+      }
     }
-    if(undo)
-      currentUndoGroupId--;
-    syncCurrentUndoGroupToDb();
-    updateUndoRedoActions();
+
+    if(!canceled)
+    {
+      if(undo)
+        undoGroupId--;
+
+      currentUndoGroupId = undoGroupId;
+
+      syncCurrentUndoGroupToDb();
+      updateUndoRedoActions();
+    }
   }
 }
 
@@ -957,6 +973,21 @@ void DataManagerBase::deInitQueries()
 
   delete querySelectById;
   querySelectById = nullptr;
+}
+
+bool DataManagerBase::invokeCallback(int totalNumber, int currentNumber)
+{
+  if(callback)
+  {
+    qint64 now = QDateTime::currentMSecsSinceEpoch();
+    // Check every 0.25 seconds
+    if(now > callbackTime + 250)
+    {
+      callbackTime = now;
+      return callback(totalNumber, currentNumber);
+    }
+  }
+  return true;
 }
 
 } // namespace sql
