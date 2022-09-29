@@ -21,6 +21,7 @@
 #include <QDateTime>
 #include <QSet>
 #include <QTimer>
+#include <QVector>
 
 class QFileSystemWatcher;
 

@@ -141,7 +141,12 @@ QStringList LoggingConfig::getLogFiles()
   collectFileNames(filenames, criticalStreamsCat);
   collectFileNames(filenames, fatalStreamsCat);
   collectFileNames(filenames, emptyStreamsCat);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
   return QStringList(filenames.begin(), filenames.end());
+#else
+  return filenames.toList();
+#endif
 }
 
 void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap)
