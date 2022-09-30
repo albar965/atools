@@ -1941,7 +1941,7 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Empty line after &quot;SCENERY&quot; missing</source>
-        <translation>Leere Zeile nach &quot;SCENERY&quot; fehlt</translation>
+        <translation type="vanished">Leere Zeile nach &quot;SCENERY&quot; fehlt</translation>
     </message>
     <message>
         <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
@@ -2249,6 +2249,10 @@ Nachtzeit: %5</translation>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
+    </message>
+    <message>
+        <source>File is not an X-Plane user_fix.dat file.</source>
+        <translation>Datei ist keine X-Plane user_fix-Datei.</translation>
     </message>
 </context>
 <context>
@@ -2584,6 +2588,10 @@ Importieren gestoppt.</translation>
     <message>
         <source>&amp;Redo %1</source>
         <translation>&amp;Wiederherstellen %1</translation>
+    </message>
+    <message>
+        <source>Invalid undo action</source>
+        <translation>Ungültige Rückgängig Aktion</translation>
     </message>
 </context>
 <context>
