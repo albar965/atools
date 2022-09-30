@@ -166,6 +166,16 @@ bool Pos::almostEqual(const Pos& other, float epsilon) const
          atools::almostEqual(latY, other.latY, epsilon);
 }
 
+float Pos::getLatYRad() const
+{
+  return toRadians(latY);
+}
+
+float Pos::getLonXRad() const
+{
+  return toRadians(lonX);
+}
+
 bool Pos::nearGrid(float spacing, float epsilon) const
 {
   return atools::almostEqual(lonX, atools::roundToNearest(lonX, spacing), epsilon) &&
@@ -374,6 +384,25 @@ float Pos::angleDegTo(const Pos& otherPos) const
   double angleDeg = toDegree(courseRad(toRadians(static_cast<double>(lonX)), toRadians(static_cast<double>(latY)),
                                        toRadians(static_cast<double>(otherPos.lonX)), toRadians(static_cast<double>(otherPos.latY))));
   return static_cast<float>(normalizeCourse(angleDeg));
+}
+
+float Pos::initialBearing(const Pos& otherPos) const
+{
+  if(!this->isValid() || !otherPos.isValid())
+    return INVALID_FLOAT;
+
+  double delta = otherPos.getLonXRad() - getLonXRad();
+  double bearing = atan2(sin(delta) * cos(otherPos.getLatYRad()),
+                         cos(getLatYRad()) * sin(otherPos.getLatYRad()) - sin(getLatYRad()) * cos(otherPos.getLatYRad()) * cos(delta));
+  return static_cast<float>(normalizeCourse(toDegree(bearing)));
+}
+
+float Pos::finalBearing(const Pos& otherPos) const
+{
+  if(!this->isValid() || !otherPos.isValid())
+    return INVALID_FLOAT;
+
+  return normalizeCourse(180.0f + otherPos.initialBearing(*this));
 }
 
 Pos Pos::endpointRhumb(float distanceMeter, float angleDeg) const

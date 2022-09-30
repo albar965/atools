@@ -108,6 +108,8 @@ public:
     return latY;
   }
 
+  float getLatYRad() const;
+
   int getLatYDeg() const
   {
     return deg(latY);
@@ -127,6 +129,8 @@ public:
   {
     return lonX;
   }
+
+  float getLonXRad() const;
 
   int getLonXDeg() const
   {
@@ -209,6 +213,12 @@ public:
 
   /* Angle to other point (initial course) */
   float angleDegTo(const atools::geo::Pos& otherPos) const;
+
+  /* Initial GC angle/course to the other point */
+  float initialBearing(const atools::geo::Pos& otherPos) const;
+
+  /* Final GC angle/course to the other point */
+  float finalBearing(const atools::geo::Pos& otherPos) const;
 
   /* return endpoint at distance and angle for a rhumb line (constant course) */
   atools::geo::Pos endpointRhumb(float distanceMeter, float angleDeg) const;

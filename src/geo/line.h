@@ -167,6 +167,16 @@ public:
 
   bool isEastCourse() const;
 
+  float getInitialBearing()
+  {
+    return pos1.initialBearing(pos2);
+  }
+
+  float getFinalBearing()
+  {
+    return pos1.finalBearing(pos2);
+  }
+
 private:
   friend QDataStream& operator<<(QDataStream& out, const atools::geo::Line& obj);
 
