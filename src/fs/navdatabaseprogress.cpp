@@ -38,12 +38,10 @@ const QString& NavDatabaseProgress::getSceneryPath() const
   return sceneryArea->getLocalPath();
 }
 
-QString NavDatabaseProgress::getBglFileName() const
+QString NavDatabaseProgress::getFileName() const
 {
-  return QFileInfo(bglFilepath).fileName();
+  return QFileInfo(filepath).fileName();
 }
-
-
 
 } // namespace fs
 } // namespace atools
