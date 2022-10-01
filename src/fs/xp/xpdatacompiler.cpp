@@ -314,7 +314,7 @@ bool XpDataCompiler::compileCifp()
 
       if((row % rowsPerStep) == 0)
       {
-        if(progress->reportOther(tr("Reading: %1").arg(file)))
+        if(progress->reportOther(tr("Reading: %1").arg(QDir::toNativeSeparators(QDir::cleanPath(file)))))
           return true;
 
         steps++;
@@ -414,7 +414,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
   stream.setCodec("UTF-8");
   bool aborted = false;
 
-  QString progressMsg = tr("Reading: %1").arg(filepath);
+  QString progressMsg = tr("Reading: %1").arg(QDir::toNativeSeparators(QDir::cleanPath(filepath)));
   QFileInfo fileinfo(filepath);
 
   if(!includeFile(fileinfo))
