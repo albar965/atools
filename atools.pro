@@ -42,6 +42,11 @@
 # Optional. Set this to "true" to omit all GRIB2 decoding code if not needed.
 # Reduces compilation time.
 #
+# More components can be disabled. Note that disabling the wrong combinations can result in build errors.
+# Full list is:
+# ATOOLS_NO_FS,  ATOOLS_NO_GRIB,  ATOOLS_NO_GUI,  ATOOLS_NO_ROUTING,  ATOOLS_NO_SQL,  ATOOLS_NO_TRACK,
+# ATOOLS_NO_USERDATA,  ATOOLS_NO_WEATHER,  ATOOLS_NO_WEB,  ATOOLS_NO_WMM,  ATOOLS_QUIET,
+#
 # This project has no deploy or install target. The include and library should
 # be used directly from the source tree.
 #
@@ -69,8 +74,17 @@ GIT_PATH=$$(ATOOLS_GIT_PATH)
 SIMCONNECT_PATH=$$(ATOOLS_SIMCONNECT_PATH)
 DEPLOY_BASE=$$(DEPLOY_BASE)
 QUIET=$$(ATOOLS_QUIET)
+
+ATOOLS_NO_USERDATA=$$(ATOOLS_NO_USERDATA)
+ATOOLS_NO_SQL=$$(ATOOLS_NO_SQL)
+ATOOLS_NO_WEATHER=$$(ATOOLS_NO_WEATHER)
+ATOOLS_NO_TRACK=$$(ATOOLS_NO_TRACK)
+ATOOLS_NO_GUI=$$(ATOOLS_NO_GUI)
+ATOOLS_NO_ROUTING=$$(ATOOLS_NO_ROUTING)
+ATOOLS_NO_WEB=$$(ATOOLS_NO_WEB)
 ATOOLS_NO_FS=$$(ATOOLS_NO_FS)
 ATOOLS_NO_GRIB=$$(ATOOLS_NO_GRIB)
+ATOOLS_NO_WMM=$$(ATOOLS_NO_WMM)
 
 # =======================================================================
 # Fill defaults for unset
@@ -142,8 +156,18 @@ message(VERSION_NUMBER: $$VERSION_NUMBER)
 message(GIT_REVISION: $$GIT_REVISION)
 message(GIT_REVISION_FULL: $$GIT_REVISION_FULL)
 message(GIT_PATH: $$GIT_PATH)
+
+message(ATOOLS_NO_USERDATA: $$ATOOLS_NO_USERDATA)
+message(ATOOLS_NO_SQL: $$ATOOLS_NO_SQL)
+message(ATOOLS_NO_WEATHER: $$ATOOLS_NO_WEATHER)
+message(ATOOLS_NO_TRACK: $$ATOOLS_NO_TRACK)
+message(ATOOLS_NO_GUI: $$ATOOLS_NO_GUI)
+message(ATOOLS_NO_ROUTING: $$ATOOLS_NO_ROUTING)
+message(ATOOLS_NO_WEB: $$ATOOLS_NO_WEB)
 message(ATOOLS_NO_FS: $$ATOOLS_NO_FS)
 message(ATOOLS_NO_GRIB: $$ATOOLS_NO_GRIB)
+message(ATOOLS_NO_WMM: $$ATOOLS_NO_WMM)
+
 message(SIMCONNECT_PATH: $$SIMCONNECT_PATH)
 message(DEFINES: $$DEFINES)
 message(INCLUDEPATH: $$INCLUDEPATH)
@@ -163,8 +187,6 @@ message(-----------------------------------)
 HEADERS += \
   src/atools.h \
   src/exception.h \
-  src/fs/bgl/surface.h \
-  src/fs/common/binarymsageometry.h \
   src/fs/navdatabaseflags.h \
   src/fs/sc/connecthandler.h \
   src/fs/sc/datareaderthread.h \
@@ -179,28 +201,10 @@ HEADERS += \
   src/fs/sc/simconnectuseraircraft.h \
   src/fs/sc/weatherrequest.h \
   src/fs/sc/xpconnecthandler.h \
-  src/fs/scenery/contentxml.h \
-  src/fs/scenery/languagejson.h \
-  src/fs/scenery/layoutjson.h \
-  src/fs/scenery/manifestjson.h \
-  src/fs/scenery/materiallib.h \
-  src/fs/userdata/airspacereaderbase.h \
-  src/fs/userdata/airspacereaderivao.h \
-  src/fs/userdata/airspacereaderopenair.h \
-  src/fs/userdata/airspacereadervatsim.h \
-  src/fs/userdata/logdatamanager.h \
   src/fs/util/coordinates.h \
   src/fs/util/fsutil.h \
   src/fs/util/morsecode.h \
   src/fs/util/tacanfrequencies.h \
-  src/fs/weather/metar.h \
-  src/fs/weather/metarindex.h \
-  src/fs/weather/metarparser.h \
-  src/fs/weather/noaaweatherdownloader.h \
-  src/fs/weather/weatherdownloadbase.h \
-  src/fs/weather/weathernetdownload.h \
-  src/fs/weather/weathertypes.h \
-  src/fs/weather/xpweatherreader.h \
   src/geo/calculations.h \
   src/geo/line.h \
   src/geo/linestring.h \
@@ -209,42 +213,8 @@ HEADERS += \
   src/geo/pos.h \
   src/geo/rect.h \
   src/geo/spatialindex.h \
-  src/grib/windquery.h \
-  src/gui/actionbuttonhandler.h \
-  src/gui/actionstatesaver.h \
-  src/gui/actiontextsaver.h \
-  src/gui/actiontool.h \
   src/gui/application.h \
-  src/gui/choicedialog.h \
-  src/gui/clicktooltiphandler.h \
   src/gui/consoleapplication.h \
-  src/gui/dialog.h \
-  src/gui/dockwidgethandler.h \
-  src/gui/errorhandler.h \
-  src/gui/filehistoryhandler.h \
-  src/gui/griddelegate.h \
-  src/gui/helphandler.h \
-  src/gui/itemviewzoomhandler.h \
-  src/gui/mapposhistory.h \
-  src/gui/palettesettings.h \
-  src/gui/signalblocker.h \
-  src/gui/tabwidgethandler.h \
-  src/gui/tools.h \
-  src/gui/translator.h \
-  src/gui/treedialog.h \
-  src/gui/widgetstate.h \
-  src/gui/widgetutil.h \
-  src/httpserver/httpconnectionhandler.h \
-  src/httpserver/httpconnectionhandlerpool.h \
-  src/httpserver/httpcookie.h \
-  src/httpserver/httpglobal.h \
-  src/httpserver/httplistener.h \
-  src/httpserver/httprequest.h \
-  src/httpserver/httprequesthandler.h \
-  src/httpserver/httpresponse.h \
-  src/httpserver/httpsession.h \
-  src/httpserver/httpsessionstore.h \
-  src/httpserver/staticfilecontroller.h \
   src/io/abstractinireader.h \
   src/io/binarystream.h \
   src/io/binaryutil.h \
@@ -257,27 +227,7 @@ HEADERS += \
   src/logging/logginghandler.h \
   src/logging/loggingtypes.h \
   src/logging/loggingutil.h \
-  src/routing/routenetwork.h \
-  src/routing/routenetworkloader.h \
-  src/routing/routenetworktypes.h \
   src/settings/settings.h \
-  src/sql/datamanagerbase.h \
-  src/sql/sqldatabase.h \
-  src/sql/sqlexception.h \
-  src/sql/sqlexport.h \
-  src/sql/sqlquery.h \
-  src/sql/sqlrecord.h \
-  src/sql/sqlscript.h \
-  src/sql/sqltransaction.h \
-  src/sql/sqltypes.h \
-  src/sql/sqlutil.h \
-  src/templateengine/template.h \
-  src/templateengine/templatecache.h \
-  src/templateengine/templateglobal.h \
-  src/templateengine/templateloader.h \
-  src/track/trackdownloader.h \
-  src/track/trackreader.h \
-  src/track/tracktypes.h \
   src/util/average.h \
   src/util/csvreader.h \
   src/util/filesystemwatcher.h \
@@ -296,8 +246,6 @@ HEADERS += \
   src/util/version.h \
   src/util/xmlstream.h \
   src/win/activationcontext.h \
-  src/wmm/GeomagnetismHeader.h \
-  src/wmm/magdectool.h \
   src/zip/gzip.h \
   src/zip/zipreader.h \
   src/zip/zipwriter.h
@@ -305,8 +253,6 @@ HEADERS += \
 SOURCES += \
   src/atools.cpp \
   src/exception.cpp \
-  src/fs/bgl/surface.cpp \
-  src/fs/common/binarymsageometry.cpp \
   src/fs/navdatabaseflags.cpp \
   src/fs/sc/connecthandler.cpp \
   src/fs/sc/datareaderthread.cpp \
@@ -321,28 +267,10 @@ SOURCES += \
   src/fs/sc/simconnectuseraircraft.cpp \
   src/fs/sc/weatherrequest.cpp \
   src/fs/sc/xpconnecthandler.cpp \
-  src/fs/scenery/contentxml.cpp \
-  src/fs/scenery/languagejson.cpp \
-  src/fs/scenery/layoutjson.cpp \
-  src/fs/scenery/manifestjson.cpp \
-  src/fs/scenery/materiallib.cpp \
-  src/fs/userdata/airspacereaderbase.cpp \
-  src/fs/userdata/airspacereaderivao.cpp \
-  src/fs/userdata/airspacereaderopenair.cpp \
-  src/fs/userdata/airspacereadervatsim.cpp \
-  src/fs/userdata/logdatamanager.cpp \
   src/fs/util/coordinates.cpp \
   src/fs/util/fsutil.cpp \
   src/fs/util/morsecode.cpp \
   src/fs/util/tacanfrequencies.cpp \
-  src/fs/weather/metar.cpp \
-  src/fs/weather/metarindex.cpp \
-  src/fs/weather/metarparser.cpp \
-  src/fs/weather/noaaweatherdownloader.cpp \
-  src/fs/weather/weatherdownloadbase.cpp \
-  src/fs/weather/weathernetdownload.cpp \
-  src/fs/weather/weathertypes.cpp \
-  src/fs/weather/xpweatherreader.cpp \
   src/geo/calculations.cpp \
   src/geo/line.cpp \
   src/geo/linestring.cpp \
@@ -350,42 +278,8 @@ SOURCES += \
   src/geo/pos.cpp \
   src/geo/rect.cpp \
   src/geo/spatialindex.cpp \
-  src/grib/windquery.cpp \
-  src/gui/actionbuttonhandler.cpp \
-  src/gui/actionstatesaver.cpp \
-  src/gui/actiontextsaver.cpp \
-  src/gui/actiontool.cpp \
   src/gui/application.cpp \
-  src/gui/choicedialog.cpp \
-  src/gui/clicktooltiphandler.cpp \
   src/gui/consoleapplication.cpp \
-  src/gui/dialog.cpp \
-  src/gui/dockwidgethandler.cpp \
-  src/gui/errorhandler.cpp \
-  src/gui/filehistoryhandler.cpp \
-  src/gui/griddelegate.cpp \
-  src/gui/helphandler.cpp \
-  src/gui/itemviewzoomhandler.cpp \
-  src/gui/mapposhistory.cpp \
-  src/gui/palettesettings.cpp \
-  src/gui/signalblocker.cpp \
-  src/gui/tabwidgethandler.cpp \
-  src/gui/tools.cpp \
-  src/gui/translator.cpp \
-  src/gui/treedialog.cpp \
-  src/gui/widgetstate.cpp \
-  src/gui/widgetutil.cpp \
-  src/httpserver/httpconnectionhandler.cpp \
-  src/httpserver/httpconnectionhandlerpool.cpp \
-  src/httpserver/httpcookie.cpp \
-  src/httpserver/httpglobal.cpp \
-  src/httpserver/httplistener.cpp \
-  src/httpserver/httprequest.cpp \
-  src/httpserver/httprequesthandler.cpp \
-  src/httpserver/httpresponse.cpp \
-  src/httpserver/httpsession.cpp \
-  src/httpserver/httpsessionstore.cpp \
-  src/httpserver/staticfilecontroller.cpp \
   src/io/abstractinireader.cpp \
   src/io/binarystream.cpp \
   src/io/binaryutil.cpp \
@@ -396,25 +290,7 @@ SOURCES += \
   src/logging/loggingguiabort.cpp \
   src/logging/logginghandler.cpp \
   src/logging/loggingutil.cpp \
-  src/routing/routenetwork.cpp \
-  src/routing/routenetworkloader.cpp \
-  src/routing/routenetworktypes.cpp \
   src/settings/settings.cpp \
-  src/sql/datamanagerbase.cpp \
-  src/sql/sqldatabase.cpp \
-  src/sql/sqlexception.cpp \
-  src/sql/sqlexport.cpp \
-  src/sql/sqlquery.cpp \
-  src/sql/sqlrecord.cpp \
-  src/sql/sqlscript.cpp \
-  src/sql/sqltransaction.cpp \
-  src/sql/sqlutil.cpp \
-  src/templateengine/template.cpp \
-  src/templateengine/templatecache.cpp \
-  src/templateengine/templateloader.cpp \
-  src/track/trackdownloader.cpp \
-  src/track/trackreader.cpp \
-  src/track/tracktypes.cpp \
   src/util/average.cpp \
   src/util/csvreader.cpp \
   src/util/filesystemwatcher.cpp \
@@ -433,10 +309,217 @@ SOURCES += \
   src/util/version.cpp \
   src/util/xmlstream.cpp \
   src/win/activationcontext.cpp \
-  src/wmm/GeomagnetismLibrary.c \
-  src/wmm/magdectool.cpp \
   src/zip/gzip.cpp \
   src/zip/zip.cpp
+
+# =====================================================================
+# Userdata
+
+!isEqual(ATOOLS_NO_USERDATA, "true") {
+HEADERS += \
+  src/fs/userdata/airspacereaderbase.h \
+  src/fs/userdata/airspacereaderivao.h \
+  src/fs/userdata/airspacereaderopenair.h \
+  src/fs/userdata/airspacereadervatsim.h \
+  src/fs/userdata/logdatamanager.h \
+  src/fs/userdata/userdatamanager.h
+
+SOURCES += \
+  src/fs/userdata/airspacereaderbase.cpp \
+  src/fs/userdata/airspacereaderivao.cpp \
+  src/fs/userdata/airspacereaderopenair.cpp \
+  src/fs/userdata/airspacereadervatsim.cpp \
+  src/fs/userdata/logdatamanager.cpp \
+  src/fs/userdata/userdatamanager.cpp
+} # ATOOLS_NO_USERDATA
+
+# =====================================================================
+# Weather
+
+!isEqual(ATOOLS_NO_SQL, "true") {
+HEADERS += \
+  src/sql/datamanagerbase.h \
+  src/sql/sqldatabase.h \
+  src/sql/sqlexception.h \
+  src/sql/sqlexport.h \
+  src/sql/sqlquery.h \
+  src/sql/sqlrecord.h \
+  src/sql/sqlscript.h \
+  src/sql/sqltransaction.h \
+  src/sql/sqltypes.h \
+  src/sql/sqlutil.h
+
+SOURCES += \
+  src/sql/datamanagerbase.cpp \
+  src/sql/sqldatabase.cpp \
+  src/sql/sqlexception.cpp \
+  src/sql/sqlexport.cpp \
+  src/sql/sqlquery.cpp \
+  src/sql/sqlrecord.cpp \
+  src/sql/sqlscript.cpp \
+  src/sql/sqltransaction.cpp \
+  src/sql/sqlutil.cpp
+} # ATOOLS_NO_SQL
+
+# =====================================================================
+# Weather
+
+!isEqual(ATOOLS_NO_WEATHER, "true") {
+HEADERS += \
+  src/fs/weather/metar.h \
+  src/fs/weather/metarindex.h \
+  src/fs/weather/metarparser.h \
+  src/fs/weather/noaaweatherdownloader.h \
+  src/fs/weather/weatherdownloadbase.h \
+  src/fs/weather/weathernetdownload.h \
+  src/fs/weather/weathertypes.h \
+  src/fs/weather/xpweatherreader.h
+
+SOURCES += \
+  src/fs/weather/metar.cpp \
+  src/fs/weather/metarindex.cpp \
+  src/fs/weather/metarparser.cpp \
+  src/fs/weather/noaaweatherdownloader.cpp \
+  src/fs/weather/weatherdownloadbase.cpp \
+  src/fs/weather/weathernetdownload.cpp \
+  src/fs/weather/weathertypes.cpp \
+  src/fs/weather/xpweatherreader.cpp
+} # ATOOLS_NO_WEATHER
+
+# =====================================================================
+# Track
+
+!isEqual(ATOOLS_NO_TRACK, "true") {
+HEADERS += \
+src/track/trackdownloader.h \
+src/track/trackreader.h \
+src/track/tracktypes.h
+
+SOURCES += \
+src/track/trackdownloader.cpp \
+src/track/trackreader.cpp \
+src/track/tracktypes.cpp
+} # ATOOLS_NO_TRACK
+
+
+# =====================================================================
+# GUI
+
+!isEqual(ATOOLS_NO_GUI, "true") {
+HEADERS += \
+  src/gui/actionbuttonhandler.h \
+  src/gui/actionstatesaver.h \
+  src/gui/actiontextsaver.h \
+  src/gui/actiontool.h \
+  src/gui/choicedialog.h \
+  src/gui/clicktooltiphandler.h \
+  src/gui/dialog.h \
+  src/gui/dockwidgethandler.h \
+  src/gui/errorhandler.h \
+  src/gui/filehistoryhandler.h \
+  src/gui/griddelegate.h \
+  src/gui/helphandler.h \
+  src/gui/itemviewzoomhandler.h \
+  src/gui/mapposhistory.h \
+  src/gui/palettesettings.h \
+  src/gui/signalblocker.h \
+  src/gui/tabwidgethandler.h \
+  src/gui/tools.h \
+  src/gui/translator.h \
+  src/gui/treedialog.h \
+  src/gui/widgetstate.h \
+  src/gui/widgetutil.h
+
+SOURCES += \
+  src/gui/actionbuttonhandler.cpp \
+  src/gui/actionstatesaver.cpp \
+  src/gui/actiontextsaver.cpp \
+  src/gui/actiontool.cpp \
+  src/gui/choicedialog.cpp \
+  src/gui/clicktooltiphandler.cpp \
+  src/gui/dialog.cpp \
+  src/gui/dockwidgethandler.cpp \
+  src/gui/errorhandler.cpp \
+  src/gui/filehistoryhandler.cpp \
+  src/gui/griddelegate.cpp \
+  src/gui/helphandler.cpp \
+  src/gui/itemviewzoomhandler.cpp \
+  src/gui/mapposhistory.cpp \
+  src/gui/palettesettings.cpp \
+  src/gui/signalblocker.cpp \
+  src/gui/tabwidgethandler.cpp \
+  src/gui/tools.cpp \
+  src/gui/translator.cpp \
+  src/gui/treedialog.cpp \
+  src/gui/widgetstate.cpp \
+  src/gui/widgetutil.cpp
+} # ATOOLS_NO_GUI
+
+# =====================================================================
+# WMM
+
+!isEqual(ATOOLS_NO_WMM, "true") {
+HEADERS += \
+  src/wmm/GeomagnetismHeader.h \
+  src/wmm/magdectool.h
+
+SOURCES += \
+  src/wmm/GeomagnetismLibrary.c \
+  src/wmm/magdectool.cpp
+} # ATOOLS_NO_WMM
+
+# =====================================================================
+# Routing
+
+!isEqual(ATOOLS_NO_ROUTING, "true") {
+HEADERS += \
+src/routing/routenetwork.h \
+src/routing/routenetworkloader.h \
+src/routing/routenetworktypes.h
+
+SOURCES += \
+src/routing/routenetwork.cpp \
+src/routing/routenetworkloader.cpp \
+src/routing/routenetworktypes.cpp
+} # ATOOLS_NO_ROUTING
+
+# =====================================================================
+# Webserver
+
+!isEqual(ATOOLS_NO_WEB, "true") {
+HEADERS += \
+  src/httpserver/httpconnectionhandler.h \
+  src/httpserver/httpconnectionhandlerpool.h \
+  src/httpserver/httpcookie.h \
+  src/httpserver/httpglobal.h \
+  src/httpserver/httplistener.h \
+  src/httpserver/httprequest.h \
+  src/httpserver/httprequesthandler.h \
+  src/httpserver/httpresponse.h \
+  src/httpserver/httpsession.h \
+  src/httpserver/httpsessionstore.h \
+  src/httpserver/staticfilecontroller.h \
+  src/templateengine/template.h \
+  src/templateengine/templatecache.h \
+  src/templateengine/templateglobal.h \
+  src/templateengine/templateloader.h
+
+SOURCES += \
+  src/httpserver/httpconnectionhandler.cpp \
+  src/httpserver/httpconnectionhandlerpool.cpp \
+  src/httpserver/httpcookie.cpp \
+  src/httpserver/httpglobal.cpp \
+  src/httpserver/httplistener.cpp \
+  src/httpserver/httprequest.cpp \
+  src/httpserver/httprequesthandler.cpp \
+  src/httpserver/httpresponse.cpp \
+  src/httpserver/httpsession.cpp \
+  src/httpserver/httpsessionstore.cpp \
+  src/httpserver/staticfilecontroller.cpp \
+  src/templateengine/template.cpp \
+  src/templateengine/templatecache.cpp \
+  src/templateengine/templateloader.cpp
+} # ATOOLS_NO_WEB
 
 # =====================================================================
 # Flight simulator files
@@ -493,9 +576,11 @@ HEADERS += \
   src/fs/bgl/section.h \
   src/fs/bgl/sectiontype.h \
   src/fs/bgl/subsection.h \
+  src/fs/bgl/surface.h \
   src/fs/bgl/util.h \
   src/fs/common/airportindex.h \
   src/fs/common/binarygeometry.h \
+  src/fs/common/binarymsageometry.h \
   src/fs/common/globereader.h \
   src/fs/common/magdecreader.h \
   src/fs/common/metadatawriter.h \
@@ -563,12 +648,17 @@ HEADERS += \
   src/fs/scenery/addoncfg.h \
   src/fs/scenery/addoncomponent.h \
   src/fs/scenery/addonpackage.h \
+  src/fs/scenery/contentxml.h \
   src/fs/scenery/fileresolver.h \
+  src/fs/scenery/languagejson.h \
+  src/fs/scenery/layoutjson.h \
+  src/fs/scenery/manifestjson.h \
+  src/fs/scenery/materiallib.h \
   src/fs/scenery/sceneryarea.h \
   src/fs/scenery/scenerycfg.h \
-  src/fs/userdata/userdatamanager.h \
   src/fs/xp/airwaypostprocess.h \
   src/fs/xp/scenerypacks.h \
+  src/fs/xp/xpairportmsawriter.h \
   src/fs/xp/xpairportwriter.h \
   src/fs/xp/xpairspacewriter.h \
   src/fs/xp/xpairwaywriter.h \
@@ -576,11 +666,11 @@ HEADERS += \
   src/fs/xp/xpconstants.h \
   src/fs/xp/xpdatacompiler.h \
   src/fs/xp/xpfixwriter.h \
-  src/fs/xp/xpmorawriter.h \
-  src/fs/xp/xpairportmsawriter.h \
   src/fs/xp/xpholdingwriter.h \
+  src/fs/xp/xpmorawriter.h \
   src/fs/xp/xpnavwriter.h \
   src/fs/xp/xpwriter.h \
+  src/grib/windquery.h \
   src/routing/routefinder.h
 
 SOURCES += \
@@ -634,9 +724,11 @@ SOURCES += \
   src/fs/bgl/section.cpp \
   src/fs/bgl/sectiontype.cpp \
   src/fs/bgl/subsection.cpp \
+  src/fs/bgl/surface.cpp \
   src/fs/bgl/util.cpp \
   src/fs/common/airportindex.cpp \
   src/fs/common/binarygeometry.cpp \
+  src/fs/common/binarymsageometry.cpp \
   src/fs/common/globereader.cpp \
   src/fs/common/magdecreader.cpp \
   src/fs/common/metadatawriter.cpp \
@@ -703,26 +795,30 @@ SOURCES += \
   src/fs/scenery/addoncfg.cpp \
   src/fs/scenery/addoncomponent.cpp \
   src/fs/scenery/addonpackage.cpp \
+  src/fs/scenery/contentxml.cpp \
   src/fs/scenery/fileresolver.cpp \
+  src/fs/scenery/languagejson.cpp \
+  src/fs/scenery/layoutjson.cpp \
+  src/fs/scenery/manifestjson.cpp \
+  src/fs/scenery/materiallib.cpp \
   src/fs/scenery/sceneryarea.cpp \
   src/fs/scenery/scenerycfg.cpp \
-  src/fs/userdata/userdatamanager.cpp \
   src/fs/xp/airwaypostprocess.cpp \
   src/fs/xp/scenerypacks.cpp \
+  src/fs/xp/xpairportmsawriter.cpp \
   src/fs/xp/xpairportwriter.cpp \
   src/fs/xp/xpairspacewriter.cpp \
   src/fs/xp/xpairwaywriter.cpp \
   src/fs/xp/xpcifpwriter.cpp \
   src/fs/xp/xpconstants.cpp \
   src/fs/xp/xpdatacompiler.cpp \
-  src/fs/xp/xpmorawriter.cpp \
-  src/fs/xp/xpairportmsawriter.cpp \
-  src/fs/xp/xpholdingwriter.cpp \
   src/fs/xp/xpfixwriter.cpp \
+  src/fs/xp/xpholdingwriter.cpp \
+  src/fs/xp/xpmorawriter.cpp \
   src/fs/xp/xpnavwriter.cpp \
   src/fs/xp/xpwriter.cpp \
+  src/grib/windquery.cpp \
   src/routing/routefinder.cpp
-
 } # ATOOLS_NO_FS
 
 
@@ -789,9 +885,11 @@ SOURCES += \
   src/grib/gribreader.cpp
 } # ATOOLS_NO_GRIB
 
+!isEqual(ATOOLS_NO_GUI, "true") {
 FORMS += \
   src/gui/choicedialog.ui \
   src/gui/treedialog.ui
+} # ATOOLS_NO_GUI
 
 
 RESOURCES += \
