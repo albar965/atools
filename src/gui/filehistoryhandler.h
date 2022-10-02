@@ -86,6 +86,9 @@ public:
     firstItemShortcut = value;
   }
 
+  /* Update tooltips showing the file path. Set "setToolTipsVisible" for menu always to true */
+  void updateMenuTooltips();
+
 signals:
   /* Emitted when the user selects a recent file action */
   void fileSelected(const QString& filename);

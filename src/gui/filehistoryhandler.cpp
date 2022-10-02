@@ -114,6 +114,11 @@ void FileHistoryHandler::itemTriggered(QAction *action)
   }
 }
 
+void FileHistoryHandler::updateMenuTooltips()
+{
+  recentMenu->setToolTipsVisible(true);
+}
+
 void FileHistoryHandler::updateMenu()
 {
   recentMenu->clear();
