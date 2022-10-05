@@ -51,10 +51,11 @@ enum Flag
   LINK_NO_UL = 1 << 11, /* Do not underline links */
   NO_ENTITIES = 1 << 12, /* Do not convert entities */
   ALIGN_RIGHT = 1 << 13, /* Only for table data */
-  AUTOLINK = 1 << 14, /* Automatically create links from http:// and https:// in text */
-  REPLACE_CRLF = 1 << 15, /* Replace carriage return and linefeed with <br/> */
+  ALIGN_LEFT = 1 << 14, /* Only for table header data */
+  AUTOLINK = 1 << 15, /* Automatically create links from http:// and https:// in text */
+  REPLACE_CRLF = 1 << 16, /* Replace carriage return and linefeed with <br/> */
 
-  NOBR_WHITESPACE = 1 << 16 /* HTML no break at whitespace for tooltips
+  NOBR_WHITESPACE = 1 << 17 /* HTML no break at whitespace for tooltips
                              * like: <p style='white-space:pre'>. Only for paragraphs. */
 };
 
@@ -341,7 +342,7 @@ public:
   HtmlBuilder& tdAtts(const QHash<QString, QString>& attributes);
   HtmlBuilder& tdEnd();
 
-  HtmlBuilder& th(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& th(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), int colspan = -1);
 
   /* Document begin and end */
   HtmlBuilder& doc(const QString& title = QString(), const QString& css = QString(),

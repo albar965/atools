@@ -355,8 +355,7 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
         valueStr = QString("Error: Invalid variant type \"%1\"").arg(value.typeName());
 
     }
-    htmlText.append(alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
-                    arg(asText(name, flags, color), value.toString()));
+    htmlText.append(alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).arg(asText(name, flags, color), value.toString()));
     tableRowsCur++;
     numLines++;
   }
@@ -483,9 +482,13 @@ HtmlBuilder& HtmlBuilder::tdEnd()
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::th(const QString& str, html::Flags flags, QColor color)
+HtmlBuilder& HtmlBuilder::th(const QString& str, html::Flags flags, QColor color, int colspan)
 {
-  htmlText.append(QLatin1String("<th") % (flags & html::ALIGN_RIGHT ? " align=\"right\"" : "") % ">");
+  htmlText.append(QLatin1String("<th") %
+                  (flags & html::ALIGN_RIGHT ? " align=\"right\"" : "") %
+                  (flags & html::ALIGN_LEFT ? " align=\"left\"" : "") %
+                  (colspan != -1 ? " colspan=\"" % QString::number(colspan) % "\"" : QString()) %
+                  ">");
   text(str, flags, color);
   htmlText.append("</th>\n");
   return *this;
