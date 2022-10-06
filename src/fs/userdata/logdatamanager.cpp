@@ -174,7 +174,9 @@ int LogdataManager::importCsv(const QString& filepath)
     atools::util::CsvReader reader;
 
     QTextStream stream(&file);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     stream.setCodec("UTF-8");
+#endif
 
     int lineNum = 0;
     while(!stream.atEnd())
@@ -374,8 +376,9 @@ int LogdataManager::importXplane(const QString& filepath,
     QString filename = QFileInfo(filepath).fileName();
 
     QTextStream stream(&file);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     stream.setCodec("UTF-8");
-
+#endif
     int lineNum = 0;
     while(!stream.atEnd())
     {
@@ -518,7 +521,9 @@ int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, 
     QueryWrapper query(util.buildSelectStatement(tableName, columns), db, ids, idColumnName);
 
     QTextStream stream(&file);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     stream.setCodec("UTF-8");
+#endif
     stream.setRealNumberNotation(QTextStream::FixedNotation);
 
     if(!endsWithEol && append)

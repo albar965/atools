@@ -36,7 +36,13 @@ XmlStream::XmlStream(QIODevice *device, const QString& filenameParam)
   {
     // Load the file into a text file to avoid BOM / xml encoding mismatches
     QTextStream stream(device);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    stream.setEncoding(QStringConverter::encodingForName(codec->name().constData()).value_or(QStringConverter::Utf8));
+#else
     stream.setCodec(codec);
+#endif
+
     QString str = stream.readAll();
 
     // The reader ignores the XML encoding header when reading from a string

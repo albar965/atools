@@ -321,10 +321,12 @@ public:
     addProps(props);
   }
 
-  Props(const QVector<atools::util::Prop>& props)
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    Props(const QVector<atools::util::Prop>& props)
   {
     addProps(props);
   }
+#endif
 
   atools::util::Prop getProp(int key)
   {
@@ -347,11 +349,13 @@ public:
       insert(prop.getKey(), prop);
   }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   void addProps(const QVector<atools::util::Prop>& props)
   {
     for(const atools::util::Prop& prop:props)
       insert(prop.getKey(), prop);
   }
+#endif
 
 private:
   friend QDataStream& operator<<(QDataStream& out, const atools::util::Props& props);

@@ -58,6 +58,7 @@
 VERSION_NUMBER=3.8.5.beta
 
 QT += sql xml svg core widgets network
+versionAtLeast(QT_VERSION, 6.0.0): QT += core5compat
 QT -= gui
 CONFIG += build_all c++14 staticlib
 CONFIG -= debug_and_release debug_and_release_target
@@ -117,6 +118,14 @@ win32 {
 macx {
   # Compatibility down to OS X Mountain Lion 10.8
   QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
+
+  versionAtLeast(QT_VERSION, 6.0.0) {
+    # Compatibility down to OS X Mojave 10.14 inclusive
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.14
+  } else {
+    # Compatibility down to OS X Sierra 10.12 inclusive
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.12
+  }
 }
 
 isEmpty(GIT_PATH) {

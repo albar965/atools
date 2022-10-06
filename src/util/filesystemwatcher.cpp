@@ -75,7 +75,7 @@ void FileSystemWatcher::pathChanged()
                  << "file" << fileinfo.isFile()
                  << "exists" << fileinfo.exists()
                  << "size" << fileinfo.size()
-                 << "last modified" << fileinfo.lastModified().toString(Qt::DefaultLocaleShortDate);
+                 << "last modified" << fileinfo.lastModified().toString(Qt::ISODateWithMs);
 
       if(fileinfo.isFile())
       {

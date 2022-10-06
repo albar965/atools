@@ -68,7 +68,7 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
     defaultDir = path;
 
   // Get path from settings use path or documents as default
-  QFileInfo dir = settingsPrefix.isEmpty() ? defaultDir : s.valueStr(settingNameDir, defaultDir);
+  QFileInfo dir(settingsPrefix.isEmpty() ? defaultDir : s.valueStr(settingNameDir, defaultDir));
 
   if(dir.exists())
   {
@@ -83,7 +83,7 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
     // Go up the directory level until a valid dir is found - avoid endless iterations
     int i = 50;
     while(!dir.exists() && !dir.isRoot() && i-- > 0)
-      dir = dir.dir().path();
+      dir.setFile(dir.dir().path());
 
     dlg.setDirectory(dir.absoluteFilePath());
     qDebug() << dir.absoluteFilePath() << "corrected path";
@@ -99,8 +99,7 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
 
     int i = 1;
     while(fi.exists() && i < 100)
-      fi = dir.filePath() + QDir::separator() + base.baseName() + QString("%1%2").arg(sep).arg(i++) + "." +
-           base.completeSuffix();
+      fi.setFile(dir.filePath() + QDir::separator() + base.baseName() + QString("%1%2").arg(sep).arg(i++) + "." + base.completeSuffix());
 
     name = fi.fileName();
   }
@@ -131,7 +130,11 @@ QString Dialog::openDirectoryDialog(const QString& title, const QString& setting
                                     const QString& path)
 {
   QFileDialog dlg(parent);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  dlg.setFileMode(QFileDialog::Directory);
+#else
   dlg.setFileMode(QFileDialog::DirectoryOnly);
+#endif
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
   return fileDialog(dlg, title, QString(), settingsPrefix, QString(), path, QString(), false /* autonumber */).at(0);
 }

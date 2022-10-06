@@ -88,7 +88,9 @@ QStringList probeFile(const QString& file, int numLinesRead)
   if(testFile.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&testFile);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     stream.setCodec("UTF-8");
+#endif
     stream.setAutoDetectUnicode(true);
 
     int numLines = 0, numLinesTotal = 0;
@@ -506,7 +508,7 @@ QTime timeFromHourMinStr(const QString& timeStr)
   if(timeStr.contains(":"))
     time = QTime(timeStr.section(':', 0, 0).toInt(&okHours), timeStr.section(':', 1, 1).toInt(&okMinutes));
   else if(timeStr.length() == 3 || timeStr.length() == 4)
-    time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.rightRef(2).toInt(&okMinutes));
+    time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.right(2).toInt(&okMinutes));
 
   return !okHours || !okMinutes ? QTime() : time;
 }
@@ -1106,16 +1108,14 @@ QDateTime timeToLastHourInterval(QDateTime datetime, int intervalsPerDay)
   return datetime;
 }
 
-uint textFileHash(const QString& filename, const QString& codec)
+uint textFileHash(const QString& filename)
 {
   QFile file(filename);
-  QByteArray latin1 = codec.toLatin1();
   uint hash = 0;
 
   if(file.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&file);
-    stream.setCodec(latin1.constData());
     stream.setAutoDetectUnicode(true);
 
     while(!stream.atEnd())
@@ -1209,7 +1209,7 @@ QString linkTarget(const QFileInfo& path)
 
 QString canonicalPath(const QFileInfo& path)
 {
-  return canonicalFilePath(path.path());
+  return canonicalFilePath(QFileInfo(path.path()));
 }
 
 QString canonicalFilePath(const QFileInfo& path)

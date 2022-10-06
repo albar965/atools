@@ -131,7 +131,7 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
 
   while(!script.atEnd())
   {
-    QChar lastChar = 0;
+    QChar lastChar('\0');
 
     line = script.readLine();
 
@@ -210,7 +210,7 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
             isSingleString = false;
             isDoubleString = false;
             isBlockComment = false;
-            lastChar = 0;
+            lastChar = QChar('\0');
           }
         }
         else

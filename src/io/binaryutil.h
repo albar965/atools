@@ -20,6 +20,7 @@
 
 #include <QDataStream>
 #include <QVector>
+#include <QIODevice>
 
 namespace atools {
 namespace io {

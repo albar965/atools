@@ -73,7 +73,9 @@ void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& d
     if(file.open(QIODevice::WriteOnly))
     {
       QTextStream stream(&file);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
       stream.setCodec("UTF-8");
+#endif
 
       // GENERAL header =====================================================================
       stream << "!GENERAL:" << endl;

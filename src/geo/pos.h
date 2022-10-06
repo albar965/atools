@@ -19,6 +19,7 @@
 #define ATOOLS_GEO_POSITION_H
 
 #include <QDebug>
+#include <QVariant>
 
 namespace atools {
 namespace geo {

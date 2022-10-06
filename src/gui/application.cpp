@@ -103,7 +103,11 @@ QString Application::generalErrorMessage()
 
 void Application::setTooltipsDisabled(const QList<QObject *>& exceptions)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  tooltipExceptions = QSet<QObject *>(exceptions.begin(), exceptions.end());
+#else
   tooltipExceptions = exceptions.toSet();
+#endif
   tooltipsDisabled = true;
 }
 

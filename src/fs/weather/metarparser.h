@@ -452,19 +452,18 @@ public:
 
   double getRelHumidity() const;
 
-  inline QVector<MetarCloud> getClouds() const
+  inline QList<MetarCloud> getClouds() const
   {
-    return QVector<MetarCloud>::fromStdVector(_clouds);
+    return QList(_clouds.begin(), _clouds.end());
   }
 
   inline QHash<QString, MetarRunway> getRunways() const;
 
   QStringList getWeather() const;
 
-  inline QVector<struct Weather> getWeather2() const
+  inline QList<struct Weather> getWeather2() const
   {
-    return QVector<struct Weather>::fromStdVector(_weather2);
-
+    return QList(_weather2.begin(), _weather2.end());
   }
 
   bool isValid() const

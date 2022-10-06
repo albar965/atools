@@ -31,6 +31,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QScreen>
+#include <QFile>
 
 namespace atools {
 namespace gui {
@@ -929,7 +930,9 @@ void DockWidgetHandler::closeAllDialogWidgets()
 
 void DockWidgetHandler::registerMetaTypes()
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   qRegisterMetaTypeStreamOperators<atools::gui::MainWindowState>();
+#endif
 }
 
 } // namespace gui

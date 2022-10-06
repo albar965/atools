@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QLineF>
 #include <QPointF>
+#include <QTextCodec>
 
 class QFile;
 class QFileInfo;
@@ -117,6 +118,7 @@ void insertInto(QList<TYPE>& list, int index, const TYPE& type)
     list.insert(index, type);
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 template<typename TYPE>
 void insertInto(QVector<TYPE>& list, int index, const TYPE& type)
 {
@@ -127,6 +129,7 @@ void insertInto(QVector<TYPE>& list, int index, const TYPE& type)
   else
     list.insert(index, type);
 }
+#endif
 
 /* Read whole file into a string */
 QString strFromFile(const QString& filename);
@@ -205,11 +208,14 @@ Q_DECL_CONSTEXPR bool inRange(const QList<TYPE>& list, int index)
   return index >= 0 && index < list.size();
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 template<typename TYPE>
 Q_DECL_CONSTEXPR bool inRange(const QVector<TYPE>& list, int index)
 {
   return index >= 0 && index < list.size();
 }
+
+#endif
 
 template<typename TYPE>
 Q_DECL_CONSTEXPR bool inRange(TYPE minValue, TYPE maxValue, TYPE value)
@@ -251,6 +257,7 @@ const TYPE& at(const QList<TYPE>& list, int index, const TYPE& defaultType = TYP
   return defaultType;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 template<typename TYPE>
 const TYPE& at(const QVector<TYPE>& list, int index, const TYPE& defaultType = TYPE())
 {
@@ -260,6 +267,7 @@ const TYPE& at(const QVector<TYPE>& list, int index, const TYPE& defaultType = T
     qWarning() << "index out of bounds:" << index << "list size" << list.size();
   return defaultType;
 }
+#endif
 
 template<typename TYPE>
 const TYPE& at(const QList<TYPE>& list, int index, const QString& msg, const TYPE& defaultType = TYPE())
@@ -271,6 +279,7 @@ const TYPE& at(const QList<TYPE>& list, int index, const QString& msg, const TYP
   return defaultType;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 template<typename TYPE>
 const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const TYPE& defaultType = TYPE())
 {
@@ -280,14 +289,16 @@ const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const T
     qWarning() << "index out of bounds:" << index << "list size" << list.size() << "message" << msg;
   return defaultType;
 }
+#endif
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 /* Functions roll over to first position on overflow */
 template<typename TYPE>
 const TYPE& atRoll(const QVector<TYPE>& list, int index)
 {
   return index < list.size() ? list.at(index) : list.constFirst();
 }
-
+#endif
 template<typename TYPE>
 const TYPE& atRoll(const QList<TYPE>& list, int index)
 {
@@ -313,6 +324,7 @@ const TYPE *constFirstOrNull(const QList<TYPE>& list)
   return list.isEmpty() ? nullptr : &list.constFirst();
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 template<typename TYPE>
 TYPE *firstOrNull(QVector<TYPE>& list)
 {
@@ -324,6 +336,7 @@ const TYPE *constFirstOrNull(const QVector<TYPE>& list)
 {
   return list.isEmpty() ? nullptr : &list.constFirst();
 }
+#endif
 
 static const int MAX_FILENAME_CHARS = 150;
 
@@ -776,7 +789,7 @@ bool checkDir(const QString& funcInfo, const QString& dir, bool warn = true);
 
 /* Calculates a simple reproducible hash for all lines in the text file ignoring line endings.
  * Uses always the same seed and ignores empty lines. To be used for testing. */
-uint textFileHash(const QString& filename, const QString& codec = "UTF-8");
+uint textFileHash(const QString& filename);
 
 /* Read a simple symmetrically encrypted string from the given file.
  * Can be used to obfuscate keys. Prints a warning and returns an empty string if the file does not exist. */

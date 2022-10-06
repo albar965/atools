@@ -23,6 +23,7 @@
 
 #include <cmath>
 #include <QRegularExpression>
+#include <QLocale>
 
 using atools::geo::Pos;
 

@@ -9,6 +9,7 @@
 #include <QStringList>
 #include <QDir>
 #include <QSet>
+#include <QRegularExpression>
 
 using namespace stefanfrings;
 
@@ -61,12 +62,16 @@ QString TemplateLoader::tryFile(QString localizedName)
 Template TemplateLoader::getTemplate(QString templateName, QString locales)
 {
   QSet<QString> tried;   // used to suppress duplicate attempts
-  QStringList locs = locales.split(',', QString::SkipEmptyParts);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  QStringList locs = locales.split(',', Qt::SkipEmptyParts);
+#else
+  QStringList locs = locales.split(',', QString::SkipEmptyParts);
+#endif
   // Search for exact match
   foreach(QString loc, locs)
   {
-    loc.replace(QRegExp(";.*"), "");
+    loc.replace(QRegularExpression(";.*"), "");
     loc.replace('-', '_');
     QString localizedName = templateName + "-" + loc.trimmed();
     if(!tried.contains(localizedName))
@@ -83,7 +88,7 @@ Template TemplateLoader::getTemplate(QString templateName, QString locales)
   // Search for correct language but any country
   foreach(QString loc, locs)
   {
-    loc.replace(QRegExp("[;_-].*"), "");
+    loc.replace(QRegularExpression("[;_-].*"), "");
     QString localizedName = templateName + "-" + loc.trimmed();
     if(!tried.contains(localizedName))
     {

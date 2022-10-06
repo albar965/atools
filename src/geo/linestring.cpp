@@ -32,18 +32,20 @@ LineString::LineString()
 }
 
 LineString::LineString(const std::initializer_list<Pos>& list)
-  : QVector(list)
+  : QList(list)
 {
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 LineString::LineString(const QVector<Pos>& list)
-  : QVector(list)
+  : QList(list)
 {
 
 }
+#endif
 
 LineString::LineString(const QList<Pos>& list)
-  : QVector(list.toVector())
+  : QList(list.toVector())
 {
 
 }
@@ -62,7 +64,7 @@ LineString::LineString(const std::initializer_list<float>& coordinatePairs)
 }
 
 LineString::LineString(const Pos& pos)
-  : QVector(
+  : QList(
     {
       pos
     })
@@ -71,7 +73,7 @@ LineString::LineString(const Pos& pos)
 }
 
 LineString::LineString(const Pos& pos1, const Pos& pos2)
-  : QVector(
+  : QList(
     {
       pos1, pos2
     })

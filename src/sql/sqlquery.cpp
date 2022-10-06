@@ -285,13 +285,14 @@ void SqlQuery::clear()
 
 void SqlQuery::clearBoundValues()
 {
-  QMap<QString, QVariant> values = boundValues();
+  QVariantList values = boundValues();
 
+  int i = 0;
   for(auto it = values.constBegin(); it != values.constEnd(); ++it)
   {
-    const QVariant& value = it.value();
+    const QVariant& value = *it;
     if(value.isValid() && !value.isNull())
-      bindValue(it.key(), QVariant(value.type()));
+      bindValue(i++, QVariant(value.type()));
   }
 }
 
@@ -433,9 +434,13 @@ QVariant SqlQuery::boundValue(int pos, bool ignoreInvalid) const
   return v;
 }
 
-QMap<QString, QVariant> SqlQuery::boundValues() const
+QVariantList SqlQuery::boundValues() const
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
   return query.boundValues();
+#else
+  return query.boundValues().values();
+#endif
 }
 
 QString SqlQuery::executedQuery() const
@@ -460,12 +465,12 @@ bool SqlQuery::nextResult()
 
 QString SqlQuery::boundValuesAsString() const
 {
-  QMap<QString, QVariant> boundValues = query.boundValues();
+  QVariantList boundValues = query.boundValues();
 
   QStringList values;
-  for(QMap<QString, QVariant>::const_iterator i = boundValues.constBegin();
-      i != boundValues.constEnd(); ++i)
-    values.append("\"" + i.key() + "\"=\"" + i.value().toString() + "\"");
+  int index = 0;
+  for(auto it = boundValues.constBegin(); it != boundValues.constEnd(); ++it)
+    values.append("\"" + QString::number(index++) + "\"=\"" + it->toString() + "\"");
   return values.join(",");
 }
 
@@ -492,23 +497,6 @@ void SqlQuery::checkError(bool retval, const QString& msg) const
 const QSqlQuery& SqlQuery::getQSqlQuery() const
 {
   return query;
-}
-
-QString SqlQuery::getFullQueryString() const
-{
-  QString retval = getQueryString();
-
-  QMap<QString, QVariant> values = boundValues();
-  for(auto it = values.constBegin(); it != values.constEnd(); ++it)
-  {
-    const QString& name = it.key();
-    const QVariant& val = it.value();
-    if(val.type() == QVariant::String)
-      retval.replace(name, "'" + val.toString() + "' /* " + name + " */");
-    else
-      retval.replace(name, val.toString() + " /* " + name + " */");
-  }
-  return retval;
 }
 
 } // namespace sql

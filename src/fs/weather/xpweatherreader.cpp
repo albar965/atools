@@ -90,7 +90,9 @@ bool XpWeatherReader::read(const QStringList& filenames)
       if(verbose)
         qDebug() << Q_FUNC_INFO << filename;
       QTextStream stream(&file);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
       stream.setCodec("UTF-8");
+#endif
 
       // Read and merge into current METAR entries
       metarIndex->read(stream, filename, true /* merge */);

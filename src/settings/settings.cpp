@@ -95,7 +95,7 @@ void Settings::clearAndShutdown()
   syncSettings();
 
   // Create a backup
-  QFileInfo file = getFilename();
+  QFileInfo file(getFilename());
   QString newFile = file.path() + QDir::separator() + file.baseName() +
                     "_" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss") + ".ini";
 

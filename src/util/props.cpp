@@ -18,6 +18,8 @@
 #include "util/props.h"
 #include "atools.h"
 
+#include <QVariant>
+
 namespace atools {
 namespace util {
 
@@ -225,7 +227,7 @@ QDataStream& operator>>(QDataStream& in, Prop& prop)
 QDataStream& operator<<(QDataStream& out, const Props& props)
 {
   int maxSize = atools::util::Props::MAX_PROPS_SIZE;
-  int size = std::min(maxSize, props.size());
+  int size = std::min(static_cast<qsizetype>(maxSize), props.size());
 
   int write = 0;
   int idx = 0;

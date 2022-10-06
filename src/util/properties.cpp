@@ -18,6 +18,7 @@
 #include "util/properties.h"
 
 #include <QTextStream>
+#include <QIODevice>
 
 namespace atools {
 namespace util {

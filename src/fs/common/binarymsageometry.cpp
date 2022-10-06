@@ -20,6 +20,7 @@
 #include "geo/calculations.h"
 
 #include <QDataStream>
+#include <QIODevice>
 
 namespace atools {
 namespace fs {

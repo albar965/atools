@@ -209,7 +209,7 @@ public:
   QVariant boundValue(const QString& placeholder, bool ignoreInvalid = false) const;
   QVariant boundValue(int pos, bool ignoreInvalid = false) const;
 
-  QMap<QString, QVariant> boundValues() const;
+  QVariantList boundValues() const;
   QString executedQuery() const;
   QVariant lastInsertId() const;
   void finish();
@@ -221,9 +221,6 @@ public:
   {
     return queryString;
   }
-
-  /* Get a full annotated query string with bound values replaced for debugging (only for named bindings) */
-  QString getFullQueryString() const;
 
   void bindValues(const QVector<std::pair<QString, QVariant> >& bindValues);
   void bindValues(const QVector<std::pair<int, QVariant> >& bindValues);

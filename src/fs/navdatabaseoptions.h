@@ -26,10 +26,9 @@
 #include <QFlags>
 #include <QRegExp>
 #include <QMap>
+#include <QStringList>
 
 class QSettings;
-class QStringList;
-class QFileInfo;
 
 namespace atools {
 namespace fs {

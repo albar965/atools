@@ -86,11 +86,11 @@ void ContentXml::read(const QString& filename)
 
       while(xmlStream.getReader().readNextStartElement())
       {
-        if(reader.name() == "Content")
+        if(reader.name() == QLatin1String("Content"))
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "Package")
+            if(reader.name() == QLatin1String("Package"))
             {
               QString name = reader.attributes().value("name").toString();
               QString activeStr = reader.attributes().value("active").toString().simplified().toLower();
@@ -117,11 +117,11 @@ void ContentXml::read(const QString& filename)
 
           break;
         }
-        else if(reader.name() == "Priorities")
+        else if(reader.name() == QLatin1String("Priorities"))
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "Package")
+            if(reader.name() == QLatin1String("Package"))
             {
               QString name = reader.attributes().value("name").toString();
 

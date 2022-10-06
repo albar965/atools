@@ -751,10 +751,12 @@ bool crossesAntiMeridian(float lonx1, float lonx2)
 
 void registerMetaTypes()
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
   qRegisterMetaTypeStreamOperators<atools::geo::Rect>();
   qRegisterMetaTypeStreamOperators<atools::geo::Line>();
   qRegisterMetaTypeStreamOperators<atools::geo::LineString>();
+#endif
 }
 
 bool isWestCourse(float lonx1, float lonx2)

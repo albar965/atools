@@ -119,7 +119,11 @@ void AbstractIniReader::read(const QString& iniFilename)
     QTextStream sceneryCfg(&sceneryCfgFile);
 
     if(!codec.isEmpty())
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+      sceneryCfg.setEncoding(QStringConverter::encodingForName(codec.toLatin1().constData()).value_or(QStringConverter::Utf8));
+#else
       sceneryCfg.setCodec(codec.toLatin1().constData());
+#endif
 
     onStartDocument(filepath);
 

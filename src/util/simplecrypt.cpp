@@ -33,6 +33,7 @@
 #include <QCryptographicHash>
 #include <QDataStream>
 #include <QRandomGenerator>
+#include <QIODevice>
 
 namespace atools {
 namespace util {

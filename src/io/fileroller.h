@@ -18,10 +18,9 @@
 #ifndef ATOOLS_IO_FILEROLLER_H
 #define ATOOLS_IO_FILEROLLER_H
 
-#include <QString>
+#include <QStringList>
 
 class QString;
-class QStringList;
 
 namespace atools {
 namespace io {

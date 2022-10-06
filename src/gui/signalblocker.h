@@ -36,7 +36,9 @@ public:
   }
 
   template<typename TYPE> SignalBlocker(QList<TYPE *> objectList);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   template<typename TYPE> SignalBlocker(QVector<TYPE *> objectList);
+#endif
 
   template<typename TYPE>
   SignalBlocker(TYPE *object)
@@ -51,9 +53,10 @@ public:
   template<typename TYPE>
   void add(QList<TYPE *> objectList);
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   template<typename TYPE>
   void add(QVector<TYPE *> objectList);
-
+#endif
 private:
   QList<QObject *> objects;
 };
@@ -64,11 +67,13 @@ SignalBlocker::SignalBlocker(QList<TYPE *> objectList)
   add(objectList);
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 template<typename TYPE>
 SignalBlocker::SignalBlocker(QVector<TYPE *> objectList)
 {
   add(objectList);
 }
+#endif
 
 template<typename TYPE>
 void SignalBlocker::add(QList<TYPE *> objectList)
@@ -83,6 +88,7 @@ void SignalBlocker::add(QList<TYPE *> objectList)
   }
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 template<typename TYPE>
 void SignalBlocker::add(QVector<TYPE *> objectList)
 {
@@ -95,6 +101,7 @@ void SignalBlocker::add(QVector<TYPE *> objectList)
     }
   }
 }
+#endif
 
 } // namespace gui
 } // namespace atools

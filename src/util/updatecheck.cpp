@@ -69,8 +69,12 @@ void UpdateCheck::checkForUpdates(const QString& versionsAlreadChecked, bool not
   {
     // Connect signals for this request
     connect(reply, &QNetworkReply::finished, this, &UpdateCheck::httpFinished);
-    connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),
-            this, &UpdateCheck::httpError);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    connect(reply, &QNetworkReply::errorOccurred, this, &UpdateCheck::httpError);
+#else
+    connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &UpdateCheck::httpError);
+#endif
   }
 }
 
@@ -230,8 +234,11 @@ void UpdateCheck::endRequest()
   if(reply != nullptr)
   {
     disconnect(reply, &QNetworkReply::finished, this, &UpdateCheck::httpFinished);
-    disconnect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),
-               this, &UpdateCheck::httpError);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    disconnect(reply, &QNetworkReply::errorOccurred, this, &UpdateCheck::httpError);
+#else
+    disconnect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &UpdateCheck::httpError);
+#endif
     reply->abort();
     reply->deleteLater();
     reply = nullptr;

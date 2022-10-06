@@ -196,7 +196,9 @@ void LoggingConfig::checkStreamSize(Channel *channel)
       // Put log file into stream
       channel->file = file;
       channel->stream->setDevice(channel->file);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
       channel->stream->setCodec("UTF-8");
+#endif
       channel->stream->setLocale(QLocale::C);
     }
   }
@@ -344,14 +346,17 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>&
     {
       QTextStream *io = new QTextStream(stdout);
       // Most terminals can deal with utf-8
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
       io->setCodec("UTF-8");
-      channelMap.insert(key, new Channel({io, nullptr}));
+#endif      channelMap.insert(key, new Channel({io, nullptr}));
     }
     else if(channelName == "stderr")
     {
       QTextStream *err = new QTextStream(stderr);
       // Most terminals can deal with utf-8
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
       err->setCodec("UTF-8");
+#endif
       channelMap.insert(key, new Channel({err, nullptr}));
     }
     else
@@ -384,7 +389,9 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>&
       if(file->open(mode))
       {
         QTextStream *stream = new QTextStream(file);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         stream->setCodec("UTF-8");
+#endif
         stream->setLocale(QLocale::C);
         channelMap.insert(key, new Channel({stream, file}));
       }
@@ -399,7 +406,11 @@ void LoggingConfig::readLevels(QSettings *settings, QHash<QString, Channel *>& c
   for(QString levelName : settings->allKeys())
   {
     // Split the "level.channel" string
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QStringList levelList = levelName.split('.', Qt::SkipEmptyParts);
+#else
     QStringList levelList = levelName.split('.', QString::SkipEmptyParts);
+#endif
     QString level = levelList.at(0);
 
     // Use default if category is not given

@@ -186,8 +186,7 @@ void SqlUtil::copyRowValues(const SqlQuery& from, SqlQuery& to)
   copyRowValuesInternal(from, to, from.record(), to.boundValues());
 }
 
-void SqlUtil::copyRowValuesInternal(const SqlQuery& from, SqlQuery& to,
-                                    const SqlRecord& fromRec, const QMap<QString, QVariant>& bound)
+void SqlUtil::copyRowValuesInternal(const SqlQuery& from, SqlQuery& to, const SqlRecord& fromRec, const QVariantList& bound)
 {
   for(int i = 0; i < fromRec.count(); i++)
   {
@@ -201,7 +200,7 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(S
 {
   int copied = 0;
   SqlRecord fromRec;
-  QMap<QString, QVariant> bound = to.boundValues();
+  QVariantList bound = to.boundValues();
 
   while(from.next())
   {
@@ -227,7 +226,7 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to)
 {
   int copied = 0;
   SqlRecord fromRec;
-  QMap<QString, QVariant> bound = to.boundValues();
+  QVariantList bound = to.boundValues();
   while(from.next())
   {
     if(fromRec.isEmpty())

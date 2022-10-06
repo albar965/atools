@@ -147,7 +147,7 @@ private:
   QStringList buildResultList(atools::sql::SqlQuery& query) const;
 
   static void copyRowValuesInternal(const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to,
-                                    const atools::sql::SqlRecord& fromRec, const QMap<QString, QVariant>& bound);
+                                    const atools::sql::SqlRecord& fromRec, const QVariantList &bound);
 
 };
 

@@ -23,11 +23,11 @@
 #include <QLoggingCategory>
 #include <QMutex>
 #include <QObject>
+#include <QStringList>
 #include <functional>
 
 class QTextStream;
 class QFile;
-class QStringList;
 class QSettings;
 
 namespace atools {

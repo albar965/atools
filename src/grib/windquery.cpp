@@ -468,7 +468,9 @@ QString WindQuery::getDebug(const geo::Pos& pos) const
 {
   QString retval;
   QTextStream out(&retval);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   out.setCodec("UTF-8");
+#endif
   out.setRealNumberPrecision(2);
   out.setRealNumberNotation(QTextStream::FixedNotation);
   out << "=================" << endl;
