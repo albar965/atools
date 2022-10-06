@@ -35,15 +35,35 @@ class LineString :
   public QList<atools::geo::Pos>
 {
 public:
-  LineString();
-  explicit LineString(const std::initializer_list<atools::geo::Pos>& list);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  explicit LineString(const QVector<atools::geo::Pos>& list);
-#endif
-  explicit LineString(const QList<atools::geo::Pos>& list);
+  LineString()
+  {
+
+  }
+
   explicit LineString(const std::initializer_list<float>& coordinatePairs);
-  explicit LineString(const atools::geo::Pos& pos);
-  explicit LineString(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2);
+
+  explicit LineString(const std::initializer_list<atools::geo::Pos>& list)
+    : QList(list)
+  {
+  }
+
+  explicit LineString(const QList<atools::geo::Pos>& list)
+    : QList(list)
+  {
+
+  }
+
+  explicit LineString(const atools::geo::Pos& pos)
+    : QList({pos})
+  {
+
+  }
+
+  explicit LineString(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2)
+    : QList({pos1, pos2})
+  {
+
+  }
 
   /* Build a circle */
   explicit LineString(const atools::geo::Pos& origin, float radiusMeter, int numSegments);

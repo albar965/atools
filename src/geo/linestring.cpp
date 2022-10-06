@@ -26,30 +26,6 @@
 namespace atools {
 namespace geo {
 
-LineString::LineString()
-{
-
-}
-
-LineString::LineString(const std::initializer_list<Pos>& list)
-  : QList(list)
-{
-}
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-LineString::LineString(const QVector<Pos>& list)
-  : QList(list)
-{
-
-}
-#endif
-
-LineString::LineString(const QList<Pos>& list)
-  : QList(list.toVector())
-{
-
-}
-
 LineString::LineString(const std::initializer_list<float>& coordinatePairs)
 {
   float lastVal = 0.f;
@@ -61,24 +37,6 @@ LineString::LineString(const std::initializer_list<float>& coordinatePairs)
 
     lastVal = val;
   }
-}
-
-LineString::LineString(const Pos& pos)
-  : QList(
-    {
-      pos
-    })
-{
-
-}
-
-LineString::LineString(const Pos& pos1, const Pos& pos2)
-  : QList(
-    {
-      pos1, pos2
-    })
-{
-
 }
 
 LineString::LineString(const Pos& origin, float radiusMeter, int numSegments)
@@ -177,9 +135,9 @@ void LineString::removeInvalid()
 
 void LineString::removeDuplicates(float epsilon)
 {
-  resize(static_cast<int>(std::distance(begin(), std::unique(begin(), end(), [ = ](atools::geo::Pos& p1, atools::geo::Pos& p2) -> bool {
+  erase(std::unique(begin(), end(), [ = ](atools::geo::Pos& p1, atools::geo::Pos& p2) -> bool {
         return p1.almostEqual(p2, epsilon);
-      }))));
+      }), end());
 }
 
 void LineString::removeDuplicates()

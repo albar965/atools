@@ -465,11 +465,11 @@ bool SqlQuery::nextResult()
 
 QString SqlQuery::boundValuesAsString() const
 {
-  QVariantList boundValues = query.boundValues();
+  QVariantList boundVals = boundValues();
 
   QStringList values;
   int index = 0;
-  for(auto it = boundValues.constBegin(); it != boundValues.constEnd(); ++it)
+  for(auto it = boundVals.constBegin(); it != boundVals.constEnd(); ++it)
     values.append("\"" + QString::number(index++) + "\"=\"" + it->toString() + "\"");
   return values.join(",");
 }

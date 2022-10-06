@@ -168,14 +168,14 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
   }
 }
 
-Rect boundingRect(const QVector<Pos>& positions)
+Rect boundingRect(const QList<Pos>& positions)
 {
   Rect rect;
   boundingRect(rect, positions);
   return rect;
 }
 
-void boundingRect(Rect& rect, QVector<atools::geo::Pos> positions)
+void boundingRect(Rect& rect, QList<atools::geo::Pos> positions)
 {
   // Remove all invalid positions
   auto iter = std::remove_if(positions.begin(), positions.end(), [](const atools::geo::Pos& p) -> bool
@@ -230,8 +230,8 @@ void boundingRect(Rect& rect, QVector<atools::geo::Pos> positions)
   int currentSign = (lonX < 0) ? -1 : +1;
   int previousSign = currentSign;
 
-  QVector<Pos>::ConstIterator it(positions.constBegin());
-  QVector<Pos>::ConstIterator itEnd(positions.constEnd());
+  auto it(positions.constBegin());
+  auto itEnd(positions.constEnd());
 
   bool processingLastNode = false;
 

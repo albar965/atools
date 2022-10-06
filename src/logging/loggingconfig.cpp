@@ -144,8 +144,10 @@ QStringList LoggingConfig::getLogFiles()
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
   return QStringList(filenames.begin(), filenames.end());
+
 #else
   return filenames.toList();
+
 #endif
 }
 
@@ -348,7 +350,8 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>&
       // Most terminals can deal with utf-8
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
       io->setCodec("UTF-8");
-#endif      channelMap.insert(key, new Channel({io, nullptr}));
+#endif
+      channelMap.insert(key, new Channel({io, nullptr}));
     }
     else if(channelName == "stderr")
     {

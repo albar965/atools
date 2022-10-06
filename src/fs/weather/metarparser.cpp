@@ -534,7 +534,7 @@ QDateTime MetarParser::extractDateTime(const QString& metar)
 
 void MetarParser::postProcess()
 {
-  QVector<MetarCloud> clouds = getClouds();
+  QList<MetarCloud> clouds = getClouds();
 
   // The lowest "BKN" or "OVC" layer specifies the cloud ceiling.
   float minAltitudeMeter = INVALID_METAR_VALUE;

@@ -27,6 +27,7 @@
 #include <QRegExp>
 #include <QMap>
 #include <QStringList>
+#include <QFileInfo>
 
 class QSettings;
 

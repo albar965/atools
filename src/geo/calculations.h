@@ -82,8 +82,8 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
 
 /* Calculate a bounding rectangle for a list of positions. Also around the anti meridian which can
  * mean that left > right */
-void boundingRect(atools::geo::Rect& rect, QVector<Pos> positions);
-atools::geo::Rect boundingRect(const QVector<Pos>& positions);
+void boundingRect(atools::geo::Rect& rect, QList<Pos> positions);
+atools::geo::Rect boundingRect(const QList<Pos>& positions);
 
 /* true if longitude values cross the anti-meridian independent of direction but unreliable for large rectangles. */
 bool crossesAntiMeridian(float lonx1, float lonx2);
