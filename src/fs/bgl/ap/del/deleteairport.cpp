@@ -16,7 +16,6 @@
 *****************************************************************************/
 
 #include "fs/bgl/ap/del/deleteairport.h"
-#include "fs/bgl/converter.h"
 #include "io/binarystream.h"
 
 #include <QDebug>

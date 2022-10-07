@@ -310,7 +310,7 @@ void SqlQuery::prepare(const QString& queryStr)
   // Extract named or positional bindings
   placeholderList = extractPlaceholders(queryString);
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
   placeholderSet = QSet<QString>(placeholderList.begin(), placeholderList.end());
 #else
   placeholderSet = placeholderList.toSet();

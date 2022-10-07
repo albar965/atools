@@ -15,13 +15,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bgl/ap/airport.h"
 #include "fs/bgl/recordtypes.h"
-#include "fs/util/fsutil.h"
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
-#include "fs/bgl/ap/approach.h"
 #include "fs/navdatabaseoptions.h"
+#include "fs/bgl/ap/sidstar.h"
 
 #include <QList>
 #include <QDebug>

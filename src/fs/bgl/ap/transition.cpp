@@ -16,7 +16,6 @@
 *****************************************************************************/
 
 #include "fs/bgl/ap/transition.h"
-#include "fs/bgl/ap/approach.h"
 #include "fs/bgl/recordtypes.h"
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"

@@ -33,7 +33,6 @@
 #include "fs/bgl/boundary.h"
 #include "fs/bgl/recordtypes.h"
 #include "fs/scenery/sceneryarea.h"
-#include "util/version.h"
 
 #include <QList>
 #include <QDebug>

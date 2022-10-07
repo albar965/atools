@@ -16,9 +16,7 @@
 *****************************************************************************/
 
 #include "fs/bgl/nav/vor.h"
-#include "fs/bgl/nav/localizer.h"
 #include "fs/bgl/nav/dme.h"
-#include "fs/bgl/nav/glideslope.h"
 #include "io/binarystream.h"
 
 #include "fs/bgl/converter.h"

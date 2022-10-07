@@ -19,7 +19,6 @@
 
 #include "fs/sc/simconnecthandler.h"
 #include "fs/sc/xpconnecthandler.h"
-#include "settings/settings.h"
 #include "atools.h"
 
 #include <QDebug>

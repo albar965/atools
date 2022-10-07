@@ -17,7 +17,6 @@
 
 #include "apron2.h"
 
-#include "fs/bgl/converter.h"
 #include "io/binarystream.h"
 #include "fs/navdatabaseoptions.h"
 

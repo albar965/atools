@@ -17,9 +17,7 @@
 
 #include "fs/bgl/nav/tacan.h"
 
-#include "fs/bgl/nav/localizer.h"
 #include "fs/bgl/nav/dme.h"
-#include "fs/bgl/nav/glideslope.h"
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
 #include "fs/bgl/recordtypes.h"
