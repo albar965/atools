@@ -21,6 +21,7 @@
 #include "sql/sqltypes.h"
 
 #include <QDateTime>
+#include <QSet>
 #include <QSqlQuery>
 #include <QVariant>
 
@@ -63,11 +64,8 @@ public:
   QSqlError lastError() const;
   bool isSelect() const;
   int size() const;
-  const QSqlDriver *driver() const;
-  const QSqlResult *result() const;
   bool isForwardOnly() const;
   SqlRecord record(bool allowInvalidQuery = false) const;
-  QSqlRecord sqlRecord() const;
 
   void setForwardOnly(bool forward);
   void exec(const QString& queryString);
@@ -190,6 +188,12 @@ public:
 
   void execBatch(QSqlQuery::BatchExecutionMode mode = QSqlQuery::ValuesAsRows);
   void prepare(const QString& queryString);
+
+  bool hasPlaceholder(const QString& name)
+  {
+    return placeholderSet.contains(name);
+  }
+
   void bindValue(const QString& placeholder, const QVariant& val, QSql::ParamType type = QSql::In);
   void bindValue(int pos, const QVariant& val, QSql::ParamType type = QSql::In);
   void addBindValue(const QVariant& val, QSql::ParamType type = QSql::In);
@@ -209,13 +213,10 @@ public:
   QVariant boundValue(const QString& placeholder, bool ignoreInvalid = false) const;
   QVariant boundValue(int pos, bool ignoreInvalid = false) const;
 
-  QVariantList boundValues() const;
   QString executedQuery() const;
   QVariant lastInsertId() const;
   void finish();
   bool nextResult();
-
-  const QSqlQuery& getQSqlQuery() const;
 
   const QString& getQueryString() const
   {
@@ -225,17 +226,42 @@ public:
   void bindValues(const QVector<std::pair<QString, QVariant> >& bindValues);
   void bindValues(const QVector<std::pair<int, QVariant> >& bindValues);
 
+  /* Extract named bindings prefixed with colon and unnamed bindings question mark. Throws exception if named and unamed are mixed */
+  static QStringList extractPlaceholders(const QString& query);
+
+  /* Get a map of placeholders and associated values from query */
+  QMap<QString, QVariant> boundPlaceholderAndValueMap() const;
+
+  /* List of bound values for all placeholders */
+  QVariantList boundValues() const;
+
+  /* Get an ordered list of placeholders as found in the query string. Positional bindings are stored as numbers */
+  const QStringList& getPlaceholderList() const
+  {
+    return placeholderList;
+  }
+
+  const QSet<QString>& getPlaceholderSet() const
+  {
+    return placeholderSet;
+  }
+
 private:
   friend class SqlDatabase;
 
   SqlQuery(const QSqlQuery& otherQuery, QString queryStr);
 
   void checkError(bool retval = true, const QString& msg = QString()) const;
+  void checkPlaceholder(const QString& funcInfo, const QString& placeholder) const;
+  void checkPos(const QString& funcInfo, int pos) const;
+  QString boundValuesAsString() const;
 
   QSqlQuery query;
   QString queryString;
+  QStringList placeholderList;
+  QSet<QString> placeholderSet;
+
   SqlDatabase *db = nullptr;
-  QString boundValuesAsString() const;
 
 };
 

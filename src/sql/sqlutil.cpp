@@ -183,10 +183,10 @@ bool SqlUtil::hasRows(const QString& tablename, const QString& criteria) const
 
 void SqlUtil::copyRowValues(const SqlQuery& from, SqlQuery& to)
 {
-  copyRowValuesInternal(from, to, from.record(), to.boundValues());
+  copyRowValuesInternal(from, to, from.record(), to.boundPlaceholderAndValueMap());
 }
 
-void SqlUtil::copyRowValuesInternal(const SqlQuery& from, SqlQuery& to, const SqlRecord& fromRec, const QVariantList& bound)
+void SqlUtil::copyRowValuesInternal(const SqlQuery& from, SqlQuery& to, const SqlRecord& fromRec, const QMap<QString, QVariant>& bound)
 {
   for(int i = 0; i < fromRec.count(); i++)
   {
@@ -200,7 +200,7 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(S
 {
   int copied = 0;
   SqlRecord fromRec;
-  QVariantList bound = to.boundValues();
+  QMap<QString, QVariant> bound = to.boundPlaceholderAndValueMap();
 
   while(from.next())
   {
@@ -226,7 +226,7 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to)
 {
   int copied = 0;
   SqlRecord fromRec;
-  QVariantList bound = to.boundValues();
+  QMap<QString, QVariant> bound = to.boundPlaceholderAndValueMap();
   while(from.next())
   {
     if(fromRec.isEmpty())

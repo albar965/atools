@@ -530,13 +530,11 @@ int DeleteProcessor::bindAndExecute(const QString& sql, const QString& msg)
 
 int DeleteProcessor::bindAndExecute(SqlQuery *query, const QString& msg)
 {
-  if(query->boundValues().contains(":prevApId"))
+  if(query->hasPlaceholder(":prevApId"))
     query->bindValue(":prevApId", prevAirportId);
-
-  if(query->boundValues().contains(":curApId"))
+  if(query->hasPlaceholder(":curApId"))
     query->bindValue(":curApId", currentAirportId);
-
-  if(query->boundValues().contains(":apIdent"))
+  if(query->hasPlaceholder(":apIdent"))
     query->bindValue(":apIdent", ident);
 
   return executeStatement(query, msg);
