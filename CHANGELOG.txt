@@ -4,6 +4,37 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.5.beta
+
+* Added progress callback for long undo/redo operations which can be canceled now.
+* Fixed issue where bulk import in logbook and userdata resulted in messed up undo state.
+* Made reading of X-Plane `scenery_packs.ini` more error tolerant for XP12. Now only printing warnings.
+* Now supporting symbolic links, Windows junctions and Windows shortcuts in MSFS `Community` and
+  X-Plane `Custom Scenery` folder. Fixed exclude file, exclude directory and exclude add-on
+  recognition to consider links.
+* Fixed import and export for X-Plane 11 and 12 `user_fix.dat`. Now allowing null coordinates as well
+  exporting and importing waypoint flags and full name. Userpoint tags are used to load and save the
+  ID of the airport terminal area and the waypoint type.
+* Fixed issue where X-Plane 12 add-on airports were not read from `Custom Scenery`. Airports not
+  included in the file `scenery_packs.ini` are now treated like enabled. #927
+* Changed FileSystemWatcher to support check for multiple files and parent folder to also catch new
+  files. Now supporting X-Plane 12 weather files by checking folder `Output/real weather`. #926
+* Added functions to calculate real canonical path and link target considering symbolic links,
+  Windows junctions and Windows shortcuts.
+* Now using canonical path to compare scenery library exclusions set from the user interface to
+  avoid issues with symbolic links.
+* Fuel sampling is now based on simulator time and requires the updated Xpconnect plugin.
+* Added option to find growing containers causing memory leaks.
+* labelForcedUpdate in widget util to work around labels not updated after style change.
+* Fixes for wrong path display when loading XP scenery.
+* Added initial and final bearing in pos to avoid cumbersome Marble methods.
+* Updated Italian translation by Flavio Borgna.
+* German translation updated.
+* Partitioned build more to allow disabling of more modules with ATOOLS_NO_* environment variables.
+* Prepated for Qt 6.
+
+===============================================================================
+
 # Version 3.8.4.beta
 
 * Fixed error message when reading XP12 scenery packs file.
