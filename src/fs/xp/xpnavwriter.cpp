@@ -566,7 +566,7 @@ void XpNavWriter::initQueries()
   updateSbasGbasThresholdQuery->prepare("update ils set "
                                         "gs_altitude = :gs_altitude, gs_lonx = :gs_lonx, gs_laty = :gs_laty, "
                                         "gs_pitch = :gs_pitch, "
-                                        "loc_heading = :loc_heading, type = :type, type = :type, "
+                                        "loc_heading = :loc_heading, type = :type, "
                                         "provider = :provider, lonx = :lonx, laty = :laty, "
                                         "end1_lonx = :end1_lonx, end1_laty = :end1_laty, "
                                         "end_mid_lonx = :end_mid_lonx, end_mid_laty = :end_mid_laty, "

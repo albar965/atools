@@ -71,8 +71,8 @@ SqlQuery::SqlQuery(const SqlQuery& other)
   queryString = other.queryString;
   placeholderList = other.placeholderList;
   placeholderSet = other.placeholderSet;
+  positionalPlaceholders = other.positionalPlaceholders;
   db = new SqlDatabase(*other.db);
-
 }
 
 SqlQuery::SqlQuery(const QSqlQuery& otherQuery, QString queryStr)
@@ -88,6 +88,7 @@ SqlQuery& SqlQuery::operator=(const SqlQuery& other)
   queryString = other.queryString;
   placeholderList = other.placeholderList;
   placeholderSet = other.placeholderSet;
+  positionalPlaceholders = other.positionalPlaceholders;
 
   delete db;
   db = new SqlDatabase(*other.db);
@@ -273,12 +274,31 @@ void SqlQuery::clear()
 
 void SqlQuery::clearBoundValues()
 {
-  int pos = 0;
-  for(const QVariant& value : boundValues())
+  if(positionalPlaceholders)
   {
-    if(value.isValid() && !value.isNull())
-      query.bindValue(pos, QVariant(value.type()));
-    pos++;
+    // Use position for "?"
+    int pos = 0;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    for(const QVariant& value : query.boundValues())
+#else
+    for(const QVariant& value : query.boundValues().values())
+#endif
+    {
+      if(value.isValid() && !value.isNull())
+        query.bindValue(pos, QVariant(value.type()));
+      pos++;
+    }
+  }
+  else
+  {
+    // Use name for ":placeholder"
+    for(const QString& placeholder : placeholderSet)
+    {
+      QVariant val = query.boundValue(placeholder);
+      if(val.isValid() && !val.isNull())
+        query.bindValue(placeholder, QVariant(val.type()));
+    }
   }
 }
 
@@ -308,7 +328,7 @@ void SqlQuery::prepare(const QString& queryStr)
   checkError(query.prepare(queryStr), QLatin1String(Q_FUNC_INFO) % ": Error executing prepare");
 
   // Extract named or positional bindings
-  placeholderList = extractPlaceholders(queryString);
+  placeholderList = extractPlaceholders(queryString, positionalPlaceholders);
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
   placeholderSet = QSet<QString>(placeholderList.begin(), placeholderList.end());
@@ -416,30 +436,31 @@ QVariant SqlQuery::boundValue(const QString& placeholder, bool ignoreInvalid) co
   if(!ignoreInvalid)
     checkPlaceholder(Q_FUNC_INFO, placeholder);
 
-  QVariant v = query.boundValue(placeholder);
-  if(!ignoreInvalid && !v.isValid())
+  QVariant value = query.boundValue(placeholder);
+  if(!ignoreInvalid && !value.isValid())
     throw SqlException(QLatin1String(Q_FUNC_INFO) % ": Bind name \"" % placeholder % "\" does not exist in query \"" % queryString % "\"");
-  return v;
+  return value;
 }
 
 QVariant SqlQuery::boundValue(int pos, bool ignoreInvalid) const
 {
   if(!ignoreInvalid)
     checkPos(Q_FUNC_INFO, pos);
-  QVariant v = query.boundValue(pos);
+  QVariant value = query.boundValue(pos);
 
-  if(!ignoreInvalid && !v.isValid())
+  if(!ignoreInvalid && !value.isValid())
     throw SqlException(QLatin1String(Q_FUNC_INFO) % ": Bind index " % QString::number(
                          pos) % " does not exist in query \"" % queryString % "\"");
-  return v;
+  return value;
 }
 
-QStringList SqlQuery::extractPlaceholders(const QString& query)
+QStringList SqlQuery::extractPlaceholders(const QString& query, bool& positional)
 {
   QStringList placeholders;
 
   QString currentPlaceholder;
-  bool placeholder = false, quote = false, hasNamed = false, hasPositional = false;
+  bool placeholder = false, quote = false, named = false;
+  positional = false;
   int valueIndex = 0;
   for(int i = 0; i < query.size(); i++)
   {
@@ -455,7 +476,7 @@ QStringList SqlQuery::extractPlaceholders(const QString& query)
       {
         // Positional placeholder - add number
         placeholders.append(QString::number(valueIndex));
-        hasPositional = true;
+        positional = true;
         valueIndex++;
       }
       else if(character == ':')
@@ -475,7 +496,7 @@ QStringList SqlQuery::extractPlaceholders(const QString& query)
         {
           // Append rest and start new
           placeholders.append(currentPlaceholder);
-          hasNamed = true;
+          named = true;
           currentPlaceholder.clear();
           valueIndex++;
         }
@@ -490,11 +511,11 @@ QStringList SqlQuery::extractPlaceholders(const QString& query)
   if(!currentPlaceholder.isEmpty())
   {
     placeholders.append(currentPlaceholder);
-    hasNamed = true;
+    named = true;
   }
 
   // ? and :placeholder are not allowed in one string
-  if(hasPositional && hasNamed)
+  if(positional && named)
     throw SqlException(QLatin1String(Q_FUNC_INFO) % ": Found named and unnamed bindings in query \"" % query % "\" bind names " %
                        placeholders.join(", "));
 
@@ -503,17 +524,26 @@ QStringList SqlQuery::extractPlaceholders(const QString& query)
 
 QMap<QString, QVariant> SqlQuery::boundPlaceholderAndValueMap() const
 {
-  QVariantList values = boundValues();
-  if(placeholderList.size() != values.size())
-    throw SqlException(QLatin1String(Q_FUNC_INFO) % ": bindnames.size() != values.size() " %
-                       QString::number(placeholderList.size()) % " != " % QString::number(values.size()) %
-                       " for query \"" % queryString % "\"");
+  QMap<QString, QVariant> placeholderMap;
+  if(positionalPlaceholders)
+  {
+    // Use position for "?"
+    int i = 0;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    for(const QVariant& value : query.boundValues())
+#else
+    for(const QVariant& value : query.boundValues().values())
+#endif
+      placeholderMap.insert(QString::number(i++), value);
+  }
+  else
+  {
+    // Use name for ":placeholder"
+    for(const QString& placeholder : placeholderSet)
+      placeholderMap.insert(placeholder, query.boundValue(placeholder));
+  }
 
-  QMap<QString, QVariant> retval;
-  for(int i = 0; i < placeholderList.size(); i++)
-    retval.insert(placeholderList.at(i), values.at(i));
-
-  return retval;
+  return placeholderMap;
 }
 
 QVariantList SqlQuery::boundValues() const
@@ -522,16 +552,13 @@ QVariantList SqlQuery::boundValues() const
   QVariantList retval = query.boundValues();
 
 #else
-  QVariantList retval = query.boundValues().values();
+  QVariantList values = query.boundValues().values();
 
 #endif
 
-  if(placeholderList.size() != retval.size())
-    throw SqlException(QLatin1String(Q_FUNC_INFO) % ": bindnames.size() != values.size() " %
-                       QString::number(placeholderList.size()) % " != " % QString::number(
-                         retval.size()) % " for query \"" % queryString % "\"");
+  checkValues(Q_FUNC_INFO, values);
 
-  return retval;
+  return values;
 }
 
 QString SqlQuery::executedQuery() const
@@ -564,17 +591,33 @@ QString SqlQuery::boundValuesAsString() const
   return values.join(",");
 }
 
+void SqlQuery::checkValues(const QString& funcInfo, const QVariantList& values) const
+{
+  // Check with unique names
+  if(placeholderSet.size() != values.size())
+    throw SqlException(funcInfo % ": placeholderSet.size() != values.size() " %
+                       QString::number(placeholderSet.size()) % " != " % QString::number(values.size()) %
+                       " for query \"" % queryString % "\"");
+}
+
 void SqlQuery::checkPlaceholder(const QString& funcInfo, const QString& placeholder) const
 {
-  if(!placeholderList.contains(placeholder))
+  if(positionalPlaceholders)
+    throw SqlException(
+            funcInfo % ": Using named placeholder \"" % placeholder % "\" for positional placeholders in query \"" % queryString % "\"");
+
+  if(!placeholderSet.contains(placeholder))
     throw SqlException(funcInfo % ": Placeholder \"" % placeholder % "\" not found in query \"" % queryString % "\"");
 }
 
 void SqlQuery::checkPos(const QString& funcInfo, int pos) const
 {
+  if(!positionalPlaceholders)
+    throw SqlException(funcInfo % ": Using position \"" % QString::number(
+                         pos) % "\" for named placeholders in query \"" % queryString % "\"");
+
   if(!atools::inRange(placeholderList, pos))
-    throw SqlException(funcInfo % ": Position \"" % QString::number(pos) % "\" not found in query \"" %
-                       queryString % "\"");
+    throw SqlException(funcInfo % ": Position \"" % QString::number(pos) % "\" not found in query \"" % queryString % "\"");
 }
 
 void SqlQuery::checkError(bool retval, const QString& msg) const

@@ -226,8 +226,9 @@ public:
   void bindValues(const QVector<std::pair<QString, QVariant> >& bindValues);
   void bindValues(const QVector<std::pair<int, QVariant> >& bindValues);
 
-  /* Extract named bindings prefixed with colon and unnamed bindings question mark. Throws exception if named and unamed are mixed */
-  static QStringList extractPlaceholders(const QString& query);
+  /* Extract named bindings prefixed with colon ":placeholder" and unnamed bindings as question mark "?".
+   * Throws exception if named and unamed are mixed. */
+  static QStringList extractPlaceholders(const QString& query, bool& positional);
 
   /* Get a map of placeholders and associated values from query */
   QMap<QString, QVariant> boundPlaceholderAndValueMap() const;
@@ -254,12 +255,14 @@ private:
   void checkError(bool retval = true, const QString& msg = QString()) const;
   void checkPlaceholder(const QString& funcInfo, const QString& placeholder) const;
   void checkPos(const QString& funcInfo, int pos) const;
+  void checkValues(const QString& funcInfo, const QVariantList& values) const;
   QString boundValuesAsString() const;
 
   QSqlQuery query;
   QString queryString;
   QStringList placeholderList;
   QSet<QString> placeholderSet;
+  bool positionalPlaceholders = false;
 
   SqlDatabase *db = nullptr;
 
