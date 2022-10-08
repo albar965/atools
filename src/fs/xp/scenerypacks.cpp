@@ -150,6 +150,10 @@ void SceneryPacks::read(const QString& basePath)
             else
               // Use relative path to base directory
               fileinfoBase = QFileInfo(atools::buildPathNoCase({basePath, fileinfoPath.filePath()}));
+
+            // Need to check the real path for existence
+            fileinfoBase.setFile(atools::canonicalFilePath(fileinfoBase));
+
             pack.valid = fileinfoBase.exists() && fileinfoBase.isDir();
 
             // path to apt.dat file
