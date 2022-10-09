@@ -76,7 +76,7 @@ public:
   {
     samples.clear();
     total1 = total2 = 0.f;
-    beforeFirstTimestampMs = 0;
+    beforeFirstTimestampMs = 0L;
   }
 
   int size() const
@@ -103,7 +103,7 @@ public:
   };
 
 private:
-  qint64 timeRangeMs, beforeFirstTimestampMs;
+  qint64 timeRangeMs, beforeFirstTimestampMs = 0L;
   QList<Sample> samples;
   float total1 = 0.f, total2 = 0.f;
 };

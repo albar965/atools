@@ -78,6 +78,7 @@ void atools::util::MovingAverageTime::addSamples(float value1, float value2, qin
 
     // Adjust total by removing this weighted value
     qint64 diff = first.timestamp - beforeFirstTimestampMs;
+
     total1 -= first.value1 * diff;
     total2 -= first.value2 * diff;
 
@@ -86,9 +87,19 @@ void atools::util::MovingAverageTime::addSamples(float value1, float value2, qin
 
   // Add new value and update totals with weighted value
   qint64 duration = timestampMs - (samples.isEmpty() ? beforeFirstTimestampMs : samples.constLast().timestamp);
-  total1 += value1 * duration;
-  total2 += value2 * duration;
-  samples.append(Sample(value1, value2, timestampMs));
+
+  if(duration < 0L)
+  {
+    // Time jump backwards - reset all
+    reset();
+    beforeFirstTimestampMs = timestampMs;
+  }
+  else
+  {
+    total1 += value1 * duration;
+    total2 += value2 * duration;
+    samples.append(Sample(value1, value2, timestampMs));
+  }
 }
 
 void MovingAverageTime::addSample(float value1, qint64 timestampMs)
