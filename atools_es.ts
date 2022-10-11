@@ -1859,10 +1859,6 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Empty line after &quot;SCENERY&quot; missing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2157,6 +2153,10 @@ Night time: %5</source>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation type="unfinished">No puedo abrir archivo &quot;%1&quot;. Motivo: %2.</translation>
     </message>
+    <message>
+        <source>File is not an X-Plane user_fix.dat file.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>atools::fs::weather::WeatherNetDownload</name>
@@ -2418,14 +2418,6 @@ Importación detenida.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Undo%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Redo%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>no %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2463,6 +2455,18 @@ Importación detenida.</translation>
     </message>
     <message>
         <source>Table undo_current is empty.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Undo %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Redo %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid undo action</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
