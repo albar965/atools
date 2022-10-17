@@ -1257,7 +1257,7 @@ QString canonicalPath(const QFileInfo& path)
 
 QString canonicalFilePath(const QFileInfo& path)
 {
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) || defined(Q_OS_MACOS)
   // Copy from QFileSystemEngine::slowCanonicalized()
   // and extended to consider shortcuts and symbolic links on Windows
 
