@@ -1238,7 +1238,6 @@ QString linkTarget(const QFileInfo& path)
       }
       CFRelease(urlRef);
     }
-    free(nsPath);
   }
 #else
   // Linux ==========================================================
