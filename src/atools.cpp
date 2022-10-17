@@ -49,6 +49,10 @@ extern "C" {
 }
 #endif
 
+#ifdef Q_OS_MACOS
+#include <CoreServices/CoreServices.h>
+#endif
+
 namespace atools {
 
 const static QChar SEP(QDir::separator());
@@ -1168,6 +1172,7 @@ QString linkTarget(const QFileInfo& path)
 {
   QString target;
 #ifdef Q_OS_WIN
+  // Windows ==========================================================
   if(path.isJunction())
   {
     QString str = QDir::toNativeSeparators(path.absoluteFilePath());
@@ -1198,11 +1203,49 @@ QString linkTarget(const QFileInfo& path)
 
     delete[] filepathW;
   }
-  else
-#endif
-  if(path.isSymLink())
+  else if(path.isSymLink())
     // Symbolic link or Windows shortcut
     target = path.symLinkTarget();
+
+#elif defined(Q_OS_MACOS)
+  // macOS ==========================================================
+  if(path.isSymbolicLink())
+    target = path.symLinkTarget();
+  else
+  {
+    NSString *nsPath = path.absoluteFilePath().toNSString();
+
+    Boolean isDir = false;
+    CFURLRef urlRef = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)nsPath, kCFURLPOSIXPathStyle, isDir);
+    if(urlRef)
+    {
+      CFErrorRef errorRef = NULL;
+      CFDataRef bookmark = CFURLCreateBookmarkDataFromFile(NULL, urlRef, &errorRef);
+
+      if(bookmark)
+      {
+        Boolean isStale;
+        CFURLRef bookmarkData = CFURLCreateByResolvingBookmarkData(NULL, bookmark, kCFURLBookmarkResolutionWithoutUIMask, NULL, NULL, &isStale, &errorRef);
+
+        if(bookmarkData)
+        {
+          char buffer[4096];
+          if(CFURLGetFileSystemRepresentation(bookmarkData, true /* absolute path */, (UInt8 *)buffer, 4096))
+            target = QString(buffer);
+          CFRelease(bookmarkData);
+        }
+        CFRelease(bookmark);
+      }
+      CFRelease(urlRef);
+    }
+    free(nsPath);
+  }
+#else
+  // Linux ==========================================================
+  if(path.isSymLink())
+    // Symbolic link
+    target = path.symLinkTarget();
+#endif
 
   return QDir::cleanPath(target);
 }
