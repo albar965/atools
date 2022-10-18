@@ -120,11 +120,11 @@ macx {
   QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
 
   versionAtLeast(QT_VERSION, 6.0.0) {
-    # Compatibility down to OS X Mojave 10.14 inclusive
+    # Compatibility down to OS X Mojave 10.14 inclusive when using Qt 6.4
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.14
   } else {
-    # Compatibility down to OS X Sierra 10.12 inclusive
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.12
+    # Compatibility down to OS X High Sierra 10.13 inclusive when using Qt 5.15
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
   }
 }
 
