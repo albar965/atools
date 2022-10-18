@@ -737,12 +737,25 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseO
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
   QStringList retval;
-  QDir customApt(buildPathNoCase({opts.getBasepath(), "Custom Scenery"}), QString(), QDir::Name,
-                 QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+
+  // Include files on macOS since aliases are detected as files
+#ifdef Q_OS_MACOS
+  QDir::Filters filters = QDir::Dirs | QDir::Files | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot;
+#else
+  QDir::Filters filters = QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot;
+#endif
+
+  QDir customApt(buildPathNoCase({opts.getBasepath(), "Custom Scenery"}), QString(), QDir::Name, filters);
   for(QFileInfo fileinfo : customApt.entryInfoList())
   {
     QString name = fileinfo.fileName();
     fileinfo.setFile(atools::canonicalFilePath(fileinfo));
+
+    // Ignore of the alias target is still a file on macOS
+#ifdef Q_OS_MACOS
+    if(fileinfo.isFile())
+      continue;
+#endif
 
     // dir:
     // KSEA Demo Area

@@ -50,7 +50,7 @@ extern "C" {
 #endif
 
 #ifdef Q_OS_MACOS
-#include <CoreServices/CoreServices.h>
+#include <CoreFoundation/CoreFoundation.h>
 #endif
 
 namespace atools {
@@ -1211,32 +1211,47 @@ QString linkTarget(const QFileInfo& path)
   // macOS ==========================================================
   if(path.isSymbolicLink())
     target = path.symLinkTarget();
-  else
+  else if(path.isFile() && path.isSymLink()) // isSymlink also returns true for macOS aliases on Qt 5.15
   {
-    NSString *nsPath = path.absoluteFilePath().toNSString();
+    QString abspath = path.absoluteFilePath();
+    NSString *nsPath = abspath.toNSString(); // NSString is autoreleased
 
-    Boolean isDir = false;
-    CFURLRef urlRef = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)nsPath, kCFURLPOSIXPathStyle, isDir);
-    if(urlRef)
+    if(nsPath != NULL)
     {
-      CFErrorRef errorRef = NULL;
-      CFDataRef bookmark = CFURLCreateBookmarkDataFromFile(NULL, urlRef, &errorRef);
-
-      if(bookmark)
+      // Create URL from path
+      Boolean isDir = false;
+      CFURLRef urlRef = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)nsPath, kCFURLPOSIXPathStyle, isDir);
+      if(urlRef)
       {
-        Boolean isStale;
-        CFURLRef bookmarkData = CFURLCreateByResolvingBookmarkData(NULL, bookmark, kCFURLBookmarkResolutionWithoutUIMask, NULL, NULL, &isStale, &errorRef);
+        // Load bookmark file data
+        CFErrorRef bookmarkErrorRef = NULL;
+        CFDataRef bookmark = CFURLCreateBookmarkDataFromFile(NULL, urlRef, &bookmarkErrorRef);
 
-        if(bookmarkData)
+        if(bookmarkErrorRef != NULL)
+          qWarning() << Q_FUNC_INFO << "CFURLCreateBookmarkDataFromFile" << CFErrorCopyDescription(bookmarkErrorRef) << path;
+
+        if(bookmark)
         {
-          char buffer[4096];
-          if(CFURLGetFileSystemRepresentation(bookmarkData, true /* absolute path */, (UInt8 *)buffer, 4096))
-            target = QString(buffer);
-          CFRelease(bookmarkData);
+          // Get the URL for the linked target (not a path yet)
+          Boolean isStale;
+          CFErrorRef bookmarkDataErrorRef = NULL;
+          CFURLRef bookmarkData = CFURLCreateByResolvingBookmarkData(NULL, bookmark, kCFURLBookmarkResolutionWithoutUIMask, NULL, NULL, &isStale, &bookmarkDataErrorRef);
+
+          if(bookmarkDataErrorRef != NULL)
+            qWarning() << Q_FUNC_INFO << "CFURLCreateByResolvingBookmarkData" << CFErrorCopyDescription(bookmarkDataErrorRef) << path;
+
+          if(bookmarkData)
+          {
+            // Now get the absolute path from the URL
+            char buffer[4096];
+            if(CFURLGetFileSystemRepresentation(bookmarkData, true /* absolute path */, (UInt8 *)buffer, 4096))
+              target = QString(buffer);
+            CFRelease(bookmarkData);
+          }
+          CFRelease(bookmark);
         }
-        CFRelease(bookmark);
+        CFRelease(urlRef);
       }
-      CFRelease(urlRef);
     }
   }
 #else
