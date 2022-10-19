@@ -256,10 +256,23 @@ Pos Pos::endpoint(float distanceMeter, float angleDeg) const
     return *this;
 
   double lon, lat;
-
   endpointRad(toRadians(static_cast<double>(lonX)), toRadians(static_cast<double>(latY)),
               meterToRad(static_cast<double>(distanceMeter)), toRadians(
                 -static_cast<double>(angleDeg) + 360.), lon, lat);
+
+  return Pos(static_cast<float>(toDegree(lon)), static_cast<float>(toDegree(lat))).normalize();
+}
+
+Pos Pos::endpointDouble(double distanceMeter, double angleDeg) const
+{
+  if(!isValid())
+    return EMPTY_POS;
+
+  if(distanceMeter == 0.)
+    return *this;
+
+  double lon, lat;
+  endpointRad(toRadians(lonX), toRadians(latY), meterToRad(distanceMeter), toRadians(-angleDeg + 360.), lon, lat);
 
   return Pos(static_cast<float>(toDegree(lon)), static_cast<float>(toDegree(lat))).normalize();
 }

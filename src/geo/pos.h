@@ -184,6 +184,7 @@ public:
 
   /* return endpoint at distance and angle */
   atools::geo::Pos endpoint(float distanceMeter, float angleDeg) const;
+  atools::geo::Pos endpointDouble(double distanceMeter, double angleDeg) const;
 
   /* Distance to other point in simple units. Uses manhattan distance in degrees.
    * Only for short distances and does not consider anti-meridian. */
