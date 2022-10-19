@@ -55,7 +55,7 @@
 # =============================================================================
 
 # Define program version here VERSION_NUMBER_TODO
-VERSION_NUMBER=3.8.5.beta
+VERSION_NUMBER=3.8.6.beta
 
 QT += sql xml svg core widgets network
 versionAtLeast(QT_VERSION, 6.0.0): QT += core5compat
