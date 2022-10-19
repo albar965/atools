@@ -34,6 +34,14 @@
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
     </message>
+    <message>
+        <source>Example Performance Profile</source>
+        <translation>Beispiel für Flugzeugleistung</translation>
+    </message>
+    <message>
+        <source>C172</source>
+        <translation>C172</translation>
+    </message>
 </context>
 <context>
     <name>AirspaceWriter</name>

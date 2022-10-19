@@ -89,6 +89,38 @@ bool AircraftPerf::isSpeedValid() const
   return climbSpeed > 1.0f && cruiseSpeed > 1.0f && descentSpeed > 1.0f;
 }
 
+AircraftPerf::AircraftPerf()
+{
+  name = tr("Example Performance Profile");
+  type = tr("C172");
+
+  volume = false;
+  jetFuel = false;
+
+  // Default values for C172 give no fuel consumption, no reserve and about 3 NM per 1000 ft climb and descent
+  taxiFuel = 0.f;
+  reserveFuel = 60.f;
+  extraFuel = 0.f;
+
+  climbVertSpeed = 550.f;
+  climbSpeed = 100.f;
+  climbFuelFlow = 80.f;
+
+  cruiseSpeed = 120.f;
+  cruiseFuelFlow = 60.f;
+  contingencyFuel = 0.f;
+
+  descentSpeed = 100.f;
+  descentVertSpeed = 550.f;
+  descentFuelFlow = 40.f;
+
+  alternateSpeed = 100.f;
+  alternateFuelFlow = 60.f;
+
+  usableFuel = 260.f;
+  minRunwayLength = 0.f;
+}
+
 void AircraftPerf::load(const QString& filename)
 {
   QFileInfo fi(filename);

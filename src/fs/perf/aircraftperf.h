@@ -55,6 +55,7 @@ class AircraftPerf
   Q_DECLARE_TR_FUNCTIONS(AircraftPerf)
 
 public:
+  AircraftPerf();
   /* Load and save throw Exception in case of error */
 
   /* Load old INI or new XML format. Format is detected automatically. */
@@ -447,28 +448,13 @@ private:
 
   QString name, type, simulator, description;
 
-  /* Default values give no fuel consumption, no reserve and about 3 NM per 1000 ft climb and descent */
-  float taxiFuel = 0.f;
-  float reserveFuel = 0.f;
-  float extraFuel = 0.f;
-
-  float climbVertSpeed = 550.f;
-  float climbSpeed = 100.f;
-  float climbFuelFlow = 0.f;
-
-  float cruiseSpeed = 100.f;
-  float cruiseFuelFlow = 0.f;
-  float contingencyFuel = 0.f;
-
-  float descentSpeed = 100.f;
-  float descentVertSpeed = 550.f;
-  float descentFuelFlow = 0.f;
-
-  float alternateSpeed = 100.f;
-  float alternateFuelFlow = 0.f;
-
-  float usableFuel = 0.f;
-  float minRunwayLength = 0.f;
+  /* Default values set in constructor give no fuel consumption, no reserve and about 3 NM per 1000 ft climb and descent */
+  float taxiFuel, reserveFuel, extraFuel;
+  float climbVertSpeed, climbSpeed, climbFuelFlow;
+  float cruiseSpeed, cruiseFuelFlow, contingencyFuel;
+  float descentSpeed, descentVertSpeed, descentFuelFlow;
+  float alternateSpeed, alternateFuelFlow;
+  float usableFuel, minRunwayLength;
 
   /* Default is soft and hard */
   atools::fs::perf::RunwayType runwayType = SOFT;
