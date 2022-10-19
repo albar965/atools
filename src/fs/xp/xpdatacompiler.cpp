@@ -435,7 +435,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
       context.curFileId = curFileId;
       context.fileName = fileinfo.fileName();
       context.filePath = fileinfo.filePath();
-      context.localPath = QDir(options.getBasepath()).relativeFilePath(fileinfo.path());
+      context.localPath = QDir::toNativeSeparators(QDir::cleanPath(QDir(options.getBasepath()).relativeFilePath(fileinfo.path())));
       context.flags = flags | flagsFromOptions();
       context.fileVersion = fileVersion;
       context.magDecReader = magDecReader;

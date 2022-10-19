@@ -41,6 +41,7 @@
 #include "atools.h"
 #include "exception.h"
 
+#include <QDir>
 #include <QFileInfo>
 
 namespace atools {
@@ -183,11 +184,11 @@ void AirportWriter::writeObject(const Airport *type)
 
     QStringList sceneryLocalPaths, bglFilenames;
     if(!deleteProcessor.getSceneryLocalPath().isEmpty())
-      sceneryLocalPaths.append(deleteProcessor.getSceneryLocalPath());
+      sceneryLocalPaths.append(QDir::toNativeSeparators(QDir::cleanPath(deleteProcessor.getSceneryLocalPath())));
     if(!deleteProcessor.getBglFilename().isEmpty())
       bglFilenames.append(deleteProcessor.getBglFilename());
 
-    sceneryLocalPaths.append(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
+    sceneryLocalPaths.append(QDir::toNativeSeparators(QDir::cleanPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath())));
     bglFilenames.append(bglFileWriter->getCurrentFilename());
 
     // Write admin names =====================
@@ -381,6 +382,8 @@ int atools::fs::db::AirportWriter::airportIdByIdent(const QString& ident, bool w
 #ifdef DEBUG_INFORMATION
   if(newId == -1 && warn)
     qWarning() << Q_FUNC_INFO << "Other airport with ident" << ident << "not found";
+#else
+  Q_UNUSED(warn)
 #endif
   return newId;
 }
