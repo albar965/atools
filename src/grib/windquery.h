@@ -19,7 +19,7 @@
 #define ATOOLS_GRIB_WINDQUERY_H
 
 #include "grib/gribcommon.h"
-#include "atools.h"
+#include "grib/windtypes.h"
 #include "fs/weather/weathertypes.h"
 
 #include <QObject>
@@ -40,80 +40,6 @@ class LineString;
 namespace grib {
 
 class GribDownloader;
-
-Q_DECL_CONSTEXPR static float INVALID_WIND_DIR_VALUE = std::numeric_limits<float>::max();
-Q_DECL_CONSTEXPR static float INVALID_WIND_SPEED_VALUE = std::numeric_limits<float>::max();
-
-/* Combines wind speed and direction */
-struct Wind
-{
-  Wind(float windDir, float windSpeed)
-  {
-    dir = windDir;
-    speed = windSpeed;
-  }
-
-  Wind()
-  {
-    dir = speed = 0.f;
-  }
-
-  /* Degrees true and knots */
-  float dir, speed;
-
-  bool isValid() const
-  {
-    return speed >= 0.f && speed < 1000.f && dir >= 0.f && dir <= 360.f;
-  }
-
-  bool isNull() const
-  {
-    return speed < 1.f;
-  }
-
-  bool operator==(const Wind& other) const
-  {
-    return atools::almostEqual(speed, other.speed) && atools::almostEqual(dir, other.dir);
-  }
-
-  bool operator!=(const Wind& other) const
-  {
-    return !operator==(other);
-  }
-
-};
-
-/* Invalid wind */
-const atools::grib::Wind EMPTY_WIND;
-
-/* Combines wind speed and direction at a position */
-struct WindPos
-{
-  atools::geo::Pos pos;
-  Wind wind;
-
-  bool isValid() const
-  {
-    return pos.isValid() && wind.isValid();
-  }
-
-  bool operator==(const WindPos& other) const
-  {
-    return pos == other.pos && wind == other.wind;
-  }
-
-  bool operator!=(const WindPos& other) const
-  {
-    return !operator==(other);
-  }
-
-};
-
-/* Invalid wind pos */
-const atools::grib::WindPos EMPTY_WIND_POS;
-
-typedef QVector<WindPos> WindPosVector;
-typedef QList<WindPos> WindPosList;
 
 struct WindRect;
 struct GridRect;
@@ -181,9 +107,9 @@ public:
   Wind getWindForPos(const atools::geo::Pos& pos, bool interpolateValue = true) const;
 
   /* Get an array of wind data for the given rectangle at the given altitude from the data grid.
-   * Data is only interpolated between layers. Result is sorted by y and x coordinates.*/
-  void getWindForRect(atools::grib::WindPosVector& result, const geo::Rect& rect, float altFeet) const;
-  atools::grib::WindPosVector getWindForRect(const atools::geo::Rect& rect, float altFeet) const;
+   * Data is only interpolated between layers. Result is sorted by y and x coordinates. */
+  void getWindForRect(atools::grib::WindPosList& result, const geo::Rect& rect, float altFeet) const;
+  atools::grib::WindPosList getWindForRect(const atools::geo::Rect& rect, float altFeet) const;
 
   /* Get average wind for the great circle line between the two given positions at the given altitude.
    *  Wind data is fetched for a certain number of spots along the line and thus not perfectly accurate.

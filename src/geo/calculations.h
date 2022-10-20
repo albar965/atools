@@ -93,7 +93,7 @@ bool isEastCourse(float lonx1, float lonx2);
 
 /* Degree to rad */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE toRadians(TYPE deg)
+constexpr TYPE toRadians(TYPE deg)
 {
   return (deg > std::numeric_limits<TYPE>::max() / 2) ? deg :
          static_cast<TYPE>(static_cast<double>(deg) * 0.017453292519943295769236907684886);
@@ -101,7 +101,7 @@ Q_DECL_CONSTEXPR TYPE toRadians(TYPE deg)
 
 /* Rad to degree */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE toDegree(TYPE rad)
+constexpr TYPE toDegree(TYPE rad)
 {
   return (rad > std::numeric_limits<TYPE>::max() / 2) ? rad :
          static_cast<TYPE>(static_cast<double>(rad) / 0.017453292519943295769236907684886);
@@ -248,13 +248,13 @@ QRectF rectToSquare(const QRectF& rect);
 
 /* Square distance */
 template<typename TYPE>
-Q_DECL_CONSTEXPR int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
+constexpr int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
   return std::abs(x1 - x2) + std::abs(y1 - y2);
 }
 
 template<>
-Q_DECL_CONSTEXPR int manhattanDistance<int>(int x1, int y1, int x2, int y2)
+constexpr int manhattanDistance<int>(int x1, int y1, int x2, int y2)
 {
   return absInt(x1 - x2) + absInt(y1 - y2);
 }
@@ -266,49 +266,49 @@ inline float manhattanDistanceF(float x1, float y1, float x2, float y2)
 
 /* Euclidian distance between points rounded to int */
 template<typename TYPE>
-Q_DECL_CONSTEXPR int simpleDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
+constexpr int simpleDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
   return static_cast<int>(std::round(std::sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))));
 }
 
 /* Euclidian distance between points */
 template<typename TYPE>
-Q_DECL_CONSTEXPR float simpleDistanceF(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
+constexpr float simpleDistanceF(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
   return static_cast<float>(std::sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))));
 }
 
 /* Temperature from celsius to farenheit */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE degCToDegF(TYPE temp)
+constexpr TYPE degCToDegF(TYPE temp)
 {
   return static_cast<TYPE>(1.8 * static_cast<double>(temp) + 32);
 }
 
 /* Temperature from farenheit to celsius */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE degFToDegC(TYPE temp)
+constexpr TYPE degFToDegC(TYPE temp)
 {
   return static_cast<TYPE>((static_cast<double>(temp) - 32) / 1.8);
 }
 
 /* Pressure from millibar to inches Hg */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE mbarToInHg(TYPE press)
+constexpr TYPE mbarToInHg(TYPE press)
 {
   return static_cast<TYPE>(static_cast<double>(press) * 0.02953);
 }
 
 /* Pressure from inches Hg to millibar */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE inHgToMbar(TYPE press)
+constexpr TYPE inHgToMbar(TYPE press)
 {
   return static_cast<TYPE>(static_cast<double>(press) * 33.863753);
 }
 
 /* Distance from nautical miles to meters */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE nmToMeter(TYPE value)
+constexpr TYPE nmToMeter(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
          static_cast<TYPE>(static_cast<double>(value) * 1852.216);
@@ -316,7 +316,7 @@ Q_DECL_CONSTEXPR TYPE nmToMeter(TYPE value)
 
 /* Distance from nautical miles to kilometers */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE nmToKm(TYPE value)
+constexpr TYPE nmToKm(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
          static_cast<TYPE>(static_cast<double>(value) * 1.852216);
@@ -324,7 +324,7 @@ Q_DECL_CONSTEXPR TYPE nmToKm(TYPE value)
 
 /* Distance from nautical miles to statue miles */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE nmToMi(TYPE value)
+constexpr TYPE nmToMi(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
          static_cast<TYPE>(static_cast<double>(value) * 1852.216 / 1609.3426);
@@ -332,7 +332,7 @@ Q_DECL_CONSTEXPR TYPE nmToMi(TYPE value)
 
 /* Distance from statue miles to nautical miles */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE miToNm(TYPE value)
+constexpr TYPE miToNm(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
          static_cast<TYPE>(static_cast<double>(value) * 1609.3426 / 1852.216);
@@ -340,7 +340,7 @@ Q_DECL_CONSTEXPR TYPE miToNm(TYPE value)
 
 /* Distance from meter to statue miles */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE meterToMi(TYPE value)
+constexpr TYPE meterToMi(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
          static_cast<TYPE>(static_cast<double>(value) / 1609.3426);
@@ -348,7 +348,7 @@ Q_DECL_CONSTEXPR TYPE meterToMi(TYPE value)
 
 /* Distance from meters to nautical miles */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE meterToNm(TYPE value)
+constexpr TYPE meterToNm(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
          static_cast<TYPE>(static_cast<double>(value) / 1852.216);
@@ -356,61 +356,61 @@ Q_DECL_CONSTEXPR TYPE meterToNm(TYPE value)
 
 /* Distance from km to nautical miles */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE kmToNm(TYPE value)
+constexpr TYPE kmToNm(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
          static_cast<TYPE>(static_cast<double>(value) / 1.852216);
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE meterToFeet(TYPE value)
+constexpr TYPE meterToFeet(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
          static_cast<TYPE>(3.2808399 * static_cast<double>(value));
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE feetToMeter(TYPE value)
+constexpr TYPE feetToMeter(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
          static_cast<TYPE>(0.3048 * static_cast<double>(value));
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE feetToNm(TYPE value)
+constexpr TYPE feetToNm(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value : meterToNm(feetToMeter(value));
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE nmToFeet(TYPE value)
+constexpr TYPE nmToFeet(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value : meterToFeet(nmToMeter(value));
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE meterPerSecToKnots(TYPE value)
+constexpr TYPE meterPerSecToKnots(TYPE value)
 {
   return static_cast<TYPE>((value > std::numeric_limits<TYPE>::max() / 2) ? value :
                            static_cast<double>(value) * 1.943844);
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE knotsToMeterPerSec(TYPE value)
+constexpr TYPE knotsToMeterPerSec(TYPE value)
 {
   return static_cast<TYPE>((value > std::numeric_limits<TYPE>::max() / 2) ? value :
                            static_cast<double>(value) / 1.943844);
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE kgToLbs(TYPE value)
+constexpr TYPE kgToLbs(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
          value : static_cast<TYPE>(static_cast<double>(value) * 2.204623);
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE lbsToKg(TYPE value)
+constexpr TYPE lbsToKg(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
          value : static_cast<TYPE>(static_cast<double>(value) / 2.204623);
@@ -418,7 +418,7 @@ Q_DECL_CONSTEXPR TYPE lbsToKg(TYPE value)
 
 /* Litre to US Gallon */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE literToGallon(TYPE value)
+constexpr TYPE literToGallon(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
          value : static_cast<TYPE>(static_cast<double>(value) / 3.785411784);
@@ -426,7 +426,7 @@ Q_DECL_CONSTEXPR TYPE literToGallon(TYPE value)
 
 /* US Gallon to Litre */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE gallonToLiter(TYPE value)
+constexpr TYPE gallonToLiter(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
          value : static_cast<TYPE>(static_cast<double>(value) * 3.785411784);
@@ -438,28 +438,28 @@ bool isJetFuel(float fuelWeightLbs, float fuelQuantityGal, float& weightVolRatio
 
 /* Avgas 1 gal = 6 lbs, Jetfuel 1 gal = 6,7 lbs */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE  fromGalToLbs(bool jetFuel, TYPE value)
+constexpr TYPE  fromGalToLbs(bool jetFuel, TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
          value : static_cast<TYPE>(static_cast<double>(value) * (jetFuel ? 6.7 : 6.));
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE  fromLbsToGal(bool jetFuel, TYPE value)
+constexpr TYPE  fromLbsToGal(bool jetFuel, TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
          value : static_cast<TYPE>(static_cast<double>(value) / (jetFuel ? 6.7 : 6.));
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE  fromLiterToKg(bool jetFuel, TYPE value)
+constexpr TYPE  fromLiterToKg(bool jetFuel, TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
          value : static_cast<TYPE>(lbsToKg(fromGalToLbs(jetFuel, literToGallon(static_cast<double>(value)))));
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE  fromKgToLiter(bool jetFuel, TYPE value)
+constexpr TYPE  fromKgToLiter(bool jetFuel, TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
          value : static_cast<TYPE>(gallonToLiter(fromLbsToGal(jetFuel, kgToLbs(static_cast<double>(value)))));
@@ -467,7 +467,7 @@ Q_DECL_CONSTEXPR TYPE  fromKgToLiter(bool jetFuel, TYPE value)
 
 /* NM to rad (longitude or latitude) */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE nmToRad(TYPE value)
+constexpr TYPE nmToRad(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
          static_cast<TYPE>(M_PI / (180. * 60.) * static_cast<double>(value));
@@ -475,7 +475,7 @@ Q_DECL_CONSTEXPR TYPE nmToRad(TYPE value)
 
 /* meter to rad (longitude or latitude) */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE meterToRad(TYPE value)
+constexpr TYPE meterToRad(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value : nmToRad(meterToNm(value));
 }
@@ -511,7 +511,7 @@ TYPE normalizeCourse(TYPE courseDegree)
 
 /* Get opposed course */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE opposedCourseDeg(TYPE courseDegree)
+constexpr TYPE opposedCourseDeg(TYPE courseDegree)
 {
   return (courseDegree > std::numeric_limits<TYPE>::max() / 2) ? courseDegree :
          static_cast<TYPE>(atools::geo::normalizeCourse(static_cast<double>(courseDegree) + 180.));
@@ -571,14 +571,14 @@ TYPE normalizeLatYDeg(TYPE latY)
 
 /* Convert angle in degrees (0 = north, counting CW) to Qt for QLineF::setAngle */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE angleToQt(TYPE angle)
+constexpr TYPE angleToQt(TYPE angle)
 {
   return (angle > std::numeric_limits<TYPE>::max() / 2) ? angle : -(angle - 90.);
 }
 
 /* Convert angle to degrees (0 = north, counting CW) from QLineF::angle */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE angleFromQt(TYPE angle)
+constexpr TYPE angleFromQt(TYPE angle)
 {
   return (angle > std::numeric_limits<TYPE>::max() / 2) ? angle :
          atools::geo::normalizeCourse(360.f - angle + 90.f);
@@ -586,7 +586,7 @@ Q_DECL_CONSTEXPR TYPE angleFromQt(TYPE angle)
 
 /* ISA temperature in °C at altitude (https://en.wikipedia.org/wiki/International_Standard_Atmosphere) */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE isaTemperature(TYPE altFeet)
+constexpr TYPE isaTemperature(TYPE altFeet)
 {
   return static_cast<TYPE>(static_cast<double>(altFeet) < 36000. ?
                            (15. - (1.98 * static_cast<double>(altFeet) / 1000.)) :
@@ -595,7 +595,7 @@ Q_DECL_CONSTEXPR TYPE isaTemperature(TYPE altFeet)
 
 /* Mach number to TAS in knots https://en.wikipedia.org/wiki/True_airspeed */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE machToTasFromAlt(TYPE altFeet, TYPE machNumber)
+constexpr TYPE machToTasFromAlt(TYPE altFeet, TYPE machNumber)
 {
   return static_cast<TYPE>(39. * static_cast<double>(machNumber) *
                            std::sqrt(isaTemperature(static_cast<double>(altFeet)) + 273.15));
@@ -603,33 +603,33 @@ Q_DECL_CONSTEXPR TYPE machToTasFromAlt(TYPE altFeet, TYPE machNumber)
 
 /* Mach number to TAS in knots https://en.wikipedia.org/wiki/True_airspeed */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE machToTasFromSat(TYPE sat, TYPE machNumber)
+constexpr TYPE machToTasFromSat(TYPE sat, TYPE machNumber)
 {
   return static_cast<TYPE>(39. * static_cast<double>(machNumber) * std::sqrt(sat) + 273.15);
 }
 
 /* TAS to mach number https://en.wikipedia.org/wiki/True_airspeed */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE tasToMach(TYPE sat, TYPE tas)
+constexpr TYPE tasToMach(TYPE sat, TYPE tas)
 {
   return static_cast<TYPE>(static_cast<double>(tas) / (std::sqrt(static_cast<double>(sat) + 273.15) * 39.));
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE tasToMachFromAlt(TYPE altFeet, TYPE tas)
+constexpr TYPE tasToMachFromAlt(TYPE altFeet, TYPE tas)
 {
   return static_cast<TYPE>(static_cast<double>(tas) /
                            (std::sqrt(isaTemperature(static_cast<double>(altFeet)) + 273.15) * 39.));
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE pressureMbarForAltMeter(TYPE altMeter)
+constexpr TYPE pressureMbarForAltMeter(TYPE altMeter)
 {
   return static_cast<TYPE>(1013.25 * std::pow(1.0 - ((0.0065 * static_cast<double>(altMeter)) / 288.15), 5.255));
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE altMeterForPressureMbar(TYPE pressureMbar)
+constexpr TYPE altMeterForPressureMbar(TYPE pressureMbar)
 {
   return static_cast<TYPE>(288.15 / 0.0065 *
                            (1 - std::pow((static_cast<double>(pressureMbar) / 1013.25), (1. / 5.255))));

@@ -382,14 +382,14 @@ Wind WindQuery::getWindForPos(const Pos& pos, bool interpolateValue) const
   }
 }
 
-atools::grib::WindPosVector WindQuery::getWindForRect(const Rect& rect, float altFeet) const
+WindPosList WindQuery::getWindForRect(const Rect& rect, float altFeet) const
 {
-  WindPosVector result;
+  WindPosList result;
   getWindForRect(result, rect, altFeet);
   return result;
 }
 
-void WindQuery::getWindForRect(WindPosVector& result, const Rect& rect, float altFeet) const
+void WindQuery::getWindForRect(WindPosList& result, const Rect& rect, float altFeet) const
 {
   if(windLayers.isEmpty())
     return;
@@ -404,13 +404,13 @@ void WindQuery::getWindForRect(WindPosVector& result, const Rect& rect, float al
   }
   else
   {
+    // Get next layers below and above altitude
+    WindAltLayer lower, upper;
+    layersByAlt(lower, upper, altFeet);
+
     // Split rectangle if it crosses the anti-meridian (date line)
     for(const atools::geo::Rect& r : rect.splitAtAntiMeridian())
     {
-      // Get next layers below and above altitude
-      WindAltLayer lower, upper;
-      layersByAlt(lower, upper, altFeet);
-
       for(float lonx = std::floor(r.getWest()); lonx <= r.getEast(); lonx += 1.f)
       {
         for(float laty = std::ceil(r.getNorth()); laty >= r.getSouth(); laty -= 1.f)

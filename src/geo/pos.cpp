@@ -176,10 +176,10 @@ float Pos::getLonXRad() const
   return toRadians(lonX);
 }
 
-bool Pos::nearGrid(float spacing, float epsilon) const
+bool Pos::nearGridLonLat(float spacingLonX, float spacingLatY, float epsilon) const
 {
-  return atools::almostEqual(lonX, atools::roundToNearest(lonX, spacing), epsilon) &&
-         atools::almostEqual(latY, atools::roundToNearest(latY, spacing), epsilon);
+  return atools::almostEqual(lonX, atools::roundToNearest(lonX, spacingLonX), epsilon) &&
+         atools::almostEqual(latY, atools::roundToNearest(latY, spacingLatY), epsilon);
 }
 
 Pos& Pos::snapToGrid()

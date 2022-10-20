@@ -161,7 +161,12 @@ public:
 
   /* true if the position is close to one degree grid point or other factor defined by "spacing".
    *  Use 1 for spacing to detect one degree grid confluence points. */
-  bool nearGrid(float spacing, float epsilon) const;
+  bool nearGridLonLat(float spacingLonX, float spacingLatY, float epsilon = POS_EPSILON_MIN) const;
+
+  bool nearGrid(float spacing, float epsilon = POS_EPSILON_MIN) const
+  {
+    return nearGridLonLat(spacing, spacing, epsilon);
+  }
 
   atools::geo::Pos& snapToGrid();
 

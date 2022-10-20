@@ -129,6 +129,7 @@ void insertInto(QVector<TYPE>& list, int index, const TYPE& type)
   else
     list.insert(index, type);
 }
+
 #endif
 
 /* Read whole file into a string */
@@ -197,20 +198,20 @@ float calculateSteps(float range, float numSteps);
 
 /* different to std::fmod and std::remainder. Sign follows the divisor or be Euclidean. Remainder of x/y */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE mod(TYPE x, TYPE y)
+constexpr TYPE mod(TYPE x, TYPE y)
 {
   return x - y * std::floor(x / y);
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR bool inRange(const QList<TYPE>& list, int index)
+constexpr bool inRange(const QList<TYPE>& list, int index)
 {
   return index >= 0 && index < list.size();
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 template<typename TYPE>
-Q_DECL_CONSTEXPR bool inRange(const QVector<TYPE>& list, int index)
+constexpr bool inRange(const QVector<TYPE>& list, int index)
 {
   return index >= 0 && index < list.size();
 }
@@ -218,13 +219,13 @@ Q_DECL_CONSTEXPR bool inRange(const QVector<TYPE>& list, int index)
 #endif
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR bool inRange(TYPE minValue, TYPE maxValue, TYPE value)
+constexpr bool inRange(TYPE minValue, TYPE maxValue, TYPE value)
 {
   return value >= minValue && value <= maxValue;
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE minmax(TYPE minValue, TYPE maxValue, TYPE value)
+constexpr TYPE minmax(TYPE minValue, TYPE maxValue, TYPE value)
 {
   return std::min(std::max(value, minValue), maxValue);
 }
@@ -267,6 +268,7 @@ const TYPE& at(const QVector<TYPE>& list, int index, const TYPE& defaultType = T
     qWarning() << "index out of bounds:" << index << "list size" << list.size();
   return defaultType;
 }
+
 #endif
 
 template<typename TYPE>
@@ -289,6 +291,7 @@ const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const T
     qWarning() << "index out of bounds:" << index << "list size" << list.size() << "message" << msg;
   return defaultType;
 }
+
 #endif
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -298,6 +301,7 @@ const TYPE& atRoll(const QVector<TYPE>& list, int index)
 {
   return index < list.size() ? list.at(index) : list.constFirst();
 }
+
 #endif
 template<typename TYPE>
 const TYPE& atRoll(const QList<TYPE>& list, int index)
@@ -313,29 +317,30 @@ int atInt(const QStringList& columns, int index, bool error);
 float atFloat(const QStringList& columns, int index, bool error);
 
 template<typename TYPE>
-TYPE *firstOrNull(QList<TYPE>& list)
+inline TYPE *firstOrNull(QList<TYPE>& list)
 {
   return list.isEmpty() ? nullptr : &list.first();
 }
 
 template<typename TYPE>
-const TYPE *constFirstOrNull(const QList<TYPE>& list)
+inline const TYPE *constFirstOrNull(const QList<TYPE>& list)
 {
   return list.isEmpty() ? nullptr : &list.constFirst();
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 template<typename TYPE>
-TYPE *firstOrNull(QVector<TYPE>& list)
+inline TYPE *firstOrNull(QVector<TYPE>& list)
 {
   return list.isEmpty() ? nullptr : &list.first();
 }
 
 template<typename TYPE>
-const TYPE *constFirstOrNull(const QVector<TYPE>& list)
+inline const TYPE *constFirstOrNull(const QVector<TYPE>& list)
 {
   return list.isEmpty() ? nullptr : &list.constFirst();
 }
+
 #endif
 
 static const int MAX_FILENAME_CHARS = 150;
@@ -347,24 +352,24 @@ QString invalidFilenameCharacters(bool html);
  * filesystem and truncated the name in the middle */
 QString cleanFilename(QString filename, int maxLength = MAX_FILENAME_CHARS);
 
-Q_DECL_CONSTEXPR int absInt(int value)
+constexpr int absInt(int value)
 {
   return value > 0 ? value : -value;
 }
 
-Q_DECL_CONSTEXPR long absLong(long value)
+constexpr long absLong(long value)
 {
   return value > 0L ? value : -value;
 }
 
-Q_DECL_CONSTEXPR long long absLongLong(long long value)
+constexpr long long absLongLong(long long value)
 {
   return value > 0L ? value : -value;
 }
 
 /* Round to integer value */
 template<typename TYPE>
-Q_DECL_CONSTEXPR int roundToInt(TYPE value)
+constexpr int roundToInt(TYPE value)
 {
   return static_cast<int>(std::round(value));
 }
@@ -372,22 +377,19 @@ Q_DECL_CONSTEXPR int roundToInt(TYPE value)
 /* Linear interpolation
  * f(x) = f0 + ((f1 - f0) / (x1 - x0)) * (x - x0) */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE interpolate(TYPE f0, TYPE f1, TYPE x0, TYPE x1, TYPE x)
+constexpr TYPE interpolate(TYPE f0, TYPE f1, TYPE x0, TYPE x1, TYPE x)
 {
-  if(f0 == f1)
-    return f0;
-  else
-    return f0 + ((f1 - f0) / (x1 - x0)) * (x - x0);
+  return f0 == f1 ? f0 : f0 + ((f1 - f0) / (x1 - x0)) * (x - x0);
 }
 
 /* Get coordinate where x crosses the line  */
-Q_DECL_CONSTEXPR QPointF interpolateForX(const QLineF& line, double x)
+constexpr QPointF interpolateForX(const QLineF& line, double x)
 {
   return line.pointAt((x - line.x1()) / line.dx());
 }
 
 /* Get coordinate where y crosses the line */
-Q_DECL_CONSTEXPR QPointF interpolateForY(const QLineF& line, double y)
+constexpr QPointF interpolateForY(const QLineF& line, double y)
 {
   return line.pointAt((y - line.y1()) / line.dy());
 }
@@ -437,7 +439,7 @@ int roundToPrecision(TYPE value, int precision = 0)
 
 /* Round value to nearest multiple of round */
 template<typename TYPE>
-TYPE roundToNearest(TYPE value, TYPE round)
+inline TYPE roundToNearest(TYPE value, TYPE round)
 {
   return round > 0. ? std::round(value / round) * round : value;
 }
@@ -490,7 +492,7 @@ QDateTime correctDateLocal(int dayOfYear, int secondsOfDayLocal, int secondsOfDa
 QDateTime correctDateLocalF(int dayOfYear, float secondsOfDayLocal, float secondsOfDayUtc);
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR int sign(TYPE t)
+constexpr int sign(TYPE t)
 {
   if(static_cast<double>(t) > 0.)
     return 1;
@@ -501,7 +503,7 @@ Q_DECL_CONSTEXPR int sign(TYPE t)
 }
 
 template<>
-Q_DECL_CONSTEXPR int sign<int>(int t)
+constexpr int sign<int>(int t)
 {
   if(t > 0)
     return 1;
@@ -512,67 +514,67 @@ Q_DECL_CONSTEXPR int sign<int>(int t)
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR bool almostEqual(TYPE f1, TYPE f2)
+constexpr bool almostEqual(TYPE f1, TYPE f2)
 {
   return std::abs(f1 - f2) <= std::numeric_limits<TYPE>::epsilon();
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR bool almostEqual(TYPE f1, TYPE f2, TYPE epsilon)
+constexpr bool almostEqual(TYPE f1, TYPE f2, TYPE epsilon)
 {
   return std::abs(f1 - f2) <= epsilon;
 }
 
 template<>
-Q_DECL_CONSTEXPR bool almostEqual<int>(int f1, int f2, int epsilon)
+constexpr bool almostEqual<int>(int f1, int f2, int epsilon)
 {
   return atools::absInt(f1 - f2) <= epsilon;
 }
 
 template<>
-Q_DECL_CONSTEXPR bool almostEqual<long>(long f1, long f2, long epsilon)
+constexpr bool almostEqual<long>(long f1, long f2, long epsilon)
 {
   return atools::absLong(f1 - f2) <= epsilon;
 }
 
 template<>
-Q_DECL_CONSTEXPR bool almostEqual<long long>(long long f1, long long f2, long long epsilon)
+constexpr bool almostEqual<long long>(long long f1, long long f2, long long epsilon)
 {
   return atools::absLongLong(f1 - f2) <= epsilon;
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR bool almostNotEqual(TYPE f1, TYPE f2)
+constexpr bool almostNotEqual(TYPE f1, TYPE f2)
 {
   return !almostEqual<TYPE>(f1, f2);
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR bool almostNotEqual(TYPE f1, TYPE f2, TYPE epsilon)
+constexpr bool almostNotEqual(TYPE f1, TYPE f2, TYPE epsilon)
 {
   return !almostEqual<TYPE>(f1, f2, epsilon);
 }
 
 template<>
-Q_DECL_CONSTEXPR bool almostNotEqual<int>(int f1, int f2, int epsilon)
+constexpr bool almostNotEqual<int>(int f1, int f2, int epsilon)
 {
   return !almostEqual<int>(f1, f2, epsilon);
 }
 
 template<>
-Q_DECL_CONSTEXPR bool almostNotEqual<long>(long f1, long f2, long epsilon)
+constexpr bool almostNotEqual<long>(long f1, long f2, long epsilon)
 {
   return !almostEqual<long>(f1, f2, epsilon);
 }
 
 template<>
-Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long long epsilon)
+constexpr bool almostNotEqual<long long>(long long f1, long long f2, long long epsilon)
 {
   return !almostEqual<long long>(f1, f2, epsilon);
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR bool isValid(TYPE value)
+constexpr bool isValid(TYPE value)
 {
   // max float (3.4028235 * 10^38) is used for all floating point numerical invalid values.
   // Divide by four to catch conversions of invalid value
@@ -580,7 +582,7 @@ Q_DECL_CONSTEXPR bool isValid(TYPE value)
 }
 
 template<>
-Q_DECL_CONSTEXPR bool isValid<int>(int value)
+constexpr bool isValid<int>(int value)
 {
   // 2 147 483 647
   return value < std::numeric_limits<int>::max() / 4;

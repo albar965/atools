@@ -680,6 +680,7 @@ HEADERS += \
   src/fs/xp/xpnavwriter.h \
   src/fs/xp/xpwriter.h \
   src/grib/windquery.h \
+  src/grib/windtypes.h \
   src/routing/routefinder.h
 
 SOURCES += \
@@ -827,6 +828,7 @@ SOURCES += \
   src/fs/xp/xpnavwriter.cpp \
   src/fs/xp/xpwriter.cpp \
   src/grib/windquery.cpp \
+  src/grib/windtypes.cpp \
   src/routing/routefinder.cpp
 } # ATOOLS_NO_FS
 
