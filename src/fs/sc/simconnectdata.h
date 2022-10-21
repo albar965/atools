@@ -19,7 +19,6 @@
 #define ATOOLS_FS_SIMCONNECTDATA_H
 
 #include "geo/pos.h"
-#include "fs/sc/simconnecttypes.h"
 #include "fs/weather/weathertypes.h"
 #include "fs/sc/simconnectuseraircraft.h"
 

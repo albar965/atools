@@ -63,6 +63,7 @@ enum AircraftFlag : quint16
   /* Indicated source simulator for all aircraft */
   SIM_FSX_P3D = 0x0020,
   SIM_XPLANE = 0x0040,
+  SIM_MSFS = 0x0800,
 
   /* Simulator is in pause mode */
   SIM_PAUSED = 0x0080,
@@ -75,8 +76,10 @@ enum AircraftFlag : quint16
 
   /* A simulator aircraft also recognized as online network aircraft.
    * This simulator aircraft is a shadow of an online network aircraft (by matching callsign to reg or position/altitude).
-   * Set in OnlinedataController::updateAircraftShadowState() */
+   * Set in OnlinedataController::updateAircraftShadowState() in the client (LNM) */
   SIM_ONLINE_SHADOW = 0x0400
+
+  // Next is 0x1000
 };
 
 Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag);

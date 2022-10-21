@@ -20,9 +20,9 @@
 #include "fs/sc/simconnectapi.h"
 #include "fs/sc/weatherrequest.h"
 #include "fs/sc/simconnectdata.h"
-#include "geo/calculations.h"
 #include "win/activationcontext.h"
 #include "fs/util/fsutil.h"
+#include "atools.h"
 
 #include <QDate>
 #include <QTime>
@@ -184,7 +184,7 @@ public:
   void fillDataDefinition();
   void fillDataDefinitionAicraft(DataDefinitionId definitionId);
 
-  void copyToSimData(const SimDataAircraft& simDataUserAircraft,
+  void copyToSimData(const SimDataAircraft& simDataAircraft,
                      atools::fs::sc::SimConnectAircraft& aircraft);
 
   bool checkCall(HRESULT hr, const QString& message);
@@ -445,19 +445,19 @@ void CALLBACK SimConnectHandlerPrivate::dispatchCallback(SIMCONNECT_RECV *pData,
   handlerClass->dispatchProcedure(pData, cbData);
 }
 
-void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserAircraft, SimConnectAircraft& aircraft)
+void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataAircraft, SimConnectAircraft& aircraft)
 {
-  aircraft.flags = atools::fs::sc::SIM_FSX_P3D;
-  aircraft.airplaneTitle = simDataUserAircraft.aircraftTitle;
-  aircraft.airplaneModel = simDataUserAircraft.aircraftAtcModel;
-  aircraft.airplaneReg = simDataUserAircraft.aircraftAtcId;
-  aircraft.airplaneType = simDataUserAircraft.aircraftAtcType;
-  aircraft.airplaneAirline = simDataUserAircraft.aircraftAtcAirline;
-  aircraft.airplaneFlightnumber = simDataUserAircraft.aircraftAtcFlightNumber;
-  aircraft.fromIdent = simDataUserAircraft.aiFrom;
-  aircraft.toIdent = simDataUserAircraft.aiTo;
+  aircraft.flags = msfs ? atools::fs::sc::SIM_MSFS : atools::fs::sc::SIM_FSX_P3D;
+  aircraft.airplaneTitle = simDataAircraft.aircraftTitle;
+  aircraft.airplaneModel = simDataAircraft.aircraftAtcModel;
+  aircraft.airplaneReg = simDataAircraft.aircraftAtcId;
+  aircraft.airplaneType = simDataAircraft.aircraftAtcType;
+  aircraft.airplaneAirline = simDataAircraft.aircraftAtcAirline;
+  aircraft.airplaneFlightnumber = simDataAircraft.aircraftAtcFlightNumber;
+  aircraft.fromIdent = simDataAircraft.aiFrom;
+  aircraft.toIdent = simDataAircraft.aiTo;
 
-  QString cat = QString(simDataUserAircraft.category).toLower().trimmed();
+  QString cat = QString(simDataAircraft.category).toLower().trimmed();
   if(cat == "airplane")
     aircraft.category = AIRPLANE;
   else if(cat == "helicopter")
@@ -473,35 +473,37 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   else if(cat == "viewer")
     aircraft.category = VIEWER;
 
-  aircraft.wingSpanFt = static_cast<quint16>(simDataUserAircraft.wingSpan);
-  aircraft.modelRadiusFt = static_cast<quint16>(simDataUserAircraft.modelRadius);
+  aircraft.wingSpanFt = static_cast<quint16>(simDataAircraft.wingSpan);
+  aircraft.modelRadiusFt = static_cast<quint16>(simDataAircraft.modelRadius);
 
-  aircraft.numberOfEngines = static_cast<quint8>(simDataUserAircraft.numEngines);
-  aircraft.engineType = static_cast<EngineType>(simDataUserAircraft.engineType);
+  aircraft.numberOfEngines = static_cast<quint8>(simDataAircraft.numEngines);
+  aircraft.engineType = static_cast<EngineType>(simDataAircraft.engineType);
 
-  aircraft.position.setLonX(simDataUserAircraft.longitudeDeg);
-  aircraft.position.setLatY(simDataUserAircraft.latitudeDeg);
-  aircraft.position.setAltitude(simDataUserAircraft.altitudeFt);
+  aircraft.position.setLonX(simDataAircraft.longitudeDeg);
+  aircraft.position.setLatY(simDataAircraft.latitudeDeg);
+  aircraft.position.setAltitude(simDataAircraft.altitudeFt);
 
-  aircraft.groundSpeedKts = simDataUserAircraft.groundVelocityKts;
-  aircraft.indicatedAltitudeFt = simDataUserAircraft.indicatedAltitudeFt;
-  aircraft.headingMagDeg = simDataUserAircraft.planeHeadingMagneticDeg;
-  aircraft.headingTrueDeg = simDataUserAircraft.planeHeadingTrueDeg;
+  aircraft.groundSpeedKts = simDataAircraft.groundVelocityKts;
+  aircraft.indicatedAltitudeFt = simDataAircraft.indicatedAltitudeFt;
+  aircraft.headingMagDeg = simDataAircraft.planeHeadingMagneticDeg;
+  aircraft.headingTrueDeg = simDataAircraft.planeHeadingTrueDeg;
 
-  aircraft.trueAirspeedKts = simDataUserAircraft.airspeedTrueKts;
-  aircraft.indicatedSpeedKts = simDataUserAircraft.airspeedIndicatedKts;
-  aircraft.machSpeed = simDataUserAircraft.airspeedMach;
-  aircraft.verticalSpeedFeetPerMin = simDataUserAircraft.verticalSpeedFps * 60.f;
+  aircraft.trueAirspeedKts = simDataAircraft.airspeedTrueKts;
+  aircraft.indicatedSpeedKts = simDataAircraft.airspeedIndicatedKts;
+  aircraft.machSpeed = simDataAircraft.airspeedMach;
+  aircraft.verticalSpeedFeetPerMin = simDataAircraft.verticalSpeedFps * 60.f;
 
-  aircraft.transponderCode = atools::fs::util::decodeTransponderCode(simDataUserAircraft.transponderCode);
+  aircraft.transponderCode = atools::fs::util::decodeTransponderCode(simDataAircraft.transponderCode);
 
-  if(simDataUserAircraft.isSimOnGround > 0)
-    aircraft.flags |= atools::fs::sc::ON_GROUND;
-  if(simDataUserAircraft.userSim > 0)
-    aircraft.flags |= atools::fs::sc::IS_USER;
+  aircraft.flags.setFlag(atools::fs::sc::IS_USER, simDataAircraft.userSim > 0);
+  aircraft.flags.setFlag(atools::fs::sc::SIM_PAUSED, simPaused > 0);
 
-  if(simPaused > 0)
-    aircraft.flags |= atools::fs::sc::SIM_PAUSED;
+  if(msfs && !aircraft.isUser())
+    // MSFS ground flag is is unreliable for AI - try to detect by speed
+    aircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0 ||
+                           (simDataAircraft.airspeedIndicatedKts < 0.01f && aircraft.verticalSpeedFeetPerMin < 0.01f));
+  else
+    aircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0);
 }
 
 bool SimConnectHandlerPrivate::checkCall(HRESULT hr, const QString& message)
