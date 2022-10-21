@@ -172,6 +172,8 @@ public:
    */
   bool isMilitary() const;
 
+  bool isFuel() const;
+
   /*
    * @return heading in degree true
    */

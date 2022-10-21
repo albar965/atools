@@ -690,6 +690,11 @@ void Airport::updateSummaryFields()
     reportFarCoordinate(p.getPosition().getPos(), "parking");
     boundingRect.extend(p.getPosition().getPos());
 
+    // Assign fuel from parking if not set in flags
+    // https://devsupport.flightsimulator.com/questions/10232/su10-u3-removed-fuel-flags-from-bgl-files.html
+    if(p.isFuel() && opts->getSimulatorType() == atools::fs::FsPaths::SimulatorType::MSFS && fuelFlags == ap::NO_FUEL_FLAGS)
+      fuelFlags = atools::fs::bgl::ap::MSFS_DEFAULT_FUEL;
+
     if(p.hasJetway())
       numJetway++;
 

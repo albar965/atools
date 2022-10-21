@@ -75,7 +75,8 @@ enum FuelFlags
   JET4 = 0x00c00000, // Bits 22-23
   JET5 = 0x03000000, // Bits 24-22
   AVGAS = 0x40000000, // Bit 30
-  JET_FUEL = 0x80000000 // Bit 31
+  JET_FUEL = 0x80000000, // Bit 31
+  MSFS_DEFAULT_FUEL = AVGAS | JET_FUEL // Assigned if airport for MSFS has no fuel flags but fuel parking
 };
 
 } // namespace ap

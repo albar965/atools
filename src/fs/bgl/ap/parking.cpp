@@ -348,6 +348,11 @@ Parking::Parking(BinaryStream *bs, atools::fs::bgl::StructureType structureType)
   }
 }
 
+bool Parking::isFuel() const
+{
+  return type == ap::FUEL;
+}
+
 bool Parking::isGate() const
 {
   if(type == ap::GATE_SMALL)
