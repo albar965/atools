@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -168,6 +168,9 @@ QString removeNonAlphaNum(const QString& str);
  */
 QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& itemSeparator,
                   const QString& lineSeparator);
+
+/* Fills maxWidth text lines into result using the separator. */
+QStringList wrapText(const QStringList& texts, const QFontMetrics& metrics, int maxWidth, const QString& separator);
 
 /* Cut linefeed separated text. Return maxLength lines where \n... is included
  * @param compressEmpty Remove empty lines before applying elide

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include <QDateTime>
 #include <QStandardPaths>
 #include <QFontMetrics>
+#include <QStringBuilder>
 
 #ifdef Q_OS_WIN
 extern "C" {
@@ -186,7 +187,7 @@ QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<Q
 
 QString ratingString(int value, int maxValue)
 {
-  return QString(QObject::tr("★", "Star for rating")).repeated(value) + QString(QObject::tr("−", "For empty rating")).
+  return QString(QObject::tr("★", "Star for rating")).repeated(value) % QString(QObject::tr("−", "For empty rating")).
          repeated(maxValue - value);
 }
 
@@ -202,7 +203,7 @@ QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues)
   QString retval(str);
 
   for(auto it = variableValues.constBegin(); it != variableValues.constEnd(); ++it)
-    retval.replace(QRegularExpression("\\$\\{" + it.key() + "\\}"), it.value().toString());
+    retval.replace(QRegularExpression("\\$\\{" % it.key() % "\\}"), it.value().toString());
 
   return retval;
 }
@@ -291,6 +292,21 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
   return false;
 }
 
+QStringList wrapText(const QStringList& texts, const QFontMetrics& metrics, int maxWidth, const QString& separator)
+{
+  QStringList wrappedTexts;
+
+  for(const QString& text : texts)
+  {
+    if(wrappedTexts.isEmpty() ||
+       metrics.horizontalAdvance(wrappedTexts.constLast()) + metrics.horizontalAdvance(separator % text) >= maxWidth)
+      wrappedTexts.append(text);
+    else
+      wrappedTexts.last() += separator % text;
+  }
+  return wrappedTexts;
+}
+
 QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& itemSeparator,
                   const QString& lineSeparator)
 {
@@ -308,7 +324,7 @@ QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& 
   // Join items by , and blocks by linefeed
   QString txt;
   for(const QStringList& list : blocks)
-    txt.append((txt.isEmpty() ? QString() : itemSeparator + lineSeparator) + list.join(itemSeparator));
+    txt.append((txt.isEmpty() ? QString() : itemSeparator % lineSeparator) % list.join(itemSeparator));
   return txt;
 }
 
@@ -339,7 +355,7 @@ QString elideTextShortLeft(const QString& str, int maxLength)
 QString elideTextShortMiddle(const QString& str, int maxLength)
 {
   if(maxLength / 2 + maxLength / 2 + 1 < str.size()) // Avoid same size replacement due to round down
-    return str.left(maxLength / 2) + QObject::tr("…", "Dots used to shorten texts") + str.right(maxLength / 2);
+    return str.left(maxLength / 2) % QObject::tr("…", "Dots used to shorten texts") % str.right(maxLength / 2);
 
   return str;
 }
@@ -773,7 +789,7 @@ QString buildPathNoCase(const QStringList& paths)
 
       if(!entries.isEmpty())
       {
-        if(QFileInfo(dir.path() + SEP + entries.constFirst()).isDir())
+        if(QFileInfo(dir.path() % SEP % entries.constFirst()).isDir())
         {
           // Directory exists - change into it
           if(!dir.cd(entries.constFirst()))
@@ -788,7 +804,7 @@ QString buildPathNoCase(const QStringList& paths)
       }
       else
         // Nothing found - add potentially wrong case name
-        dir.setPath(dir.path() + SEP + path);
+        dir.setPath(dir.path() % SEP % path);
     }
     i++;
   }
@@ -796,7 +812,7 @@ QString buildPathNoCase(const QStringList& paths)
   if(file.isEmpty())
     return dir.path();
   else
-    return dir.path() + SEP + file;
+    return dir.path() % SEP % file;
 
 #endif
 }
@@ -1142,7 +1158,7 @@ QString convertToIsoWithOffset(const QDateTime& dateTime, bool milliseconds)
   const static QString STR("%1%2:%3");
 
   int offset = dateTime.offsetFromUtc();
-  return dateTime.toString(milliseconds ? PATTERN_MS : PATTERN) + STR.
+  return dateTime.toString(milliseconds ? PATTERN_MS : PATTERN) % STR.
          arg(offset >= 0 ? '+' : '-').
          arg(atools::absInt(offset / 3600), 2, 10, QChar('0')).
          arg(atools::absInt((offset / 60) % 60), 2, 10, QChar('0'));
@@ -1235,7 +1251,8 @@ QString linkTarget(const QFileInfo& path)
           // Get the URL for the linked target (not a path yet)
           Boolean isStale;
           CFErrorRef bookmarkDataErrorRef = NULL;
-          CFURLRef bookmarkData = CFURLCreateByResolvingBookmarkData(NULL, bookmark, kCFURLBookmarkResolutionWithoutUIMask, NULL, NULL, &isStale, &bookmarkDataErrorRef);
+          CFURLRef bookmarkData = CFURLCreateByResolvingBookmarkData(NULL, bookmark, kCFURLBookmarkResolutionWithoutUIMask, NULL, NULL,
+                                                                     &isStale, &bookmarkDataErrorRef);
 
           if(bookmarkDataErrorRef != NULL)
             qWarning() << Q_FUNC_INFO << "CFURLCreateByResolvingBookmarkData" << CFErrorCopyDescription(bookmarkDataErrorRef) << path;
