@@ -34,6 +34,14 @@
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation type="unfinished">No puedo abrir archivir &quot;%1&quot;. Motivo: %2</translation>
     </message>
+    <message>
+        <source>Example Performance Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>C172</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AirspaceWriter</name>

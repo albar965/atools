@@ -17,28 +17,38 @@
 <context>
     <name>AircraftPerf</name>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="96"/>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="365"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="94"/>
+        <source>Example Performance Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="95"/>
+        <source>C172</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="128"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="397"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier de performance de l&apos;avion &quot;%1&quot; pour la lecture.</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="109"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="141"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading. Invalid format.</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier de performances des avions &quot;%1&quot; pour le lire. Format non valide.</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="137"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="169"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="229"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="261"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="379"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="411"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier de performance de l&apos;avion &quot;%1&quot; pour l&apos;écriture.</translation>
     </message>
@@ -1399,34 +1409,34 @@ Fichier: &quot;%2&quot;
         <translation type="unfinished">&lt;b&gt;Une erreur fatale s&apos;est produite. &lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Pressez OK pour quitter l&apos;application. &lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="118"/>
+        <location filename="src/atools.cpp" line="119"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation type="unfinished">Error reading &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="189"/>
+        <location filename="src/atools.cpp" line="190"/>
         <source>★</source>
         <comment>Star for rating</comment>
         <translation type="unfinished">★</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="189"/>
+        <location filename="src/atools.cpp" line="190"/>
         <source>−</source>
         <comment>For empty rating</comment>
         <translation type="unfinished">−</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="326"/>
-        <location filename="src/atools.cpp" line="334"/>
         <location filename="src/atools.cpp" line="342"/>
-        <location filename="src/atools.cpp" line="393"/>
+        <location filename="src/atools.cpp" line="350"/>
+        <location filename="src/atools.cpp" line="358"/>
+        <location filename="src/atools.cpp" line="409"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translation type="unfinished">…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="370"/>
-        <location filename="src/atools.cpp" line="375"/>
+        <location filename="src/atools.cpp" line="386"/>
+        <location filename="src/atools.cpp" line="391"/>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
@@ -1434,7 +1444,7 @@ Fichier: &quot;%2&quot;
 </translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="372"/>
+        <location filename="src/atools.cpp" line="388"/>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
@@ -1442,29 +1452,29 @@ Fichier: &quot;%2&quot;
 …</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="373"/>
+        <location filename="src/atools.cpp" line="389"/>
         <source>…</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translation type="unfinished">…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="394"/>
+        <location filename="src/atools.cpp" line="410"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
         <translation type="unfinished">.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="427"/>
+        <location filename="src/atools.cpp" line="443"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Créé par %1 Version %2 (révision %3) sur %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="437"/>
+        <location filename="src/atools.cpp" line="453"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Créé par %1 Version %2 (révision %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="462"/>
+        <location filename="src/atools.cpp" line="478"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="84"/>
@@ -1472,47 +1482,47 @@ Fichier: &quot;%2&quot;
         <translation>Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="815"/>
+        <location filename="src/atools.cpp" line="831"/>
         <source>Directory name is empty.</source>
         <translation type="unfinished">Le nom du répertoire est vide.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="824"/>
+        <location filename="src/atools.cpp" line="840"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation type="unfinished">Le répertoire &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="832"/>
+        <location filename="src/atools.cpp" line="848"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;est pas un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="838"/>
+        <location filename="src/atools.cpp" line="854"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation type="unfinished">Le répertoire &quot;%1&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="856"/>
+        <location filename="src/atools.cpp" line="872"/>
         <source>Filepath is empty.</source>
         <translation type="unfinished">Le chemin d&apos;accès au fichier est vide.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="865"/>
+        <location filename="src/atools.cpp" line="881"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="873"/>
+        <location filename="src/atools.cpp" line="889"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; est un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="878"/>
+        <location filename="src/atools.cpp" line="894"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="884"/>
+        <location filename="src/atools.cpp" line="900"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; est vide.</translation>
     </message>
@@ -2340,22 +2350,22 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
         <translation type="unfinished">Entrée non valable à la ligne %1 dans &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="174"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="177"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
         <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="177"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="180"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
         <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;est pas un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="180"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="183"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
         <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="206"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="209"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
@@ -2577,7 +2587,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="414"/>
         <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trop d&apos;erreurs dans la lecture du simulateur. Déconnecté. Redémarrez %1 pour réessayer.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="433"/>
@@ -2710,7 +2720,7 @@ Période nocturne : %5</translation>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="273"/>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="277"/>
         <source>File is not an X-Plane user_fix.dat file.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le fichier n&apos;est pas un fichier X-Plane user_fix.dat.</translation>
     </message>
 </context>
 <context>
@@ -3033,12 +3043,12 @@ Importation arrêtée.</translation>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="725"/>
         <source>&amp;Undo %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Défaire %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="731"/>
         <source>&amp;Redo %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Rétablir %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="817"/>
@@ -3073,7 +3083,7 @@ Importation arrêtée.</translation>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="830"/>
         <source>Invalid undo action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Action d&apos;annulation invalide</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="834"/>

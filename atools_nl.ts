@@ -17,28 +17,38 @@
 <context>
     <name>AircraftPerf</name>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="96"/>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="365"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="94"/>
+        <source>Example Performance Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="95"/>
+        <source>C172</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="128"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="397"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
         <translation>Kan.&quot;aircraft performance&quot;-bestand &quot;%1&quot; niet openen om te lezen.</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="109"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="141"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading. Invalid format.</source>
         <translation>Kan &quot;aircraft performance&quot;-bestand &quot;%1&quot; niet openen om te lezen.</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="137"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="169"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>Kan bestand %1 niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="229"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="261"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="379"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="411"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
         <translation>Kan &quot;aircraft performance&quot;-bestand &quot;%1&quot; niet openen om te schrijven.</translation>
     </message>
@@ -1398,37 +1408,37 @@ Bestand:&quot;%2&quot;
         <translation type="unfinished">&lt;b&gt;Fatale fout.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Toets OK om de applicatie te verlaten.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="114"/>
+        <location filename="src/atools.cpp" line="119"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>Fout bij het lezen &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="185"/>
+        <location filename="src/atools.cpp" line="190"/>
         <source>★</source>
         <comment>Star for rating</comment>
         <translatorcomment>Ster voor beoordeling</translatorcomment>
         <translation>★</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="185"/>
+        <location filename="src/atools.cpp" line="190"/>
         <source>−</source>
         <comment>For empty rating</comment>
         <translatorcomment>Voor lege beoordeling</translatorcomment>
         <translation>−</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="322"/>
-        <location filename="src/atools.cpp" line="330"/>
-        <location filename="src/atools.cpp" line="338"/>
-        <location filename="src/atools.cpp" line="389"/>
+        <location filename="src/atools.cpp" line="342"/>
+        <location filename="src/atools.cpp" line="350"/>
+        <location filename="src/atools.cpp" line="358"/>
+        <location filename="src/atools.cpp" line="409"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translatorcomment>Punten gebruikt om teksten in te korten</translatorcomment>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="366"/>
-        <location filename="src/atools.cpp" line="371"/>
+        <location filename="src/atools.cpp" line="386"/>
+        <location filename="src/atools.cpp" line="391"/>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
@@ -1437,7 +1447,7 @@ Bestand:&quot;%2&quot;
 </translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="368"/>
+        <location filename="src/atools.cpp" line="388"/>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
@@ -1446,30 +1456,30 @@ Bestand:&quot;%2&quot;
 …</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="369"/>
+        <location filename="src/atools.cpp" line="389"/>
         <source>…</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translatorcomment>Linefeed en punten gebruikt om teksten in te korten</translatorcomment>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="390"/>
+        <location filename="src/atools.cpp" line="410"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="423"/>
+        <location filename="src/atools.cpp" line="443"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Gemaakt door %1 Versie %2 (revisie %3) op %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="433"/>
+        <location filename="src/atools.cpp" line="453"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Gemaakt door %1 Versie %2 (revisie %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="458"/>
+        <location filename="src/atools.cpp" line="478"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="84"/>
@@ -1477,47 +1487,47 @@ Bestand:&quot;%2&quot;
         <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="811"/>
+        <location filename="src/atools.cpp" line="831"/>
         <source>Directory name is empty.</source>
         <translation>Foldernaam is leeg.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="820"/>
+        <location filename="src/atools.cpp" line="840"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation>Folder &quot;%1&quot; bestaat niet.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="828"/>
+        <location filename="src/atools.cpp" line="848"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation>Bestand &quot;%1&quot; is geen folder.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="834"/>
+        <location filename="src/atools.cpp" line="854"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation>Folder &quot;%1&quot; is niet leesbaar.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="852"/>
+        <location filename="src/atools.cpp" line="872"/>
         <source>Filepath is empty.</source>
         <translation>Pad naar bestand is leeg.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="861"/>
+        <location filename="src/atools.cpp" line="881"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation>Bestand&quot;%1&quot; bestaat niet.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="869"/>
+        <location filename="src/atools.cpp" line="889"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation>Bestand &quot;%1&quot; is een folder.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="874"/>
+        <location filename="src/atools.cpp" line="894"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation>Bestand &quot;%1&quot; is niet leesbaar.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="880"/>
+        <location filename="src/atools.cpp" line="900"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation>Bestand &quot;%1&quot; is leeg.</translation>
     </message>
@@ -2226,52 +2236,52 @@ Importeren gestopt.</translation>
         <translation>Aan het lezen: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="839"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="852"/>
         <source>Counting files for Resources ...</source>
         <translation>Bestanden tellen vanuit Resources ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="847"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="860"/>
         <source>Counting files for Custom Scenery/Global Airports ...</source>
         <translation>Bestanden tellen vanuit Custom.Scenery/Global Airports ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="860"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="873"/>
         <source>Counting files for Global Scenery/Global Airports ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="871"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="884"/>
         <source>Counting files for Airspaces ...</source>
         <translation>Bestanden tellen vanuit Airspaces ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="876"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="889"/>
         <source>Counting files for Custom Scenery ...</source>
         <translation>Bestanden tellen vanuit Custom Scenery ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="887"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="900"/>
         <source>Counting files for Custom Data ...</source>
         <translation>Bestanden tellen vanuit Custom Data ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="954"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="967"/>
         <source>AIRAC cycle in file is empty.</source>
         <translation>AIRAC cycle bestand is leeg.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="962"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="975"/>
         <source>Found different AIRAC cycles across navdata files. %1 and %2</source>
         <translation>Meerdere AIRAC cycles in de navdatabestanden gevonden. %1 en %2</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="972"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="985"/>
         <source>AIRAC cycle not found in file.</source>
         <translation>AIRAC cycle niet gevonden in bestand.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1011"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1024"/>
         <source>Cannot find valid files for X-Plane navdata in either
 &quot;%1&quot; or
 &quot;%2&quot;
@@ -2345,22 +2355,22 @@ Maak dat earth_fix.dat, earth_awy.dat en earth_nav.dat gevonden kunnen worden op
         <translation>Ongeldige invoer van lijn %1 in &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="174"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="177"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
         <translation>&quot;%1&quot; van lijn %2 in &quot;%3&quot; bestaat niet.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="177"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="180"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
         <translation>&quot;%1&quot; van lijn %2 in &quot;%3&quot; is geen folder.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="180"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="183"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
         <translation>&quot;%1&quot; van lijn %2 in &quot;%3&quot; is niet leesbaar.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="206"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="209"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2.</translation>
     </message>
