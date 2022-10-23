@@ -184,8 +184,7 @@ public:
   void fillDataDefinition();
   void fillDataDefinitionAicraft(DataDefinitionId definitionId);
 
-  void copyToSimData(const SimDataAircraft& simDataAircraft,
-                     atools::fs::sc::SimConnectAircraft& aircraft);
+  void copyToSimData(const SimDataAircraft& simDataAircraft, atools::fs::sc::SimConnectAircraft& aircraft);
 
   bool checkCall(HRESULT hr, const QString& message);
   bool callDispatch(bool& dataFetched, const QString& message);
@@ -499,9 +498,9 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataAircr
   aircraft.flags.setFlag(atools::fs::sc::SIM_PAUSED, simPaused > 0);
 
   if(msfs && !aircraft.isUser())
-    // MSFS ground flag is is unreliable for AI - try to detect by speed
+    // MSFS ground flag is is unreliable for AI - try to detect by speed at least
     aircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0 ||
-                           (simDataAircraft.airspeedIndicatedKts < 0.01f && aircraft.verticalSpeedFeetPerMin < 0.01f));
+                           (aircraft.verticalSpeedFeetPerMin < 0.01f && simDataAircraft.groundVelocityKts < 30.f));
   else
     aircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0);
 }
@@ -836,7 +835,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
   p->state = sc::STATEOK;
 
-  // Get user aircraft =======================================================================
+  // Get AI aircraft =======================================================================
   QSet<unsigned long> objectIds;
   for(int i = 0; i < p->simDataAircraft.size(); i++)
   {
@@ -844,18 +843,21 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     // Avoid duplicates
     if(!objectIds.contains(oid))
     {
-      atools::fs::sc::SimConnectAircraft aircraft;
-      p->copyToSimData(p->simDataAircraft.at(i), aircraft);
-      aircraft.objectId = static_cast<unsigned int>(oid);
-      data.aiAircraft.append(aircraft);
-      objectIds.insert(aircraft.objectId);
+      atools::fs::sc::SimConnectAircraft aiAircraft;
+      p->copyToSimData(p->simDataAircraft.at(i), aiAircraft);
+      aiAircraft.objectId = static_cast<unsigned int>(oid);
+      data.aiAircraft.append(aiAircraft);
+      objectIds.insert(aiAircraft.objectId);
     }
   }
 
   // Get user aircraft =======================================================================
   if(p->userDataFetched)
   {
+    // Copy base data
     p->copyToSimData(p->simData.aircraft, data.userAircraft);
+
+    // Copy additional user aircraft data
     data.userAircraft.objectId = static_cast<unsigned int>(p->simDataObjectId);
 
     data.userAircraft.groundAltitudeFt = p->simData.groundAltitudeFt;
