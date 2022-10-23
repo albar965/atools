@@ -18,6 +18,7 @@
 #ifndef ATOOLS_DOCKWIDGETHANDLER_H
 #define ATOOLS_DOCKWIDGETHANDLER_H
 
+#include <QBitArray>
 #include <QDockWidget>
 
 class QMainWindow;
@@ -130,6 +131,18 @@ public:
   /* For one single widget not managed by this handler. */
   static void setDockingAllowed(QDockWidget *dockWidget, bool allow);
 
+  /* Hide title bar for all docked windows. The title bar is restored if dock is floating */
+  void setHideTitleBar(bool hide);
+
+  /* Hide title bar for given dock window if not floating. */
+  static void setHideTitleBar(QDockWidget *dockWidget, bool hide);
+
+  /* Global status of title bar visibility */
+  bool getHideTitle() const
+  {
+    return hideTitle;
+  }
+
   /* Forbid moving by click in title bar if value is false. */
   void setMovingAllowed(bool allow);
 
@@ -233,7 +246,7 @@ private:
   /* Saved state of main window including dock widgets and toolbars */
   MainWindowState *normalState, *fullscreenState;
 
-  bool fullscreen = false, delayedFullscreen = false, verbose = false;
+  bool fullscreen = false, delayedFullscreen = false, verbose = false, hideTitle = false;
 
   static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x2D6A9C2F;
   static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 2;

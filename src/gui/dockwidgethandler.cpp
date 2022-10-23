@@ -325,8 +325,12 @@ void DockWidgetHandler::dockTopLevelChanged(bool topLevel)
   if(verbose)
     qDebug() << Q_FUNC_INFO;
 
-  Q_UNUSED(topLevel)
   updateDockTabStatus();
+
+  // Restore title bar state if widget is not floating
+  QDockWidget *dockWidget = dynamic_cast<QDockWidget *>(sender());
+  if(dockWidget != nullptr)
+    setHideTitleBar(dockWidget, hideTitle && !topLevel);
 }
 
 void DockWidgetHandler::dockLocationChanged(Qt::DockWidgetArea area)
@@ -586,6 +590,37 @@ void DockWidgetHandler::setDockingAllowed(bool allow)
       dock->setAllowedAreas(allow ? Qt::AllDockWidgetAreas : Qt::NoDockWidgetArea);
       if(verbose)
         qDebug() << Q_FUNC_INFO << dock->allowedAreas() << "before" << a << "after" << dock->allowedAreas();
+    }
+  }
+}
+
+void DockWidgetHandler::setHideTitleBar(bool hide)
+{
+  hideTitle = hide;
+
+  for(QDockWidget *dock : dockWidgets)
+    setHideTitleBar(dock, hide);
+}
+
+void DockWidgetHandler::setHideTitleBar(QDockWidget *dockWidget, bool hide)
+{
+  // is null if default title bar is used - i.e. it is visible
+  QWidget *widget = dockWidget->titleBarWidget();
+
+  if(hide)
+  {
+    // Hide if not floating and not already hidden
+    if(!dockWidget->isFloating() && widget == nullptr)
+      dockWidget->setTitleBarWidget(new QWidget(dockWidget));
+  }
+  else
+  {
+    // Show if not already default
+    if(widget != nullptr)
+    {
+      // Setting bar to null regains ownership of widget
+      widget->deleteLater();
+      dockWidget->setTitleBarWidget(nullptr);
     }
   }
 }
