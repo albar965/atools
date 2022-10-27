@@ -144,9 +144,11 @@ void GribReader::readFile(const QString& filename)
         throw atools::Exception(tr("Cannot read file %1").arg(filename));
 
       if(verbose)
+      {
         qDebug() << "numfields" << numfields << "numlocal" << numlocal;
-      printArrInt(QString(Q_FUNC_INFO) + " Section 0: ", listSection0, 3);
-      printArrInt(QString(Q_FUNC_INFO) + " Section 1: ", listSection1, 13);
+        printArrInt(QString(Q_FUNC_INFO) + " Section 0: ", listSection0, 3);
+        printArrInt(QString(Q_FUNC_INFO) + " Section 1: ", listSection1, 13);
+      }
 
       // Read datasets / GRIB messages ========================================
       for(long n = 0; n < numfields; n++)
@@ -412,12 +414,13 @@ void GribReader::readFile(const QString& filename)
         if(verbose)
           printArrFloat("fld", gribField->fld, std::min(gribField->ndpts, g2int(100)));
 
-        qDebug() << Q_FUNC_INFO
-                 << "param type" << dataset.parameterType
-                 << "surface" << dataset.surface
-                 << "surface type" << dataset.surfaceType
-                 << "alt calculated" << dataset.altFeetCalculated
-                 << "alt rounded" << dataset.altFeetRounded;
+        if(verbose)
+          qDebug() << Q_FUNC_INFO
+                   << "param type" << dataset.parameterType
+                   << "surface" << dataset.surface
+                   << "surface type" << dataset.surfaceType
+                   << "alt calculated" << dataset.altFeetCalculated
+                   << "alt rounded" << dataset.altFeetRounded;
 
         // Copy data as is
         for(int i = 0; i < gribField->ndpts; i++)
