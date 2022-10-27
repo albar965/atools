@@ -60,6 +60,8 @@ QString surfaceToDb(Surface value, const XpWriterContext *context)
 
 #ifdef DEBUG_INFORMATION
   qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown surface value" << value;
+#else
+  Q_UNUSED(context)
 #endif
 
   // Fall back to asphalt

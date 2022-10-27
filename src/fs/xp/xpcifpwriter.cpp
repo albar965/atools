@@ -121,7 +121,22 @@ void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context
   procInput.theta = at(line, THETA).simplified().isEmpty() ? atools::fs::common::INVALID_FLOAT : at(line, THETA).toFloat() / 10.f;
   procInput.rho = at(line, RHO).simplified().isEmpty() ? atools::fs::common::INVALID_FLOAT : at(line, RHO).toFloat() / 10.f;
   procInput.magCourse = at(line, MAG_CRS).toFloat() / 10.f;
-  procInput.rnp = at(line, RNP).simplified().isEmpty() ? atools::fs::common::INVALID_FLOAT : at(line, RNP).toFloat();
+
+  QString rnpStr = at(line, RNP).simplified();
+  if(rnpStr.isEmpty())
+    procInput.rnp = atools::fs::common::INVALID_FLOAT;
+  else
+  {
+    // RNP values are entered into the field in nautical miles (two digits) with a zero or negative exponent (one digit).
+    // Examples: 990 (equal to 99.0NM), 120 (equal to 12.0NM), 013 (equal to 0.001NM)
+
+    procInput.rnp = atools::fs::common::INVALID_FLOAT;
+    char expChar = atools::latin1CharAt(rnpStr, 2);
+    if(expChar == '0')
+      procInput.rnp = rnpStr.toFloat() / 10.f;
+    else
+      procInput.rnp = rnpStr.leftRef(2).toFloat() * std::pow(10.f, -static_cast<float>(expChar - '0'));
+  }
 
   procInput.rteHoldTime = procInput.rteHoldDist = 0.f;
   QString distTime = at(line, RTE_DIST_HOLD_DIST_TIME).trimmed();
