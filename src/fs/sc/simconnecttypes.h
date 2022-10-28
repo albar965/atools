@@ -18,8 +18,6 @@
 #ifndef ATOOLS_SC_TYPES_H
 #define ATOOLS_SC_TYPES_H
 
-#include "geo/pos.h"
-
 #include <QVector>
 #include <QObject>
 #include <QDateTime>
@@ -62,7 +60,8 @@ enum AircraftFlag : quint16
 
   /* Indicated source simulator for all aircraft */
   SIM_FSX_P3D = 0x0020,
-  SIM_XPLANE = 0x0040,
+  SIM_XPLANE11 = 0x0040,
+  SIM_XPLANE12 = 0x1000,
   SIM_MSFS = 0x0800,
 
   /* Simulator is in pause mode */
@@ -79,7 +78,7 @@ enum AircraftFlag : quint16
    * Set in OnlinedataController::updateAircraftShadowState() in the client (LNM) */
   SIM_ONLINE_SHADOW = 0x0400
 
-  // Next is 0x1000
+                      // Next is 0x2000
 };
 
 Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag);
