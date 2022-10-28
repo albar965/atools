@@ -31,6 +31,7 @@
 
 #include <QDateTime>
 #include <QDir>
+#include <QStringBuilder>
 
 namespace atools {
 namespace fs {
@@ -594,6 +595,26 @@ void LogdataManager::updateSchema()
 void LogdataManager::clearGeometryCache()
 {
   cache.clear();
+}
+
+int LogdataManager::cleanupLogEntries(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance)
+{
+  QVector<int> ids;
+  SqlUtil util(getDatabase());
+
+  if(departureAndDestEqual)
+    util.getIds(ids, tableName, idColumnName,
+                "departure_ident is not null and destination_ident is not null and departure_ident = destination_ident");
+
+  if(departureOrDestEmpty)
+    util.getIds(ids, tableName, idColumnName, "departure_ident is null or destination_ident is null");
+
+  if(minFlownDistance >= 0.f)
+    util.getIds(ids, tableName, idColumnName, QString("distance_flown <= %1").arg(minFlownDistance));
+
+  deleteRows(ids);
+
+  return ids.size();
 }
 
 bool LogdataManager::hasRouteAttached(int id)

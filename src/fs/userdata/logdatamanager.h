@@ -78,6 +78,9 @@ public:
   /* Clear cache used by getRouteGeometry and getTrackGeometry */
   void clearGeometryCache();
 
+  /* Remove entries by criteria */
+  int cleanupLogEntries(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance);
+
   /* true if any of the files/BLOBs is present (length > 0) for the dataset */
   bool hasRouteAttached(int id);
   bool hasPerfAttached(int id);

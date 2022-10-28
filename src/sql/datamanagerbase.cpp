@@ -297,10 +297,14 @@ void DataManagerBase::deleteOneRow(int id)
   postUndo();
 }
 
-void DataManagerBase::deleteRows(const QVector<int>& ids)
+void DataManagerBase::deleteRows(QVector<int> ids)
 {
   if(!ids.isEmpty())
   {
+    // Sort and erase duplicates before to avoid unique constraint exceptions
+    std::sort(ids.begin(), ids.end());
+    ids.erase(std::unique(ids.begin(), ids.end()), ids.end());
+
     preUndoDelete(ids);
     deleteRowsInternal(ids);
     postUndo();

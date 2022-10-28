@@ -134,6 +134,9 @@ public:
   /* Get maximum integer from either rowid or given primary key column */
   int getMaxId(const QString& table, const QString& idColumn = QString());
 
+  /* Get a list of all ids from table */
+  void getIds(QVector<int>& ids, const QString& table, const QString& idColumn, const QString& where = QString());
+
   /* Get singe row/column values from query. Returns default if result set is empty */
   int getValueInt(const QString& queryStr, int defaultValue = 0);
   float getValueFloat(const QString& queryStr, float defaultValue = 0.f);

@@ -60,7 +60,7 @@ public:
    */
   DataManagerBase(atools::sql::SqlDatabase *sqlDb, const QString& tableNameParam, const QString& idColumnNameParam,
                   const QString& createSqlScript, const QString& createUndoSqlScript, const QString& dropSqlScript);
-  virtual ~DataManagerBase();
+  virtual ~DataManagerBase() override;
 
   /* True if table is present in database */
   bool hasSchema() const;
@@ -126,7 +126,7 @@ public:
   void deleteOneRow(int id);
 
   /* Removes entries. Does not commit. Supports undo. */
-  void deleteRows(const QVector<int>& ids);
+  void deleteRows(QVector<int> ids);
 
   /* Removes all data */
   void deleteAllRows(const QString& table); /* No undo support */
@@ -315,7 +315,6 @@ private:
 
   QString tableName, idColumnName;
 
-private:
   void deleteRowsInternal(const QVector<int>& ids);
 
   /* Update all fields in the record given for given ids */
