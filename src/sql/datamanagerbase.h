@@ -93,6 +93,9 @@ public:
     undoRedo(false);
   }
 
+  /* Removes all undo/redo steps if undo is enabled */
+  void clearUndoRedoData();
+
   /* Updates all columns found in the record for all rows with the given ids. Does not commit.
    * Both methods support undo. */
   void updateOneRecord(atools::sql::SqlRecord record, int id = -1);

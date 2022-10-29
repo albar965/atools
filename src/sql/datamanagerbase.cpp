@@ -482,6 +482,17 @@ bool DataManagerBase::hasUndoSchema() const
   return util->hasTable("undo_data") && util->hasTable("undo_current");
 }
 
+void DataManagerBase::clearUndoRedoData()
+{
+  if(undoActive)
+  {
+    SqlQuery query(db);
+    query.exec("delete from undo_data");
+    query.exec("delete from undo_current");
+    query.exec("insert into undo_current (undo_group_id) values(0)");
+  }
+}
+
 void DataManagerBase::preUndoInsert(sql::SqlRecordList records)
 {
   if(undoActive)
