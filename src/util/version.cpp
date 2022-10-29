@@ -54,7 +54,8 @@ Version::Version(const QString& str)
 
 Version::Version()
 {
-  initFromString(QCoreApplication::applicationVersion());
+  if(!QCoreApplication::applicationVersion().isEmpty())
+    initFromString(QCoreApplication::applicationVersion());
 }
 
 Version::~Version()
