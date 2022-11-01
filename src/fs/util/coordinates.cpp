@@ -511,8 +511,11 @@ atools::geo::Pos degFromMatch(const QRegularExpressionMatch& match)
   return Pos(lonX, latY);
 }
 
-geo::Pos fromAnyFormat(const QString& coords)
+geo::Pos fromAnyFormat(const QString& coords, bool *hemisphere)
 {
+  if(hemisphere != nullptr)
+    *hemisphere = true; // Default is N, E, W and S designators given
+
   if(coords.simplified().isEmpty())
     return atools::geo::EMPTY_POS;
 
@@ -620,11 +623,15 @@ geo::Pos fromAnyFormat(const QString& coords)
 
   // ================================================================================
   // Decimal degree formats
-  // 49,4449 -9,2015 - caller probably has to swap lat/lon
+  // 49,4449 -9,2015
   QRegularExpressionMatch match = safeMatch(FORMAT_NUMBER_SIGNED, coordStr);
   if(match.hasMatch())
   {
     Pos pos = degFromMatchSigned(match);
+
+    if(hemisphere != nullptr)
+      *hemisphere = false; // caller probably has to swap lat/lon
+
     if(pos.isValid()) // Do not check range since lat/lon might be swapped
       return pos;
   }

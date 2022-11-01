@@ -37,10 +37,14 @@ namespace util {
  *  49° 26,69' N 9° 12,09' E
  *  49,4449° N 9,2015° E
  *  N 49,4449° E 9,2015°
+ *
+ *  hemisphere is true if the format contains explicitly N, E, W and S designators.
+ *  Plain numbers result in hemisphere = false.
  */
-atools::geo::Pos fromAnyFormat(const QString& coords);
+atools::geo::Pos fromAnyFormat(const QString& coords, bool *hemisphere);
 
-/* Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given */
+/* Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given.
+ * Swapping depends on user interface setting. */
 void maybeSwapOrdinates(atools::geo::Pos& pos, const QString& coords);
 
 /* N48194W123096 Examples:
