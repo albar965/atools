@@ -428,17 +428,17 @@ Bestand:&quot;%2&quot;
         <translation>Bestand %1 is niet leesbaar</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="450"/>
+        <location filename="src/grib/gribreader.cpp" line="453"/>
         <source>Cannot open file %1</source>
         <translation>Kan &quot;%1&quot; niet openen</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="460"/>
+        <location filename="src/grib/gribreader.cpp" line="463"/>
         <source>GRIB data empty</source>
         <translation>GRIB data leeg</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="463"/>
+        <location filename="src/grib/gribreader.cpp" line="466"/>
         <source>Not a GRIB file</source>
         <translatorcomment>Is geen GRIB bestand</translatorcomment>
         <translation></translation>
@@ -2678,14 +2678,14 @@ Maak dat earth_fix.dat, earth_awy.dat en earth_nav.dat gevonden kunnen worden op
 <context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="305"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="493"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="567"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="306"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="494"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="568"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="468"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="469"/>
         <source>Imported from X-Plane logbook %1
 Number of landings: %2
 Cross country time: %3
@@ -2798,25 +2798,25 @@ Nachttijd: %5</translation>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="783"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="788"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="874"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="818"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="823"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="909"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>Fout bij het lezen van &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="811"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="816"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="846"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="851"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation>Fout bij het schrijven van &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="834"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="869"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation>Fout bij het lezen van &quot;%1&quot;: Ongeldig magisch nummer. Geen venster layout bestand.</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="837"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="872"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation>Fout bij het lezen van &quot;%1&quot;: Ongeldige versie. Niet-compatibel venster layout bestand.</translation>
     </message>
@@ -2947,7 +2947,7 @@ Nachttijd: %5</translation>
 <context>
     <name>atools::sql::DataManagerBase</name>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="428"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="432"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -2960,7 +2960,7 @@ Import stopped.</source>
 Importeren gestopt.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="431"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="435"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -2973,7 +2973,7 @@ Import stopped.</source>
 Importeren gestopt.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="434"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="438"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -2986,7 +2986,7 @@ Import stopped.</source>
 Importeren gestopt.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="437"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="441"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -2999,7 +2999,7 @@ Import stopped.</source>
 Importeren gestopt.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="440"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="444"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -3012,84 +3012,84 @@ Import stopped.</source>
 Importeren gestopt.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="516"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="531"/>
         <source>preUndoBulkInsert() not called</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="615"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="630"/>
         <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="725"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="731"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="740"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="746"/>
         <source>&amp;%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="725"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="740"/>
         <source>&amp;Undo %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="731"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="746"/>
         <source>&amp;Redo %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="817"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="832"/>
         <source>no %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="819"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="834"/>
         <source>one %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="821"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="836"/>
         <source>two %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="823"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="838"/>
         <source>%1 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="825"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="840"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="825"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="840"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="830"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="845"/>
         <source>Invalid undo action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="834"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="849"/>
         <source>%1 adding of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="838"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="853"/>
         <source>%1 editing of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="842"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="857"/>
         <source>%1 deleting of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="881"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="893"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="896"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="908"/>
         <source>Table undo_current is empty.</source>
         <translation type="unfinished"></translation>
     </message>
