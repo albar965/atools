@@ -657,18 +657,24 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
     // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore\fs-base\en-US.locPak
 
-    // Load the language index for lookup for airport names and more
+    // Load the language index for lookup for airport names and more - first from fs-base
     QString packageBase = options->getMsfsOfficialPath();
     QFileInfo langFile = buildPathNoCase({packageBase, "fs-base", options->getLanguage() % ".locPak"});
-    if(!langFile.exists() || !langFile.isFile())
-    {
-      qWarning() << Q_FUNC_INFO << langFile.absoluteFilePath() << "not found. Falling back to en-US";
+    if(!atools::checkFile(Q_FUNC_INFO, langFile, true /* warn */))
       langFile = buildPathNoCase({packageBase, "fs-base", "en-US.locPak"});
-    }
+
+    // Load the language index for lookup for airport names from fs-base-genericairports
+    QFileInfo langFileGeneric = buildPathNoCase({packageBase, "fs-base-genericairports", options->getLanguage() % ".locPak"});
+    if(!atools::checkFile(Q_FUNC_INFO, langFileGeneric, true /* warn */))
+      langFileGeneric = buildPathNoCase({packageBase, "fs-base-genericairports", "en-US.locPak"});
 
     // Load translation file in current language for airport names ====================================
     languageIndex.reset(new scenery::LanguageJson());
-    languageIndex->readFromFile(langFile.filePath(), {"AIRPORT"});
+    languageIndex->clear();
+    if(langFile.exists() && langFile.isFile())
+      languageIndex->readFromFile(langFile.filePath(), {"AIRPORT"});
+    if(langFileGeneric.exists() && langFileGeneric.isFile())
+      languageIndex->readFromFile(langFileGeneric.filePath(), {"AIRPORT"});
     fsDataWriter->setLanguageIndex(languageIndex.data());
 
     // Load the two official material libraries ================================

@@ -54,8 +54,6 @@ const static QSet<QString> NO_NAMES = {
  */
 void LanguageJson::readFromFile(const QString& filename, const QStringList& keyPrefixes)
 {
-  clear();
-
   if(atools::checkFile(Q_FUNC_INFO, filename))
   {
     QFile file(filename);
