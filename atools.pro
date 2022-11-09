@@ -115,19 +115,6 @@ win32 {
   }
 }
 
-macx {
-  # Compatibility down to OS X Mountain Lion 10.8
-  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
-
-  versionAtLeast(QT_VERSION, 6.0.0) {
-    # Compatibility down to OS X Mojave 10.14 inclusive when using Qt 6.4
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.14
-  } else {
-    # Compatibility down to OS X High Sierra 10.13 inclusive when using Qt 5.15
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
-  }
-}
-
 isEmpty(GIT_PATH) {
   GIT_REVISION=UNKNOWN
   GIT_REVISION_FULL=UNKNOWN

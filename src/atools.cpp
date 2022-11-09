@@ -1331,7 +1331,7 @@ QString canonicalFilePath(const QFileInfo& path)
         {
           if(fileinfo.isDir() && !target.endsWith(slash))
             target.append(slash);
-          target.append(tmpPath.midRef(separatorPos));
+          target.append(tmpPath.mid(separatorPos));
         }
         tmpPath = QDir::cleanPath(target);
         separatorPos = 0;
