@@ -4,6 +4,29 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.6.beta
+
+* Fixed issue where airport city names were missing since MSFS SU11 beta.
+* Added hemisphere indicator to all reading of coordinates where lat/lon is swapped in the UI.
+* Added DataManagerBase::clearUndoRedoData
+* Added method to clean up logbook database.
+* Added XP11 and XP12 flags in simconnect types.
+* Calculating RNP value now correct for procedures from X-Plane data.
+* Reduced logging when reading GRIB wind files.
+* Added option to hide title bars in dock widget handler.
+* Added workaround for wrong on-ground state in MSFS AI.
+* Changed fuel detection for MSFS. An airport now gets Avgas and Jet A availability assigned if it
+  has a fuel pad (which has no fuel type information). albar965/littlenavmap#918
+* Restructuring, code cleanup and optimizations in winds aloft code. albar965/littlenavmap#940
+* Updated default aircraft performance file to get values without warnings.
+* Fixed issue where paths were stored with the wrong separators in the database on Windows.
+* Fixed remaining issues with macOS aliases. These can now be used in X- Plane `Custom Scenery`.
+* Raised macOS minimum requirement to 10.13 High Sierra.
+* Added support for macOS aliases
+* French translations updated by Patrick.
+
+===============================================================================
+
 # Version 3.8.5.beta
 
 * Added progress callback for long undo/redo operations which can be canceled now.
