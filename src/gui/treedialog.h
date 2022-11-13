@@ -102,10 +102,11 @@ public:
     return addItemInt(parent, static_cast<int>(id), {text1, text2}, tooltip, checked);
   }
 
+  /* Uses text2 also as tooltip on all columns */
   template<typename TYPE>
   QTreeWidgetItem *addItem2(QTreeWidgetItem *parent, TYPE id, const QString& text1, const QString& text2, bool checked = true)
   {
-    return addItemInt(parent, static_cast<int>(id), {text1, text2}, QString(), checked);
+    return addItemInt(parent, static_cast<int>(id), {text1, text2}, text2, checked);
   }
 
   /* True if the item with the given type exists and has check state checked */
