@@ -2299,6 +2299,14 @@ Night time: %5</source>
         <source>Help file &quot;%1&quot; not found</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source> 64-bit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> 32-bit</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>atools::gui::TabWidgetHandler</name>
