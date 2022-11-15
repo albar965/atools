@@ -437,10 +437,10 @@ void DataReaderThread::run()
 
         if(data.getStatus() == INVALID_MAGIC_NUMBER || data.getStatus() == VERSION_MISMATCH)
         {
-          emit postLogMessage(tr("Your installed version of <i>Little Xpconnect</i> "
-                                 "is not compatible with this version of <i>%2</i>.").
+          emit postLogMessage(tr("Your installed version of Little Xpconnect "
+                                 "is not compatible with this version of %2.").
                               arg(QCoreApplication::applicationName()), false, true);
-          emit postLogMessage(tr("Install the latest version of <i>Little Xpconnect</i>."), false, true);
+          emit postLogMessage(tr("Install the latest version of Little Xpconnect."), false, true);
         }
 
         break;

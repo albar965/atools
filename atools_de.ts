@@ -2181,11 +2181,11 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Your installed version of &lt;i&gt;Little Xpconnect&lt;/i&gt; is not compatible with this version of &lt;i&gt;%2&lt;/i&gt;.</source>
-        <translation>Die installierte Version von &lt;i&gt;Little Xpconnect&lt;/i&gt; ist nicht kompatibel mit dieser Version von &lt;i&gt;%2&lt;/i&gt;.</translation>
+        <translation type="vanished">Die installierte Version von &lt;i&gt;Little Xpconnect&lt;/i&gt; ist nicht kompatibel mit dieser Version von &lt;i&gt;%2&lt;/i&gt;.</translation>
     </message>
     <message>
         <source>Install the latest version of &lt;i&gt;Little Xpconnect&lt;/i&gt;.</source>
-        <translation>Bitte die neueste Version von &lt;i&gt;Little Xpconnect&lt;/i&gt; installieren.</translation>
+        <translation type="vanished">Bitte die neueste Version von &lt;i&gt;Little Xpconnect&lt;/i&gt; installieren.</translation>
     </message>
     <message>
         <source>Writing to &quot;%1&quot; in VATSIM format every %2 seconds.</source>
@@ -2194,6 +2194,14 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <message>
         <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
         <translation>Zu viele Fehler beim Lesen vom Simulator. Verbindung getrennt. %1 für weitere Versuche neu starten.</translation>
+    </message>
+    <message>
+        <source>Your installed version of Little Xpconnect is not compatible with this version of %2.</source>
+        <translation>Die installierte Version von Little Xpconnect ist nicht kompatibel mit dieser Version von %2.</translation>
+    </message>
+    <message>
+        <source>Install the latest version of Little Xpconnect.</source>
+        <translation>Bitte die neueste Version von Little Xpconnect installieren.</translation>
     </message>
 </context>
 <context>
