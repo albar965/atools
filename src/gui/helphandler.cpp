@@ -56,6 +56,14 @@ void HelpHandler::about()
                arg(QSslSocket::sslLibraryBuildVersionString()).arg(QSslSocket::sslLibraryVersionString());
   }
 
+#if defined(WINARCH64)
+  QString applicationVersion = QApplication::applicationVersion() + tr(" 64-bit");
+#elif defined(WINARCH32)
+  QString applicationVersion = QApplication::applicationVersion() + tr(" 32-bit");
+#else
+  QString applicationVersion = QApplication::applicationVersion();
+#endif
+
   QMessageBox::about(parentWidget,
                      tr("About %1").arg(QApplication::applicationName()),
                      tr("<p><b>%1</b></p>%2<p><hr/>Version %3 (revision %4)</p>"
@@ -65,7 +73,7 @@ void HelpHandler::about()
                               "<hr/>%9<br/>").
                      arg(QApplication::applicationName()).
                      arg(message).
-                     arg(QApplication::applicationVersion()).
+                     arg(applicationVersion).
                      arg(rev).
                      arg(atools::version()).
                      arg(atools::gitRevision()).

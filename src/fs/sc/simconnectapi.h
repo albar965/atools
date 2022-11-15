@@ -20,7 +20,7 @@
 
 #include <QString>
 
-#if defined(SIMCONNECT_BUILD)
+#if defined(SIMCONNECT_BUILD_WIN32) || defined(SIMCONNECT_BUILD_WIN64)
 // Use real SimConnect
 extern "C" {
 #include <windows.h>
