@@ -501,12 +501,14 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataAircr
   aircraft.flags.setFlag(atools::fs::sc::IS_USER, simDataAircraft.userSim > 0);
   aircraft.flags.setFlag(atools::fs::sc::SIM_PAUSED, simPaused > 0);
 
-  if(msfs && !aircraft.isUser())
+#if defined(WINARCH32)
+  aircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0);
+#elif defined(WINARCH64)
+  if(!aircraft.isUser())
     // MSFS ground flag is is unreliable for AI - try to detect by speed at least
     aircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0 ||
                            (aircraft.verticalSpeedFeetPerMin < 0.01f && simDataAircraft.groundVelocityKts < 30.f));
-  else
-    aircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0);
+#endif
 }
 
 bool SimConnectHandlerPrivate::checkCall(HRESULT hr, const QString& message)
