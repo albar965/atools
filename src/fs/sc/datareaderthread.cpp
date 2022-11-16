@@ -135,7 +135,7 @@ void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& d
           // ac.setCoordinates(pos);
         }
 
-        //// Move N8
+        // // Move N8
         // if(reg.startsWith("N8"))
         // {
         // atools::geo::Pos pos = ac.getPosition();
@@ -239,6 +239,9 @@ void DataReaderThread::setHandler(ConnectHandler *connectHandler)
 
 void DataReaderThread::connectToSimulator()
 {
+  if(failedTerminally)
+    return;
+
   if(!handler->isLoaded())
   {
     QString msg = tr("No flight simulator installation found. SimConnect not loaded.");
@@ -323,6 +326,10 @@ void DataReaderThread::run()
 
   waitMutex.lock();
 
+  // Drop dead for good - cannot recover from these errors
+  numErrors = 0;
+  failedTerminally = false;
+
   // Main loop  ============================================
   while(!terminate)
   {
@@ -344,10 +351,10 @@ void DataReaderThread::run()
         if(!(opts & atools::fs::sc::FETCH_AI_AIRCRAFT))
         {
           QVector<SimConnectAircraft>::iterator it =
-            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [](const SimConnectAircraft& aircraft) -> bool
-                {
-                  return !aircraft.isUser() && !aircraft.isAnyBoat();
-                });
+            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [] (const SimConnectAircraft &aircraft)->bool
+                           {
+                             return !aircraft.isUser() && !aircraft.isAnyBoat();
+                           });
           if(it != aiAircraft.end())
             aiAircraft.erase(it, aiAircraft.end());
         }
@@ -355,10 +362,10 @@ void DataReaderThread::run()
         if(!(opts & atools::fs::sc::FETCH_AI_BOAT))
         {
           QVector<SimConnectAircraft>::iterator it =
-            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [](const SimConnectAircraft& aircraft) -> bool
-                {
-                  return !aircraft.isUser() && aircraft.isAnyBoat();
-                });
+            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [] (const SimConnectAircraft &aircraft)->bool
+                           {
+                             return !aircraft.isUser() && aircraft.isAnyBoat();
+                           });
           if(it != aiAircraft.end())
             aiAircraft.erase(it, aiAircraft.end());
         }
@@ -369,9 +376,9 @@ void DataReaderThread::run()
 #ifdef DEBUG_CREATE_WHAZZUP_TEST_FILTER
 
         data.getAiAircraft().erase(std::remove_if(data.getAiAircraft().begin(), data.getAiAircraft().end(),
-                                                  [](const SimConnectAircraft& type) -> bool {
-                return type.getAirplaneRegistration() != "N2092Z";
-              }), data.getAiAircraft().end());
+                                                  [] (const SimConnectAircraft &type)->bool {
+                                                    return type.getAirplaneRegistration() != "N2092Z";
+                                                  }), data.getAiAircraft().end());
 #endif
 
         emit postSimConnectData(data);
@@ -410,7 +417,8 @@ void DataReaderThread::run()
 
         if(numErrors++ > MAX_NUMBER_OF_ERRORS)
         {
-          numErrors = 0;
+          qWarning() << "Failed terminally - restart needed";
+          failedTerminally = true;
           emit postLogMessage(tr("Too many errors reading from simulator. Disconnected. "
                                  "Restart %1 to try again.").
                               arg(QCoreApplication::applicationName()), false, true);
@@ -463,7 +471,11 @@ void DataReaderThread::run()
 
   closeReplay();
 
-  terminate = false; // Allow restart
+  if(failedTerminally)
+    terminate = true;  // Drop dead
+  else
+    terminate = false;  // Allow restart
+
   connected = false;
   reconnecting = false;
 

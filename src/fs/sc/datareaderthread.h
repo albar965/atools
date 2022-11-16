@@ -80,6 +80,12 @@ public:
     return reconnecting;
   }
 
+  /* SimConnect interface is dead. Need a restart */
+  bool isFailedTerminally() const
+  {
+    return failedTerminally;
+  }
+
   /* If set all data will be saved into that file too */
   void setSaveReplayFilepath(const QString& value)
   {
@@ -173,7 +179,7 @@ private:
   int aiFetchRadiusKm = 200; // around 105 NM
 
   int numErrors = 0;
-  const int MAX_NUMBER_OF_ERRORS = 50;
+  const int MAX_NUMBER_OF_ERRORS = 10;
 
   const quint32 REPLAY_FILE_MAGIC_NUMBER = 0XCACF4F27;
   const quint32 REPLAY_FILE_VERSION = 1;
@@ -185,7 +191,7 @@ private:
   QFile *saveReplayFile = nullptr, *loadReplayFile = nullptr;
   quint32 replayUpdateRateMs = 500;
 
-  bool terminate = false, verbose = false;
+  bool terminate = false, verbose = false, failedTerminally = false;
   unsigned int updateRate = 500;
   int reconnectRateSec = 10;
   bool connected = false, reconnecting = false;

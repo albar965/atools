@@ -54,9 +54,13 @@ enum DataRequestId
   DATA_REQUEST_ID_AI_AIRCRAFT = 2,
   DATA_REQUEST_ID_AI_HELICOPTER = 3,
   DATA_REQUEST_ID_AI_BOAT = 4,
+
+  // No weather requests in 64-bit version which uses only MSFS
+#if defined(WINARCH32)
   DATA_REQUEST_ID_WEATHER_INTERPOLATED = 5,
   DATA_REQUEST_ID_WEATHER_NEAREST_STATION = 6,
   DATA_REQUEST_ID_WEATHER_STATION = 7
+#endif
 };
 
 enum DataDefinitionId
@@ -103,7 +107,6 @@ struct SimDataAircraft
   qint32 numEngines;
   qint32 engineType; // 0 = Piston 1 = Jet 2 = None 3 = Helo(Bell) turbine 4 = Unsupported 5 = Turboprop
 
-  // Not used for MSFS
   char aiFrom[32];
   char aiTo[32];
 };
@@ -204,7 +207,7 @@ public:
   SIMCONNECT_RECV_OPEN openData;
 
   bool simRunning = true, simPaused = false, verbose = false, simConnectLoaded = false,
-       userDataFetched = false, aiDataFetched = false, weatherDataFetched = false, msfs = false;
+       userDataFetched = false, aiDataFetched = false, weatherDataFetched = false;
 };
 
 void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData)
@@ -237,15 +240,6 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
               << "." << openData.dwSimConnectVersionMinor
               << "Build" << openData.dwSimConnectBuildMajor
               << "." << openData.dwSimConnectBuildMinor;
-
-      msfs = strcmp(openData.szApplicationName, "KittyHawk") == 0 ||
-             (openData.dwSimConnectVersionMajor == 11 && openData.dwSimConnectBuildMajor == 62651);
-
-      qInfo() << Q_FUNC_INFO << "MSFS detected" << msfs;
-
-      // Now define other data to fetch
-      fillDataDefinition();
-
       break;
 
     case SIMCONNECT_RECV_ID_EXCEPTION:
@@ -254,11 +248,14 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
         SIMCONNECT_RECV_EXCEPTION *except = static_cast<SIMCONNECT_RECV_EXCEPTION *>(pData);
         simconnectException = static_cast<SIMCONNECT_EXCEPTION>(except->dwException);
 
-        if(simconnectException != SIMCONNECT_EXCEPTION_WEATHER_UNABLE_TO_GET_OBSERVATION || verbose)
+        if(simconnectException != SIMCONNECT_EXCEPTION_WEATHER_UNABLE_TO_GET_OBSERVATION)
+        {
           qWarning() << "SimConnect exception" << except->dwException
                      << "send ID" << except->dwSendID << "index" << except->dwIndex;
-
-        state = sc::EXCEPTION;
+          state = sc::EXCEPTION;
+        }
+        else
+          simconnectException = SIMCONNECT_EXCEPTION_NONE;
         break;
       }
 
@@ -403,6 +400,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
 
         break;
       }
+#if defined(WINARCH32)
     case SIMCONNECT_RECV_ID_WEATHER_OBSERVATION:
       {
         SIMCONNECT_RECV_WEATHER_OBSERVATION *pObjData = static_cast<SIMCONNECT_RECV_WEATHER_OBSERVATION *>(pData);
@@ -421,6 +419,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
         }
         break;
       }
+#endif
 
     case SIMCONNECT_RECV_ID_QUIT:
       if(verbose)
@@ -446,7 +445,12 @@ void CALLBACK SimConnectHandlerPrivate::dispatchCallback(SIMCONNECT_RECV *pData,
 
 void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataAircraft, SimConnectAircraft& aircraft)
 {
-  aircraft.flags = msfs ? atools::fs::sc::SIM_MSFS : atools::fs::sc::SIM_FSX_P3D;
+#if defined(WINARCH32)
+  aircraft.flags = atools::fs::sc::SIM_FSX_P3D;
+#elif defined(WINARCH64)
+  aircraft.flags = atools::fs::sc::SIM_MSFS;
+#endif
+
   aircraft.airplaneTitle = simDataAircraft.aircraftTitle;
   aircraft.airplaneModel = simDataAircraft.aircraftAtcModel;
   aircraft.airplaneReg = simDataAircraft.aircraftAtcId;
@@ -622,12 +626,7 @@ void SimConnectHandlerPrivate::fillDataDefinition()
   // Measured in seconds, positive west of GMT.
   api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Time Zone Offset", "seconds", SIMCONNECT_DATATYPE_INT32);
 
-  // Request an event when the simulation starts or pauses
-  api.SubscribeToSystemEvent(EVENT_SIM_STATE, "Sim");
-  api.SubscribeToSystemEvent(EVENT_SIM_PAUSE, "Pause");
-
   state = sc::STATEOK;
-  dataDefined = true;
 }
 
 void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId definitionId)
@@ -742,7 +741,13 @@ bool SimConnectHandler::isSimPaused() const
 
 bool SimConnectHandler::canFetchWeather() const
 {
-  return !p->msfs;
+#if defined(WINARCH32)
+  return true;
+
+#else
+  return false;
+
+#endif
 }
 
 bool SimConnectHandler::isLoaded() const
@@ -760,17 +765,21 @@ bool SimConnectHandler::connect()
   HRESULT hr;
 
   if(p->verbose)
-    qDebug() << Q_FUNC_INFO << "Before Open";
+    qDebug() << "Before open";
 
   hr = p->api.Open(appName.constData(), nullptr, 0, nullptr, 0);
   if(hr == S_OK)
   {
-    qDebug() << Q_FUNC_INFO << "Opened";
+    if(p->verbose)
+      qDebug() << "Connected to Flight Simulator";
 
-    // Call dispatch function to get the SimConnect version information in SIMCONNECT_RECV_ID_OPEN event
-    // This event will also do the data definition
-    bool fetched = false;
-    p->callDispatch(fetched, "OPEN");
+    p->fillDataDefinition();
+
+    // Request an event when the simulation starts or pauses
+    p->api.SubscribeToSystemEvent(EVENT_SIM_STATE, "Sim");
+    p->api.SubscribeToSystemEvent(EVENT_SIM_PAUSE, "Pause");
+
+    p->state = sc::STATEOK;
 
     return true;
   }
@@ -785,12 +794,6 @@ bool SimConnectHandler::connect()
 
 bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm, atools::fs::sc::Options options)
 {
-  if(!p->dataDefined)
-  {
-    qWarning() << Q_FUNC_INFO << "Fetch before data definition";
-    return false;
-  }
-
   if(p->verbose)
     qDebug() << "fetchData entered ================================================================";
 
@@ -824,99 +827,102 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
   p->callDispatch(p->aiDataFetched, "DATA_REQUEST_ID_AI_HELICOPTER, DATA_REQUEST_ID_AI_BOAT and DATA_REQUEST_ID_AI_AIRCRAFT");
 
-  // === Get user aircraft =======================================================
-  hr = p->api.RequestDataOnSimObjectType(
-    DATA_REQUEST_ID_USER_AIRCRAFT, DATA_DEFINITION_USER_AIRCRAFT, 0,
-    SIMCONNECT_SIMOBJECT_TYPE_USER);
-  if(!p->checkCall(hr, "DATA_REQUEST_ID_USER_AIRCRAFT"))
-    return false;
-
-  p->callDispatch(p->userDataFetched, "DATA_REQUEST_ID_USER_AIRCRAFT");
-
-  p->state = sc::STATEOK;
-
-  // Get AI aircraft =======================================================================
-  QSet<unsigned long> objectIds;
-  for(int i = 0; i < p->simDataAircraft.size(); i++)
+  if(p->state == sc::STATEOK)
   {
-    unsigned long oid = p->simDataAircraftObjectIds.at(i);
-    // Avoid duplicates
-    if(!objectIds.contains(oid))
+    // === Get user aircraft =======================================================
+    hr = p->api.RequestDataOnSimObjectType(
+      DATA_REQUEST_ID_USER_AIRCRAFT, DATA_DEFINITION_USER_AIRCRAFT, 0,
+      SIMCONNECT_SIMOBJECT_TYPE_USER);
+    if(!p->checkCall(hr, "DATA_REQUEST_ID_USER_AIRCRAFT"))
+      return false;
+
+    p->callDispatch(p->userDataFetched, "DATA_REQUEST_ID_USER_AIRCRAFT");
+
+    p->state = sc::STATEOK;
+
+    // Get AI aircraft =======================================================================
+    QSet<unsigned long> objectIds;
+    for(int i = 0; i < p->simDataAircraft.size(); i++)
     {
-      atools::fs::sc::SimConnectAircraft aiAircraft;
-      p->copyToSimData(p->simDataAircraft.at(i), aiAircraft);
-      aiAircraft.objectId = static_cast<unsigned int>(oid);
-      data.aiAircraft.append(aiAircraft);
-      objectIds.insert(aiAircraft.objectId);
+      unsigned long oid = p->simDataAircraftObjectIds.at(i);
+      // Avoid duplicates
+      if(!objectIds.contains(oid))
+      {
+        atools::fs::sc::SimConnectAircraft aiAircraft;
+        p->copyToSimData(p->simDataAircraft.at(i), aiAircraft);
+        aiAircraft.objectId = static_cast<unsigned int>(oid);
+        data.aiAircraft.append(aiAircraft);
+        objectIds.insert(aiAircraft.objectId);
+      }
     }
-  }
 
-  // Get user aircraft =======================================================================
-  if(p->userDataFetched)
-  {
-    // Copy base data
-    p->copyToSimData(p->simData.aircraft, data.userAircraft);
+    // Get user aircraft =======================================================================
+    if(p->userDataFetched)
+    {
+      // Copy base data
+      p->copyToSimData(p->simData.aircraft, data.userAircraft);
 
-    // Copy additional user aircraft data
-    data.userAircraft.objectId = static_cast<unsigned int>(p->simDataObjectId);
+      // Copy additional user aircraft data
+      data.userAircraft.objectId = static_cast<unsigned int>(p->simDataObjectId);
 
-    data.userAircraft.groundAltitudeFt = p->simData.groundAltitudeFt;
+      data.userAircraft.groundAltitudeFt = p->simData.groundAltitudeFt;
 
-    if(p->simData.autopilotAvailable > 0)
-      data.userAircraft.altitudeAutopilotFt = p->simData.altitudeAutopilotFt;
+      if(p->simData.autopilotAvailable > 0)
+        data.userAircraft.altitudeAutopilotFt = p->simData.altitudeAutopilotFt;
+      else
+        data.userAircraft.altitudeAutopilotFt = 0.f;
+
+      data.userAircraft.altitudeAboveGroundFt = p->simData.planeAboveGroundFt;
+
+      if(p->simData.ambientPrecipStateFlags & 4)
+        data.userAircraft.flags |= atools::fs::sc::IN_RAIN;
+      if(p->simData.ambientPrecipStateFlags & 8)
+        data.userAircraft.flags |= atools::fs::sc::IN_SNOW;
+
+      if(p->simData.ambientIsInCloud > 0)
+        data.userAircraft.flags |= atools::fs::sc::IN_CLOUD;
+
+      data.userAircraft.ambientTemperatureCelsius = p->simData.ambientTemperatureC;
+      data.userAircraft.totalAirTemperatureCelsius = p->simData.totalAirTemperatureC;
+      data.userAircraft.ambientVisibilityMeter = p->simData.ambientVisibilityMeter;
+
+      data.userAircraft.seaLevelPressureMbar = p->simData.seaLevelPressureMbar;
+      data.userAircraft.pitotIcePercent = static_cast<quint8>(p->simData.pitotIcePercent);
+      data.userAircraft.structuralIcePercent = static_cast<quint8>(p->simData.structuralIcePercent);
+      data.userAircraft.airplaneTotalWeightLbs = p->simData.airplaneTotalWeightLbs;
+      data.userAircraft.airplaneMaxGrossWeightLbs = p->simData.airplaneMaxGrossWeightLbs;
+      data.userAircraft.airplaneEmptyWeightLbs = p->simData.airplaneEmptyWeightLbs;
+      data.userAircraft.fuelTotalQuantityGallons = p->simData.fuelTotalQuantityGallons;
+      data.userAircraft.fuelTotalWeightLbs = p->simData.fuelTotalWeightLbs;
+      data.userAircraft.magVarDeg = p->simData.magVarDeg;
+
+      data.userAircraft.trackMagDeg = p->simData.planeTrackMagneticDeg;
+      data.userAircraft.trackTrueDeg = p->simData.planeTrackTrueDeg;
+
+      // Summarize fuel flow for all engines
+      data.userAircraft.fuelFlowPPH = p->simData.fuelFlowPph1 + p->simData.fuelFlowPph2 + p->simData.fuelFlowPph3 + p->simData.fuelFlowPph4;
+
+      data.userAircraft.fuelFlowGPH = p->simData.fuelFlowGph1 + p->simData.fuelFlowGph2 + p->simData.fuelFlowGph3 + p->simData.fuelFlowGph4;
+
+      data.userAircraft.windDirectionDegT = p->simData.ambientWindDirectionDegT;
+      data.userAircraft.windSpeedKts = p->simData.ambientWindVelocityKts;
+
+      // Build local time and use timezone offset from simulator
+      QDate localDate(p->simData.localYear, p->simData.localMonth, p->simData.localDay);
+      QTime localTime = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(p->simData.localTimeSeconds * 1000.f));
+
+      // Offset from FS: Measured in seconds, positive west of GMT.
+      QDateTime localDateTime(localDate, localTime, Qt::OffsetFromUTC, -p->simData.timeZoneOffsetSeconds);
+      data.userAircraft.localDateTime = localDateTime;
+
+      QDate zuluDate(p->simData.zuluYear, p->simData.zuluMonth, p->simData.zuluDay);
+      QTime zuluTime = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(p->simData.zuluTimeSeconds * 1000.f));
+      QDateTime zuluDateTime(zuluDate, zuluTime, Qt::UTC);
+      data.userAircraft.zuluDateTime = zuluDateTime;
+    }
     else
-      data.userAircraft.altitudeAutopilotFt = 0.f;
-
-    data.userAircraft.altitudeAboveGroundFt = p->simData.planeAboveGroundFt;
-
-    if(p->simData.ambientPrecipStateFlags & 4)
-      data.userAircraft.flags |= atools::fs::sc::IN_RAIN;
-    if(p->simData.ambientPrecipStateFlags & 8)
-      data.userAircraft.flags |= atools::fs::sc::IN_SNOW;
-
-    if(p->simData.ambientIsInCloud > 0)
-      data.userAircraft.flags |= atools::fs::sc::IN_CLOUD;
-
-    data.userAircraft.ambientTemperatureCelsius = p->simData.ambientTemperatureC;
-    data.userAircraft.totalAirTemperatureCelsius = p->simData.totalAirTemperatureC;
-    data.userAircraft.ambientVisibilityMeter = p->simData.ambientVisibilityMeter;
-
-    data.userAircraft.seaLevelPressureMbar = p->simData.seaLevelPressureMbar;
-    data.userAircraft.pitotIcePercent = static_cast<quint8>(p->simData.pitotIcePercent);
-    data.userAircraft.structuralIcePercent = static_cast<quint8>(p->simData.structuralIcePercent);
-    data.userAircraft.airplaneTotalWeightLbs = p->simData.airplaneTotalWeightLbs;
-    data.userAircraft.airplaneMaxGrossWeightLbs = p->simData.airplaneMaxGrossWeightLbs;
-    data.userAircraft.airplaneEmptyWeightLbs = p->simData.airplaneEmptyWeightLbs;
-    data.userAircraft.fuelTotalQuantityGallons = p->simData.fuelTotalQuantityGallons;
-    data.userAircraft.fuelTotalWeightLbs = p->simData.fuelTotalWeightLbs;
-    data.userAircraft.magVarDeg = p->simData.magVarDeg;
-
-    data.userAircraft.trackMagDeg = p->simData.planeTrackMagneticDeg;
-    data.userAircraft.trackTrueDeg = p->simData.planeTrackTrueDeg;
-
-    // Summarize fuel flow for all engines
-    data.userAircraft.fuelFlowPPH = p->simData.fuelFlowPph1 + p->simData.fuelFlowPph2 + p->simData.fuelFlowPph3 + p->simData.fuelFlowPph4;
-
-    data.userAircraft.fuelFlowGPH = p->simData.fuelFlowGph1 + p->simData.fuelFlowGph2 + p->simData.fuelFlowGph3 + p->simData.fuelFlowGph4;
-
-    data.userAircraft.windDirectionDegT = p->simData.ambientWindDirectionDegT;
-    data.userAircraft.windSpeedKts = p->simData.ambientWindVelocityKts;
-
-    // Build local time and use timezone offset from simulator
-    QDate localDate(p->simData.localYear, p->simData.localMonth, p->simData.localDay);
-    QTime localTime = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(p->simData.localTimeSeconds * 1000.f));
-
-    // Offset from FS: Measured in seconds, positive west of GMT.
-    QDateTime localDateTime(localDate, localTime, Qt::OffsetFromUTC, -p->simData.timeZoneOffsetSeconds);
-    data.userAircraft.localDateTime = localDateTime;
-
-    QDate zuluDate(p->simData.zuluYear, p->simData.zuluMonth, p->simData.zuluDay);
-    QTime zuluTime = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(p->simData.zuluTimeSeconds * 1000.f));
-    QDateTime zuluDateTime(zuluDate, zuluTime, Qt::UTC);
-    data.userAircraft.zuluDateTime = zuluDateTime;
-  }
-  else
-    data.userAircraft.position = atools::geo::Pos();
+      data.userAircraft.position = atools::geo::Pos();
+  } // if(p->state == sc::STATEOK)
 
   if(!p->simRunning || p->simPaused || !p->userDataFetched)
   {
@@ -932,11 +938,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
 bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
 {
-  if(!p->dataDefined)
-  {
-    qWarning() << Q_FUNC_INFO << "Fetch before data definition";
-    return false;
-  }
+#if defined(WINARCH32)
 
   if(p->weatherRequest.isValid())
   {
@@ -1019,6 +1021,11 @@ bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
     return false;
   }
   return true;
+
+#else
+  return false;
+
+#endif
 
 }
 

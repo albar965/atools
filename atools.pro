@@ -109,12 +109,14 @@ unix {
 
 win32 {
   contains(QT_ARCH, i386) {
+  # FSX or P3D
     !isEmpty(SIMCONNECT_PATH_WIN32) {
       DEFINES += SIMCONNECT_BUILD_WIN32 WINARCH32
       INCLUDEPATH += $$SIMCONNECT_PATH_WIN32"\inc"
       LIBS += $$SIMCONNECT_PATH_WIN32"\lib\SimConnect.lib"
     }
   } else {
+  # MSFS
     !isEmpty(SIMCONNECT_PATH_WIN64) {
       DEFINES += SIMCONNECT_BUILD_WIN64 WINARCH64
       INCLUDEPATH += $$SIMCONNECT_PATH_WIN64"\include"

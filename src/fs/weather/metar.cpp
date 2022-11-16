@@ -92,7 +92,6 @@ Metar::Metar(const QString& metarString, const QString& metarStation, const QDat
   }
   catch(const std::exception& e)
   {
-    qWarning() << "Exception while parsing metar" << cleanMetar << ":" << e.what();
     delete parsed;
     parsed = new MetarParser(QString());
   }
