@@ -150,9 +150,12 @@ QString elideTextShortLeft(const QString& str, int maxLength);
 /* Cuts text in the center and uses combined ellipsis character */
 QString elideTextShortMiddle(const QString& str, int maxLength);
 
+#if defined(QT_WIDGETS_LIB)
 /* Elide text for pixel size. Returns single "..." for less than three characters, a single "." if it fits and empty text if not. */
 QString elidedText(const QFontMetrics& metrics, QString text, Qt::TextElideMode mode, int width);
 QStringList elidedTexts(const QFontMetrics& metrics, const QStringList& texts, Qt::TextElideMode mode, int width);
+
+#endif
 
 /* Remove any non printable characters from string */
 QString removeNonPrintable(const QString& str);
@@ -169,8 +172,11 @@ QString removeNonAlphaNum(const QString& str);
 QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& itemSeparator,
                   const QString& lineSeparator);
 
+#if defined(QT_WIDGETS_LIB)
 /* Fills maxWidth text lines into result using the separator. */
 QStringList wrapText(const QStringList& texts, const QFontMetrics& metrics, int maxWidth, const QString& separator);
+
+#endif
 
 /* Cut linefeed separated text. Return maxLength lines where \n... is included
  * @param compressEmpty Remove empty lines before applying elide

@@ -57,11 +57,12 @@
 # Define program version here VERSION_NUMBER_TODO
 VERSION_NUMBER=3.8.6.beta
 
-QT += sql xml svg core widgets network
+QT += sql xml core network
+
 versionAtLeast(QT_VERSION, 6.0.0): QT += core5compat
 QT -= gui
 CONFIG += build_all c++14 staticlib
-CONFIG -= debug_and_release debug_and_release_target
+CONFIG -= gui debug_and_release debug_and_release_target
 
 TARGET = atools
 TARGET_NAME=$$TARGET
@@ -89,6 +90,9 @@ ATOOLS_NO_WEB=$$(ATOOLS_NO_WEB)
 ATOOLS_NO_FS=$$(ATOOLS_NO_FS)
 ATOOLS_NO_GRIB=$$(ATOOLS_NO_GRIB)
 ATOOLS_NO_WMM=$$(ATOOLS_NO_WMM)
+
+!isEqual(ATOOLS_NO_GUI, "true"): QT += svg widgets
+!isEqual(ATOOLS_NO_GUI, "true"): CONFIG += svg widgets
 
 # =======================================================================
 # Fill defaults for unset
@@ -223,7 +227,6 @@ HEADERS += \
   src/geo/pos.h \
   src/geo/rect.h \
   src/geo/spatialindex.h \
-  src/gui/application.h \
   src/gui/consoleapplication.h \
   src/io/abstractinireader.h \
   src/io/binarystream.h \
@@ -243,12 +246,9 @@ HEADERS += \
   src/util/filesystemwatcher.h \
   src/util/flags.h \
   src/util/heap.h \
-  src/util/htmlbuilder.h \
   src/util/httpdownloader.h \
-  src/util/paintercontextsaver.h \
   src/util/properties.h \
   src/util/props.h \
-  src/util/roundedpolygon.h \
   src/util/simplecrypt.h \
   src/util/str.h \
   src/util/timedcache.h \
@@ -288,7 +288,6 @@ SOURCES += \
   src/geo/pos.cpp \
   src/geo/rect.cpp \
   src/geo/spatialindex.cpp \
-  src/gui/application.cpp \
   src/gui/consoleapplication.cpp \
   src/io/abstractinireader.cpp \
   src/io/binarystream.cpp \
@@ -306,12 +305,9 @@ SOURCES += \
   src/util/filesystemwatcher.cpp \
   src/util/flags.cpp \
   src/util/heap.cpp \
-  src/util/htmlbuilder.cpp \
   src/util/httpdownloader.cpp \
-  src/util/paintercontextsaver.cpp \
   src/util/properties.cpp \
   src/util/props.cpp \
-  src/util/roundedpolygon.cpp \
   src/util/simplecrypt.cpp \
   src/util/str.cpp \
   src/util/timedcache.cpp \
@@ -413,7 +409,7 @@ src/track/tracktypes.cpp
 
 
 # =====================================================================
-# GUI
+# GUI and widgets
 
 !isEqual(ATOOLS_NO_GUI, "true") {
 HEADERS += \
@@ -421,6 +417,7 @@ HEADERS += \
   src/gui/actionstatesaver.h \
   src/gui/actiontextsaver.h \
   src/gui/actiontool.h \
+  src/gui/application.h \
   src/gui/choicedialog.h \
   src/gui/clicktooltiphandler.h \
   src/gui/dialog.h \
@@ -438,13 +435,17 @@ HEADERS += \
   src/gui/translator.h \
   src/gui/treedialog.h \
   src/gui/widgetstate.h \
-  src/gui/widgetutil.h
+  src/gui/widgetutil.h \
+  src/util/htmlbuilder.h \
+  src/util/paintercontextsaver.h \
+  src/util/roundedpolygon.h
 
 SOURCES += \
   src/gui/actionbuttonhandler.cpp \
   src/gui/actionstatesaver.cpp \
   src/gui/actiontextsaver.cpp \
   src/gui/actiontool.cpp \
+  src/gui/application.cpp \
   src/gui/choicedialog.cpp \
   src/gui/clicktooltiphandler.cpp \
   src/gui/dialog.cpp \
@@ -462,7 +463,10 @@ SOURCES += \
   src/gui/translator.cpp \
   src/gui/treedialog.cpp \
   src/gui/widgetstate.cpp \
-  src/gui/widgetutil.cpp
+  src/gui/widgetutil.cpp \
+  src/util/htmlbuilder.cpp \
+  src/util/paintercontextsaver.cpp \
+  src/util/roundedpolygon.cpp
 } # ATOOLS_NO_GUI
 
 # =====================================================================

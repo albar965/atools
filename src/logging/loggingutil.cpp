@@ -23,7 +23,6 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QTextCodec>
-#include <QStyleFactory>
 
 namespace atools {
 namespace logging {

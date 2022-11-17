@@ -24,7 +24,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QDateTime>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace settings {
@@ -48,7 +48,7 @@ Settings::Settings()
     else
     {
       // Create path based on relative path to application
-      QDir appDir(QApplication::applicationDirPath());
+      QDir appDir(QCoreApplication::applicationDirPath());
       if(!appDir.exists(overridePath))
       {
         if(!appDir.mkpath(overridePath))

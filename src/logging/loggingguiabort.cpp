@@ -17,10 +17,15 @@
 
 #include "logging/loggingguiabort.h"
 #include "logging/logginghandler.h"
-#include "gui/application.h"
 
+#if defined(QT_WIDGETS_LIB)
+#include "gui/application.h"
 #include <QMessageBox>
 #include <QMainWindow>
+#endif
+
+#include <QCoreApplication>
+
 #include <QThread>
 #include <QDebug>
 
@@ -36,6 +41,7 @@ void LoggingGuiAbortHandler::guiAbortFunction(const QString& msg)
   if(LoggingHandler::instance == nullptr)
     qWarning() << Q_FUNC_INFO << "LoggingHandler::instance==nullptr";
 
+#if defined(QT_WIDGETS_LIB)
   // Called by signal on main thread context
   if(atools::gui::Application::isShowExceptionDialog())
     QMessageBox::warning(LoggingHandler::parentWidget, QApplication::applicationName(),
@@ -51,6 +57,7 @@ void LoggingGuiAbortHandler::guiAbortFunction(const QString& msg)
                          arg(atools::gui::Application::getContactHtml()).
                          arg(atools::gui::Application::getReportPathHtml())
                          );
+#endif
 
 #ifdef Q_OS_WIN32
   // Will not call any crash handler on windows - is not helpful anyway
@@ -85,7 +92,7 @@ void LoggingGuiAbortHandler::setGuiAbortFunction(QWidget *parent)
         emit LoggingHandler::instance->guiAbortSignal(msg);
 
         // Allow delivery
-        QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
         // Stop this thread forever
         // This will never be called if this is the main thread

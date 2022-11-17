@@ -28,8 +28,11 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QStandardPaths>
-#include <QFontMetrics>
 #include <QStringBuilder>
+
+#if defined(QT_WIDGETS_LIB)
+#include <QFontMetrics>
+#endif
 
 #ifdef Q_OS_WIN
 extern "C" {
@@ -292,6 +295,8 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
   return false;
 }
 
+#if defined(QT_WIDGETS_LIB)
+
 QStringList wrapText(const QStringList& texts, const QFontMetrics& metrics, int maxWidth, const QString& separator)
 {
   QStringList wrappedTexts;
@@ -306,6 +311,8 @@ QStringList wrapText(const QStringList& texts, const QFontMetrics& metrics, int 
   }
   return wrappedTexts;
 }
+
+#endif
 
 QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& itemSeparator,
                   const QString& lineSeparator)
@@ -391,6 +398,7 @@ QString elideTextLinesShort(QString str, int maxLines, int maxLength, bool compr
     return lines.join(QObject::tr("\n", "Linefeed used to shorten large texts"));
 }
 
+#if defined(QT_WIDGETS_LIB)
 QStringList elidedTexts(const QFontMetrics& metrics, const QStringList& texts, Qt::TextElideMode mode, int width)
 {
   QStringList retval(texts);
@@ -418,6 +426,8 @@ QString elidedText(const QFontMetrics& metrics, QString text, Qt::TextElideMode 
 
   return text;
 }
+
+#endif
 
 float calculateSteps(float range, float numSteps)
 {

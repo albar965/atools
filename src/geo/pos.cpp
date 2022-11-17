@@ -24,7 +24,6 @@
 
 #include <QDataStream>
 #include <QRegularExpression>
-#include <QVector3D>
 
 namespace atools {
 namespace geo {
