@@ -18,6 +18,7 @@
 #include "fs/util/fsutil.h"
 #include "atools.h"
 #include "geo/calculations.h"
+#include "geo/pos.h"
 
 #include <QRegularExpression>
 #include <QSet>
@@ -980,6 +981,21 @@ QString waypointFlagsFromXplane(const QString& flags, const QString& defaultValu
       arincTypeStr.append(QChar(u.byteValue[3]));
   }
   return arincTypeStr;
+}
+
+void calculateIlsGeometry(const atools::geo::Pos& pos, float headingTrue, float widthDeg, float featherLengthNm,
+                          atools::geo::Pos& p1, atools::geo::Pos& p2, atools::geo::Pos& pmid)
+{
+  float hdg = atools::geo::opposedCourseDeg(headingTrue);
+  float lengthMeter = atools::geo::nmToMeter(featherLengthNm);
+
+  if(!(widthDeg < atools::geo::INVALID_FLOAT) || widthDeg < 0.1f)
+    widthDeg = 4.f;
+
+  p1 = pos.endpoint(lengthMeter, hdg - widthDeg / 2.f);
+  p2 = pos.endpoint(lengthMeter, hdg + widthDeg / 2.f);
+  float featherWidth = p1.distanceMeterTo(p2);
+  pmid = pos.endpoint(lengthMeter - featherWidth / 2.f, hdg);
 }
 
 } // namespace util

@@ -19,13 +19,10 @@
 #include "fs/bgl/nav/dme.h"
 #include "fs/bgl/nav/glideslope.h"
 #include "fs/bgl/nav/localizer.h"
-#include "fs/bgl/util.h"
 #include "fs/db/datawriter.h"
-#include "sql/sqlquery.h"
+#include "fs/util/fsutil.h"
 #include "fs/navdatabaseoptions.h"
-#include "fs/db/runwayindex.h"
 #include "fs/db/meta/bglfilewriter.h"
-#include "fs/db/meta/sceneryareawriter.h"
 #include "geo/calculations.h"
 #include "atools.h"
 
@@ -68,7 +65,6 @@ void IlsWriter::writeObject(const Ils *type)
 
   if(loc != nullptr)
   {
-
     if(getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
       // MSFS uses magnetic course - turn to true
       headingTrue = atools::geo::normalizeCourse(loc->getHeading() + type->getMagVar());
@@ -76,14 +72,9 @@ void IlsWriter::writeObject(const Ils *type)
       // FSX and P3D use true course
       headingTrue = loc->getHeading();
 
-    float locHeading = atools::geo::opposedCourseDeg(headingTrue);
-
-    float length = atools::geo::nmToMeter(FEATHER_LEN_NM);
-    // Calculate the display of the ILS feather
-    Pos p1 = pos.getPos().endpoint(length, locHeading - loc->getWidth() / 2.f);
-    Pos p2 = pos.getPos().endpoint(length, locHeading + loc->getWidth() / 2.f);
-    float featherWidth = p1.distanceMeterTo(p2);
-    Pos pmid = pos.getPos().endpoint(length - featherWidth / 2.f, locHeading);
+    Pos p1, p2, pmid;
+    atools::fs::util::calculateIlsGeometry(pos.getPos(), headingTrue, loc->getWidth(), atools::fs::util::DEFAULT_FEATHER_LEN_NM,
+                                           p1, p2, pmid);
 
     bind(":end1_lonx", p1.getLonX());
     bind(":end1_laty", p1.getLatY());

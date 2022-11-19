@@ -21,8 +21,17 @@
 #include <QString>
 
 namespace atools {
+namespace geo {
+class Pos;
+}
 namespace fs {
 namespace util {
+
+/* Calculate the display points of an ILS feather */
+void calculateIlsGeometry(const atools::geo::Pos& pos, float headingTrue, float widthDeg, float featherLengthNm,
+                          geo::Pos& p1, geo::Pos& p2, geo::Pos& pmid);
+
+const float DEFAULT_FEATHER_LEN_NM = 9.f;
 
 /* Split runway name into parts and return true if name matches a runway number */
 bool runwayNameSplit(const QString& name, int *number = nullptr, QString *designator = nullptr, bool *trueHeading = nullptr);

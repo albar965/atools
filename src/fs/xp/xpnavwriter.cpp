@@ -18,6 +18,7 @@
 #include "fs/xp/xpnavwriter.h"
 
 #include "fs/common/airportindex.h"
+#include "fs/util/fsutil.h"
 #include "fs/util/tacanfrequencies.h"
 #include "fs/progresshandler.h"
 #include "fs/navdatabaseoptions.h"
@@ -384,16 +385,10 @@ void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
   progress->incNumIls();
 }
 
-void XpNavWriter::assignIlsGeometry(atools::sql::SqlQuery *query, const atools::geo::Pos& pos, float heading,
-                                    float width)
+void XpNavWriter::assignIlsGeometry(atools::sql::SqlQuery *query, const atools::geo::Pos& pos, float heading, float width)
 {
-  int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
-  // Calculate the display of the ILS feather
-  float ilsHeading = atools::geo::opposedCourseDeg(heading);
-  Pos p1 = pos.endpoint(length, ilsHeading - width / 2.f);
-  Pos p2 = pos.endpoint(length, ilsHeading + width / 2.f);
-  float featherWidth = p1.distanceMeterTo(p2);
-  Pos pmid = pos.endpoint(length - featherWidth / 2, ilsHeading);
+  Pos p1, p2, pmid;
+  atools::fs::util::calculateIlsGeometry(pos, heading, width, atools::fs::util::DEFAULT_FEATHER_LEN_NM, p1, p2, pmid);
 
   query->bindValue(":end1_lonx", p1.getLonX());
   query->bindValue(":end1_laty", p1.getLatY());

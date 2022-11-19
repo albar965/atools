@@ -59,8 +59,6 @@ namespace atools {
 namespace fs {
 namespace ng {
 
-/* Length of the ILS feather */
-static const float ILS_FEATHER_LEN_NM = 9;
 static const float ILS_FEATHER_WIDTH_DEG = 4.f;
 
 DfdCompiler::DfdCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
@@ -1615,21 +1613,13 @@ void DfdCompiler::updateIlsGeometry()
   SqlUtil::UpdateColFuncType func =
     [](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
     {
-      // Position of the pointy end
-      Pos pos(from.valueFloat("lonx"), from.valueFloat("laty"));
-
-      float length = ageo::nmToMeter(ILS_FEATHER_LEN_NM);
-      float heading = ageo::normalizeCourse(ageo::opposedCourseDeg(from.valueFloat("loc_heading")));
       QString type = from.valueStr("type");
       float width = type == "G" || type == "T" ? ILS_FEATHER_WIDTH_DEG * 2.f : ILS_FEATHER_WIDTH_DEG;
 
-      // Corner endpoints
-      Pos p1 = pos.endpoint(length, heading - width / 2.f);
-      Pos p2 = pos.endpoint(length, heading + width / 2.f);
-
-      // Calculated the center point between corners - move it a bit towareds the pointy end
-      float featherWidth = p1.distanceMeterTo(p2);
-      Pos pmid = pos.endpoint(length - featherWidth / 2, heading);
+      Pos p1, p2, pmid;
+      atools::fs::util::calculateIlsGeometry(Pos(from.valueFloat("lonx"), from.valueFloat("laty")),
+                                             from.valueFloat("loc_heading"), width, atools::fs::util::DEFAULT_FEATHER_LEN_NM,
+                                             p1, p2, pmid);
 
       to.bindValue(":end1_lonx", p1.getLonX());
       to.bindValue(":end1_laty", p1.getLatY());
