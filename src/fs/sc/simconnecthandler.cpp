@@ -56,7 +56,7 @@ enum DataRequestId
   DATA_REQUEST_ID_AI_BOAT = 4,
 
   // No weather requests in 64-bit version which uses only MSFS
-#if defined(WINARCH32)
+#if defined(SIMCONNECT_BUILD_WIN32)
   DATA_REQUEST_ID_WEATHER_INTERPOLATED = 5,
   DATA_REQUEST_ID_WEATHER_NEAREST_STATION = 6,
   DATA_REQUEST_ID_WEATHER_STATION = 7
@@ -187,7 +187,7 @@ public:
   void fillDataDefinition();
   void fillDataDefinitionAicraft(DataDefinitionId definitionId);
 
-  void copyToSimData(const SimDataAircraft& simDataAircraft, atools::fs::sc::SimConnectAircraft& aircraft);
+  void copyToSimConnectAircraft(const SimDataAircraft& simDataAircraft, atools::fs::sc::SimConnectAircraft& aircraft);
 
   bool checkCall(HRESULT hr, const QString& message);
   bool callDispatch(bool& dataFetched, const QString& message);
@@ -400,7 +400,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
 
         break;
       }
-#if defined(WINARCH32)
+#if defined(SIMCONNECT_BUILD_WIN32)
     case SIMCONNECT_RECV_ID_WEATHER_OBSERVATION:
       {
         SIMCONNECT_RECV_WEATHER_OBSERVATION *pObjData = static_cast<SIMCONNECT_RECV_WEATHER_OBSERVATION *>(pData);
@@ -443,11 +443,11 @@ void CALLBACK SimConnectHandlerPrivate::dispatchCallback(SIMCONNECT_RECV *pData,
   handlerClass->dispatchProcedure(pData, cbData);
 }
 
-void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataAircraft, SimConnectAircraft& aircraft)
+void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& simDataAircraft, SimConnectAircraft& aircraft)
 {
-#if defined(WINARCH32)
+#if defined(SIMCONNECT_BUILD_WIN32)
   aircraft.flags = atools::fs::sc::SIM_FSX_P3D;
-#elif defined(WINARCH64)
+#elif defined(SIMCONNECT_BUILD_WIN64)
   aircraft.flags = atools::fs::sc::SIM_MSFS;
 #endif
 
@@ -500,15 +500,6 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataAircr
 
   aircraft.flags.setFlag(atools::fs::sc::IS_USER, simDataAircraft.userSim > 0);
   aircraft.flags.setFlag(atools::fs::sc::SIM_PAUSED, simPaused > 0);
-
-#if defined(WINARCH32)
-  aircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0);
-#elif defined(WINARCH64)
-  if(!aircraft.isUser())
-    // MSFS ground flag is is unreliable for AI - try to detect by speed at least
-    aircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0 ||
-                           (aircraft.verticalSpeedFeetPerMin < 0.01f && simDataAircraft.groundVelocityKts < 30.f));
-#endif
 }
 
 bool SimConnectHandlerPrivate::checkCall(HRESULT hr, const QString& message)
@@ -743,7 +734,7 @@ bool SimConnectHandler::isSimPaused() const
 
 bool SimConnectHandler::canFetchWeather() const
 {
-#if defined(WINARCH32)
+#if defined(SIMCONNECT_BUILD_WIN32)
   return true;
 
 #else
@@ -850,8 +841,18 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       // Avoid duplicates
       if(!objectIds.contains(oid))
       {
+        const SimDataAircraft& simDataAircraft = p->simDataAircraft.at(i);
         atools::fs::sc::SimConnectAircraft aiAircraft;
-        p->copyToSimData(p->simDataAircraft.at(i), aiAircraft);
+        p->copyToSimConnectAircraft(simDataAircraft, aiAircraft);
+
+#if defined(SIMCONNECT_BUILD_WIN64)
+        // MSFS ground flag is is unreliable for AI - try to detect by speed at least, AGL is not available for this
+        aiAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0 ||
+                                 (aiAircraft.verticalSpeedFeetPerMin < 0.01f && simDataAircraft.groundVelocityKts < 30.f));
+#else
+        // FSX and P3D
+        aiAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0);
+#endif
         aiAircraft.objectId = static_cast<unsigned int>(oid);
         data.aiAircraft.append(aiAircraft);
         objectIds.insert(aiAircraft.objectId);
@@ -862,7 +863,16 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     if(p->userDataFetched)
     {
       // Copy base data
-      p->copyToSimData(p->simData.aircraft, data.userAircraft);
+      p->copyToSimConnectAircraft(p->simData.aircraft, data.userAircraft);
+
+#if defined(SIMCONNECT_BUILD_WIN64)
+      // MSFS - on ground is unreliable
+      data.userAircraft.flags.setFlag(atools::fs::sc::ON_GROUND,
+                                      p->simData.aircraft.isSimOnGround > 0 && p->simData.planeAboveGroundFt < 10.f);
+#else
+      // FSX and P3D
+      data.userAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, p->simData.aircraft.isSimOnGround > 0);
+#endif
 
       // Copy additional user aircraft data
       data.userAircraft.objectId = static_cast<unsigned int>(p->simDataObjectId);
@@ -940,7 +950,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
 bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
 {
-#if defined(WINARCH32)
+#if defined(SIMCONNECT_BUILD_WIN32)
 
   if(p->weatherRequest.isValid())
   {
@@ -1025,6 +1035,7 @@ bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
   return true;
 
 #else
+  Q_UNUSED(data)
   return false;
 
 #endif
