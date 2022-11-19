@@ -439,11 +439,10 @@ void AircraftPerf::setNull()
       climbVertSpeed = climbSpeed = climbFuelFlow =
         cruiseSpeed = cruiseFuelFlow =
           descentSpeed = descentVertSpeed = descentFuelFlow =
-            alternateSpeed = alternateFuelFlow =
-              usableFuel =
-                minRunwayLength =
-                  0.f;
+            alternateSpeed = alternateFuelFlow = usableFuel = minRunwayLength = 0.f;
   runwayType = SOFT;
+  name.clear();
+  type.clear();
 }
 
 void AircraftPerf::fromGalToLbs()

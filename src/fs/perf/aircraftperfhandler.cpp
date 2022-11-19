@@ -36,6 +36,8 @@ AircraftPerfHandler::AircraftPerfHandler(QObject *parent)
   : QObject(parent)
 {
   perf = new AircraftPerf;
+
+  // Nullify all values and clear name and type
   perf->setNull();
 
   curSimAircraft = new SimConnectUserAircraft;
