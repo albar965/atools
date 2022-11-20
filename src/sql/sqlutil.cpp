@@ -146,10 +146,15 @@ SqlDatabase *SqlUtil::getDbWithTableAndRows(const QString& tablename, QVector<Sq
 {
   for(SqlDatabase *database : databases)
   {
-    if(SqlUtil(database).hasTableAndRows(tablename))
+    if(database != nullptr && SqlUtil(database).hasTableAndRows(tablename))
       return database;
   }
   return nullptr;
+}
+
+SqlDatabase *SqlUtil::getDbWithTableAndRows(const QString& tablename, SqlDatabase *db1, SqlDatabase *db2)
+{
+  return getDbWithTableAndRows(tablename, {db1, db2});
 }
 
 int SqlUtil::getTableColumnAndDistinctRows(const QString& tablename, const QString& columnname) const

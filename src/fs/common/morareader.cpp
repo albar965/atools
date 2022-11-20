@@ -31,9 +31,9 @@ namespace atools {
 namespace fs {
 namespace common {
 
-MoraReader::MoraReader(sql::SqlDatabase *sqlDbNav, sql::SqlDatabase *sqlDbSim)
+MoraReader::MoraReader(sql::SqlDatabase *sqlDb1, sql::SqlDatabase *sqlDb2)
 {
-  db = SqlUtil::getDbWithTableAndRows("mora_grid", {sqlDbNav, sqlDbSim});
+  assignDatabase(sqlDb1, sqlDb2);
 }
 
 MoraReader::MoraReader(sql::SqlDatabase *sqlDb)
@@ -53,9 +53,9 @@ MoraReader::~MoraReader()
 
 }
 
-bool MoraReader::readFromTable(atools::sql::SqlDatabase& sqlDb)
+bool MoraReader::readFromTable(sql::SqlDatabase *sqlDbNav, sql::SqlDatabase *sqlDbSim)
 {
-  db = &sqlDb;
+  assignDatabase(sqlDbNav, sqlDbSim);
   return readFromTable();
 }
 
@@ -363,6 +363,12 @@ int MoraReader::getMoraFt(int lonx, int laty) const
   int pos = (-laty + 90) * 360 + lonx + 180;
 
   return datagrid.at(pos);
+}
+
+void MoraReader::assignDatabase(sql::SqlDatabase *sqlDb1, sql::SqlDatabase *sqlDb2)
+{
+  db = SqlUtil::getDbWithTableAndRows("mora_grid", {sqlDb1, sqlDb2});
+  navdata = sqlDb1 == db;
 }
 
 } // namespace common
