@@ -57,7 +57,7 @@ Settings::Settings()
     }
 
     // qSettings object is used to determine paths
-    qSettings = new QSettings(overridePath + QDir::separator() + appNameForFiles(), QSettings::IniFormat);
+    qSettings = new QSettings(overridePath + QDir::separator() + appNameForFiles() + ".ini", QSettings::IniFormat);
   }
   else
     // Default settings path in roaming or other well known paths

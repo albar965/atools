@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "gui/application.h"
+#include "atools.h"
 
 #include <cstdlib>
 #include <QDebug>
@@ -74,7 +75,6 @@ bool Application::notify(QObject *receiver, QEvent *event)
 
 #ifndef DEBUG_NO_APPLICATION_EXCEPTION
 }
-
 catch(std::exception& e)
 {
   qCritical() << "receiver" << (receiver == nullptr ? "null" : receiver->objectName());
@@ -204,7 +204,7 @@ QString Application::getReportPathHtml()
     const QStringList& paths = reportFiles.value(header);
 
     for(const QString& path : paths)
-      fileStr += tr("<a href=\"%1\">%2</a><br/>").arg(QUrl::fromLocalFile(path).toString()).arg(path);
+      fileStr += tr("<a href=\"%1\">%2</a><br/>").arg(QUrl::fromLocalFile(path).toString()).arg(atools::elideTextShortLeft(path, 80));
 
     if(header != keys.constLast())
       fileStr.append(tr("<br/>"));

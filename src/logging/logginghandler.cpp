@@ -72,12 +72,18 @@ void LoggingHandler::initialize(const QString& logConfiguration,
     qWarning() << "LoggingHandler::initialize called more than once";
 }
 
+void LoggingHandler::initialize(const QString& logConfiguration, const QString& logDirectory)
+{
+  if(instance == nullptr)
+    instance = new LoggingHandler(logConfiguration, logDirectory, prefix());
+  else
+    qWarning() << "LoggingHandler::initialize called more than once";
+}
+
 void LoggingHandler::initialize(const QString& logConfiguration)
 {
   if(instance == nullptr)
-    instance = new LoggingHandler(logConfiguration, QDir::currentPath(),
-                                  QCoreApplication::organizationName().replace(" ", "_").toLower() + "-" +
-                                  QCoreApplication::applicationName().replace(" ", "_").toLower());
+    instance = new LoggingHandler(logConfiguration, QDir::currentPath(), prefix());
   else
     qWarning() << "LoggingHandler::initialize called more than once";
 }
@@ -85,11 +91,15 @@ void LoggingHandler::initialize(const QString& logConfiguration)
 void LoggingHandler::initializeForTemp(const QString& logConfiguration)
 {
   if(instance == nullptr)
-    instance = new LoggingHandler(logConfiguration, QDir::tempPath(),
-                                  QCoreApplication::organizationName().replace(" ", "_").toLower() + "-" +
-                                  QCoreApplication::applicationName().replace(" ", "_").toLower());
+    instance = new LoggingHandler(logConfiguration, QDir::tempPath(), prefix());
   else
     qWarning() << "LoggingHandler::initializeForTemp called more than once";
+}
+
+QString LoggingHandler::prefix()
+{
+  return QCoreApplication::organizationName().replace(" ", "_").toLower() + "-" +
+         QCoreApplication::applicationName().replace(" ", "_").toLower();
 }
 
 void LoggingHandler::shutdown()

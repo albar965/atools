@@ -166,7 +166,7 @@ void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelVect
       QString filename = channel->file->fileName();
 
       if(!filename.isEmpty())
-        filenames.insert(filename);
+        filenames.insert(QDir::toNativeSeparators(QFileInfo(filename).absoluteFilePath()));
     }
   }
 }

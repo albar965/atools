@@ -83,6 +83,7 @@ public:
    * @param logFilePrefix Prefix all log file names with this string
    */
   static void initialize(const QString& logConfiguration, const QString& logDirectory, const QString& logFilePrefix);
+  static void initialize(const QString& logConfiguration, const QString& logDirectory);
 
   /* Uses current directory for log and application name as prefix */
   static void initialize(const QString& logConfiguration);
@@ -140,6 +141,7 @@ private:
   static void messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg);
   static void messageHandlerNarrow(QtMsgType type, const QMessageLogContext& context, const QString& msg);
   static void categoryFilter(QLoggingCategory *category);
+  static QString prefix();
 
   static LoggingHandler *instance;
 
