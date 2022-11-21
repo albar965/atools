@@ -254,7 +254,7 @@ QString WindQuery::collectGribFiles()
   else if(weatherType == atools::fs::weather::WEATHER_XP12)
   {
     // GRIB-2022-9-6-21.00-ZULU-wind.grib
-    QDir weatherDir(weatherPath, "GRIB-*-*-*-*.*-ZULU-wind.grib", QDir::Unsorted, QDir::Files | QDir::NoDotAndDotDot);
+    QDir weatherDir(weatherPath, "GRIB-*-wind.grib", QDir::Unsorted, QDir::Files | QDir::NoDotAndDotDot);
     for(QFileInfo entry : weatherDir.entryInfoList())
       gribFiles.append(entry);
 

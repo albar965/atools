@@ -138,7 +138,8 @@ QStringList XpWeatherReader::collectWeatherFiles()
   else if(weatherType == atools::fs::weather::WEATHER_XP12)
   {
     // METAR-2022-9-6-19.00-ZULU.txt, METAR-2022-9-6-20.00-ZULU.txt
-    QDir weatherDir(weatherPath, "METAR-*-*-*-*.*-ZULU.txt", QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
+    // METAR-2022-9-6-19.00.txt, METAR-2022-9-6-20.00.txt
+    QDir weatherDir(weatherPath, "METAR-*.txt", QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
     for(QFileInfo entry : weatherDir.entryInfoList())
       metarFiles.append(entry.absoluteFilePath());
   }

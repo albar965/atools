@@ -22,7 +22,6 @@
 #include "atools.h"
 
 #include <QTimeZone>
-#include <QRegularExpression>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -34,8 +33,7 @@ namespace weather {
 /* Internal struct for METAR data. Stored in the spatial index */
 struct MetarData
 {
-  MetarData(const QString& identParam, const QString& metarParam, QDateTime timestampParam,
-            const atools::geo::Pos& posParam)
+  MetarData(const QString& identParam, const QString& metarParam, QDateTime timestampParam, const atools::geo::Pos& posParam)
     : ident(identParam), metar(metarParam), timestamp(timestampParam), pos(posParam)
   {
   }
@@ -60,6 +58,16 @@ struct MetarData
   }
 
 };
+
+inline bool isDigit(QChar c)
+{
+  return c >= '0' && c <= '9';
+}
+
+inline bool isLetterOrDigit(QChar c)
+{
+  return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z');
+}
 
 // ====================================================================================================
 MetarIndex::MetarIndex(MetarFormat formatParam, bool verboseLogging)
@@ -106,12 +114,6 @@ int MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
 // KADS 301847Z 06005G14KT 13SM SKC 32/19 A3007
 int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bool merge)
 {
-  // Recognize METAR airport ident
-  static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{2,5}$");
-
-  // Recognize date part
-  static const QRegularExpression DATE_REGEXP("^[\\d]{4}/[\\d]{2}/[\\d]{2}");
-
   if(!merge)
   {
     spatialIndex->clear();
@@ -145,8 +147,13 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
 
     if(line.size() >= 4)
     {
-
-      if(DATE_REGEXP.match(line).hasMatch())
+      // static const QRegularExpression DATE_REGEXP("^[\\d]{4}/[\\d]{2}/[\\d]{2}");
+      if(line.size() > 10 &&
+         // 2017/07/30 18:55 - detect only date part
+         isDigit(line.at(0)) && isDigit(line.at(1)) && isDigit(line.at(2)) && isDigit(line.at(3)) &&
+         line.at(4) == '/' && isDigit(line.at(5)) && isDigit(line.at(6)) &&
+         line.at(7) == '/' && isDigit(line.at(8)) && isDigit(line.at(9)) &&
+         line.at(10) == ' ')
       {
         // Found line containing date like "2017/10/29 11:45"
         lastTimestamp = QDateTime::fromString(line, "yyyy/MM/dd hh:mm");
@@ -171,8 +178,12 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
         continue;
       }
 
-      QString ident = line.section(' ', 0, 0).simplified().toUpper();
-      if(IDENT_REGEXP.match(ident).hasMatch())
+      QString ident = line.section(' ', 0, 0);
+      // Recognize METAR airport ident
+      // static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{2,5}$");
+      if(ident.size() >= 3 &&
+         // KPRO 301855Z AUTO 11003KT 10SM CLR 26/14 A3022 RMK AO2 T02570135
+         isLetterOrDigit(line.at(0)) && isLetterOrDigit(line.at(1)) && isLetterOrDigit(line.at(2)))
       {
         // Found METAR line
         if(verbose)
