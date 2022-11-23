@@ -135,6 +135,9 @@ void insertInto(QVector<TYPE>& list, int index, const TYPE& type)
 /* Read whole file into a string */
 QString strFromFile(const QString& filename);
 
+/* Write string into a file */
+void strToFile(const QString& filename, const QString& text);
+
 /* Unicode normalizes string and replaces special characters like ö->o.
  * Removes all diacritics.
  * Omits characters if they cannot be transformed to ASCII. */

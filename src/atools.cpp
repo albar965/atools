@@ -554,6 +554,17 @@ QString strFromFile(const QString& filename)
   return QString();
 }
 
+void strToFile(const QString& filename, const QString& text)
+{
+  QFile file(filename);
+  if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&file);
+    stream << text;
+  }
+
+}
+
 QString homeDir()
 {
   return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
