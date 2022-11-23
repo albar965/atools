@@ -432,6 +432,9 @@ public:
   float toFuelGal(float fuelGalLbs) const;
   float toFuelLbs(float fuelGalLbs) const;
 
+  /* true if this is the example performance after creating a new file */
+  bool isDefault() const;
+
   /* Version number to save into LNMPERF XML files */
   static const int LNMPERF_VERSION_MAJOR = 1;
   static const int LNMPERF_VERSION_MINOR = 0;
@@ -447,6 +450,8 @@ private:
   bool volume = false, jetFuel = false;
 
   QString name, type, simulator, description;
+
+  QString defaultName, defaultType;
 
   /* Default values set in constructor give no fuel consumption, no reserve and about 3 NM per 1000 ft climb and descent */
   float taxiFuel, reserveFuel, extraFuel;

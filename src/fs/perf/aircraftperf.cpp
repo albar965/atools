@@ -91,8 +91,11 @@ bool AircraftPerf::isSpeedValid() const
 
 AircraftPerf::AircraftPerf()
 {
-  name = tr("Example Performance Profile");
-  type = tr("C172");
+  defaultName = tr("Example Performance Profile");
+  defaultType = tr("C172");
+
+  name = defaultName;
+  type = defaultType;
 
   volume = false;
   jetFuel = false;
@@ -591,6 +594,11 @@ float AircraftPerf::toFuelLbs(float fuelGalLbs) const
 {
   // Convert to lbs if this perf is volume based
   return volume ? ageo::fromGalToLbs(jetFuel, fuelGalLbs) : fuelGalLbs;
+}
+
+bool AircraftPerf::isDefault() const
+{
+  return name == defaultName && type == defaultType;
 }
 
 float AircraftPerf::toFuelGal(float fuelGalLbs) const
