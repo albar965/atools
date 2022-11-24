@@ -48,7 +48,12 @@ void XpWeatherReader::setWeatherPath(const QString& path, XpWeatherType type)
   weatherType = type;
 }
 
-atools::fs::weather::MetarResult XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
+bool XpWeatherReader::needsLoading()
+{
+  return fileWatcher == nullptr && !weatherPath.isEmpty();
+}
+
+void XpWeatherReader::load()
 {
   if(fileWatcher == nullptr && !weatherPath.isEmpty())
   {
@@ -60,6 +65,12 @@ atools::fs::weather::MetarResult XpWeatherReader::getXplaneMetar(const QString& 
 
     createFsWatcher();
   }
+}
+
+atools::fs::weather::MetarResult XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
+{
+  if(needsLoading())
+    load();
 
   return metarIndex->getMetar(station, pos);
 }

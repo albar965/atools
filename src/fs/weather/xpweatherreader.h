@@ -68,6 +68,12 @@ public:
   /* Print the size of all container classes to detect overflow or memory leak conditions */
   void debugDumpContainerSizes() const;
 
+  /* true if empty */
+  bool needsLoading();
+
+  /* load all METAR files */
+  void load();
+
 signals:
   void weatherUpdated();
 
