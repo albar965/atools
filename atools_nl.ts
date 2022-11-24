@@ -27,28 +27,28 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="128"/>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="397"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="131"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="400"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
         <translation>Kan.&quot;aircraft performance&quot;-bestand &quot;%1&quot; niet openen om te lezen.</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="141"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="144"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading. Invalid format.</source>
         <translation>Kan &quot;aircraft performance&quot;-bestand &quot;%1&quot; niet openen om te lezen.</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="169"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="172"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>Kan bestand %1 niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="261"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="264"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="411"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="414"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
         <translation>Kan &quot;aircraft performance&quot;-bestand &quot;%1&quot; niet openen om te schrijven.</translation>
     </message>
@@ -1402,43 +1402,43 @@ Bestand:&quot;%2&quot;
         <translation>Onbekende Status</translation>
     </message>
     <message>
-        <location filename="src/logging/loggingguiabort.cpp" line="42"/>
+        <location filename="src/logging/loggingguiabort.cpp" line="48"/>
         <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <oldsource>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</oldsource>
         <translation type="unfinished">&lt;b&gt;Fatale fout.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Toets OK om de applicatie te verlaten.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="119"/>
+        <location filename="src/atools.cpp" line="122"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>Fout bij het lezen &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="190"/>
+        <location filename="src/atools.cpp" line="193"/>
         <source>★</source>
         <comment>Star for rating</comment>
         <translatorcomment>Ster voor beoordeling</translatorcomment>
         <translation>★</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="190"/>
+        <location filename="src/atools.cpp" line="193"/>
         <source>−</source>
         <comment>For empty rating</comment>
         <translatorcomment>Voor lege beoordeling</translatorcomment>
         <translation>−</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="342"/>
-        <location filename="src/atools.cpp" line="350"/>
-        <location filename="src/atools.cpp" line="358"/>
-        <location filename="src/atools.cpp" line="409"/>
+        <location filename="src/atools.cpp" line="349"/>
+        <location filename="src/atools.cpp" line="357"/>
+        <location filename="src/atools.cpp" line="365"/>
+        <location filename="src/atools.cpp" line="417"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translatorcomment>Punten gebruikt om teksten in te korten</translatorcomment>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="386"/>
-        <location filename="src/atools.cpp" line="391"/>
+        <location filename="src/atools.cpp" line="393"/>
+        <location filename="src/atools.cpp" line="398"/>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
@@ -1447,7 +1447,7 @@ Bestand:&quot;%2&quot;
 </translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="388"/>
+        <location filename="src/atools.cpp" line="395"/>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
@@ -1456,30 +1456,30 @@ Bestand:&quot;%2&quot;
 …</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="389"/>
+        <location filename="src/atools.cpp" line="396"/>
         <source>…</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translatorcomment>Linefeed en punten gebruikt om teksten in te korten</translatorcomment>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="410"/>
+        <location filename="src/atools.cpp" line="418"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="443"/>
+        <location filename="src/atools.cpp" line="453"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Gemaakt door %1 Versie %2 (revisie %3) op %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="453"/>
+        <location filename="src/atools.cpp" line="463"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Gemaakt door %1 Versie %2 (revisie %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="478"/>
+        <location filename="src/atools.cpp" line="488"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="84"/>
@@ -1487,47 +1487,47 @@ Bestand:&quot;%2&quot;
         <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="831"/>
+        <location filename="src/atools.cpp" line="852"/>
         <source>Directory name is empty.</source>
         <translation>Foldernaam is leeg.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="840"/>
+        <location filename="src/atools.cpp" line="861"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation>Folder &quot;%1&quot; bestaat niet.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="848"/>
+        <location filename="src/atools.cpp" line="869"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation>Bestand &quot;%1&quot; is geen folder.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="854"/>
+        <location filename="src/atools.cpp" line="875"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation>Folder &quot;%1&quot; is niet leesbaar.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="872"/>
+        <location filename="src/atools.cpp" line="893"/>
         <source>Filepath is empty.</source>
         <translation>Pad naar bestand is leeg.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="881"/>
+        <location filename="src/atools.cpp" line="902"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation>Bestand&quot;%1&quot; bestaat niet.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="889"/>
+        <location filename="src/atools.cpp" line="910"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation>Bestand &quot;%1&quot; is een folder.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="894"/>
+        <location filename="src/atools.cpp" line="915"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation>Bestand &quot;%1&quot; is niet leesbaar.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="900"/>
+        <location filename="src/atools.cpp" line="921"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation>Bestand &quot;%1&quot; is leeg.</translation>
     </message>
@@ -2469,87 +2469,87 @@ Maak dat earth_fix.dat, earth_awy.dat en earth_nav.dat gevonden kunnen worden op
 <context>
     <name>atools::fs::perf::AircraftPerfHandler</name>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="235"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="237"/>
         <source>on ground</source>
         <translation>op de grond</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="237"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="239"/>
         <source>fuel flow</source>
         <translation>brandstofverbruik</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="244"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="246"/>
         <source>climbing</source>
         <translation>klimmend</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="246"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="248"/>
         <source>descending</source>
         <translation>dalend</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="250"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="252"/>
         <source>at cruise altitude</source>
         <translation>op cruisehoogte</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="252"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="254"/>
         <source>below cruise altitude</source>
         <translation>lager dan de cruisehoogte</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="254"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="256"/>
         <source>above cruise altitude</source>
         <translation>hoger dan de cruisehoogte</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="379"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="381"/>
         <source>Invalid</source>
         <translation>Ongeldig</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="382"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="384"/>
         <source>None</source>
         <translation>Geen</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="385"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="387"/>
         <source>Departure Parking</source>
         <translation>Parking Vertrek</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="388"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="390"/>
         <source>Departure Taxi and Takeoff</source>
         <translation>Taxi en Takeoff Vertrek</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="391"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="393"/>
         <source>Climb</source>
         <translation>Klimfase</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="394"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="396"/>
         <source>Cruise</source>
         <translation>Cruise</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="397"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="399"/>
         <source>Descent</source>
         <translation>Daling</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="400"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="402"/>
         <source>Destination Taxi</source>
         <translation>Taxi Aankomst</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="403"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="405"/>
         <source>Destination Parking</source>
         <translation>Parking Aankomst</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="406"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="408"/>
         <source>Unknown</source>
         <translation>Onbekend</translation>
     </message>
@@ -2557,22 +2557,22 @@ Maak dat earth_fix.dat, earth_awy.dat en earth_nav.dat gevonden kunnen worden op
 <context>
     <name>atools::fs::sc::DataReaderThread</name>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="244"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="247"/>
         <source>No flight simulator installation found. SimConnect not loaded.</source>
         <translation>Geen vluchtsimulator geinstalleerd. Simconnect niet geladen.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="250"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="253"/>
         <source>Not connected to the simulator. Waiting ...</source>
         <translation>Niet verbonden met de simulator. Wachten ...</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="270"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="273"/>
         <source>Connected to simulator.</source>
         <translation>Verbonden met de simulator.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="382"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="389"/>
         <source>Error reading &quot;%1&quot;: %2.</source>
         <translation>Fout bij het lezen van &quot;%1&quot;: %2.</translation>
     </message>
@@ -2586,54 +2586,62 @@ Maak dat earth_fix.dat, earth_awy.dat en earth_nav.dat gevonden kunnen worden op
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="414"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="422"/>
         <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
         <oldsource>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</oldsource>
         <translation type="unfinished">Teveel fouten bij het lezen vanuit de simulator. Niet meer verbonden. Herstarten.&lt;i&gt;%1&lt;/i&gt; om opnieuw te proberen.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="433"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="441"/>
         <source>Error reading from simulator: %1. Disconnected. Restart &lt;i&gt;%2&lt;/i&gt; to try again.</source>
         <translation>Fout bij het lezen vanuit de simulator: %1. Niet meer verbonden. Herstarten.&lt;i&gt;%2&lt;/i&gt; om opnieuw te proberen.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="440"/>
         <source>Your installed version of &lt;i&gt;Little Xpconnect&lt;/i&gt; is not compatible with this version of &lt;i&gt;%2&lt;/i&gt;.</source>
-        <translation>De geïnstalleerde versie van &lt;i&gt;Little Xpconnect&lt;/i&gt; is niet compatibel met deze versie van &lt;i&gt;%2&lt;/i&gt;.</translation>
+        <translation type="vanished">De geïnstalleerde versie van &lt;i&gt;Little Xpconnect&lt;/i&gt; is niet compatibel met deze versie van &lt;i&gt;%2&lt;/i&gt;.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="443"/>
         <source>Install the latest version of &lt;i&gt;Little Xpconnect&lt;/i&gt;.</source>
-        <translation>Installeer de laatste versie van &lt;i&gt;Little Xpconnect&lt;/i&gt;.</translation>
+        <translation type="vanished">Installeer de laatste versie van &lt;i&gt;Little Xpconnect&lt;/i&gt;.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="540"/>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="583"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="448"/>
+        <source>Your installed version of Little Xpconnect is not compatible with this version of %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="451"/>
+        <source>Install the latest version of Little Xpconnect.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="552"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="595"/>
         <source>Cannot open &quot;%1&quot;.</source>
         <translation>Kan &quot;%1&quot; niet openen.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="555"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="567"/>
         <source>Cannot open &quot;%1&quot;. Is not a replay file - wrong magic number.</source>
         <translation>Kan &quot;%1&quot; niet openen. Is geen antwoord bestand - verkeerd magic nummer.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="562"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="574"/>
         <source>Cannot open &quot;%1&quot;. Wrong version.</source>
         <translation>Kan &quot;%1&quot; niet openen. Verkeerde versie.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="567"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="579"/>
         <source>Replaying from &quot;%1&quot;.</source>
         <translation>Herstarten van &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="573"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="585"/>
         <source>Cannot open &quot;%1&quot;. File is too small.</source>
         <translation>Kan &quot;%1&quot; niet openen. Bestand is te klein.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="589"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="601"/>
         <source>Saving replay to &quot;%1&quot;.</source>
         <translation>Herstel bewaren in &quot;%1&quot;.</translation>
     </message>
@@ -2824,7 +2832,7 @@ Nachttijd: %5</translation>
 <context>
     <name>atools::gui::HelpHandler</name>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="60"/>
+        <location filename="src/gui/helphandler.cpp" line="68"/>
         <source>About %1</source>
         <translation>Over %1</translation>
     </message>
@@ -2843,24 +2851,34 @@ Nachttijd: %5</translation>
         <translation>&lt;p&gt;%1 (build)&lt;br/&gt;%2 (library)&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="61"/>
+        <location filename="src/gui/helphandler.cpp" line="60"/>
+        <source> 64-bit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/helphandler.cpp" line="62"/>
+        <source> 32-bit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/helphandler.cpp" line="69"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Versie %3 (revisie %4)&lt;/p&gt;&lt;p&gt;atools Versioe %5 (revisie %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="79"/>
+        <location filename="src/gui/helphandler.cpp" line="87"/>
         <source>About Qt</source>
         <translation>Over Qt</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="92"/>
+        <location filename="src/gui/helphandler.cpp" line="100"/>
         <source>Error opening help URL &quot;%1&quot;</source>
         <oldsource>Error opening help URL &lt;i&gt;%1&lt;/i&gt;</oldsource>
         <translation>Fout bij het openen van hulp URL &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="128"/>
-        <location filename="src/gui/helphandler.cpp" line="149"/>
+        <location filename="src/gui/helphandler.cpp" line="136"/>
+        <location filename="src/gui/helphandler.cpp" line="157"/>
         <source>Help file &quot;%1&quot; not found</source>
         <oldsource>Help file &lt;i&gt;%1&lt;/i&gt; not found</oldsource>
         <translation>Hulp bestand &quot;%1&quot; niet gevonden</translation>
@@ -2870,8 +2888,8 @@ Nachttijd: %5</translation>
         <translation type="vanished">URL is leeg voor &quot;%1&quot; en anker &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="208"/>
-        <location filename="src/gui/helphandler.cpp" line="224"/>
+        <location filename="src/gui/helphandler.cpp" line="216"/>
+        <location filename="src/gui/helphandler.cpp" line="232"/>
         <source>URL is empty for &quot;%1&quot;.</source>
         <translation>URL is leeg voor &quot;%1&quot;.</translation>
     </message>

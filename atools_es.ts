@@ -2091,19 +2091,19 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your installed version of &lt;i&gt;Little Xpconnect&lt;/i&gt; is not compatible with this version of &lt;i&gt;%2&lt;/i&gt;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Install the latest version of &lt;i&gt;Little Xpconnect&lt;/i&gt;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Writing to &quot;%1&quot; in VATSIM format every %2 seconds.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your installed version of Little Xpconnect is not compatible with this version of %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Install the latest version of Little Xpconnect.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
