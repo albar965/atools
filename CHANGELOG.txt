@@ -4,6 +4,19 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.7.beta
+
+* Fixes for overriding log and settings path when using portable mode scripts.
+  Corrected wrong settings file name from `little_navmap` to `little_navmap.ini` when using portable mode.
+* Fix for X-Plane 12 METAR. Made file matching pattern more tolerant and applied
+  optimizations for faster readin albar965/littlenavmap#950
+* MoraReader now checks for table in nav and sim database.
+* Moved ILS feather calculation to common function.
+* Fixed issues where merge aircraft performance where example profile values showed up.
+* Fixed on-ground flag for MSFS user aircraft.
+
+===============================================================================
+
 # Version 3.8.6.beta
 
 * Fixed issue where airport city names were missing since MSFS SU11 beta.
