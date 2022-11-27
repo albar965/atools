@@ -1026,7 +1026,15 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
   else if(key == "city")
     insertAirportQuery->bindValue(":city", value);
   else if(key == "country")
+  {
+    // Remove area or country code from "USA United States"
+    // Allow at least two characters for the county - otherwise leave as is
+    value = value.simplified();
+    if(value.size() > 6 && value.at(0).isUpper() && value.at(1).isUpper() && value.at(2).isUpper() && value.at(3) == ' ')
+      value = value.mid(4);
+
     insertAirportQuery->bindValue(":country", value);
+  }
   else if(key == "flatten")
     insertAirportQuery->bindValue(":flatten", value);
   else if(key.startsWith("region") && !value.isEmpty()) // Documentation is not clear - region_id or region_code
