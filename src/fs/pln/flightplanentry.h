@@ -116,6 +116,11 @@ public:
     return position;
   }
 
+  float getAltitude() const
+  {
+    return position.getAltitude();
+  }
+
   void setPosition(const atools::geo::Pos& value)
   {
     position = value;
@@ -143,7 +148,7 @@ public:
   /* Do not save entry into the file if it is a procedure or an alternate airport */
   bool isNoSave() const
   {
-    return (flags& entry::PROCEDURE) || (flags & entry::ALTERNATE);
+    return flags.testFlag(entry::PROCEDURE) || flags.testFlag(entry::ALTERNATE);
   }
 
   bool isTrack() const
