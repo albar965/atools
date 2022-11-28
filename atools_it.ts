@@ -19,12 +19,12 @@
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="94"/>
         <source>Example Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Esempio di Profilo delle Prestazioni</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="95"/>
         <source>C172</source>
-        <translation type="unfinished"></translation>
+        <translation>C172</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="131"/>
@@ -1471,7 +1471,7 @@ File: &quot;%2&quot;
         <location filename="src/logging/loggingguiabort.cpp" line="48"/>
         <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <oldsource>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;Incontrato un errore fatale.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Premere OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
+        <translation>&lt;b&gt;Incontrato un errore fatale.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Premere OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="src/atools.cpp" line="122"/>
@@ -2654,7 +2654,7 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
         <location filename="src/fs/sc/datareaderthread.cpp" line="422"/>
         <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
         <oldsource>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</oldsource>
-        <translation type="unfinished">Troppi errori leggendo dal simulatore. Disconnesso. Riavvia &lt;i&gt;%1&lt;/i&gt; per riprovare.</translation>
+        <translation>Troppi errori in lettura dal simulatore. Disconnesso. Riavvia %1 per riprovare.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="441"/>
@@ -2672,12 +2672,12 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="448"/>
         <source>Your installed version of Little Xpconnect is not compatible with this version of %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>La tua versione di Little Xpconnect non è compatibile con questa versione di %2.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="451"/>
         <source>Install the latest version of Little Xpconnect.</source>
-        <translation type="unfinished"></translation>
+        <translation>Installa l&apos;ultima versione di Little Xpconnect.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="552"/>
@@ -2795,7 +2795,7 @@ Ore Notturne: %5</translation>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="273"/>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="277"/>
         <source>File is not an X-Plane user_fix.dat file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file non è un file user_fix.dat di X-Plane.</translation>
     </message>
 </context>
 <context>
@@ -2817,7 +2817,7 @@ Ore Notturne: %5</translation>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="701"/>
+        <location filename="src/grib/windquery.cpp" line="686"/>
         <source>Unknown error.</source>
         <translation>Errore sconosciuto.</translation>
     </message>
@@ -2828,7 +2828,7 @@ Ore Notturne: %5</translation>
         <location filename="src/gui/application.cpp" line="97"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di &lt;i&gt;%1&lt;/i&gt; e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation>&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di %1 e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione al tuo report, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
@@ -2934,12 +2934,12 @@ Ore Notturne: %5</translation>
     <message>
         <location filename="src/gui/helphandler.cpp" line="60"/>
         <source> 64-bit</source>
-        <translation type="unfinished"></translation>
+        <translation> 64-bit</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="62"/>
         <source> 32-bit</source>
-        <translation type="unfinished"></translation>
+        <translation> 32-bit</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="69"/>
@@ -3134,12 +3134,12 @@ Importazione interrotta.</translation>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="740"/>
         <source>&amp;Undo %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Annulla %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="746"/>
         <source>&amp;Redo %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Rifare %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="832"/>
@@ -3174,7 +3174,7 @@ Importazione interrotta.</translation>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="845"/>
         <source>Invalid undo action</source>
-        <translation type="unfinished"></translation>
+        <translation>Azione di annullamento non valida</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="849"/>
