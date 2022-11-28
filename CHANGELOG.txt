@@ -4,6 +4,15 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.8.beta
+
+* Removing area/country codes from X-Plane country names now.
+* New methods in FlighPlanEntry.
+* Fixed performance issue when loading X-Plane METAR and GRIB (wind) files. Now only reading the
+  latest three METAR and the latest GRIB file.
+
+===============================================================================
+
 # Version 3.8.7.beta
 
 * Fixes for overriding log and settings path when using portable mode scripts.
