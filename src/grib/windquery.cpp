@@ -26,9 +26,9 @@
 #include "grib/gribdownloader.h"
 #include "grib/gribreader.h"
 #include "util/filesystemwatcher.h"
+#include "fs/util/fsutil.h"
 
 #include <QDir>
-#include <QRegularExpression>
 
 using atools::grib::GribDownloader;
 using atools::geo::Rect;
@@ -258,36 +258,21 @@ QString WindQuery::collectGribFiles()
     for(QFileInfo entry : weatherDir.entryInfoList())
       gribFiles.append(entry);
 
-    // const QDateTime now = QDateTime::currentDateTimeUtc();
     // Sort by timestamp - put latest at begin of list
     if(gribFiles.size() > 1)
       std::sort(gribFiles.begin(), gribFiles.end(), [](const QFileInfo& file1, const QFileInfo& file2)->bool {
-            return xpFilenameToDate(file1.fileName()) > xpFilenameToDate(file2.fileName());
+            return atools::fs::util::xpGribFilenameToDate(file1.fileName()) > atools::fs::util::xpGribFilenameToDate(file2.fileName());
           });
   }
-
-  QStringList files;
-  for(QFileInfo entry : gribFiles)
-    files.append(entry.absoluteFilePath());
 
   if(verbose)
     qDebug() << Q_FUNC_INFO << gribFiles;
 
   // Return first and latest file since GRIB cannot be merged like METAR
-  return files.value(0);
-}
-
-QDateTime WindQuery::xpFilenameToDate(const QString& filename)
-{
-  // GRIB-2022-9-6-21.00-ZULU-wind.grib
-  const static QRegularExpression GRIB_REGEXP("GRIB-(\\d+)-(\\d+)-(\\d+)-(\\d+).(\\d+)-ZULU-wind\\.grib$");
-  QRegularExpressionMatch match = GRIB_REGEXP.match(filename);
-
-  if(match.hasMatch())
-    return QDateTime(QDate(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt()),
-                     QTime(match.captured(4).toInt(), match.captured(5).toInt()), Qt::UTC);
+  if(!gribFiles.isEmpty())
+    return gribFiles.constFirst().absoluteFilePath();
   else
-    return QDateTime();
+    return QString();
 }
 
 void WindQuery::initFromFixedModel(float dir, float speed, float altitude)

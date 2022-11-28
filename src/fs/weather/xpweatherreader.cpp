@@ -19,9 +19,11 @@
 
 #include "util/filesystemwatcher.h"
 #include "fs/weather/metarindex.h"
+#include "fs/util/fsutil.h"
 
 #include <QDir>
 #include <QFileInfo>
+#include <QMap>
 
 namespace atools {
 namespace fs {
@@ -142,7 +144,8 @@ void XpWeatherReader::filesUpdated(const QStringList& filenames)
 
 QStringList XpWeatherReader::collectWeatherFiles()
 {
-  QStringList metarFiles;
+  QFileInfoList metarFiles;
+
   if(weatherType == atools::fs::weather::WEATHER_XP11)
     // METAR.rwx
     metarFiles.append(weatherPath);
@@ -152,14 +155,27 @@ QStringList XpWeatherReader::collectWeatherFiles()
     // METAR-2022-9-6-19.00.txt, METAR-2022-9-6-20.00.txt
     QDir weatherDir(weatherPath, "METAR-*.txt", QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
     for(QFileInfo entry : weatherDir.entryInfoList())
-      metarFiles.append(entry.absoluteFilePath());
+      metarFiles.append(entry);
+
+    // Sort by timestamp - put latest at begin of list
+    if(metarFiles.size() > 1)
+      std::sort(metarFiles.begin(), metarFiles.end(), [](const QFileInfo& file1, const QFileInfo& file2)->bool {
+              return atools::fs::util::xpMetarFilenameToDate(file1.fileName()) > atools::fs::util::xpMetarFilenameToDate(file2.fileName());
+            });
   }
 
   if(verbose)
     qDebug() << Q_FUNC_INFO << metarFiles;
 
-  metarFiles.sort();
-  return metarFiles;
+  // Return only latest three files
+  QStringList files;
+  for(int i = 0; i < std::min(3, metarFiles.size()); i++)
+    files.append(metarFiles.at(i).absoluteFilePath());
+
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << files;
+
+  return files;
 }
 
 void XpWeatherReader::deleteFsWatcher()

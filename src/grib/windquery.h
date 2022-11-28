@@ -189,7 +189,6 @@ private:
   WindData windAverageForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
 
   QString collectGribFiles();
-  static QDateTime xpFilenameToDate(const QString& filename);
 
   /* Surfaces to download from NOAA. Negative value denotes AGL in ft and positive is millibar level.
    *

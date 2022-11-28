@@ -20,6 +20,7 @@
 #include "geo/calculations.h"
 #include "geo/pos.h"
 
+#include <QDateTime>
 #include <QRegularExpression>
 #include <QSet>
 #include <QStringBuilder>
@@ -996,6 +997,38 @@ void calculateIlsGeometry(const atools::geo::Pos& pos, float headingTrue, float 
   p2 = pos.endpoint(lengthMeter, hdg + widthDeg / 2.f);
   float featherWidth = p1.distanceMeterTo(p2);
   pmid = pos.endpoint(lengthMeter - featherWidth / 2.f, hdg);
+}
+
+QDateTime xpGribFilenameToDate(const QString& filename)
+{
+  // XP 11 and 12
+  // GRIB-2022-11-25-00.00-ZULU-wind.grib
+  // GRIB-2022-9-6-21.00-ZULU-wind.grib
+  const static QRegularExpression GRIB_REGEXP("GRIB-(\\d+)-(\\d+)-(\\d+)-(\\d+).(\\d+)(-ZULU)?-wind\\.grib$",
+                                              QRegularExpression::CaseInsensitiveOption);
+  QRegularExpressionMatch match = GRIB_REGEXP.match(filename);
+
+  if(match.hasMatch())
+    return QDateTime(QDate(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt()),
+                     QTime(match.captured(4).toInt(), match.captured(5).toInt()), Qt::UTC);
+  else
+    return QDateTime();
+}
+
+QDateTime xpMetarFilenameToDate(const QString& filename)
+{
+  // XP 12
+  // Metar-2022-9-6-20.00.txt
+  // metar-2022-10-2-22.00.txt
+  const static QRegularExpression METAR_REGEXP("METAR-(\\d+)-(\\d+)-(\\d+)-(\\d+).(\\d+)(-ZULU)?\\.txt$",
+                                               QRegularExpression::CaseInsensitiveOption);
+  QRegularExpressionMatch match = METAR_REGEXP.match(filename);
+
+  if(match.hasMatch())
+    return QDateTime(QDate(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt()),
+                     QTime(match.captured(4).toInt(), match.captured(5).toInt()), Qt::UTC);
+  else
+    return QDateTime();
 }
 
 } // namespace util
