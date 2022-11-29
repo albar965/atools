@@ -24,15 +24,6 @@
 namespace atools {
 namespace util {
 
-// Split the download links for used OS
-#if defined(Q_OS_WIN32)
-static const QLatin1String DOWNLOAD_KEY("downloadwin");
-#elif defined(Q_OS_MACOS)
-static const QLatin1String DOWNLOAD_KEY("downloadmac");
-#else
-static const QLatin1String DOWNLOAD_KEY("downloadlinux");
-#endif
-
 UpdateCheck::UpdateCheck(bool forceDebug)
   : curProgramVersion(QCoreApplication::applicationVersion()), debug(forceDebug)
 {
@@ -179,19 +170,7 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
           }
           changelogContinuation = false;
         }
-        else if(key == "url")
-        {
-          map[currentChannel].url = value;
-          changelogContinuation = false;
-        }
-        else if(key.startsWith("download"))
-        {
-          if(key == DOWNLOAD_KEY || key == "download")
-            // OS specific or general download
-            map[currentChannel].download = value;
-          changelogContinuation = false;
-        }
-        else if(key == "changelog")
+        else if(key == "changelog" || key == "description")
         {
           // Start of changelog
           map[currentChannel].changelog = rawValue;
@@ -237,7 +216,8 @@ void UpdateCheck::endRequest()
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     disconnect(reply, &QNetworkReply::errorOccurred, this, &UpdateCheck::httpError);
 #else
-    disconnect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &UpdateCheck::httpError);
+    disconnect(reply, static_cast<void (QNetworkReply::*)(
+                                    QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &UpdateCheck::httpError);
 #endif
     reply->abort();
     reply->deleteLater();

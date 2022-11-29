@@ -39,10 +39,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(atools::util::UpdateChannels);
 struct Update
 {
   atools::util::UpdateChannels channel; /* The used update channel */
-  QString url, /* URL with general information like a release page */
-          version, /* the offered version */
-          changelog, /* HTML changelog */
-          download; /* A download URL for the used operating system */
+  QString version, /* the offered version */
+          changelog; /* HTML changelog */
 };
 
 typedef QVector<atools::util::Update> UpdateList;
@@ -57,20 +55,14 @@ typedef QVector<atools::util::Update> UpdateList;
  *
  * [stable]
  * version=1.4.4
- * url=https://albar965.github.io/release/2017/07/04/littlenavmap-stable-144-released.html
  * changelog=<ul> <li>Added light (Positron) and dark (Dark Matter) maps from CARTO.</li> ...
- * downloadwin=https://github.com/albar965/littlenavmap/releases/download/v1.4.4/LittleNavmap-win-1.4.4.zip
- * downloadmac=https://github.com/albar965/littlenavmap/releases/download/v1.4.4/LittleNavmap-macOS-1.4.4.dmg
- * downloadlinux=https://github.com/albar965/littlenavmap/releases/download/v1.4.4/LittleNavmap-linux-1.4.4.tar.gz
  *
  * # [beta] Comment
  * # version=1.6.0.beta
- * # url=https://albar965.github.io/release/2017/07/04/littlenavmap-stable-144-released.html
  * # changelog=<ul><li>First beta</li><li>Second beta</li></ul><p>Notes: Do not delete</p>
  *
  * [develop]
  * version=1.5.3.develop
- * downloadwin=https://www.dropbox.com/s/v98jflpxphns4x0/LittleNavmap-20170730-1853.zip
  * changelog=<ul> <li>Fixed missing encoding in PLN XML files since changing to Qt 5.9.</li> ...
  */
 
