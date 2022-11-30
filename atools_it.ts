@@ -3201,7 +3201,7 @@ Importazione interrotta.</translation>
 <context>
     <name>atools::util::UpdateCheck</name>
     <message>
-        <location filename="src/util/updatecheck.cpp" line="118"/>
+        <location filename="src/util/updatecheck.cpp" line="109"/>
         <source>Unknown Error</source>
         <translation>Errore sconosciuto</translation>
     </message>

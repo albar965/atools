@@ -19,12 +19,12 @@
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="94"/>
         <source>Example Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exemple de profil de performance</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="95"/>
         <source>C172</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">C172</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="131"/>
@@ -123,7 +123,7 @@
     <message>
         <location filename="src/fs/scenery/contentxml.cpp" line="194"/>
         <source>Generic Airports</source>
-        <translation type="unfinished">Aérodromes génériques</translation>
+        <translation type="unfinished">Aéroports génériques</translation>
     </message>
     <message>
         <location filename="src/fs/scenery/contentxml.cpp" line="201"/>
@@ -247,7 +247,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanentry.cpp" line="87"/>
         <source>Airport</source>
-        <translation type="unfinished">Aérodrome</translation>
+        <translation type="unfinished">Aéroport</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanentry.cpp" line="90"/>
@@ -1330,7 +1330,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1478"/>
         <source>Generic Airports</source>
-        <translation type="unfinished">Aérodromes génériques</translation>
+        <translation type="unfinished">Aéroports génériques</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1493"/>
@@ -2243,7 +2243,7 @@ Importation arrêtée.</translation>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="873"/>
         <source>Counting files for Global Scenery/Global Airports ...</source>
-        <translation type="unfinished">Comptage des fichiers pour la scène globale/Aérodromes mondiaux ...</translation>
+        <translation type="unfinished">Comptage des fichiers pour la scène globale/Aéroports mondiaux ...</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="884"/>
@@ -2605,12 +2605,12 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="448"/>
         <source>Your installed version of Little Xpconnect is not compatible with this version of %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Votre version installée de Little Xpconnect n&apos;est pas compatible avec cette version de %2.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="451"/>
         <source>Install the latest version of Little Xpconnect.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Installez la dernière version de Little Xpconnect.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="552"/>
@@ -2854,12 +2854,12 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/gui/helphandler.cpp" line="60"/>
         <source> 64-bit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> 64-bit</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="62"/>
         <source> 32-bit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> 32-bit</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="69"/>
@@ -3128,7 +3128,7 @@ Importation arrêtée.</translation>
 <context>
     <name>atools::util::UpdateCheck</name>
     <message>
-        <location filename="src/util/updatecheck.cpp" line="118"/>
+        <location filename="src/util/updatecheck.cpp" line="109"/>
         <source>Unknown Error</source>
         <translation>Erreur inconnue</translation>
     </message>
