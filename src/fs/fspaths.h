@@ -87,6 +87,16 @@ public:
 
   Q_ENUM(SimulatorType)
 
+  enum MsfsInstallType
+  {
+    MSFS_INSTALL_NONE,
+    MSFS_INSTALL_ONLINE,
+    MSFS_INSTALL_BOXED,
+    MSFS_INSTALL_STEAM
+  };
+
+  Q_ENUM(MsfsInstallType)
+
   typedef QVector<atools::fs::FsPaths::SimulatorType> SimulatorTypeVector;
 
   /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed.
@@ -102,6 +112,9 @@ public:
 
   /* Path to official MSFS scenery containing fs-base and fs-base-nav */
   static QString getMsfsOfficialPath();
+
+  /* Detected installation type of MSFS */
+  static MsfsInstallType getMsfsInstallType();
 
   /* Path to official folder for changed base where base is like
    * .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/[OneStore|Steam]

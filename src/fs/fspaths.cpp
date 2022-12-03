@@ -140,6 +140,8 @@ const QLatin1String P3D_V4_NO_WINDOWS_PATH("Prepar3D v4");
 const QLatin1String P3D_V5_NO_WINDOWS_PATH("Prepar3D v5");
 const QLatin1String MSFS_NO_WINDOWS_PATH("MSFS2020");
 
+static FsPaths::MsfsInstallType msfsInstallType = FsPaths::MSFS_INSTALL_NONE;
+
 static QProcessEnvironment environment;
 
 using atools::settings::Settings;
@@ -232,6 +234,11 @@ QString FsPaths::getSceneryLibraryPath(FsPaths::SimulatorType type)
 QString FsPaths::getMsfsOfficialPath()
 {
   return msfsOfficialPath;
+}
+
+FsPaths::MsfsInstallType FsPaths::getMsfsInstallType()
+{
+  return msfsInstallType;
 }
 
 QString FsPaths::getMsfsOfficialPath(const QString& basePath)
@@ -345,6 +352,8 @@ QString FsPaths::initBasePath(SimulatorType type)
       // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe
       msfsSimPath = environment.value("LOCALAPPDATA") % SEP % "Packages" % SEP % "Microsoft.FlightSimulator_8wekyb3d8bbwe";
       qInfo() << Q_FUNC_INFO << "Found MSFS Online simulator path" << msfsSimPath;
+
+      msfsInstallType = MSFS_INSTALL_ONLINE;
     }
 
     // Steam installation ====================
@@ -358,6 +367,8 @@ QString FsPaths::initBasePath(SimulatorType type)
       // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
       msfsSimPath = environment.value("APPDATA") % SEP % "Microsoft Flight Simulator";
       qInfo() << Q_FUNC_INFO << "Found MSFS Steam simulator path" << msfsSimPath;
+
+      msfsInstallType = MSFS_INSTALL_STEAM;
     }
 
     // MS Boxed installation ====================
@@ -371,6 +382,8 @@ QString FsPaths::initBasePath(SimulatorType type)
       // C:\Users\USER\AppData\Local\MSFSPackages\UserCfg.opt
       msfsSimPath = environment.value("LOCALAPPDATA") % SEP % "MSFSPackages";
       qInfo() << Q_FUNC_INFO << "Found MSFS Boxed simulator path" << msfsSimPath;
+
+      msfsInstallType = MSFS_INSTALL_BOXED;
     }
 
 #elif defined(DEBUG_FS_PATHS)
@@ -389,6 +402,8 @@ QString FsPaths::initBasePath(SimulatorType type)
       // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe
       msfsSimPath = nonWinPath % SEP % "Packages" % SEP % "Microsoft.FlightSimulator_8wekyb3d8bbwe";
       qInfo() << Q_FUNC_INFO << "Found MSFS simulator path" << msfsSimPath;
+
+      msfsInstallType = MSFS_INSTALL_ONLINE;
     }
 
 #endif
