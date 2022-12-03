@@ -3367,7 +3367,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
 
     if(version11Format)
     {
-      // New X-Plane 11 format
+      // FMS 11 ======================================
       stream << "1100 Version" << endl;
 
       stream << "CYCLE " << cycle << endl;
@@ -3424,14 +3424,9 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       // Number of waypoints
       stream << "NUMENR " << numEntries << endl;
     }
-    else if(!iniBuildsFormat)
-    {
-      stream << "3 version" << endl;
-      stream << "1" << endl;
-      stream << (numEntries - 1) << endl; // Number of waypoints
-    }
     else if(iniBuildsFormat)
     {
+      // MSFS Inibuilds ======================================
       // AIRLINE
       // FLTID N314SB
       // CYCLE 2211
@@ -3454,10 +3449,23 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       // PAXNBR 221
       // CARGO 5513
       // PAYLOAD 23056
+      // 1 KDEN ADEP 5434.000000 39.861667 -104.673167
+      // 3 HGO DRCT 35900.000000 38.817500 -103.621389
+      // 3 LAA DRCT 37000.000000 38.197092 -102.687533
+      // 3 SPS DRCT 37000.000000 33.987286 -98.593472
+      // 3 FUZ DRCT 3100.000000 32.889450 -97.179425
+      // 1 KDFW ADES 3100.000000 32.897233 -97.037694
       stream << "ADEP " << departureIdent << endl;
       stream << "ADES " << destinationIdent << endl;
       stream << "CYCLE " << cycle << endl;
       stream << "CRUISE " << plan.getCruisingAltitude() << endl;
+    }
+    else
+    {
+      // FMS 3 ======================================
+      stream << "3 version" << endl;
+      stream << "1" << endl;
+      stream << (numEntries - 1) << endl; // Number of waypoints
     }
 
     // Waypoints ======================================
@@ -3478,6 +3486,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       if(entry.getWaypointType() == atools::fs::pln::entry::USER ||
          entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
       {
+        // Type column user ================
         stream << "28 ";
 
         if(ident.isEmpty())
@@ -3493,6 +3502,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       }
       else
       {
+        // Type column ================
         if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
           stream << "1 " << ident.left(8) << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::WAYPOINT)
@@ -3503,7 +3513,8 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
           stream << "2 " << ident << " ";
       }
 
-      if(version11Format)
+      // Keywords column ================
+      if(version11Format || iniBuildsFormat)
       {
         if(index == 0)
           stream << (entry.getWaypointType() == entry::AIRPORT ? "ADEP " : "DEP ");
@@ -3513,7 +3524,9 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
           stream << (entry.getAirway().isEmpty() ? "DRCT " : entry.getAirway() + " ");
       }
 
-      stream << QString::number(entry.getPosition().getAltitude(), 'f', 6) << " "
+      // Coordinates for all formats ================
+      stream << QString::number(entry.getPosition().getAltitude(), 'f', 6)
+             << " "
              << QString::number(entry.getPosition().getLatY(), 'f', 6)
              << " "
              << QString::number(entry.getPosition().getLonX(), 'f', 6)
