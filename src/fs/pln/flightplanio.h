@@ -118,6 +118,9 @@ public:
   void saveFms3(const atools::fs::pln::Flightplan& plan, const QString& file);
   void saveFms11(const atools::fs::pln::Flightplan& plan, const QString& file);
 
+  /* MSFS IniBuilds A310 */
+  void saveIniBuildsMsfs(const atools::fs::pln::Flightplan& plan, const QString& file);
+
   /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
   void saveGpx(const atools::fs::pln::Flightplan& plan, const QString& filename, const QVector<geo::LineString>& tracks,
                const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt);
@@ -189,7 +192,7 @@ public:
 
 private:
   void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, int userWpLength);
-  void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format);
+  void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format, bool iniBuildsFormat);
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
   void saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer,
                        const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs,

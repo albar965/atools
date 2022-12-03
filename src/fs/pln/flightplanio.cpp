@@ -3306,14 +3306,19 @@ void FlightplanIO::loadGpxInternal(atools::geo::LineString *route, QStringList *
   }
 }
 
+void FlightplanIO::saveIniBuildsMsfs(const atools::fs::pln::Flightplan& plan, const QString& file)
+{
+  saveFmsInternal(plan, file, false /* version11Format */, true /* iniBuildsFormat */);
+}
+
 void FlightplanIO::saveFms3(const atools::fs::pln::Flightplan& plan, const QString& file)
 {
-  saveFmsInternal(plan, file, false);
+  saveFmsInternal(plan, file, false /* version11Format */, false /* iniBuildsFormat */);
 }
 
 void FlightplanIO::saveFms11(const atools::fs::pln::Flightplan& plan, const QString& file)
 {
-  saveFmsInternal(plan, file, true);
+  saveFmsInternal(plan, file, true /* version11Format */, false /* iniBuildsFormat */);
 }
 
 // I
@@ -3334,8 +3339,8 @@ void FlightplanIO::saveFms11(const atools::fs::pln::Flightplan& plan, const QStr
 // 11 MOATS V155 0.000000 35.621601 -79.092964
 // 3 RDU V155 0.000000 35.872520 -78.783340
 // 1 KRDU ADES 435.000000 35.877640 -78.787476
-void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename,
-                                   bool version11Format)
+void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format,
+                                   bool iniBuildsFormat)
 {
   QFile fmsFile(filename);
 
@@ -3346,26 +3351,28 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
     QTextStream stream(&fmsFile);
     stream.setCodec("UTF-8");
 
-    // OS
-    stream << "I" << endl;
+    if(!iniBuildsFormat)
+      // OS
+      stream << "I" << endl;
 
     // File version
+    QString departureIdent = plan.getDepartureIdent().left(8);
+    QString destinationIdent = plan.getDestinationIdent().left(8);
+    QString cycle = plan.properties.value(NAVDATACYCLE);
+    if(cycle.isEmpty())
+      cycle = plan.properties.value(SIMDATACYCLE);
+    if(cycle.isEmpty())
+      // Fake a cycle by using current year and month
+      cycle = QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyMM");
+
     if(version11Format)
     {
       // New X-Plane 11 format
       stream << "1100 Version" << endl;
 
-      QString cycle = plan.properties.value(NAVDATACYCLE);
-      if(cycle.isEmpty())
-        cycle = plan.properties.value(SIMDATACYCLE);
-      if(cycle.isEmpty())
-        // Fake a cycle by using current year and month
-        cycle = QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyMM");
-
       stream << "CYCLE " << cycle << endl;
 
       // Departure ==============================
-      QString departureIdent = plan.getDepartureIdent().left(8);
       if(plan.entries.constFirst().getWaypointType() == entry::AIRPORT && !plan.properties.contains(AIRPORT_DEPARTURE_NO_AIRPORT))
         // Departure is normal airport id or there is a SID
         stream << "ADEP " << departureIdent << endl;
@@ -3384,7 +3391,6 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
         stream << "SIDTRANS " << plan.properties.value(SIDTRANS) << endl;
 
       // Destination =============================
-      QString destinationIdent = plan.getDestinationIdent().left(8);
       if(plan.entries.constLast().getWaypointType() == entry::AIRPORT && !plan.properties.contains(AIRPORT_DESTINATION_NO_AIRPORT))
         // Destination is normal airport id or there is a STAR or an approach
         stream << "ADES " << destinationIdent << endl;
@@ -3418,11 +3424,40 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       // Number of waypoints
       stream << "NUMENR " << numEntries << endl;
     }
-    else
+    else if(!iniBuildsFormat)
     {
       stream << "3 version" << endl;
       stream << "1" << endl;
       stream << (numEntries - 1) << endl; // Number of waypoints
+    }
+    else if(iniBuildsFormat)
+    {
+      // AIRLINE
+      // FLTID N314SB
+      // CYCLE 2211
+      // ADEP KDEN
+      // ADES KDFW
+      // ALTN KIAH
+      // CRUISE 37000
+      // TRIP 6024
+      // CONT 1061
+      // ALTNFUEL 2821
+      // FINRES 1845
+      // MINTO 11752
+      // EXTRA 0
+      // TAXI 399
+      // BLOCK 12151
+      // ZFW 110280
+      // TOW 122032
+      // LAW 116008
+      // CRUISEWIND 239/082
+      // PAXNBR 221
+      // CARGO 5513
+      // PAYLOAD 23056
+      stream << "ADEP " << departureIdent << endl;
+      stream << "ADES " << destinationIdent << endl;
+      stream << "CYCLE " << cycle << endl;
+      stream << "CRUISE " << plan.getCruisingAltitude() << endl;
     }
 
     // Waypoints ======================================
