@@ -4,6 +4,15 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.9.rc1
+
+* Updated export format MSFS IniBuilds A310
+* Updated French translations by Patrick.
+* Updated Italian translations by Flavio.
+* Remove keys "url" and "download" from update check.
+
+===============================================================================
+
 # Version 3.8.8.beta
 
 * Removing area/country codes from X-Plane country names now.
