@@ -6,6 +6,8 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 # Version 3.8.9.rc1
 
+* Weather reading for X-Plane 12 fixed which failed to recognize new files if the weather folder
+  was intially empty. This affected METAR and GRIB (winds aloft) files.
 * Updated export format MSFS IniBuilds A310
 * Updated French translations by Patrick.
 * Updated Italian translations by Flavio.

@@ -57,7 +57,10 @@ void FileSystemWatcher::stopWatching()
 void FileSystemWatcher::pathChanged()
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO;
+  {
+    qDebug() << Q_FUNC_INFO << "directories" << fsWatcher->directories();
+    qDebug() << Q_FUNC_INFO << "files" << fsWatcher->files();
+  }
 
   // Stop all timers - one of the other will be started later
   periodicCheckTimer.stop();
@@ -227,14 +230,21 @@ void FileSystemWatcher::setFilenamesAndStart(const QStringList& pathList)
   for(const QString& path : pathList)
   {
     QFileInfo fileinfo(path);
-    paths.append(PathInfo(path, fileinfo.lastModified(), fileinfo.size()));
+    if(fileinfo.isFile())
+      paths.append(PathInfo(path, fileinfo.lastModified(), fileinfo.size()));
   }
 
-  // Get parent folder of first file
-  if(!paths.isEmpty())
+  // Get parent folder of first file or directory
+  if(!pathList.isEmpty())
   {
-    QFileInfo fileinfo(paths.constFirst().path);
-    paths.append(PathInfo(fileinfo.path(), fileinfo.lastModified(), fileinfo.size()));
+    QFileInfo fileinfo(pathList.constFirst());
+    QString path;
+    if(fileinfo.isFile())
+      path = fileinfo.path();
+    else if(fileinfo.isDir())
+      path = fileinfo.filePath();
+
+    paths.append(PathInfo(path, fileinfo.lastModified(), fileinfo.size()));
   }
 
   createFsWatcher();
@@ -281,6 +291,7 @@ void FileSystemWatcher::createFsWatcher()
       info.sizeLastRead = fileinfo.size();
     }
   }
+
   // Check every ten seconds since the watcher is unreliable
   QTimer::connect(&periodicCheckTimer, &QTimer::timeout, this, &FileSystemWatcher::pathChanged);
   periodicCheckTimer.start(checkMs);
@@ -302,14 +313,25 @@ void FileSystemWatcher::setPathsToFsWatcher(bool update)
     if(!files.contains(info.path) && !directories.contains(info.path))
     {
       if(update && verbose && warn())
-        qWarning() << "dropped path" << info.path << files << directories;
+        qDebug() << "dropped path" << info.path << files << directories;
 
-      if(!fsWatcher->addPath(info.path))
+      if(QFileInfo::exists(info.path))
       {
-        if(warn())
-          qWarning() << "cannot watch file" << info.path;
+        if(!fsWatcher->addPath(info.path))
+        {
+          if(warn())
+            qWarning() << "cannot watch file" << info.path;
+        }
       }
+      else
+        fsWatcher->removePath(info.path);
     }
+  }
+
+  if(verbose)
+  {
+    qDebug() << Q_FUNC_INFO << "directories" << fsWatcher->directories();
+    qDebug() << Q_FUNC_INFO << "files" << fsWatcher->files();
   }
 }
 

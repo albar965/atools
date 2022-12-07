@@ -123,6 +123,7 @@ private:
   // Indexes into above paths for pathUpdatedDelayed() filled by pathChanged() if changed
   QSet<int> changedPathIndexes;
 
+  /* Calls pathChanged() on folder and file changes */
   QFileSystemWatcher *fsWatcher = nullptr;
 
   QTimer periodicCheckTimer, // Calls pathChanged()

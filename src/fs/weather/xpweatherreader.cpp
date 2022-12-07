@@ -205,8 +205,12 @@ void XpWeatherReader::createFsWatcher()
   // Load initially
   filesUpdated(currentMetarFiles);
 
-  // Start watching for changes
-  fileWatcher->setFilenamesAndStart(currentMetarFiles);
+  if(currentMetarFiles.isEmpty() && weatherType == WEATHER_XP12)
+    // Watch at least folder if file list is empty
+    fileWatcher->setFilenamesAndStart({weatherPath});
+  else
+    // Start watching for changes
+    fileWatcher->setFilenamesAndStart(currentMetarFiles);
 }
 
 void XpWeatherReader::debugDumpContainerSizes() const

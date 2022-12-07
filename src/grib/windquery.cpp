@@ -241,8 +241,12 @@ void WindQuery::initFromPath(const QString& path, atools::fs::weather::XpWeather
   // Inital load
   gribFileUpdated({currentGribFile});
 
-  // Start checking file and parent folder for changes
-  fileWatcher->setFilenameAndStart(currentGribFile);
+  if(currentGribFile.isEmpty() && weatherType == atools::fs::weather::WEATHER_XP12)
+    // Watch folder if file not given
+    fileWatcher->setFilenameAndStart(weatherPath);
+  else
+    // Start checking file and parent folder for changes
+    fileWatcher->setFilenameAndStart(currentGribFile);
 }
 
 QString WindQuery::collectGribFiles()
