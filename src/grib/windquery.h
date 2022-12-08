@@ -108,7 +108,7 @@ public:
 
   /* Get an array of wind data for the given rectangle at the given altitude from the data grid.
    * Data is only interpolated between layers. Result is sorted by y and x coordinates. */
-  void getWindForRect(atools::grib::WindPosList& result, const geo::Rect& rect, float altFeet) const;
+  void getWindForRect(atools::grib::WindPosList& result, const geo::Rect& rect, float altFeet, int gridSpacing) const;
   atools::grib::WindPosList getWindForRect(const atools::geo::Rect& rect, float altFeet) const;
 
   /* Get average wind for the great circle line between the two given positions at the given altitude.

@@ -374,11 +374,11 @@ Wind WindQuery::getWindForPos(const Pos& pos, bool interpolateValue) const
 WindPosList WindQuery::getWindForRect(const Rect& rect, float altFeet) const
 {
   WindPosList result;
-  getWindForRect(result, rect, altFeet);
+  getWindForRect(result, rect, altFeet, 1);
   return result;
 }
 
-void WindQuery::getWindForRect(WindPosList& result, const Rect& rect, float altFeet) const
+void WindQuery::getWindForRect(WindPosList& result, const Rect& rect, float altFeet, int gridSpacing) const
 {
   if(windLayers.isEmpty())
     return;
@@ -405,6 +405,9 @@ void WindQuery::getWindForRect(WindPosList& result, const Rect& rect, float altF
         for(float laty = std::ceil(r.getNorth()); laty >= r.getSouth(); laty -= 1.f)
         {
           Pos cell(lonx, laty);
+          if(gridSpacing > 1 && !cell.nearGrid(gridSpacing))
+            continue;
+
           QPoint gPos = gridPos(cell);
 
           WindPos wp;
