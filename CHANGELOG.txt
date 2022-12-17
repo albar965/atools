@@ -4,6 +4,12 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.10.rc2
+
+* Added isDownloading to UpdateCheck
+
+===============================================================================
+
 # Version 3.8.9.rc1
 
 * Weather reading for X-Plane 12 fixed which failed to recognize new files if the weather folder
