@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ class UpdateCheck :
   Q_OBJECT
 
 public:
-  explicit UpdateCheck(bool forceDebug);
+  explicit UpdateCheck();
 
   /*
    * @param programVersion Current program version
@@ -88,8 +88,7 @@ public:
    * @param notifyForEmptyUpdates Also send a signal if nothing was found
    * @param updateChannels Channels to check
    */
-  void checkForUpdates(const QString& versionsAlreadChecked, bool notifyForEmptyUpdates,
-                       atools::util::UpdateChannels updateChannels);
+  void checkForUpdates(const QString& versionsAlreadChecked, bool notifyForEmptyUpdates, atools::util::UpdateChannels updateChannels);
 
   /* Get the URL of the text file that contains the update information */
   const QUrl& getUrl() const
@@ -104,6 +103,11 @@ public:
 
   /* Force notification and ignore time and skip lists */
   void setForceDebug(bool value);
+
+  bool isDownloading() const
+  {
+    return reply != nullptr;
+  }
 
 signals:
   /* Sent if updates were found */

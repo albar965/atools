@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 namespace atools {
 namespace util {
 
-UpdateCheck::UpdateCheck(bool forceDebug)
-  : curProgramVersion(QCoreApplication::applicationVersion()), debug(forceDebug)
+UpdateCheck::UpdateCheck()
+  : curProgramVersion(QCoreApplication::applicationVersion())
 {
 
 }
@@ -64,7 +64,7 @@ void UpdateCheck::checkForUpdates(const QString& versionsAlreadChecked, bool not
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     connect(reply, &QNetworkReply::errorOccurred, this, &UpdateCheck::httpError);
 #else
-    connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &UpdateCheck::httpError);
+    connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this, &UpdateCheck::httpError);
 #endif
   }
 }
@@ -216,8 +216,7 @@ void UpdateCheck::endRequest()
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     disconnect(reply, &QNetworkReply::errorOccurred, this, &UpdateCheck::httpError);
 #else
-    disconnect(reply, static_cast<void (QNetworkReply::*)(
-                                    QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &UpdateCheck::httpError);
+    disconnect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this, &UpdateCheck::httpError);
 #endif
     reply->abort();
     reply->deleteLater();
