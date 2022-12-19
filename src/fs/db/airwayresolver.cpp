@@ -283,7 +283,6 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
   }
 
   int fragmentNum = 1;
-  QHash<int, AirwaySegment>::const_iterator it;
   AirwaySegment segment;
 
   // Iterator over all waypoints in the airway which are neither ordered nor connected yet
@@ -293,8 +292,8 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
     newAirway.clear();
 
     // Take a random waypoint from the unordered airway and add it to the queue
-    segment = *airway.begin();
-    airway.erase(airway.begin());
+    segment = *airway.constBegin();
+    airway.erase(airway.constBegin());
     newAirway.append(segment);
 
     bool foundTo, foundFrom;
@@ -307,8 +306,8 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
 
       // Take a segment from the front of the queue and find predecessors
       segment = newAirway.front();
-      it = segsByToWpId.find(segment.fromWaypointId);
-      if(it != segsByToWpId.end() && airway.find(it.value()) != airway.end())
+      auto it = segsByToWpId.constFind(segment.fromWaypointId);
+      if(it != segsByToWpId.constEnd() && airway.constFind(it.value()) != airway.constEnd())
       {
         // Found a predecessor in the index - add it to the new airway and remove it from the queue
         segment = it.value();
@@ -320,14 +319,14 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
 
       // Take a segment from the end of the queue and find successors
       segment = newAirway.back();
-      it = segsByFromWpId.find(segment.toWaypointId);
-      if(it != segsByFromWpId.end() && airway.find(it.value()) != airway.end())
+      it = segsByFromWpId.constFind(segment.toWaypointId);
+      if(it != segsByFromWpId.constEnd() && airway.constFind(it.value()) != airway.constEnd())
       {
         // Found a successor in the index - add it to the new airway and remove it from the queue
         segment = it.value();
         newAirway.append(segment);
 
-        airway.erase(airway.find(segment));
+        airway.erase(airway.constFind(segment));
         foundFrom = true;
       }
     } while(foundTo || foundFrom);
