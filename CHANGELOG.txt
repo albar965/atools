@@ -4,6 +4,12 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.11
+
+* Corrected layer ordering for MSFS scenery library to adhere to priorities in file `Content.xml`.
+
+===============================================================================
+
 # Version 3.8.10.rc2
 
 * Added isDownloading to UpdateCheck
