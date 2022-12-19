@@ -1431,9 +1431,9 @@ bool NavDatabase::runScript(ProgressHandler *progress, const QString& scriptFile
 void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 {
   // Force well known layer piority to avoid mess up due to not documented "Content.xml"
-  const static int LAYER_NUM_BASE = -1000;
-  const static int LAYER_NUM_GENERIC_AIRPORTS = -1001;
-  const static int LAYER_NUM_BASE_NAV = -1002;
+  const static int LAYER_NUM_GENERIC_AIRPORTS = -1002; // Read first - airports
+  const static int LAYER_NUM_BASE = -1001; // Read second - procedures
+  const static int LAYER_NUM_BASE_NAV = -1000; // Read last navaids and then "Community"
 
   // Default for all other layers/packages
   const static int LAYER_NUM_DEFAULT = 0;
@@ -1596,6 +1596,9 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
       }
     }
   }
+
+  // Bring in order according to Content.xml
+  cfg.sortAreas();
 }
 
 bool NavDatabase::checkNavigraphNavdataUpdate(atools::fs::scenery::ManifestJson& manifest)
