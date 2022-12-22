@@ -320,7 +320,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1005"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1361"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4080"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4128"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -330,7 +330,7 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3666"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3714"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
@@ -402,7 +402,7 @@ Ocorreu um erro no Sql
         <translation>Não é possível abrir o arquivo FlightGear &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3521"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3569"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -1119,7 +1119,7 @@ Ocorreu um erro no Sql
         <translation>Comunidade</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1902"/>
+        <location filename="src/fs/navdatabase.cpp" line="1905"/>
         <source>Counting files for %1 ...</source>
         <translation>Contando arquivos para %1 ...</translation>
     </message>
@@ -2741,7 +2741,7 @@ Tempo Noturno: %5</translation>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="686"/>
+        <location filename="src/grib/windquery.cpp" line="693"/>
         <source>Unknown error.</source>
         <translation>Erro desconhecido.</translation>
     </message>

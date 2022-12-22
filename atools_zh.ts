@@ -342,7 +342,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1005"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1361"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4080"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4128"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件“%1”。原因是：%2</translation>
     </message>
@@ -372,12 +372,12 @@ File: &quot;%2&quot;
         <translation> 航迹</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3521"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3569"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>由 %1 在 %4 创建的 PMDG RTE ，版本 %2（修订版本 %3） </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3666"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3714"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>写入 %1 时遇到了内部错误：文件大小无效 %2 != %3 这个文件将不可用。</translation>
     </message>
@@ -1322,7 +1322,7 @@ File: &quot;%2&quot;
         <translation>社区</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1902"/>
+        <location filename="src/fs/navdatabase.cpp" line="1905"/>
         <source>Counting files for %1 ...</source>
         <translation>正在为 %1 计数文件...</translation>
     </message>
@@ -2685,7 +2685,7 @@ Night time: %5</source>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="686"/>
+        <location filename="src/grib/windquery.cpp" line="693"/>
         <source>Unknown error.</source>
         <translation>未知错误。</translation>
     </message>

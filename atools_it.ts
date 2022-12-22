@@ -416,7 +416,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1005"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1361"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4080"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4128"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2</translation>
     </message>
@@ -458,7 +458,7 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file FMS &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3521"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3569"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Creato da %1 Versione %2 (revisione %3) il %4 </translation>
     </message>
@@ -467,7 +467,7 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file RTE &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3666"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3714"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Errore interno scrivendo %1: Il file ha dimensione non valida %2 != %3 e non sarà utilizzabile.</translation>
     </message>
@@ -1414,7 +1414,7 @@ File: &quot;%2&quot;
         <translation>Comunità</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1902"/>
+        <location filename="src/fs/navdatabase.cpp" line="1905"/>
         <source>Counting files for %1 ...</source>
         <translation>Conteggio dei file per%1 ...</translation>
     </message>
@@ -2817,7 +2817,7 @@ Ore Notturne: %5</translation>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="686"/>
+        <location filename="src/grib/windquery.cpp" line="693"/>
         <source>Unknown error.</source>
         <translation>Errore sconosciuto.</translation>
     </message>
