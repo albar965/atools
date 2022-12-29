@@ -1042,7 +1042,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1465"/>
         <source>LIFR</source>
-        <translation>LIRF</translation>
+        <translation>LIFR</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1468"/>
