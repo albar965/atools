@@ -92,17 +92,19 @@ public:
    * directory or the given path if the file exists. Otherwise throws Exception.
    *
    * @param filename
+   * @param ignoreMissing Throw an exception if false and file not found anywhere. Otherwise return empty string.
    * @return Path to existing file from settings or original filename.
    */
-  static QString getOverloadedPath(const QString& filename);
+  static QString getOverloadedPath(const QString& filename, bool ignoreMissing = false);
 
   /* Returns the filename of the given path if the file exists in the current
    * directory or the given path if the file exists. Otherwise throws Exception.
    *
    * @param filename
+   * @param ignoreMissing Throw an exception if false and file not found anywhere. Otherwise return empty string.
    * @return Path to existing file from settings or original filename.
    */
-  static QString getOverloadedLocalPath(const QString& filename);
+  static QString getOverloadedLocalPath(const QString& filename, bool ignoreMissing = false);
 
   /* The same as QSettings.value() but ensures that the default is stored in the file
    * if not already present. Call syncSettings afterwards to write all defaults to the file. */

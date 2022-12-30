@@ -144,7 +144,7 @@ QString Settings::getConfigFilename(const QString& extension, const QString& sub
   return path + QDir::separator() + appNameForFiles() + extension;
 }
 
-QString Settings::getOverloadedLocalPath(const QString& filename)
+QString Settings::getOverloadedLocalPath(const QString& filename, bool ignoreMissing)
 {
   QString configDirFile = QFileInfo(filename).fileName();
 
@@ -155,11 +155,13 @@ QString Settings::getOverloadedLocalPath(const QString& filename)
   else if(QFileInfo::exists(filename))
     // No overloading and file exists return the original path
     return filename;
-  else
+  else if(!ignoreMissing)
     throw Exception(QString("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
+
+  return QString();
 }
 
-QString Settings::getOverloadedPath(const QString& filename)
+QString Settings::getOverloadedPath(const QString& filename, bool ignoreMissing)
 {
   QString configDirFile = getPath() + QDir::separator() + QFileInfo(filename).fileName();
 
@@ -170,8 +172,10 @@ QString Settings::getOverloadedPath(const QString& filename)
   else if(QFileInfo::exists(filename))
     // No overloading and file exists return the original path
     return filename;
-  else
+  else if(!ignoreMissing)
     throw Exception(QString("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
+
+  return QString();
 }
 
 QVariant Settings::getAndStoreValue(const QString& key, const QVariant& defaultValue) const
