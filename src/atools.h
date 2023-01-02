@@ -49,7 +49,7 @@ QString programFileInfoNoDate();
 bool fileEndsWithEol(const QString& filepath);
 
 /* Get the target of a symbolic link (all OS), a Windows shortcut (.lnk) or a Windows junction.
- * Returns a cleaned path with '/' as separators. */
+ * Returns a cleaned path with '/' as separators or an empty string if file is not link. */
 QString linkTarget(const QFileInfo& path);
 
 /* Get canonical path also considering symbolic links, Windows shortcuts or a Windows junctions.
@@ -212,7 +212,7 @@ float calculateSteps(float range, float numSteps);
 template<typename TYPE>
 constexpr TYPE mod(TYPE x, TYPE y)
 {
-  return x - y * std::floor(x / y);
+  return x - y *std::floor(x / y);
 }
 
 template<typename TYPE>

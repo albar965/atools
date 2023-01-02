@@ -1233,6 +1233,10 @@ QString linkTarget(const QFileInfo& path)
       {
         target = QString::fromWCharArray(junctionPathW);
         target.remove("\\\\?\\");
+
+        // Clear path if target is the same. This can happen with mounted drives which are also identified as Junctions
+        if(QDir::cleanPath(target) == QDir::cleanPath(path.absoluteFilePath()))
+          target = QString();
       }
 
       CloseHandle(hFile);
