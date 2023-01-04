@@ -865,14 +865,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       // Copy base data
       p->copyToSimConnectAircraft(p->simData.aircraft, data.userAircraft);
 
-#if defined(SIMCONNECT_BUILD_WIN64)
-      // MSFS - on ground is unreliable
-      data.userAircraft.flags.setFlag(atools::fs::sc::ON_GROUND,
-                                      p->simData.aircraft.isSimOnGround > 0 && p->simData.planeAboveGroundFt < 10.f);
-#else
-      // FSX and P3D
       data.userAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, p->simData.aircraft.isSimOnGround > 0);
-#endif
 
       // Copy additional user aircraft data
       data.userAircraft.objectId = static_cast<unsigned int>(p->simDataObjectId);
