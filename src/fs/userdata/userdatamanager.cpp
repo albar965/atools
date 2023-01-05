@@ -172,8 +172,8 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
 
       if(lineNum == 0)
       {
-        QString header = QString(line).replace(' ', QString()).toLower();
-        if(flags & CSV_HEADER || header.startsWith("type,name,ident,latitude,longitude,elevation"))
+        QString header = QString(line).simplified().replace(' ', QString()).replace('"', QString()).toLower();
+        if(flags & CSV_HEADER || header.startsWith("type,name,ident,latitude,longitude"))
         {
           lineNum++;
           // Ignore header

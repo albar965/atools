@@ -186,7 +186,7 @@ int LogdataManager::importCsv(const QString& filepath)
 
       if(lineNum == 0)
       {
-        QString header = QString(line).replace(" ", QString()).toLower();
+        QString header = QString(line).simplified().replace(' ', QString()).replace('"', QString()).toLower();
         if(header.startsWith(csv::HEADER_LINE) || header.startsWith(csv::HEADER_LINE2))
         {
           lineNum++;
