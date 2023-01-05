@@ -37,6 +37,7 @@
 #include <QRandomGenerator>
 #include <QRegularExpression>
 #include <QXmlStreamReader>
+#include <QDir>
 
 using atools::geo::Pos;
 
@@ -3311,6 +3312,53 @@ void FlightplanIO::saveIniBuildsMsfs(const atools::fs::pln::Flightplan& plan, co
   saveFmsInternal(plan, file, false /* version11Format */, true /* iniBuildsFormat */);
 }
 
+// I
+// 3 version
+// 1
+// 8
+// 28 WP1 0.000000 53.421391 -6.270000
+// 28 WP2 0.000000 53.434834 -6.238197
+// 28 WP3 0.000000 53.437164 -6.280617
+// 28 WP4 0.000000 53.503860 -6.442389
+// 28 WP5 0.000000 53.552917 -6.601222
+// 28 WP6 0.000000 53.597584 -7.391278
+// 28 WP7 0.000000 49.500000 -52.000000
+// 28 WP8 0.000000 48.731529 -54.328449
+// 28 WP9 0.000000 48.692711 -54.633060
+void FlightplanIO::saveCivaFms(const atools::fs::pln::Flightplan& plan, const QString& file)
+{
+  int fileNumber = 0;
+  atools::fs::pln::Flightplan splitPlan;
+  for(int i = 0; i < plan.entries.size(); i++)
+  {
+    // Prepare entry for copying
+    FlightplanEntry entry = plan.getEntries().at(i);
+    entry.setIdent(QString("WP%1").arg(splitPlan.entries.size() + 1));   // Change ident
+    entry.setPosition(entry.getPosition().alt(0.f));   // Set altitude to zero
+    entry.setWaypointType(atools::fs::pln::entry::USER);   // Change to user to export with prefix 28
+    entry.setFlags(atools::fs::pln::entry::NONE);   // No flags - all points exported
+    splitPlan.entries.append(entry);
+
+    // Check if current file is full or the last one was added
+    if(splitPlan.entries.size() == 8 || i == plan.entries.size() - 1)
+    {
+      QFileInfo fi(file);
+      QString filename;
+      if(fileNumber == 0)
+        // Omit number for first file
+        filename = fi.path() + QDir::separator() + fi.baseName() + "." + fi.completeSuffix();
+      else
+        // Add number for all other files
+        filename = fi.path() + QDir::separator() + fi.baseName() + QString::number(fileNumber) + "." + fi.completeSuffix();
+
+      splitPlan.adjustDepartureAndDestination(true);
+      saveFmsInternal(splitPlan, filename, false /* version11Format */, false /* iniBuildsFormat */);
+      splitPlan.clear();
+      fileNumber++;
+    }
+  }
+}
+
 void FlightplanIO::saveFms3(const atools::fs::pln::Flightplan& plan, const QString& file)
 {
   saveFmsInternal(plan, file, false /* version11Format */, false /* iniBuildsFormat */);
@@ -3346,7 +3394,6 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
 
   if(fmsFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-
     int numEntries = numEntriesSave(plan);
     QTextStream stream(&fmsFile);
     stream.setCodec("UTF-8");
@@ -3465,7 +3512,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       // FMS 3 ======================================
       stream << "3 version" << endl;
       stream << "1" << endl;
-      stream << (numEntries - 1) << endl; // Number of waypoints
+      stream << numEntries << endl; // Number of waypoints
     }
 
     // Waypoints ======================================

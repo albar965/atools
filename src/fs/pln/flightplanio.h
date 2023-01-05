@@ -118,6 +118,9 @@ public:
   void saveFms3(const atools::fs::pln::Flightplan& plan, const QString& file);
   void saveFms11(const atools::fs::pln::Flightplan& plan, const QString& file);
 
+  /* X-Plane CIVA Navigation System. Saves multiple files. */
+  void saveCivaFms(const atools::fs::pln::Flightplan& plan, const QString& file);
+
   /* MSFS IniBuilds A310 */
   void saveIniBuildsMsfs(const atools::fs::pln::Flightplan& plan, const QString& file);
 
