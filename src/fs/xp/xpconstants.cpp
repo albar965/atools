@@ -27,36 +27,61 @@ QString surfaceToDb(Surface value, const XpWriterContext *context)
 {
   switch(value)
   {
-    case atools::fs::xp::UNKNOWN:
+    case UNKNOWN:
       return "UNKNOWN";
 
-    case atools::fs::xp::TRANSPARENT:
+    case TRANSPARENT:
       return "TR";
 
-    case atools::fs::xp::ASPHALT:
-      return "A";
-
-    case atools::fs::xp::CONCRETE:
-      return "C";
-
-    case atools::fs::xp::TURF_OR_GRASS:
+    case TURF_OR_GRASS:
       return "G";
 
-    case atools::fs::xp::DRY_LAKEBED:
-    case atools::fs::xp::DIRT:
+    case DRY_LAKEBED:
+    case DIRT:
       return "D";
 
-    case atools::fs::xp::GRAVEL:
+    case GRAVEL:
       return "GR";
 
-    case atools::fs::xp::WATER:
+    case WATER:
       return "W";
 
-    case atools::fs::xp::SNOW_OR_ICE:
+    case SNOW_OR_ICE:
       return "SN";
 
+    case ASPHALT:
+    case ASPHALT_L:
+    case ASPHALT_L_PATCHED:
+    case ASPHALT_L_PLAIN:
+    case ASPHALT_L_WORN:
+    case ASPHALT_PATCHED:
+    case ASPHALT_PLAIN:
+    case ASPHALT_WORN:
+    case ASPHALT_D:
+    case ASPHALT_D_PATCHED:
+    case ASPHALT_D_PLAIN:
+    case ASPHALT_D_WORN:
+    case ASPHALT_D2:
+    case ASPHALT_D2_PATCHED:
+    case ASPHALT_D2_PLAIN:
+    case ASPHALT_D2_WORN:
+    case ASPHALT_D3:
+    case ASPHALT_D3_PATCHED:
+    case ASPHALT_D3_PLAIN:
+    case ASPHALT_D3_WORN:
+      return "A";
+
+    case CONCRETE:
+    case CONCRETE_L:
+    case CONCRETE_L_DIRTY:
+    case CONCRETE_L_WORN:
+    case CONCRETE_DIRTY:
+    case CONCRETE_WORN:
+    case CONCRETE_D:
+    case CONCRETE_D_DIRTY:
+    case CONCRETE_D_WORN:
+      return "C";
   }
-  // New unknown in XP12 20 22 23 24 25 26 27 29 30 31 33 34 36 37 38 50 51 52 53 54 55 56 57
 
 #ifdef DEBUG_INFORMATION
   qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown surface value" << value;
@@ -70,7 +95,7 @@ QString surfaceToDb(Surface value, const XpWriterContext *context)
 
 bool isSurfaceHard(Surface value)
 {
-  return value == UNKNOWN || value == TRANSPARENT || value == ASPHALT || value == CONCRETE;
+  return !isSurfaceSoft(value) && !isSurfaceWater(value);
 }
 
 bool isSurfaceSoft(Surface value)
@@ -109,22 +134,22 @@ int markingToDb(Marking value, const XpWriterContext *context)
 
   switch(value)
   {
-    case atools::fs::xp::NO_MARKING:
+    case NO_MARKING:
       return NO_FLAGS;
 
-    case atools::fs::xp::VISUAL:
+    case VISUAL:
       return EDGES | DASHES | IDENT;
 
-    case atools::fs::xp::NON_PAP:
+    case NON_PAP:
       return EDGES | THRESHOLD | TOUCHDOWN | DASHES | IDENT;
 
-    case atools::fs::xp::PAP:
+    case PAP:
       return EDGES | THRESHOLD | FIXED_DISTANCE | TOUCHDOWN | DASHES | IDENT | PRECISION;
 
-    case atools::fs::xp::UK_NON_PAP:
+    case UK_NON_PAP:
       return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_TOUCHDOWN | DASHES | IDENT;
 
-    case atools::fs::xp::UK_PAP:
+    case UK_PAP:
       return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_FIXEDDISTANCE | ALTERNATE_TOUCHDOWN | DASHES | IDENT |
              ALTERNATE_PRECISION;
 
@@ -137,43 +162,43 @@ QString alsToDb(ApproachLight value, const XpWriterContext *context)
 {
   switch(value)
   {
-    case atools::fs::xp::NO_ALS:
+    case NO_ALS:
       return QString();
 
-    case atools::fs::xp::ALSF_I:
+    case ALSF_I:
       return "ALSF1";
 
-    case atools::fs::xp::ALSF_II:
+    case ALSF_II:
       return "ALSF2";
 
-    case atools::fs::xp::CALVERT:
+    case CALVERT:
       return "CALVERT";
 
-    case atools::fs::xp::CALVERT_ILS:
+    case CALVERT_ILS:
       return "CALVERT2";
 
-    case atools::fs::xp::SSALR:
+    case SSALR:
       return "SSALR";
 
-    case atools::fs::xp::SSALF:
+    case SSALF:
       return "SSALF";
 
-    case atools::fs::xp::SALS:
+    case SALS:
       return "SALS";
 
-    case atools::fs::xp::MALSR:
+    case MALSR:
       return "MALSR";
 
-    case atools::fs::xp::MALSF:
+    case MALSF:
       return "MALSF";
 
-    case atools::fs::xp::MALS:
+    case MALS:
       return "MALS";
 
-    case atools::fs::xp::ODALS:
+    case ODALS:
       return "ODALS";
 
-    case atools::fs::xp::RAIL:
+    case RAIL:
       return "RAIL";
 
   }
@@ -199,25 +224,25 @@ QString approachIndicatorToDb(ApproachIndicator value, const XpWriterContext *co
 
   switch(value)
   {
-    case atools::fs::xp::VASI:
+    case VASI:
       return "VASI22";
 
-    case atools::fs::xp::PAPI_4L:
+    case PAPI_4L:
       return "PAPI4";
 
-    case atools::fs::xp::PAPI_4R:
+    case PAPI_4R:
       return "PAPI4";
 
-    case atools::fs::xp::SPACE_SHUTTLE_PAPI:
+    case SPACE_SHUTTLE_PAPI:
       return "PAPI4";
 
-    case atools::fs::xp::TRI_COLOR_VASI:
+    case TRI_COLOR_VASI:
       return "TRICOLOR";
 
-    case atools::fs::xp::RUNWAY_GUARD:
+    case RUNWAY_GUARD:
       return "GUARD";
 
-    case atools::fs::xp::NO_APPR_INDICATOR:
+    case NO_APPR_INDICATOR:
       break;
   }
   qWarning() << (context != nullptr ? context->messagePrefix() : QString())

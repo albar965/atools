@@ -166,7 +166,36 @@ enum Surface
   DRY_LAKEBED = 12, // (eg.At KEDW) Example: KEDW(Edwards AFB)
   WATER = 13, // runways Nothing displayed
   SNOW_OR_ICE = 14, // Poor friction.Runway markings cannot be added.
-  TRANSPARENT = 15 // Hard surface, but no texture / markings(use in custom scenery)
+  TRANSPARENT = 15, // Hard surface, but no texture / markings (use in custom scenery)
+
+  // New X-Plane 12 types (WED 2.5)
+  ASPHALT_L = 20,
+  ASPHALT_L_PATCHED = 21,
+  ASPHALT_L_PLAIN = 22,
+  ASPHALT_L_WORN = 23,
+  ASPHALT_PATCHED = 24,
+  ASPHALT_PLAIN = 25,
+  ASPHALT_WORN = 26,
+  ASPHALT_D = 27,
+  ASPHALT_D_PATCHED = 28,
+  ASPHALT_D_PLAIN = 29,
+  ASPHALT_D_WORN = 30,
+  ASPHALT_D2 = 31,
+  ASPHALT_D2_PATCHED = 32,
+  ASPHALT_D2_PLAIN = 33,
+  ASPHALT_D2_WORN = 34,
+  ASPHALT_D3 = 35,
+  ASPHALT_D3_PATCHED = 36,
+  ASPHALT_D3_PLAIN = 37,
+  ASPHALT_D3_WORN = 38,
+  CONCRETE_L = 50,
+  CONCRETE_L_DIRTY = 51,
+  CONCRETE_L_WORN = 52,
+  CONCRETE_DIRTY = 53,
+  CONCRETE_WORN = 54,
+  CONCRETE_D = 55,
+  CONCRETE_D_DIRTY = 56,
+  CONCRETE_D_WORN = 57
 };
 
 QString surfaceToDb(atools::fs::xp::Surface value, const XpWriterContext *context);
