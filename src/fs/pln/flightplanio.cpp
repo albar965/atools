@@ -40,6 +40,8 @@
 #include <QDir>
 
 using atools::geo::Pos;
+using atools::fs::pln::Flightplan;
+using atools::fs::pln::FlightplanEntry;
 
 namespace atools {
 namespace fs {
@@ -931,8 +933,7 @@ void FlightplanIO::insertPropertyIf(atools::fs::pln::Flightplan& plan, const QSt
     plan.properties.insert(key, value.trimmed());
 }
 
-void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries,
-                                    const QString& elementName)
+void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries, const QString& elementName)
 {
   QXmlStreamReader& reader = xmlStream.getReader();
 
@@ -977,7 +978,7 @@ void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<Fl
   }
 }
 
-void FlightplanIO::loadLnmStr(Flightplan& plan, const QString& string)
+void FlightplanIO::loadLnmStr(atools::fs::pln::Flightplan& plan, const QString& string)
 {
   plan.entries.clear();
   if(!string.isEmpty())
@@ -987,7 +988,7 @@ void FlightplanIO::loadLnmStr(Flightplan& plan, const QString& string)
   }
 }
 
-void FlightplanIO::loadLnmGz(Flightplan& plan, const QByteArray& bytes)
+void FlightplanIO::loadLnmGz(atools::fs::pln::Flightplan& plan, const QByteArray& bytes)
 {
   loadLnmStr(plan, QString(atools::zip::gzipDecompress(bytes)));
 }
@@ -1006,7 +1007,7 @@ void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& fil
     throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
 }
 
-void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream)
+void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::util::XmlStream& xmlStream)
 {
   QXmlStreamReader& reader = xmlStream.getReader();
 
@@ -1817,8 +1818,7 @@ void FlightplanIO::savePlnAnnotated(const Flightplan& plan, const QString& file)
   savePlnInternal(plan, file, true /* annotated */, false /* msfs */, 10);
 }
 
-void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs,
-                                   int userWpLength)
+void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, int userWpLength)
 {
   // Write XML to string first ===================
   QString xmlString;
@@ -2312,8 +2312,7 @@ void FlightplanIO::saveFlp(const atools::fs::pln::Flightplan& plan, const QStrin
 // TransLvl=18000
 
 void FlightplanIO::saveFlpKeyValue(QTextStream& stream, const atools::fs::pln::Flightplan& plan, const QString& prefix,
-                                   const QString& key,
-                                   const QString& property)
+                                   const QString& key, const QString& property)
 {
   stream << key << "=";
 
@@ -2326,8 +2325,7 @@ void FlightplanIO::saveFlpKeyValue(QTextStream& stream, const atools::fs::pln::F
   stream << endl;
 }
 
-void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj,
-                                   bool msfs)
+void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj, bool msfs)
 {
   QFile flpFile(filename);
   bool alternateFmt = crj | msfs;
@@ -2980,7 +2978,7 @@ void FlightplanIO::saveIfly(const Flightplan& plan, const QString& filename)
     stream << endl;
 
     int index = 0;
-    for(const atools::fs::pln::FlightplanEntry& entry : plan.getEntries())
+    for(const FlightplanEntry& entry : plan.getEntries())
     {
       if(entry.isNoSave())
         // Do not save procedure points
@@ -3022,8 +3020,7 @@ void FlightplanIO::saveIfly(const Flightplan& plan, const QString& filename)
 }
 
 QString FlightplanIO::saveGpxStr(const Flightplan& plan, const QVector<geo::LineString>& tracks,
-                                 const QVector<QVector<qint64> >& timestampsMs,
-                                 int cruiseAltFt)
+                                 const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt)
 {
   QString gpxString;
   QXmlStreamWriter writer(&gpxString);
@@ -3040,8 +3037,7 @@ QByteArray FlightplanIO::saveGpxGz(const Flightplan& plan, const QVector<geo::Li
 }
 
 void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QString& filename,
-                           const QVector<geo::LineString>& tracks,
-                           const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt)
+                           const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt)
 {
   QFile gpxFile(filename);
   if(gpxFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -3055,8 +3051,7 @@ void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QStrin
 }
 
 void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer,
-                                   const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs,
-                                   int cruiseAltFt)
+                                   const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt)
 {
   writer.setCodec("UTF-8");
   writer.setAutoFormatting(true);
@@ -3327,20 +3322,26 @@ void FlightplanIO::saveIniBuildsMsfs(const atools::fs::pln::Flightplan& plan, co
 // 28 WP9 0.000000 48.692711 -54.633060
 void FlightplanIO::saveCivaFms(const atools::fs::pln::Flightplan& plan, const QString& file)
 {
+  // Create a copy and erase all consecutive waypoints having the same position
+  FlightplanEntryListType entries = plan.getEntries();
+  entries.erase(std::unique(entries.begin(), entries.end(), [ = ](FlightplanEntry& entry1, FlightplanEntry& entry2) -> bool {
+          return entry1.getPosition().almostEqual(entry2.getPosition(), atools::geo::Pos::POS_EPSILON_10M);
+        }), entries.end());
+
   int fileNumber = 0;
-  atools::fs::pln::Flightplan splitPlan;
-  for(int i = 0; i < plan.entries.size(); i++)
+  Flightplan splitPlan;
+  for(int i = 0; i < entries.size(); i++)
   {
     // Prepare entry for copying
-    FlightplanEntry entry = plan.getEntries().at(i);
-    entry.setIdent(QString("WP%1").arg(splitPlan.entries.size() + 1));   // Change ident
-    entry.setPosition(entry.getPosition().alt(0.f));   // Set altitude to zero
-    entry.setWaypointType(atools::fs::pln::entry::USER);   // Change to user to export with prefix 28
-    entry.setFlags(atools::fs::pln::entry::NONE);   // No flags - all points exported
+    FlightplanEntry entry = entries.at(i);
+    entry.setIdent(QString("WP%1").arg(splitPlan.entries.size() + 1)); // Change ident
+    entry.setPosition(entry.getPosition().alt(0.f)); // Set altitude to zero
+    entry.setWaypointType(atools::fs::pln::entry::USER); // Change to user type to export with prefix 28
+    entry.setFlags(atools::fs::pln::entry::NONE); // No flags - all points exported - missed approach removed
     splitPlan.entries.append(entry);
 
     // Check if current file is full or the last one was added
-    if(splitPlan.entries.size() == 8 || i == plan.entries.size() - 1)
+    if(splitPlan.entries.size() == 9 || (i == entries.size() - 1 && !splitPlan.entries.isEmpty()))
     {
       QFileInfo fi(file);
       QString filename;
@@ -3353,7 +3354,11 @@ void FlightplanIO::saveCivaFms(const atools::fs::pln::Flightplan& plan, const QS
 
       splitPlan.adjustDepartureAndDestination(true);
       saveFmsInternal(splitPlan, filename, false /* version11Format */, false /* iniBuildsFormat */);
+
+      // Clear and add last one for overlap
       splitPlan.clear();
+      entry.setIdent("WP1");
+      splitPlan.entries.append(entry);
       fileNumber++;
     }
   }
@@ -3512,7 +3517,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       // FMS 3 ======================================
       stream << "3 version" << endl;
       stream << "1" << endl;
-      stream << numEntries << endl; // Number of waypoints
+      stream << (numEntries - 1) << endl; // Number of waypoints minus one for FMS 3
     }
 
     // Waypoints ======================================
@@ -3968,8 +3973,7 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename)
     throw Exception(errorMsg.arg(filename).arg(fltplanFile.errorString()));
 }
 
-void FlightplanIO::saveGarminFpl(const atools::fs::pln::Flightplan& plan, const QString& filename,
-                                 bool saveAsUserWaypoints)
+void FlightplanIO::saveGarminFpl(const atools::fs::pln::Flightplan& plan, const QString& filename, bool saveAsUserWaypoints)
 {
   // Create a copy so we can easily change all waypoints to user defined is this is desired
   atools::fs::pln::FlightplanEntryListType planEntries = plan.entries;
@@ -4161,7 +4165,7 @@ void FlightplanIO::saveGarminFpl(const atools::fs::pln::Flightplan& plan, const 
     throw Exception(errorMsg.arg(filename).arg(xmlFile.errorString()));
 }
 
-void FlightplanIO::loadGarminFpl(Flightplan& plan, const QString& filename)
+void FlightplanIO::loadGarminFpl(atools::fs::pln::Flightplan& plan, const QString& filename)
 {
   QFile xmlFile(filename);
   if(xmlFile.open(QIODevice::ReadOnly))
@@ -4182,7 +4186,7 @@ void FlightplanIO::loadGarminFpl(Flightplan& plan, const QString& filename)
 // FPN/RI:F:SPZO:F:ILMOX.V11.JUL.A304.PAZ.W11.VIR.A556.VAS.A311.COSTA:F:SGES
 // FPN/RI:DA:KYKM:D:WENAS7.PERTT:R:09O:F:COBDI,N47072W120397:F:N47406W120509:F:ROZSE,N48134W121018:F:DIABO,N48500W120562.J503.FOLDY,N49031W120427:
 // AA:CYLW:A:PIGLU4.YDC(16O):AP:I16-Z.HUMEK
-void FlightplanIO::loadGarminGfp(Flightplan& plan, const QString& filename)
+void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
@@ -4317,12 +4321,12 @@ void FlightplanIO::loadGarminGfp(Flightplan& plan, const QString& filename)
     throw Exception(errorMsg.arg(filename).arg(gfpFile.errorString()));
 }
 
-void FlightplanIO::loadGarminFplGz(Flightplan& plan, const QByteArray& bytes)
+void FlightplanIO::loadGarminFplGz(atools::fs::pln::Flightplan& plan, const QByteArray& bytes)
 {
   loadGarminFplStr(plan, QString(atools::zip::gzipDecompress(bytes)));
 }
 
-void FlightplanIO::loadGarminFplStr(Flightplan& plan, const QString& string)
+void FlightplanIO::loadGarminFplStr(atools::fs::pln::Flightplan& plan, const QString& string)
 {
   plan.entries.clear();
 
@@ -4333,7 +4337,7 @@ void FlightplanIO::loadGarminFplStr(Flightplan& plan, const QString& string)
   }
 }
 
-void FlightplanIO::loadGarminFplInternal(Flightplan& plan, atools::util::XmlStream& xmlStream)
+void FlightplanIO::loadGarminFplInternal(atools::fs::pln::Flightplan& plan, atools::util::XmlStream& xmlStream)
 {
   QXmlStreamReader& reader = xmlStream.getReader();
 
@@ -4342,7 +4346,7 @@ void FlightplanIO::loadGarminFplInternal(Flightplan& plan, atools::util::XmlStre
   // Additional unknown elements are ignored and a warning is logged
 
   // Waypoint key is list of ident,region and type
-  QHash<QStringList, atools::fs::pln::FlightplanEntry> waypointIndex;
+  QHash<QStringList, FlightplanEntry> waypointIndex;
 
   xmlStream.readUntilElement("flight-plan");
   while(xmlStream.readNextStartElement())
@@ -4459,7 +4463,7 @@ atools::fs::pln::entry::WaypointType FlightplanIO::garminToWaypointType(const QS
   return atools::fs::pln::entry::USER;
 }
 
-QString FlightplanIO::flightplanTypeToString(FlightplanType type)
+QString FlightplanIO::flightplanTypeToString(atools::fs::pln::FlightplanType type)
 {
   switch(type)
   {
