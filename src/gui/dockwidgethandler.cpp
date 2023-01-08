@@ -940,6 +940,7 @@ void DockWidgetHandler::addDialogWidget(QDialog *dialogWidget)
   {
     dialogWidget->installEventFilter(dockEventFilter);
     dialogWidgets.append(dialogWidget);
+    setStayOnTop(dialogWidget, isStayOnTopMain());
   }
 }
 
@@ -950,6 +951,12 @@ void DockWidgetHandler::removeDialogWidget(QDialog *dialogWidget)
     dialogWidgets.removeAll(dialogWidget);
     dialogWidget->removeEventFilter(dockEventFilter);
   }
+}
+
+void DockWidgetHandler::setStayOnTopDialogWidgets(bool value) const
+{
+  for(QDialog *dialog : dialogWidgets)
+    setStayOnTop(dialog, value);
 }
 
 void DockWidgetHandler::closeAllDialogWidgets()

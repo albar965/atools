@@ -195,6 +195,8 @@ public:
   void addDialogWidget(QDialog *dialogWidget);
   void removeDialogWidget(QDialog *dialogWidget);
 
+  void setStayOnTopDialogWidgets(bool value) const;
+
   /* Closes all widgets and removes them from the list afterwards */
   void closeAllDialogWidgets();
 
