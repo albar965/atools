@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -337,6 +337,19 @@ LineString LineString::splitAtAntiMeridian(bool *crossed) const
     split.append(constFirst());
 
   return split;
+}
+
+LineString& LineString::normalize()
+{
+  for(Pos& pos : *this)
+    pos.normalize();
+  return *this;
+}
+
+LineString LineString::normalized() const
+{
+  LineString retval(*this);
+  return retval.normalize();
 }
 
 QDataStream& operator<<(QDataStream& out, const LineString& obj)

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -176,6 +176,12 @@ public:
   {
     return pos1.finalBearing(pos2);
   }
+
+  /* Normalize all positions to -180 < lonx < 180 and -90 < laty < 90 and return reference */
+  atools::geo::Line& normalize();
+
+  /* Return a normalized copy of this */
+  atools::geo::Line normalized() const;
 
 private:
   friend QDataStream& operator<<(QDataStream& out, const atools::geo::Line& obj);

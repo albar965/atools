@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -104,11 +104,11 @@ public:
   void deinit();
 
   /* Get interpolated wind data for single position. Altitude in feet is used from position. */
-  Wind getWindForPos(const atools::geo::Pos& pos, bool interpolateValue = true) const;
+  Wind getWindForPos(atools::geo::Pos pos, bool interpolateValue = true) const;
 
   /* Get an array of wind data for the given rectangle at the given altitude from the data grid.
    * Data is only interpolated between layers. Result is sorted by y and x coordinates. */
-  void getWindForRect(atools::grib::WindPosList& result, const geo::Rect& rect, float altFeet, int gridSpacing) const;
+  void getWindForRect(atools::grib::WindPosList& result, atools::geo::Rect rect, float altFeet, int gridSpacing) const;
   atools::grib::WindPosList getWindForRect(const atools::geo::Rect& rect, float altFeet) const;
 
   /* Get average wind for the great circle line between the two given positions at the given altitude.
@@ -185,8 +185,9 @@ private:
   /* get interpolated wind for two sets at two altitudes */
   WindData interpolateWind(const WindData& w0, const WindData& w1, float alt0, float alt1, float alt) const;
 
-  /* Get average wind for a line between two points. Uses only U and V components */
-  WindData windAverageForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
+  /* Get average wind for a line between two points. Uses only U and V components.
+   *  Normalizes positions to avoid overflow on grid access */
+  WindData windAverageForLine(atools::geo::Pos pos1, atools::geo::Pos pos2) const;
 
   QString collectGribFiles();
 

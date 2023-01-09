@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -196,6 +196,12 @@ public:
 
   /* Returns two lines if it crosses. Otherwise a copy of this or empty list if invalid. */
   LineString splitAtAntiMeridian(bool *crossed = nullptr) const;
+
+  /* Normalize all positions to -180 < lonx < 180 and -90 < laty < 90 and return reference */
+  atools::geo::LineString& normalize();
+
+  /* Return a normalized copy of this */
+  atools::geo::LineString normalized() const;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::geo::LineString& record);

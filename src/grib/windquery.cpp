@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -315,8 +315,10 @@ void WindQuery::deinit()
   currentGribFile.clear();
 }
 
-Wind WindQuery::getWindForPos(const Pos& pos, bool interpolateValue) const
+Wind WindQuery::getWindForPos(atools::geo::Pos pos, bool interpolateValue) const
 {
+  pos.normalize();
+
   if(!pos.isValid())
   {
     qWarning() << Q_FUNC_INFO << "invalid pos";
@@ -371,17 +373,19 @@ Wind WindQuery::getWindForPos(const Pos& pos, bool interpolateValue) const
   }
 }
 
-WindPosList WindQuery::getWindForRect(const Rect& rect, float altFeet) const
+WindPosList WindQuery::getWindForRect(const atools::geo::Rect& rect, float altFeet) const
 {
   WindPosList result;
   getWindForRect(result, rect, altFeet, 1);
   return result;
 }
 
-void WindQuery::getWindForRect(WindPosList& result, const Rect& rect, float altFeet, int gridSpacing) const
+void WindQuery::getWindForRect(WindPosList& result, atools::geo::Rect rect, float altFeet, int gridSpacing) const
 {
   if(windLayers.isEmpty())
     return;
+
+  rect.normalize();
 
   if(rect.isPoint(atools::geo::Pos::POS_EPSILON_100M))
   {
@@ -514,7 +518,7 @@ Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2) const
   return windAverageForLine(pos1, pos2).toWind();
 }
 
-WindData WindQuery::windAverageForLine(const Pos& pos1, const Pos& pos2) const
+WindData WindQuery::windAverageForLine(geo::Pos pos1, geo::Pos pos2) const
 {
   WindData windData = EMPTY_WIND_DATA;
 
@@ -529,6 +533,9 @@ WindData WindQuery::windAverageForLine(const Pos& pos1, const Pos& pos2) const
     qWarning() << Q_FUNC_INFO << "invalid pos2";
     return windData;
   }
+
+  pos1.normalize();
+  pos2.normalize();
 
   // Calculate the number of samples for a line. Roughly four samples per degree.
   float distanceMeter = pos1.distanceMeterTo(pos2);

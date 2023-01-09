@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -319,6 +319,19 @@ bool Line::isWestCourse() const
 bool Line::isEastCourse() const
 {
   return atools::geo::isEastCourse(pos1.getLonX(), pos2.getLonX());
+}
+
+Line& Line::normalize()
+{
+  pos1.normalize();
+  pos2.normalize();
+  return *this;
+}
+
+Line Line::normalized() const
+{
+  Line retval(*this);
+  return retval.normalize();
 }
 
 QDebug operator<<(QDebug out, const Line& record)
