@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -496,7 +496,7 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
         if(line.startsWith("0 ----")) // End of file indicator
           break;
 
-        QList<QString> list = line.split(" ");
+        const QList<QString> list = line.split(" ");
 
         QString airway;
         if(v11Format)
@@ -563,14 +563,15 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
 
         if(list.size() >= minListSize)
         {
-          float altitude = list.at(2 + fieldOffset).toFloat();
-          if(altitude > 1000000.f)
-            // Avoid excessive altitudes
-            altitude = 0.f;
+          bool altOk;
+          float altitude = list.at(2 + fieldOffset).toFloat(&altOk);
+          if(!altOk || altitude < 0.f || altitude > 1000000.f)
+            throw Exception(tr("Invalid FMS file. Invalid altitude in %1").arg(flpFile.fileName()));
 
-          Pos position(list.at(4 + fieldOffset).toFloat(), list.at(3 + fieldOffset).toFloat(), altitude);
-          if(!position.isValid() || position.isNull())
-            break;
+          bool lonOk, latOk;
+          Pos position(list.at(4 + fieldOffset).toFloat(&lonOk), list.at(3 + fieldOffset).toFloat(&latOk), altitude);
+          if(!position.isValidRange() || !lonOk || !latOk)
+            throw Exception(tr("Invalid FMS file. Invalid coordinate in %1").arg(flpFile.fileName()));
 
           FlightplanEntry entry;
           const QString& ident = list.at(1);
@@ -579,7 +580,11 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
 
           entry.setPosition(position);
 
-          int type = list.at(0).toInt();
+          bool typeOk;
+          int type = list.at(0).toInt(&typeOk);
+          if(!typeOk)
+            throw Exception(tr("Invalid FMS file. Cannot read waypoint type in %1").arg(flpFile.fileName()));
+
           switch(type)
           {
             case 1: // - Airport ICAO
@@ -602,6 +607,9 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
             case 13: // - Lat/Lon Position
               entry.setWaypointType(atools::fs::pln::entry::USER);
               break;
+
+            default:
+              throw Exception(tr("Invalid FMS file. Invalid waypoint type in %1").arg(flpFile.fileName()));
           }
 
           entry.setIdent(ident);
