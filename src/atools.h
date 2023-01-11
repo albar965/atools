@@ -212,7 +212,7 @@ float calculateSteps(float range, float numSteps);
 template<typename TYPE>
 constexpr TYPE mod(TYPE x, TYPE y)
 {
-  return x - y *std::floor(x / y);
+  return x - y * std::floor(x / y);
 }
 
 template<typename TYPE>
@@ -499,9 +499,9 @@ QString currentIsoWithOffset(bool milliseconds = true);
 QDateTime correctDate(int day, int hour, int minute);
 
 /* Determines timezone offset by seconds of day and creates local time from incomplete values based on current year.
- * Time can be converted to UTC which might also roll over the date. */
-QDateTime correctDateLocal(int dayOfYear, int secondsOfDayLocal, int secondsOfDayUtc);
-QDateTime correctDateLocalF(int dayOfYear, float secondsOfDayLocal, float secondsOfDayUtc);
+ * Time can be converted to UTC which might also roll over the date.
+ * Used to create a complete timedata from the cumbersome X-Plane time and date datarefs */
+QDateTime correctDateLocal(int dayOfYear, float secondsOfDayLocal, float secondsOfDayUtc, float longitudeX);
 
 template<typename TYPE>
 constexpr int sign(TYPE t)
