@@ -35,7 +35,7 @@ const QHash<atools::track::TrackType, QString> TrackDownloader::URL =
   // NAT
   // curl  "https://notams.aim.faa.gov/nat.html" > NAT.html
   {
-    NAT, "https://notams.aim.faa.gov/nat.html"
+    NAT, "https://www.notams.faa.gov/common/nat.html"
   },
 
   // PACOTS
@@ -60,9 +60,7 @@ const QHash<atools::track::TrackType, QStringList> TrackDownloader::PARAM =
   },
 
   {
-    PACOTS, {
-      "queryType", "pacificTracks", "actionType", "advancedNOTAMFunctions"
-    }
+    PACOTS, {"queryType", "pacificTracks", "actionType", "advancedNOTAMFunctions"}
   },
 
   {
