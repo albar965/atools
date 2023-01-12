@@ -4,6 +4,29 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.12
+
+* Corrected logbook and userpoint import functions where first row in CSV files was not recognized
+  with quoted names.
+* Added export for X-Plane CIVA Navigation System which writes the flight plan into partitioned
+  files.
+* Fixed several issues with new X-Plane runway surface types. Fixed dropped runways if they used
+  unknown surface types for X-Plane airports. This resulted in airports registered without runways
+  and having helipad symbol assigned. Implemented new undocumented asphalt and concrete textures
+  found in WED 2.5.
+* Reverted workaround for MSFS unreliable on-ground indication for user aircraft.
+* Fixed issue with mapped drives on Windows where add-on airports were not detected when having
+  MSFS installed on a mapped drive.
+* Made loading of X-Plane FMS plans more tolerant for invalid files. Now throwing error messages in
+  case of invalid coordinates to avoid crash.
+* WindQuery more tolerant for invalid coordinates.
+* Fixed wrong date and timezone calculation which resulted in wrong endurance and
+  turn anticipation display in Little Navmap.
+* Corrected NAT track download address to notams.aim.faa.gov/nat.html to avoid error messages on
+  download.
+
+===============================================================================
+
 # Version 3.8.11
 
 * Corrected layer ordering for MSFS scenery library to adhere to priorities in file `Content.xml`.
