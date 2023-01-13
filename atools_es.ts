@@ -324,6 +324,22 @@ Atrapada excepción
         <source>Invalid LNMPLN flight plan. No waypoints found.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Invalid FMS file. Invalid altitude in %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid FMS file. Invalid coordinate in %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid FMS file. Cannot read waypoint type in %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid FMS file. Invalid waypoint type in %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GribReader</name>

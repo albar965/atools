@@ -19,12 +19,12 @@
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="94"/>
         <source>Example Performance Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Exemplo de Perfil de Performance</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="95"/>
         <source>C172</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="131"/>
@@ -78,27 +78,27 @@
     <message>
         <location filename="src/io/binarystream.cpp" line="238"/>
         <source>Unknown</source>
-        <translation type="unfinished">Desconhecido</translation>
+        <translation>Desconhecido</translation>
     </message>
     <message>
         <location filename="src/io/binarystream.cpp" line="242"/>
         <source>No error</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem erro</translation>
     </message>
     <message>
         <location filename="src/io/binarystream.cpp" line="245"/>
         <source>Read past file end</source>
-        <translation type="unfinished"></translation>
+        <translation>Leia o final do arquivo passado</translation>
     </message>
     <message>
         <location filename="src/io/binarystream.cpp" line="248"/>
         <source>Read corrupted data</source>
-        <translation type="unfinished"></translation>
+        <translation>Ler dados corrompidos</translation>
     </message>
     <message>
         <location filename="src/io/binarystream.cpp" line="251"/>
         <source>Write failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Falha na gravação</translation>
     </message>
 </context>
 <context>
@@ -106,7 +106,7 @@
     <message>
         <location filename="src/gui/choicedialog.ui" line="14"/>
         <source>Little Navmap - </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -118,12 +118,12 @@
     <message>
         <location filename="src/fs/scenery/contentxml.cpp" line="188"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/fs/scenery/contentxml.cpp" line="194"/>
         <source>Generic Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>Aeroportos Genéricos</translation>
     </message>
     <message>
         <location filename="src/fs/scenery/contentxml.cpp" line="201"/>
@@ -230,12 +230,12 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="116"/>
         <source>Pattern contains invalid characters, double spaces or is longer than %1 characters.%2Not allowed are: %3</source>
-        <translation type="unfinished"></translation>
+        <translation>O padrão contém caracteres inválidos, espaços duplos ou é maior que %1 caracteres.%2Não são permitidos: %3</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="126"/>
         <source>Pattern is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>O padrão está vazio.</translation>
     </message>
 </context>
 <context>
@@ -275,12 +275,12 @@ Ocorreu um erro no Sql
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3108"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3112"/>
         <source> Flight Plan</source>
         <translation> Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3161"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3165"/>
         <source> Track</source>
         <translation> Rastrear</translation>
     </message>
@@ -305,7 +305,7 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não foi possível abrir o arquivo RTE %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="194"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="197"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
         <translation>Não foi possível abrir um arquivo de plano de voo vazio &quot;%1&quot;.</translation>
     </message>
@@ -318,9 +318,9 @@ Ocorreu um erro no Sql
         <translation type="vanished">Posição inválida em GPX.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1005"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1361"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4128"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1015"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1371"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4187"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -330,79 +330,99 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3714"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3774"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="468"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="471"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>FMS arquivo inválido. Não é possível ler o número da versão: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="117"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="120"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>Não é possível abrir o arquivo %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="134"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="137"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP.</source>
         <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</oldsource>
         <translation>Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML,MSFS XML, FS9 INI e FSC), X-Plane FMS, FLP e FlightGear FGFP.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="483"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="486"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>FMS arquivo inválido. Versão invalida %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="610"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="569"/>
+        <source>Invalid FMS file. Invalid altitude in %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="574"/>
+        <source>Invalid FMS file. Invalid coordinate in %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="586"/>
+        <source>Invalid FMS file. Cannot read waypoint type in %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="612"/>
+        <source>Invalid FMS file. Invalid waypoint type in %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="621"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>FMS arquivo inválido . Numero de seções %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="841"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="852"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>Arquivo de plano de voo inválido &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="871"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="882"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
         <oldsource>Invalid position in LNMPLN.</oldsource>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="874"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="885"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;. Ordenadas fora de alcance: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="883"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="894"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;. As ordenadas não são números.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="911"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="922"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
         <translation>Posição inválida no arquivo GPX &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1195"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1205"/>
         <source>Invalid LNMPLN flight plan. No waypoints found.</source>
         <translation>Plano de voo LNMPLN inválido. Nenhum waypoint encontrado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1197"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1207"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation>Arquivo de plano de voo LNMPLN inválido &quot;%1&quot;. Nenhum waypoint encontrado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1558"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1568"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>Não é possível abrir o arquivo FlightGear &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3569"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3629"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -1100,7 +1120,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1478"/>
         <source>Generic Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>Aeroportos Genéricos</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1493"/>
@@ -1111,7 +1131,7 @@ Ocorreu um erro no Sql
         <location filename="src/fs/navdatabase.cpp" line="1541"/>
         <location filename="src/fs/navdatabase.cpp" line="1587"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
-        <translation type="unfinished"></translation>
+        <translation>Complemento criptografado &quot;%1&quot; encontrado. O complemento pode não aparecer corretamente.</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1583"/>
@@ -1143,7 +1163,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/navdatabase.cpp" line="147"/>
         <source>Cleaning Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpeza do Banco de Dados</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="162"/>
@@ -1178,7 +1198,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1466"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Creating airways</source>
@@ -1353,10 +1373,8 @@ Ocorreu um erro no Sql
 <context>
     <name>QObject</name>
     <message>
-        <location filename="src/logging/loggingguiabort.cpp" line="48"/>
-        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <oldsource>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;Ocorreu um grave erro.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK para fechar o programa.&lt;/h3&gt;</translation>
+        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <translation type="vanished">&lt;b&gt;Ocorreu um grave erro.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK para fechar o programa.&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="343"/>
@@ -1529,7 +1547,7 @@ Ocorreu um erro no Sql
         <location filename="src/atools.cpp" line="418"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/atools.cpp" line="488"/>
@@ -2021,6 +2039,11 @@ Ocorreu um erro no Sql
         <source>AUSOTS</source>
         <translation></translation>
     </message>
+    <message>
+        <location filename="src/logging/loggingguiabort.cpp" line="48"/>
+        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <translation>&lt;b&gt;Ocorreu um erro fatal.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt; Pressione OK para sair do aplicativo.&lt;/h3&gt;</translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
@@ -2069,32 +2092,32 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/gui/treedialog.ui" line="14"/>
         <source>Little Navmap - </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/treedialog.ui" line="70"/>
         <source>Text Display Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opções de Exibição de Texto</translation>
     </message>
     <message>
         <location filename="src/gui/treedialog.ui" line="101"/>
         <source>&amp;Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Selecionar tudo</translation>
     </message>
     <message>
         <location filename="src/gui/treedialog.ui" line="108"/>
         <source>Select &amp;None</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione &amp;Nenhum</translation>
     </message>
     <message>
         <location filename="src/gui/treedialog.ui" line="115"/>
         <source>&amp;Expand All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Expandir Todos</translation>
     </message>
     <message>
         <location filename="src/gui/treedialog.ui" line="122"/>
         <source>&amp;Collapse All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Recolher Todos</translation>
     </message>
 </context>
 <context>
@@ -2174,19 +2197,19 @@ Importação interrompida.</translation>
         <location filename="src/util/version.cpp" line="41"/>
         <source>%1.%2%3%4%5</source>
         <comment>Used to build a version string like 1.2.33.beta1</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/util/version.cpp" line="44"/>
         <source>.%1</source>
         <comment>Patchlevel in version string</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/util/version.cpp" line="45"/>
         <source>.%1</source>
         <comment>Name like &quot;beta&quot; in version string</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -2248,6 +2271,11 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <translation>Arquivo padrão &quot;%1&quot; não encontrado</translation>
     </message>
     <message>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="212"/>
+        <source>Post processing Airways</source>
+        <translation>Pós-processamento de aerovias</translation>
+    </message>
+    <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="852"/>
         <source>Counting files for Resources ...</source>
         <translation>Contando arquivos para Recursos ...</translation>
@@ -2260,7 +2288,7 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="873"/>
         <source>Counting files for Global Scenery/Global Airports ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Contando arquivos para Cenário Global/Aeroportos Globais...</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="884"/>
@@ -2283,10 +2311,8 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <translation>Foi encontrado um ciclo do Airac diferente nos arquivos do navdata. %1 e %2</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="212"/>
-        <source>Post processing Airways</source>
-        <oldsource>Post procecssing Airways</oldsource>
-        <translation type="unfinished">Processando Airways</translation>
+        <source>Post procecssing Airways</source>
+        <translation type="vanished">Processando Airways</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="317"/>
@@ -2562,14 +2588,24 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <translation>Não foi possível abrir &quot;%1&quot;. Não é um arquivo de repetição -número mágico errado.</translation>
     </message>
     <message>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="69"/>
+        <source>Writing to &quot;%1&quot; in VATSIM format every %2 seconds.</source>
+        <translation>Gravando em &quot;%1&quot; no formato VATSIM a cada %2 segundos.</translation>
+    </message>
+    <message>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="422"/>
+        <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
+        <translation>Muitos erros de leitura do simulador. Desconectado. Reinicie %1 para tentar novamente.</translation>
+    </message>
+    <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="448"/>
         <source>Your installed version of Little Xpconnect is not compatible with this version of %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sua versão instalada do Little Xpconnect não é compatível com esta versão de %2.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="451"/>
         <source>Install the latest version of Little Xpconnect.</source>
-        <translation type="unfinished"></translation>
+        <translation>Instale a versão mais recente do Little Xpconnect.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="574"/>
@@ -2592,20 +2628,13 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <translation>Instalação do flight simulator não foi encontrada. SimConnect não pode ser carregado.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="69"/>
-        <source>Writing to &quot;%1&quot; in VATSIM format every %2 seconds.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="253"/>
         <source>Not connected to the simulator. Waiting ...</source>
         <translation>Não conectado com o simulador. Aguarde ...</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="422"/>
-        <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
-        <oldsource>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</oldsource>
-        <translation type="unfinished">Muitos erros de leitura do simulador. Desconectado. Reinicie &lt;i&gt;%1&lt;/i&gt; para tentar novamente.</translation>
+        <source>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</source>
+        <translation type="vanished">Muitos erros de leitura do simulador. Desconectado. Reinicie &lt;i&gt;%1&lt;/i&gt; para tentar novamente.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="441"/>
@@ -2653,7 +2682,7 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
     <message>
         <location filename="src/fs/userdata/airspacereaderivao.cpp" line="226"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation type="unfinished">Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2 (%3)</translation>
+        <translation>Não é possível abrir o arquivo &quot;%1&quot;. Motivo: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -2669,7 +2698,7 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
     <message>
         <location filename="src/fs/userdata/airspacereadervatsim.cpp" line="293"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation type="unfinished">Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2 (%3)</translation>
+        <translation>Não é possível abrir o arquivo &quot;%1&quot;. Motivo: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -2719,7 +2748,7 @@ Tempo Noturno: %5</translation>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="273"/>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="277"/>
         <source>File is not an X-Plane user_fix.dat file.</source>
-        <translation type="unfinished"></translation>
+        <translation>O arquivo não é um arquivo user_fix.dat do X-Plane.</translation>
     </message>
 </context>
 <context>
@@ -2727,7 +2756,7 @@ Tempo Noturno: %5</translation>
     <message>
         <location filename="src/fs/weather/weathernetdownload.cpp" line="54"/>
         <source>No METARs found in download.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhum METAR encontrado no download.</translation>
     </message>
 </context>
 <context>
@@ -2741,7 +2770,7 @@ Tempo Noturno: %5</translation>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="693"/>
+        <location filename="src/grib/windquery.cpp" line="700"/>
         <source>Unknown error.</source>
         <translation>Erro desconhecido.</translation>
     </message>
@@ -2776,8 +2805,8 @@ Tempo Noturno: %5</translation>
     <message>
         <location filename="src/gui/application.cpp" line="97"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
-        <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;Se o problema persistir ou ocorrer durante a inicialização, exclua todas as configurações e arquivos do banco de dados de &lt;i&gt;%1&lt;/i&gt; e tente novamente.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se você deseja relatar esse erro, anexe os arquivos de registro e configuração ao seu relatório, adicione todas as outras informações disponíveis e envie-as para um dos endereços de contato abaixo.&lt;/b&gt;&lt;br/&gt;</translation>
+        <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</oldsource>
+        <translation>&lt;b&gt;Se o problema persistir ou ocorrer durante a inicialização, exclua todas as configurações e arquivos de banco de dados de %1 e tente novamente.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se desejar relatar este erro, anexe o log e arquivos de configuração ao seu relatório, adicione todas as outras informações disponíveis e envie para o endereço de contato abaixo.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="126"/>
@@ -2840,12 +2869,12 @@ Tempo Noturno: %5</translation>
     <message>
         <location filename="src/gui/helphandler.cpp" line="60"/>
         <source> 64-bit</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="62"/>
         <source> 32-bit</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="68"/>
@@ -2892,7 +2921,7 @@ Tempo Noturno: %5</translation>
         <location filename="src/gui/tabwidgethandler.cpp" line="61"/>
         <source>&amp;Open all Tabs</source>
         <oldsource>&amp;Open All</oldsource>
-        <translation type="unfinished">&amp;Abra Tudo</translation>
+        <translation>&amp;Abra todas as Guias</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="62"/>
@@ -2903,7 +2932,7 @@ Tempo Noturno: %5</translation>
         <location filename="src/gui/tabwidgethandler.cpp" line="68"/>
         <source>&amp;Close all Tabs except Current</source>
         <oldsource>&amp;Close All Except Current</oldsource>
-        <translation type="unfinished">&amp;Fechar tudo, exceto o atual</translation>
+        <translation>&amp;Feche todas as Guias, exceto a Atual</translation>
     </message>
     <message>
         <source>Close all tabs except the current tab</source>
@@ -2955,7 +2984,7 @@ Tempo Noturno: %5</translation>
     <message>
         <location filename="src/gui/treedialog.cpp" line="180"/>
         <source>Duplicate id %1 found while adding item in TreeDialog</source>
-        <translation type="unfinished"></translation>
+        <translation>ID duplicado %1 encontrado ao adicionar item no TreeDialog</translation>
     </message>
 </context>
 <context>
@@ -2967,7 +2996,7 @@ Tempo Noturno: %5</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Longitude não é um número válido na linha
+        <translation>Longitude não é um número válido na linha
 
 &quot;%1&quot;
 
@@ -2980,7 +3009,7 @@ Importação interrompida.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Latitude não é um número válido na linha
+        <translation>Latitude não é um número válido na linha
 
 &quot;%1&quot;
 
@@ -2993,7 +3022,7 @@ Importação interrompida.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Coordenadas não são válidas na linha
+        <translation>Coordenadas não são válidas na linha
 
 &quot;%1&quot;
 
@@ -3006,7 +3035,7 @@ Importação interrompida.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Coordenadas são nulas na linha
+        <translation>Coordenadas são nulas na linha
 
 &quot;%1&quot;
 
@@ -3019,7 +3048,7 @@ Importação interrompida.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Coordenadas não estão em um intervalo válido na linha
+        <translation>Coordenadas não estão em um intervalo válido na linha
 
 &quot;%1&quot;
 
@@ -3028,84 +3057,84 @@ Importação interrompida.</translation>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="531"/>
         <source>preUndoBulkInsert() not called</source>
-        <translation type="unfinished"></translation>
+        <translation>preUndoBulkInsert() não chamado</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="630"/>
         <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tentativa de modificar a tabela &quot;%1&quot; ignorando a função de desfazer ativa.</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="740"/>
         <location filename="src/sql/datamanagerbase.cpp" line="746"/>
         <source>&amp;%1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="740"/>
         <source>&amp;Undo %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Desfazer %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="746"/>
         <source>&amp;Redo %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Refazer %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="832"/>
         <source>no %1</source>
-        <translation type="unfinished"></translation>
+        <translation>não %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="834"/>
         <source>one %1</source>
-        <translation type="unfinished"></translation>
+        <translation>um %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="836"/>
         <source>two %1</source>
-        <translation type="unfinished"></translation>
+        <translation>dois %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="838"/>
         <source>%1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="840"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Desfazer</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="840"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Refazer</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="845"/>
         <source>Invalid undo action</source>
-        <translation type="unfinished"></translation>
+        <translation>Ação de desfazer inválida</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="849"/>
         <source>%1 adding of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 adição de %2</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="853"/>
         <source>%1 editing of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 edição de %2</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="857"/>
         <source>%1 deleting of %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 deletando de %2</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="896"/>
         <location filename="src/sql/datamanagerbase.cpp" line="908"/>
         <source>Table undo_current is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>A tabela undo_current está vazia.</translation>
     </message>
 </context>
 <context>

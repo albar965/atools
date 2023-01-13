@@ -357,6 +357,22 @@ Datei: &quot;%2&quot;
         <source>Invalid LNMPLN flight plan. No waypoints found.</source>
         <translation>Ungültiger LNMPLN-Flugplan. Keine Wegpunkte gefunden.</translation>
     </message>
+    <message>
+        <source>Invalid FMS file. Invalid altitude in %1</source>
+        <translation>Ungültige FMS-Datei. Ungültige Höhe in %1</translation>
+    </message>
+    <message>
+        <source>Invalid FMS file. Invalid coordinate in %1</source>
+        <translation>Ungültige FMS-Datei. Ungültige Koordinate in %1</translation>
+    </message>
+    <message>
+        <source>Invalid FMS file. Cannot read waypoint type in %1</source>
+        <translation>Ungültige FMS-Datei. Kann Wegpunkttyp in %1 nicht lesen</translation>
+    </message>
+    <message>
+        <source>Invalid FMS file. Invalid waypoint type in %1</source>
+        <translation>Ungültige FMS-Datei. Ungültiger Wegpunkttyp in %1</translation>
+    </message>
 </context>
 <context>
     <name>GribReader</name>
