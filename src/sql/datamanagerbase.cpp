@@ -180,6 +180,8 @@ void DataManagerBase::setActions(QAction *undoActionParam, QAction *redoActionPa
 
 void DataManagerBase::insertOneRecord(SqlRecord record, int id)
 {
+  initCurrentId();
+
   if(id == -1)
     // Use generated id if not given
     id = getNextId();
@@ -194,6 +196,8 @@ void DataManagerBase::insertOneRecord(SqlRecord record, int id)
 
 void DataManagerBase::insertRecords(sql::SqlRecordList records)
 {
+  initCurrentId();
+
   // Insert id in records if id column is 0 or missing
   for(SqlRecord& record : records)
     updateIdColumn(record, getNextId());
@@ -559,6 +563,9 @@ void DataManagerBase::postUndoBulkInsert()
     syncCurrentUndoGroupToDb();
     updateUndoRedoActions();
   }
+
+  // get current (max) id from table
+  initCurrentId();
 }
 
 void DataManagerBase::preUndoDeleteAll()

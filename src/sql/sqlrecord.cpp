@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,7 @@ QVariant SqlRecord::value(int i) const
 {
   QVariant retval = sqlRecord.value(i);
   if(!retval.isValid())
-    throw SqlException("SqlRecord::value(): Value index " + QString::number(
-                         i) + " does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::value(): Value index " + QString::number(i) + " does not exist in query \"" + queryString + "\"");
   return retval;
 }
 
@@ -43,8 +42,7 @@ QVariant SqlRecord::value(const QString& name) const
 {
   QVariant retval = sqlRecord.value(name);
   if(!retval.isValid())
-    throw SqlException("SqlRecord::value(): Value name \"" +
-                       name + "\" does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::value(): Value name \"" + name + "\" does not exist in query \"" + queryString + "\"");
   return retval;
 
 }
@@ -67,8 +65,7 @@ QDateTime SqlRecord::valueDateTime(const QString& name, const QDateTime& default
 bool SqlRecord::isNull(int i) const
 {
   if(sqlRecord.fieldName(i).isEmpty())
-    throw SqlException("SqlRecord::isNull(): Field index " + QString::number(i) +
-                       " does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::isNull(): Field index " + QString::number(i) + " does not exist in query \"" + queryString + "\"");
 
   return sqlRecord.isNull(i);
 }
@@ -76,8 +73,7 @@ bool SqlRecord::isNull(int i) const
 bool SqlRecord::isNull(const QString& name) const
 {
   if(sqlRecord.indexOf(name) == -1)
-    throw SqlException("SqlRecord::indexOf(): Field name \"" +
-                       name + "\" does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::indexOf(): Field name \"" + name + "\" does not exist in query \"" + queryString + "\"");
   return sqlRecord.isNull(name);
 }
 
@@ -85,8 +81,7 @@ int SqlRecord::indexOf(const QString& name) const
 {
   int retval = sqlRecord.indexOf(name);
   if(retval == -1)
-    throw SqlException("SqlRecord::indexOf(): Field name \"" +
-                       name + "\" does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::indexOf(): Field name \"" + name + "\" does not exist in query \"" + queryString + "\"");
   return retval;
 }
 
@@ -94,8 +89,7 @@ QString SqlRecord::fieldName(int i) const
 {
   QString retval = sqlRecord.fieldName(i);
   if(retval.isEmpty())
-    throw SqlException("SqlRecord::fieldName(): Field index " + QString::number(i) +
-                       " does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::fieldName(): Field index " + QString::number(i) + " does not exist in query \"" + queryString + "\"");
   return retval;
 }
 
@@ -103,8 +97,7 @@ QVariant::Type SqlRecord::fieldType(int i) const
 {
   QSqlField retval = sqlRecord.field(i);
   if(sqlRecord.fieldName(i).isEmpty())
-    throw SqlException("SqlRecord::fieldType(): Field index " + QString::number(i) +
-                       " does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::fieldType(): Field index " + QString::number(i) + " does not exist in query \"" + queryString + "\"");
   return retval.type();
 }
 
@@ -112,8 +105,7 @@ QVariant::Type SqlRecord::fieldType(const QString& name) const
 {
   QSqlField retval = sqlRecord.field(name);
   if(!contains(name))
-    throw SqlException("SqlRecord::fieldType(): Field name \"" +
-                       name + "\" does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::fieldType(): Field name \"" + name + "\" does not exist in query \"" + queryString + "\"");
 
   return retval.type();
 }
@@ -121,8 +113,7 @@ QVariant::Type SqlRecord::fieldType(const QString& name) const
 bool SqlRecord::isGenerated(int i) const
 {
   if(sqlRecord.fieldName(i).isEmpty())
-    throw SqlException("SqlRecord::isGenerated(): Field index " + QString::number(i) +
-                       " does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::isGenerated(): Field index " + QString::number(i) + " does not exist in query \"" + queryString + "\"");
 
   return sqlRecord.isGenerated(i);
 }
@@ -130,8 +121,7 @@ bool SqlRecord::isGenerated(int i) const
 bool SqlRecord::isGenerated(const QString& name) const
 {
   if(!contains(name))
-    throw SqlException("SqlRecord::isGenerated(): Field name \"" +
-                       name + "\" does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::isGenerated(): Field name \"" + name + "\" does not exist in query \"" + queryString + "\"");
   return sqlRecord.isGenerated(name);
 }
 
@@ -243,32 +233,28 @@ QVariantList SqlRecord::values() const
 void SqlRecord::setValue(int i, const QVariant& val)
 {
   if(sqlRecord.fieldName(i).isEmpty())
-    throw SqlException("SqlRecord::setValue(): Field index " + QString::number(i) +
-                       " does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::setValue(): Field index " + QString::number(i) + " does not exist in query \"" + queryString + "\"");
   sqlRecord.setValue(i, val);
 }
 
 void SqlRecord::setValue(const QString& name, const QVariant& val)
 {
   if(sqlRecord.indexOf(name) == -1)
-    throw SqlException("SqlRecord::setValue(): Field name \"" +
-                       name + "\" does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::setValue(): Field name \"" + name + "\" does not exist in query \"" + queryString + "\"");
   sqlRecord.setValue(name, val);
 }
 
 void SqlRecord::setNull(int i)
 {
   if(sqlRecord.fieldName(i).isEmpty())
-    throw SqlException("SqlRecord::setNull(): Field index " + QString::number(i) +
-                       " does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::setNull(): Field index " + QString::number(i) + " does not exist in query \"" + queryString + "\"");
   sqlRecord.setNull(i);
 }
 
 void SqlRecord::setNull(const QString& name)
 {
   if(sqlRecord.indexOf(name) == -1)
-    throw SqlException("SqlRecord::setNull(): Field name \"" +
-                       name + "\" does not exist in query \"" + queryString + "\"");
+    throw SqlException("SqlRecord::setNull(): Field name \"" + name + "\" does not exist in query \"" + queryString + "\"");
   sqlRecord.setNull(name);
 }
 

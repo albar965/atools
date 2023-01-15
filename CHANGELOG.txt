@@ -24,6 +24,7 @@ This text is partially Markdown, hence sometimes strange formatting.
   turn anticipation display in Little Navmap.
 * Corrected NAT track download address to notams.aim.faa.gov/nat.html to avoid error messages on
   download.
+* Fixes to avoid crash with duplicate ids when adding userpoints or logbook entries. #985
 
 ===============================================================================
 
