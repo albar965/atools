@@ -25,6 +25,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Corrected NAT track download address to notams.aim.faa.gov/nat.html to avoid error messages on
   download.
 * Fixes to avoid crash with duplicate ids when adding userpoints or logbook entries. #985
+* Updated program translation for Brazilian Portuguese by Ricardo.
 
 ===============================================================================
 

@@ -3063,7 +3063,7 @@ Ore Notturne: %5</translation>
 <context>
     <name>atools::sql::DataManagerBase</name>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="432"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="436"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -3076,7 +3076,7 @@ Import stopped.</source>
 Importazione interrotta.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="435"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="439"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -3089,7 +3089,7 @@ Import stopped.</source>
 Importazione interrotta.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="438"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="442"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -3102,7 +3102,7 @@ Import stopped.</source>
 Importazione interrotta.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="441"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="445"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -3115,7 +3115,7 @@ Import stopped.</source>
 Importazione interrotta.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="444"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="448"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -3128,18 +3128,18 @@ Import stopped.</source>
 Importazione interrotta.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="531"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="535"/>
         <source>preUndoBulkInsert() not called</source>
         <translation>preUndoBulkInsert() non chiamato</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="630"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="637"/>
         <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
         <translation>Tentativo di modifica della tabella &quot;%1&quot; bypassando la funzione attiva di annullamento.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="740"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="746"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="747"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="753"/>
         <source>&amp;%1</source>
         <translation>&amp;%1</translation>
     </message>
@@ -3152,68 +3152,68 @@ Importazione interrotta.</translation>
         <translation type="vanished">&amp;Rifare%1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="740"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="747"/>
         <source>&amp;Undo %1</source>
         <translation>&amp;Annulla %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="746"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="753"/>
         <source>&amp;Redo %1</source>
         <translation>&amp;Rifare %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="832"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="839"/>
         <source>no %1</source>
         <translation>nessun %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="834"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="841"/>
         <source>one %1</source>
         <translation>uno %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="836"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="843"/>
         <source>two %1</source>
         <translation>due %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="838"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="845"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="840"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="847"/>
         <source>Undo</source>
         <translation>Annulla</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="840"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="847"/>
         <source>Redo</source>
         <translation>Rifare</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="845"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="852"/>
         <source>Invalid undo action</source>
         <translation>Azione di annullamento non valida</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="849"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="856"/>
         <source>%1 adding of %2</source>
         <translation>%1 aggiunta di %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="853"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="860"/>
         <source>%1 editing of %2</source>
         <translation>%1 modifica di %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="857"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="864"/>
         <source>%1 deleting of %2</source>
         <translation>%1 cancellazione di %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="896"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="908"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="903"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="915"/>
         <source>Table undo_current is empty.</source>
         <translation>La tabella undo_current è vuota.</translation>
     </message>
