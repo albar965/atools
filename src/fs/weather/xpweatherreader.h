@@ -74,6 +74,16 @@ public:
   /* load all METAR files */
   void load();
 
+  atools::fs::weather::XpWeatherType getWeatherType() const
+  {
+    return weatherType;
+  }
+
+  const QString& getWeatherPath() const
+  {
+    return weatherPath;
+  }
+
 signals:
   void weatherUpdated();
 
