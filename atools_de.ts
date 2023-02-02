@@ -359,7 +359,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Invalid FMS file. Invalid altitude in %1</source>
-        <translation>Ungültige FMS-Datei. Ungültige Höhe in %1</translation>
+        <translation type="vanished">Ungültige FMS-Datei. Ungültige Höhe in %1</translation>
     </message>
     <message>
         <source>Invalid FMS file. Invalid coordinate in %1</source>
@@ -2431,6 +2431,10 @@ Nachtzeit: %5</translation>
     <message>
         <source> 32-bit</source>
         <translation> 32-Bit</translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; not found</source>
+        <translation>Datei &quot;%1&quot; wurde nicht gefunden</translation>
     </message>
 </context>
 <context>

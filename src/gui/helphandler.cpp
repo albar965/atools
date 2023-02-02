@@ -17,20 +17,16 @@
 
 #include "gui/helphandler.h"
 
-#include "logging/logginghandler.h"
-#include "settings/settings.h"
 #include "atools.h"
 #include "gui/application.h"
 #include "gui/dialog.h"
 
-#include <QDebug>
 #include <QMessageBox>
 #include <QApplication>
 #include <QUrl>
 #include <QDir>
 #include <QFileInfo>
 #include <QDesktopServices>
-#include <QRegularExpression>
 #include <QSslSocket>
 #include <QProcess>
 
@@ -124,8 +120,20 @@ void HelpHandler::openFile(QWidget *parent, const QString& filepath)
   {
 #if defined(DEBUG_OPEN_FILE) && defined(Q_OS_LINUX)
     // Workaround for a KDE bug which does not open files from the build folder
-    if(filepath.endsWith(".lnmpln") || filepath.endsWith(".lnmperf") || filepath.endsWith(".pln") || filepath.endsWith(".fms"))
-      QProcess::startDetached("/usr/bin/kate", {QDir::toNativeSeparators(filepath)});
+    if(QFile::exists("/usr/bin/xdg-open"))
+    {
+      QStringList env = QProcess::systemEnvironment();
+      env.erase(std::remove_if(env.begin(), env.end(), [ = ](const QString& str) {
+            return str.startsWith("LD_LIBRARY_PATH=");
+          }), env.end());
+
+      QProcess process;
+      process.setEnvironment(env);
+      process.setArguments({QDir::toNativeSeparators(filepath)});
+      process.setProgram("/usr/bin/xdg-open");
+      if(!process.startDetached())
+        atools::gui::Dialog::warning(parent, tr("File \"%1\" not found").arg(filepath));
+    }
     else
       openUrl(parent, QUrl::fromLocalFile(QDir::toNativeSeparators(filepath)));
 #else
@@ -133,7 +141,7 @@ void HelpHandler::openFile(QWidget *parent, const QString& filepath)
 #endif
   }
   else
-    atools::gui::Dialog::warning(parent, tr("Help file \"%1\" not found").arg(filepath));
+    atools::gui::Dialog::warning(parent, tr("File \"%1\" not found").arg(filepath));
 }
 
 QUrl HelpHandler::getHelpUrlWeb(const QString& urlString, const QString& language)
