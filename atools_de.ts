@@ -202,6 +202,14 @@ Datei: &quot;%2&quot;
         <source>Pattern is empty.</source>
         <translation>Muster ist leer.</translation>
     </message>
+    <message>
+        <source>File pattern has no extension. It should end with &quot;.%1&quot;.</source>
+        <translation>Dateimuster hat keine Endung. Es sollte mit &quot;.%1&quot; enden.</translation>
+    </message>
+    <message>
+        <source>File pattern uses a wrong extension &quot;.%1&quot;. It should end with &quot;.%2&quot;.</source>
+        <translation>Dateimuster hat die falsche Endung &quot;.%1&quot;. Es sollte mit &quot;.%2&quot; enden.</translation>
+    </message>
 </context>
 <context>
     <name>FlightplanEntry</name>

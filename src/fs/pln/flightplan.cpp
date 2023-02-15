@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 #include "fs/pln/flightplan.h"
 
 #include "geo/calculations.h"
+
+#include <QFileInfo>
 
 namespace atools {
 namespace fs {
@@ -104,9 +106,23 @@ QString Flightplan::getFilenamePatternExample(const QString& pattern, const QStr
 {
   if(!pattern.isEmpty())
   {
+    if(errorMessage != nullptr)
+    {
+      // Check pattern for errors
+      QString patternSuffix = QFileInfo(pattern).suffix();
+      QString defaultPatternSuffix = suffix.startsWith('.') ? suffix.mid(1) : suffix;
+
+      if(patternSuffix.isEmpty())
+        errorMessage->append(tr("File pattern has no extension. It should end with \".%1\".").arg(defaultPatternSuffix));
+      else if(patternSuffix.compare(defaultPatternSuffix, Qt::CaseInsensitive) != 0)
+        // Pattern differs to given extension
+        errorMessage->append(tr("File pattern uses a wrong extension \".%1\". It should end with \".%2\".").
+                             arg(patternSuffix).arg(defaultPatternSuffix));
+    }
+
     // Build an example filename
     QString example = atools::fs::pln::Flightplan::getFilenamePattern(pattern, "IFR", "Frankfurt am Main", "EDDF",
-                                                                      "Fiumicino", "LIRF", suffix, 30000, false /* clean */);
+                                                                      "Fiumicino", "LIRF", QString(), 30000, false /* clean */);
 
     // Clean name from invalid characters
     QString cleanExample = atools::cleanFilename(example, atools::MAX_FILENAME_CHARS);
@@ -122,6 +138,7 @@ QString Flightplan::getFilenamePatternExample(const QString& pattern, const QStr
   }
   else
   {
+    // Nothing given - return empty example
     if(errorMessage != nullptr)
       *errorMessage = tr("Pattern is empty.");
     return QString();
