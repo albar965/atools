@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 
 #include "fs/scenery/manifestjson.h"
 
-#include "exception.h"
 #include "atools.h"
 
 #include <QFile>
@@ -98,8 +97,7 @@ bool ManifestJson::isAnyScenery() const
 
   // Cannot discriminate by values since add-on developers use often wrong types
   // Instead exclude obvious known types
-  return contentType.compare("AIRCRAFT", Qt::CaseInsensitive) != 0 &&
-         contentType.compare("INSTRUMENTS", Qt::CaseInsensitive) != 0 &&
+  return contentType.compare("INSTRUMENTS", Qt::CaseInsensitive) != 0 &&
          contentType.compare("LIVERY", Qt::CaseInsensitive) != 0;
 }
 
