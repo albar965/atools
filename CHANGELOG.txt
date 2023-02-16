@@ -4,6 +4,16 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.13
+
+* Better check for flight plan file pattern.
+* Changed reading of MSFS scenery library. Now also reading content type `AIRCRAFT` since
+  aircraft add-ons may contain airports as well.
+* Adjusted detection of Navigraph package.
+* Fixed crash when loading X-Plane FMS files with negative airport elevation.
+
+===============================================================================
+
 # Version 3.8.12
 
 * Corrected logbook and userpoint import functions where first row in CSV files was not recognized
