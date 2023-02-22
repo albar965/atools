@@ -1004,15 +1004,27 @@ QDateTime xpGribFilenameToDate(const QString& filename)
   // XP 11 and 12
   // GRIB-2022-11-25-00.00-ZULU-wind.grib
   // GRIB-2022-9-6-21.00-ZULU-wind.grib
-  const static QRegularExpression GRIB_REGEXP("GRIB-(\\d+)-(\\d+)-(\\d+)-(\\d+).(\\d+)(-ZULU)?-wind\\.grib$",
+  // GRIB-2023-02-22-18.00-ZULU-wind-v2.grib
+  const static QRegularExpression GRIB_REGEXP("^GRIB-(\\d+)-(\\d+)-(\\d+)-(\\d+).(\\d+)(-ZULU)?-wind(-v\\d+)?\\.grib$",
                                               QRegularExpression::CaseInsensitiveOption);
   QRegularExpressionMatch match = GRIB_REGEXP.match(filename);
 
   if(match.hasMatch())
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "Match for" << filename << match.capturedTexts();
+#endif
+
     return QDateTime(QDate(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt()),
                      QTime(match.captured(4).toInt(), match.captured(5).toInt()), Qt::UTC);
+  }
   else
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "No match for" << filename;
+#endif
     return QDateTime();
+  }
 }
 
 QDateTime xpMetarFilenameToDate(const QString& filename)
