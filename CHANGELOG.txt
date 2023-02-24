@@ -12,6 +12,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Adjusted detection of Navigraph package.
 * Fixed crash when loading X-Plane FMS files with negative airport elevation.
 * Adapted to new wind aloft file pattern in X-Plane which was introduced with version 12.04b2.
+* Increased maximum length for user waypoints to 80 characters in MSFS PLN flight plan file export.
 
 ===============================================================================
 

@@ -1819,22 +1819,22 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
 
 void FlightplanIO::savePln(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, 10);
+  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, 10 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnMsfs(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, true /* msfs */, 10);
+  savePlnInternal(plan, file, false /* annotated */, true /* msfs */, 80 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnIsg(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, 12);
+  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, 12 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnAnnotated(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, true /* annotated */, false /* msfs */, 10);
+  savePlnInternal(plan, file, true /* annotated */, false /* msfs */, 10 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, int userWpLength)
