@@ -86,7 +86,7 @@ struct SimDataAircraft
   qint32 modelRadius;
   qint32 wingSpan;
 
-  float altitudeFt;
+  float altitudeFt; // Actual altitude
   float latitudeDeg;
   float longitudeDeg;
 
@@ -195,7 +195,7 @@ public:
   SimData simData;
   unsigned long simDataObjectId;
 
-  QVector<SimDataAircraft> simDataAircraft;
+  QVector<SimDataAircraft> simDataAircraftList;
   QVector<unsigned long> simDataAircraftObjectIds;
 
   sc::State state = sc::STATEOK;
@@ -391,7 +391,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                          << simDataAircraftPtr->planeHeadingTrueDeg << "T"
                 ;
 
-              simDataAircraft.append(*simDataAircraftPtr);
+              simDataAircraftList.append(*simDataAircraftPtr);
               simDataAircraftObjectIds.append(objectID);
               aiDataFetched = true;
             }
@@ -791,7 +791,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     qDebug() << "fetchData entered ================================================================";
 
   // === Get AI aircraft =======================================================
-  p->simDataAircraft.clear();
+  p->simDataAircraftList.clear();
   p->simDataAircraftObjectIds.clear();
   p->simDataObjectId = 0;
 
@@ -835,13 +835,13 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
     // Get AI aircraft =======================================================================
     QSet<unsigned long> objectIds;
-    for(int i = 0; i < p->simDataAircraft.size(); i++)
+    for(int i = 0; i < p->simDataAircraftList.size(); i++)
     {
       unsigned long oid = p->simDataAircraftObjectIds.at(i);
       // Avoid duplicates
       if(!objectIds.contains(oid))
       {
-        const SimDataAircraft& simDataAircraft = p->simDataAircraft.at(i);
+        const SimDataAircraft& simDataAircraft = p->simDataAircraftList.at(i);
         atools::fs::sc::SimConnectAircraft aiAircraft;
         p->copyToSimConnectAircraft(simDataAircraft, aiAircraft);
 

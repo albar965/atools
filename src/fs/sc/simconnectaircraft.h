@@ -429,7 +429,9 @@ private:
   QString airplaneTitle, airplaneType, airplaneModel, airplaneReg, airplaneRegKey,
           airplaneAirline, airplaneFlightnumber, fromIdent, toIdent;
 
+  // Altitude field in pos is actual altitude
   atools::geo::Pos position;
+
   float headingTrueDeg = 0.f, headingMagDeg = 0.f, groundSpeedKts = 0.f, indicatedAltitudeFt = 0.f,
         indicatedSpeedKts = 0.f, trueAirspeedKts = 0.f,
         machSpeed = 0.f, verticalSpeedFeetPerMin = 0.f;
