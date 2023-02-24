@@ -301,6 +301,9 @@ void DockWidgetHandler::dockVisibilityChanged(bool visible)
     QDockWidget *dockWidget = dynamic_cast<QDockWidget *>(sender());
     if(dockWidget != nullptr)
     {
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << "visible true" << dockWidget->objectName();
+
       if(dockWidget->isFloating())
       {
         // Check if widget or its title bar are off screen and correct position if needed
@@ -323,7 +326,7 @@ void DockWidgetHandler::dockVisibilityChanged(bool visible)
 void DockWidgetHandler::dockTopLevelChanged(bool topLevel)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << topLevel;
 
   updateDockTabStatus();
 
@@ -362,8 +365,7 @@ void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
   if(checked)
   {
     // Find a stack that contains the widget ==================
-    auto it = std::find_if(dockStackList.begin(), dockStackList.end(),
-                           [dockWidget](QList<QDockWidget *>& list)
+    auto it = std::find_if(dockStackList.begin(), dockStackList.end(), [dockWidget](QList<QDockWidget *>& list)
         {
           return list.contains(dockWidget);
         });
@@ -374,7 +376,11 @@ void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
       for(QDockWidget *dock : *it)
       {
         if(dock != dockWidget)
+        {
+          if(verbose)
+            qDebug() << Q_FUNC_INFO << dock->objectName();
           dock->show();
+        }
       }
     }
 
@@ -391,7 +397,11 @@ void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
       for(QDockWidget *dock : mainWindow->tabifiedDockWidgets(dockWidget))
       {
         if(!dock->isFloating())
+        {
+          if(verbose)
+            qDebug() << Q_FUNC_INFO << dock->objectName();
           dock->close();
+        }
       }
     }
   }
@@ -410,6 +420,9 @@ void DockWidgetHandler::updateDockTabStatus()
 
 void DockWidgetHandler::updateDockTabStatus(QDockWidget *dockWidget)
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << dockWidget->objectName();
+
   if(dockWidget->isFloating())
     return;
 
@@ -444,7 +457,9 @@ void DockWidgetHandler::dockViewToggled()
   if(verbose)
     qDebug() << Q_FUNC_INFO;
 
-  if(handleDockViews)
+  // Do not change dock stack order if the main window is minimized or unminimized
+  // State is still min if main window is unminimized
+  if(handleDockViews && !mainWindow->isMinimized())
   {
     QAction *action = dynamic_cast<QAction *>(sender());
     if(action != nullptr)
