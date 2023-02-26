@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 
 #include "routing/routenetworkloader.h"
 
+#include "geo/calculations.h"
+#include "io/binaryutil.h"
+#include "routing/routenetwork.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
 #include "sql/sqlutil.h"
-#include "geo/calculations.h"
-#include "routing/routenetwork.h"
 #include "track/tracktypes.h"
-#include "io/binaryutil.h"
 
 #include <QElapsedTimer>
 
@@ -107,22 +107,25 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
     // Column order is important in the queries
 
     // Read navaids into nodeIdIndexMap and into nodesTemp ====================
+    // Filter - waypoints from procedures are omitted
     // Named and unnamed waypoints without airways as well as degree confluence waypoints
+    // RNAV and OA appear only in MSFS
     if(hasNav)
       readNodesAirway(nodeVector, nodeIdIndexMap,
                       "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty "
                       "from waypoint w "
-                      "where w.type in ('WN', 'WU') and w.airport_id is null and "
+                      "where w.type in ('WN', 'WU', 'RNAV', 'OA') and w.airport_id is null and "
                       "w.num_jet_airway = 0 and w.num_victor_airway = 0",
                       false, false, false, true /* filterProc */);
 
     // Airway waypoints ====================
     // No filter - all waypoints are taken
+    // RNAV appears only in MSFS
     if(hasNav)
       readNodesAirway(nodeVector, nodeIdIndexMap,
                       "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway "
                       "from waypoint w "
-                      "where w.type like 'W%' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
+                      "where w.type in ('WN', 'WU', 'RNAV') and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
                       false, false, false, false);
 
     // Track waypoints ====================
