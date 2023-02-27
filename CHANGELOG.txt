@@ -16,6 +16,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Fix for stacked dock windows appearing in the wrong order or toggling visibility after un-minimizing main window.
 * Corrected loading of routing network which was incomplete due to new MSFS RNAV waypoint type. #1001
 * Increased max entries in map position history.
+* Made reading of GRIB files more error tolerant. Now throwing exception for empty, null-sized or wrong files.
 
 ===============================================================================
 

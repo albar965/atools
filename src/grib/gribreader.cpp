@@ -43,7 +43,7 @@ void printArrInt(const QString& name, g2int *arr, g2int num)
     QStringList list;
     for(int i = 0; i < num; i++)
       list.append(QString::number(arr[i]));
-    qDebug().noquote().nospace() << name << "(" << num << ")" << "[" << list.join(", ") << "]";
+    qDebug().noquote().nospace() << Q_FUNC_INFO << name << "(" << num << ")" << "[" << list.join(", ") << "]";
   }
 }
 
@@ -57,7 +57,7 @@ void printArrFloat(const QString& name, g2float *arr, g2int num)
     QStringList list;
     for(int i = 0; i < num; i++)
       list.append(QString::number(arr[i]));
-    qDebug().noquote().nospace() << name << "(" << num << ")" << "[" << list.join(", ") << "]";
+    qDebug().noquote().nospace() << Q_FUNC_INFO << name << "(" << num << ")" << "[" << list.join(", ") << "]";
   }
 }
 
@@ -67,7 +67,7 @@ Q_REQUIRED_RESULT inline bool checkValue(const QString& message, TYPE value, TYP
 {
   if(expected != value)
   {
-    qWarning() << QString("GribReader: Error reading grib file: %1: value %2 not equal to expected value %3").
+    qWarning() << Q_FUNC_INFO << QString("GribReader: Error reading grib file: %1: value %2 not equal to expected value %3").
       arg(message).arg(value).arg(expected);
     return false;
   }
@@ -84,7 +84,7 @@ Q_REQUIRED_RESULT bool checkValue(const QString& message, TYPE value, const QVec
     for(TYPE val : expected)
       expectedStr.append(QString::number(static_cast<int>(val)));
 
-    qWarning() << QString("GribReader: Error reading grib file: %1: value %2 not in expected range %3").
+    qWarning() << Q_FUNC_INFO << QString("GribReader: Error reading grib file: %1: value %2 not in expected range %3").
       arg(message).arg(value).arg(expectedStr.join(GribReader::tr(", ")));
     return false;
   }
@@ -100,6 +100,12 @@ GribReader::GribReader(bool verboseParam)
 
 void GribReader::readFile(const QString& filename)
 {
+  if(QFileInfo(filename).size() == 0)
+    throw atools::Exception(tr("GRIB data empty"));
+
+  if(!validateGribFile(filename))
+    throw atools::Exception(tr("Not a GRIB file"));
+
   unsigned char *cgrib;
   g2int listSection0[3], listSection1[13], numlocal, numfields;
   long skipBytes, numGribBytes, seekBytes = 0L;
@@ -145,7 +151,7 @@ void GribReader::readFile(const QString& filename)
 
       if(verbose)
       {
-        qDebug() << "numfields" << numfields << "numlocal" << numlocal;
+        qDebug() << Q_FUNC_INFO << "numfields" << numfields << "numlocal" << numlocal;
         printArrInt(QString(Q_FUNC_INFO) + " Section 0: ", listSection0, 3);
         printArrInt(QString(Q_FUNC_INFO) + " Section 1: ", listSection1, 13);
       }
@@ -162,8 +168,8 @@ void GribReader::readFile(const QString& filename)
         {
           // gfld->version = GRIB edition number ( currently 2 )
           // gfld->discipline = Message Discipline ( see Code Table 0.0 )
-          qDebug() << "===================================";
-          qDebug() << "field" << n << "version" << gribField->version << "discipline" << gribField->discipline;
+          qDebug() << Q_FUNC_INFO << "===================================";
+          qDebug() << Q_FUNC_INFO << "field" << n << "version" << gribField->version << "discipline" << gribField->discipline;
         }
 
         // ID section ====================================================================================
@@ -235,7 +241,7 @@ void GribReader::readFile(const QString& filename)
         // 1 - Predetermined grid Defined by originating centre
         // https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_table3-0.shtml
         if(verbose)
-          qDebug() << "griddef" << gribField->griddef;
+          qDebug() << Q_FUNC_INFO << "griddef" << gribField->griddef;
         if(!checkValue("Grid definition", gribField->griddef, g2int(0)))
           continue;
 
@@ -243,7 +249,7 @@ void GribReader::readFile(const QString& filename)
         // Latitude/Longitude (See Template 3.0)
         // https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_table3-1.shtml
         if(verbose)
-          qDebug() << "igdtnum" << gribField->igdtnum;
+          qDebug() << Q_FUNC_INFO << "igdtnum" << gribField->igdtnum;
         if(!checkValue("Grid Definition Template Number", gribField->igdtnum, g2int(0)))
           continue;
 
@@ -455,6 +461,9 @@ void GribReader::readFile(const QString& filename)
 #if defined(Q_OS_WIN32)
   delete[] path;
 #endif
+
+  if(datasets.isEmpty())
+    throw atools::Exception(tr("Wrong GRIB file type"));
 }
 
 void GribReader::readData(const QByteArray& data)
@@ -490,7 +499,7 @@ bool GribReader::validateGribFile(const QString& path)
   if(file.open(QIODevice::ReadOnly))
     return validateGribData(file.read(8));
   else
-    qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
+    qWarning() << Q_FUNC_INFO << "Cannot open" << file.fileName() << "reason" << file.errorString();
   return false;
 }
 
