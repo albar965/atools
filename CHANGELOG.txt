@@ -15,6 +15,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Increased maximum length for user waypoints to 80 characters in MSFS PLN flight plan file export.
 * Fix for stacked dock windows appearing in the wrong order or toggling visibility after un-minimizing main window.
 * Corrected loading of routing network which was incomplete due to new MSFS RNAV waypoint type. #1001
+* Increased max entries in map position history.
 
 ===============================================================================
 

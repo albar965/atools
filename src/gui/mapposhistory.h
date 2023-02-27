@@ -135,7 +135,7 @@ signals:
 private:
   // Aggregate all entry that are close than this value
   const int MAX_MS_FOR_NEW_ENTRY = 200;
-  const int MAX_NUMBER_OF_ENTRIES = 50;
+  const int MAX_NUMBER_OF_ENTRIES = 100;
 
   const quint32 FILE_MAGIC_NUMBER = 0x4C8D1F09;
   const quint16 FILE_VERSION = 1;
