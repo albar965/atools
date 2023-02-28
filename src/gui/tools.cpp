@@ -97,6 +97,13 @@ bool showInFileManager(const QString& filepath, QWidget *parent)
       return true;
   }
 #else
+
+#if defined(DEBUG_OPEN_FILE) && defined(Q_OS_LINUX)
+  // Workaround for a KDE bug which does not open files from the build folder
+  atools::gui::HelpHandler::openFile(parent, QFileInfo(filepath).canonicalPath());
+  return true;
+
+#else
   QFileInfo fi(filepath);
   QUrl url = QUrl::fromLocalFile(fi.canonicalPath());
   qDebug() << Q_FUNC_INFO << "url" << url;
@@ -108,6 +115,8 @@ bool showInFileManager(const QString& filepath, QWidget *parent)
   }
   else
     return true;
+
+#endif
 
 #endif
 }
