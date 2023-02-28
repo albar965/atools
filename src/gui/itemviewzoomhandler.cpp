@@ -82,7 +82,9 @@ ItemViewZoomHandler::~ItemViewZoomHandler()
 
 void ItemViewZoomHandler::fontChanged()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << itemView->objectName();
+#endif
 
   setTableViewFontSize(defaultTableViewFontPointSize);
 }
@@ -94,8 +96,10 @@ void ItemViewZoomHandler::setTableViewFontSize(double pointSize)
 
   double newFontHeight = QFontMetricsF(newFont).height();
 
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "pointSize" << pointSize << itemView->objectName() << "new font height" << newFontHeight
            << "point size" << newFont.pointSizeF();
+#endif
 
   itemView->setFont(newFont);
 
@@ -127,8 +131,10 @@ void ItemViewZoomHandler::initTableViewZoom()
   else
     newPointSize = defaultTableViewFontPointSize;
 
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << itemView->objectName() << "newPointSize" << newPointSize
            << "defaultTableViewFontPointSize" << defaultTableViewFontPointSize;
+#endif
 
   setTableViewFontSize(newPointSize);
 }
@@ -150,7 +156,9 @@ void ItemViewZoomHandler::zoomDefault()
 
 void ItemViewZoomHandler::zoomPercent(int percent)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << itemView->objectName() << percent;
+#endif
 
   double newPointSize = defaultTableViewFontPointSize * percent / 100.;
 
@@ -162,7 +170,9 @@ void ItemViewZoomHandler::zoomPercent(int percent)
 
 void ItemViewZoomHandler::zoomTableView(int value)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << itemView->objectName() << value;
+#endif
 
   double newPointSize = defaultTableViewFontPointSize;
 

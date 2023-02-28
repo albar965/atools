@@ -101,16 +101,19 @@ void SqlDatabase::open(const QStringList& pragmas)
   if(!readonly && automaticTransactions)
     transactionInternal();
 
-  qInfo() << "Opened database" << databaseName();
+  qInfo() << Q_FUNC_INFO << "Opened database" << databaseName();
+
+#ifdef DEBUG_INFORMATION
   atools::sql::SqlQuery query(db);
   for(const QString& pragmaQuery : pragmas)
   {
     QString pragma = pragmaQuery.section("=", 0, 0);
     query.exec(pragma);
     if(query.next())
-      qInfo() << pragma << "value is now: " << query.value(0).toString();
+      qInfo() << Q_FUNC_INFO << pragma << "value is now: " << query.value(0).toString();
     query.finish();
   }
+#endif
 
   recordFileMetadata();
 }
@@ -121,7 +124,7 @@ void SqlDatabase::open(const QString& user, const QString& password, const QStri
   checkError(db.open(user, password), "Error opening database");
   checkError(isValid(), "Database not valid after opening");
 
-  qInfo() << "Opened database" << databaseName();
+  qInfo() << Q_FUNC_INFO << "Opened database" << databaseName();
   for(const QString& pragma : pragmas)
   {
     db.exec(pragma);
@@ -146,7 +149,7 @@ void SqlDatabase::close()
 
   db.close();
 
-  qInfo() << "Closed database" << databaseName();
+  qInfo() << Q_FUNC_INFO << "Closed database" << databaseName();
 
   QString journalName(db.databaseName() + "-journal");
   QFileInfo journal(journalName);

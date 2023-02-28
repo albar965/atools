@@ -73,7 +73,7 @@ public:
 
   /* Create database schema. Drops current schema if tables already exist. Initalizes ids and uses a transaction.
    * Also creates the undo schema if the script is given in the constructor. */
-  void createSchema();
+  void createSchema(bool verboseLogging);
 
   /* Drops schema tables and indexes */
   void dropSchema();

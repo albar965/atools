@@ -71,14 +71,14 @@ int DataManagerBase::rowCount() const
   return hasData() ? util->rowCount(tableName) : 0;
 }
 
-void DataManagerBase::createSchema()
+void DataManagerBase::createSchema(bool verboseLogging)
 {
   qDebug() << Q_FUNC_INFO << tableName;
 
   deInitQueries();
 
   SqlTransaction transaction(db);
-  SqlScript script(db, true);
+  SqlScript script(db, verboseLogging);
 
   script.executeScript(createScript);
 
@@ -157,7 +157,10 @@ void DataManagerBase::initCurrentUndoIds()
 
 bool DataManagerBase::addColumnIf(const QString& colName, const QString& colType)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << colName << colType;
+#endif
+
   SqlTransaction transaction(db);
   bool retval = util->addColumnIf(tableName, colName, colType);
 
@@ -167,7 +170,9 @@ bool DataManagerBase::addColumnIf(const QString& colName, const QString& colType
     retvalUndo = util->addColumnIf("undo_data", colName, colType);
   transaction.commit();
 
-  qDebug() << Q_FUNC_INFO << colName << colType << "added" << retval << "added undo" << retvalUndo;
+  if(retval || retvalUndo)
+    qDebug() << Q_FUNC_INFO << colName << colType << "added" << retval << "added undo" << retvalUndo;
+
   return retval;
 }
 
