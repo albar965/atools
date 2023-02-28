@@ -17,6 +17,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Corrected loading of routing network which was incomplete due to new MSFS RNAV waypoint type. #1001
 * Increased max entries in map position history.
 * Made reading of GRIB files more error tolerant. Now throwing exception for empty, null-sized or wrong files.
+* Removed needless dock window repositioning to avoid issues with docks moved to the wrong screen.
 
 ===============================================================================
 

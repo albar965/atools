@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -291,38 +291,6 @@ DockWidgetHandler::~DockWidgetHandler()
   delete fullscreenState;
 }
 
-void DockWidgetHandler::dockVisibilityChanged(bool visible)
-{
-  if(verbose)
-    qDebug() << Q_FUNC_INFO << "visible" << visible;
-
-  if(visible)
-  {
-    QDockWidget *dockWidget = dynamic_cast<QDockWidget *>(sender());
-    if(dockWidget != nullptr)
-    {
-      if(verbose)
-        qDebug() << Q_FUNC_INFO << "visible true" << dockWidget->objectName();
-
-      if(dockWidget->isFloating())
-      {
-        // Check if widget or its title bar are off screen and correct position if needed
-        QPoint pos = dockWidget->pos();
-        if(pos.y() < 0)
-          pos.setY(10);
-        if(pos.x() < 0)
-          pos.setX(10);
-        if(pos != dockWidget->pos())
-        {
-          qDebug() << Q_FUNC_INFO << "Correcting dock position for" << dockWidget->objectName()
-                   << "from" << dockWidget->pos() << "to" << pos;
-          dockWidget->move(pos);
-        }
-      }
-    }
-  }
-}
-
 void DockWidgetHandler::dockTopLevelChanged(bool topLevel)
 {
   if(verbose)
@@ -351,7 +319,6 @@ void DockWidgetHandler::connectDockWidget(QDockWidget *dockWidget)
   connect(dockWidget->toggleViewAction(), &QAction::toggled, this, &DockWidgetHandler::dockViewToggled);
   connect(dockWidget, &QDockWidget::dockLocationChanged, this, &DockWidgetHandler::dockLocationChanged);
   connect(dockWidget, &QDockWidget::topLevelChanged, this, &DockWidgetHandler::dockTopLevelChanged);
-  connect(dockWidget, &QDockWidget::visibilityChanged, this, &DockWidgetHandler::dockVisibilityChanged);
   dockWidget->installEventFilter(dockEventFilter);
 }
 
