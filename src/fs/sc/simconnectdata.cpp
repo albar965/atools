@@ -147,13 +147,13 @@ int SimConnectData::write(QIODevice *ioDevice)
   if(userValid)
     userAircraft.write(out);
 
-  int numAi = std::min(static_cast<qsizetype>(65535), static_cast<qsizetype>(aiAircraft.size()));
+  qsizetype numAi = std::min(static_cast<qsizetype>(65535), static_cast<qsizetype>(aiAircraft.size()));
   out << static_cast<quint16>(numAi);
 
   for(int i = 0; i < numAi; i++)
     aiAircraft.at(i).write(out);
 
-  int numMetar = std::min(static_cast<qsizetype>(65535), static_cast<qsizetype>(metarResults.size()));
+  qsizetype numMetar = std::min(static_cast<qsizetype>(65535), static_cast<qsizetype>(metarResults.size()));
   out << static_cast<quint16>(numMetar);
 
   for(int i = 0; i < numMetar; i++)
@@ -193,7 +193,7 @@ const SimConnectAircraft *SimConnectData::getAiAircraftConstById(int id) const
 
 SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
                                                      float vertSpeed, float tas, float fuelflow, float totalFuel, float ice,
-                                                     float flightplanAlt, float magVar)
+                                                     float flightplanAlt, float magVar, bool jetFuel)
 {
   static QVector<float> lastHdgs;
   lastHdgs.fill(0.f, 10);
@@ -258,9 +258,9 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.airplaneTotalWeightLbs = 3000.f;
   data.userAircraft.airplaneMaxGrossWeightLbs = 4000.f;
   data.userAircraft.fuelTotalWeightLbs = totalFuel;
-  data.userAircraft.fuelTotalQuantityGallons = atools::geo::fromLbsToGal(false, data.userAircraft.fuelTotalWeightLbs);
+  data.userAircraft.fuelTotalQuantityGallons = atools::geo::fromLbsToGal(jetFuel, data.userAircraft.fuelTotalWeightLbs);
   data.userAircraft.fuelFlowPPH = fuelflow;
-  data.userAircraft.fuelFlowGPH = atools::geo::fromLbsToGal(false, fuelflow);
+  data.userAircraft.fuelFlowGPH = atools::geo::fromLbsToGal(jetFuel, fuelflow);
   data.userAircraft.flags = IS_USER | (ground ? ON_GROUND : NONE);
 
   data.userAircraft.debug = true;
