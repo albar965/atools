@@ -66,8 +66,7 @@ inline uint qHash(const ParkingKey& pair)
 
 using atools::io::BinaryStream;
 
-Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
-                 atools::fs::bgl::flags::CreateFlags flags)
+Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs::bgl::flags::CreateFlags flags)
   : Record(options, bs)
 {
   Q_UNUSED(flags)
@@ -84,6 +83,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
   towerPosition = BglPosition(bs, true, 1000.f);
   magVar = converter::adjustMagvar(bs->readFloat());
   ident = converter::intToIcao(bs->readUInt());
+  msfs = options->getSimulatorType() == atools::fs::FsPaths::SimulatorType::MSFS;
 
   // Check if the airport is filtered out in the configuration file
   if(!options->isIncludedAirportIdent(ident))
@@ -98,7 +98,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
 
   fuelFlags = static_cast<ap::FuelFlags>(bs->readUInt());
 
-  if(options->getSimulatorType() == atools::fs::FsPaths::SimulatorType::MSFS)
+  if(msfs)
   {
     bs->skip(2);
     quint8 flags = bs->readUByte();
@@ -111,7 +111,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
   else
     bs->skip(4); // unknown, traffic scalar, unknown (FSX only)
 
-  if(options->getSimulatorType() == atools::fs::FsPaths::SimulatorType::MSFS)
+  if(msfs)
   {
     /*int numDepartures = TODO compare with number of departure subrecords*/
     bs->readUByte();
@@ -522,23 +522,6 @@ bool Airport::isMsfsPoiDummy() const
          approaches.isEmpty() && sidsAndStars.isEmpty() && coms.isEmpty();
 }
 
-bool Airport::isEmpty() const
-{
-  return !towerObj &&
-         name.isEmpty() &&
-         runways.isEmpty() &&
-         parkings.isEmpty() &&
-         coms.isEmpty() &&
-         helipads.isEmpty() &&
-         starts.isEmpty() &&
-         approaches.isEmpty() &&
-         waypoints.isEmpty() &&
-         deleteAirports.isEmpty() &&
-         aprons.isEmpty() &&
-         aprons2.isEmpty() &&
-         taxipaths.isEmpty();
-}
-
 bool Airport::isCurrentRecordValid()
 {
   Record tempRec(opts, bs);
@@ -555,8 +538,7 @@ int Airport::calculateRating(bool isAddon) const
     // MSFS starred airports always get highest rating
     return 5;
   else
-    return atools::fs::util::calculateAirportRating(isAddon,
-                                                    hasTowerObj(),
+    return atools::fs::util::calculateAirportRating(isAddon, hasTowerObj(), msfs,
                                                     getTaxiPaths().size(),
                                                     getParkings().size() + getHelipads().size(),
                                                     getAprons().size());
@@ -669,7 +651,7 @@ void Airport::updateSummaryFields()
   }
 
   // Completely rely on closed flag for MSFS - check runways for other simulators
-  if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
+  if(!msfs)
   {
     // If all runways are closed the airport is closed ...
     airportClosed = !runways.isEmpty() && numRunwayFullClosed == runways.size();
@@ -692,7 +674,7 @@ void Airport::updateSummaryFields()
 
     // Assign fuel from parking if not set in flags
     // https://devsupport.flightsimulator.com/questions/10232/su10-u3-removed-fuel-flags-from-bgl-files.html
-    if(p.isFuel() && opts->getSimulatorType() == atools::fs::FsPaths::SimulatorType::MSFS && fuelFlags == ap::NO_FUEL_FLAGS)
+    if(p.isFuel() && msfs && fuelFlags == ap::NO_FUEL_FLAGS)
       fuelFlags = atools::fs::bgl::ap::MSFS_DEFAULT_FUEL;
 
     if(p.hasJetway())
@@ -837,7 +819,7 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
           taxiPath.start = taxipoints.at(taxiPath.startPoint);
           taxiPath.end = taxipoints.at(taxiPath.endPoint);
         }
-        else if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
+        else if(!msfs)
           qWarning() << "One or more taxiway indexes out of bounds in" << ident
                      << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
         break; // avoid fallthrough warning
@@ -860,7 +842,7 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
           taxiPath.start = taxipoints.at(taxiPath.startPoint);
           taxiPath.end = TaxiPoint(parkings.at(taxiPath.endPoint));
         }
-        else if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
+        else if(!msfs)
           qWarning() << "One or more taxiway indexes out of bounds in" << ident
                      << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
         break;

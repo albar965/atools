@@ -90,8 +90,7 @@ class Airport :
   public atools::fs::bgl::Record
 {
 public:
-  Airport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
-          atools::fs::bgl::flags::CreateFlags flags);
+  Airport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, atools::fs::bgl::flags::CreateFlags flags);
   virtual ~Airport() override;
 
   const QList<atools::fs::bgl::Approach>& getApproaches() const
@@ -350,12 +349,6 @@ public:
     return numParkingMilitaryCombat;
   }
 
-  /*
-   *  Check if this is a dummy airport that comes with some elevation adjustments
-   * @return true if there are no runways, no parking, etc.
-   */
-  bool isEmpty() const;
-
   /* true if this is a MSFS dummy POI airport without runways */
   bool isMsfsPoiDummy() const;
 
@@ -395,7 +388,7 @@ private:
   QString ident, name, region;
 
   atools::fs::bgl::ap::FuelFlags fuelFlags;
-  bool towerObj = false, airportClosed = false,
+  bool towerObj = false, airportClosed = false, msfs = false,
        msfsStar = false /* Will result in five stars rating*/;
 
   int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numRunwayEndClosed = 0, numRunwayFullClosed = 0,

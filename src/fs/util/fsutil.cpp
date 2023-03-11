@@ -408,10 +408,14 @@ QString aircraftTypeForCode(const QString& code)
   return NAME_CODE_MAP.value(code);
 }
 
-int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int numParkings, int numAprons)
+int calculateAirportRating(bool isAddon, bool hasTower, bool msfs, int numTaxiPaths, int numParkings, int numAprons)
 {
   // Maximum rating is 5
   int rating = (numTaxiPaths > 0) + (numParkings > 0) + (numAprons > 0) + isAddon;
+
+  // MSFS has a lot of generated airports with tiny apron snippets. Put rating to zero for these if they are not add-ons
+  if(msfs && !isAddon && numTaxiPaths == 0 && numParkings == 0)
+    rating = 0;
 
   if(rating > 0 && hasTower)
     // Add tower only if there is already a rating - otherwise we'll get too many airports with a too good rating

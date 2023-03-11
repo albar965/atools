@@ -101,7 +101,7 @@ float roundComFrequency(int frequency);
 const int MAX_RATING = 5;
 
 /* Calculate for FSX/P3D based on airport facilities */
-int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int numParkings, int numAprons);
+int calculateAirportRating(bool isAddon, bool hasTower, bool msfs, int numTaxiPaths, int numParkings, int numAprons);
 
 /* Calculate for X-Plane based on airport facilities */
 int calculateAirportRatingXp(bool isAddon, bool is3D, bool hasTower, int numTaxiPaths, int numParkings, int numAprons);
