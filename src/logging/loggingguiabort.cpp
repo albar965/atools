@@ -57,6 +57,8 @@ void LoggingGuiAbortHandler::guiAbortFunction(const QString& msg)
                          arg(atools::gui::Application::getContactHtml()).
                          arg(atools::gui::Application::getReportPathHtml())
                          );
+#else
+  Q_UNUSED(msg)
 #endif
 
 #ifdef Q_OS_WIN32

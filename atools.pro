@@ -323,18 +323,12 @@ SOURCES += \
 
 !isEqual(ATOOLS_NO_USERDATA, "true") {
 HEADERS += \
-  src/fs/userdata/airspacereaderbase.h \
-  src/fs/userdata/airspacereaderivao.h \
-  src/fs/userdata/airspacereaderopenair.h \
-  src/fs/userdata/airspacereadervatsim.h \
+  src/sql/datamanagerbase.h \
   src/fs/userdata/logdatamanager.h \
   src/fs/userdata/userdatamanager.h
 
 SOURCES += \
-  src/fs/userdata/airspacereaderbase.cpp \
-  src/fs/userdata/airspacereaderivao.cpp \
-  src/fs/userdata/airspacereaderopenair.cpp \
-  src/fs/userdata/airspacereadervatsim.cpp \
+  src/sql/datamanagerbase.cpp \
   src/fs/userdata/logdatamanager.cpp \
   src/fs/userdata/userdatamanager.cpp
 } # ATOOLS_NO_USERDATA
@@ -344,7 +338,6 @@ SOURCES += \
 
 !isEqual(ATOOLS_NO_SQL, "true") {
 HEADERS += \
-  src/sql/datamanagerbase.h \
   src/sql/sqldatabase.h \
   src/sql/sqlexception.h \
   src/sql/sqlexport.h \
@@ -356,7 +349,6 @@ HEADERS += \
   src/sql/sqlutil.h
 
 SOURCES += \
-  src/sql/datamanagerbase.cpp \
   src/sql/sqldatabase.cpp \
   src/sql/sqlexception.cpp \
   src/sql/sqlexport.cpp \
@@ -670,6 +662,10 @@ HEADERS += \
   src/fs/scenery/materiallib.h \
   src/fs/scenery/sceneryarea.h \
   src/fs/scenery/scenerycfg.h \
+  src/fs/userdata/airspacereaderbase.h \
+  src/fs/userdata/airspacereaderivao.h \
+  src/fs/userdata/airspacereaderopenair.h \
+  src/fs/userdata/airspacereadervatsim.h \
   src/fs/xp/airwaypostprocess.h \
   src/fs/xp/scenerypacks.h \
   src/fs/xp/xpairportmsawriter.h \
@@ -818,6 +814,10 @@ SOURCES += \
   src/fs/scenery/materiallib.cpp \
   src/fs/scenery/sceneryarea.cpp \
   src/fs/scenery/scenerycfg.cpp \
+  src/fs/userdata/airspacereaderbase.cpp \
+  src/fs/userdata/airspacereaderivao.cpp \
+  src/fs/userdata/airspacereaderopenair.cpp \
+  src/fs/userdata/airspacereadervatsim.cpp \
   src/fs/xp/airwaypostprocess.cpp \
   src/fs/xp/scenerypacks.cpp \
   src/fs/xp/xpairportmsawriter.cpp \
