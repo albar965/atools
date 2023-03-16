@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,15 @@
 #include <QMenu>
 #include <QApplication>
 #include <QStyle>
+#include <QHBoxLayout>
 
 const static char ID_PROPERTY[] = "tabid";
 
 namespace atools {
 namespace gui {
 
-TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QIcon& icon, const QString& toolButtonTooltip)
+TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QList<QWidget *>& additionalWidgets,
+                                   const QIcon& icon, const QString& toolButtonTooltip)
   : QObject(tabWidgetParam), tabWidget(tabWidgetParam)
 {
   styleChanged();
@@ -50,7 +52,21 @@ TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QIcon& icon
   toolButtonCorner->setStatusTip(toolButtonTooltip);
   toolButtonCorner->setPopupMode(QToolButton::InstantPopup);
   toolButtonCorner->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-  tabWidget->setCornerWidget(toolButtonCorner);
+
+  // Container widget and layout for tool button and additional widgets
+  QWidget *widget = new QWidget(tabWidget);
+  QHBoxLayout *layout = new QHBoxLayout(widget);
+  layout->setMargin(0);
+  layout->setSpacing(2);
+
+  // Add additional
+  for(QWidget *additionalWidget : additionalWidgets)
+    layout->addWidget(additionalWidget, 0, Qt::AlignRight);
+
+  // Add toolbutton at the right
+  layout->addWidget(toolButtonCorner, 0, Qt::AlignRight); // Add button to the right
+
+  tabWidget->setCornerWidget(widget);
 
   // Add menu =======
   toolButtonCorner->setMenu(new QMenu(toolButtonCorner));
