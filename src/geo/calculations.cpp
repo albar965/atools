@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -643,23 +643,6 @@ bool speedFromCAS(float& mach, float& tasKts, float casKts, float altFt, float i
   mach = tasKts / a;
 
   tasKts *= FEETPERSEC2KT;
-  return true;
-}
-
-bool pressureAltitude(float& altFt, float pressurePa)
-{
-  if(pressurePa >= p1)
-    // Layer 0 > Troposphere
-    altFt = T0 * (std::pow((p0 / pressurePa), (deltaTdh0SI / gRGasSI)) - 1.0f) / deltaTdh0;
-  else if(pressurePa >= p2)
-    // Layer 1 > Tropopause
-    altFt = alt1Ft - std::log(pressurePa / p1) * T1 / gRGas;
-  else if(pressurePa >= p3)
-    // Layer 2 > Stratosphere (1/2)
-    altFt = alt2Ft + T2 * (std::pow((p2 / pressurePa), (deltaTdh2SI / gRGasSI)) - 1.0f) / deltaTdh2;
-  else
-    return false;
-
   return true;
 }
 

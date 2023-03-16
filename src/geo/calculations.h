@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -212,34 +212,32 @@ inline bool ordinateValid(int ord)
 
 inline bool ordinateValidF(float ord)
 {
-  return std::isfinite(ord) &&
-         ord > std::numeric_limits<float>::lowest() / 2.f && ord < INVALID_FLOAT / 2.f;
+  return std::isfinite(ord) && ord > std::numeric_limits<float>::lowest() / 2.f && ord < INVALID_FLOAT / 2.f;
 }
 
 inline bool ordinateValidD(double ord)
 {
-  return std::isfinite(ord) &&
-         ord > std::numeric_limits<double>::lowest() / 2. && ord < INVALID_DOUBLE / 2.;
+  return std::isfinite(ord) && ord > std::numeric_limits<double>::lowest() / 2. && ord < INVALID_DOUBLE / 2.;
 }
 
 inline bool pointValid(const QPointF& point)
 {
-  return ordinateValidD(point.x()) && ordinateValidD(point.y());
+  return atools::geo::ordinateValidD(point.x()) && atools::geo::ordinateValidD(point.y());
 }
 
 inline bool pointValid(const QPoint& point)
 {
-  return ordinateValid(point.x()) && ordinateValid(point.y());
+  return atools::geo::ordinateValid(point.x()) && atools::geo::ordinateValid(point.y());
 }
 
 inline bool lineValid(const QLineF& line)
 {
-  return pointValid(line.p1()) && pointValid(line.p2());
+  return atools::geo::pointValid(line.p1()) && atools::geo::pointValid(line.p2());
 }
 
 inline bool lineValid(const QLine& line)
 {
-  return pointValid(line.p1()) && pointValid(line.p2());
+  return atools::geo::pointValid(line.p1()) && atools::geo::pointValid(line.p2());
 }
 
 /* Converts rectangles to square rectangles so that width == height */
@@ -282,14 +280,14 @@ constexpr float simpleDistanceF(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 template<typename TYPE>
 constexpr TYPE degCToDegF(TYPE temp)
 {
-  return static_cast<TYPE>(1.8 * static_cast<double>(temp) + 32);
+  return static_cast<TYPE>(1.8 * static_cast<double>(temp) + 32.);
 }
 
 /* Temperature from farenheit to celsius */
 template<typename TYPE>
 constexpr TYPE degFToDegC(TYPE temp)
 {
-  return static_cast<TYPE>((static_cast<double>(temp) - 32) / 1.8);
+  return static_cast<TYPE>((static_cast<double>(temp) - 32.) / 1.8);
 }
 
 /* Pressure from millibar to inches Hg */
@@ -310,126 +308,111 @@ constexpr TYPE inHgToMbar(TYPE press)
 template<typename TYPE>
 constexpr TYPE nmToMeter(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
-         static_cast<TYPE>(static_cast<double>(value) * 1852.216);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) * 1852.216);
 }
 
 /* Distance from nautical miles to kilometers */
 template<typename TYPE>
 constexpr TYPE nmToKm(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
-         static_cast<TYPE>(static_cast<double>(value) * 1.852216);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) * 1.852216);
 }
 
 /* Distance from nautical miles to statue miles */
 template<typename TYPE>
 constexpr TYPE nmToMi(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
-         static_cast<TYPE>(static_cast<double>(value) * 1852.216 / 1609.3426);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) * 1852.216 / 1609.3426);
 }
 
 /* Distance from statue miles to nautical miles */
 template<typename TYPE>
 constexpr TYPE miToNm(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
-         static_cast<TYPE>(static_cast<double>(value) * 1609.3426 / 1852.216);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) * 1609.3426 / 1852.216);
 }
 
 /* Distance from meter to statue miles */
 template<typename TYPE>
 constexpr TYPE meterToMi(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
-         static_cast<TYPE>(static_cast<double>(value) / 1609.3426);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) / 1609.3426);
 }
 
 /* Distance from meters to nautical miles */
 template<typename TYPE>
 constexpr TYPE meterToNm(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
-         static_cast<TYPE>(static_cast<double>(value) / 1852.216);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) / 1852.216);
 }
 
 /* Distance from km to nautical miles */
 template<typename TYPE>
 constexpr TYPE kmToNm(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
-         static_cast<TYPE>(static_cast<double>(value) / 1.852216);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) / 1.852216);
 }
 
 template<typename TYPE>
 constexpr TYPE meterToFeet(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
-         static_cast<TYPE>(3.2808399 * static_cast<double>(value));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(3.2808399 * static_cast<double>(value));
 }
 
 template<typename TYPE>
 constexpr TYPE feetToMeter(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
-         static_cast<TYPE>(0.3048 * static_cast<double>(value));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(0.3048 * static_cast<double>(value));
 }
 
 template<typename TYPE>
 constexpr TYPE feetToNm(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : meterToNm(feetToMeter(value));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : atools::geo::meterToNm(atools::geo::feetToMeter(value));
 }
 
 template<typename TYPE>
 constexpr TYPE nmToFeet(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : meterToFeet(nmToMeter(value));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : atools::geo::meterToFeet(atools::geo::nmToMeter(value));
 }
 
 template<typename TYPE>
 constexpr TYPE meterPerSecToKnots(TYPE value)
 {
-  return static_cast<TYPE>((value > std::numeric_limits<TYPE>::max() / 2) ? value :
-                           static_cast<double>(value) * 1.943844);
+  return static_cast<TYPE>((value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<double>(value) * 1.943844);
 }
 
 template<typename TYPE>
 constexpr TYPE knotsToMeterPerSec(TYPE value)
 {
-  return static_cast<TYPE>((value > std::numeric_limits<TYPE>::max() / 2) ? value :
-                           static_cast<double>(value) / 1.943844);
+  return static_cast<TYPE>((value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<double>(value) / 1.943844);
 }
 
 template<typename TYPE>
 constexpr TYPE kgToLbs(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ?
-         value : static_cast<TYPE>(static_cast<double>(value) * 2.204623);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) * 2.204623);
 }
 
 template<typename TYPE>
 constexpr TYPE lbsToKg(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ?
-         value : static_cast<TYPE>(static_cast<double>(value) / 2.204623);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) / 2.204623);
 }
 
 /* Litre to US Gallon */
 template<typename TYPE>
 constexpr TYPE literToGallon(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ?
-         value : static_cast<TYPE>(static_cast<double>(value) / 3.785411784);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) / 3.785411784);
 }
 
 /* US Gallon to Litre */
 template<typename TYPE>
 constexpr TYPE gallonToLiter(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ?
-         value : static_cast<TYPE>(static_cast<double>(value) * 3.785411784);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) * 3.785411784);
 }
 
 /* Calculate the weight/volume ratio and determine if it is jet fuel
@@ -440,29 +423,29 @@ bool isJetFuel(float fuelWeightLbs, float fuelQuantityGal, float& weightVolRatio
 template<typename TYPE>
 constexpr TYPE  fromGalToLbs(bool jetFuel, TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ?
-         value : static_cast<TYPE>(static_cast<double>(value) * (jetFuel ? 6.7 : 6.));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) * (jetFuel ? 6.7 : 6.));
 }
 
 template<typename TYPE>
 constexpr TYPE  fromLbsToGal(bool jetFuel, TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ?
-         value : static_cast<TYPE>(static_cast<double>(value) / (jetFuel ? 6.7 : 6.));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) / (jetFuel ? 6.7 : 6.));
 }
 
 template<typename TYPE>
 constexpr TYPE  fromLiterToKg(bool jetFuel, TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ?
-         value : static_cast<TYPE>(lbsToKg(fromGalToLbs(jetFuel, literToGallon(static_cast<double>(value)))));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
+         static_cast<TYPE>(atools::geo::lbsToKg(atools::geo::fromGalToLbs(jetFuel,
+                                                                          atools::geo::literToGallon(static_cast<double>(value)))));
 }
 
 template<typename TYPE>
 constexpr TYPE  fromKgToLiter(bool jetFuel, TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
-         value : static_cast<TYPE>(gallonToLiter(fromLbsToGal(jetFuel, kgToLbs(static_cast<double>(value)))));
+         value : static_cast<TYPE>(atools::geo::gallonToLiter(atools::geo::fromLbsToGal(jetFuel,
+                                                                                        atools::geo::kgToLbs(static_cast<double>(value)))));
 }
 
 /* NM to rad (longitude or latitude) */
@@ -477,7 +460,7 @@ constexpr TYPE nmToRad(TYPE value)
 template<typename TYPE>
 constexpr TYPE meterToRad(TYPE value)
 {
-  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : nmToRad(meterToNm(value));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : atools::geo::nmToRad(atools::geo::meterToNm(value));
 }
 
 /* Normalizes a number to an arbitrary range by assuming the range wraps around when going below min or above max */
@@ -488,7 +471,7 @@ TYPE normalizeRange(TYPE value, TYPE start, TYPE end)
   TYPE offsetValue = value - start; // Make value relative to 0
 
   // Reset back to start of original range by adding start
-  return (offsetValue - (floor(offsetValue / width) * width)) + start;
+  return (offsetValue - (std::floor(offsetValue / width) * width)) + start;
 }
 
 /* Normalizes a number to an arbitrary range by assuming the range wraps around when going below min or above max */
@@ -506,7 +489,7 @@ inline int normalizeRange<int>(int value, int start, int end)
 template<typename TYPE>
 TYPE normalizeCourse(TYPE courseDegree)
 {
-  return static_cast<TYPE>(normalizeRange(static_cast<double>(courseDegree), 0., 360.));
+  return static_cast<TYPE>(atools::geo::normalizeRange(static_cast<double>(courseDegree), 0., 360.));
 }
 
 /* Get opposed course */
@@ -559,14 +542,14 @@ TYPE angleAbsDiff2(TYPE angle1, TYPE angle2)
 template<typename TYPE>
 TYPE normalizeLonXDeg(TYPE lonX)
 {
-  return static_cast<TYPE>(normalizeRange(static_cast<double>(lonX), -180., 180.));
+  return static_cast<TYPE>(atools::geo::normalizeRange(static_cast<double>(lonX), -180., 180.));
 }
 
 /* Normalize laty to -90 < laty < 90 */
 template<typename TYPE>
 TYPE normalizeLatYDeg(TYPE latY)
 {
-  return static_cast<TYPE>(normalizeRange(static_cast<double>(latY), -90., 90.));
+  return static_cast<TYPE>(atools::geo::normalizeRange(static_cast<double>(latY), -90., 90.));
 }
 
 /* Convert angle in degrees (0 = north, counting CW) to Qt for QLineF::setAngle */
@@ -580,17 +563,14 @@ constexpr TYPE angleToQt(TYPE angle)
 template<typename TYPE>
 constexpr TYPE angleFromQt(TYPE angle)
 {
-  return (angle > std::numeric_limits<TYPE>::max() / 2) ? angle :
-         atools::geo::normalizeCourse(360.f - angle + 90.f);
+  return (angle > std::numeric_limits<TYPE>::max() / 2) ? angle : atools::geo::normalizeCourse(360.f - angle + 90.f);
 }
 
 /* ISA temperature in °C at altitude (https://en.wikipedia.org/wiki/International_Standard_Atmosphere) */
 template<typename TYPE>
 constexpr TYPE isaTemperature(TYPE altFeet)
 {
-  return static_cast<TYPE>(static_cast<double>(altFeet) < 36000. ?
-                           (15. - (1.98 * static_cast<double>(altFeet) / 1000.)) :
-                           -56.5);
+  return static_cast<TYPE>(static_cast<double>(altFeet) < 36000. ? (15. - (1.98 * static_cast<double>(altFeet) / 1000.)) : -56.5);
 }
 
 /* Mach number to TAS in knots https://en.wikipedia.org/wiki/True_airspeed */
@@ -598,7 +578,7 @@ template<typename TYPE>
 constexpr TYPE machToTasFromAlt(TYPE altFeet, TYPE machNumber)
 {
   return static_cast<TYPE>(39. * static_cast<double>(machNumber) *
-                           std::sqrt(isaTemperature(static_cast<double>(altFeet)) + 273.15));
+                           std::sqrt(atools::geo::isaTemperature(static_cast<double>(altFeet)) + 273.15));
 }
 
 /* Mach number to TAS in knots https://en.wikipedia.org/wiki/True_airspeed */
@@ -619,20 +599,42 @@ template<typename TYPE>
 constexpr TYPE tasToMachFromAlt(TYPE altFeet, TYPE tas)
 {
   return static_cast<TYPE>(static_cast<double>(tas) /
-                           (std::sqrt(isaTemperature(static_cast<double>(altFeet)) + 273.15) * 39.));
+                           (std::sqrt(atools::geo::isaTemperature(static_cast<double>(altFeet)) + 273.15) * 39.));
 }
 
 template<typename TYPE>
 constexpr TYPE pressureMbarForAltMeter(TYPE altMeter)
 {
-  return static_cast<TYPE>(1013.25 * std::pow(1.0 - ((0.0065 * static_cast<double>(altMeter)) / 288.15), 5.255));
+  return static_cast<TYPE>(1013.25 * std::pow(1. - ((0.0065 * static_cast<double>(altMeter)) / 288.15), 5.255));
 }
 
 template<typename TYPE>
 constexpr TYPE altMeterForPressureMbar(TYPE pressureMbar)
 {
-  return static_cast<TYPE>(288.15 / 0.0065 *
-                           (1 - std::pow((static_cast<double>(pressureMbar) / 1013.25), (1. / 5.255))));
+  return static_cast<TYPE>(288.15 / 0.0065 * (1. - std::pow((static_cast<double>(pressureMbar) / 1013.25), (1. / 5.255))));
+}
+
+template<typename TYPE>
+constexpr TYPE pressureAltitudeFt(TYPE altitudeFeet, TYPE seaLevelPressureMbar)
+{
+  // National Oceanic and Atmospheric Administration (NOAA) formula
+  return static_cast<TYPE>(altitudeFeet + 145366.45 * (1 - std::pow(seaLevelPressureMbar / 1013.25, 0.190284)));
+}
+
+template<typename TYPE>
+constexpr TYPE densityAltitudeFt(TYPE temperatureC, TYPE pressureAltitudeFt)
+{
+  double standardTempK = 273.15 + (15 - .0019812 * static_cast<double>(pressureAltitudeFt));
+  return static_cast<TYPE>(pressureAltitudeFt + (standardTempK / .0019812) *
+                           (1 - std::pow(standardTempK / (273.15 + temperatureC), 0.2349690)));
+}
+
+template<typename TYPE>
+constexpr TYPE densityAltitudeFt(TYPE temperatureC, TYPE altitudeFeet, TYPE seaLevelPressureMbar)
+{
+  double pressureAlt = atools::geo::pressureAltitudeFt(altitudeFeet, seaLevelPressureMbar);
+  double standardTempK = 273.15 + (15 - .0019812 * pressureAlt);
+  return static_cast<TYPE>(pressureAlt + (standardTempK / .0019812) * (1 - std::pow(standardTempK / (273.15 + temperatureC), 0.2349690)));
 }
 
 /* Collection of trigonometric functions that accept or return degree */
