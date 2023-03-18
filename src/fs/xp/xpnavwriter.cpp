@@ -348,7 +348,7 @@ void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
     insertIlsQuery->bindValue(":type", "G");
     insertIlsQuery->bindValue(":gs_pitch", std::floor(at(line, HDG).toFloat() / 1000.f) / 100.f);
     heading = atools::geo::normalizeCourse(std::fmod(heading, 1000.f));
-    width = ILS_FEATHER_WIDTH_DEG * 2.f;
+    width = RNV_FEATHER_WIDTH_DEG;
   }
   else
   {

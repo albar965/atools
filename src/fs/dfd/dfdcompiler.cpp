@@ -59,7 +59,7 @@ namespace atools {
 namespace fs {
 namespace ng {
 
-static const float ILS_FEATHER_WIDTH_DEG = 4.f;
+static const float RNV_FEATHER_WIDTH_DEG = 8.f;
 
 DfdCompiler::DfdCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
                          ProgressHandler *progressHandler)
@@ -1614,12 +1614,11 @@ void DfdCompiler::updateIlsGeometry()
     [](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
     {
       QString type = from.valueStr("type");
-      float width = type == "G" || type == "T" ? ILS_FEATHER_WIDTH_DEG * 2.f : ILS_FEATHER_WIDTH_DEG;
 
       Pos p1, p2, pmid;
-      atools::fs::util::calculateIlsGeometry(Pos(from.valueFloat("lonx"), from.valueFloat("laty")),
-                                             from.valueFloat("loc_heading"), width, atools::fs::util::DEFAULT_FEATHER_LEN_NM,
-                                             p1, p2, pmid);
+      atools::fs::util::calculateIlsGeometry(Pos(from.valueFloat("lonx"), from.valueFloat("laty")), from.valueFloat("loc_heading"),
+                                             type == "G" || type == "T" ? RNV_FEATHER_WIDTH_DEG : from.valueFloat("loc_width"),
+                                             atools::fs::util::DEFAULT_FEATHER_LEN_NM, p1, p2, pmid);
 
       to.bindValue(":end1_lonx", p1.getLonX());
       to.bindValue(":end1_laty", p1.getLatY());
@@ -1630,7 +1629,7 @@ void DfdCompiler::updateIlsGeometry()
       return true;
     };
 
-  SqlUtil(db).updateColumnInTable("ils", "ils_id", {"lonx", "laty", "loc_heading", "type"},
+  SqlUtil(db).updateColumnInTable("ils", "ils_id", {"lonx", "laty", "loc_heading", "loc_width", "type"},
                                   {"end1_lonx", "end1_laty", "end_mid_lonx", "end_mid_laty", "end2_lonx", "end2_laty"},
                                   func);
   db.commit();

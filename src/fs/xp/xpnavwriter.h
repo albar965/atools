@@ -78,6 +78,7 @@ private:
 
   const int FEATHER_LEN_NM = 9;
   const float ILS_FEATHER_WIDTH_DEG = 4.f;
+  const float RNV_FEATHER_WIDTH_DEG = 8.f;
 
   int curVorId = 0, curNdbId = 0, curMarkerId = 0, curIlsId = 0;
 

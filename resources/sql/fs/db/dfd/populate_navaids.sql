@@ -148,7 +148,7 @@ select
   l.airport_identifier as loc_airport_ident,
   substr(l.runway_identifier, 3) as loc_runway_name, -- Strip off "RW" prefix
   l.llz_bearing + l.station_declination as loc_heading, -- Magnetic to true
-  null as loc_width, -- Not available
+  l.llz_width as loc_width,
   0 as end1_lonx,  -- All geometry is calculated later
   0 as end1_laty,
   0 as end_mid_lonx,
@@ -164,9 +164,8 @@ from tbl_localizers_glideslopes l left outer join tbl_vhfnavaids d on
 -- GLS approach stations **********************************
 
 insert into ils ( ident, region, type, frequency, range, mag_var, has_backcourse,
-  dme_range, dme_altitude, dme_lonx, dme_laty,
   gs_range, gs_pitch, gs_altitude, gs_lonx, gs_laty,
-  loc_airport_ident, loc_runway_name, loc_heading, loc_width,
+  loc_airport_ident, loc_runway_name, loc_heading,
   end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty)
 select
   g.gls_ref_path_identifier as ident,
@@ -176,10 +175,6 @@ select
   27 as range, -- default range used by FSX
   g.magentic_variation as mag_var,
   0 as has_backcourse, -- Not available
-  null as dme_range,
-  null as dme_altitude,
-  null as dme_lonx,
-  null as dme_laty,
   27 as gs_range,
   g.gls_approach_slope as gs_pitch,
   g.station_elevation as gs_altitude,
@@ -188,7 +183,6 @@ select
   g.airport_identifier as loc_airport_ident,
   substr(g.runway_identifier, 3) as loc_runway_name, -- Strip off "RW" prefix
   g.gls_approach_bearing + g.magentic_variation as loc_heading, -- Magnetic to true
-  null as loc_width, -- Not available
   0 as end1_lonx,  -- All geometry is calculated later
   0 as end1_laty,
   0 as end_mid_lonx,
