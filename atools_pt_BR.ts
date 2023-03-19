@@ -211,29 +211,39 @@ Ocorreu um erro no Sql
 <context>
     <name>Flightplan</name>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="177"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="194"/>
         <source>Empty Flightplan</source>
         <translation>Plano de voo Vazio</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="60"/>
-        <location filename="src/fs/pln/flightplan.cpp" line="181"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="62"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="198"/>
         <source>IFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="62"/>
-        <location filename="src/fs/pln/flightplan.cpp" line="183"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="64"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="200"/>
         <source>VFR</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="116"/>
+        <source>File pattern has no extension. It should end with &quot;.%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplan.cpp" line="119"/>
+        <source>File pattern uses a wrong extension &quot;.%1&quot;. It should end with &quot;.%2&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplan.cpp" line="132"/>
         <source>Pattern contains invalid characters, double spaces or is longer than %1 characters.%2Not allowed are: %3</source>
         <translation>O padrão contém caracteres inválidos, espaços duplos ou é maior que %1 caracteres.%2Não são permitidos: %3</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="126"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="143"/>
         <source>Pattern is empty.</source>
         <translation>O padrão está vazio.</translation>
     </message>
@@ -275,12 +285,12 @@ Ocorreu um erro no Sql
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3112"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3123"/>
         <source> Flight Plan</source>
         <translation> Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3165"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3176"/>
         <source> Track</source>
         <translation> Rastrear</translation>
     </message>
@@ -305,7 +315,7 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não foi possível abrir o arquivo RTE %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="197"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="200"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
         <translation>Não foi possível abrir um arquivo de plano de voo vazio &quot;%1&quot;.</translation>
     </message>
@@ -318,9 +328,9 @@ Ocorreu um erro no Sql
         <translation type="vanished">Posição inválida em GPX.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1015"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1371"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4187"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1022"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1378"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4198"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -330,99 +340,98 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3774"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3785"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="471"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="474"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>FMS arquivo inválido. Não é possível ler o número da versão: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="120"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="123"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>Não é possível abrir o arquivo %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="137"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="140"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP.</source>
         <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</oldsource>
         <translation>Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML,MSFS XML, FS9 INI e FSC), X-Plane FMS, FLP e FlightGear FGFP.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="486"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="489"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>FMS arquivo inválido. Versão invalida %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="569"/>
         <source>Invalid FMS file. Invalid altitude in %1</source>
-        <translation>Arquivo FMS inválido. Altitude inválida em %1</translation>
+        <translation type="vanished">Arquivo FMS inválido. Altitude inválida em %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="574"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="581"/>
         <source>Invalid FMS file. Invalid coordinate in %1</source>
         <translation>Arquivo FMS inválido. Coordenada inválida em %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="586"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="593"/>
         <source>Invalid FMS file. Cannot read waypoint type in %1</source>
         <translation>Arquivo FMS inválido. Não é possível ler o tipo de waypoint em %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="612"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="619"/>
         <source>Invalid FMS file. Invalid waypoint type in %1</source>
         <translation>Arquivo FMS inválido. Tipo de ponto de referência inválido em %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="621"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="628"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>FMS arquivo inválido . Numero de seções %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="852"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="859"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>Arquivo de plano de voo inválido &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="882"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="889"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
         <oldsource>Invalid position in LNMPLN.</oldsource>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="885"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="892"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;. Ordenadas fora de alcance: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="894"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="901"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;. As ordenadas não são números.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="922"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="929"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
         <translation>Posição inválida no arquivo GPX &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1205"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1212"/>
         <source>Invalid LNMPLN flight plan. No waypoints found.</source>
         <translation>Plano de voo LNMPLN inválido. Nenhum waypoint encontrado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1207"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1214"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation>Arquivo de plano de voo LNMPLN inválido &quot;%1&quot;. Nenhum waypoint encontrado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1568"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1579"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>Não é possível abrir o arquivo FlightGear &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3629"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3640"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -435,28 +444,35 @@ Ocorreu um erro no Sql
         <translation></translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="134"/>
+        <location filename="src/grib/gribreader.cpp" line="140"/>
         <source>Cannot seek in file %1</source>
         <translation>Não é possível procurar o arquivo %1</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="139"/>
-        <location filename="src/grib/gribreader.cpp" line="144"/>
+        <location filename="src/grib/gribreader.cpp" line="145"/>
+        <location filename="src/grib/gribreader.cpp" line="150"/>
         <source>Cannot read file %1</source>
         <translation>Não é possível ler o arquivo %1</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="453"/>
+        <location filename="src/grib/gribreader.cpp" line="459"/>
         <source>Cannot open file %1</source>
         <translation>Não é possível abrir o arquivo %1</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="463"/>
+        <location filename="src/grib/gribreader.cpp" line="466"/>
+        <source>Wrong GRIB file type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/grib/gribreader.cpp" line="104"/>
+        <location filename="src/grib/gribreader.cpp" line="472"/>
         <source>GRIB data empty</source>
         <translation>Dados GRIB vazio</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="466"/>
+        <location filename="src/grib/gribreader.cpp" line="107"/>
+        <location filename="src/grib/gribreader.cpp" line="475"/>
         <source>Not a GRIB file</source>
         <translation>Não há um arquivo GRIB</translation>
     </message>
@@ -1910,107 +1926,107 @@ Ocorreu um erro no Sql
     </message>
     <message>
         <location filename="src/gui/tools.cpp" line="93"/>
-        <location filename="src/gui/tools.cpp" line="106"/>
+        <location filename="src/gui/tools.cpp" line="113"/>
         <source>Error opening path &quot;%1&quot;</source>
         <translation>Erro ao abrir o caminho &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="131"/>
+        <location filename="src/gui/tools.cpp" line="140"/>
         <source>File or directory &quot;%1&quot; does not exist.</source>
         <translation>Arquivo ou diretório &quot;%1&quot; não existe.</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="149"/>
+        <location filename="src/gui/tools.cpp" line="158"/>
         <source>%1 pt</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="151"/>
+        <location filename="src/gui/tools.cpp" line="160"/>
         <source>%1 px</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="155"/>
+        <location filename="src/gui/tools.cpp" line="164"/>
         <source>thin</source>
         <translation>fino</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="157"/>
+        <location filename="src/gui/tools.cpp" line="166"/>
         <source>extra light</source>
         <translation>luz extra</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="159"/>
+        <location filename="src/gui/tools.cpp" line="168"/>
         <source>light</source>
         <translation>luz</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="161"/>
+        <location filename="src/gui/tools.cpp" line="170"/>
         <source>normal</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="163"/>
+        <location filename="src/gui/tools.cpp" line="172"/>
         <source>medium</source>
         <translation>médio</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="165"/>
+        <location filename="src/gui/tools.cpp" line="174"/>
         <source>demi bold</source>
         <translation>semi negrito</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="167"/>
+        <location filename="src/gui/tools.cpp" line="176"/>
         <source>bold</source>
         <translation>negrito</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="169"/>
+        <location filename="src/gui/tools.cpp" line="178"/>
         <source>extra bold</source>
         <translation>extra negrito</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="171"/>
+        <location filename="src/gui/tools.cpp" line="180"/>
         <source>black</source>
         <translation>preto</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="174"/>
+        <location filename="src/gui/tools.cpp" line="183"/>
         <source>italic</source>
         <translation>itálico</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="176"/>
+        <location filename="src/gui/tools.cpp" line="185"/>
         <source>overline</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="178"/>
+        <location filename="src/gui/tools.cpp" line="187"/>
         <source>underline</source>
         <translation>sublinhado</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="180"/>
+        <location filename="src/gui/tools.cpp" line="189"/>
         <source>strike out</source>
         <translation>atacar</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="183"/>
+        <location filename="src/gui/tools.cpp" line="192"/>
         <source>fixed pitch</source>
         <translation>pitch fixo</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="187"/>
+        <location filename="src/gui/tools.cpp" line="196"/>
         <source>System font: %1</source>
         <translation>Fonte do sistema: %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="189"/>
+        <location filename="src/gui/tools.cpp" line="198"/>
         <source>User selected font: %1</source>
         <translation>Fonte selecionada pelo usuário: %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="191"/>
+        <location filename="src/gui/tools.cpp" line="200"/>
         <source>, </source>
         <translation></translation>
     </message>
@@ -2770,7 +2786,7 @@ Tempo Noturno: %5</translation>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="700"/>
+        <location filename="src/grib/windquery.cpp" line="705"/>
         <source>Unknown error.</source>
         <translation>Erro desconhecido.</translation>
     </message>
@@ -2827,25 +2843,25 @@ Tempo Noturno: %5</translation>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="818"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="823"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="909"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="800"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="805"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="891"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>Erro de leitura &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="846"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="851"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="828"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="833"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation>Erro de escrita &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="869"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="851"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation>Erro ao ler &quot;%1&quot;: Número mágico inválido. Não é um arquivo de layout de janela.</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="872"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="854"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation>Erro ao ler &quot;%1&quot;: versão inválida. Arquivo de layout de janela incompatível.</translation>
     </message>
@@ -2857,49 +2873,54 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Versão %3 (revisão %4)&lt;/p&gt;&lt;p&gt;atools Versão %5 (revisão %6)&lt;/p&gt;&lt;hr/&gt;%7&lt;hr/&gt;%8&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="53"/>
+        <location filename="src/gui/helphandler.cpp" line="49"/>
         <source>&lt;p&gt;%1 (build and library)&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1 (build e biblioteca)&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="55"/>
+        <location filename="src/gui/helphandler.cpp" line="51"/>
         <source>&lt;p&gt;%1 (build)&lt;br/&gt;%2 (library)&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1 (build)&lt;br/&gt;%2 (biblioteca)&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="60"/>
+        <location filename="src/gui/helphandler.cpp" line="56"/>
         <source> 64-bit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="62"/>
+        <location filename="src/gui/helphandler.cpp" line="58"/>
         <source> 32-bit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="68"/>
+        <location filename="src/gui/helphandler.cpp" line="64"/>
         <source>About %1</source>
         <translation>Sobre %1</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="69"/>
+        <location filename="src/gui/helphandler.cpp" line="65"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Versão%3 (revisão %4)&lt;/p&gt;&lt;p&gt;atools Versão %5 (revisão %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="87"/>
+        <location filename="src/gui/helphandler.cpp" line="83"/>
         <source>About Qt</source>
         <translation>Sobre Qt</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="100"/>
+        <location filename="src/gui/helphandler.cpp" line="96"/>
         <source>Error opening help URL &quot;%1&quot;</source>
         <oldsource>Error opening help URL &lt;i&gt;%1&lt;/i&gt;</oldsource>
         <translation>Erro em abrir o URL de ajuda &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="136"/>
-        <location filename="src/gui/helphandler.cpp" line="157"/>
+        <location filename="src/gui/helphandler.cpp" line="135"/>
+        <location filename="src/gui/helphandler.cpp" line="144"/>
+        <source>File &quot;%1&quot; not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/helphandler.cpp" line="165"/>
         <source>Help file &quot;%1&quot; not found</source>
         <oldsource>Help file &lt;i&gt;%1&lt;/i&gt; not found</oldsource>
         <translation>Arquivo de ajuda &quot;%1&quot; não encontrado</translation>
@@ -2909,8 +2930,8 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">URL está vazio por &quot;%1&quot; e ancora &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="216"/>
-        <location filename="src/gui/helphandler.cpp" line="232"/>
+        <location filename="src/gui/helphandler.cpp" line="224"/>
+        <location filename="src/gui/helphandler.cpp" line="240"/>
         <source>URL is empty for &quot;%1&quot;.</source>
         <translation>O URL está vazio para &quot;%1&quot;.</translation>
     </message>
@@ -2918,18 +2939,18 @@ Tempo Noturno: %5</translation>
 <context>
     <name>atools::gui::TabWidgetHandler</name>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="61"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="77"/>
         <source>&amp;Open all Tabs</source>
         <oldsource>&amp;Open All</oldsource>
         <translation>&amp;Abra todas as Guias</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="62"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="78"/>
         <source>Show all tabs</source>
         <translation>Mostrar todas as guias</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="68"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="84"/>
         <source>&amp;Close all Tabs except Current</source>
         <oldsource>&amp;Close All Except Current</oldsource>
         <translation>&amp;Feche todas as Guias, exceto a Atual</translation>
@@ -2939,42 +2960,42 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">Feche todas as guias excerto a atual</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="69"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="85"/>
         <source>Close all tabs except the currently active tab</source>
         <translation>Feche todas as guias exceto a guia atualmente ativa</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="75"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="91"/>
         <source>&amp;Reset Tab Layout</source>
         <translation>&amp;Resete o Layout da Guia</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="76"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="92"/>
         <source>Show all tabs and reset order back to default</source>
         <translation>Mostrar todas as guias e redefinir o pedido de volta ao padrão</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="83"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="99"/>
         <source>&amp;Lock Tab Layout</source>
         <translation>&amp;Bloquear Layout da Guia</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="84"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="100"/>
         <source>Hides close buttons and fixes tabs at current position</source>
         <translation>Oculta botões e corrige guias na posição atual</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="156"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="172"/>
         <source>&amp;Close tab %1</source>
         <translation>&amp;Fecha a guia %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="160"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="176"/>
         <source>Close tab</source>
         <translation>Fecha a guia</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="209"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="225"/>
         <source>Open or close tab %1</source>
         <translation>Abrir ou fechar a guia %1</translation>
     </message>
@@ -2990,7 +3011,7 @@ Tempo Noturno: %5</translation>
 <context>
     <name>atools::sql::DataManagerBase</name>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="436"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="441"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -3003,7 +3024,7 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="439"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="444"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -3016,7 +3037,7 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="442"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="447"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -3029,7 +3050,7 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="445"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="450"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -3042,7 +3063,7 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="448"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="453"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -3055,84 +3076,84 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="535"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="540"/>
         <source>preUndoBulkInsert() not called</source>
         <translation>preUndoBulkInsert() não chamado</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="637"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="642"/>
         <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
         <translation>Tentativa de modificar a tabela &quot;%1&quot; ignorando a função de desfazer ativa.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="747"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="753"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="752"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="758"/>
         <source>&amp;%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="747"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="752"/>
         <source>&amp;Undo %1</source>
         <translation>&amp;Desfazer %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="753"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="758"/>
         <source>&amp;Redo %1</source>
         <translation>&amp;Refazer %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="839"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="844"/>
         <source>no %1</source>
         <translation>não %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="841"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="846"/>
         <source>one %1</source>
         <translation>um %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="843"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="848"/>
         <source>two %1</source>
         <translation>dois %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="845"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="850"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="847"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="852"/>
         <source>Undo</source>
         <translation>Desfazer</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="847"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="852"/>
         <source>Redo</source>
         <translation>Refazer</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="852"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="857"/>
         <source>Invalid undo action</source>
         <translation>Ação de desfazer inválida</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="856"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="861"/>
         <source>%1 adding of %2</source>
         <translation>%1 adição de %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="860"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="865"/>
         <source>%1 editing of %2</source>
         <translation>%1 edição de %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="864"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="869"/>
         <source>%1 deleting of %2</source>
         <translation>%1 deletando de %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="903"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="915"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="908"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="920"/>
         <source>Table undo_current is empty.</source>
         <translation>A tabela undo_current está vazia.</translation>
     </message>

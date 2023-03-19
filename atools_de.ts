@@ -408,6 +408,10 @@ Datei: &quot;%2&quot;
         <source>Not a GRIB file</source>
         <translation>Keine GRIB-Datei</translation>
     </message>
+    <message>
+        <source>Wrong GRIB file type</source>
+        <translation>Falsche GRIB-Dateityp</translation>
+    </message>
 </context>
 <context>
     <name>HtmlBuilder</name>

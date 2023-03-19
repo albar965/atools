@@ -194,6 +194,14 @@ Atrapada excepción
         <source>Pattern is empty.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>File pattern has no extension. It should end with &quot;.%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File pattern uses a wrong extension &quot;.%1&quot;. It should end with &quot;.%2&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FlightplanEntry</name>
@@ -325,10 +333,6 @@ Atrapada excepción
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid FMS file. Invalid altitude in %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Invalid FMS file. Invalid coordinate in %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -365,6 +369,10 @@ Atrapada excepción
     </message>
     <message>
         <source>Not a GRIB file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wrong GRIB file type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2321,6 +2329,10 @@ Night time: %5</source>
     </message>
     <message>
         <source> 32-bit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; not found</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
