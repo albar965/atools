@@ -262,6 +262,9 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.fuelFlowPPH = fuelflow;
   data.userAircraft.fuelFlowGPH = atools::geo::fromLbsToGal(jetFuel, fuelflow);
   data.userAircraft.flags = IS_USER | (ground ? ON_GROUND : NONE);
+  data.userAircraft.seaLevelPressureMbar = 1013.25f;
+  data.userAircraft.ambientTemperatureCelsius = 10.f;
+  data.userAircraft.totalAirTemperatureCelsius = 15.f;
 
   data.userAircraft.debug = true;
 
