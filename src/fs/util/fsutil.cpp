@@ -490,9 +490,9 @@ QString capAirportName(const QString& str)
           "AAC", "AAF", "AB", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CFB", "CGS", "DGAC",
           "FAA", "FBO", "GTS", "HSC", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK",
           "NOLF", "NRC", "NRC", "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RLA", "RNAS",
-          "USFS"});
+          "USFS", "CGAS", "TV", "NVC"});
 
-  return atools::capString(str, FORCE_UPPER);
+  return atools::capString(str, FORCE_UPPER).replace("-O-", "-o-").replace("-N-", "-n-").replace("-A-", "-a-");
 }
 
 QString adjustFsxUserWpName(QString name, int length)
