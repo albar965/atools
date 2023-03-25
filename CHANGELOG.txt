@@ -4,6 +4,18 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.14
+
+* More parameters in buildDebugForPosition
+* Now populating ils.loc_width in DFD compiler albar965/littlenavmap#1011
+* Added option for extra buttons in tab handler.
+* Added density and pressure altitude calculation
+* Adjusted airport rating calculation for MSFS. Now setting airports having only apron snippets to
+  zero rating equal to empty albar965/littlenavmap#1010
+* Airport name adjustements
+
+===============================================================================
+
 # Version 3.8.13
 
 * Better check for flight plan file pattern.
