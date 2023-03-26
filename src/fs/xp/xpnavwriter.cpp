@@ -374,7 +374,7 @@ void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
   insertIlsQuery->bindValue(":laty", pos.getLatY());
 
   insertIlsQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
-  insertIlsQuery->bindValue(":loc_width", width);
+  insertIlsQuery->bindNullFloat(":loc_width");
   insertIlsQuery->bindValue(":has_backcourse", 0);
 
   if(rowCode != SBAS_GBAS_FINAL)
