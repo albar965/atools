@@ -13,6 +13,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Adjusted airport rating calculation for MSFS. Now setting airports having only apron snippets to
   zero rating equal to empty albar965/littlenavmap#1010
 * Airport name adjustements
+* Added workaround for missing translations in MSFS for AI or multiplayer aircraft.
 
 ===============================================================================
 

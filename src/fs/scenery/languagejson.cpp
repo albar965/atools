@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -136,10 +136,25 @@ void LanguageJson::writeToDb(sql::SqlDatabase *db) const
   query.prepare("insert into translation (language, key, text) values(?, ?, ?)");
   for(auto it = names.constBegin(); it != names.constEnd(); ++it)
   {
+    QString key = it.key();
+
     query.bindValue(0, language);
-    query.bindValue(1, it.key());
+    query.bindValue(1, key);
     query.bindValue(2, it.value());
     query.exec();
+
+    // Key change in SU12 - add duplicate entries in old and new format
+    if(key.startsWith("ATCCOM.ATC_NAME "))
+    {
+      query.bindValue(1, key.replace("ATCCOM.ATC_NAME ", "ATCCOM.ATC_NAME_"));
+      query.exec();
+    }
+    else if(key.startsWith("ATCCOM.AC_MODEL "))
+    {
+      query.bindValue(1, key.replace("ATCCOM.AC_MODEL ", "ATCCOM.AC_MODEL_"));
+      query.exec();
+    }
+
   }
   db->commit();
 }
