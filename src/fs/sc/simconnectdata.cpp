@@ -212,9 +212,9 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   }
 
   data.userAircraft.trackMagDeg = atools::geo::normalizeCourse(headingTrue - magVar);
-  data.userAircraft.trackTrueDeg = atools::geo::normalizeCourse(headingTrue);
+  data.userAircraft.trackTrueDeg = headingTrue;
   data.userAircraft.headingMagDeg = atools::geo::normalizeCourse(headingTrue - magVar);
-  data.userAircraft.headingTrueDeg = atools::geo::normalizeCourse(headingTrue);
+  data.userAircraft.headingTrueDeg = headingTrue;
   data.userAircraft.magVarDeg = magVar;
 
   data.userAircraft.pitotIcePercent = static_cast<quint8>(ice);
@@ -240,8 +240,8 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
 
   data.userAircraft.verticalSpeedFeetPerMin = vertSpeed;
 
-  data.userAircraft.windDirectionDegT = 45;
-  data.userAircraft.windSpeedKts = 19;
+  data.userAircraft.windDirectionDegT = atools::geo::normalizeCourse(headingTrue + 45.f);
+  data.userAircraft.windSpeedKts = 19.f;
 
   data.userAircraft.toIdent = "LIRF";
   data.userAircraft.altitudeAboveGroundFt = pos.getAltitude();
