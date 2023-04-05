@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -238,6 +238,7 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
   setResolveAirways(settings.value("Options/ResolveRoutes", true).toBool());
   setLanguage(settings.value("Options/MsfsAirportLanguage", "en-US").toString());
   setCreateRouteTables(settings.value("Options/CreateRouteTables", false).toBool());
+  setCreateAirportTables(settings.value("Options/CreateAirportTables", false).toBool());
   setDatabaseReport(settings.value("Options/DatabaseReport", true).toBool());
   setDeletes(settings.value("Options/ProcessDelete", true).toBool());
   setDeduplicate(settings.value("Options/Deduplicate", true).toBool());

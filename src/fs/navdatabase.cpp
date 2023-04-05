@@ -799,6 +799,12 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
     return result;
 
+  if(options->isCreateAirportTables())
+  {
+    if((aborted = runScript(&progress, "fs/db/finish_schema_airport.sql", tr("Creating medium and large airport tables"))))
+      return result;
+  }
+
   if(options->isCreateRouteTables())
   {
     if((aborted = runScript(&progress, "fs/db/finish_schema_route.sql", tr("Creating indexes for route"))))

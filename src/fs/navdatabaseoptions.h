@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -138,7 +138,10 @@ enum OptionFlag
   DROP_INDEXES = 1 << 14,
 
   /* Remove all indexes */
-  AIRPORT_VALIDATION = 1 << 15
+  AIRPORT_VALIDATION = 1 << 15,
+
+  /* * Create airport large and medium tables */
+  CREATE_AIRPORT_TABLES = 1 << 16
 };
 
 Q_DECLARE_FLAGS(OptionFlags, OptionFlag);
@@ -269,6 +272,14 @@ public:
     flags.setFlag(type::CREATE_ROUTE_TABLES, value);
   }
 
+  /*
+   * If true create all route_edge_* and route_node_* tables that are needed for flight plan creation
+   */
+  void setCreateAirportTables(bool value)
+  {
+    flags.setFlag(type::CREATE_AIRPORT_TABLES, value);
+  }
+
   /* Reads all inactive scenery regions if set to true */
   void setReadInactive(bool value)
   {
@@ -394,6 +405,11 @@ public:
   bool isCreateRouteTables() const
   {
     return flags.testFlag(type::CREATE_ROUTE_TABLES);
+  }
+
+  bool isCreateAirportTables() const
+  {
+    return flags.testFlag(type::CREATE_AIRPORT_TABLES);
   }
 
   bool isReadInactive() const

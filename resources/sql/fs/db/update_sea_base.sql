@@ -57,15 +57,6 @@ update airport set num_runway_hard = num_runway_hard -
   where airport_id in
     (select CAirport from fake);
 
---update airport_large set num_runway_hard = num_runway_hard -
---  (select count(CRunway) from fake where airport_large.airport_id = fake.CAirport group by CAirport)
---  where airport_id in
---    (select CAirport from fake);
---update airport_medium set num_runway_hard = num_runway_hard -
---  (select count(CRunway) from fake where airport_medium.airport_id = fake.CAirport group by CAirport)
---  where airport_id in
---    (select CAirport from fake);
-
 delete from runway
   where runway_id in
     (select CRunway from fake);

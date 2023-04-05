@@ -14,6 +14,7 @@ This text is partially Markdown, hence sometimes strange formatting.
   zero rating equal to empty albar965/littlenavmap#1010
 * Airport name adjustements
 * Added workaround for missing translations in MSFS for AI or multiplayer aircraft.
+* Added option to disable obsolete airport_large and airport_medium tables.
 
 ===============================================================================
 
