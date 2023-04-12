@@ -61,6 +61,9 @@ public:
   {
     names.clear();
     language.clear();
+#ifdef DEBUG_MODEL_SUPPORT
+    models.clear();
+#endif
   }
 
   bool isEmpty() const
@@ -70,7 +73,16 @@ public:
 
   /* Get localized airport or other name from key found in BGL file like "TT:AIRPORTXX.MYNN.name"
    * Returns key if it does not start with the translation prefix "TT:" or list is empty */
-  QString getName(QString key) const;
+  QString getName(QString key) const
+  {
+    return valueFromMap(names, key);
+  }
+
+#ifdef DEBUG_MODEL_SUPPORT
+  /* Aircraft model "C172" from "ATCCOM.AC_MODEL_C172.0.text". */
+  QString getModel(QString key) const;
+
+#endif
 
   /* Get language as read from file or db. E.g. "en-US" */
   const QString& getLanguage() const
@@ -84,8 +96,17 @@ private:
   /* Maps key like "TT:AIRPORTXX.MYNN.name" to text */
   QHash<QString, QString> names;
 
+#ifdef DEBUG_MODEL_SUPPORT
+  void addModel(const QString& key, const QString& value);
+
+  /* Maps "ATCCOM.AC_MODEL_C172.0.text" to "C172" */
+  QHash<QString, QString> models;
+#endif
+
   /* Loaded language */
   QString language;
+
+  QString valueFromMap(const QHash<QString, QString>& hash, QString key) const;
 
 };
 

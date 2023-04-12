@@ -124,7 +124,12 @@ void LanguageJson::readFromDb(sql::SqlDatabase *db, const QString& languageParam
     query.bindValue(":key", keyPrefix.isEmpty() ? "%" : keyPrefix);
     query.exec();
     while(query.next())
+    {
       names.insert(query.valueStr(0), query.valueStr(1));
+#ifdef DEBUG_MODEL_SUPPORT
+      addModel(query.valueStr(0), query.valueStr(1));
+#endif
+    }
   }
   else
     qWarning() << Q_FUNC_INFO << "Table translation not found in database or empty";
@@ -168,7 +173,15 @@ void LanguageJson::adjustLanguage()
   language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
 }
 
-QString LanguageJson::getName(QString key) const
+#ifdef DEBUG_MODEL_SUPPORT
+QString LanguageJson::getModel(QString key) const
+{
+  return valueFromMap(models, key);
+}
+
+#endif
+
+QString LanguageJson::valueFromMap(const QHash<QString, QString>& hash, QString key) const
 {
   key = key.trimmed();
   QString value;
@@ -176,22 +189,55 @@ QString LanguageJson::getName(QString key) const
   {
     // Translated string
     QString k = key.mid(3);
-    value = names.value(k);
+    value = hash.value(k);
     if(value.isEmpty() && k.endsWith(".text"))
     {
       // Nothing found - try tts suffix again
       k.chop(4);
-      value = names.value(k + "tts");
+      value = hash.value(k + "tts");
     }
     // Otherweise return empty
   }
   else if(key.startsWith("$$:"))
     value = key.mid(3);
   else
+  {
+    value = hash.value(key);
+    if(value.isEmpty() && key.endsWith(".text"))
+    {
+      // Nothing found - try tts suffix again
+      key.chop(4);
+      value = hash.value(key + "tts");
+    }
+  }
+
+  if(value.isEmpty())
     value = key;
 
   return value;
 }
+
+#ifdef DEBUG_MODEL_SUPPORT
+
+void LanguageJson::addModel(const QString& key, const QString& value)
+{
+  const static QRegularExpression MODEL_REGEXP("^ATCCOM.AC_MODEL[_ ]?([A-Z0-9]+)\\.(text|tts)?");
+
+  // "ATCCOM.AC_MODEL_C172.0.text" to "C172"
+  // "ATCCOM.AC_MODEL BE58.0.text": "Baron",
+  // "ATCCOM.AC_MODEL_BE58.0.text": "BE58",
+  // "ATCCOM.AC_MODEL BE58.0.tts": "Baron",
+  // "ATCCOM.AC_MODEL_BE58.0.tts": "BE58",
+
+  if(key.startsWith("ATCCOM.AC_MODEL"))
+  {
+    QRegularExpressionMatch match = MODEL_REGEXP.match(key);
+    if(match.hasMatch())
+      models.insert(key, match.captured(1));
+  }
+}
+
+#endif
 
 } // namespace scenery
 } // namespace fs
