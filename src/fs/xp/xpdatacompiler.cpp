@@ -846,6 +846,7 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
   // Default or custom scenery files - required
   // earth_fix.dat earth_awy.dat earth_nav.dat earth_mora.dat
   reportCount += 4 * NUM_REPORT_STEPS_SMALL;
+  const QString& basepath = opts.getBasepath();
 
   if(sim == atools::fs::FsPaths::XPLANE_11)
   {
@@ -853,15 +854,14 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
       return 0;
 
     // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat ===================
-    if(checkFile(Q_FUNC_INFO,
-                 buildPathNoCase({opts.getBasepath(), "Resources", "default scenery", "default apt dat", "Earth nav data", "apt.dat"})))
+    if(checkFile(Q_FUNC_INFO, buildPathNoCase({basepath, "Resources", "default scenery", "default apt dat", "Earth nav data", "apt.dat"})))
       reportCount += NUM_REPORT_STEPS;
 
     if(progress->reportOtherMsg(tr("Counting files for Custom Scenery/Global Airports ...")))
       return 0;
 
     // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat ===================
-    if(checkFile(Q_FUNC_INFO, buildPathNoCase({opts.getBasepath(), "Custom Scenery", "Global Airports", "Earth nav data", "apt.dat"})))
+    if(checkFile(Q_FUNC_INFO, buildPathNoCase({basepath, "Custom Scenery", "Global Airports", "Earth nav data", "apt.dat"})))
       reportCount += NUM_REPORT_STEPS;
   }
 
@@ -874,7 +874,7 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
       return 0;
 
     // X-Plane 12/Global Scenery/Global Airports/Earth nav data/apt.dat
-    if(checkFile(Q_FUNC_INFO, buildPathNoCase({opts.getBasepath(), "Global Scenery", "Global Airports", "Earth nav data", "apt.dat"})))
+    if(checkFile(Q_FUNC_INFO, buildPathNoCase({basepath, "Global Scenery", "Global Airports", "Earth nav data", "apt.dat"})))
       reportCount += NUM_REPORT_STEPS;
   }
 
@@ -893,17 +893,27 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
   reportCount += findCustomAptDatFiles(opts, nullptr, nullptr, false /* verbose */).count();
 
-  // earth_nav.dat localizers $X-Plane/Custom Scenery/Global Airports/Earth nav data/
-  if(checkFile(Q_FUNC_INFO, buildPathNoCase({opts.getBasepath(), "Custom Scenery", "Global Airports", "Earth nav data", "earth_nav.dat"})))
-    reportCount++;
+  // earth_nav.dat localizers Custom Scenery/Global Airports/Earth nav data/earth_nav.dat (X-Plane 11)
+  if(sim == atools::fs::FsPaths::XPLANE_11)
+  {
+    if(checkFile(Q_FUNC_INFO, buildPathNoCase({basepath, "Custom Scenery", "Global Airports", "Earth nav data", "earth_nav.dat"})))
+      reportCount++;
+  }
+
+  // earth_nav.dat localizers Global Scenery/Global Airports/Earth nav data/earth_nav.dat (X-Plane 12)
+  if(sim == atools::fs::FsPaths::XPLANE_12)
+  {
+    if(checkFile(Q_FUNC_INFO, buildPathNoCase({basepath, "Global Scenery", "Global Airports", "Earth nav data", "earth_nav.dat"})))
+      reportCount++;
+  }
 
   if(progress->reportOtherMsg(tr("Counting files for Custom Data ...")))
     return 0;
 
   // user_nav.dat user_fix.dat $X-Plane/Custom Data/
-  if(checkFile(Q_FUNC_INFO, buildPathNoCase({opts.getBasepath(), "Custom Data", "user_nav.dat"})))
+  if(checkFile(Q_FUNC_INFO, buildPathNoCase({basepath, "Custom Data", "user_nav.dat"})))
     reportCount++;
-  if(checkFile(Q_FUNC_INFO, buildPathNoCase({opts.getBasepath(), "Custom Data", "user_fix.dat"})))
+  if(checkFile(Q_FUNC_INFO, buildPathNoCase({basepath, "Custom Data", "user_fix.dat"})))
     reportCount++;
 
   qDebug() << Q_FUNC_INFO << "=P=== X-Plane files" << reportCount;
