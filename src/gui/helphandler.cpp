@@ -92,8 +92,28 @@ void HelpHandler::openUrl(QWidget *parent, const QUrl& url)
 {
   qDebug() << Q_FUNC_INFO << "About to open URL" << url;
 
+#if defined(DEBUG_OPEN_FILE) && defined(Q_OS_LINUX)
+  // Workaround for a KDE bug which does not open files from the build folder
+  if(QFile::exists("/usr/bin/xdg-open"))
+  {
+    QStringList env = QProcess::systemEnvironment();
+    env.erase(std::remove_if(env.begin(), env.end(), [ = ](const QString& str) {
+          return str.startsWith("LD_LIBRARY_PATH=");
+        }), env.end());
+
+    QProcess process;
+    process.setEnvironment(env);
+    process.setArguments({url.toString()});
+    process.setProgram("/usr/bin/xdg-open");
+    if(!process.startDetached())
+      atools::gui::Dialog::warning(parent, tr("ULR \"%1\" not found").arg(url.toString()));
+  }
+  else if(!QDesktopServices::openUrl(url))
+    atools::gui::Dialog::warning(parent, tr("Error opening help URL \"%1\"").arg(url.toDisplayString()));
+#else
   if(!QDesktopServices::openUrl(url))
     atools::gui::Dialog::warning(parent, tr("Error opening help URL \"%1\"").arg(url.toDisplayString()));
+#endif
 }
 
 void HelpHandler::openUrlWeb(const QString& url)
@@ -147,9 +167,7 @@ void HelpHandler::openFile(QWidget *parent, const QString& filepath)
 QUrl HelpHandler::getHelpUrlWeb(const QString& urlString, const QString& language)
 {
   // Replace variable and create URL
-  QUrl url = QUrl(atools::replaceVar(urlString, "LANG", language));
-
-  return url;
+  return QUrl(atools::replaceVar(urlString, "LANG", language));
 }
 
 QUrl HelpHandler::getHelpUrlFile(QWidget *parent, const QString& urlString, const QString& language)
