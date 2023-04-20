@@ -182,13 +182,8 @@ private:
   int countMsfsSteps(ProgressHandler *progress, const scenery::SceneryCfg& cfg);
   int countMsSimSteps();
 
-  /* Detect Navigraph navdata update packages for special handling */
-  bool checkNavigraphNavdataUpdate(atools::fs::scenery::ManifestJson& manifest);
-
-  /* Detect Navigraph maintenance package for exclusion. true if should be excluded */
-  bool checkNavigraphNavdataExclude(atools::fs::scenery::ManifestJson& manifest);
-
-  /* For metadata */
+  /* Detect Navigraph navdata update packages for special handling. */
+  bool isNavigraphNavdata(atools::fs::scenery::ManifestJson& manifest);
 
   atools::sql::SqlDatabase *db;
   atools::fs::NavDatabaseErrors *errors = nullptr;

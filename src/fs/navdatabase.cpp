@@ -581,7 +581,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     // Check for Navigraph packages to report back to caller
     for(const SceneryArea& area : sceneryCfg.getAreas())
     {
-      if(area.isNavigraphNavdataUpdate())
+      if(area.isNavigraphNavdata())
       {
         result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
         break;
@@ -1535,7 +1535,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     manifest.clear();
     manifest.read(fileinfo.filePath() % SEP % "manifest.json");
 
-    if(manifest.isAnyScenery() && !checkNavigraphNavdataExclude(manifest))
+    if(manifest.isAnyScenery())
     {
       // Read BGL and material file locations from layout file
       layout.clear();
@@ -1553,7 +1553,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
         addonArea.setAddOn(true);
 
         // Detect Navigraph navdata update packages for special handling
-        addonArea.setNavigraphNavdataUpdate(checkNavigraphNavdataUpdate(manifest));
+        addonArea.setNavigraphNavdata(isNavigraphNavdata(manifest));
 
         cfg.getAreas().append(addonArea);
       }
@@ -1580,7 +1580,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     manifest.clear();
     manifest.read(fileinfo.filePath() % SEP % "manifest.json");
 
-    if(manifest.isAnyScenery() && !checkNavigraphNavdataExclude(manifest))
+    if(manifest.isAnyScenery())
     {
       // Read BGL and material file locations from layout file
       layout.clear();
@@ -1596,7 +1596,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
       if(!layout.getBglPaths().isEmpty())
       {
         // Detect Navigraph navdata update packages for special handling
-        addonArea.setNavigraphNavdataUpdate(checkNavigraphNavdataUpdate(manifest));
+        addonArea.setNavigraphNavdata(isNavigraphNavdata(manifest));
 
         cfg.getAreas().append(addonArea);
       }
@@ -1607,36 +1607,55 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   cfg.sortAreas();
 }
 
-bool NavDatabase::checkNavigraphNavdataUpdate(atools::fs::scenery::ManifestJson& manifest)
+bool NavDatabase::isNavigraphNavdata(atools::fs::scenery::ManifestJson& manifest)
 {
-  // {
-  // "content_type": "SCENERY",
-  // "title": "AIRAC Cycle 2013 rev.2",
-  // ...
-  // "creator": "Navigraph",
-  // ..
-  // }
+  // navigraph-navdata
+  // Procedures and airport centers
+  // .../Community/navigraph-navdata/scenery/fs-base-jep/scenery/1107/NAX92590.bgl
+  //
+  // . {
+  // .   "dependencies": [
+  // .     {
+  // .       "name": "navigraph-navdata-base",
+  // .       "package_version": "0.1.0"
+  // .     }
+  // .   ],
+  // .   "content_type": "SCENERY",
+  // .   "title": "AIRAC Cycle 2303 rev.1",
+  // .   "manufacturer": "Jeppesen",
+  // .   "creator": "Navigraph",
+  // .   "package_version": "1.23.10",
+  // .   "minimum_game_version": "1.30.12",
+  // .   "release_notes": {
+  // .     "neutral": {
+  // .       "LastUpdate": "",
+  // .       "OlderHistory": ""
+  // .     }
+  // .   }
+  // . }
 
-  return manifest.isScenery() &&
-         manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
-         (manifest.getTitle().contains("AIRAC", Qt::CaseInsensitive) ||
-          manifest.getTitle().contains("Cycle", Qt::CaseInsensitive));
-}
+  // navigraph-navdata-base
+  // Airports
+  // .../Community/navigraph-navdata-base/scenery/fs-base/scenery/1107/APX92590.bgl
+  //
+  // . {
+  // .   "dependencies": [],
+  // .   "content_type": "SCENERY",
+  // .   "title": "AIRAC Cycle Base",
+  // .   "manufacturer": "Jeppesen",
+  // .   "creator": "Navigraph",
+  // .   "package_version": "0.1.0",
+  // .   "minimum_game_version": "1.30.12",
+  // .   "release_notes": {
+  // .     "neutral": {
+  // .       "LastUpdate": "",
+  // .       "OlderHistory": ""
+  // .     }
+  // .   }
+  // . }
 
-bool NavDatabase::checkNavigraphNavdataExclude(scenery::ManifestJson& manifest)
-{
-  // {
-  // "content_type": "SCENERY",
-  // "title": "Maintenance",
-  // ...
-  // "creator": "Navigraph",
-  // ...
-  // }
-
-  return manifest.isScenery() &&
-         manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
-         (manifest.getTitle().contains("Maintenance", Qt::CaseInsensitive) ||
-          manifest.getTitle().contains("AIRAC Cycle Base", Qt::CaseInsensitive));
+  return manifest.isScenery() && manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
+         manifest.getTitle().contains("AIRAC Cycle", Qt::CaseInsensitive);
 }
 
 void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)

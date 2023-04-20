@@ -154,14 +154,14 @@ public:
   }
 
   /* MSFS only. Indicates special handling for third-party navdata update scenery areas. */
-  bool isNavigraphNavdataUpdate() const
+  bool isNavigraphNavdata() const
   {
-    return navigraphNavdataUpdate;
+    return navigraphNavdata;
   }
 
-  void setNavigraphNavdataUpdate(bool value = true)
+  void setNavigraphNavdata(bool value = true)
   {
-    navigraphNavdataUpdate = value;
+    navigraphNavdata = value;
   }
 
   /* MSFS only. Indicates special handling for "fs-base-nav" navdata update scenery area
@@ -223,7 +223,7 @@ private:
 
   int areaNumber = 0, textureId = 0, layer = 0;
   bool active = false, required = false, highPriority = false, addOn = false, community = false,
-       navigraphNavdataUpdate = false, navdata = false; /* Only MSFS */
+       navigraphNavdata = false, navdata = false; /* Only MSFS */
   QString title, remotePath, localPath, exclude,
           minGameVersion, packageVersion; // Only MSFS
 };

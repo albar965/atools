@@ -57,7 +57,8 @@ enum CreateFlag
   NONE = 0,
   AIRPORT_FS9_FORMAT = 1 << 0,
   AIRPORT_FSX_FORMAT = 1 << 1,
-  AIRPORT_MSFS_DUMMY = 1 << 2
+  AIRPORT_MSFS_DUMMY = 1 << 2,
+  AIRPORT_NAVIGRAPH_NAVDATA = 1 << 3,
 };
 
 Q_DECLARE_FLAGS(CreateFlags, CreateFlag);

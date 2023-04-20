@@ -69,8 +69,6 @@ using atools::io::BinaryStream;
 Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs::bgl::flags::CreateFlags flags)
   : Record(options, bs)
 {
-  Q_UNUSED(flags)
-
   /*int numRunways = TODO compare with number of subrecords */
   bs->readUByte();
   /*int numComs = TODO compare with number of subrecords*/ bs->readUByte();
@@ -101,10 +99,10 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
   if(msfs)
   {
     bs->skip(2);
-    quint8 flags = bs->readUByte();
-    if((flags & 0x04) == 0x04)
+    quint8 msfsflags = bs->readUByte();
+    if((msfsflags & 0x04) == 0x04)
       airportClosed = true;
-    if((flags & 0x01) == 0x01)
+    if((msfsflags & 0x01) == 0x01)
       msfsStar = true;
     bs->skip(1);
   }
@@ -229,7 +227,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
 
       case rec::APPROACH:
       case rec::MSFS_APPROACH_NEW:
-        if(options->isIncludedNavDbObject(type::APPROACH))
+        if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::flags::AIRPORT_NAVIGRAPH_NAVDATA))
         {
           r.seekToStart();
           approaches.append(Approach(options, bs, type));
@@ -238,7 +236,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
 
       case rec::MSFS_SID:
       case rec::MSFS_STAR:
-        if(options->isIncludedNavDbObject(type::APPROACH))
+        if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::flags::AIRPORT_NAVIGRAPH_NAVDATA))
         {
           r.seekToStart();
           sidsAndStars.append(SidStar(options, bs));

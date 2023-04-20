@@ -259,8 +259,8 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
   bgl::flags::CreateFlags createFlags = bgl::flags::NONE;
 
   // Set flag if MSFS scenery area is only navdata and dummy airports
-  if(area.isNavdata())
-    createFlags |= bgl::flags::AIRPORT_MSFS_DUMMY;
+  createFlags.setFlag(bgl::flags::AIRPORT_MSFS_DUMMY, area.isNavdata());
+  createFlags.setFlag(bgl::flags::AIRPORT_NAVIGRAPH_NAVDATA, area.isNavigraphNavdata());
 
   for(Subsection& subsection : subsections)
   {

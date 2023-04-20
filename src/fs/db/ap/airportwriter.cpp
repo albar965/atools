@@ -86,6 +86,7 @@ void AirportWriter::setNameLists(const QList<const Namelist *>& namelists)
 void AirportWriter::writeObject(const Airport *type)
 {
   QString ident = type->getIdent();
+
   if(!getOptions().isIncludedAirportIdent(ident))
     return;
 
@@ -96,7 +97,10 @@ void AirportWriter::writeObject(const Airport *type)
   }
 
   DataWriter& dw = getDataWriter();
-  bool msfsNavdata = dw.getSceneryAreaWriter()->getCurrentArea().isNavdata();
+  const SceneryAreaWriter *sceneryAreaWriter = dw.getSceneryAreaWriter();
+  const scenery::SceneryArea& currentArea = sceneryAreaWriter->getCurrentArea();
+
+  bool msfsNavdata = currentArea.isNavdata();
 
   int predId = airportIdByIdent(ident, msfsNavdata /* warn */);
 
@@ -107,9 +111,7 @@ void AirportWriter::writeObject(const Airport *type)
   if(ident.isEmpty())
     throw atools::Exception("Found airport without ident");
 
-  const SceneryAreaWriter *sceneryAreaWriter = dw.getSceneryAreaWriter();
   BglFileWriter *bglFileWriter = dw.getBglFileWriter();
-  const scenery::SceneryArea& currentArea = sceneryAreaWriter->getCurrentArea();
   if(msfsNavdata)
   {
     // Do a shortcut for MSFS dummies which transport only procedures and COM
@@ -154,7 +156,7 @@ void AirportWriter::writeObject(const Airport *type)
     isAddon = getOptions().isAddonGui(QFileInfo(bglFileWriter->getCurrentFilepath())) && isRealAddon;
 
     // Third party navdata update or MSFS stock airport in official - not an addon
-    if(currentArea.isNavigraphNavdataUpdate())
+    if(currentArea.isNavigraphNavdata())
       isAddon = false;
 
 #ifdef DEBUG_INFORMATION
@@ -324,17 +326,23 @@ void AirportWriter::writeObject(const Airport *type)
     RunwayWriter *rwWriter = dw.getRunwayWriter();
     rwWriter->write(type->getRunways());
 
-    WaypointWriter *waypointWriter = dw.getWaypointWriter();
-    waypointWriter->write(type->getWaypoints());
+    if(!currentArea.isNavigraphNavdata())
+    {
+      WaypointWriter *waypointWriter = dw.getWaypointWriter();
+      waypointWriter->write(type->getWaypoints());
+    }
 
     ComWriter *comWriter = dw.getAirportComWriter();
     comWriter->write(type->getComs());
 
-    ApproachWriter *appWriter = dw.getApproachWriter();
-    appWriter->write(type->getApproaches());
+    if(!currentArea.isNavigraphNavdata())
+    {
+      ApproachWriter *appWriter = dw.getApproachWriter();
+      appWriter->write(type->getApproaches());
 
-    SidStarWriter *sidStarWriter = dw.getSidStarWriter();
-    sidStarWriter->write(type->getSidsAndStars());
+      SidStarWriter *sidStarWriter = dw.getSidStarWriter();
+      sidStarWriter->write(type->getSidsAndStars());
+    }
 
     // Helipads will take the start index + the current start id as reference to starts
     HelipadWriter *heliWriter = dw.getHelipadWriter();
