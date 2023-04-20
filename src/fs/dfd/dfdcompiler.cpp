@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,23 @@
 
 #include "fs/dfd/dfdcompiler.h"
 
-#include "fs/common/metadatawriter.h"
-#include "fs/common/magdecreader.h"
-#include "settings/settings.h"
-#include "sql/sqldatabase.h"
-#include "sql/sqlutil.h"
-#include "fs/progresshandler.h"
-#include "fs/util/fsutil.h"
-#include "fs/util/tacanfrequencies.h"
-#include "sql/sqlscript.h"
-#include "sql/sqlquery.h"
-#include "fs/navdatabaseoptions.h"
-#include "fs/common/procedurewriter.h"
-#include "geo/calculations.h"
 #include "atools.h"
 #include "fs/common/airportindex.h"
 #include "fs/common/binarygeometry.h"
 #include "fs/common/binarymsageometry.h"
+#include "fs/common/magdecreader.h"
+#include "fs/common/metadatawriter.h"
 #include "fs/common/morareader.h"
+#include "fs/common/procedurewriter.h"
+#include "fs/navdatabaseoptions.h"
+#include "fs/progresshandler.h"
+#include "fs/util/fsutil.h"
+#include "fs/util/tacanfrequencies.h"
+#include "geo/calculations.h"
+#include "sql/sqldatabase.h"
+#include "sql/sqlquery.h"
+#include "sql/sqlscript.h"
+#include "sql/sqlutil.h"
 
 #include <QCoreApplication>
 #include <QDataStream>
@@ -594,7 +593,7 @@ void DfdCompiler::writeParking()
 
   SqlScript script(db, true /*options->isVerbose()*/);
 
-  // Write parking/gates
+  // Write parking/gates and start positions for runway ends
   script.executeScript(":/atools/resources/sql/fs/db/dfd/populate_parking.sql");
   db.commit();
 }

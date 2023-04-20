@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -36,3 +36,15 @@ coalesce((select count(1)
 from parking p
 where p.airport_id = airport.airport_id
 group by p.airport_id), 0);
+
+-- Create start positions for primary runway ends
+insert into start (airport_id, runway_end_id, runway_name, type, heading, altitude, lonx, laty)
+select r.airport_id, p.runway_end_id , p.name , 'R' as type, r.heading, r.altitude, p.lonx, p.laty
+from runway_end p join runway r on p.runway_end_id= r.primary_end_id;
+
+-- Secondary
+insert into start (airport_id, runway_end_id, runway_name, type, heading, altitude, lonx, laty)
+select r.airport_id, s.runway_end_id , s.name , 'R' as type, r.heading, r.altitude, s.lonx, s.laty
+from runway_end s join runway r on s.runway_end_id= r.secondary_end_id;
+
+
