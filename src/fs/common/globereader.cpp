@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -61,9 +61,7 @@ bool GlobeReader::isDirValid(const QString& path)
 
 bool GlobeReader::fileEntryValid(const QFileInfo& fileEntry)
 {
-  return fileEntry.exists() &&
-         fileEntry.isReadable() &&
-         fileEntry.isFile() &&
+  return fileEntry.exists() && fileEntry.isReadable() && fileEntry.isFile() &&
          QDir::match("[a-p][1-9][0-9][gb]", fileEntry.fileName()) &&
          (fileEntry.size() == FILE_SIZE_LARGE || fileEntry.size() == FILE_SIZE_SMALL);
 }
