@@ -47,6 +47,14 @@ void NavDatabaseOptions::setLanguage(const QString& value)
   language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
 }
 
+void NavDatabaseOptions::addIncludeGui(const QFileInfo& path)
+{
+  if(path.exists() && path.isDir())
+    dirIncludesGui.append(atools::canonicalFilePath(path));
+  else
+    qWarning() << Q_FUNC_INFO << "Inclusion path does not exist or is no dir" << path;
+}
+
 void NavDatabaseOptions::addExcludeGui(const QFileInfo& path)
 {
   if(path.exists())
@@ -369,6 +377,7 @@ QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
   out << ", addonFiltersInc [" << patternStr(opts.addonFiltersInc) << "]";
   out << ", addonFiltersExcl [" << patternStr(opts.addonFiltersExcl) << "]";
   out << ", highPriorityFiltersInc [" << patternStr(opts.highPriorityFiltersInc) << "]";
+  out << ", dirIncludesGui [" << opts.dirIncludesGui << "]";
   out << ", dirExcludesGui [" << patternStr(opts.dirExcludesGui) << "]";
   out << ", fileExcludesGui [" << patternStr(opts.fileExcludesGui) << "]";
   out << ", dirAddonExcludesGui [" << patternStr(opts.dirAddonExcludesGui) << "]";

@@ -297,6 +297,9 @@ public:
   /* Set progress callback function/method */
   void setProgressCallback(ProgressCallbackType func);
 
+  /* Include absolute directories paths. Used by the GUI options dialog. Not saved. */
+  void addIncludeGui(const QFileInfo& path);
+
   /* Exclude absolute directories and file paths. Used by the GUI options dialog. Not saved. */
   void addExcludeGui(const QFileInfo& path);
 
@@ -440,6 +443,12 @@ public:
 
   bool isIncludedNavDbObject(atools::fs::type::NavDbObjectType type) const;
 
+  /* Paths to add to search list */
+  const QStringList& getDirIncludesGui() const
+  {
+    return dirIncludesGui;
+  }
+
   ProgressCallbackType getProgressCallback() const;
 
   atools::fs::FsPaths::SimulatorType getSimulatorType() const
@@ -519,6 +528,7 @@ private:
 
   /* Elements set from GUI. Not loaded from config file */
   QList<QRegExp> dirExcludesGui, fileExcludesGui, dirAddonExcludesGui, fileAddonExcludesGui;
+  QStringList dirIncludesGui;
 
   QSet<atools::fs::type::NavDbObjectType> navDbObjectTypeFiltersInc, navDbObjectTypeFiltersExcl;
   ProgressCallbackType progressCallback = nullptr;

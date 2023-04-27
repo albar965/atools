@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -51,8 +51,7 @@ public:
    * @param filenames If not null will get all filenames (only filename)
    * @return number of files found
    */
-  int getFiles(const atools::fs::scenery::SceneryArea& area, QStringList *filepaths = nullptr,
-               QStringList *filenames = nullptr);
+  int getFiles(const atools::fs::scenery::SceneryArea& area, QStringList *filepaths = nullptr, QStringList *filenames = nullptr);
 
   const QStringList& getErrorMessages() const
   {

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -126,14 +126,14 @@ bool XpDataCompiler::compileEarthFix()
 
   if(checkFile(Q_FUNC_INFO, path))
   {
-    bool aborted = readDataFile(path, 5, fixWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
-
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(path, 5, fixWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL))
+      return true;
   }
   else
     throw Exception(tr("Default file \"%1\" not found").arg(path));
+
+  db.commit();
+  return false;
 }
 
 bool XpDataCompiler::compileEarthMora()
@@ -144,13 +144,11 @@ bool XpDataCompiler::compileEarthMora()
   if(checkFile(Q_FUNC_INFO, filepath))
   {
     // NO_FLAG - ignore AIRAC discrepancies
-    bool aborted = readDataFile(filepath, 5, moraWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL);
-
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(filepath, 5, moraWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL))
+      return true;
   }
 
+  db.commit();
   return false;
 }
 
@@ -162,13 +160,11 @@ bool XpDataCompiler::compileEarthAirportMsa()
   if(checkFile(Q_FUNC_INFO, filepath))
   {
     // NO_FLAG - ignore AIRAC discrepancies
-    bool aborted = readDataFile(filepath, 5, airportMsaWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL);
-
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(filepath, 5, airportMsaWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL))
+      return true;
   }
 
+  db.commit();
   return false;
 }
 
@@ -180,13 +176,11 @@ bool XpDataCompiler::compileEarthHolding()
   if(checkFile(Q_FUNC_INFO, filepath))
   {
     // NO_FLAG - ignore AIRAC discrepancies
-    bool aborted = readDataFile(filepath, 5, holdingWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL);
-
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(filepath, 5, holdingWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL))
+      return true;
   }
 
+  db.commit();
   return false;
 }
 
@@ -197,25 +191,26 @@ bool XpDataCompiler::compileEarthAirway()
   if(checkFile(Q_FUNC_INFO, path))
   {
 
-    bool aborted = readDataFile(path, 11, airwayWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(path, 11, airwayWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL))
+      return true;
   }
   else
     throw Exception(tr("Default file \"%1\" not found").arg(path));
+
+  db.commit();
+  return false;
 }
 
 bool XpDataCompiler::postProcessEarthAirway()
 {
-  bool aborted = false;
-  if((aborted = progress->reportOther(tr("Post processing Airways"))))
+  if(progress->reportOther(tr("Post processing Airways")))
     return true;
 
-  aborted = airwayPostProcess->postProcessEarthAirway();
-  if(!aborted)
-    db.commit();
-  return aborted;
+  if(airwayPostProcess->postProcessEarthAirway())
+    return true;
+
+  db.commit();
+  return false;
 }
 
 bool XpDataCompiler::compileEarthNav()
@@ -223,25 +218,44 @@ bool XpDataCompiler::compileEarthNav()
   QString path = buildPathNoCase({basePath, "earth_nav.dat"});
   if(checkFile(Q_FUNC_INFO, path))
   {
-    bool aborted = readDataFile(path, 11, navWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(path, 11, navWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL))
+      return true;
   }
   else
     throw Exception(tr("Default file \"%1\" not found").arg(path));
+
+  db.commit();
+  return false;
 }
 
 bool XpDataCompiler::compileCustomApt()
 {
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
-  QStringList localFindCustomAptDatFiles = findCustomAptDatFiles(options, errors, progress, true /* verbose */);
-  for(const QString& aptdat : localFindCustomAptDatFiles)
+  QStringList aptDatFiles = findCustomAptDatFiles(buildPathNoCase({options.getBasepath(), "Custom Scenery"}),
+                                                  options, errors, progress, true /* verbose */, false /* userInclude */);
+  for(const QString& aptdat : aptDatFiles)
   {
     // Only one progress report per file
     if(readDataFile(aptdat, 1, airportWriter, IS_ADDON | READ_SHORT_REPORT, 1))
       return true;
+  }
+  db.commit();
+  return false;
+}
+
+bool XpDataCompiler::compileUserIncludeApt()
+{
+  for(const QString& path : options.getDirIncludesGui())
+  {
+    // Find all apt.dat in the included folder
+    QStringList aptDatFiles = findCustomAptDatFiles(path, options, errors, progress, true /* verbose */, true /* userInclude */);
+    for(const QString& aptdat : aptDatFiles)
+    {
+      // Only one progress report per file
+      if(readDataFile(aptdat, 1, airportWriter, IS_ADDON | READ_SHORT_REPORT, 1))
+        return true;
+    }
   }
   db.commit();
   return false;
@@ -254,12 +268,11 @@ bool XpDataCompiler::compileCustomGlobalApt()
 
   if(checkFile(Q_FUNC_INFO, path))
   {
-    bool aborted = readDataFile(path, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS);
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(path, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS))
+      return true;
   }
 
+  db.commit();
   return false;
 }
 
@@ -270,12 +283,11 @@ bool XpDataCompiler::compileGlobalApt12()
 
   if(checkFile(Q_FUNC_INFO, path))
   {
-    bool aborted = readDataFile(path, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS);
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(path, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS))
+      return true;
   }
 
+  db.commit();
   return false;
 }
 
@@ -287,13 +299,14 @@ bool XpDataCompiler::compileDefaultApt()
 
   if(checkFile(Q_FUNC_INFO, defaultAptDat))
   {
-    bool aborted = readDataFile(defaultAptDat, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS);
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(defaultAptDat, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS))
+      return true;
   }
   else
     throw Exception(tr("Default file \"%1\" not found").arg(defaultAptDat));
+
+  db.commit();
+  return false;
 }
 
 bool XpDataCompiler::compileCifp()
@@ -357,12 +370,11 @@ bool XpDataCompiler::compileLocalizers()
   if(checkFile(Q_FUNC_INFO, path))
   {
     // Only one progress report per file
-    bool aborted = readDataFile(path, 11, navWriter, READ_LOCALIZERS | READ_SHORT_REPORT, 1);
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(path, 11, navWriter, READ_LOCALIZERS | READ_SHORT_REPORT, 1))
+      return true;
   }
 
+  db.commit();
   return false;
 }
 
@@ -373,12 +385,11 @@ bool XpDataCompiler::compileUserNav()
   if(checkFile(Q_FUNC_INFO, path))
   {
     // One progress report per file
-    bool aborted = readDataFile(path, 11, navWriter, READ_USER | READ_SHORT_REPORT, 1);
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(path, 11, navWriter, READ_USER | READ_SHORT_REPORT, 1))
+      return true;
   }
 
+  db.commit();
   return false;
 }
 
@@ -389,12 +400,11 @@ bool XpDataCompiler::compileUserFix()
   if(checkFile(Q_FUNC_INFO, path))
   {
     // One progress report per file
-    bool aborted = readDataFile(path, 5, fixWriter, READ_USER | READ_SHORT_REPORT, 1);
-    if(!aborted)
-      db.commit();
-    return aborted;
+    if(readDataFile(path, 5, fixWriter, READ_USER | READ_SHORT_REPORT, 1))
+      return true;
   }
 
+  db.commit();
   return false;
 }
 
@@ -714,24 +724,28 @@ void XpDataCompiler::close()
   deInitQueries();
 }
 
-QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts,
+QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const atools::fs::NavDatabaseOptions& opts,
                                                   atools::fs::NavDatabaseErrors *navdatabaseErrors,
-                                                  atools::fs::ProgressHandler *progressHandler, bool verbose)
+                                                  atools::fs::ProgressHandler *progressHandler, bool verbose, bool userInclude)
 {
-  // Read only apt.dat from scenery_packs.ini - Global Airports are excluded and read separately, disabled are included
-  QVector<SceneryPack> packs = loadFilepathsFromSceneryPacks(opts, progressHandler, navdatabaseErrors);
-
-  if(verbose)
-  {
-    qDebug() << Q_FUNC_INFO << "scenery_packs.ini";
-    for(const SceneryPack& pack : packs)
-      qDebug() << pack;
-  }
-
-  // Create index for packs
   QHash<QString, int> pathToPackIndex;
-  for(int i = 0; i < packs.size(); i++)
-    pathToPackIndex.insert(packs.at(i).pathstr.toLower().remove("custom scenery/").remove('/'), i);
+  QVector<SceneryPack> packs;
+  if(!userInclude)
+  {
+    // Read only apt.dat from scenery_packs.ini - Global Airports are excluded and read separately, disabled are included
+    packs = loadFilepathsFromSceneryPacks(opts, progressHandler, navdatabaseErrors);
+
+    if(verbose)
+    {
+      qDebug() << Q_FUNC_INFO << "scenery_packs.ini";
+      for(const SceneryPack& pack : packs)
+        qDebug() << pack;
+    }
+
+    // Create index for packs
+    for(int i = 0; i < packs.size(); i++)
+      pathToPackIndex.insert(packs.at(i).pathstr.toLower().remove("custom scenery/").remove('/'), i);
+  }
 
   // Read all apt.dat files in the directory structure and exclude if disabled in scenery_packs.ini if flag is set
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
@@ -745,8 +759,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseO
   QDir::Filters filters = QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot;
 #endif
 
-  QDir customApt(buildPathNoCase({opts.getBasepath(), "Custom Scenery"}), QString(), QDir::Name, filters);
-  for(QFileInfo fileinfo : customApt.entryInfoList())
+  for(QFileInfo fileinfo : QDir(path, QString(), QDir::Name, filters).entryInfoList())
   {
     QString name = fileinfo.fileName();
     fileinfo.setFile(atools::canonicalFilePath(fileinfo));
@@ -761,11 +774,11 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseO
     // KSEA Demo Area
     // LFPG Paris - Charles de Gaulle
 
-    if(name.toLower() == "global airports") // Should normally not appear here
+    if(name.compare("Global Airports", Qt::CaseInsensitive) == 0) // Should normally not appear here
       continue;
 
     // Exclude if disabled and user set read inactive - entries missing in the list are included
-    if(!opts.isReadInactive())
+    if(!userInclude && !opts.isReadInactive())
     {
       int idx = pathToPackIndex.value(name.toLower(), -1);
       if(idx != -1 && packs.at(idx).disabled == true)
@@ -886,12 +899,14 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
 
   reportCount += findAirspaceFiles(opts).count();
 
+  // Custom Scenery ==============================================================
   if(progress->reportOtherMsg(tr("Counting files for Custom Scenery ...")))
     return 0;
 
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
-  reportCount += findCustomAptDatFiles(opts, nullptr, nullptr, false /* verbose */).count();
+  reportCount += findCustomAptDatFiles(buildPathNoCase({basepath, "Custom Scenery"}), opts,
+                                       false /* verbose */, false /* userInclude */).count();
 
   // earth_nav.dat localizers Custom Scenery/Global Airports/Earth nav data/earth_nav.dat (X-Plane 11)
   if(sim == atools::fs::FsPaths::XPLANE_11)
@@ -900,6 +915,7 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
       reportCount++;
   }
 
+  // Global Scenery ==============================================================
   // earth_nav.dat localizers Global Scenery/Global Airports/Earth nav data/earth_nav.dat (X-Plane 12)
   if(sim == atools::fs::FsPaths::XPLANE_12)
   {
@@ -907,6 +923,7 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
       reportCount++;
   }
 
+  // Custom Data ==============================================================
   if(progress->reportOtherMsg(tr("Counting files for Custom Data ...")))
     return 0;
 
@@ -915,6 +932,13 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
     reportCount++;
   if(checkFile(Q_FUNC_INFO, buildPathNoCase({basepath, "Custom Data", "user_fix.dat"})))
     reportCount++;
+
+  // User defined folders ==============================================================
+  if(progress->reportOtherMsg(tr("Counting files for User Included Path ...")))
+    return 0;
+
+  for(const QString& dirInclude : opts.getDirIncludesGui())
+    reportCount += findCustomAptDatFiles(dirInclude, opts, false /* verbose */, true /* userInclude */).count();
 
   qDebug() << Q_FUNC_INFO << "=P=== X-Plane files" << reportCount;
   return reportCount;

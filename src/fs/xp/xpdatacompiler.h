@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -210,6 +210,11 @@ public:
    */
   bool compileCustomApt();
 
+  /*
+   * Read custom airports like X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat from user defined paths
+   */
+  bool compileUserIncludeApt();
+
   /* Close all writers and queries */
   void close();
 
@@ -251,8 +256,14 @@ private:
   static QString buildBasePath(const NavDatabaseOptions& opts, const QString& filename);
 
   /* FInd custom apt.dat like X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat */
-  static QStringList findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts,
-                                           NavDatabaseErrors *navdatabaseErrors, ProgressHandler *progressHandler, bool verbose);
+  static QStringList findCustomAptDatFiles(const QString& path, const atools::fs::NavDatabaseOptions& opts,
+                                           NavDatabaseErrors *navdatabaseErrors, ProgressHandler *progressHandler, bool verbose,
+                                           bool userInclude);
+
+  static QStringList findCustomAptDatFiles(const QString& path, const atools::fs::NavDatabaseOptions& opts, bool verbose, bool userInclude)
+  {
+    return findCustomAptDatFiles(path, opts, nullptr, nullptr, verbose, userInclude);
+  }
 
   /* Find CIFP files like X-Plane 11/Resources/default data/CIFP/KSEA.dat */
   static QStringList findCifpFiles(const atools::fs::NavDatabaseOptions& opts);

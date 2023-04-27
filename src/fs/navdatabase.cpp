@@ -79,6 +79,7 @@ using atools::fs::scenery::AddOnCfgEntry;
 using atools::fs::scenery::SceneryArea;
 using atools::fs::scenery::AddOnComponent;
 using atools::fs::scenery::AddOnPackage;
+using atools::fs::FsPaths;
 using atools::buildPathNoCase;
 
 NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb, NavDatabaseErrors *databaseErrors,
@@ -96,8 +97,8 @@ atools::fs::ResultFlags NavDatabase::compileDatabase()
   QString sceneryCfgCodec;
 
   if(options != nullptr)
-    sceneryCfgCodec = (options->getSimulatorType() == atools::fs::FsPaths::P3D_V4 ||
-                       options->getSimulatorType() == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
+    sceneryCfgCodec = (options->getSimulatorType() == FsPaths::P3D_V4 ||
+                       options->getSimulatorType() == FsPaths::P3D_V5) ? "UTF-8" : QString();
 
   atools::fs::ResultFlags result = createInternal(sceneryCfgCodec);
   if(aborted)
@@ -206,9 +207,9 @@ bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& c
 
 bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, atools::fs::FsPaths::SimulatorType type)
 {
-  if(atools::fs::FsPaths::isAnyXplane(type))
+  if(FsPaths::isAnyXplane(type))
     errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "Resources", "default data"})));
-  else if(type == atools::fs::FsPaths::MSFS)
+  else if(type == FsPaths::MSFS)
   {
     // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
 
@@ -568,14 +569,15 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   // ==============================================================================
   // Calculate the total number of progress steps
   int total = 0;
-  if(atools::fs::FsPaths::isAnyXplane(sim))
+  if(FsPaths::isAnyXplane(sim))
     total = countXplaneSteps(&progress);
-  else if(sim == atools::fs::FsPaths::NAVIGRAPH)
+  else if(sim == FsPaths::NAVIGRAPH)
     total = countDfdSteps();
-  else if(sim == atools::fs::FsPaths::MSFS)
+  else if(sim == FsPaths::MSFS)
   {
     // Fill with default required entries but does not read a file
     readSceneryConfigMsfs(sceneryCfg);
+    readSceneryConfigIncludePathsFsxP3dMsfs(sceneryCfg);
     total = countMsfsSteps(&progress, sceneryCfg);
 
     // Check for Navigraph packages to report back to caller
@@ -592,6 +594,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   {
     // Read scenery.cfg
     readSceneryConfigFsxP3d(sceneryCfg);
+    readSceneryConfigIncludePathsFsxP3dMsfs(sceneryCfg);
     total = countFsxP3dSteps(&progress, sceneryCfg);
   }
 
@@ -620,10 +623,10 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
 
   // ================================================================================================
   // Start compilation
-  if(sim == atools::fs::FsPaths::NAVIGRAPH)
+  if(sim == FsPaths::NAVIGRAPH)
   {
     // Create a single Navigraph scenery area
-    atools::fs::scenery::SceneryArea area(1, tr("Navigraph"), QString());
+    SceneryArea area(1, tr("Navigraph"), QString());
 
     // Prepare error collection for single area
     if(errors != nullptr)
@@ -634,10 +637,10 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     loadDfd(&progress, dfdCompiler.data(), area);
     dfdCompiler->close();
   }
-  else if(atools::fs::FsPaths::isAnyXplane(sim))
+  else if(FsPaths::isAnyXplane(sim))
   {
     // Create a single X-Plane scenery area
-    atools::fs::scenery::SceneryArea area(1, tr("X-Plane"), QString());
+    SceneryArea area(1, tr("X-Plane"), QString());
 
     // Prepare error collection for single area
     if(errors != nullptr)
@@ -648,7 +651,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     loadXplane(&progress, xpDataCompiler.data(), area);
     xpDataCompiler->close();
   }
-  else if(sim == atools::fs::FsPaths::MSFS)
+  else if(sim == FsPaths::MSFS)
   {
     // Load FSX / P3D scenery database ======================================================
     fsDataWriter.reset(new atools::fs::db::DataWriter(*db, *options, &progress));
@@ -700,13 +703,13 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   // ===========================================================================
   // Loading is done here - now continue with the post process steps
 
-  if(options->isResolveAirways() && sim != atools::fs::FsPaths::NAVIGRAPH)
+  if(options->isResolveAirways() && sim != FsPaths::NAVIGRAPH)
   {
     // All simulators ====================
     // Read tmp_airway_point table, connect all waypoints and write the ordered result into the airway table
     atools::fs::db::AirwayResolver resolver(db, progress);
 
-    if(sim != atools::fs::FsPaths::NAVIGRAPH && !atools::fs::FsPaths::isAnyXplane(sim))
+    if(sim != FsPaths::NAVIGRAPH && !FsPaths::isAnyXplane(sim))
       // Drop large segments only for the borked data of FSX/P3D/MSFS - default is 8000 nm
       resolver.setMaxAirwaySegmentLengthNm(800);
 
@@ -716,7 +719,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
       return result;
   }
 
-  if(!atools::fs::FsPaths::isAnyXplane(sim) && sim != atools::fs::FsPaths::NAVIGRAPH && sim != atools::fs::FsPaths::MSFS)
+  if(!FsPaths::isAnyXplane(sim) && sim != FsPaths::NAVIGRAPH && sim != FsPaths::MSFS)
   {
     // Create VORTACs
     if((aborted = runScript(&progress, "fs/db/update_vor.sql", tr("Merging VOR and TACAN to VORTAC"))))
@@ -727,14 +730,14 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   if((aborted = runScript(&progress, "fs/db/update_wp_ids.sql", tr("Updating waypoints"))))
     return result;
 
-  if(!atools::fs::FsPaths::isAnyXplane(sim) && sim != atools::fs::FsPaths::NAVIGRAPH)
+  if(!FsPaths::isAnyXplane(sim) && sim != FsPaths::NAVIGRAPH)
   {
     // Assign airport ids based on stored idents for waypoint and ndb
     if((aborted = runScript(&progress, "fs/db/update_nav_ids.sql", tr("Updating Navaids"))))
       return result;
   }
 
-  if(sim == atools::fs::FsPaths::NAVIGRAPH)
+  if(sim == FsPaths::NAVIGRAPH)
   {
     // Remove all unreferenced dummy waypoints that were added for airway generation
     if((aborted = runScript(&progress, "fs/db/dfd/clean_waypoints.sql", tr("Cleaning up waypoints"))))
@@ -749,12 +752,12 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   if((aborted = runScript(&progress, "fs/db/update_airport.sql", tr("Updating Airports"))))
     return result;
 
-  if(sim == atools::fs::FsPaths::DFD)
+  if(sim == FsPaths::DFD)
   {
     if((aborted = runScript(&progress, "fs/db/dfd/update_airport_ils.sql", tr("Updating ILS"))))
       return result;
   }
-  else if(!atools::fs::FsPaths::isAnyXplane(sim))
+  else if(!FsPaths::isAnyXplane(sim))
   {
     // The ids are already updated when reading the X-Plane data
     // Set runway end ids into the ILS
@@ -790,7 +793,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   if((aborted = runScript(&progress, "fs/db/finish_airport_schema.sql", tr("Creating indexes for airport"))))
     return result;
 
-  if(!atools::fs::FsPaths::isAnyXplane(sim) && sim != atools::fs::FsPaths::NAVIGRAPH)
+  if(!FsPaths::isAnyXplane(sim) && sim != FsPaths::NAVIGRAPH)
   {
     if((aborted = runScript(&progress, "fs/db/update_sea_base.sql", tr("Clean up runways"))))
       return result;
@@ -811,7 +814,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
       return result;
   }
 
-  if(sim == atools::fs::FsPaths::MSFS)
+  if(sim == FsPaths::MSFS)
   {
     if((aborted = progress.reportOther(tr("Loading translations"))))
       return result;
@@ -826,7 +829,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   // Update the metadata in the database
   atools::fs::db::DatabaseMeta databaseMetadata(db);
 
-  if(sim == atools::fs::FsPaths::MSFS && result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
+  if(sim == FsPaths::MSFS && result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
     databaseMetadata.addProperty(atools::fs::db::PROPERTYNAME_MSFS_NAVIGRAPH_FOUND);
 
   if(!xpDataCompiler.isNull())
@@ -1020,13 +1023,17 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
 
   if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
   {
-    // Airports are overloaded by ident
+    // Airports are overloaded by ident - first coming in overload the rest
+
+    // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
+    if((aborted = xpDataCompiler->compileUserIncludeApt())) // Add-on
+      return true;
 
     // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
     if((aborted = xpDataCompiler->compileCustomApt())) // Add-on
       return true;
 
-    if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE_11)
+    if(options->getSimulatorType() == FsPaths::XPLANE_11)
     {
       // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
       if((aborted = xpDataCompiler->compileCustomGlobalApt()))
@@ -1042,7 +1049,7 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
       return true;
   }
 
-  if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE_12)
+  if(options->getSimulatorType() == FsPaths::XPLANE_12)
   {
     // X-Plane 12/Global Scenery/Global Airports/Earth nav data/apt.dat
     if((aborted = xpDataCompiler->compileGlobalApt12()))
@@ -1178,7 +1185,7 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
                                           const QList<atools::fs::scenery::SceneryArea>& areas)
 {
   scenery::MaterialLib materialLib(options);
-  for(const atools::fs::scenery::SceneryArea& area : areas)
+  for(const SceneryArea& area : areas)
   {
     if((area.isActive() || options->isReadInactive()) && options->isIncludedLocalPath(area.getLocalPath()))
     {
@@ -1197,7 +1204,7 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
           fileinfo.setFile(options->getMsfsOfficialPath() % SEP % area.getLocalPath());
       }
 
-      if(options->getSimulatorType() == atools::fs::FsPaths::MSFS && (area.isAddOn() || area.isCommunity()))
+      if(options->getSimulatorType() == FsPaths::MSFS && (area.isAddOn() || area.isCommunity()))
       {
         // Load package specific material library for MSFS
         materialLib.clear();
@@ -1658,6 +1665,32 @@ bool NavDatabase::isNavigraphNavdata(atools::fs::scenery::ManifestJson& manifest
          manifest.getTitle().contains("AIRAC Cycle", Qt::CaseInsensitive);
 }
 
+void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::SceneryCfg& cfg)
+{
+  int nextNum = nextAreaNum(cfg.getAreas());
+
+  // All included paths in GUI
+  for(int i = 0; i < options->getDirIncludesGui().size(); i++)
+  {
+    // One included directory
+    QDir dir(options->getDirIncludesGui().at(i));
+
+    // Get all folders in the directory where each one is an add-on
+    for(const QFileInfo& addonDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+    {
+      if(options->getSimulatorType() == FsPaths::MSFS)
+      {
+        // The MSFS add-on dir needs two JSON files to be valid
+        if(QDir(addonDir.canonicalFilePath()).entryList({"layout.json", "manifest.json"}, QDir::Files).size() == 2)
+          cfg.appendArea(SceneryArea(nextNum + i, tr("Custom scenery path %1").arg(i + 1), addonDir.canonicalFilePath()));
+      }
+      else if(!QDir(addonDir.canonicalFilePath() + SEP + "scenery").entryList({"*.bgl"}, QDir::Files).isEmpty())
+        // The FSX/P3D addon directory needs a sub-folder "scenery" with BGL files
+        cfg.appendArea(SceneryArea(nextNum + i, tr("Custom scenery path %1").arg(i + 1), addonDir.canonicalFilePath()));
+    }
+  }
+}
+
 void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
 {
   // Get entries from scenery.cfg file
@@ -1666,18 +1699,17 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
   bool readInactive = options->isReadInactive();
   FsPaths::SimulatorType sim = options->getSimulatorType();
 
-  if(options->isReadAddOnXml() &&
-     (sim == atools::fs::FsPaths::P3D_V3 || sim == atools::fs::FsPaths::P3D_V4 || sim == atools::fs::FsPaths::P3D_V5))
+  if(options->isReadAddOnXml() && (sim == FsPaths::P3D_V3 || sim == FsPaths::P3D_V4 || sim == FsPaths::P3D_V5))
   {
     // Read the Prepar3D add on packages and add them to the scenery list ===============================
     QString documents(atools::documentsDir());
 
     int simNum = 0;
-    if(sim == atools::fs::FsPaths::P3D_V3)
+    if(sim == FsPaths::P3D_V3)
       simNum = 3;
-    else if(sim == atools::fs::FsPaths::P3D_V4)
+    else if(sim == FsPaths::P3D_V4)
       simNum = 4;
-    else if(sim == atools::fs::FsPaths::P3D_V5)
+    else if(sim == FsPaths::P3D_V5)
       simNum = 5;
 
     // Calculate maximum area number
@@ -1716,8 +1748,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       // Use $HOME/.config for testing
       QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
 #endif
-      addonsCfgFile += SEP % QString("Lockheed Martin") % SEP % QString("Prepar3D v%1").arg(simNum) %
-                       SEP % "add-ons.cfg";
+      addonsCfgFile += SEP % QString("Lockheed Martin") % SEP % QString("Prepar3D v%1").arg(simNum) % SEP % "add-ons.cfg";
       addonsCfgFiles.append(addonsCfgFile);
     }
 
@@ -1925,7 +1956,7 @@ void NavDatabase::countFiles(ProgressHandler *progress, const QList<atools::fs::
   qDebug() << Q_FUNC_INFO << "Entry";
   atools::fs::scenery::FileResolver resolver(*options, true);
 
-  for(const atools::fs::scenery::SceneryArea& area : areas)
+  for(const SceneryArea& area : areas)
   {
     if((aborted = progress->reportOtherMsg(tr("Counting files for %1 ...").arg(area.getTitle()))))
       return;

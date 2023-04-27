@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -88,9 +88,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
         // Get all scenery folders for FSX and P3D
         QDir sceneryAreaDir(sceneryArea.filePath());
 
-        sceneryDirs.append(sceneryAreaDir.entryInfoList({"scenery"},
-                                                        QDir::Dirs | QDir::Hidden | QDir::System |
-                                                        QDir::NoDotAndDotDot));
+        sceneryDirs.append(sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot));
 
         if(sceneryDirs.isEmpty() && sceneryAreaDir.dirName().toLower() == "scenery")
           // Special case where entry points to scenery directory which is allowed by P3D
