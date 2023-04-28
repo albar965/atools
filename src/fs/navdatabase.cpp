@@ -1670,24 +1670,38 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
   int nextNum = nextAreaNum(cfg.getAreas());
 
   // All included paths in GUI
+  int num = 1;
   for(int i = 0; i < options->getDirIncludesGui().size(); i++)
   {
-    // One included directory
-    QDir dir(options->getDirIncludesGui().at(i));
+    bool added = false;
 
     // Get all folders in the directory where each one is an add-on
-    for(const QFileInfo& addonDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+    for(const QFileInfo& addonDir : QDir(options->getDirIncludesGui().at(i)).entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
-      if(options->getSimulatorType() == FsPaths::MSFS)
+      // The MSFS add-on dir needs two JSON files to be valid
+      bool msfsFiles = QDir(addonDir.canonicalFilePath()).entryList({"layout.json", "manifest.json"}, QDir::Files, QDir::Name).size() == 2;
+      if(options->getSimulatorType() == FsPaths::MSFS && msfsFiles)
       {
-        // The MSFS add-on dir needs two JSON files to be valid
-        if(QDir(addonDir.canonicalFilePath()).entryList({"layout.json", "manifest.json"}, QDir::Files).size() == 2)
-          cfg.appendArea(SceneryArea(nextNum + i, tr("Custom scenery path %1").arg(i + 1), addonDir.canonicalFilePath()));
+        cfg.appendArea(SceneryArea(nextNum + i, tr("Custom scenery path %1").arg(num), addonDir.canonicalFilePath()));
+        added = true;
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << "Added custom include MSFS" << cfg.getAreas().last();
+#endif
       }
-      else if(!QDir(addonDir.canonicalFilePath() + SEP + "scenery").entryList({"*.bgl"}, QDir::Files).isEmpty())
-        // The FSX/P3D addon directory needs a sub-folder "scenery" with BGL files
-        cfg.appendArea(SceneryArea(nextNum + i, tr("Custom scenery path %1").arg(i + 1), addonDir.canonicalFilePath()));
+      else if(!msfsFiles && !QDir(addonDir.canonicalFilePath() + SEP + "scenery").entryList({"*.bgl"}, QDir::Files, QDir::Name).isEmpty())
+      {
+        // The FSX/P3D addon directory needs a sub-folder "scenery" with one or more BGL files
+        cfg.appendArea(SceneryArea(nextNum + i, tr("Custom scenery path %1").arg(num), addonDir.canonicalFilePath()));
+        added = true;
+
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << "Added custom include FSX P3D" << cfg.getAreas().last();
+#endif
+      }
     }
+
+    if(added)
+      num++;
   }
 }
 

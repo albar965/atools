@@ -165,6 +165,8 @@ private:
   /* Count files in FSX/P3D scenery configuration */
   void countFiles(ProgressHandler *progress, const QList<scenery::SceneryArea>& areas, int& numFiles,
                   int& numSceneryAreas);
+
+  /* Search for highest area number */
   int nextAreaNum(const QList<atools::fs::scenery::SceneryArea>& areas);
 
   /* Run and report SQL script */
