@@ -276,7 +276,6 @@ int UserdataManager::importXplane(const QString& filepath)
     if(!line.isEmpty())
       throw atools::Exception(tr("File is not an X-Plane user_fix.dat file."));
 
-    int lineNum = 0;
     while(!stream.atEnd())
     {
       line = stream.readLine().simplified();
@@ -309,7 +308,6 @@ int UserdataManager::importXplane(const QString& filepath)
       insertQuery.bindValue(":lonx", at(cols, xp::LONX));
       insertQuery.bindValue(":laty", at(cols, xp::LATY));
       insertQuery.exec();
-      lineNum++;
       numImported++;
     }
     file.close();
@@ -365,7 +363,6 @@ int UserdataManager::importGarmin(const QString& filepath)
     QTextStream stream(&file);
     stream.setCodec("UTF-8");
 
-    int lineNum = 0;
     while(!stream.atEnd())
     {
       QString line = stream.readLine().simplified();
@@ -387,7 +384,6 @@ int UserdataManager::importGarmin(const QString& filepath)
       insertQuery.bindValue(":lonx", at(cols, gm::LONX));
       insertQuery.bindValue(":laty", at(cols, gm::LATY));
       insertQuery.exec();
-      lineNum++;
       numImported++;
     }
     file.close();
@@ -400,8 +396,8 @@ int UserdataManager::importGarmin(const QString& filepath)
   return numImported;
 }
 
-int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags,
-                               QChar separator, QChar escape) const
+int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags, QChar separator,
+                               QChar escape) const
 {
   // VRP,  1NM NORTH SALERNO TOWN, 1NSAL, 40.6964,            14.785,         0,0, IT, FROM SOR VOR: 069° 22NM
   // Check if the file ends with a \n or \r so we can add if necessary
@@ -539,8 +535,8 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
              << atools::programFileInfoNoDate() << "." << endl << endl;
     }
 
-    QueryWrapper query(
-      "select " + idColumnName + ", ident, name, tags, laty, lonx, altitude, tags, region from " + tableName, db, ids, idColumnName);
+    QueryWrapper query("select " + idColumnName + ", ident, name, tags, laty, lonx, altitude, tags, region from " + tableName, db, ids,
+                       idColumnName);
 
     // X-Plane 11
     // I
@@ -668,8 +664,7 @@ int UserdataManager::exportBgl(const QString& filepath, const QVector<int>& ids)
     writer.writeAttribute("xsi:noNamespaceSchemaLocation", "bglcomp.xsd");
     writer.writeComment(atools::programFileInfo());
 
-    QueryWrapper query("select " + idColumnName + ", ident, region, tags, laty, lonx from " + tableName, db, ids,
-                       idColumnName);
+    QueryWrapper query("select " + idColumnName + ", ident, region, tags, laty, lonx from " + tableName, db, ids, idColumnName);
     query.exec();
     while(query.next())
     {

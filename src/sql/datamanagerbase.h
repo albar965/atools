@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -99,10 +99,10 @@ public:
   /* Updates all columns found in the record for all rows with the given ids. Does not commit.
    * Both methods support undo. */
   void updateOneRecord(atools::sql::SqlRecord record, int id = -1);
-  void updateRecords(const SqlRecord& record, const QVector<int>& ids);
+  void updateRecords(const SqlRecord& record, const QSet<int>& ids);
 
   /* Updates columns for all rows with the given ids. Does not commit. Supports undo. */
-  void updateField(const QString& column, const QVector<int>& ids, const QVariant& value);
+  void updateField(const QString& column, const QSet<int>& ids, const QVariant& value);
 
   /* Adds new record to database. Creates record id automatically if id is -1.
    * Column order in record does not have to match column order in table.
@@ -129,7 +129,7 @@ public:
   void deleteOneRow(int id);
 
   /* Removes entries. Does not commit. Supports undo. */
-  void deleteRows(QVector<int> ids);
+  void deleteRows(QSet<int> ids);
 
   /* Removes all data */
   void deleteAllRows(const QString& table); /* No undo support */
@@ -143,11 +143,11 @@ public:
   /* Get records with content for ids */
   bool hasRecord(int id) const;
   atools::sql::SqlRecord getRecord(int id) const;
-  void getRecords(QVector<atools::sql::SqlRecord>& records, const QVector<int> ids) const;
+  void getRecords(QVector<atools::sql::SqlRecord>& records, const QSet<int> ids) const;
 
   /* Get values with content for ids and one column */
   QVariant getValue(int id, const QString& colName) const;
-  void getValues(QVariantList& values, const QVector<int>& ids, const QString& colName) const;
+  void getValues(QVariantList& values, const QSet<int>& ids, const QString& colName) const;
 
   /* Empty records with schema populated */
   atools::sql::SqlRecord getEmptyRecord() const;
@@ -263,8 +263,16 @@ protected:
    */
   struct QueryWrapper
   {
-    QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase *sqlDb, const QVector<int>& idList, const QString& idColName)
-      : query(sqlDb), ids(idList), hasIds(!ids.isEmpty())
+    /* Returns records in order of id vector */
+    QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase *sqlDb, const QVector<int>& idVector, const QString& idColName)
+      : query(sqlDb), ids(idVector), hasIds(!ids.isEmpty())
+    {
+      query.prepare(queryStr + (hasIds ? " where " + idColName + " = :id" : QString()));
+    }
+
+    /* Returns records in arbitrary order */
+    QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase *sqlDb, const QSet<int>& idSet, const QString& idColName)
+      : query(sqlDb), ids(idSet.constBegin(), idSet.constEnd()), hasIds(!ids.isEmpty())
     {
       query.prepare(queryStr + (hasIds ? " where " + idColName + " = :id" : QString()));
     }
@@ -318,10 +326,10 @@ private:
 
   QString tableName, idColumnName;
 
-  void deleteRowsInternal(const QVector<int>& ids);
+  void deleteRowsInternal(const QSet<int>& ids);
 
   /* Update all fields in the record given for given ids */
-  void updateRecordsInternal(sql::SqlRecord record, const QVector<int>& ids);
+  void updateRecordsInternal(sql::SqlRecord record, const QSet<int>& ids);
 
   /* Fetch current id from max primary key of main table */
   void initCurrentId();
@@ -331,9 +339,9 @@ private:
 
   /* pre methods create a copy of main table rows in the table undo_data. These have to be called before any table change. */
   void preUndoInsert(SqlRecordList records);
-  void preUndoUpdate(const QVector<int>& ids);
-  void preUndoDelete(const QVector<int>& ids);
-  void preUndoCopyInternal(const QVector<int>& ids, UndoAction undoAction);
+  void preUndoUpdate(const QSet<int>& ids);
+  void preUndoDelete(const QSet<int>& ids);
+  void preUndoCopyInternal(const QSet<int>& ids, UndoAction undoAction);
   void preUndoDeleteAll();
 
   /* Copies current undo_group_id to table undo_current */

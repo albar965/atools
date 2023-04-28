@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -499,8 +499,8 @@ int LogdataManager::importXplane(const QString& filepath,
 
 }
 
-int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, bool exportPlan, bool exportPerf,
-                              bool exportGpx, bool header, bool append)
+int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, bool exportPlan, bool exportPerf, bool exportGpx, bool header,
+                              bool append)
 {
   bool endsWithEol = atools::fileEndsWithEol(filepath);
   int numExported = 0;
@@ -599,7 +599,7 @@ void LogdataManager::clearGeometryCache()
 
 int LogdataManager::cleanupLogEntries(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance)
 {
-  QVector<int> ids;
+  QSet<int> ids;
   SqlUtil util(getDatabase());
 
   if(departureAndDestEqual)

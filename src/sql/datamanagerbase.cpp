@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -222,7 +222,7 @@ void DataManagerBase::insertRecords(const SqlRecordList& records, const QString&
   insert.bindAndExecRecords(records, ":");
 }
 
-void DataManagerBase::updateField(const QString& column, const QVector<int>& ids, const QVariant& value)
+void DataManagerBase::updateField(const QString& column, const QSet<int>& ids, const QVariant& value)
 {
   if(!ids.isEmpty())
   {
@@ -252,7 +252,7 @@ void DataManagerBase::updateOneRecord(SqlRecord record, int id)
   updateRecords(record, {id});
 }
 
-void DataManagerBase::updateRecords(const sql::SqlRecord& record, const QVector<int>& ids)
+void DataManagerBase::updateRecords(const sql::SqlRecord& record, const QSet<int>& ids)
 {
   if(!ids.isEmpty())
   {
@@ -262,7 +262,7 @@ void DataManagerBase::updateRecords(const sql::SqlRecord& record, const QVector<
   }
 }
 
-void DataManagerBase::updateRecordsInternal(sql::SqlRecord record, const QVector<int>& ids)
+void DataManagerBase::updateRecordsInternal(sql::SqlRecord record, const QSet<int>& ids)
 {
   if(!ids.isEmpty())
   {
@@ -306,14 +306,10 @@ void DataManagerBase::deleteOneRow(int id)
   postUndo();
 }
 
-void DataManagerBase::deleteRows(QVector<int> ids)
+void DataManagerBase::deleteRows(QSet<int> ids)
 {
   if(!ids.isEmpty())
   {
-    // Sort and erase duplicates before to avoid unique constraint exceptions
-    std::sort(ids.begin(), ids.end());
-    ids.erase(std::unique(ids.begin(), ids.end()), ids.end());
-
     preUndoDelete(ids);
     deleteRowsInternal(ids);
     postUndo();
@@ -327,7 +323,7 @@ void DataManagerBase::deleteAllRows(const QString& table)
   SqlQuery("delete from " % table, db).exec();
 }
 
-void DataManagerBase::deleteRowsInternal(const QVector<int>& ids)
+void DataManagerBase::deleteRowsInternal(const QSet<int>& ids)
 {
   for(int id : ids)
   {
@@ -341,13 +337,13 @@ void DataManagerBase::deleteRowsInternal(const QVector<int>& ids)
 void DataManagerBase::deleteRows(const QString& column, const QVariant& value)
 {
   // Collect all ids for rows to delete
-  QVector<int> ids;
+  QSet<int> ids;
   SqlQuery query(db);
   query.prepare("select " % idColumnName % " from " % tableName % " where " % column % " = ?");
   query.bindValue(0, value);
   query.exec();
   while(query.next())
-    ids.append(query.valueInt(0));
+    ids.insert(query.valueInt(0));
 
   // Also takes care about undo
   deleteRows(ids);
@@ -364,7 +360,7 @@ void DataManagerBase::deleteRows(const QString& table, const QString& column, co
   query.exec();
 }
 
-void DataManagerBase::getValues(QVariantList& values, const QVector<int>& ids, const QString& colName) const
+void DataManagerBase::getValues(QVariantList& values, const QSet<int>& ids, const QString& colName) const
 {
   if(!ids.isEmpty())
   {
@@ -393,7 +389,7 @@ QVariant DataManagerBase::getValue(int id, const QString& colName) const
   return values.isEmpty() ? QVariant() : values.constFirst();
 }
 
-void DataManagerBase::getRecords(QVector<SqlRecord>& records, const QVector<int> ids) const
+void DataManagerBase::getRecords(QVector<SqlRecord>& records, const QSet<int> ids) const
 {
   for(int id : ids)
   {
@@ -595,17 +591,17 @@ void DataManagerBase::preUndoDeleteAll()
   }
 }
 
-void DataManagerBase::preUndoUpdate(const QVector<int>& ids)
+void DataManagerBase::preUndoUpdate(const QSet<int>& ids)
 {
   preUndoCopyInternal(ids, UNDO_UPDATE);
 }
 
-void DataManagerBase::preUndoDelete(const QVector<int>& ids)
+void DataManagerBase::preUndoDelete(const QSet<int>& ids)
 {
   preUndoCopyInternal(ids, UNDO_DELETE);
 }
 
-void DataManagerBase::preUndoCopyInternal(const QVector<int>& ids, UndoAction action)
+void DataManagerBase::preUndoCopyInternal(const QSet<int>& ids, UndoAction action)
 {
   if(undoActive)
   {

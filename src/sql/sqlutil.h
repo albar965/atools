@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -138,6 +138,7 @@ public:
 
   /* Get a list of all ids from table */
   void getIds(QVector<int>& ids, const QString& table, const QString& idColumn, const QString& where = QString());
+  void getIds(QSet<int>& ids, const QString& table, const QString& idColumn, const QString& where = QString());
 
   /* Get singe row/column values from query. Returns default if result set is empty */
   int getValueInt(const QString& queryStr, int defaultValue = 0);
