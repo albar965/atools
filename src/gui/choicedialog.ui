@@ -47,10 +47,10 @@
         <x>0</x>
         <y>0</y>
         <width>346</width>
-        <height>166</height>
+        <height>167</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <layout class="QVBoxLayout" name="verticalLayoutScrollArea">
        <property name="spacing">
         <number>2</number>
        </property>

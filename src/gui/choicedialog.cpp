@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString&
   ui->buttonBoxChoice->button(QDialogButtonBox::Ok)->setDefault(true);
 
   connect(ui->buttonBoxChoice, &QDialogButtonBox::clicked, this, &ChoiceDialog::buttonBoxClicked);
+  updateButtonBoxState();
 }
 
 ChoiceDialog::~ChoiceDialog()
@@ -87,7 +88,7 @@ void ChoiceDialog::addCheckBoxInt(int id, const QString& text, const QString& to
   connect(checkBox, &QCheckBox::toggled, this, &ChoiceDialog::checkBoxToggledInternal);
 
   // Add widget before the button box and verticalSpacerChoice
-  ui->verticalLayout_4->insertWidget(-1, checkBox);
+  ui->verticalLayoutScrollArea->insertWidget(-1, checkBox);
 }
 
 void ChoiceDialog::addLine()
@@ -96,17 +97,17 @@ void ChoiceDialog::addLine()
   line = new QFrame(this);
   line->setFrameShape(QFrame::HLine);
   line->setFrameShadow(QFrame::Sunken);
-  ui->verticalLayout_4->insertWidget(-1, line);
+  ui->verticalLayoutScrollArea->insertWidget(-1, line);
 }
 
 void ChoiceDialog::addLabel(const QString& text)
 {
-  ui->verticalLayout_4->insertWidget(-1, new QLabel(text, this));
+  ui->verticalLayoutScrollArea->insertWidget(-1, new QLabel(text, this));
 }
 
 void ChoiceDialog::addSpacer()
 {
-  ui->verticalLayout_4->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding)); // Move button up with spacer
+  ui->verticalLayoutScrollArea->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding)); // Move button up with spacer
 }
 
 QVector<std::pair<int, bool> > ChoiceDialog::getCheckState() const
@@ -147,6 +148,7 @@ void ChoiceDialog::buttonBoxClicked(QAbstractButton *button)
 
 void ChoiceDialog::checkBoxToggledInternal(bool checked)
 {
+  updateButtonBoxState();
   QCheckBox *checkBox = dynamic_cast<QCheckBox *>(sender());
   if(checkBox != nullptr)
     emit checkBoxToggled(checkBox->property(ID_PROPERTY).toInt(), checked);
@@ -174,6 +176,18 @@ void ChoiceDialog::saveState()
     ids << QString::number(state.first) << QString::number(state.second);
 
   atools::settings::Settings::instance().setValue(settingsPrefix + "CheckBoxStates", ids);
+}
+
+void ChoiceDialog::updateButtonBoxState()
+{
+  bool found = false;
+  for(int i : required)
+  {
+    if(index.contains(i) && index.value(i)->isChecked())
+      found = true;
+  }
+
+  ui->buttonBoxChoice->button(QDialogButtonBox::Ok)->setEnabled(found);
 }
 
 } // namespace gui
