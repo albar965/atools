@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include "sql/sqltransaction.h"
 #include "sql/sqlutil.h"
 #include "util/csvreader.h"
+#include "sql/sqlscript.h"
 
 #include <QDir>
 #include <QRegularExpression>
@@ -126,7 +127,66 @@ void UserdataManager::updateSchema()
     transaction.commit();
   }
 
+  if(!db->tables().contains("tempuserdata"))
+  {
+    // Add temporary table for cleanup function
+    qDebug() << Q_FUNC_INFO << "Adding table tempuserdata";
+
+    SqlTransaction transaction(db);
+    sql::SqlScript script(db, true /* options->isVerbose()*/);
+    script.executeScript(":/atools/resources/sql/fs/userdata/create_user_schema_temp.sql");
+    transaction.commit();
+  }
+
   DataManagerBase::updateUndoSchema();
+}
+
+int UserdataManager::cleanupUserdata(const QStringList& columns, bool duplicateCoordinates, bool empty)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Clean up - set empty string columns to null - hidden compatibility change, no need to undo ======================
+  SqlQuery query(db);
+  for(QString column : {"type", "name", "ident", "region", "description", "tags"})
+  {
+    query.exec("update userdata set " + column + " = null where " + column + " = ''");
+    qDebug() << Q_FUNC_INFO << "Reset to null for" << column << query.numRowsAffected();
+  }
+
+  // Get ids to delete empty rows ==================================================
+  QSet<int> ids;
+  SqlUtil util(db);
+  if(empty)
+    util.getIds(ids, tableName, idColumnName, "name is null and ident is null and region is null and description is null and tags is null");
+
+  if(!columns.isEmpty())
+  {
+    // Remove duplicates ========================================
+    QString tablename;
+    if(duplicateCoordinates)
+    {
+      // Remove duplicates with coordinates ========================================
+      tablename = "tempuserdata";
+      query.exec("delete from tempuserdata");
+
+      // Get rows for duplicate by coordinates with duplicates *and* originals =================================================
+      query.exec("insert into tempuserdata (userdata_id, type, name, ident, region, description, tags, lonx, laty) "
+                 "select u1.userdata_id, u1.type, u1.name, u1.ident, u1.region, u1.description, u1.tags, u1.lonx, u1.laty "
+                 "from userdata u1, userdata u2 "
+                 "where u1.userdata_id <> u2.userdata_id and (abs(u1.lonx - u2.lonx) + abs(u1.laty - u2.laty)) < 0.00001");
+    }
+    else
+      tablename = "userdata";
+
+    // Get duplicates by name from temp or userpoint table =================================================
+    util.getIds(ids, tablename, idColumnName, "userdata_id not in  "
+                                              "(select min(userdata_id) from userdata group by " + columns.join(", ") + ")");
+  }
+
+  // Delete duplicates with undo ==================================================
+  deleteRows(ids);
+
+  return ids.size();
 }
 
 void UserdataManager::clearTemporary()

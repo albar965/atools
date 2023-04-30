@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2021 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 -- ****************************************************************************/
 
 -- *******************************************************************************
--- This script creates the user defined waypoint table which is kept in its own database
+-- This script creates the userpoint/userdata table which is kept in its own database
 -- *******************************************************************************
 
 drop table if exists userdata;

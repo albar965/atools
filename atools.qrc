@@ -53,5 +53,6 @@
         <file>resources/sql/fs/userdata/create_user_schema_undo.sql</file>
         <file>resources/sql/fs/logbook/create_logbook_schema_undo.sql</file>
         <file>resources/sql/fs/db/finish_schema_airport.sql</file>
+        <file>resources/sql/fs/userdata/create_user_schema_temp.sql</file>
     </qresource>
 </RCC>
