@@ -188,31 +188,30 @@ QString LanguageJson::valueFromMap(const QHash<QString, QString>& hash, QString 
   if(key.startsWith("TT:"))
   {
     // Translated string
-    QString k = key.mid(3);
-    value = hash.value(k);
-    if(value.isEmpty() && k.endsWith(".text"))
-    {
+    key.remove(0, 3);
+    value = hash.value(key);
+    if(value.isEmpty() && key.endsWith(".text"))
       // Nothing found - try tts suffix again
-      k.chop(4);
-      value = hash.value(k + "tts");
-    }
-    // Otherweise return empty
+      value = hash.value(key.chopped(4) + "tts");
+    // else return empty
   }
   else if(key.startsWith("$$:"))
     value = key.mid(3);
+  else if(key.startsWith("AIRPORT"))
+    // Return empty if airport name or admin names not found
+    value = hash.value(key);
+  else if(key.startsWith("ATCCOM."))
+    // Return empty if aircraft names not found
+    value = hash.value(key);
   else
   {
     value = hash.value(key);
     if(value.isEmpty() && key.endsWith(".text"))
-    {
       // Nothing found - try tts suffix again
-      key.chop(4);
-      value = hash.value(key + "tts");
-    }
+      value = hash.value(key.chopped(4) + "tts");
+    if(value.isEmpty())
+      value = key;
   }
-
-  if(value.isEmpty())
-    value = key;
 
   return value;
 }
