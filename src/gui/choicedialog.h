@@ -87,7 +87,7 @@ public:
   }
 
   /* ok button is enabled if at least one checkbox for these ids is checked */
-  void setRequiredChecked(QSet<int> ids)
+  void setRequiredAnyChecked(QSet<int> ids)
   {
     required = ids;
   }

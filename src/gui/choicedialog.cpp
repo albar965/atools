@@ -162,7 +162,13 @@ void ChoiceDialog::restoreState()
   // Restore checkboxes
   QStringList ids = atools::settings::Settings::instance().valueStrList(settingsPrefix + "CheckBoxStates");
   for(int i = 0; i < ids.size(); i += 2)
-    index.value(ids.at(i).toInt())->setChecked(ids.at(i + 1).toInt());
+  {
+    int id = ids.at(i).toInt();
+    bool checked = ids.at(i + 1).toInt() > 0;
+    index.value(id)->setChecked(checked);
+    emit checkBoxToggled(id, checked);
+  }
+  updateButtonBoxState();
 }
 
 void ChoiceDialog::saveState()
