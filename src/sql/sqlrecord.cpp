@@ -140,6 +140,15 @@ int SqlRecord::count() const
   return sqlRecord.count();
 }
 
+void SqlRecord::setEmptyStringsToNull()
+{
+  for(int i = 0; i < count(); i++)
+  {
+    if(sqlRecord.field(i).type() == QVariant::String && sqlRecord.value(i).toString().isEmpty())
+      sqlRecord.setNull(i);
+  }
+}
+
 void SqlRecord::appendField(const QString& fieldName, QVariant::Type type)
 {
   sqlRecord.append(QSqlField(fieldName, type));

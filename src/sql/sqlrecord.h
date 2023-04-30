@@ -204,6 +204,9 @@ public:
     return sqlRecord;
   }
 
+  /* Set all empty string values to null */
+  void setEmptyStringsToNull();
+
   void appendField(const QString& fieldName, QVariant::Type type);
   void insertField(int pos, const QString& fieldName, QVariant::Type type);
 
