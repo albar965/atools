@@ -60,7 +60,7 @@ public:
   void clearTemporary();
 
   /* Import and export from a predefined CSV format */
-  int importCsv(const QString& filepath, atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,
+  int importCsv(const QStringList& filepaths, atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,
                 QChar separator = ',', QChar escape = '"');
   int exportCsv(const QString& filepath, const QVector<int>& ids = QVector<int>(),
                 atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,

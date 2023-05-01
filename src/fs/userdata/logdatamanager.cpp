@@ -19,7 +19,6 @@
 
 #include "sql/sqlutil.h"
 #include "sql/sqlexport.h"
-#include "sql/sqltransaction.h"
 #include "sql/sqldatabase.h"
 #include "util/csvreader.h"
 #include "geo/pos.h"
@@ -144,7 +143,7 @@ const static QHash<int, std::pair<QString,QString>> COL_MAP =
 
 LogdataManager::LogdataManager(sql::SqlDatabase *sqlDb)
   : DataManagerBase(sqlDb, "logbook", "logbook_id",
-                    ":/atools/resources/sql/fs/logbook/create_logbook_schema.sql",
+                    {":/atools/resources/sql/fs/logbook/create_logbook_schema.sql"},
                     ":/atools/resources/sql/fs/logbook/create_logbook_schema_undo.sql",
                     ":/atools/resources/sql/fs/logbook/drop_logbook_schema.sql"), cache(MAX_CACHE_ENTRIES)
 {
@@ -158,11 +157,9 @@ LogdataManager::~LogdataManager()
 
 int LogdataManager::importCsv(const QString& filepath)
 {
-  SqlTransaction transaction(db);
-
   int id = getCurrentId() + 1;
   preUndoBulkInsert(id);
-  QString idBinding(":" + idColumnName);
+  QString idBinding(":" % idColumnName);
 
   // Autogenerate id - exclude logbook_id from insert
   SqlQuery insertQuery(db);
@@ -306,7 +303,6 @@ int LogdataManager::importCsv(const QString& filepath)
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
 
   postUndoBulkInsert();
-  transaction.commit();
   return numImported;
 }
 
@@ -361,10 +357,9 @@ int LogdataManager::importXplane(const QString& filepath,
     AIRCRAFT_TYPE
   };
 
-  SqlTransaction transaction(db);
   int id = getCurrentId() + 1;
   preUndoBulkInsert(id);
-  QString idBinding(":" + idColumnName);
+  QString idBinding(":" % idColumnName);
 
   // Autogenerate id
   SqlQuery insertQuery(db);
@@ -397,7 +392,7 @@ int LogdataManager::importXplane(const QString& filepath,
 
         // Time ========================
         int travelTimeSecs = atools::roundToInt(atFloat(line, TIME, true) * 3600.f);
-        QDateTime departureTime = QDateTime::fromString("20" + at(line, DATE), "yyyyMMdd");
+        QDateTime departureTime = QDateTime::fromString("20" % at(line, DATE), "yyyyMMdd");
         QDateTime destinationTime = departureTime.addSecs(travelTimeSecs);
 
         // Resolve departure and destination ================================
@@ -494,12 +489,12 @@ int LogdataManager::importXplane(const QString& filepath,
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
 
   postUndoBulkInsert();
-  transaction.commit();
   return numImported;
 
 }
 
-int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, bool exportPlan, bool exportPerf, bool exportGpx, bool header,
+int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, bool exportPlan, bool exportPerf, bool exportGpx,
+                              bool header,
                               bool append)
 {
   bool endsWithEol = atools::fileEndsWithEol(filepath);
@@ -514,7 +509,7 @@ int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, 
     {
       std::pair<QString, QString> col = csv::COL_MAP.value(i);
       if(col.first != idColumnName)
-        columns.append(col.first + " as \"" + col.second + "\"");
+        columns.append(col.first % " as \"" % col.second % "\"");
     }
 
     // Use query wrapper to automatically use passed ids or all rows
@@ -601,6 +596,7 @@ int LogdataManager::cleanupLogEntries(bool departureAndDestEqual, bool departure
 {
   QSet<int> ids;
   SqlUtil util(getDatabase());
+  db->analyze();
 
   if(departureAndDestEqual)
     util.getIds(ids, tableName, idColumnName,
@@ -613,6 +609,7 @@ int LogdataManager::cleanupLogEntries(bool departureAndDestEqual, bool departure
     util.getIds(ids, tableName, idColumnName, QString("distance_flown <= %1").arg(minFlownDistance));
 
   deleteRows(ids);
+  db->analyze();
 
   return ids.size();
 }
@@ -660,7 +657,7 @@ void LogdataManager::getFlightStatsTime(QDateTime& earliest, QDateTime& latest, 
                                         QDateTime& latestSim)
 {
   SqlQuery query("select min(departure_time), max(departure_time), "
-                 "min(departure_time_sim), max(departure_time_sim) from " + tableName, db);
+                 "min(departure_time_sim), max(departure_time_sim) from " % tableName, db);
   query.exec();
   if(query.next())
   {
@@ -673,7 +670,7 @@ void LogdataManager::getFlightStatsTime(QDateTime& earliest, QDateTime& latest, 
 
 void LogdataManager::getFlightStatsDistance(float& distTotal, float& distMax, float& distAverage)
 {
-  SqlQuery query("select sum(distance), max(distance), avg(distance) from " + tableName, db);
+  SqlQuery query("select sum(distance), max(distance), avg(distance) from " % tableName, db);
   query.exec();
   if(query.next())
   {
@@ -685,7 +682,7 @@ void LogdataManager::getFlightStatsDistance(float& distTotal, float& distMax, fl
 
 void LogdataManager::getFlightStatsAirports(int& numDepartAirports, int& numDestAirports)
 {
-  SqlQuery query("select count(distinct departure_ident), count(distinct destination_ident) from " + tableName, db);
+  SqlQuery query("select count(distinct departure_ident), count(distinct destination_ident) from " % tableName, db);
   query.exec();
   if(query.next())
   {
@@ -698,7 +695,7 @@ void LogdataManager::getFlightStatsAircraft(int& numTypes, int& numRegistrations
 {
   SqlQuery query("select count(distinct aircraft_type), count(distinct aircraft_registration), "
                  "count(distinct aircraft_name), count(distinct simulator) "
-                 "from " + tableName, db);
+                 "from " % tableName, db);
   query.exec();
   if(query.next())
   {
@@ -711,7 +708,7 @@ void LogdataManager::getFlightStatsAircraft(int& numTypes, int& numRegistrations
 
 void LogdataManager::getFlightStatsSimulator(QVector<std::pair<int, QString> >& numSimulators)
 {
-  SqlQuery query("select count(1), simulator from " + tableName + " group by simulator order by count(1) desc", db);
+  SqlQuery query("select count(1), simulator from " % tableName % " group by simulator order by count(1) desc", db);
   query.exec();
   while(query.next())
     numSimulators.append(std::make_pair(query.valueInt(0), query.valueStr(1)));
@@ -786,7 +783,7 @@ void LogdataManager::getFlightStatsTripTime(float& timeMaximum, float& timeAvera
 
   query.exec("select max(time_real), avg(time_real), sum(time_real) "
              "from (select strftime('%s', destination_time) - strftime('%s', departure_time) as time_real "
-             "from " + tableName + ") where time_real > 0");
+             "from " % tableName % ") where time_real > 0");
   if(query.next())
   {
     int idx = 0;
@@ -798,7 +795,7 @@ void LogdataManager::getFlightStatsTripTime(float& timeMaximum, float& timeAvera
 
   query.exec("select max(time_sim), avg(time_sim), sum(time_sim) "
              "from (select strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) as time_sim "
-             "from " + tableName + ") where time_sim > 0");
+             "from " % tableName % ") where time_sim > 0");
   if(query.next())
   {
     int idx = 0;

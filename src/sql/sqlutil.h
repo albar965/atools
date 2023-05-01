@@ -137,8 +137,8 @@ public:
   int getMaxId(const QString& table, const QString& idColumn = QString());
 
   /* Get a list of all ids from table */
-  void getIds(QVector<int>& ids, const QString& table, const QString& idColumn, const QString& where = QString());
   void getIds(QSet<int>& ids, const QString& table, const QString& idColumn, const QString& where = QString());
+  void getIds(QSet<int>& ids, const QString& queryString);
 
   /* Get singe row/column values from query. Returns default if result set is empty */
   int getValueInt(const QString& queryStr, int defaultValue = 0);

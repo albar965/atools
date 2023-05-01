@@ -36,10 +36,10 @@ namespace atools {
 namespace sql {
 
 DataManagerBase::DataManagerBase(sql::SqlDatabase *sqlDb, const QString& tableNameParam,
-                                 const QString& idColumnNameParam, const QString& createSqlScript, const QString& createUndoSqlScript,
+                                 const QString& idColumnNameParam, const QStringList& createSqlScripts, const QString& createUndoSqlScript,
                                  const QString& dropSqlScript)
-  : db(sqlDb), tableName(tableNameParam), idColumnName(idColumnNameParam), createScript(createSqlScript),
-  createUndoScript(createUndoSqlScript), dropScript(dropSqlScript)
+  : db(sqlDb), tableName(tableNameParam), idColumnName(idColumnNameParam), createUndoScript(createUndoSqlScript), dropScript(dropSqlScript),
+  createScripts(createSqlScripts)
 {
   util = new SqlUtil(db);
   undoActive = hasUndoSchema();
@@ -80,7 +80,8 @@ void DataManagerBase::createSchema(bool verboseLogging)
   SqlTransaction transaction(db);
   SqlScript script(db, verboseLogging);
 
-  script.executeScript(createScript);
+  for(const QString& createScript : createScripts)
+    script.executeScript(createScript);
 
   if(!createUndoScript.isEmpty())
     script.executeScript(createUndoScript);
@@ -539,6 +540,7 @@ void DataManagerBase::postUndoBulkInsert()
 
     // get current (max) id from table
     initCurrentId();
+    db->analyze(); // Avoid long running queries
 
     // Fetch all ids that were inserted in the bulk import
     SqlQuery select(db);
@@ -564,6 +566,7 @@ void DataManagerBase::postUndoBulkInsert()
     syncCurrentUndoGroupToDb();
     updateUndoRedoActions();
   }
+  db->analyze(); // Avoid long running queries after insert
 
   // get current (max) id from table
   initCurrentId();

@@ -545,17 +545,17 @@ int SqlUtil::getMaxId(const QString& table, const QString& idColumn)
   return id;
 }
 
-void SqlUtil::getIds(QVector<int>& ids, const QString& table, const QString& idColumn, const QString& where)
+void SqlUtil::getIds(QSet<int>& ids, const QString& table, const QString& idColumn, const QString& where)
 {
   SqlQuery query("select " % idColumn % " from " % table % " " % (where.isEmpty() ? QString() : " where " % where), db);
   query.exec();
   while(query.next())
-    ids.append(query.valueInt(0));
+    ids.insert(query.valueInt(0));
 }
 
-void SqlUtil::getIds(QSet<int>& ids, const QString& table, const QString& idColumn, const QString& where)
+void SqlUtil::getIds(QSet<int>& ids, const QString& queryString)
 {
-  SqlQuery query("select " % idColumn % " from " % table % " " % (where.isEmpty() ? QString() : " where " % where), db);
+  SqlQuery query(queryString, db);
   query.exec();
   while(query.next())
     ids.insert(query.valueInt(0));

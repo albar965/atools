@@ -59,7 +59,7 @@ public:
    * dropSqlScript Drops all tables including undo.
    */
   DataManagerBase(atools::sql::SqlDatabase *sqlDb, const QString& tableNameParam, const QString& idColumnNameParam,
-                  const QString& createSqlScript, const QString& createUndoSqlScript, const QString& dropSqlScript);
+                  const QStringList& createSqlScripts, const QString& createUndoSqlScript, const QString& dropSqlScript);
   virtual ~DataManagerBase() override;
 
   /* True if table is present in database */
@@ -369,7 +369,8 @@ private:
   int undoRedoStepCount(bool undo, UndoAction *action) const;
   bool invokeCallback(int totalNumber, int currentNumber);
 
-  QString createScript, createUndoScript, dropScript, textSuffixSingular, textSuffixPlural;
+  QString createUndoScript, dropScript, textSuffixSingular, textSuffixPlural;
+  QStringList createScripts;
 
   bool undoActive = false;
   int currentId = 0, currentUndoId = 0, preBulkInsertId = -1, maximumUndoSteps = 1000;

@@ -106,7 +106,7 @@ void HelpHandler::openUrl(QWidget *parent, const QUrl& url)
     process.setArguments({url.toString()});
     process.setProgram("/usr/bin/xdg-open");
     if(!process.startDetached())
-      atools::gui::Dialog::warning(parent, tr("ULR \"%1\" not found").arg(url.toString()));
+      atools::gui::Dialog::warning(parent, tr("URL \"%1\" not found").arg(url.toString()));
   }
   else if(!QDesktopServices::openUrl(url))
     atools::gui::Dialog::warning(parent, tr("Error opening help URL \"%1\"").arg(url.toDisplayString()));

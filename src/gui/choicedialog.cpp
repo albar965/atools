@@ -165,8 +165,12 @@ void ChoiceDialog::restoreState()
   {
     int id = ids.at(i).toInt();
     bool checked = ids.at(i + 1).toInt() > 0;
-    index.value(id)->setChecked(checked);
-    emit checkBoxToggled(id, checked);
+
+    if(index.value(id) != nullptr)
+    {
+      index.value(id)->setChecked(checked);
+      emit checkBoxToggled(id, checked);
+    }
   }
   updateButtonBoxState();
 }
@@ -186,14 +190,19 @@ void ChoiceDialog::saveState()
 
 void ChoiceDialog::updateButtonBoxState()
 {
-  bool found = false;
-  for(int i : required)
+  if(!required.isEmpty())
   {
-    if(index.contains(i) && index.value(i)->isChecked())
-      found = true;
-  }
+    bool found = false;
+    for(int i : required)
+    {
+      if(index.contains(i) && index.value(i)->isChecked())
+        found = true;
+    }
 
-  ui->buttonBoxChoice->button(QDialogButtonBox::Ok)->setEnabled(found);
+    ui->buttonBoxChoice->button(QDialogButtonBox::Ok)->setEnabled(found);
+  }
+  else
+    ui->buttonBoxChoice->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
 
 } // namespace gui
