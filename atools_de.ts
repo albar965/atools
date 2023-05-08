@@ -1166,6 +1166,14 @@ Datei: &quot;%2&quot;
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation>Verschlüsseltes Add-on &quot;%1&quot; gefunden. Add-on wird möglicherweise nicht korrekt angezeigt.</translation>
     </message>
+    <message>
+        <source>Creating medium and large airport tables</source>
+        <translation>Erstelle große und mittlere Flugplatztabellen</translation>
+    </message>
+    <message>
+        <source>Custom scenery path %1</source>
+        <translation>Benutzerdefinierter Szeneriepfad %1</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -1952,6 +1960,10 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
         <source>Post processing Airways</source>
         <translation>Nachbearbeitung der Luftstraßen</translation>
     </message>
+    <message>
+        <source>Counting files for User Included Path ...</source>
+        <translation>Zähle Dateien für vom Benutzer eingeschlossenen Pfad ...</translation>
+    </message>
 </context>
 <context>
     <name>XpSceneryPacks</name>
@@ -2447,6 +2459,10 @@ Nachtzeit: %5</translation>
     <message>
         <source>File &quot;%1&quot; not found</source>
         <translation>Datei &quot;%1&quot; wurde nicht gefunden</translation>
+    </message>
+    <message>
+        <source>URL &quot;%1&quot; not found</source>
+        <translation>URL &quot;%1&quot; nicht gefunden</translation>
     </message>
 </context>
 <context>

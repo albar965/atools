@@ -585,8 +585,11 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     {
       if(area.isNavigraphNavdata())
       {
-        result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
-        break;
+        if(options->isIncludedGui(area.getLocalPath()))
+        {
+          result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
+          break;
+        }
       }
     }
   }

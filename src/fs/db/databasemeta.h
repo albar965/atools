@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -126,6 +126,12 @@ public:
     return airacCycle.leftRef(2).toInt() * 100 + airacCycle.rightRef(2).toInt();
   }
 
+  /* Included old navdata cycle */
+  bool isIncludedAiracCycle() const
+  {
+    return getAiracCycleInt() <= DB_INCLUDED_NAVDATA_CYCLE;
+  }
+
   const QString& getValidThrough() const
   {
     return validThrough;
@@ -220,6 +226,12 @@ public:
     properties.clear();
   }
 
+  /* Version of included AIRAC cycle. */
+  static int getDbIncludedNavdataCycle()
+  {
+    return DB_INCLUDED_NAVDATA_CYCLE;
+  }
+
 private:
   /* This defines the database schema version of the application and should be updated for every incompatible
    * schema or content change.
@@ -271,6 +283,11 @@ private:
    * 27 Columns "metadata.properties" added.
    */
   static const int DB_VERSION_MINOR = 27;
+
+  /* Version of included AIRAC cycle.
+   * VERSION_NUMBER=
+   */
+  static const int DB_INCLUDED_NAVDATA_CYCLE = 1801;
 
   /* Update the last loaded timestamp in the database and set it to now */
   void updateTimestamp();

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,11 @@
 
 #include "fs/common/procedurewriter.h"
 
-#include "fs/common/airportindex.h"
-#include "fs/xp/xpconstants.h"
-#include "fs/progresshandler.h"
 #include "atools.h"
-#include "sql/sqlrecord.h"
-#include "sql/sqlquery.h"
+#include "fs/common/airportindex.h"
 #include "sql/sqldatabase.h"
+#include "sql/sqlquery.h"
+#include "sql/sqlrecord.h"
 
 #include "sql/sqlutil.h"
 
