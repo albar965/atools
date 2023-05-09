@@ -237,7 +237,16 @@ void WidgetState::restore(QObject *widget) const
     {
       QVariant v = loadWidget(settings, widget);
       if(v.isValid())
+      {
+        if(cb->isEditable() && !block)
+        {
+          // Force signal on editable combo boxes when applying index below
+          cb->blockSignals(true);
+          cb->setCurrentIndex(-1);
+          cb->blockSignals(false);
+        }
         cb->setCurrentIndex(v.toInt());
+      }
 
       if(cb->isEditable())
       {
