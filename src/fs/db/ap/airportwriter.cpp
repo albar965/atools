@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -173,7 +173,7 @@ void AirportWriter::writeObject(const Airport *type)
     // Get country, state and city =====================
     QString city, state, country, region;
     fetchAdmin(type, city, state, country, region);
-    QString name = atools::fs::util::capAirportName(getDataWriter().getLanguage(type->getName()));
+    QString name = atools::fs::util::capAirportName(getDataWriter().getLanguage(type->getName())).simplified();
 
     deleteProcessor.init(delAp, type, getCurrentId(), name, city, state, country, region);
 
@@ -469,14 +469,14 @@ void AirportWriter::fetchAdmin(const Airport *type, QString& city, QString& stat
   const NamelistEntry *nl = nameListIndex.value(type->getIdent(), nullptr);
   if(nl != nullptr)
   {
-    city = atools::capString(getDataWriter().getLanguage(nl->getCityName()), {}, TOLOWER);
-    state = atools::capString(getDataWriter().getLanguage(nl->getStateName()), {}, TOLOWER);
-    country = atools::capString(getDataWriter().getLanguage(nl->getCountryName()), {}, TOLOWER);
+    city = atools::capString(getDataWriter().getLanguage(nl->getCityName()), {}, TOLOWER).simplified();
+    state = atools::capString(getDataWriter().getLanguage(nl->getStateName()), {}, TOLOWER).simplified();
+    country = atools::capString(getDataWriter().getLanguage(nl->getCountryName()), {}, TOLOWER).simplified();
 
     if(!type->getRegion().isEmpty())
-      region = type->getRegion();
+      region = type->getRegion().simplified();
     else if(!nl->getRegionIdent().isEmpty())
-      region = nl->getRegionIdent();
+      region = nl->getRegionIdent().simplified();
   }
 }
 
