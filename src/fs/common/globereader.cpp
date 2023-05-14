@@ -157,7 +157,7 @@ float GlobeReader::elevationMax(const geo::Pos& pos, float sampleRadiusMeter)
   indexes.insert(std::make_pair(fileIndex, fileOffset));
 
   // Build a rectangle around the position
-  atools::geo::Rect rect(pos, sampleRadiusMeter);
+  atools::geo::Rect rect(pos, sampleRadiusMeter, true /* fast */);
 
   // Get split if crossing anti-meridian
   for(const atools::geo::Rect& r : rect.splitAtAntiMeridian())

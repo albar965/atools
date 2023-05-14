@@ -124,7 +124,7 @@ void RouteEdgeWriter::run()
     toNodeDistanceVars.clear();
 
     // Get all navaids in bounding rectangle - first iterations
-    Rect queryRect(pos, MAX_RADIO_RANGE_METER);
+    Rect queryRect(pos, MAX_RADIO_RANGE_METER, true /* fast */);
     bool nearestSatisfied = nearest(nearestNodesQuery, fromNodeId, pos, queryRect, fromRangeMeter,
                                     toNodeIdVars, toNodeTypeVars, toNodeDistanceVars);
 

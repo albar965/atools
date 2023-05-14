@@ -48,15 +48,15 @@ public:
   explicit Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY);
   explicit Rect(const LineString& linestring);
 
+  /* Create rectangle that includes the given circle. Radius in meter. Set fast to true to avoid complex calculations. */
+  explicit Rect(const atools::geo::Pos& center, float radiusMeter, bool fast);
+
   atools::geo::Rect& operator=(const atools::geo::Rect& other)
   {
     topLeft = other.topLeft;
     bottomRight = other.bottomRight;
     return *this;
   }
-
-  /* Create rectangle that includes the given circle. Radius in meter. */
-  explicit Rect(const atools::geo::Pos& center, float radiusMeter);
 
   bool operator==(const atools::geo::Rect& other) const;
 

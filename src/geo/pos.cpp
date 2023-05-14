@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -696,6 +696,37 @@ double Pos::courseRad(double lonX1, double latY1, double lonX2, double latY2)
                      cos((lonX2 - lonX1)));
 
   return std::fmod(val + M_PI * 2., M_PI * 2.);
+}
+
+float Pos::meterForDegreeLonx(float latY)
+{
+  float absLat = std::abs(latY);
+  float nmPerDeg;
+
+  if(absLat < 20.f)
+    nmPerDeg = 56.f; // at 20°
+  else if(absLat < 30.f)
+    nmPerDeg = 52.f; // at 30°
+  else if(absLat < 40.f)
+    nmPerDeg = 46.f; // at 40°
+  else if(absLat < 50.f)
+    nmPerDeg = 39.f; // at 50°
+  else if(absLat < 60.f)
+    nmPerDeg = 30.f; // at 60°
+  else if(absLat < 65.f)
+    nmPerDeg = 25.f;   // at 65°
+  else if(absLat < 70.f)
+    nmPerDeg = 21.f; // at 70°
+  else if(absLat < 75.f)
+    nmPerDeg = 15.5f;   // at 75°
+  else if(absLat < 80.f)
+    nmPerDeg = 10.4f; // at 80°
+  else if(absLat < 85.f)
+    nmPerDeg = 5.2f;   // at 85°
+  else
+    nmPerDeg = 1.f; // at 85°
+
+  return atools::geo::nmToMeter(nmPerDeg);
 }
 
 double Pos::distanceRad(double lonX1, double latY1, double lonX2, double latY2)

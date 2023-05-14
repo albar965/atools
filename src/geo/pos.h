@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ struct LineDistance
 
   /* All distances in meter */
   float distance, /* Cross track distance - Positive means right of course,  negative means left of course.
-                   *  Can also contain distance to nearest point depending on status */
+                   * Can also contain distance to nearest point depending on status */
         distanceFrom1, /* Along track distance from point to start of line or linestring */
         distanceFrom2; /* Along track distance from point to end of line or linestring */
 };
@@ -347,6 +347,15 @@ public:
   /* Basic funtions if more accuracy than float is needed */
   static double distanceRad(double lonX1, double latY1, double lonX2, double latY2);
   static double courseRad(double lonX1, double latY1, double lonX2, double latY2);
+
+  /* Quick and rough estimate using table based approach meter per degree longitude depending on latitude.
+   * Rounds down to have slightly larger boundaries in degree than desired. */
+  static float meterForDegreeLonx(float latY);
+
+  float meterForDegreeLonx() const
+  {
+    return meterForDegreeLonx(latY);
+  }
 
 private:
   Q_DECL_CONSTEXPR static double EARTH_RADIUS_METER_DOUBLE = 6371. * 1000.;

@@ -75,10 +75,22 @@ Rect::Rect(double lonX, double latY)
   bottomRight = Pos(lonX, latY);
 }
 
-Rect::Rect(const Pos& center, float radiusMeter)
+Rect::Rect(const Pos& center, float radiusMeter, bool fast)
 {
-  float east = center.endpoint(radiusMeter, 90.).getLonX();
-  float west = center.endpoint(radiusMeter, 270.).getLonX();
+  float east, west;
+  if(fast)
+  {
+    // Do approximation avoiding complex calculations
+    float meterForDeg = center.meterForDegreeLonx();
+    east = center.getLonX() + radiusMeter / meterForDeg;
+    west = center.getLonX() - radiusMeter / meterForDeg;
+  }
+  else
+  {
+    // Calculate exact left and right boundaries
+    east = center.endpoint(radiusMeter, 90.).getLonX();
+    west = center.endpoint(radiusMeter, 270.).getLonX();
+  }
 
   float radiusNm = meterToNm(radiusMeter);
   float north = center.getLatY() + radiusNm / 60.f;
