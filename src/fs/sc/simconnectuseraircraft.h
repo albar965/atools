@@ -205,7 +205,10 @@ public:
   /* Uses several parameters since on-ground is unreliable in the first X-Plane packets */
   bool isFlying() const
   {
-    return !isOnGround() && getGroundSpeedKts() > 10.f && getAltitudeAboveGroundFt() > 10.f;
+    if(isHelicopter())
+      return !isOnGround() && getAltitudeAboveGroundFt() > 10.f;
+    else
+      return !isOnGround() && getGroundSpeedKts() > 10.f && getAltitudeAboveGroundFt() > 10.f;
   }
 
   bool hasFuelFlow() const

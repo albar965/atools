@@ -193,7 +193,7 @@ const SimConnectAircraft *SimConnectData::getAiAircraftConstById(int id) const
 
 SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
                                                      float vertSpeed, float tas, float fuelflow, float totalFuel, float ice,
-                                                     float flightplanAlt, float magVar, bool jetFuel)
+                                                     float flightplanAlt, float magVar, bool jetFuel, bool helicopter)
 {
   static QVector<float> lastHdgs;
   lastHdgs.fill(0.f, 10);
@@ -224,7 +224,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.windowIcePercent = static_cast<quint8>(ice / 5);
   data.userAircraft.aoaIcePercent = static_cast<quint8>(ice > 0.f ? 1 : 0);
   data.userAircraft.inletIcePercent = static_cast<quint8>(ice > 0.f ? 100 : 0);
-  data.userAircraft.category = AIRPLANE;
+  data.userAircraft.category = helicopter ? HELICOPTER : AIRPLANE;
   data.userAircraft.engineType = PISTON;
   data.userAircraft.zuluDateTime = QDateTime::currentDateTimeUtc();
   data.userAircraft.localDateTime = QDateTime::currentDateTime();

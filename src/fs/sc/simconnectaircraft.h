@@ -195,6 +195,11 @@ public:
     return machSpeed;
   }
 
+  bool isHelicopter() const
+  {
+    return category == HELICOPTER || engineType == HELO_TURBINE;
+  }
+
   AircraftFlags getFlags() const
   {
     return flags;
