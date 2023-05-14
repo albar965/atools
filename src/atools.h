@@ -329,28 +329,55 @@ int atInt(const QStringList& columns, int index, bool error);
 float atFloat(const QStringList& columns, int index, bool error);
 
 template<typename TYPE>
-inline TYPE *firstOrNull(QList<TYPE>& list)
+inline TYPE *firstPtrOrNull(QList<TYPE>& list)
 {
   return list.isEmpty() ? nullptr : &list.first();
 }
 
 template<typename TYPE>
-inline const TYPE *constFirstOrNull(const QList<TYPE>& list)
+inline const TYPE *constFirstPtrOrNull(const QList<TYPE>& list)
 {
   return list.isEmpty() ? nullptr : &list.constFirst();
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 template<typename TYPE>
-inline TYPE *firstOrNull(QVector<TYPE>& list)
+inline TYPE *firstPtrOrNull(QVector<TYPE>& list)
 {
   return list.isEmpty() ? nullptr : &list.first();
 }
 
 template<typename TYPE>
-inline const TYPE *constFirstOrNull(const QVector<TYPE>& list)
+inline const TYPE *constFirstPtrOrNull(const QVector<TYPE>& list)
 {
   return list.isEmpty() ? nullptr : &list.constFirst();
+}
+
+#endif
+
+template<typename TYPE>
+inline TYPE firstOrEmpty(const QList<TYPE>& list)
+{
+  return list.isEmpty() ? TYPE() : list.first();
+}
+
+template<typename TYPE>
+inline const TYPE constFirstOrEmpty(const QList<TYPE>& list)
+{
+  return list.isEmpty() ? TYPE() : list.constFirst();
+}
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+template<typename TYPE>
+inline TYPE firstOrEmpty(const QVector<TYPE>& list)
+{
+  return list.isEmpty() ? TYPE() : list.first();
+}
+
+template<typename TYPE>
+inline const TYPE constFirstOrEmpty(const QVector<TYPE>& list)
+{
+  return list.isEmpty() ? TYPE() : list.constFirst();
 }
 
 #endif
