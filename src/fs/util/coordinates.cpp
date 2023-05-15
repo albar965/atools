@@ -511,7 +511,7 @@ atools::geo::Pos degFromMatch(const QRegularExpressionMatch& match)
   return Pos(lonX, latY);
 }
 
-geo::Pos fromAnyFormat(const QString& coords, bool *hemisphere)
+geo::Pos fromAnyFormatInternal(const QString& coords, bool *hemisphere)
 {
   if(hemisphere != nullptr)
     *hemisphere = true; // Default is N, E, W and S designators given
@@ -695,6 +695,29 @@ geo::Pos fromAnyFormat(const QString& coords, bool *hemisphere)
   }
 
   return fromAnyWaypointFormat(coordStr);
+}
+
+atools::geo::Pos fromAnyFormat(const QString& coords, bool *hemisphere)
+{
+  Pos pos = fromAnyFormatInternal(coords, hemisphere);
+  if(!pos.isValid())
+  {
+    // Nothing found - modify format
+    if(coords.count(", ") == 1)
+      // Comma/space as number separator
+      pos = fromAnyFormatInternal(QString(coords).replace(", ", " "), hemisphere);
+
+    if(!pos.isValid())
+    {
+      if(coords.count(',') == 3)
+        // Comma as decimal separator and comma as number separator
+        pos = fromAnyFormatInternal(coords.section(',', 0, 1) + " " + coords.section(',', 2, 3), hemisphere);
+      else if(coords.count(',') == 1 && coords.count('.') == 2)
+        // Period as decimal separator and comma as number separator
+        pos = fromAnyFormatInternal(coords.section(',', 0, 0) + " " + coords.section(',', 1, 1), hemisphere);
+    }
+  }
+  return pos;
 }
 
 void maybeSwapOrdinates(geo::Pos& pos, const QString& coords)
