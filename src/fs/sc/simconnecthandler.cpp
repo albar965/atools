@@ -45,7 +45,8 @@ namespace sc {
 enum EventIds
 {
   EVENT_SIM_STATE,
-  EVENT_SIM_PAUSE
+  EVENT_SIM_PAUSE,
+  EVENT_AIRCRAFT_LOADED
 };
 
 enum DataRequestId
@@ -275,6 +276,12 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
             if(verbose)
               qDebug() << "EVENT_SIM_STATE" << evt->dwData;
             simRunning = evt->dwData == 1;
+            break;
+
+          case EVENT_AIRCRAFT_LOADED:
+            SIMCONNECT_RECV_EVENT_FILENAME *evtFilename = static_cast<SIMCONNECT_RECV_EVENT_FILENAME *>(pData);
+            if(verbose)
+              qDebug() << "EVENT_AIRCRAFT_LOADED" << evtFilename->szFileName;
             break;
         }
         break;
@@ -771,6 +778,7 @@ bool SimConnectHandler::connect()
     // Request an event when the simulation starts or pauses
     p->api.SubscribeToSystemEvent(EVENT_SIM_STATE, "Sim");
     p->api.SubscribeToSystemEvent(EVENT_SIM_PAUSE, "Pause");
+    p->api.RequestSystemState(EVENT_AIRCRAFT_LOADED, "AircraftLoaded");
 
     p->state = sc::STATEOK;
 
