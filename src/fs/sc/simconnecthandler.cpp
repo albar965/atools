@@ -193,6 +193,13 @@ public:
   bool checkCall(HRESULT hr, const QString& message);
   bool callDispatch(bool& dataFetched, const QString& message);
 
+#if defined(SIMCONNECT_BUILD_WIN64)
+  /* Load aircraft configuration file to get the value for icao_type_designator since
+   * SimConnect does nor provided a useful value on MSFS*/
+  void loadAircraftCfg(const QString& path);
+
+#endif
+
   SimData simData;
   unsigned long simDataObjectId;
 
@@ -209,6 +216,12 @@ public:
 
   bool simRunning = true, simPaused = false, verbose = false, simConnectLoaded = false,
        userDataFetched = false, aiDataFetched = false, weatherDataFetched = false;
+
+#if defined(SIMCONNECT_BUILD_WIN64)
+  QDateTime lastSystemRequestTime; // Do not request for every fetch
+  QString aircraftAcfFilePath, // Clean path to acf file
+          icaoTypeDesignator; // Extracted icao_type_designator
+#endif
 };
 
 void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData)
@@ -260,6 +273,18 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
         break;
       }
 
+#if defined(SIMCONNECT_BUILD_WIN64)
+    case SIMCONNECT_RECV_ID_SYSTEM_STATE:
+      {
+        // Aircraft file changed - reload type
+        SIMCONNECT_RECV_SYSTEM_STATE *evt = static_cast<SIMCONNECT_RECV_SYSTEM_STATE *>(pData);
+        if(verbose)
+          qDebug() << "SIMCONNECT_RECV_ID_SYSTEM_STATE" << evt->szString;
+        loadAircraftCfg(QString::fromLocal8Bit(evt->szString));
+        break;
+      }
+#endif
+
     case SIMCONNECT_RECV_ID_EVENT:
       {
         SIMCONNECT_RECV_EVENT *evt = static_cast<SIMCONNECT_RECV_EVENT *>(pData);
@@ -276,12 +301,6 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
             if(verbose)
               qDebug() << "EVENT_SIM_STATE" << evt->dwData;
             simRunning = evt->dwData == 1;
-            break;
-
-          case EVENT_AIRCRAFT_LOADED:
-            SIMCONNECT_RECV_EVENT_FILENAME *evtFilename = static_cast<SIMCONNECT_RECV_EVENT_FILENAME *>(pData);
-            if(verbose)
-              qDebug() << "EVENT_AIRCRAFT_LOADED" << evtFilename->szFileName;
             break;
         }
         break;
@@ -459,7 +478,11 @@ void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& s
 #endif
 
   aircraft.airplaneTitle = simDataAircraft.aircraftTitle;
+#if defined(SIMCONNECT_BUILD_WIN64)
+  aircraft.airplaneModel = !icaoTypeDesignator.isEmpty() ? icaoTypeDesignator : simDataAircraft.aircraftAtcModel;
+#else
   aircraft.airplaneModel = simDataAircraft.aircraftAtcModel;
+#endif
   aircraft.airplaneReg = simDataAircraft.aircraftAtcId;
   aircraft.airplaneType = simDataAircraft.aircraftAtcType;
   aircraft.airplaneAirline = simDataAircraft.aircraftAtcAirline;
@@ -558,6 +581,55 @@ bool SimConnectHandlerPrivate::callDispatch(bool& dataFetched, const QString& me
 
   return true;
 }
+
+#if defined(SIMCONNECT_BUILD_WIN64)
+void SimConnectHandlerPrivate::loadAircraftCfg(const QString& path)
+{
+  QString cleanPath = QDir::cleanPath(path);
+  if(aircraftAcfFilePath != cleanPath)
+  {
+    qDebug() << "New aircraft path" << cleanPath;
+
+    QFile file(QFileInfo(cleanPath).absolutePath() + QDir::separator() + "aircraft.cfg");
+    if(file.open(QIODevice::ReadOnly))
+    {
+      qDebug() << "Opened" << file.fileName();
+
+      QTextStream stream(&file);
+      stream.setCodec("UTF-8");
+      stream.setAutoDetectUnicode(true);
+
+      QString typeDesignator, atcModel;
+      while(!stream.atEnd())
+      {
+        QString line = stream.readLine().trimmed();
+
+        if(line.startsWith("icao_type_designator", Qt::CaseInsensitive)) // icao_type_designator = "A20N"
+          typeDesignator = line.simplified().section('=', 1).remove('"').trimmed();
+
+        if(line.startsWith("atc_model", Qt::CaseInsensitive)) // atc_model=C172
+          atcModel = line.simplified().section('=', 1).remove('"').trimmed();
+
+        if(!typeDesignator.isEmpty())
+          break;
+      }
+      file.close();
+
+      if(!typeDesignator.isEmpty() || !atcModel.isEmpty())
+      {
+        icaoTypeDesignator = !typeDesignator.isEmpty() ? typeDesignator : atcModel;
+        aircraftAcfFilePath = cleanPath;
+        qDebug() << "Found aircraft type" << icaoTypeDesignator << "for" <<  file.fileName();
+      }
+    }
+    else
+    {
+      icaoTypeDesignator.clear();
+      aircraftAcfFilePath.clear();
+    }
+  }
+}
+#endif
 
 void SimConnectHandlerPrivate::fillDataDefinition()
 {
@@ -802,6 +874,14 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   p->simDataAircraftList.clear();
   p->simDataAircraftObjectIds.clear();
   p->simDataObjectId = 0;
+
+#if defined(SIMCONNECT_BUILD_WIN64)
+  if(!p->lastSystemRequestTime.isValid() || p->lastSystemRequestTime.msecsTo(QDateTime::currentDateTime()) > 1000)
+  {
+    p->api.RequestSystemState(EVENT_AIRCRAFT_LOADED, "AircraftLoaded");
+    p->lastSystemRequestTime = QDateTime::currentDateTime();
+  }
+#endif
 
   HRESULT hr = 0;
 
