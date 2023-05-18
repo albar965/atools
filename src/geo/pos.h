@@ -73,7 +73,12 @@ public:
   {
   }
 
-  explicit Pos(double longitudeX, double latitudeY, double alt = 0.);
+  explicit Pos(double longitudeX, double latitudeY, double alt = 0.)
+  {
+    lonX = static_cast<float>(longitudeX);
+    latY = static_cast<float>(latitudeY);
+    altitude = static_cast<float>(alt);
+  }
 
   /* Will be invalid if variants are null or not valid */
   explicit Pos(const QVariant& longitudeX, const QVariant& latitudeY, const QVariant& alt = QVariant(0.f));
@@ -384,28 +389,28 @@ uint qHash(const atools::geo::Pos& pos);
 class DPos
 {
 public:
-  explicit DPos(const atools::geo::Pos& other)
+  DPos()
+    : lonX(INVALID_VALUE), latY(INVALID_VALUE), altitude(0.f)
   {
-    lonX = other.getLonX();
-    latY = other.getLatY();
+
+  }
+
+  explicit DPos(const atools::geo::Pos& pos)
+  {
+    lonX = pos.getLonX();
+    latY = pos.getLatY();
+    altitude = pos.getAltitude();
+  }
+
+  explicit DPos(double longitudeX, double latitudeY, float alt = 0.f)
+    : lonX(longitudeX), latY(latitudeY), altitude(alt)
+  {
+
   }
 
   DPos(const atools::geo::DPos& other)
   {
     this->operator=(other);
-
-  }
-
-  DPos()
-    : lonX(INVALID_VALUE), latY(INVALID_VALUE)
-  {
-
-  }
-
-  DPos(double longitudeX, double latitudeY)
-    : lonX(longitudeX), latY(latitudeY)
-  {
-
   }
 
   atools::geo::DPos& operator=(const atools::geo::DPos& other)
@@ -413,6 +418,11 @@ public:
     lonX = other.lonX;
     latY = other.latY;
     return *this;
+  }
+
+  atools::geo::Pos asPos() const
+  {
+    return atools::geo::Pos(lonX, latY, static_cast<double>(altitude));
   }
 
   double getLonX() const
@@ -438,13 +448,22 @@ public:
     return lonX == 0. && latY == 0.;
   }
 
+  float getAltitude() const
+  {
+    return altitude;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::geo::DPos& record);
 
   Q_DECL_CONSTEXPR static double INVALID_VALUE = std::numeric_limits<double>::max();
 
-  double lonX = INVALID_VALUE, latY = INVALID_VALUE;
+  double lonX, latY;
+  float altitude;
 };
+
+/* Invalid position */
+const atools::geo::DPos EMPTY_DPOS;
 
 } // namespace geo
 } // namespace atools

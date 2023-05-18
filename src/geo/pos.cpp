@@ -64,12 +64,7 @@ uint qHash(const atools::geo::Pos& pos)
   return static_cast<unsigned int>(pos.getLonX()) ^ static_cast<unsigned int>(pos.getLatY());
 }
 
-Pos::Pos(double longitudeX, double latitudeY, double alt)
-{
-  lonX = static_cast<float>(longitudeX);
-  latY = static_cast<float>(latitudeY);
-  altitude = static_cast<float>(alt);
-}
+
 
 Pos::Pos(const QVariant& longitudeX, const QVariant& latitudeY, const QVariant& alt)
 {

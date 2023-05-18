@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2021 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -72,71 +72,71 @@ class Prop
 {
 public:
   /* Constructs an invalid value which is not saved to streams. */
-  Prop()
+  explicit Prop()
     : type(ptinternal::INVALID)
   {
   }
 
   /* Valid property without value. */
-  Prop(int keyParam)
+  explicit Prop(int keyParam)
     : key(keyParam), type(ptinternal::NONE)
   {
   }
 
   /* Takes value from variant and type by using best guess. */
-  Prop(int keyParam, const QVariant& valueParam);
+  explicit Prop(int keyParam, const QVariant& valueParam);
 
   /* Boolean value */
-  Prop(int keyParam, bool valueParam)
+  explicit Prop(int keyParam, bool valueParam)
     : key(keyParam), type(ptinternal::BOOL)
   {
     number.value = valueParam;
   }
 
   /* Width and type of numeric integer values is set by number to get the smallest number of bytes to save. */
-  Prop(int keyParam, char valueParam)
+  explicit Prop(int keyParam, char valueParam)
     : key(keyParam)
   {
     number.value = valueParam;
     setTypeForInt();
   }
 
-  Prop(int keyParam, unsigned char valueParam)
+  explicit Prop(int keyParam, unsigned char valueParam)
     : key(keyParam)
   {
     number.value = valueParam;
     setTypeForInt();
   }
 
-  Prop(int keyParam, short valueParam)
+  explicit Prop(int keyParam, short valueParam)
     : key(keyParam)
   {
     number.value = valueParam;
     setTypeForInt();
   }
 
-  Prop(int keyParam, unsigned short valueParam)
+  explicit Prop(int keyParam, unsigned short valueParam)
     : key(keyParam)
   {
     number.value = valueParam;
     setTypeForInt();
   }
 
-  Prop(int keyParam, int valueParam)
+  explicit Prop(int keyParam, int valueParam)
     : key(keyParam)
   {
     number.value = valueParam;
     setTypeForInt();
   }
 
-  Prop(int keyParam, unsigned int valueParam)
+  explicit Prop(int keyParam, unsigned int valueParam)
     : key(keyParam)
   {
     number.value = valueParam;
     setTypeForInt();
   }
 
-  Prop(int keyParam, long long valueParam)
+  explicit Prop(int keyParam, long long valueParam)
     : key(keyParam)
   {
     number.value = valueParam;
@@ -144,20 +144,20 @@ public:
   }
 
   /* Values where user has to define type */
-  Prop(int keyParam, float valueParam)
+  explicit Prop(int keyParam, float valueParam)
     : key(keyParam), type(ptinternal::FLOAT)
   {
     number.floatValue = valueParam;
   }
 
-  Prop(int keyParam, double valueParam)
+  explicit Prop(int keyParam, double valueParam)
     : key(keyParam), type(ptinternal::DOUBLE)
   {
     number.doubleValue = valueParam;
   }
 
   /* Length prefix is determined by string length */
-  Prop(int keyParam, const QString& valueParam)
+  explicit Prop(int keyParam, const QString& valueParam)
     : key(keyParam)
   {
     bytes = valueParam.toUtf8();
@@ -165,7 +165,7 @@ public:
   }
 
   /* Length prefix is determined by byte array length */
-  Prop(int keyParam, const QByteArray& valueParam)
+  explicit Prop(int keyParam, const QByteArray& valueParam)
     : key(keyParam)
   {
     bytes = valueParam;
@@ -197,37 +197,37 @@ public:
 
   bool getValueBool() const
   {
-    return number.value;
+    return static_cast<bool>(number.value);
   }
 
   char getValueByte() const
   {
-    return number.value;
+    return static_cast<char>(number.value);
   }
 
   unsigned char getValueUByte() const
   {
-    return number.value;
+    return static_cast<unsigned char>(number.value);
   }
 
   short getValueShort() const
   {
-    return number.value;
+    return static_cast<short>(number.value);
   }
 
   unsigned short getValueUShort() const
   {
-    return number.value;
+    return static_cast<unsigned short>(number.value);
   }
 
   int getValueInt() const
   {
-    return number.value;
+    return static_cast<int>(number.value);
   }
 
   unsigned int getValueUInt() const
   {
-    return number.value;
+    return static_cast<unsigned int>(number.value);
   }
 
   long long getValueLongLong() const
@@ -322,10 +322,11 @@ public:
   }
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    Props(const QVector<atools::util::Prop>& props)
+  Props(const QVector<atools::util::Prop>& props)
   {
     addProps(props);
   }
+
 #endif
 
   atools::util::Prop getProp(int key)
@@ -355,6 +356,7 @@ public:
     for(const atools::util::Prop& prop:props)
       insert(prop.getKey(), prop);
   }
+
 #endif
 
 private:
