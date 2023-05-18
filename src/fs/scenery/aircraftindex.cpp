@@ -55,15 +55,19 @@ void AircraftIndex::loadIndex(const QStringList& basePaths)
           // Find aircraft.cfg relative location in manifest
           LayoutJson layout;
           layout.read(addonDir.filePath() + QDir::separator() + "layout.json");
-          if(layout.isValid() && !layout.getAircraftCfgPaths().isEmpty())
+          if(layout.isValid())
           {
-            // This is the hashmap key returned by SimConnect_RequestSystemState(EVENT_AIRCRAFT_LOADED, ...)
-            // SimObjects/Airplanes/Asobo_208B_GRAND_CARAVAN_EX/aircraft.cfg
-            QString cfgPathKey = QDir::cleanPath(layout.getAircraftCfgPaths().constFirst());
-            QFileInfo fullCfgPathValue(addonDir.filePath() + QDir::separator() + cfgPathKey);
+            // There may be more than one aircraft.cfg, e.g. for wheeled and floats
+            for(const QString& layoutPath : layout.getAircraftCfgPaths())
+            {
+              // This is the hashmap key returned by SimConnect_RequestSystemState(EVENT_AIRCRAFT_LOADED, ...)
+              // SimObjects/Airplanes/Asobo_208B_GRAND_CARAVAN_EX/aircraft.cfg
+              QString cfgPathKey = QDir::cleanPath(layoutPath);
+              QFileInfo fullCfgPathValue(addonDir.filePath() + QDir::separator() + cfgPathKey);
 
-            if(fullCfgPathValue.exists() && fullCfgPathValue.isFile())
-              aircraftShortToFullPathMap.insert(cfgPathKey.toLower(), QDir::cleanPath(fullCfgPathValue.canonicalFilePath()));
+              if(fullCfgPathValue.exists() && fullCfgPathValue.isFile())
+                aircraftShortToFullPathMap.insert(cfgPathKey.toLower(), QDir::cleanPath(fullCfgPathValue.canonicalFilePath()));
+            }
           }
         }
       }
