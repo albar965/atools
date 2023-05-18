@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -88,8 +88,8 @@ struct SimDataAircraft
   qint32 wingSpan;
 
   float altitudeFt; // Actual altitude
-  float latitudeDeg;
-  float longitudeDeg;
+  double latitudeDeg;
+  double longitudeDeg;
 
   float groundVelocityKts;
   float indicatedAltitudeFt;
@@ -193,13 +193,6 @@ public:
   bool checkCall(HRESULT hr, const QString& message);
   bool callDispatch(bool& dataFetched, const QString& message);
 
-#if defined(SIMCONNECT_BUILD_WIN64)
-  /* Load aircraft configuration file to get the value for icao_type_designator since
-   * SimConnect does nor provided a useful value on MSFS*/
-  void loadAircraftCfg(const QString& path);
-
-#endif
-
   SimData simData;
   unsigned long simDataObjectId;
 
@@ -219,8 +212,7 @@ public:
 
 #if defined(SIMCONNECT_BUILD_WIN64)
   QDateTime lastSystemRequestTime; // Do not request for every fetch
-  QString aircraftAcfFilePath, // Clean path to acf file
-          icaoTypeDesignator; // Extracted icao_type_designator
+  QString aircraftFilePath; // Clean path to aircraft.cfg file in MSFS
 #endif
 };
 
@@ -280,7 +272,8 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
         SIMCONNECT_RECV_SYSTEM_STATE *evt = static_cast<SIMCONNECT_RECV_SYSTEM_STATE *>(pData);
         if(verbose)
           qDebug() << "SIMCONNECT_RECV_ID_SYSTEM_STATE" << evt->szString;
-        loadAircraftCfg(QString::fromLocal8Bit(evt->szString));
+        // "SimObjects/Airplanes/Asobo_A320_NEO/aircraft.cfg" on MSFS
+        aircraftFilePath = QString::fromLocal8Bit(evt->szString);
         break;
       }
 #endif
@@ -478,17 +471,19 @@ void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& s
 #endif
 
   aircraft.airplaneTitle = simDataAircraft.aircraftTitle;
-#if defined(SIMCONNECT_BUILD_WIN64)
-  aircraft.airplaneModel = !icaoTypeDesignator.isEmpty() ? icaoTypeDesignator : simDataAircraft.aircraftAtcModel;
-#else
   aircraft.airplaneModel = simDataAircraft.aircraftAtcModel;
-#endif
   aircraft.airplaneReg = simDataAircraft.aircraftAtcId;
   aircraft.airplaneType = simDataAircraft.aircraftAtcType;
   aircraft.airplaneAirline = simDataAircraft.aircraftAtcAirline;
   aircraft.airplaneFlightnumber = simDataAircraft.aircraftAtcFlightNumber;
   aircraft.fromIdent = simDataAircraft.aiFrom;
   aircraft.toIdent = simDataAircraft.aiTo;
+
+#if defined(SIMCONNECT_BUILD_WIN64)
+  // Add aircraft.cfg location as additional property for MSFS
+  if(!aircraftFilePath.isEmpty())
+    aircraft.properties.addProp(atools::util::Prop(atools::fs::sc::PROP_AIRCRAFT_CFG, aircraftFilePath));
+#endif
 
   QString cat = QString(simDataAircraft.category).toLower().trimmed();
   if(cat == "airplane")
@@ -512,9 +507,15 @@ void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& s
   aircraft.numberOfEngines = static_cast<quint8>(simDataAircraft.numEngines);
   aircraft.engineType = static_cast<EngineType>(simDataAircraft.engineType);
 
-  aircraft.position.setLonX(simDataAircraft.longitudeDeg);
-  aircraft.position.setLatY(simDataAircraft.latitudeDeg);
+  aircraft.position.setLonX(static_cast<float>(simDataAircraft.longitudeDeg));
+  aircraft.position.setLatY(static_cast<float>(simDataAircraft.latitudeDeg));
   aircraft.position.setAltitude(simDataAircraft.altitudeFt);
+
+#if defined(SIMCONNECT_BUILD_WIN64)
+  // Add more accurate coordinates as optional property
+  aircraft.properties.addProp(atools::util::Prop(atools::fs::sc::PROP_AIRCRAFT_LONX, simDataAircraft.longitudeDeg));
+  aircraft.properties.addProp(atools::util::Prop(atools::fs::sc::PROP_AIRCRAFT_LATY, simDataAircraft.latitudeDeg));
+#endif
 
   aircraft.groundSpeedKts = simDataAircraft.groundVelocityKts;
   aircraft.indicatedAltitudeFt = simDataAircraft.indicatedAltitudeFt;
@@ -581,55 +582,6 @@ bool SimConnectHandlerPrivate::callDispatch(bool& dataFetched, const QString& me
 
   return true;
 }
-
-#if defined(SIMCONNECT_BUILD_WIN64)
-void SimConnectHandlerPrivate::loadAircraftCfg(const QString& path)
-{
-  QString cleanPath = QDir::cleanPath(path);
-  if(aircraftAcfFilePath != cleanPath)
-  {
-    qDebug() << "New aircraft path" << cleanPath;
-
-    QFile file(QFileInfo(cleanPath).absolutePath() + QDir::separator() + "aircraft.cfg");
-    if(file.open(QIODevice::ReadOnly))
-    {
-      qDebug() << "Opened" << file.fileName();
-
-      QTextStream stream(&file);
-      stream.setCodec("UTF-8");
-      stream.setAutoDetectUnicode(true);
-
-      QString typeDesignator, atcModel;
-      while(!stream.atEnd())
-      {
-        QString line = stream.readLine().trimmed();
-
-        if(line.startsWith("icao_type_designator", Qt::CaseInsensitive)) // icao_type_designator = "A20N"
-          typeDesignator = line.simplified().section('=', 1).remove('"').trimmed();
-
-        if(line.startsWith("atc_model", Qt::CaseInsensitive)) // atc_model=C172
-          atcModel = line.simplified().section('=', 1).remove('"').trimmed();
-
-        if(!typeDesignator.isEmpty())
-          break;
-      }
-      file.close();
-
-      if(!typeDesignator.isEmpty() || !atcModel.isEmpty())
-      {
-        icaoTypeDesignator = !typeDesignator.isEmpty() ? typeDesignator : atcModel;
-        aircraftAcfFilePath = cleanPath;
-        qDebug() << "Found aircraft type" << icaoTypeDesignator << "for" <<  file.fileName();
-      }
-    }
-    else
-    {
-      icaoTypeDesignator.clear();
-      aircraftAcfFilePath.clear();
-    }
-  }
-}
-#endif
 
 void SimConnectHandlerPrivate::fillDataDefinition()
 {
@@ -717,8 +669,8 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
   api.AddToDataDefinition(definitionId, "Wing Span", "feet", SIMCONNECT_DATATYPE_INT32);
 
   api.AddToDataDefinition(definitionId, "Plane Altitude", "feet", SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(definitionId, "Plane Latitude", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(definitionId, "Plane Longitude", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(definitionId, "Plane Latitude", "degrees", SIMCONNECT_DATATYPE_FLOAT64);
+  api.AddToDataDefinition(definitionId, "Plane Longitude", "degrees", SIMCONNECT_DATATYPE_FLOAT64);
 
   api.AddToDataDefinition(definitionId, "Ground Velocity", "knots", SIMCONNECT_DATATYPE_FLOAT32);
   api.AddToDataDefinition(definitionId, "Indicated Altitude", "feet", SIMCONNECT_DATATYPE_FLOAT32);

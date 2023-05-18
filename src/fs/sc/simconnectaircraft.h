@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,13 @@ enum DataFlags : quint8
                          // and are only transferred every tenth packets - currenty not used
 };
 
+enum SimConnectAircraftPropTypes
+{
+  PROP_AIRCRAFT_CFG,
+  PROP_AIRCRAFT_LONX,
+  PROP_AIRCRAFT_LATY
+};
+
 /*
  * Base aircraft that is used to transfer across network links. For user and AI aircraft.
  */
@@ -111,10 +118,15 @@ public:
     return airplaneTitle;
   }
 
-  /* Short ICAO code MD80, BE58, etc. Actually type designator. */
+  /* ICAO aircraft designator: MD80, BE58, etc. */
   const QString& getAirplaneModel() const
   {
     return airplaneModel;
+  }
+
+  void setAirplaneModel(const QString& value)
+  {
+    airplaneModel = value;
   }
 
   /* N71FS */
@@ -139,6 +151,16 @@ public:
   const atools::geo::Pos& getPosition() const
   {
     return position;
+  }
+
+  /* More accurate optional position as double */
+  atools::geo::DPos getPositionD() const
+  {
+    if(properties.contains(PROP_AIRCRAFT_LONX) && properties.contains(PROP_AIRCRAFT_LATY))
+      return atools::geo::DPos(properties.value(PROP_AIRCRAFT_LONX).getValueDouble(),
+                               properties.value(PROP_AIRCRAFT_LATY).getValueDouble(), position.getAltitude());
+    else
+      return atools::geo::DPos(position);
   }
 
   /* Leaves altitude intact */
