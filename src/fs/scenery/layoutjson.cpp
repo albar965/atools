@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 
 #include "fs/scenery/layoutjson.h"
 
-#include "exception.h"
 #include "atools.h"
 
 #include <QFile>
@@ -69,25 +68,38 @@ void LayoutJson::read(const QString& filename)
       QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
       if(error.error != QJsonParseError::NoError)
         qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
-
-      QJsonArray arr = doc.object().value("content").toArray();
-      for(int i = 0; i < arr.count(); i++)
+      else
       {
-        QString path = arr.at(i).toObject().value("path").toString();
+        QJsonArray arr = doc.object().value("content").toArray();
+        for(int i = 0; i < arr.count(); i++)
+        {
+          QString path = arr.at(i).toObject().value("path").toString();
 
-        if(path.endsWith(".fsarchive", Qt::CaseInsensitive))
-          fsArchiveFound = true;
+          if(path.endsWith(".fsarchive", Qt::CaseInsensitive))
+            fsArchiveFound = true;
 
-        if(path.endsWith(".bgl", Qt::CaseInsensitive))
-          bglPaths.append(path);
-        else if(path.endsWith("Library.xml", Qt::CaseInsensitive))
-          materialPaths.append(path);
+          if(path.endsWith(".bgl", Qt::CaseInsensitive))
+            bglPaths.append(path);
+          else if(path.endsWith("aircraft.cfg", Qt::CaseInsensitive))
+            aircraftCfgPaths.append(path);
+          else if(path.endsWith("Library.xml", Qt::CaseInsensitive))
+            materialPaths.append(path);
+        }
+        valid = true;
       }
       file.close();
     }
     else
       qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << file.errorString();
   }
+}
+
+void LayoutJson::clear()
+{
+  bglPaths.clear();
+  materialPaths.clear();
+  fsArchiveFound = false;
+  valid = false;
 }
 
 } // namespace scenery

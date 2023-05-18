@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,7 @@ class LayoutJson
 public:
   void read(const QString& filename);
 
-  void clear()
-  {
-    bglPaths.clear();
-    materialPaths.clear();
-    fsArchiveFound = false;
-  }
+  void clear();
 
   /* Relative paths for all BGL files */
   const QStringList& getBglPaths() const
@@ -52,15 +47,28 @@ public:
     return materialPaths;
   }
 
+  /* Relative paths for all aircraft.cfg files */
+  const QStringList& getAircraftCfgPaths() const
+  {
+    return aircraftCfgPaths;
+  }
+
   /* true if any encrypted file was found. */
   bool hasFsArchive() const
   {
     return fsArchiveFound;
   }
 
+  /* True if file exists and was read */
+  bool isValid() const
+  {
+    return valid;
+  }
+
 private:
-  QStringList bglPaths, materialPaths;
+  QStringList bglPaths, materialPaths, aircraftCfgPaths;
   bool fsArchiveFound = false;
+  bool valid = false;
 };
 
 } // namespace scenery

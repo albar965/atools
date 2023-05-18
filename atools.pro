@@ -215,6 +215,7 @@ HEADERS += \
   src/fs/sc/simconnectuseraircraft.h \
   src/fs/sc/weatherrequest.h \
   src/fs/sc/xpconnecthandler.h \
+  src/fs/scenery/aircraftindex.h \
   src/fs/util/coordinates.h \
   src/fs/util/fsutil.h \
   src/fs/util/morsecode.h \
@@ -277,6 +278,7 @@ SOURCES += \
   src/fs/sc/simconnectuseraircraft.cpp \
   src/fs/sc/weatherrequest.cpp \
   src/fs/sc/xpconnecthandler.cpp \
+  src/fs/scenery/aircraftindex.cpp \
   src/fs/util/coordinates.cpp \
   src/fs/util/fsutil.cpp \
   src/fs/util/morsecode.cpp \

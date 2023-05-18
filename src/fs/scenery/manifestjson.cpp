@@ -62,43 +62,22 @@ void ManifestJson::read(const QString& filename)
       QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
       if(error.error != QJsonParseError::NoError)
         qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
-
-      QJsonObject obj = doc.object();
-
-      contentType = obj.value("content_type").toString();
-      title = obj.value("title").toString();
-      manufacturer = obj.value("manufacturer").toString();
-      creator = obj.value("creator").toString();
-      packageVersion = obj.value("package_version").toString();
-      minGameVersion = obj.value("minimum_game_version").toString();
+      else
+      {
+        QJsonObject obj = doc.object();
+        contentType = obj.value("content_type").toString();
+        title = obj.value("title").toString();
+        manufacturer = obj.value("manufacturer").toString();
+        creator = obj.value("creator").toString();
+        packageVersion = obj.value("package_version").toString();
+        minGameVersion = obj.value("minimum_game_version").toString();
+        valid = true;
+      }
       file.close();
-      valid = true;
     }
     else
       qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << file.errorString();
   }
-}
-
-bool ManifestJson::isScenery() const
-{
-  // "content_type": "SCENERY"
-  return contentType.compare("SCENERY", Qt::CaseInsensitive) == 0;
-}
-
-bool ManifestJson::isAnyScenery() const
-{
-  // "content_type": "AIRCRAFT"
-  // "content_type": "CORE"
-  // "content_type": "INSTRUMENTS"
-  // "content_type": "LIVERY"
-  // "content_type": "MISC"
-  // "content_type": "MISSION"
-  // "content_type": "SCENERY"
-
-  // Cannot discriminate by values since add-on developers use often wrong types
-  // Instead exclude obvious known types
-  return contentType.compare("INSTRUMENTS", Qt::CaseInsensitive) != 0 &&
-         contentType.compare("LIVERY", Qt::CaseInsensitive) != 0;
 }
 
 void ManifestJson::clear()

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -48,11 +48,33 @@ class ManifestJson
 public:
   void read(const QString& filename);
 
-  /* Might be scenery or core. Only excludes known types which are not scenery. */
-  bool isAnyScenery() const;
+  bool isScenery() const
+  {
+    // "content_type": "SCENERY"
+    return contentType.compare("SCENERY", Qt::CaseInsensitive) == 0;
+  }
 
-  /* Checks for type "SCENERY". */
-  bool isScenery() const;
+  /* Might be scenery or core. Only excludes known types which are not scenery. */
+  bool isAnyScenery() const
+  {
+    // "content_type": "AIRCRAFT"
+    // "content_type": "CORE"
+    // "content_type": "INSTRUMENTS"
+    // "content_type": "LIVERY"
+    // "content_type": "MISC"
+    // "content_type": "MISSION"
+    // "content_type": "SCENERY"
+
+    // Cannot discriminate by values since add-on developers use often wrong types
+    // Instead exclude obvious known types
+    return contentType.compare("INSTRUMENTS", Qt::CaseInsensitive) != 0 && contentType.compare("LIVERY", Qt::CaseInsensitive) != 0;
+  }
+
+  bool isAircraft() const
+  {
+    // "content_type": "AIRCRAFT"
+    return contentType.compare("AIRCRAFT", Qt::CaseInsensitive) == 0;
+  }
 
   const QString& getContentType() const
   {
