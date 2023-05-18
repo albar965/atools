@@ -64,8 +64,6 @@ uint qHash(const atools::geo::Pos& pos)
   return static_cast<unsigned int>(pos.getLonX()) ^ static_cast<unsigned int>(pos.getLatY());
 }
 
-
-
 Pos::Pos(const QVariant& longitudeX, const QVariant& latitudeY, const QVariant& alt)
 {
   if(!longitudeX.isNull() && !latitudeY.isNull() && longitudeX.isValid() && latitudeY.isValid())
@@ -156,8 +154,7 @@ bool Pos::operator==(const Pos& other) const
 
 bool Pos::almostEqual(const Pos& other, float epsilon) const
 {
-  return atools::almostEqual(lonX, other.lonX, epsilon) &&
-         atools::almostEqual(latY, other.latY, epsilon);
+  return atools::almostEqual(lonX, other.lonX, epsilon) && atools::almostEqual(latY, other.latY, epsilon);
 }
 
 float Pos::getLatYRad() const
@@ -709,15 +706,15 @@ float Pos::meterForDegreeLonx(float latY)
   else if(absLat < 60.f)
     nmPerDeg = 30.f; // at 60°
   else if(absLat < 65.f)
-    nmPerDeg = 25.f;   // at 65°
+    nmPerDeg = 25.f; // at 65°
   else if(absLat < 70.f)
     nmPerDeg = 21.f; // at 70°
   else if(absLat < 75.f)
-    nmPerDeg = 15.5f;   // at 75°
+    nmPerDeg = 15.5f; // at 75°
   else if(absLat < 80.f)
     nmPerDeg = 10.4f; // at 80°
   else if(absLat < 85.f)
-    nmPerDeg = 5.2f;   // at 85°
+    nmPerDeg = 5.2f; // at 85°
   else
     nmPerDeg = 1.f; // at 85°
 
@@ -821,6 +818,11 @@ void Pos::toCartesian(double& x, double& y, double& z) const
     x = y = z = 0.;
 }
 
+bool PosD::almostEqual(const PosD& other, double epsilon) const
+{
+  return atools::almostEqual(lonX, other.lonX, epsilon) && atools::almostEqual(latY, other.latY, epsilon);
+}
+
 QDebug operator<<(QDebug out, const Pos& pos)
 {
   QDebugStateSaver saver(out);
@@ -828,7 +830,7 @@ QDebug operator<<(QDebug out, const Pos& pos)
   return out;
 }
 
-QDebug operator<<(QDebug out, const DPos& pos)
+QDebug operator<<(QDebug out, const PosD& pos)
 {
   QDebugStateSaver saver(out);
   out.nospace().noquote() << "DPos(" << pos.lonX << "," << pos.latY << ")";
@@ -842,6 +844,18 @@ QDataStream& operator<<(QDataStream& out, const Pos& obj)
 }
 
 QDataStream& operator>>(QDataStream& in, Pos& obj)
+{
+  in >> obj.lonX >> obj.latY >> obj.altitude;
+  return in;
+}
+
+QDataStream& operator<<(QDataStream& out, const PosD& obj)
+{
+  out << obj.lonX << obj.latY << obj.altitude;
+  return out;
+}
+
+QDataStream& operator>>(QDataStream& in, PosD& obj)
 {
   in >> obj.lonX >> obj.latY >> obj.altitude;
   return in;

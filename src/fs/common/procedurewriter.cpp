@@ -1084,8 +1084,8 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
                                                        const QString& sectionCode,
                                                        const QString& subSectionCode, const QString& ident,
                                                        const QString& region,
-                                                       const atools::geo::DPos& pos,
-                                                       const atools::geo::DPos& airportPos)
+                                                       const atools::geo::PosD& pos,
+                                                       const atools::geo::PosD& airportPos)
 {
   if(ident.isEmpty())
     return NavIdInfo();
@@ -1124,7 +1124,7 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
     }
 
     // Fall back to airport position
-    atools::geo::DPos searchPos = pos.isValid() && !pos.isNull() ? pos : airportPos;
+    atools::geo::PosD searchPos = pos.isValid() && !pos.isNull() ? pos : airportPos;
 
     if(searchPos.isValid() && !searchPos.isNull())
     {
@@ -1279,7 +1279,7 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
 }
 
 void ProcedureWriter::findFix(atools::sql::SqlQuery *query, const QString& ident, const QString& region,
-                              const atools::geo::DPos& pos) const
+                              const atools::geo::PosD& pos) const
 {
   query->bindValue(":ident", ident);
   query->bindValue(":region", region.isEmpty() ? "%" : region);

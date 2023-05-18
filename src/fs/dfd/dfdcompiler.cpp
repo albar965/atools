@@ -49,7 +49,7 @@ using atools::sql::SqlRecordList;
 using atools::sql::SqlRecord;
 using atools::geo::Pos;
 using atools::geo::LineString;
-using atools::geo::DPos;
+using atools::geo::PosD;
 using atools::geo::Rect;
 namespace utl = atools::fs::util;
 namespace ageo = atools::geo;
@@ -1283,7 +1283,7 @@ void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
 
     procInput.airportIdent = airportIdent;
     procInput.airportId = airportIndex->getAirportId(airportIdent);
-    procInput.airportPos = ageo::DPos(airportIndex->getAirportPos(airportIdent));
+    procInput.airportPos = ageo::PosD(airportIndex->getAirportPos(airportIdent));
 
     // Fill data for procedure writer
     fillProcedureInput(procInput, query);
@@ -1311,9 +1311,9 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   procInput.aircraftCategory = query.valueStr("aircraft_category", QString());
 
   if(!query.isNull("waypoint_longitude") && !query.isNull("waypoint_latitude"))
-    procInput.waypointPos = DPos(query.valueDouble("waypoint_longitude"), query.valueDouble("waypoint_latitude"));
+    procInput.waypointPos = PosD(query.valueDouble("waypoint_longitude"), query.valueDouble("waypoint_latitude"));
   else
-    procInput.waypointPos = DPos();
+    procInput.waypointPos = PosD();
 
   procInput.turnDir = query.valueStr("turn_direction");
   procInput.pathTerm = query.valueStr("path_termination");
@@ -1323,10 +1323,10 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   // procInput.recdSubCode = query.valueStr("");  // Not available
 
   if(!query.isNull("recommanded_navaid_longitude") && !query.isNull("recommanded_navaid_latitude"))
-    procInput.recdWaypointPos = DPos(query.valueDouble("recommanded_navaid_longitude"),
+    procInput.recdWaypointPos = PosD(query.valueDouble("recommanded_navaid_longitude"),
                                      query.valueDouble("recommanded_navaid_latitude"));
   else
-    procInput.recdWaypointPos = DPos();
+    procInput.recdWaypointPos = PosD();
 
   if(query.isNull("theta"))
     procInput.theta = atools::fs::common::INVALID_FLOAT;
@@ -1380,10 +1380,10 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   // procInput.centerSubCode = query.valueStr("");  // Not available
 
   if(!query.isNull("center_waypoint_longitude") && !query.isNull("center_waypoint_latitude"))
-    procInput.centerPos = DPos(query.valueDouble("center_waypoint_longitude"),
+    procInput.centerPos = PosD(query.valueDouble("center_waypoint_longitude"),
                                query.valueDouble("center_waypoint_latitude"));
   else
-    procInput.centerPos = DPos();
+    procInput.centerPos = PosD();
 
   // procInput.gnssFmsIndicator = query.valueStr("");
 }

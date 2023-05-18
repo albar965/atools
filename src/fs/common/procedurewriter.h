@@ -60,7 +60,7 @@ struct ProcedureInput
   QString context;
   QString airportIdent;
   int airportId;
-  atools::geo::DPos airportPos;
+  atools::geo::PosD airportPos;
 
   /* APPCH, SID, STAR, or RWY (ignored) */
   QString rowCode; // All: 4.1.9.1. Page 55 (70)
@@ -75,7 +75,7 @@ struct ProcedureInput
   QString secCode; // 37      5.4
   QString subCode; // 38      5.5
   QString descCode; // 40-43   5.17
-  atools::geo::DPos waypointPos; // Need accurate positions so we can query for exact values
+  atools::geo::PosD waypointPos; // Need accurate positions so we can query for exact values
 
   QString turnDir; // 44      5.20
   QString pathTerm; // 48-49   5.21
@@ -84,7 +84,7 @@ struct ProcedureInput
   QString recdRegion; // 55-56   5.14
   QString recdSecCode; // 79      5.4
   QString recdSubCode; // 80      5.5
-  atools::geo::DPos recdWaypointPos;
+  atools::geo::PosD recdWaypointPos;
 
   float theta; // 63-66   5.24
   float rho; // 67-70   5.25
@@ -105,7 +105,7 @@ struct ProcedureInput
   QString centerIcaoCode; // 113-114 5.14
   QString centerSecCode; // 115     5.4
   QString centerSubCode; // 116     5.5
-  atools::geo::DPos centerPos;
+  atools::geo::PosD centerPos;
 
   QString gnssFmsIndicator; // 117     5.222
   QString aircraftCategory; // 5.221
@@ -207,7 +207,7 @@ private:
    *  If not valid query the database for navaids */
   NavIdInfo navaidType(const QString& context, const QString& descCode, const QString& sectionCode,
                        const QString& subSectionCode, const QString& ident, const QString& region,
-                       const geo::DPos& pos, const atools::geo::DPos& airportPos);
+                       const geo::PosD& pos, const atools::geo::PosD& airportPos);
   NavIdInfo navaidTypeFix(const ProcedureInput& line);
 
   /* Calculate a database procedure type based on route type */
@@ -228,7 +228,7 @@ private:
   float altitudeFromStr(const QString& altStr);
 
   void findFix(atools::sql::SqlQuery *query, const QString& ident, const QString& region,
-               const atools::geo::DPos& pos) const;
+               const atools::geo::PosD& pos) const;
 
   /* Database ids */
   int curApproachId = 0, curTransitionId = 0, curApproachLegId = 0, curTransitionLegId = 0;

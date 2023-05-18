@@ -154,13 +154,13 @@ public:
   }
 
   /* More accurate optional position as double */
-  atools::geo::DPos getPositionD() const
+  atools::geo::PosD getPositionD() const
   {
     if(properties.contains(PROP_AIRCRAFT_LONX) && properties.contains(PROP_AIRCRAFT_LATY))
-      return atools::geo::DPos(properties.value(PROP_AIRCRAFT_LONX).getValueDouble(),
+      return atools::geo::PosD(properties.value(PROP_AIRCRAFT_LONX).getValueDouble(),
                                properties.value(PROP_AIRCRAFT_LATY).getValueDouble(), position.getAltitude());
     else
-      return atools::geo::DPos(position);
+      return atools::geo::PosD(position);
   }
 
   /* Leaves altitude intact */

@@ -386,43 +386,47 @@ const atools::geo::Pos EMPTY_POS;
 uint qHash(const atools::geo::Pos& pos);
 
 /* Primitive class to transport more accurate values */
-class DPos
+class PosD
 {
 public:
-  DPos()
-    : lonX(INVALID_VALUE), latY(INVALID_VALUE), altitude(0.f)
+  PosD()
+    : lonX(INVALID_VALUE), latY(INVALID_VALUE), altitude(0.)
   {
 
   }
 
-  explicit DPos(const atools::geo::Pos& pos)
+  explicit PosD(const atools::geo::Pos& pos)
   {
     lonX = pos.getLonX();
     latY = pos.getLatY();
     altitude = pos.getAltitude();
   }
 
-  explicit DPos(double longitudeX, double latitudeY, float alt = 0.f)
+  explicit PosD(double longitudeX, double latitudeY, double alt = 0.)
     : lonX(longitudeX), latY(latitudeY), altitude(alt)
   {
 
   }
 
-  DPos(const atools::geo::DPos& other)
+  PosD(const atools::geo::PosD& other)
   {
     this->operator=(other);
   }
 
-  atools::geo::DPos& operator=(const atools::geo::DPos& other)
+  atools::geo::PosD& operator=(const atools::geo::PosD& other)
   {
     lonX = other.lonX;
     latY = other.latY;
+    altitude = other.altitude;
     return *this;
   }
 
+  /* Compare for equal with accuracy depending on epsilon. Does not compare altitude. */
+  bool almostEqual(const atools::geo::PosD& other, double epsilon = DPOS_EPSILON_MIN) const;
+
   atools::geo::Pos asPos() const
   {
-    return atools::geo::Pos(lonX, latY, static_cast<double>(altitude));
+    return atools::geo::Pos(lonX, latY, altitude);
   }
 
   double getLonX() const
@@ -448,22 +452,24 @@ public:
     return lonX == 0. && latY == 0.;
   }
 
-  float getAltitude() const
+  double getAltitude() const
   {
     return altitude;
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const atools::geo::DPos& record);
+  friend QDebug operator<<(QDebug out, const atools::geo::PosD& record);
+  friend QDataStream& operator<<(QDataStream& out, const atools::geo::PosD& obj);
+  friend QDataStream& operator>>(QDataStream& in, atools::geo::PosD& obj);
 
   Q_DECL_CONSTEXPR static double INVALID_VALUE = std::numeric_limits<double>::max();
+  Q_DECL_CONSTEXPR static float DPOS_EPSILON_MIN = std::numeric_limits<float>::epsilon();
 
-  double lonX, latY;
-  float altitude;
+  double lonX, latY, altitude;
 };
 
 /* Invalid position */
-const atools::geo::DPos EMPTY_DPOS;
+const atools::geo::PosD EMPTY_POSD;
 
 } // namespace geo
 } // namespace atools
@@ -471,8 +477,8 @@ const atools::geo::DPos EMPTY_DPOS;
 Q_DECLARE_TYPEINFO(atools::geo::Pos, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(atools::geo::Pos);
 
-Q_DECLARE_TYPEINFO(atools::geo::DPos, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(atools::geo::DPos);
+Q_DECLARE_TYPEINFO(atools::geo::PosD, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(atools::geo::PosD);
 
 Q_DECLARE_TYPEINFO(atools::geo::LineDistance, Q_PRIMITIVE_TYPE);
 
