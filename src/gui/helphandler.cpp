@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,21 +53,21 @@ void HelpHandler::about()
   }
 
 #if defined(WINARCH64)
-  QString applicationVersion = QApplication::applicationVersion() + tr(" 64-bit");
+  QString applicationVersion = QCoreApplication::applicationVersion() + tr(" 64-bit");
 #elif defined(WINARCH32)
-  QString applicationVersion = QApplication::applicationVersion() + tr(" 32-bit");
+  QString applicationVersion = QCoreApplication::applicationVersion() + tr(" 32-bit");
 #else
-  QString applicationVersion = QApplication::applicationVersion();
+  QString applicationVersion = QCoreApplication::applicationVersion();
 #endif
 
   QMessageBox::about(parentWidget,
-                     tr("About %1").arg(QApplication::applicationName()),
+                     tr("About %1").arg(QCoreApplication::applicationName()),
                      tr("<p><b>%1</b></p>%2<p><hr/>Version %3 (revision %4)</p>"
                           "<p>atools Version %5 (revision %6)</p>"
                             "%7"
                             "<hr/>%8"
                               "<hr/>%9<br/>").
-                     arg(QApplication::applicationName()).
+                     arg(QCoreApplication::applicationName()).
                      arg(message).
                      arg(applicationVersion).
                      arg(rev).

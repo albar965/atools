@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -46,9 +46,9 @@ Application::~Application()
 {
   if(restartProcess)
   {
-    qDebug() << Q_FUNC_INFO << "Starting" << QApplication::applicationFilePath();
+    qDebug() << Q_FUNC_INFO << "Starting" << QCoreApplication::applicationFilePath();
     restartProcess = false;
-    bool result = QProcess::startDetached(QApplication::applicationFilePath(), QApplication::arguments());
+    bool result = QProcess::startDetached(QCoreApplication::applicationFilePath(), QCoreApplication::arguments());
     if(result)
       qInfo() << Q_FUNC_INFO << "Success.";
     else
@@ -98,7 +98,7 @@ QString Application::generalErrorMessage()
               "delete all settings and database files of %1 and try again.</b><br/><br/>"
               "<b>If you wish to report this error attach the log and configuration files "
                 "to your report, add all other available information and send it to "
-                "the contact address below.</b><br/>").arg(QApplication::applicationName());
+                "the contact address below.</b><br/>").arg(QCoreApplication::applicationName());
 }
 
 void Application::setTooltipsDisabled(const QList<QObject *>& exceptions)
@@ -122,7 +122,7 @@ void Application::handleException(const char *file, int line, const std::excepti
   qCritical() << "Caught exception in file" << file << "line" << line << "what" << e.what();
 
   if(showExceptionDialog)
-    QMessageBox::critical(nullptr, QApplication::applicationName(),
+    QMessageBox::critical(nullptr, QCoreApplication::applicationName(),
                           tr("<b>Caught exception in file \"%1\" line %2.</b><br/><br/>"
                              "<i>%3</i><br/><br/>"
                              "%4"
@@ -144,7 +144,7 @@ void Application::handleException(const char *file, int line)
   qCritical() << "Caught unknown exception in file" << file << "line" << line;
 
   if(showExceptionDialog)
-    QMessageBox::critical(nullptr, QApplication::applicationName(),
+    QMessageBox::critical(nullptr, QCoreApplication::applicationName(),
                           tr("<b>Caught unknown exception in file %1 line %2.</b><br/><br/>"
                              "%2"
                              "<hr/>%4"

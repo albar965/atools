@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ void LoggingGuiAbortHandler::guiAbortFunction(const QString& msg)
 #if defined(QT_WIDGETS_LIB)
   // Called by signal on main thread context
   if(atools::gui::Application::isShowExceptionDialog())
-    QMessageBox::warning(LoggingHandler::parentWidget, QApplication::applicationName(),
+    QMessageBox::warning(LoggingHandler::parentWidget, QCoreApplication::applicationName(),
                          QObject::tr("<b>A fatal error has occured.</b><br/><br/>"
                                      "%1<br/><br/>"
                                      "%2"

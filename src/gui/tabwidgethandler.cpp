@@ -27,7 +27,6 @@
 #include <QDebug>
 #include <QLabel>
 #include <QMenu>
-#include <QApplication>
 #include <QStyle>
 #include <QHBoxLayout>
 

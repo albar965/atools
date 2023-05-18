@@ -19,6 +19,7 @@
 
 #include "geo/calculations.h"
 
+#include <QCoreApplication>
 #include <QFileInfo>
 
 namespace atools {
@@ -100,6 +101,12 @@ void Flightplan::setDepartureParkingType(QString type)
     departureParkingType = atools::fs::pln::HELIPAD;
   else
     departureParkingType = atools::fs::pln::NO_POS;
+}
+
+QString Flightplan::getDescr() const
+{
+  return QString("%1, %2 created by %3 %4").
+         arg(departureIdent).arg(destinationIdent).arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 }
 
 QString Flightplan::getFilenamePatternExample(const QString& pattern, const QString& suffix, bool html, QString *errorMessage)

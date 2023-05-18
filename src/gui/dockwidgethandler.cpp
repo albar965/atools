@@ -868,7 +868,7 @@ bool DockWidgetHandler::loadWindowState(const QString& filename, bool allowUndoc
     if(allowUndock != allowUndockCentral)
       // A layout file can only be applied properly if the state of the central widget (normal or dock widget)
       // is the same - show warning
-      retval = QMessageBox::question(mainWindow, QApplication::applicationName(),
+      retval = QMessageBox::question(mainWindow, QCoreApplication::applicationName(),
                                      allowUndockCentralErrorMessage, QMessageBox::Yes | QMessageBox::Cancel);
 
     if(retval == QMessageBox::Yes)
