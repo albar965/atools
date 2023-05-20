@@ -279,8 +279,8 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
   // Now check for each sector if conditions are met
   for(int sectorNum = 0; sectorNum < NUM_SECTORS; sectorNum++)
   {
-    const QVector<TempNodeTo>& sectorReachable = sectorsReachable.value(sectorNum);
-    const QVector<TempNodeTo>& sectorOther = sectorsOther.value(sectorNum);
+    const QVector<TempNodeTo> sectorReachable = sectorsReachable.value(sectorNum);
+    const QVector<TempNodeTo> sectorOther = sectorsOther.value(sectorNum);
     int numOtherEntries = std::min(sectorOther.size(), MAX_EDGES_PER_SECTOR);
     int numReachableEntries = std::min(sectorReachable.size(), MAX_EDGES_PER_SECTOR);
 

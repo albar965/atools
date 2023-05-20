@@ -373,7 +373,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
   runways.clear();
 
   // Do a workaround for insufficient runway information
-  const QString& surface = longestRunwaySurfaceMap.value(apt);
+  const QString surface = longestRunwaySurfaceMap.value(apt);
   int numRunwayHard = 0, numRunwaySoft = 0, numRunwayWater = 0;
   if(surface == "H")
     // Assume all are hard if the longest is hard surface

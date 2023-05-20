@@ -35,9 +35,7 @@ void AircraftIndex::loadIndex(const QStringList& basePaths)
     clear();
     loadedBasePaths = basePaths;
 
-#ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << "Loading from" << basePaths << "...";
-#endif
 
     for(const QString& path : basePaths)
     {
@@ -72,10 +70,7 @@ void AircraftIndex::loadIndex(const QStringList& basePaths)
         }
       }
     }
-#ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << "loading done.";
-#endif
-
   }
 }
 

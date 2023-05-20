@@ -415,8 +415,8 @@ void XpAirportWriter::bindTaxiEdge(const QStringList& line, const atools::fs::xp
   if(at(line, te::TYPE) == "runway")
     return;
 
-  const Pos& start = taxiNodes.value(at(line, te::START).toInt());
-  const Pos& end = taxiNodes.value(at(line, te::END).toInt());
+  const Pos start = taxiNodes.value(at(line, te::START).toInt());
+  const Pos end = taxiNodes.value(at(line, te::END).toInt());
   airportRect.extend(start);
   airportRect.extend(end);
 

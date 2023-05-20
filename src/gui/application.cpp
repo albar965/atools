@@ -201,7 +201,7 @@ QString Application::getReportPathHtml()
   for(QString header : keys)
   {
     fileStr.append(tr("<b>%1</b><br/>").arg(header));
-    const QStringList& paths = reportFiles.value(header);
+    const QStringList paths = reportFiles.value(header);
 
     for(const QString& path : paths)
       fileStr += tr("<a href=\"%1\">%2</a><br/>").arg(QUrl::fromLocalFile(path).toString()).arg(atools::elideTextShortLeft(path, 80));
