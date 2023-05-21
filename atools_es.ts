@@ -1108,6 +1108,14 @@ Atrapada excepción
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Creating medium and large airport tables</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom scenery path %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -1867,6 +1875,10 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <source>Post processing Airways</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Counting files for User Included Path ...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>XpSceneryPacks</name>
@@ -2333,6 +2345,10 @@ Night time: %5</source>
     </message>
     <message>
         <source>File &quot;%1&quot; not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>URL &quot;%1&quot; not found</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
