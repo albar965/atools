@@ -1098,7 +1098,7 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
           idents.append(entry.getIdent());
 
         if(!idents.isEmpty())
-          plan.properties.insert(ALTERNATES, idents.join('#'));
+          plan.properties.insert(ALTERNATES, idents.join(PROPERTY_LIST_SEP));
       }
     }
     // Departure position (gate, etc.) =========================================
@@ -1227,6 +1227,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
     atools::util::XmlStream xmlStream(&xmlFile, filename);
     QXmlStreamReader& reader = xmlStream.getReader();
 
+    // Read header ===========================================================
     // Skip all the useless entries until we hit the document
     xmlStream.readUntilElement("SimBase.Document");
     xmlStream.readUntilElement("Descr");
@@ -1312,16 +1313,29 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       }
 
       // Collect MSFS procedure information from all legs ========================================
-      QString sid, sidRunway, sidRunwayDesignator, sidTransition, star, starRunway, starRunwayDesignator,
-              starTransition, approach, approachSuffix, approachRunway, approachRunwayDesignator, approachTransition;
+      QString sid, sidWp, sidRunway, sidRunwayDesignator, star, starWp, starWpPrev, starRunway, starRunwayDesignator,
+              approach, approachSuffix, approachRunway, approachRunwayDesignator, approachTransition;
       for(int i = 0; i < plan.entries.size(); i++)
       {
         FlightplanEntry& entry = plan.entries[i];
+
+        if(!entry.getSid().isEmpty() && plan.entries.value(i + 1).getSid().isEmpty())
+          // This is the last waypoint in a SID transition
+          sidWp = entry.getIdent();
+
+        if(!entry.getStar().isEmpty() && plan.entries.value(i - 1).getStar().isEmpty())
+        {
+          // First waypoint in STAR transition
+          starWp = entry.getIdent();
+
+          // Need to catch previous waypoint as well due to broken SimBrief plans or plans having SID exit equal to STAR entry
+          starWpPrev = plan.entries.value(i - 1).getIdent();
+        }
+
         if(!entry.getSid().isEmpty())
         {
           // Leg is part of a SID ==========
           sid = entry.getSid();
-          sidTransition = entry.getSidTransition();
           sidRunway = entry.getRunwayNumber();
           sidRunwayDesignator = entry.getRunwayDesignator();
         }
@@ -1329,7 +1343,6 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
         {
           // Leg is part of a STAR ==========
           star = entry.getStar();
-          starTransition = entry.getStarTransition();
           starRunway = entry.getRunwayNumber();
           starRunwayDesignator = entry.getRunwayDesignator();
         }
@@ -1353,9 +1366,11 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
 
       // Add MSFS procedure information to properties ========================================
       insertPropertyIf(plan, SID, sid);
+      insertPropertyIf(plan, SIDTRANSWP, sidWp);
       insertPropertyIf(plan, SIDRW, sidRunway + strAt(sidRunwayDesignator, 0));
 
       insertPropertyIf(plan, STAR, star);
+      insertPropertyIf(plan, STARTRANSWP, QStringList({starWp, starWpPrev}).join(PROPERTY_LIST_SEP));
       insertPropertyIf(plan, STARRW, starRunway + strAt(starRunwayDesignator, 0));
 
       // insertPropertyIf(plan, TRANSITIONTYPE, );
@@ -1777,7 +1792,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   }
 
   // Collect alternates from the properties list
-  QStringList alternateIdents = plan.properties.value(ALTERNATES).split('#');
+  QStringList alternateIdents = plan.properties.value(ALTERNATES).split(PROPERTY_LIST_SEP);
   alternateIdents.removeAll(QString());
   if(!alternates.isEmpty() || !alternateIdents.isEmpty())
   {
@@ -2369,7 +2384,7 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
     {
       stream << "ArptAltn=";
 
-      QString alternate = pln.properties.value(ALTERNATES).split('#').value(0);
+      QString alternate = pln.properties.value(ALTERNATES).split(PROPERTY_LIST_SEP).value(0);
       if(!alternate.isEmpty())
         stream << alternate;
       stream << endl;
@@ -4087,7 +4102,7 @@ void FlightplanIO::saveGarminFpl(const atools::fs::pln::Flightplan& plan, const 
       if(waypointList.contains(wptDat))
       {
         // Waypoint already in index
-        const Pos& pos = waypointList.value(wptDat);
+        const Pos pos = waypointList.value(wptDat);
 
         if(!pos.almostEqual(entry.getPosition(), Pos::POS_EPSILON_5M))
         {
@@ -4126,7 +4141,7 @@ void FlightplanIO::saveGarminFpl(const atools::fs::pln::Flightplan& plan, const 
 
       writer.writeTextElement("country-code", region);
 
-      const Pos& pos = waypointList.value(key);
+      const Pos pos = waypointList.value(key);
       writer.writeTextElement("lat", QString::number(pos.getLatY(), 'f', 6));
       writer.writeTextElement("lon", QString::number(pos.getLonX(), 'f', 6));
 

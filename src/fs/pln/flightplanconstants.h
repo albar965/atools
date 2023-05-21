@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -115,39 +115,46 @@ enum RouteType
  * Keys that describe procedures */
 
 /* SID, runway and transiton */
-const QLatin1String SID("sidappr");
-const QLatin1String SIDRW("sidapprrw");
-const QLatin1String SIDTRANS("sidtrans");
-const QLatin1String SIDTYPE("sidtype");
+const QLatin1String SID("sidappr"); /* SID name */
+const QLatin1String SIDRW("sidapprrw"); /* SID runway */
+const QLatin1String SIDTRANS("sidtrans"); /* SID transition name */
+const QLatin1String SIDTRANSWP("sidtranswp"); /* Alternative to above, the endpoint of the SID transition */
+const QLatin1String SIDTYPE("sidtype"); /* Optional type of SID, CUSTOMDEPART for selected runway */
 
 /* STAR, runway and transiton */
-const QLatin1String STAR("star");
-const QLatin1String STARRW("starrw");
-const QLatin1String STARTRANS("startrans");
+const QLatin1String STAR("star"); /* STAR name */
+const QLatin1String STARRW("starrw"); /* STAR runway */
+const QLatin1String STARTRANS("startrans"); /* STAR transition name */
+const QLatin1String STARTRANSWP("startranswp"); /* Alternative to above, the possible startpoints of a STAR transition
+                                                 *  separated by PROPERTY_LIST_SEP */
 
 /* Approach, runway and more */
-const QLatin1String APPROACH("approach");
+const QLatin1String APPROACH("approach"); /* Approach name like waypoint */
 const QLatin1String APPROACH_ARINC("approacharinc"); /* ARINC short name for FMS files */
-const QLatin1String APPROACHTYPE("approachtype");
-const QLatin1String APPROACHRW("approachrw");
-const QLatin1String APPROACHSUFFIX("approachsuffix");
+const QLatin1String APPROACHTYPE("approachtype"); /* Optional type like ILS, RNAV, etc. CUSTOM for selected arrival runway and leg distances. */
+const QLatin1String APPROACHRW("approachrw"); /* Runway for approach */
+const QLatin1String APPROACHSUFFIX("approachsuffix"); /* Suffix like Z for ILS-Z */
 
 /* Approach transiton */
-const QLatin1String TRANSITION("transition");
-const QLatin1String TRANSITIONTYPE("transitiontype");
+const QLatin1String TRANSITION("transition"); /* Transition name */
+const QLatin1String TRANSITIONTYPE("transitiontype"); /* Type: Full, etc. */
 
 /* Name of airway which leads to IAF of a STAR or an approach (-transition) */
 const QLatin1String PROCAIRWAY("procairway");
 
-/* Only for approachtype = CUSTOM */
-const QLatin1String APPROACH_CUSTOM_DISTANCE("approachcustomdistance");
-const QLatin1String APPROACH_CUSTOM_ALTITUDE("approachcustomaltitude");
-const QLatin1String APPROACH_CUSTOM_OFFSET("approachcustomoffset");
+/* Only for APPROACHTYPE = CUSTOM */
+const QLatin1String APPROACH_CUSTOM_DISTANCE("approachcustomdistance"); /* Length or final leg in NM */
+const QLatin1String APPROACH_CUSTOM_ALTITUDE("approachcustomaltitude"); /* Entry altitude at final leg in ft */
+const QLatin1String APPROACH_CUSTOM_OFFSET("approachcustomoffset"); /* Offset angle for approach */
 
-const QLatin1String DEPARTURE_CUSTOM_DISTANCE("departurecustomdistance");
+/* Only for SIDTYPE = CUSTOMDEPART */
+const QLatin1String DEPARTURE_CUSTOM_DISTANCE("departurecustomdistance"); /* Length or final leg in NM */
 
-/* List of alternate airport(s) separated by "#" */
+/* List of alternate airport(s) separated by PROPERTY_LIST_SEP */
 const QLatin1String ALTERNATES("alternates");
+
+/* Separator character for alternate and transition waypoint lists */
+const QLatin1Char PROPERTY_LIST_SEP('#');
 
 /* Copies all related properties and deletes the ones in "to" that do not exist in "from". */
 void copySidProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
@@ -178,6 +185,7 @@ const float INVALID_HEADING = std::numeric_limits<float>::max();
 
 /* Invalid position altitude for parking and departure */
 const float INVALID_ALTITUDE = std::numeric_limits<float>::max();
+
 } // namespace pln
 } // namespace fs
 } // namespace atools

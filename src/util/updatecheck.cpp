@@ -128,7 +128,7 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
     QString line = rawLine.trimmed();
 
     // Skip comments and empty lines
-    if(line.isEmpty() || line.startsWith("#"))
+    if(line.isEmpty() || line.startsWith('#'))
     {
       changelogContinuation = false;
       continue;
