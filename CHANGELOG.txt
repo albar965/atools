@@ -4,6 +4,38 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.15
+
+* Added option and properties to determine SID/STAR transitions by last or first waypoint when
+  loading flight plan.
+* Added reading of aircraft type designator from MSFS aircraft configuration files.
+* Added aircraft index to fetch additional values from MSFS aircraft.cfg files.
+* Added properties to SimConnectAircraft: More accurate position and aircraft.cfg file for MSFS.
+* Work on binary Props and DPos. Explicit for Props constructors and fixed warnings. Improved class DPos.
+* Now allowing comma separated coordinate pairs for decimal coordinate formats.
+* Added aircraft loaded event to SimConnectHandler
+* Added helicopter to SimConnectAircraft::isFlying and SimConnectData::buildDebugForPosition
+* More cleanup for MSFS airport names. Now removing space at end and beginning of all names.
+* Fixed no signal on current index sent when restoring editable combo boxes.
+* Fixed issue where MSFS navdata update was recognized despite excluded folders
+* Fixes in userpoint and logdata import and export.
+* Added methods to cleanup userpoint database.
+* Userpoint CSV import is now one transaction (undo) for all selected files.
+* Fixed country names appearing as language keys when compiling MSFS.
+* Now optionally disabling ok button in choice dialog if required checkboxes are not set.
+* Changed ids from list to set in DataManagerBase.
+* Added option to read extra scenery library folder. albar965/littlenavmap#959
+* Fixed crash in dialog class if checkbox is not set. Now allowing empty settingsKey for all methods.
+* Now adding start positions for runways in DFD compiler to allow departure parking selection.
+* Corrected detection and reading of Navigraph navdata update in MSFS.
+  Now reading airport add-ons from update. Navdata and procedures are ignored. Wrongly excluded
+  package is now read. Speed up for reading scenery library by ignoring unused procedures from
+  navdata update. albar965/littlenavmap#1019
+* X-Plane 12 manually corrected localizers are now read.
+* Fix for missing aircraft model translations since MSFS SU12.
+
+===============================================================================
+
 # Version 3.8.14
 
 * More parameters in buildDebugForPosition
