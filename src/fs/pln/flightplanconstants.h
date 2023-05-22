@@ -112,8 +112,9 @@ enum RouteType
 /*
  * Common key that are used int flight plan properties that are not supported in PLN.
  * Used to transport more optional details to the export methods.
- * Keys that describe procedures */
+ * Keys should never be empty to avoid issues when loading procedures. */
 
+/* Keys that describe procedures */
 /* SID, runway and transiton */
 const QLatin1String SID("sidappr"); /* SID name */
 const QLatin1String SIDRW("sidapprrw"); /* SID runway */

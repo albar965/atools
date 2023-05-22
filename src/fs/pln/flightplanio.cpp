@@ -1370,7 +1370,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       insertPropertyIf(plan, SIDRW, sidRunway + strAt(sidRunwayDesignator, 0));
 
       insertPropertyIf(plan, STAR, star);
-      insertPropertyIf(plan, STARTRANSWP, QStringList({starWp, starWpPrev}).join(PROPERTY_LIST_SEP));
+      insertPropertyIf(plan, STARTRANSWP, atools::strJoin(QStringList({starWp, starWpPrev}), PROPERTY_LIST_SEP));
       insertPropertyIf(plan, STARRW, starRunway + strAt(starRunwayDesignator, 0));
 
       // insertPropertyIf(plan, TRANSITIONTYPE, );

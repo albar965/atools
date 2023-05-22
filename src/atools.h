@@ -80,6 +80,11 @@ bool strContains(const QString& name, const QStringList& list);
 /* Concatenates all non empty strings in the list with the given separator */
 QString strJoin(const QStringList& list, const QString& sep);
 
+inline QString strJoin(const QStringList& list, QChar sep)
+{
+  return strJoin(list, QString(sep));
+}
+
 /* Concatenates all non empty strings in the list with the given separator and uses lastSep for separation.
  *  Example: strJoin({"A", "B", "C"}, ", ", " and ") => "A, B and C" */
 QString strJoin(const QStringList& list, const QString& sep, const QString& lastSep, const QString& suffix = QString());
