@@ -1,3 +1,9 @@
+Note: These build instructions are outdated.
+Look at the Little Navmap Github Wiki for constantly updated instructions:
+https://github.com/albar965/littlenavmap/wiki/Compiling
+
+==============================================================================
+
 # Build Instructions
 
 Qt development packages of Core, Widgets, XML and SQL are needed with minimum version 5.6.
