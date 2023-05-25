@@ -33,6 +33,8 @@ This text is partially Markdown, hence sometimes strange formatting.
   navdata update. albar965/littlenavmap#1019
 * X-Plane 12 manually corrected localizers are now read.
 * Fix for missing aircraft model translations since MSFS SU12.
+* Corrected overzealous filter for MSFS airport dummy structures which removed add-on helipads or
+  airports. Example add-on: `willicopta-spital-la-chaux-de-fonds-lsh9` which did not show up.
 
 ===============================================================================
 

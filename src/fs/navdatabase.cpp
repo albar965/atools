@@ -1201,13 +1201,16 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
       QFileInfo fileinfo(area.getLocalPath());
       if(!fileinfo.isAbsolute())
       {
-        if(area.isCommunity())
+        if(area.isIncluded())
+          // Include from GUI has full path
+          fileinfo.setFile(area.getLocalPath());
+        else if(area.isCommunity())
           fileinfo.setFile(options->getMsfsCommunityPath() % SEP % area.getLocalPath());
         else if(area.isAddOn())
           fileinfo.setFile(options->getMsfsOfficialPath() % SEP % area.getLocalPath());
       }
 
-      if(options->getSimulatorType() == FsPaths::MSFS && (area.isAddOn() || area.isCommunity()))
+      if(options->getSimulatorType() == FsPaths::MSFS && (area.isAddOn() || area.isCommunity() || area.isIncluded()))
       {
         // Load package specific material library for MSFS
         materialLib.clear();
@@ -1685,7 +1688,9 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
       bool msfsFiles = QDir(addonDir.canonicalFilePath()).entryList({"layout.json", "manifest.json"}, QDir::Files, QDir::Name).size() == 2;
       if(options->getSimulatorType() == FsPaths::MSFS && msfsFiles)
       {
-        cfg.appendArea(SceneryArea(nextNum + i, tr("Custom scenery path %1").arg(num), addonDir.canonicalFilePath()));
+        SceneryArea area(nextNum + i, tr("Custom scenery path %1").arg(num), addonDir.canonicalFilePath());
+        area.setIncluded(true);
+        cfg.appendArea(area);
         added = true;
 #ifdef DEBUG_INFORMATION
         qDebug() << Q_FUNC_INFO << "Added custom include MSFS" << cfg.getAreas().last();
@@ -1694,7 +1699,9 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
       else if(!msfsFiles && !QDir(addonDir.canonicalFilePath() + SEP + "scenery").entryList({"*.bgl"}, QDir::Files, QDir::Name).isEmpty())
       {
         // The FSX/P3D addon directory needs a sub-folder "scenery" with one or more BGL files
-        cfg.appendArea(SceneryArea(nextNum + i, tr("Custom scenery path %1").arg(num), addonDir.canonicalFilePath()));
+        SceneryArea area(nextNum + i, tr("Custom scenery path %1").arg(num), addonDir.canonicalFilePath());
+        area.setIncluded(true);
+        cfg.appendArea(area);
         added = true;
 
 #ifdef DEBUG_INFORMATION

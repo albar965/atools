@@ -101,12 +101,9 @@ void AirportWriter::writeObject(const Airport *type)
   const scenery::SceneryArea& currentArea = sceneryAreaWriter->getCurrentArea();
 
   bool msfsNavdata = currentArea.isNavdata();
+  bool msfs = getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS;
 
   int predId = airportIdByIdent(ident, msfsNavdata /* warn */);
-
-  if(!msfsNavdata && (type->isMsfsPoiDummy() && predId == -1) && getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
-    // Skip empty POI dummy airports in MSFS but not if there is a stock airport with the same name
-    return;
 
   if(ident.isEmpty())
     throw atools::Exception("Found airport without ident");
@@ -114,6 +111,7 @@ void AirportWriter::writeObject(const Airport *type)
   BglFileWriter *bglFileWriter = dw.getBglFileWriter();
   if(msfsNavdata)
   {
+    // =========================================================================
     // Do a shortcut for MSFS dummies which transport only procedures and COM
     // Instead of writing a new airport simply add COM and procedures
 
@@ -141,26 +139,31 @@ void AirportWriter::writeObject(const Airport *type)
   }
   else
   {
-    bool isRealAddon = false, // Add-ons need deleteprocessor action
-         isAddon = false; // This flag indicates if the airport is hightlighted as an add-on
+    // Normal stock or add-on airport =========================================
+    if(msfs && predId == -1 && type->isMsfsPoiDummy(currentArea.isCommunity() || currentArea.isIncluded()))
+      // Skip empty POI dummy airports in MSFS but not if there is a stock airport with the same name
+      return;
 
-    if(getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
+    bool realAddon = false, // Add-ons need deleteprocessor action
+         addon = false; // This flag indicates if the airport is hightlighted as an add-on
+
+    if(msfs)
       // MSFS add-on status is set in the scenery area
-      isRealAddon = currentArea.isCommunity() || currentArea.isAddOn();
+      realAddon = currentArea.isCommunity() || currentArea.isIncluded() || currentArea.isAddOn();
     else
       // Check if this is an addon airport - if yes start the delete processor
       // Airport is add-on if it is not in the default scenery and not excluded from add-on recognition
-      isRealAddon = getOptions().isAddonLocalPath(sceneryAreaWriter->getCurrentSceneryLocalPath());
+      realAddon = getOptions().isAddonLocalPath(sceneryAreaWriter->getCurrentSceneryLocalPath());
 
     // This is the shown add-on status - can be changed by filter in GUI
-    isAddon = getOptions().isAddonGui(QFileInfo(bglFileWriter->getCurrentFilepath())) && isRealAddon;
+    addon = getOptions().isAddonGui(QFileInfo(bglFileWriter->getCurrentFilepath())) && realAddon;
 
     // Third party navdata update or MSFS stock airport in official - not an addon
     if(currentArea.isNavigraphNavdata())
-      isAddon = false;
+      addon = false;
 
 #ifdef DEBUG_INFORMATION
-    if(isRealAddon && type->getDeleteAirports().isEmpty())
+    if(realAddon && type->getDeleteAirports().isEmpty())
       qInfo() << "Addon airport without delete record" << ident;
 #endif
 
@@ -179,7 +182,7 @@ void AirportWriter::writeObject(const Airport *type)
 
     if(getOptions().isDeletes())
     {
-      if(delAp != nullptr || isRealAddon)
+      if(delAp != nullptr || realAddon)
         // Now delete the stock/default airport
         deleteProcessor.preProcessDelete();
     }
@@ -227,7 +230,7 @@ void AirportWriter::writeObject(const Airport *type)
 
     bindBool(":is_military", atools::fs::util::isNameMilitary(name));
 
-    bindBool(":is_addon", isAddon);
+    bindBool(":is_addon", addon);
     bindBool(":is_3d", 0);
 
     bind(":num_com", type->getComs().size());
@@ -285,7 +288,7 @@ void AirportWriter::writeObject(const Airport *type)
          bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGaRamp()));
     bind(":largest_parking_gate", bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGate()));
 
-    bind(":rating", type->calculateRating(isAddon));
+    bind(":rating", type->calculateRating(addon));
 
     bind(":scenery_local_path", sceneryLocalPaths.join(", "));
     bind(":bgl_filename", bglFilenames.join(", "));
@@ -373,7 +376,7 @@ void AirportWriter::writeObject(const Airport *type)
           // Now delete the stock/default airport
           deleteProcessor.postProcessDelete();
       }
-      else if(isRealAddon)
+      else if(realAddon)
         deleteProcessor.postProcessDelete();
     }
   }

@@ -350,7 +350,7 @@ public:
   }
 
   /* true if this is a MSFS dummy POI airport without runways */
-  bool isMsfsPoiDummy() const;
+  bool isMsfsPoiDummy(bool addon) const;
 
   int calculateRating(bool isAddon) const;
 

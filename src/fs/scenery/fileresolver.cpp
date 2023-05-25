@@ -59,7 +59,10 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     {
       // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
 
-      if(area.isCommunity())
+      if(area.isIncluded())
+        // Include from GUI has full path
+        sceneryAreaDirStr = areaLocalPathStr;
+      else if(area.isCommunity())
         // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
         sceneryAreaDirStr = options.getMsfsCommunityPath() + SEP + areaLocalPathStr;
       else

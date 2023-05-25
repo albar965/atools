@@ -218,11 +218,22 @@ public:
     packageVersion = value;
   }
 
+  /* Included from GUI by path */
+  bool isIncluded() const
+  {
+    return included;
+  }
+
+  void setIncluded(bool value)
+  {
+    included = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
 
   int areaNumber = 0, textureId = 0, layer = 0;
-  bool active = false, required = false, highPriority = false, addOn = false, community = false,
+  bool active = false, required = false, highPriority = false, addOn = false, community = false, included = false,
        navigraphNavdata = false, navdata = false; /* Only MSFS */
   QString title, remotePath, localPath, exclude,
           minGameVersion, packageVersion; // Only MSFS
