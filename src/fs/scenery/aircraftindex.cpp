@@ -91,7 +91,9 @@ QString AircraftIndex::getIcaoTypeDesignator(const QString& aircraftCfgFilepath)
     if(file.open(QIODevice::ReadOnly))
     {
       QTextStream stream(&file);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
       stream.setCodec("UTF-8");
+#endif
       stream.setAutoDetectUnicode(true);
 
       while(!stream.atEnd())
