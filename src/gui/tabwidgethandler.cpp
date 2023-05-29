@@ -30,6 +30,10 @@
 #include <QStyle>
 #include <QHBoxLayout>
 
+#if defined(Q_OS_MACOS)
+#include <QApplication>
+#endif
+
 const static char ID_PROPERTY[] = "tabid";
 
 namespace atools {
