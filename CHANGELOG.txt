@@ -36,6 +36,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Corrected overzealous filter for MSFS airport dummy structures which removed add-on helipads or
   airports. Example add-on: `willicopta-spital-la-chaux-de-fonds-lsh9` which did not show up.
 * Fixed issue with excessive fight plan altitude on loading for formats which do not support this.
+* Now attempting to load SID and STAR from FSC PLN files.
 
 ===============================================================================
 

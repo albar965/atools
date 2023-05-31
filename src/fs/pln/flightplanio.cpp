@@ -651,6 +651,60 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
 {
   qDebug() << Q_FUNC_INFO << filename;
   // [FSCFP]
+  // DepartAPCode=KLAS
+  // DepartNum=0
+  // DepartID=26R
+  // DepartType=Rwy
+  // DestAPCode=KSAN
+  // RouteType=1
+  // SID=RADYR2 (26R)
+  // STAR=LUCKI1
+  // Transition=
+  // WP=1,Int,RUDYY,RUDYY,36.068786,-115.258975,0.000000,262.596679,11.200000,3,0,0,,0,0,0,RADYR2
+  // WP=2,Int,SELLZ,SELLZ,35.992428,-115.293894,0.000000,200.305925,11.200000,3,0,0,,0,0,0,RADYR2
+  // WP=3,Int,RADYR,RADYR,35.609006,-115.387875,0.000000,191.271261,11.200000,3,0,0,,0,0,0,RADYR2
+  // WP=4,Int,DOYYL,DOYYL,35.119733,-115.353233,0.000000,176.685433,11.100000,3,0,0,,0,0,0,RADYR2
+  // WP=5,Int,ZELMA,ZELMA,34.783331,-115.329864,0.000000,176.734506,11.000000,3,0,0,,0,0,0,RADYR2
+  // WP=6,Int,JOTNU,JOTNU,34.325864,-115.529525,0.000000,199.827832,11.000000,3,0,0,,0,0,0,RADYR2
+  // WP=7,Int,LVELL,LVELL,34.210383,-115.614792,0.000000,211.415245,11.000000,3,0,0,,0,0,0,RADYR2
+  // WP=8,Int,LVELL,LVELL,34.210383,-115.614792,0.000000,0.000000,11.000000,2,0,0,,0,0,0
+  // WP=9,Int,CHADT,CHADT,33.921803,-115.750906,0.000000,201.359438,10.900000,2,0,0,,0,0,0,LUCKI1
+  // WP=10,Int,CABIC,CABIC,33.771392,-115.824642,0.000000,202.174321,10.900000,2,0,0,,0,0,0,LUCKI1
+  // WP=11,Int,MOMAR,MOMAR,33.515036,-115.944483,0.000000,201.253645,10.900000,2,0,0,,0,0,0,LUCKI1
+  // WP=12,Int,DSURT,DSURT,33.337500,-116.250000,0.000000,235.236049,11.000000,2,0,0,,0,0,0,LUCKI1
+  // WP=13,Int,TRIXI,TRIXI,33.005556,-116.444167,0.000000,206.140245,11.000000,2,0,0,,0,0,0,LUCKI1
+  // WP=14,Int,HSKER,HSKER,32.844444,-116.606667,0.000000,220.295916,11.000000,2,0,0,,0,0,0,LUCKI1
+  // WP=15,Int,BARET,BARET,32.774108,-116.677464,0.000000,220.249993,11.000000,2,0,0,,0,0,0,LUCKI1
+  // WP=16,Int,HNAHH,HNAHH,32.739917,-116.749694,0.000000,240.645456,11.000000,2,0,0,,0,0,0,LUCKI1
+  // WP=17,Int,LUCKI,LUCKI,32.707500,-116.818056,0.000000,240.610457,11.000000,2,0,0,,0,0,0,LUCKI1
+  // WP=18,Int,LYNDI,LYNDI,32.688222,-116.879861,0.000000,249.679288,11.000000,2,0,0,,0,0,0,LUCKI1
+
+  // [FSCFP]
+  // DepartAPCode=VHHH
+  // DepartNum=0
+  // DepartID=07R
+  // DepartType=Rwy
+  // DestAPCode=ZSHC
+  // RouteType=1
+  // SID=BEKO3A (07R)
+  // STAR=ELN81A
+  // Transition=
+  // WP=1,Int,PORPA,PORPA,22.335861,114.021194,0.000000,74.664997,-3.300000,3,0,0,,0,0,0,BEKO3A
+  // WP=2,Fix,TD,TUNG LUNG,22.247894,114.293139,116.100000,109.218089,-3.300000,3,0,0,,0,0,0,BEKO3A
+  // WP=3,Int,ATENA,ATENA,22.411069,114.386633,0.000000,27.905991,-3.400000,3,0,0,,0,0,0,BEKO3A
+  // WP=4,Int,BEKOL,BEKOL,22.543333,114.133333,0.000000,299.518842,-3.400000,3,0,0,,0,0,0,BEKO3A
+  // WP=5,Int,IDUMA,IDUMA,22.896389,113.951667,0.000000,334.644805,-3.400000,1,0,0,,0,0,0,A461,0,0
+  // ...
+  // WP=18,Int,ELNEX,ELNEX,29.631667,119.490000,0.000000,47.904800,-5.800000,2,0,0,,0,0,0,A599,0,0
+  // WP=19,Int,UGAGO,UGAGO,29.627500,119.650556,0.000000,91.670526,-5.800000,2,0,0,,0,0,0,ELN81A
+  // WP=20,Int,MOLGU,MOLGU,29.850000,119.966667,0.000000,50.892435,-5.900000,2,0,0,,0,0,0,ELN81A
+  // WP=21,Int,HC309,HC309,29.898056,120.067778,0.000000,61.247184,-5.900000,2,0,0,,0,0,0,ELN81A
+  // WP=22,Int,HC307,HC307,29.996111,120.275000,0.000000,61.309367,-6.000000,2,0,0,,0,0,0,ELN81A
+  // WP=23,Int,HC306,HC306,30.125833,120.566389,0.000000,62.707069,-6.100000,2,0,0,,0,0,0,ELN81A
+  // WP=24,Int,HC305,HC305,30.217500,120.774167,0.000000,62.912000,-6.100000,2,0,0,,0,0,0,ELN81A
+  // WP=25,Int,HC304,HC304,30.282083,120.736611,0.000000,333.337497,-6.100000,2,0,0,,0,0,0,ELN81A
+
+  // [FSCFP]
   // DepartAPCode=LIDT
   // DepartNum=0
   // DepartID=18
@@ -671,50 +725,44 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
   {
     QTextStream stream(&plnFile);
     FlightplanEntry departure, destination;
+    QString sidAndRw, starAndRw;
 
     while(!stream.atEnd())
     {
       QString line = stream.readLine().simplified();
       if(!line.isEmpty())
       {
-        QString key = line.section('=', 0, 0).toLower().trimmed();
-        QStringList values = line.section('=', 1).simplified().split(",");
+        QString key = line.section('=', 0, 0).toUpper().trimmed();
+        QString value = line.section('=', 1).simplified();
 
-        if(values.isEmpty())
+        if(value.isEmpty())
           continue;
 
-        if(key == "departapcode")
+        if(key == "DEPARTAPCODE")
         {
-          departure.setIdent(values.constFirst());
+          departure.setIdent(value);
           departure.setWaypointType(atools::fs::pln::entry::AIRPORT);
         }
-        else if(key == "destapcode")
+        else if(key == "DESTAPCODE")
         {
-          destination.setIdent(values.constFirst());
+          destination.setIdent(value);
           destination.setWaypointType(atools::fs::pln::entry::AIRPORT);
         }
-        // Ignored keys
-        // else if(key == "DepartNum")
-        // else if(key == "DepartID")
-        // else if(key == "DepartType")
-        // else if(key == "SID")
-        // else if(key == "STAR")
-        // else if(key == "Transition")
-        else if(key == "wp")
+        else if(key == "SID")
+          sidAndRw = value.remove('(').remove(')').simplified(); // SID=RADYR2 (26R)
+        else if(key == "STAR")
+          starAndRw = value.remove('(').remove(')').simplified(); // STAR=ELN81A
+        else if(key == "WP")
         {
+          QStringList values = value.split(",");
           QString type = values.value(1).toLower();
           QString ident = values.value(2);
-          QString name = values.value(3);
-          QString airway = values.value(16);
 
           FlightplanEntry entry;
           entry.setIdent(ident);
-          entry.setName(name);
-          entry.setAirway(airway);
-
-          float latY = values.value(4).toFloat();
-          float lonX = values.value(5).toFloat();
-          entry.setPosition(Pos(lonX, latY));
+          entry.setName(values.value(3));
+          entry.setAirway(values.value(16)); // Either airway or procedure - store procedure temporarily in airway field
+          entry.setPosition(Pos(values.value(5).toFloat(), values.value(4).toFloat()));
 
           if(type == "fix" || type == "int")
             entry.setWaypointType(atools::fs::pln::entry::WAYPOINT);
@@ -723,19 +771,101 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
 
           plan.entries.append(entry);
         }
+        // Ignored keys
+        // else if(key == "DEPARTNUM")
+        // else if(key == "DEPARTID")
+        // else if(key == "DEPARTTYPE")
+        // else if(key == "TRANSITION")
+      }
+    } // while(!stream.atEnd())
+
+    // Now determine SID, runway and entries to delete ==========================================
+
+    // Remember procedure entries to delete
+    QVector<int> procedureEntryIndexes;
+    if(!sidAndRw.isEmpty())
+    {
+      QString sid = sidAndRw.section(' ', 0, 0);
+      QString rw = sidAndRw.section(' ', 1, 1);
+      QString transWp;
+      bool sidFound = false;
+
+      // Check from start to end - entries do not contain departure airport yet
+      for(int i = 0; i < plan.entries.size(); i++)
+      {
+        const FlightplanEntry& entry = plan.entries.at(i);
+        if(entry.getAirway() == sid)
+        {
+          // Airway field matches SID name in header
+          procedureEntryIndexes.append(i);
+          sidFound = true;
+        }
+        else
+        {
+          // End of matching entries - get waypoint name from previous entry for probable transition
+          transWp = plan.entries.value(i - 1).getIdent();
+          break;
+        }
+      }
+
+      if(sidFound)
+      {
+        insertPropertyIf(plan, SID, sid);
+        insertPropertyIf(plan, SIDRW, rw);
+        insertPropertyIf(plan, SIDTRANSWP, transWp);
       }
     }
 
+    // Now determine STAR, runway and entries to delete ==========================================
+    if(!starAndRw.isEmpty())
+    {
+      QString star = starAndRw.section(' ', 0, 0);
+      QString rw = starAndRw.section(' ', 1, 1);
+      QString transWp;
+      bool starFound = false;
+
+      // Check starting from end - entries do not contain destination airport yet
+      for(int i = plan.entries.size() - 1; i >= 0; i--)
+      {
+        const FlightplanEntry& entry = plan.entries.at(i);
+        if(entry.getAirway() == star)
+        {
+          // Airway field matches STAR name in header
+          procedureEntryIndexes.append(i);
+          starFound = true;
+        }
+        else
+        {
+          // End of matching entries - get waypoint name for probable transition
+          transWp = plan.entries.value(i).getIdent();
+          break;
+        }
+      }
+
+      if(starFound)
+      {
+        insertPropertyIf(plan, STAR, star);
+        insertPropertyIf(plan, STARRW, rw);
+        insertPropertyIf(plan, STARTRANSWP, transWp);
+      }
+    }
+
+    if(!procedureEntryIndexes.isEmpty())
+    {
+      // Sort, remove duplicates and delete entries starting from end of list
+      std::sort(procedureEntryIndexes.begin(), procedureEntryIndexes.end());
+      procedureEntryIndexes.erase(std::unique(procedureEntryIndexes.begin(), procedureEntryIndexes.end()), procedureEntryIndexes.end());
+      for(int i = procedureEntryIndexes.size() - 1; i >= 0; i--)
+        plan.entries.removeAt(procedureEntryIndexes.at(i));
+    }
+
+    // Add departure and start airports
     plan.entries.prepend(departure);
     plan.entries.append(destination);
-
-    plnFile.close();
 
     plan.flightplanType = IFR;
     plan.cruisingAlt = 0.f; // Use either GUI value or calculate from airways
     plan.adjustDepartureAndDestination();
-
-    plnFile.close();
   }
   else
     throw Exception(errorMsg.arg(filename).arg(plnFile.errorString()));
