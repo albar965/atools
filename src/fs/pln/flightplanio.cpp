@@ -407,7 +407,7 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
     plan.entries.append(destination);
 
     flpFile.close();
-    plan.flightplanType = IFR;
+    plan.flightplanType = NO_TYPE;
     plan.cruisingAlt = 0.f; // Use either GUI value or calculate from airways
 
     plan.adjustDepartureAndDestination();
@@ -636,7 +636,7 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
         insertPropertyIf(plan, STARRW, destinationRwy);
     }
 
-    plan.flightplanType = IFR;
+    plan.flightplanType = NO_TYPE;
     plan.cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
     plan.adjustDepartureAndDestination();
     plan.assignAltitudeToAllEntries();
@@ -863,7 +863,7 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
     plan.entries.prepend(departure);
     plan.entries.append(destination);
 
-    plan.flightplanType = IFR;
+    plan.flightplanType = NO_TYPE;
     plan.cruisingAlt = 0.f; // Use either GUI value or calculate from airways
     plan.adjustDepartureAndDestination();
   }
@@ -4472,7 +4472,7 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
       } // if(atools::contains(value,  ... else
     } // for(int i = 0; i < valueList.size(); i++)
 
-    plan.flightplanType = IFR;
+    plan.flightplanType = NO_TYPE;
     plan.adjustDepartureAndDestination();
     plan.assignAltitudeToAllEntries();
 
@@ -4604,7 +4604,7 @@ void FlightplanIO::loadGarminFplInternal(atools::fs::pln::Flightplan& plan, atoo
       xmlStream.skipCurrentElement(false /* warn */);
   }
 
-  plan.flightplanType = IFR;
+  plan.flightplanType = NO_TYPE;
   plan.cruisingAlt = 0; // Use altitude as set in GUI
   plan.assignAltitudeToAllEntries();
   plan.adjustDepartureAndDestination();

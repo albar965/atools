@@ -37,6 +37,7 @@ This text is partially Markdown, hence sometimes strange formatting.
   airports. Example add-on: `willicopta-spital-la-chaux-de-fonds-lsh9` which did not show up.
 * Fixed issue with excessive fight plan altitude on loading for formats which do not support this.
 * Now attempting to load SID and STAR from FSC PLN files.
+* Now omitting flight plan type (IFR/VFR) for flight plan formats not supporting this.
 
 ===============================================================================
 
