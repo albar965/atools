@@ -58,9 +58,6 @@ static const QRegularExpression FS9_MATCH(
   "(^appversion\\s*=|^title\\s*=|^description\\s*=|^type\\s*=|"
   "^routetype\\s*=|^cruising_altitude\\s*=|^departure_id\\s*=|^destination_id\\s*=)");
 
-const static float ALTITUDE_MIN = -2000.f;
-const static float ALTITUDE_MAX = 100000.f; // GUI altitude limit
-
 /* Format structs for the Majestic Software MJC8 Q400.
  * Structs need to be packed to avoid padding. */
 namespace fpr {
@@ -568,7 +565,7 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
         {
           bool altOk;
           float altitude = list.at(2 + fieldOffset).toFloat(&altOk);
-          if(!altOk || altitude < ALTITUDE_MIN || altitude > ALTITUDE_MAX)
+          if(!altOk || altitude < atools::fs::pln::FLIGHTPLAN_ALTITUDE_MIN || altitude > atools::fs::pln::FLIGHTPLAN_ALTITUDE_MAX)
           {
             // Avoid excessive altitudes
             qWarning() << Q_FUNC_INFO << "Invalid altitude";
@@ -1512,7 +1509,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
 
             bool altOk;
             float altitude = wpalt.toFloat(&altOk);
-            if(!altOk || altitude < ALTITUDE_MIN || altitude > ALTITUDE_MAX)
+            if(!altOk || altitude < atools::fs::pln::FLIGHTPLAN_ALTITUDE_MIN || altitude > atools::fs::pln::FLIGHTPLAN_ALTITUDE_MAX)
             {
               // Avoid excessive altitudes
               qWarning() << Q_FUNC_INFO << "Invalid altitude";

@@ -41,6 +41,9 @@ const QString SHORT(DEPARTIDENT + " " + DESTIDENT);
 const QString LONG(PLANTYPE + " " + DEPARTNAME + " (" + DEPARTIDENT + ") to " + DESTNAME + " (" + DESTIDENT + ")");
 }
 
+const static float FLIGHTPLAN_ALTITUDE_MIN = -2000.f;
+const static float FLIGHTPLAN_ALTITUDE_MAX = 100000.f; // GUI altitude limit
+
 namespace entry {
 
 enum WaypointType
