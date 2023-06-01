@@ -637,7 +637,18 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
     }
 
     plan.flightplanType = NO_TYPE;
-    plan.cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
+
+    // Check if there are waypoints with zero altitude to avoid invalid maximum in broken plans
+    for(int i = 1; i < plan.entries.size() - 1; i++)
+    {
+      if(atools::almostEqual(plan.entries.at(i).getAltitude(), 0.f))
+      {
+        maxAlt = 0.f; // Use value from GUI
+        break;
+      }
+    }
+    plan.cruisingAlt = atools::roundToInt(maxAlt); // Use value from GUI
+
     plan.adjustDepartureAndDestination();
     plan.assignAltitudeToAllEntries();
 
@@ -1713,7 +1724,8 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
 
     xmlFile.close();
 
-    plan.cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
+    plan.flightplanType = atools::fs::pln::NO_TYPE;
+    plan.cruisingAlt = atools::roundToInt(maxAlt); // Use value from GUI
     plan.adjustDepartureAndDestination();
     plan.assignAltitudeToAllEntries();
   }
@@ -3696,8 +3708,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       // 11 - Fix
       // 28 - Lat/Lon Position
       QString ident = entry.getIdent();
-      if(entry.getWaypointType() == atools::fs::pln::entry::USER ||
-         entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+      if(entry.getWaypointType() == atools::fs::pln::entry::USER || entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
       {
         // Type column user ================
         stream << "28 ";
@@ -4473,6 +4484,7 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
     } // for(int i = 0; i < valueList.size(); i++)
 
     plan.flightplanType = NO_TYPE;
+    plan.cruisingAlt = 0;
     plan.adjustDepartureAndDestination();
     plan.assignAltitudeToAllEntries();
 

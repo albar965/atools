@@ -313,6 +313,7 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
 
+  /* Required to fill this structure */
   friend class atools::fs::pln::FlightplanIO;
 
   const QString& departNameOrIdent() const
