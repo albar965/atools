@@ -408,7 +408,7 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
 
     flpFile.close();
     plan.flightplanType = NO_TYPE;
-    plan.cruisingAlt = 0.f; // Use either GUI value or calculate from airways
+    plan.cruiseAltitudeFt = 0.f; // Use either GUI value or calculate from airways
 
     plan.adjustDepartureAndDestination();
     flpFile.close();
@@ -565,7 +565,7 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
         {
           bool altOk;
           float altitude = list.at(2 + fieldOffset).toFloat(&altOk);
-          if(!altOk || altitude < atools::fs::pln::FLIGHTPLAN_ALTITUDE_MIN || altitude > atools::fs::pln::FLIGHTPLAN_ALTITUDE_MAX)
+          if(!altOk || altitude < atools::fs::pln::FLIGHTPLAN_ALTITUDE_FT_MIN || altitude > atools::fs::pln::FLIGHTPLAN_ALTITUDE_FT_MAX)
           {
             // Avoid excessive altitudes
             qWarning() << Q_FUNC_INFO << "Invalid altitude";
@@ -647,7 +647,7 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
         break;
       }
     }
-    plan.cruisingAlt = atools::roundToInt(maxAlt); // Use value from GUI
+    plan.cruiseAltitudeFt = maxAlt > atools::fs::pln::FLIGHTPLAN_ALTITUDE_FT_MIN ? maxAlt : 0.f; // Use value from GUI
 
     plan.adjustDepartureAndDestination();
     plan.assignAltitudeToAllEntries();
@@ -875,7 +875,7 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
     plan.entries.append(destination);
 
     plan.flightplanType = NO_TYPE;
-    plan.cruisingAlt = 0.f; // Use either GUI value or calculate from airways
+    plan.cruiseAltitudeFt = 0.f; // Use either GUI value or calculate from airways
     plan.adjustDepartureAndDestination();
   }
   else
@@ -937,7 +937,7 @@ void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& fil
           // type=IFR
           plan.flightplanType = stringFlightplanType(value);
         else if(key == "cruising_altitude")
-          plan.cruisingAlt = value.toInt();
+          plan.cruiseAltitudeFt = value.toFloat();
         else if(key == "departure_id")
         {
           // departure_id=EGPB, N59* 52.88', W001* 17.63', +000020.00
@@ -1172,7 +1172,7 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
   // ==================================================================================
   // Read all elements - order does not matter
   // Additional unknown elements are ignored and a warning is logged
-
+  plan.cruiseAltitudeFt = 0.f;
   while(xmlStream.readNextStartElement())
   {
     // Read data from header =========================================
@@ -1190,8 +1190,13 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
 
         if(reader.name() == "FlightplanType")
           plan.flightplanType = stringFlightplanType(reader.readElementText());
+        else if(reader.name() == "CruisingAltF")
+          plan.cruiseAltitudeFt = reader.readElementText().toFloat();   // Always prefer more accurate value
         else if(reader.name() == "CruisingAlt")
-          plan.cruisingAlt = reader.readElementText().toInt();
+        {
+          if(atools::almostEqual(plan.cruiseAltitudeFt, 0.f))
+            plan.cruiseAltitudeFt = reader.readElementText().toInt();     // Fall back to old integer representation
+        }
         else if(reader.name() == "Comment")
           plan.comment = reader.readElementText();
         else
@@ -1399,7 +1404,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       if(name == "FPType")
         plan.flightplanType = stringFlightplanType(reader.readElementText());
       else if(name == "CruisingAlt")
-        plan.cruisingAlt = atools::roundToInt(reader.readElementText().toFloat());
+        plan.cruiseAltitudeFt = reader.readElementText().toFloat();
       else if(name == "DepartureID")
         plan.departureIdent = reader.readElementText();
       else if(name == "DepartureLLA")
@@ -1650,7 +1655,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
 
             bool altOk;
             float altitude = wpalt.toFloat(&altOk);
-            if(!altOk || altitude < atools::fs::pln::FLIGHTPLAN_ALTITUDE_MIN || altitude > atools::fs::pln::FLIGHTPLAN_ALTITUDE_MAX)
+            if(!altOk || altitude < atools::fs::pln::FLIGHTPLAN_ALTITUDE_FT_MIN || altitude > atools::fs::pln::FLIGHTPLAN_ALTITUDE_FT_MAX)
             {
               // Avoid excessive altitudes
               qWarning() << Q_FUNC_INFO << "Invalid altitude";
@@ -1725,7 +1730,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
     xmlFile.close();
 
     plan.flightplanType = atools::fs::pln::NO_TYPE;
-    plan.cruisingAlt = atools::roundToInt(maxAlt); // Use value from GUI
+    plan.cruiseAltitudeFt = maxAlt > atools::fs::pln::FLIGHTPLAN_ALTITUDE_FT_MIN ? maxAlt : 0.f; // Use value from GUI
     plan.adjustDepartureAndDestination();
     plan.assignAltitudeToAllEntries();
   }
@@ -1819,7 +1824,8 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   // Save header and metadata =======================================================
   writer.writeStartElement("Header");
   writeTextElementIf(writer, "FlightplanType", flightplanTypeToString(plan.flightplanType));
-  writeTextElementIf(writer, "CruisingAlt", QString::number(plan.cruisingAlt));
+  writeTextElementIf(writer, "CruisingAlt", QString::number(atools::roundToInt(plan.cruiseAltitudeFt)));
+  writeTextElementIf(writer, "CruisingAltF", QString::number(plan.cruiseAltitudeFt, 'f', 8));
   writeTextElementIf(writer, "Comment", plan.comment);
   writeTextElementIf(writer, "CreationDate", atools::currentIsoWithOffset(false /* milliseconds */));
   writeTextElementIf(writer, "FileVersion", QString("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
@@ -2033,7 +2039,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
 
   writer.writeTextElement("RouteType", routeTypeToString(plan.getRouteType()));
 
-  writer.writeTextElement("CruisingAlt", QString::number(plan.cruisingAlt));
+  writer.writeTextElement("CruisingAlt", QString::number(atools::roundToInt(plan.cruiseAltitudeFt)));
   writer.writeTextElement("DepartureID", plan.departureIdent);
 
   // Use parking position
@@ -2594,7 +2600,7 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
 
       stream << endl;
       stream << "[PerfData]" << endl;
-      stream << "CrzAlt=" << plan.getCruisingAltitude() << endl; // Cruise Altitude (in feet)
+      stream << "CrzAlt=" << atools::roundToInt(plan.cruiseAltitudeFt) << endl; // Cruise Altitude (in feet)
       stream << "CrzAltAltn=-1" << endl; // Cruise Altitude to Alternate Airport (in feet)
       stream << "PaxCnt=-1" << endl; // Passenger count
       stream << "PaxWeight=-1" << endl; // Average Passenger weight (lbs)
@@ -2815,7 +2821,7 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& filename, con
     stream << "Generator=" << QCoreApplication::applicationName() << endl;
     stream << "Origin=" << plan.departureIdent << endl;
     stream << "Destination=" << plan.destinationIdent << endl;
-    stream << "CruiseAltitude=" << plan.getCruisingAltitude() << endl;
+    stream << "CruiseAltitude=" << atools::roundToInt(plan.cruiseAltitudeFt) << endl;
     stream << "DepartureProcedureInfo=" << departureRw << "|||" << endl;
     stream << "ArrivalProcedureInfo=" << destinationRw << "||" << endl;
     stream << "ApproachProcedureInfo=||" << endl;
@@ -3048,7 +3054,7 @@ void FlightplanIO::saveTfdi(const Flightplan& plan, const QString& filename, con
     writer.writeStartElement("Version1");
     writer.writeTextElement("Departure", plan.departureIdent);
     writer.writeTextElement("Arrival", plan.destinationIdent);
-    writer.writeTextElement("CruiseLevel", QString::number(plan.cruisingAlt));
+    writer.writeTextElement("CruiseLevel", QString::number(atools::roundToInt(plan.cruiseAltitudeFt)));
     writer.writeStartElement("Legs");
 
     int wpIdent = 0;
@@ -3270,7 +3276,7 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
     descr = QString("%1 (%2) to %3 (%4) at %5 ft, %6").
             arg(plan.departNameOrIdent()).arg(plan.departureIdent).
             arg(plan.destNameOrIdent()).arg(plan.destinationIdent).
-            arg(plan.getCruisingAltitude()).
+            arg(atools::roundToInt(plan.getCruiseAltitudeFt())).
             arg(flightplanTypeToString(plan.flightplanType));
 
     writer.writeStartElement("rte");
@@ -3683,7 +3689,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       stream << "ADEP " << departureIdent << endl;
       stream << "ADES " << destinationIdent << endl;
       stream << "CYCLE " << cycle << endl;
-      stream << "CRUISE " << plan.getCruisingAltitude() << endl;
+      stream << "CRUISE " << atools::roundToInt(plan.getCruiseAltitudeFt()) << endl;
     }
     else
     {
@@ -3992,7 +3998,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
     stream << "," << endl;
 
     // 32000,
-    stream << plan.getCruisingAltitude() << "," << endl;
+    stream << atools::roundToInt(plan.getCruiseAltitudeFt()) << "," << endl;
 
     // ,
     // ,
@@ -4110,11 +4116,9 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename)
     // destination_id=LIRF, N41* 48.02', E012* 14.33', +000014.00
     // departure_name=HAMBURG
     // destination_name=FIUMICINO
-    stream << "cruising_altitude=" << plan.getCruisingAltitude() << endl;
-    stream << "departure_id=" << plan.getDepartureIdent() << ", "
-           << coordStringFs9(plan.getDeparturePosition()) << endl;
-    stream << "destination_id=" << plan.getDestinationIdent() << ", "
-           << coordStringFs9(plan.getDestinationPosition()) << endl;
+    stream << "cruising_altitude=" << atools::roundToInt(plan.getCruiseAltitudeFt()) << endl;
+    stream << "departure_id=" << plan.getDepartureIdent() << ", " << coordStringFs9(plan.getDeparturePosition()) << endl;
+    stream << "destination_id=" << plan.getDestinationIdent() << ", " << coordStringFs9(plan.getDestinationPosition()) << endl;
     stream << "departure_name=" << plan.departNameOrIdent().toUpper() << endl;
     stream << "destination_name=" << plan.destNameOrIdent().toUpper() << endl;
 
@@ -4484,7 +4488,7 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
     } // for(int i = 0; i < valueList.size(); i++)
 
     plan.flightplanType = NO_TYPE;
-    plan.cruisingAlt = 0;
+    plan.cruiseAltitudeFt = 0.f;
     plan.adjustDepartureAndDestination();
     plan.assignAltitudeToAllEntries();
 
@@ -4617,7 +4621,7 @@ void FlightplanIO::loadGarminFplInternal(atools::fs::pln::Flightplan& plan, atoo
   }
 
   plan.flightplanType = NO_TYPE;
-  plan.cruisingAlt = 0; // Use altitude as set in GUI
+  plan.cruiseAltitudeFt = 0.f; // Use altitude as set in GUI
   plan.assignAltitudeToAllEntries();
   plan.adjustDepartureAndDestination();
 }
@@ -4654,10 +4658,12 @@ QString FlightplanIO::flightplanTypeToString(atools::fs::pln::FlightplanType typ
 
 FlightplanType FlightplanIO::stringFlightplanType(const QString& str)
 {
-  if(str == "IFR")
+  if(str.compare("IFR", Qt::CaseInsensitive) == 0)
     return IFR;
+  else if(str.compare("VFR", Qt::CaseInsensitive) == 0)
+    return VFR;
 
-  return VFR;
+  return NO_TYPE;
 }
 
 QString FlightplanIO::routeTypeToString(RouteType type)

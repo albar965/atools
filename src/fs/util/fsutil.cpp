@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -620,12 +620,37 @@ bool extractSpeedAndAltitude(const QString& item, float& speedKnots, float& altF
   return spdOk && altOk;
 }
 
-QString createSpeedAndAltitude(float speedKnots, float altFeet)
+QString createSpeedAndAltitude(float speedKts, float altFeet, bool metricSpeed, bool metricAlt)
 {
-  if(altFeet < 18000.f)
-    return QString("N%1A%2").arg(speedKnots, 4, 'f', 0, QChar('0')).arg(altFeet / 100.f, 3, 'f', 0, QChar('0'));
+  QString str;
+  if(metricSpeed)
+    // K: Kilometers per hour followed by a four digit value.
+    str = QString("K%1").arg(atools::geo::knotsToKmh(speedKts), 4, 'f', 0, QChar('0'));
   else
-    return QString("N%1F%2").arg(speedKnots, 4, 'f', 0, QChar('0')).arg(altFeet / 100.f, 3, 'f', 0, QChar('0'));
+    // N: Knots followed by a four digit value.
+    str = QString("N%1").arg(speedKts, 4, 'f', 0, QChar('0'));
+
+  if(metricAlt)
+  {
+    // Meter ===========================
+    if(altFeet < atools::geo::feetToMeter(18000.f))
+      // M: Altitude in tens of meter in four digits.
+      str.append(QString("M%2").arg(atools::geo::feetToMeter(altFeet) / 10.f, 4, 'f', 0, QChar('0')));
+    else
+      // S: Metric flight level in three digits of tens of meters.
+      str.append(QString("S%2").arg(atools::geo::feetToMeter(altFeet) / 10.f, 3, 'f', 0, QChar('0')));
+  }
+  else
+  {
+    // Feet ===========================
+    if(altFeet < 18000.f)
+      // A: Altitude in hundreds of feet in three digits.
+      str.append(QString("A%2").arg(altFeet / 100.f, 3, 'f', 0, QChar('0')));
+    else
+      // F :Flight level in three digits.
+      str.append(QString("F%2").arg(altFeet / 100.f, 3, 'f', 0, QChar('0')));
+  }
+  return str;
 }
 
 float roundComFrequency(int frequency)

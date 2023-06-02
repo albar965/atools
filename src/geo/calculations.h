@@ -390,6 +390,12 @@ constexpr TYPE knotsToMeterPerSec(TYPE value)
 }
 
 template<typename TYPE>
+constexpr TYPE knotsToKmh(TYPE value)
+{
+    return static_cast<TYPE>((value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<double>(value) * 1.852);
+}
+
+template<typename TYPE>
 constexpr TYPE kgToLbs(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<TYPE>(static_cast<double>(value) * 2.204623);

@@ -43,6 +43,7 @@
   </xs:element>
   <xs:element name="FlightplanType" type="xs:string"/>
   <xs:element name="CruisingAlt" type="xs:decimal"/>
+  <xs:element name="CruisingAltF" type="xs:decimal"/>
   <xs:element name="CreationDate" type="xs:string"/>
   <xs:element name="FileVersion" type="xs:decimal"/>
   <xs:element name="ProgramName" type="xs:string"/>

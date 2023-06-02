@@ -91,14 +91,14 @@ public:
   /*
    * @return cruise altitude in feet
    */
-  int getCruisingAltitude() const
+  float getCruiseAltitudeFt() const
   {
-    return cruisingAlt;
+    return cruiseAltitudeFt;
   }
 
-  void setCruisingAltitude(int value)
+  void setCruiseAltitudeFt(float value)
   {
-    cruisingAlt = value;
+    cruiseAltitudeFt = value;
   }
 
   /*
@@ -337,7 +337,7 @@ private:
 
   atools::fs::pln::FlightplanEntryListType entries;
 
-  int cruisingAlt;
+  float cruiseAltitudeFt;
   QString departureIdent, destinationIdent,
           departureParkingName, departureName, destinationName, comment;
   atools::geo::Pos departurePos /* Airport */,

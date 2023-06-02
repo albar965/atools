@@ -191,7 +191,7 @@ public:
 
   /* Version number to save into LNMPLN files */
   static const int LNMPLN_VERSION_MAJOR = 1;
-  static const int LNMPLN_VERSION_MINOR = 1;
+  static const int LNMPLN_VERSION_MINOR = 2;
 
 private:
   void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, int userWpLength);

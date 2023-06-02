@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -158,7 +158,7 @@ bool extractSpeedAndAltitude(const QString& item, float& speedKnots, float& altF
 bool speedAndAltitudeMatch(const QString& item);
 
 /* Gives always NXXXAXXX for altitude < 18000 ft or NXXXFXXX for altitude > 18000 */
-QString createSpeedAndAltitude(float speedKnots, float altFeet);
+QString createSpeedAndAltitude(float speedKts, float altFeet, bool metricSpeed, bool metricAlt);
 
 /* Converts ARINC 424.18 field type definition 5.42 to 32 bit representation
  * E.g. "V  " to "2105430" */

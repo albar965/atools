@@ -170,7 +170,7 @@ void Flightplan::clear()
   lnmFormat = true;
   flightplanType = VFR;
   routeType = DIRECT;
-  cruisingAlt = 10000;
+  cruiseAltitudeFt = 10000.f;
   properties.clear();
 }
 
@@ -218,7 +218,8 @@ QString Flightplan::getFilenamePattern(const QString& pattern, const QString& su
   if(destIdent.isEmpty())
     destIdent = destinationAirport().getIdent();
 
-  return getFilenamePattern(pattern, type, departName, departIdent, destName, destIdent, suffix, cruisingAlt, clean);
+  return getFilenamePattern(pattern, type, departName, departIdent, destName, destIdent, suffix,
+                            atools::roundToInt(cruiseAltitudeFt), clean);
 }
 
 QString Flightplan::getFilenamePattern(QString pattern, const QString& type, const QString& departureName,
@@ -262,8 +263,7 @@ void Flightplan::adjustDepartureAndDestination(bool force)
 void Flightplan::assignAltitudeToAllEntries()
 {
   for(FlightplanEntry& entry : entries)
-    entry.setPosition(Pos(entry.getPosition().getLonX(),
-                          entry.getPosition().getLatY(), cruisingAlt));
+    entry.setPosition(Pos(entry.getPosition().getLonX(), entry.getPosition().getLatY(), cruiseAltitudeFt));
 }
 
 atools::fs::pln::Flightplan Flightplan::compressedAirways() const

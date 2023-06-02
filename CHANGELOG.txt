@@ -39,6 +39,9 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Now attempting to load SID and STAR from FSC PLN files.
 * Now omitting flight plan type (IFR/VFR) for flight plan formats not supporting this.
 * Added workaround for broken X-Plane FMS flight plans without valid altitude information.
+* Added new optional CruisingAltF element to LNMPLN file format to avoid rounding errors when using
+  metric units. Update LNMPLN file version to 1.2 for change.
+* Changed internal representation of cruise altitude to floating point to avoid rounding errors.
 
 ===============================================================================
 

@@ -418,6 +418,13 @@ constexpr int roundToInt(TYPE value)
   return static_cast<int>(std::round(value));
 }
 
+/* Round up to integer value */
+template<typename TYPE>
+constexpr int ceilToInt(TYPE value)
+{
+    return static_cast<int>(std::ceil(value));
+}
+
 /* Linear interpolation
  * f(x) = f0 + ((f1 - f0) / (x1 - x0)) * (x - x0) */
 template<typename TYPE>
@@ -486,6 +493,13 @@ template<typename TYPE>
 inline TYPE roundToNearest(TYPE value, TYPE round)
 {
   return round > 0. ? std::round(value / round) * round : value;
+}
+
+/* Round value to nearest multiple of round */
+template<typename TYPE>
+inline TYPE ceilToNearest(TYPE value, TYPE ceil)
+{
+    return ceil > 0. ? std::ceil(value / ceil) * ceil : value;
 }
 
 /* To string with changing precision */
