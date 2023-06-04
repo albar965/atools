@@ -148,7 +148,17 @@ public:
   /* Do not save entry into the file if it is a procedure or an alternate airport */
   bool isNoSave() const
   {
-    return flags.testFlag(entry::PROCEDURE) || flags.testFlag(entry::ALTERNATE);
+    return isProcedure() || isAlternate();
+  }
+
+  bool isProcedure() const
+  {
+    return flags.testFlag(entry::PROCEDURE);
+  }
+
+  bool isAlternate() const
+  {
+    return flags.testFlag(entry::ALTERNATE);
   }
 
   bool isTrack() const

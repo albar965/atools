@@ -847,9 +847,9 @@ bool checkDir(const QString& funcInfo, const QFileInfo& dir, bool warn = true);
 bool checkFile(const QString& funcInfo, const QString& file, bool warn = true);
 bool checkDir(const QString& funcInfo, const QString& dir, bool warn = true);
 
-/* Calculates a simple reproducible hash for all lines in the text file ignoring line endings.
+/* Calculates a simple reproducible stable hash for all lines in the text file ignoring line endings.
  * Uses always the same seed and ignores empty lines. To be used for testing. */
-uint textFileHash(const QString& filename);
+quint32 textFileHash(const QString& filename);
 
 /* Read a simple symmetrically encrypted string from the given file.
  * Can be used to obfuscate keys. Prints a warning and returns an empty string if the file does not exist. */

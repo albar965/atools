@@ -1155,10 +1155,10 @@ QDateTime timeToLastHourInterval(QDateTime datetime, int intervalsPerDay)
   return datetime;
 }
 
-uint textFileHash(const QString& filename)
+quint32 textFileHash(const QString& filename)
 {
   QFile file(filename);
-  uint hash = 0;
+  quint32 hash = 0x55555555;
 
   if(file.open(QIODevice::ReadOnly))
   {
@@ -1169,7 +1169,11 @@ uint textFileHash(const QString& filename)
     {
       QString line = stream.readLine().trimmed();
       if(!line.isEmpty())
-        hash ^= qHash(line, 97);
+      {
+        QByteArray utf8 = line.toUtf8();
+        for(int i = 0; i < utf8.size(); i++)
+          hash ^= static_cast<unsigned int>(utf8.at(i)) << (i % 4);
+      }
     }
   }
   else

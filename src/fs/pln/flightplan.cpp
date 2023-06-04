@@ -33,25 +33,14 @@ using Qt::endl;
 using atools::geo::Pos;
 
 // =============================================================================================
-void Flightplan::removeNoSaveEntries()
-{
-  auto it = std::remove_if(entries.begin(), entries.end(),
-                           [](const FlightplanEntry& type) -> bool
-        {
-          return type.isNoSave();
-        });
-
-  if(it != entries.end())
-    entries.erase(it, entries.end());
-}
 
 float Flightplan::getDistanceNm() const
 {
   float distanceMeter = 0.f;
-  if(entries.size() > 1)
+  if(size() > 1)
   {
-    for(int i = 0; i < entries.size() - 1; i++)
-      distanceMeter += entries.at(i).getPosition().distanceMeterTo(entries.at(i + 1).getPosition());
+    for(int i = 0; i < size() - 1; i++)
+      distanceMeter += at(i).getPosition().distanceMeterTo(at(i + 1).getPosition());
   }
   return atools::geo::meterToNm(distanceMeter);
 }
@@ -152,9 +141,10 @@ QString Flightplan::getFilenamePatternExample(const QString& pattern, const QStr
   }
 }
 
-void Flightplan::clear()
+void Flightplan::clearAll()
 {
-  entries.clear();
+  clearEntries();
+  clearProperties();
 
   departureIdent.clear();
   destinationIdent.clear();
@@ -171,7 +161,6 @@ void Flightplan::clear()
   flightplanType = VFR;
   routeType = DIRECT;
   cruiseAltitudeFt = 10000.f;
-  properties.clear();
 }
 
 void Flightplan::setDeparturePosition(const geo::Pos& value)
@@ -210,9 +199,9 @@ QString Flightplan::getFilenamePattern(const QString& pattern, const QString& su
           destName = getDestinationName(), destIdent = getDestinationIdent();
 
   if(departName.isEmpty())
-    departName = entries.constFirst().getName();
+    departName = constFirst().getName();
   if(departIdent.isEmpty())
-    departIdent = entries.constFirst().getIdent();
+    departIdent = constFirst().getIdent();
   if(destName.isEmpty())
     destName = destinationAirport().getName();
   if(destIdent.isEmpty())
@@ -239,22 +228,22 @@ QString Flightplan::getFilenamePattern(QString pattern, const QString& type, con
 
 void Flightplan::adjustDepartureAndDestination(bool force)
 {
-  if(!entries.isEmpty())
+  if(!isEmpty())
   {
     if(force || departureIdent.isEmpty())
-      departureIdent = entries.constFirst().getIdent();
+      departureIdent = constFirst().getIdent();
     if(force || departureName.isEmpty())
-      departureName = entries.constFirst().getName();
+      departureName = constFirst().getName();
     if(force || !departurePos.isValid())
-      departurePos = entries.constFirst().getPosition();
+      departurePos = constFirst().getPosition();
 
     if(force || destinationIdent.isEmpty())
-      destinationIdent = entries.constLast().getIdent();
+      destinationIdent = constLast().getIdent();
     if(force || destinationName.isEmpty())
-      destinationName = entries.constLast().getName();
+      destinationName = constLast().getName();
 
     if(force || !destinationPos.isValid())
-      destinationPos = entries.constLast().getPosition();
+      destinationPos = constLast().getPosition();
     // These remain empty
     // departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
   }
@@ -262,7 +251,7 @@ void Flightplan::adjustDepartureAndDestination(bool force)
 
 void Flightplan::assignAltitudeToAllEntries()
 {
-  for(FlightplanEntry& entry : entries)
+  for(FlightplanEntry& entry : *this)
     entry.setPosition(Pos(entry.getPosition().getLonX(), entry.getPosition().getLatY(), cruiseAltitudeFt));
 }
 
@@ -272,21 +261,21 @@ atools::fs::pln::Flightplan Flightplan::compressedAirways() const
 
   if(!isEmpty())
   {
-    plan.getEntries().clear();
+    plan.clear();
 
-    for(int i = 0; i < entries.size() - 1; i++)
+    for(int i = 0; i < size() - 1; i++)
     {
-      const FlightplanEntry& entry = entries.at(i);
+      const FlightplanEntry& entry = at(i);
 
-      if(!entry.getAirway().isEmpty() && entry.getAirway() == entries.at(i + 1).getAirway())
+      if(!entry.getAirway().isEmpty() && entry.getAirway() == at(i + 1).getAirway())
         // Skip if the next airway is the same
         continue;
 
-      plan.getEntries().append(entry);
+      plan.append(entry);
     }
 
     // Add destination
-    plan.getEntries().append(entries.constLast());
+    plan.append(constLast());
   }
   return plan;
 }
@@ -294,7 +283,7 @@ atools::fs::pln::Flightplan Flightplan::compressedAirways() const
 QString Flightplan::toShortString() const
 {
   QStringList str;
-  for(const FlightplanEntry& entry : entries)
+  for(const FlightplanEntry& entry : *this)
   {
     if(!entry.getAirway().isEmpty())
       str.append(QString("[%1]").arg(entry.getAirway()));
@@ -303,14 +292,26 @@ QString Flightplan::toShortString() const
   return str.join(' ');
 }
 
+QVector<const FlightplanEntry *> Flightplan::getAlternates() const
+{
+  QVector<const FlightplanEntry *> alternates;
+
+  for(const FlightplanEntry& entry : *this)
+  {
+    if(entry.getFlags() & entry::ALTERNATE)
+      alternates.append(&entry);
+  }
+  return alternates;
+}
+
 const atools::fs::pln::FlightplanEntry& Flightplan::destinationAirport() const
 {
   static const FlightplanEntry EMPTY;
 
-  for(int i = entries.size() - 1; i >= 0; i--)
+  for(int i = size() - 1; i >= 0; i--)
   {
-    if(!(entries.at(i).isNoSave()))
-      return entries.at(i);
+    if(!(at(i).isAlternate()))
+      return at(i);
   }
   return EMPTY;
 }
@@ -326,7 +327,7 @@ QDebug operator<<(QDebug out, const Flightplan& record)
                           << ", properties " << record.properties;
 
   int i = 1;
-  for(const FlightplanEntry& entry : record.getEntries())
+  for(const FlightplanEntry& entry : record)
     out << endl << i++ << " " << entry;
   out << "]";
   return out;

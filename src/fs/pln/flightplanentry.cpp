@@ -192,7 +192,9 @@ QDebug operator<<(QDebug out, const FlightplanEntry& record)
                           << ", comment " << record.getComment()
                           << ", pos " << record.getPosition()
                           << ", flags " << FlightplanEntry::flagsAsString(record.getFlags())
-                          << ", save " << !record.isNoSave() << "]";
+                          << ", alternate " << !record.isAlternate()
+                          << ", procedure " << !record.isProcedure()
+                          << "]";
   return out;
 }
 

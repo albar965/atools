@@ -119,7 +119,7 @@ public:
   void saveFms11(const atools::fs::pln::Flightplan& plan, const QString& file);
 
   /* X-Plane CIVA Navigation System. Saves multiple files. */
-  void saveCivaFms(const atools::fs::pln::Flightplan& plan, const QString& file);
+  void saveCivaFms(Flightplan plan, const QString& file);
 
   /* MSFS IniBuilds A310 */
   void saveIniBuildsMsfs(const atools::fs::pln::Flightplan& plan, const QString& file);
@@ -148,7 +148,7 @@ public:
 
   /* Garmin FPL (XML) format for Reality XP GNS XML. */
   void loadGarminFpl(atools::fs::pln::Flightplan& plan, const QString& filename);
-  void saveGarminFpl(const atools::fs::pln::Flightplan& flightplan, const QString& filename, bool saveAsUserWaypoints);
+  void saveGarminFpl(Flightplan flightplan, const QString& filename, bool saveAsUserWaypoints);
 
   /* Garmin GFP - One line text format prefixed with "FPN/RI:..." */
   void loadGarminGfp(atools::fs::pln::Flightplan& plan, const QString& filename);

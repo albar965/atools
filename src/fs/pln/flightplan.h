@@ -34,46 +34,17 @@ namespace pln {
 
 class FlightplanIO;
 
-typedef QList<atools::fs::pln::FlightplanEntry> FlightplanEntryListType;
-
 /*
  * A class to load, modify and save FSX (and all other compatible simulators) flight plans.
  */
-class Flightplan
+class Flightplan :
+  private QList<atools::fs::pln::FlightplanEntry>
 {
   Q_DECLARE_TR_FUNCTIONS(Flightplan)
 
 public:
-  /*
-   * @return Get all flight plan entries/waypoints. These include start and destination.
-   */
-  atools::fs::pln::FlightplanEntryListType& getEntries()
-  {
-    return entries;
-  }
-
-  /* Clear out all entries with no save = true */
-  void removeNoSaveEntries();
-
-  /*
-   * @return Get all flight plan entries/waypoints. These include start and destination.
-   */
-  const atools::fs::pln::FlightplanEntryListType& getEntries() const
-  {
-    return entries;
-  }
-
+  /* Total distance for all waypoints */
   float getDistanceNm() const;
-
-  const atools::fs::pln::FlightplanEntry& at(int index) const
-  {
-    return entries.at(index);
-  }
-
-  atools::fs::pln::FlightplanEntry& operator[](int index)
-  {
-    return entries[index];
-  }
 
   atools::fs::pln::FlightplanType getFlightplanType() const
   {
@@ -132,12 +103,41 @@ public:
     destinationName = value;
   }
 
-  bool isEmpty() const
+  /* Pull required methods into public space */
+  /* Keep clear() hidden */
+  using QList::append;
+  using QList::at;
+  using QList::begin;
+  using QList::constBegin;
+  using QList::constEnd;
+  using QList::constFirst;
+  using QList::constLast;
+  using QList::end;
+  using QList::erase;
+  using QList::first;
+  using QList::insert;
+  using QList::isEmpty;
+  using QList::last;
+  using QList::move;
+  using QList::operator[];
+  using QList::prepend;
+  using QList::rbegin;
+  using QList::removeAt;
+  using QList::rend;
+  using QList::replace;
+  using QList::size;
+
+  void clearAll();
+
+  void clearEntries()
   {
-    return entries.isEmpty();
+    QList::clear();
   }
 
-  void clear();
+  void clearProperties()
+  {
+    properties.clear();
+  }
 
   void setDepartureIdent(const QString& value)
   {
@@ -233,6 +233,11 @@ public:
     return properties;
   }
 
+  const QHash<QString, QString>& getPropertiesConst() const
+  {
+    return properties;
+  }
+
   void setCustomData(const QHash<QString, QString>& value)
   {
     properties = value;
@@ -310,6 +315,31 @@ public:
    * To be used for testing and logging */
   QString toShortString() const;
 
+  /* Pointer to alternates are valid until flight plan is modified */
+  QVector<const FlightplanEntry *> getAlternates() const;
+
+  /* Clear out all entries with no save, alternate or procedure = true */
+  void removeIsNoSaveEntries()
+  {
+    erase(std::remove_if(begin(), end(), [](const FlightplanEntry& type) -> bool {
+            return type.isNoSave();
+          }), end());
+  }
+
+  void removeAlternateEntries()
+  {
+    erase(std::remove_if(begin(), end(), [](const FlightplanEntry& type) -> bool {
+            return type.isAlternate();
+          }), end());
+  }
+
+  void removeProcedureEntries()
+  {
+    erase(std::remove_if(begin(), end(), [](const FlightplanEntry& type) -> bool {
+            return type.isProcedure();
+          }), end());
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
 
@@ -334,8 +364,6 @@ private:
 
   atools::fs::pln::FlightplanType flightplanType = VFR;
   atools::fs::pln::RouteType routeType = DIRECT;
-
-  atools::fs::pln::FlightplanEntryListType entries;
 
   float cruiseAltitudeFt;
   QString departureIdent, destinationIdent,
