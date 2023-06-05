@@ -118,7 +118,7 @@ QString Flightplan::getFilenamePatternExample(const QString& pattern, const QStr
 
     // Build an example filename
     QString example = atools::fs::pln::Flightplan::getFilenamePattern(pattern, "IFR", "Frankfurt am Main", "EDDF",
-                                                                      "Fiumicino", "LIRF", QString(), 30000, false /* clean */);
+                                                                      "Fiumicino", "LIRF", QString(), 30000);
 
     // Clean name from invalid characters
     QString cleanExample = atools::cleanFilename(example, atools::MAX_FILENAME_CHARS);
@@ -184,7 +184,7 @@ void Flightplan::setDepartureParkingPosition(const geo::Pos& value, float altitu
   departureParkingHeading = headingTrue;
 }
 
-QString Flightplan::getFilenamePattern(const QString& pattern, const QString& suffix, bool clean) const
+QString Flightplan::getFilenamePattern(const QString& pattern, const QString& suffix, bool metric) const
 {
   if(isEmpty())
     return tr("Empty Flightplan") + suffix;
@@ -207,23 +207,24 @@ QString Flightplan::getFilenamePattern(const QString& pattern, const QString& su
   if(destIdent.isEmpty())
     destIdent = destinationAirport().getIdent();
 
-  return getFilenamePattern(pattern, type, departName, departIdent, destName, destIdent, suffix,
-                            atools::roundToInt(cruiseAltitudeFt), clean);
+  // Convert feet to metric altitude if needed
+  int cruiseLocal = atools::roundToInt(metric ? atools::geo::feetToMeter(cruiseAltitudeFt) : cruiseAltitudeFt);
+  return getFilenamePattern(pattern, type, departName, departIdent, destName, destIdent, suffix, cruiseLocal);
 }
 
 QString Flightplan::getFilenamePattern(QString pattern, const QString& type, const QString& departureName,
                                        const QString& departureIdent, const QString& destName, const QString& destIdent,
-                                       const QString& suffix, int altitude, bool clean)
+                                       const QString& suffix, int altitudeLocal)
 {
   QString name = pattern.
                  replace(pattern::PLANTYPE, type.trimmed()).
-                 replace(pattern::DEPARTNAME, departureName.simplified()).
+                 replace(pattern::DEPARTNAME, departureName.simplified().mid(0, 30)).
                  replace(pattern::DEPARTIDENT, departureIdent.simplified()).
-                 replace(pattern::DESTNAME, destName.simplified()).
+                 replace(pattern::DESTNAME, destName.simplified().mid(0, 30)).
                  replace(pattern::DESTIDENT, destIdent.simplified()).
-                 replace(pattern::CRUISEALT, QString::number(altitude)) + suffix;
+                 replace(pattern::CRUISEALT, altitudeLocal > 0 ? QString::number(altitudeLocal) : QString()) + suffix;
 
-  return clean ? atools::cleanFilename(name) : name;
+  return atools::cleanFilename(name, 1000);
 }
 
 void Flightplan::adjustDepartureAndDestination(bool force)
