@@ -1234,7 +1234,10 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
     {
       readWaypointsLnm(xmlStream, alternates, "Alternate");
       for(FlightplanEntry& entry : alternates)
+      {
+        entry.setWaypointType(atools::fs::pln::entry::AIRPORT);
         entry.setFlag(atools::fs::pln::entry::ALTERNATE);
+      }
     }
     // Departure position (gate, etc.) =========================================
     else if(reader.name() == "Departure")
