@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -469,7 +469,7 @@ atools::geo::Pos degMinSecFromMatch(const QRegularExpressionMatch& match)
   return Pos(lonX, latY);
 }
 
-atools::geo::Pos degMinFromMatch(const QRegularExpressionMatch& match)
+atools::geo::Pos degMinDesignatorFromMatch(const QRegularExpressionMatch& match)
 {
   QString ns = safeCaptured(match, "NS");
   int latYDeg = safeCaptured(match, "LATY_DEG").toInt();
@@ -481,6 +481,19 @@ atools::geo::Pos degMinFromMatch(const QRegularExpressionMatch& match)
 
   float latY = (latYDeg + latYMin / 60.f) * (ns == "S" ? -1.f : 1.f);
   float lonX = (lonXDeg + lonXMin / 60.f) * (ew == "W" ? -1.f : 1.f);
+  return Pos(lonX, latY);
+}
+
+atools::geo::Pos degMinFromMatch(const QRegularExpressionMatch& match)
+{
+  int latYDeg = safeCaptured(match, "LATY_DEG").toInt();
+  float latYMin = safeCaptured(match, "LATY_DEC_MIN").toFloat();
+
+  int lonXDeg = safeCaptured(match, "LONX_DEG").toInt();
+  float lonXMin = safeCaptured(match, "LONX_DEC_MIN").toFloat();
+
+  float latY = (latYDeg >= 0.f ? 1.f : -1.f) * (std::abs(latYDeg) + latYMin / 60.f);
+  float lonX = (lonXDeg >= 0.f ? 1.f : -1.f) * (std::abs(lonXDeg) + lonXMin / 60.f);
   return Pos(lonX, latY);
 }
 
@@ -511,7 +524,7 @@ atools::geo::Pos degFromMatch(const QRegularExpressionMatch& match)
   return Pos(lonX, latY);
 }
 
-geo::Pos fromAnyFormatInternal(const QString& coords, bool *hemisphere)
+geo::Pos fromAnyFormatInternal(const QString& coords, bool replaceDecimals, bool *hemisphere)
 {
   if(hemisphere != nullptr)
     *hemisphere = true; // Default is N, E, W and S designators given
@@ -529,11 +542,11 @@ geo::Pos fromAnyFormatInternal(const QString& coords, bool *hemisphere)
 #endif
 
   // Replace variations for minute and degree signs like they are using in Wikipedia
-  coordStr.replace("″", "\"");
-  coordStr.replace("′", "'");
-  coordStr.replace("’", "'");
-  coordStr.replace("`", "'");
-  coordStr.replace("´", "'");
+  coordStr.replace(L'″', '\"');
+  coordStr.replace(L'′', '\'');
+  coordStr.replace(L'’', '\'');
+  coordStr.replace(L'`', '\'');
+  coordStr.replace(L'´', '\'');
 
   // Remove various separators
   coordStr.replace('|', ' ');
@@ -541,14 +554,21 @@ geo::Pos fromAnyFormatInternal(const QString& coords, bool *hemisphere)
   coordStr.replace('_', ' ');
   coordStr.replace(':', ' ');
 
-  coordStr = coordStr.simplified().toUpper().replace(QLocale().decimalPoint(), ".").replace(",", ".");
+  coordStr = coordStr.simplified().toUpper();
+
+  if(replaceDecimals)
+    coordStr = coordStr.replace(QLocale().decimalPoint(), '.').replace(',', '.');
+
+  coordStr = coordStr.simplified();
 
   // North/south and east/west designator
   const static QLatin1String NS("(?<NS>[NS])");
   const static QLatin1String EW("(?<EW>[EW])");
 
   // Optional n-space
-  const static QLatin1String SP("\\s*");
+  const static QLatin1String SP("\\s*"); // Optional space
+  const static QLatin1String SPREQ("\\s+"); // Required at least one space
+  const static QLatin1String COMMA(",");
 
   // Degree, minute and seconds signs or space
   const static QString DEG("[ °\\*]");
@@ -563,6 +583,10 @@ geo::Pos fromAnyFormatInternal(const QString& coords, bool *hemisphere)
   // Integer degree with named capture
   const static QLatin1String LONX_DEG("(?<LONX_DEG>[0-9]+)");
   const static QLatin1String LATY_DEG("(?<LATY_DEG>[0-9]+)");
+
+  // Integer degree with named capture and sign
+  const static QLatin1String LONX_DEG_SIGN("(?<LONX_DEG>[+-]?[0-9]+)");
+  const static QLatin1String LATY_DEG_SIGN("(?<LATY_DEG>[+-]?[0-9]+)");
 
   // Decimal degree
   const static QLatin1String LONX_DEC_DEG("(?<LONX_DEC_DEG>[0-9\\.]+)");
@@ -621,6 +645,10 @@ geo::Pos fromAnyFormatInternal(const QString& coords, bool *hemisphere)
   static const QRegularExpression FORMAT_NUMBER_SIGNED(
     "^" + LATY_DEC_DEG_SIGN + "[\\s\\|_/#;:]+" + LONX_DEC_DEG_SIGN + "$");
 
+  // Google format -120 19.70, 46 42.88
+  static const QRegularExpression FORMAT_NUMBER_GOOGLE(
+    "^" + LATY_DEG_SIGN + SPREQ + LATY_DEC_MIN + SP + COMMA + SP + LONX_DEG_SIGN + SPREQ + LONX_DEC_MIN + "$");
+
   // ================================================================================
   // Decimal degree formats
   // 49,4449 -9,2015
@@ -660,13 +688,22 @@ geo::Pos fromAnyFormatInternal(const QString& coords, bool *hemisphere)
   match = safeMatch(FORMAT_DEG_MIN_REGEXP, coordStr);
   if(match.hasMatch())
   {
-    Pos pos = degMinFromMatch(match);
+    Pos pos = degMinDesignatorFromMatch(match);
     if(pos.isValidRange())
       return pos;
   }
 
   // 49° 26,69' N 9° 12,09' E
   match = safeMatch(FORMAT_DEG_MIN_REGEXP2, coordStr);
+  if(match.hasMatch())
+  {
+    Pos pos = degMinDesignatorFromMatch(match);
+    if(pos.isValidRange())
+      return pos;
+  }
+
+  // -120 19.70, 46 42.88
+  match = safeMatch(FORMAT_NUMBER_GOOGLE, coordStr);
   if(match.hasMatch())
   {
     Pos pos = degMinFromMatch(match);
@@ -699,24 +736,29 @@ geo::Pos fromAnyFormatInternal(const QString& coords, bool *hemisphere)
 
 atools::geo::Pos fromAnyFormat(const QString& coords, bool *hemisphere)
 {
-  Pos pos = fromAnyFormatInternal(coords, hemisphere);
+  Pos pos = fromAnyFormatInternal(coords, true /* replaceDecimal */, hemisphere);
+
+  if(!pos.isValid() && coords.count(", ") == 1)
+    // Nothing found - modify format
+    // Comma/space as number separator
+    pos = fromAnyFormatInternal(coords, true /* replaceDecimal */, hemisphere);
+
   if(!pos.isValid())
   {
-    // Nothing found - modify format
-    if(coords.count(", ") == 1)
-      // Comma/space as number separator
-      pos = fromAnyFormatInternal(QString(coords).replace(", ", " "), hemisphere);
-
-    if(!pos.isValid())
-    {
-      if(coords.count(',') == 3)
-        // Comma as decimal separator and comma as number separator
-        pos = fromAnyFormatInternal(coords.section(',', 0, 1) + " " + coords.section(',', 2, 3), hemisphere);
-      else if(coords.count(',') == 1 && coords.count('.') == 2)
-        // Period as decimal separator and comma as number separator
-        pos = fromAnyFormatInternal(coords.section(',', 0, 0) + " " + coords.section(',', 1, 1), hemisphere);
-    }
+    if(coords.count(',') == 3)
+      // Comma as decimal separator and comma as number separator
+      pos = fromAnyFormatInternal(coords.section(',', 0, 1) + " " +
+                                  coords.section(',', 2, 3), true /* replaceDecimal */, hemisphere);
+    else if(coords.count(',') == 1 && coords.count('.') == 2)
+      // Period as decimal separator and comma as number separator
+      pos = fromAnyFormatInternal(coords.section(',', 0, 0) + " " +
+                                  coords.section(',', 1, 1), true /* replaceDecimal */, hemisphere);
   }
+
+  if(!pos.isValid())
+    // Maybe Google earth format - use as is
+    pos = fromAnyFormatInternal(coords, false /* replaceDecimal */, hemisphere);
+
   return pos;
 }
 
