@@ -198,12 +198,12 @@ Ocorreu um erro no Sql
 <context>
     <name>FileResolver</name>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="175"/>
+        <location filename="src/fs/scenery/fileresolver.cpp" line="178"/>
         <source>&quot;%2&quot; does not exist.</source>
         <translation>&quot;%2&quot; não existe.</translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="168"/>
+        <location filename="src/fs/scenery/fileresolver.cpp" line="171"/>
         <source>&quot;%2&quot; is not a directory.</source>
         <translation>&quot;%2&quot; não é um diretório.</translation>
     </message>
@@ -211,39 +211,39 @@ Ocorreu um erro no Sql
 <context>
     <name>Flightplan</name>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="201"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="190"/>
         <source>Empty Flightplan</source>
         <translation>Plano de voo Vazio</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="63"/>
-        <location filename="src/fs/pln/flightplan.cpp" line="205"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="52"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="194"/>
         <source>IFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="65"/>
-        <location filename="src/fs/pln/flightplan.cpp" line="207"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="54"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="196"/>
         <source>VFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="123"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="112"/>
         <source>File pattern has no extension. It should end with &quot;.%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>O padrão do arquivo não possui uma extensão. Deve terminar com &quot;.%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="126"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="115"/>
         <source>File pattern uses a wrong extension &quot;.%1&quot;. It should end with &quot;.%2&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>O padrão do arquivo usa uma extensão incorreta &quot;.%1&quot;. Deve terminar com &quot;.%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="139"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="128"/>
         <source>Pattern contains invalid characters, double spaces or is longer than %1 characters.%2Not allowed are: %3</source>
         <translation>O padrão contém caracteres inválidos, espaços duplos ou é maior que %1 caracteres.%2Não são permitidos: %3</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="150"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="139"/>
         <source>Pattern is empty.</source>
         <translation>O padrão está vazio.</translation>
     </message>
@@ -285,12 +285,12 @@ Ocorreu um erro no Sql
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3138"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3264"/>
         <source> Flight Plan</source>
         <translation> Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3191"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3317"/>
         <source> Track</source>
         <translation> Rastrear</translation>
     </message>
@@ -315,7 +315,7 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não foi possível abrir o arquivo RTE %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="200"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="197"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
         <translation>Não foi possível abrir um arquivo de plano de voo vazio &quot;%1&quot;.</translation>
     </message>
@@ -328,9 +328,9 @@ Ocorreu um erro no Sql
         <translation type="vanished">Posição inválida em GPX.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1022"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1393"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4213"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1160"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1534"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4333"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -340,28 +340,28 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3800"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3924"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="474"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="471"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>FMS arquivo inválido. Não é possível ler o número da versão: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="123"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="120"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>Não é possível abrir o arquivo %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="140"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="137"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP.</source>
         <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</oldsource>
         <translation>Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML,MSFS XML, FS9 INI e FSC), X-Plane FMS, FLP e FlightGear FGFP.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="489"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="486"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>FMS arquivo inválido. Versão invalida %2: %1</translation>
     </message>
@@ -370,68 +370,68 @@ Ocorreu um erro no Sql
         <translation type="vanished">Arquivo FMS inválido. Altitude inválida em %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="581"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="578"/>
         <source>Invalid FMS file. Invalid coordinate in %1</source>
         <translation>Arquivo FMS inválido. Coordenada inválida em %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="593"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="590"/>
         <source>Invalid FMS file. Cannot read waypoint type in %1</source>
         <translation>Arquivo FMS inválido. Não é possível ler o tipo de waypoint em %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="619"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="616"/>
         <source>Invalid FMS file. Invalid waypoint type in %1</source>
         <translation>Arquivo FMS inválido. Tipo de ponto de referência inválido em %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="628"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="625"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>FMS arquivo inválido . Numero de seções %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="859"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="997"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>Arquivo de plano de voo inválido &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="889"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1027"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
         <oldsource>Invalid position in LNMPLN.</oldsource>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="892"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1030"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;. Ordenadas fora de alcance: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="901"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1039"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;. As ordenadas não são números.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="929"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1067"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
         <translation>Posição inválida no arquivo GPX &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1212"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1353"/>
         <source>Invalid LNMPLN flight plan. No waypoints found.</source>
         <translation>Plano de voo LNMPLN inválido. Nenhum waypoint encontrado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1214"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1355"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation>Arquivo de plano de voo LNMPLN inválido &quot;%1&quot;. Nenhum waypoint encontrado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1594"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1736"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>Não é possível abrir o arquivo FlightGear &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3655"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3779"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -462,7 +462,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/grib/gribreader.cpp" line="466"/>
         <source>Wrong GRIB file type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de arquivo GRIB incorreto</translation>
     </message>
     <message>
         <location filename="src/grib/gribreader.cpp" line="104"/>
@@ -1110,7 +1110,7 @@ Ocorreu um erro no Sql
         <location filename="src/fs/navdatabase.cpp" line="961"/>
         <location filename="src/fs/navdatabase.cpp" line="991"/>
         <location filename="src/fs/navdatabase.cpp" line="1097"/>
-        <location filename="src/fs/navdatabase.cpp" line="1243"/>
+        <location filename="src/fs/navdatabase.cpp" line="1246"/>
         <source>Creating boundary indexes</source>
         <translation>Criando índices de limite</translation>
     </message>
@@ -1125,7 +1125,7 @@ Ocorreu um erro no Sql
         <translation>Atualizando Navaids nos Waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1257"/>
+        <location filename="src/fs/navdatabase.cpp" line="1260"/>
         <source>Basic Validation</source>
         <translation>Validação Básica</translation>
     </message>
@@ -1134,41 +1134,41 @@ Ocorreu um erro no Sql
         <translation type="vanished">Aeroportos Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1494"/>
+        <location filename="src/fs/navdatabase.cpp" line="1497"/>
         <source>Generic Airports</source>
         <translation>Aeroportos Genéricos</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1509"/>
+        <location filename="src/fs/navdatabase.cpp" line="1512"/>
         <source>Base Navigation</source>
         <translation>Navegação Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1557"/>
-        <location filename="src/fs/navdatabase.cpp" line="1603"/>
+        <location filename="src/fs/navdatabase.cpp" line="1560"/>
+        <location filename="src/fs/navdatabase.cpp" line="1606"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation>Complemento criptografado &quot;%1&quot; encontrado. O complemento pode não aparecer corretamente.</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1599"/>
+        <location filename="src/fs/navdatabase.cpp" line="1602"/>
         <source>Community</source>
         <translation>Comunidade</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1688"/>
-        <location filename="src/fs/navdatabase.cpp" line="1697"/>
+        <location filename="src/fs/navdatabase.cpp" line="1691"/>
+        <location filename="src/fs/navdatabase.cpp" line="1702"/>
         <source>Custom scenery path %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Caminho personalizado do cenário: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1978"/>
+        <location filename="src/fs/navdatabase.cpp" line="1985"/>
         <source>Counting files for %1 ...</source>
         <translation>Contando arquivos para %1 ...</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="967"/>
         <location filename="src/fs/navdatabase.cpp" line="1110"/>
-        <location filename="src/fs/navdatabase.cpp" line="1249"/>
+        <location filename="src/fs/navdatabase.cpp" line="1252"/>
         <source>Clean up</source>
         <translation>Limpando</translation>
     </message>
@@ -1215,7 +1215,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/navdatabase.cpp" line="810"/>
         <source>Creating medium and large airport tables</source>
-        <translation type="unfinished"></translation>
+        <translation>Criando tabelas de aeroportos médios e grandes</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="863"/>
@@ -1223,7 +1223,7 @@ Ocorreu um erro no Sql
         <translation>Criando Script de preparação do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1482"/>
+        <location filename="src/fs/navdatabase.cpp" line="1485"/>
         <source>Base</source>
         <translation></translation>
     </message>
@@ -1235,7 +1235,7 @@ Ocorreu um erro no Sql
         <location filename="src/fs/navdatabase.cpp" line="958"/>
         <location filename="src/fs/navdatabase.cpp" line="986"/>
         <location filename="src/fs/navdatabase.cpp" line="1094"/>
-        <location filename="src/fs/navdatabase.cpp" line="1240"/>
+        <location filename="src/fs/navdatabase.cpp" line="1243"/>
         <source>Creating indexes</source>
         <translation>Criando índices</translation>
     </message>
@@ -1250,17 +1250,17 @@ Ocorreu um erro no Sql
         <translation>Criando índices para fazer a procura</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1426"/>
+        <location filename="src/fs/navdatabase.cpp" line="1429"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Criando relatório em coordenadas duplicadas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1388"/>
+        <location filename="src/fs/navdatabase.cpp" line="1391"/>
         <source>Creating report on duplicates</source>
         <translation>Criando relatório em duplicata</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1382"/>
+        <location filename="src/fs/navdatabase.cpp" line="1385"/>
         <source>Creating report on values</source>
         <translation>Criando relatório em valores</translation>
     </message>
@@ -1275,7 +1275,7 @@ Ocorreu um erro no Sql
         <translation>Criando pontas de rotas waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1376"/>
+        <location filename="src/fs/navdatabase.cpp" line="1379"/>
         <source>Creating table statistics</source>
         <translation>Criando tabela de estatísticas</translation>
     </message>
@@ -2335,7 +2335,7 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="937"/>
         <source>Counting files for User Included Path ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Contando arquivos para o caminho de inclusão do Usuário ...</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="1009"/>
@@ -2926,7 +2926,7 @@ Tempo Noturno: %5</translation>
     <message>
         <location filename="src/gui/helphandler.cpp" line="109"/>
         <source>URL &quot;%1&quot; not found</source>
-        <translation type="unfinished"></translation>
+        <translation>URL &quot;%1&quot; não encontrado</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="112"/>
@@ -2939,7 +2939,7 @@ Tempo Noturno: %5</translation>
         <location filename="src/gui/helphandler.cpp" line="155"/>
         <location filename="src/gui/helphandler.cpp" line="164"/>
         <source>File &quot;%1&quot; not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivo &quot;%1&quot; não encontrado</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="183"/>
@@ -2961,18 +2961,18 @@ Tempo Noturno: %5</translation>
 <context>
     <name>atools::gui::TabWidgetHandler</name>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="76"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="80"/>
         <source>&amp;Open all Tabs</source>
         <oldsource>&amp;Open All</oldsource>
         <translation>&amp;Abra todas as Guias</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="77"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="81"/>
         <source>Show all tabs</source>
         <translation>Mostrar todas as guias</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="83"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="87"/>
         <source>&amp;Close all Tabs except Current</source>
         <oldsource>&amp;Close All Except Current</oldsource>
         <translation>&amp;Feche todas as Guias, exceto a Atual</translation>
@@ -2982,42 +2982,42 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">Feche todas as guias excerto a atual</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="84"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="88"/>
         <source>Close all tabs except the currently active tab</source>
         <translation>Feche todas as guias exceto a guia atualmente ativa</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="90"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="94"/>
         <source>&amp;Reset Tab Layout</source>
         <translation>&amp;Resete o Layout da Guia</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="91"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="95"/>
         <source>Show all tabs and reset order back to default</source>
         <translation>Mostrar todas as guias e redefinir o pedido de volta ao padrão</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="98"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="102"/>
         <source>&amp;Lock Tab Layout</source>
         <translation>&amp;Bloquear Layout da Guia</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="99"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="103"/>
         <source>Hides close buttons and fixes tabs at current position</source>
         <translation>Oculta botões e corrige guias na posição atual</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="171"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="175"/>
         <source>&amp;Close tab %1</source>
         <translation>&amp;Fecha a guia %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="175"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="179"/>
         <source>Close tab</source>
         <translation>Fecha a guia</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="224"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="228"/>
         <source>Open or close tab %1</source>
         <translation>Abrir ou fechar a guia %1</translation>
     </message>

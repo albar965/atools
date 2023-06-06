@@ -198,12 +198,12 @@ File: &quot;%2&quot;
 <context>
     <name>FileResolver</name>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="168"/>
+        <location filename="src/fs/scenery/fileresolver.cpp" line="171"/>
         <source>&quot;%2&quot; is not a directory.</source>
         <translation>“%2” 不是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="175"/>
+        <location filename="src/fs/scenery/fileresolver.cpp" line="178"/>
         <source>&quot;%2&quot; does not exist.</source>
         <translation>“%2” 不存在。</translation>
     </message>
@@ -211,39 +211,39 @@ File: &quot;%2&quot;
 <context>
     <name>Flightplan</name>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="201"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="190"/>
         <source>Empty Flightplan</source>
         <translation>空飞行计划</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="63"/>
-        <location filename="src/fs/pln/flightplan.cpp" line="205"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="52"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="194"/>
         <source>IFR</source>
         <translation>IFR</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="65"/>
-        <location filename="src/fs/pln/flightplan.cpp" line="207"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="54"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="196"/>
         <source>VFR</source>
         <translation>VFR</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="123"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="112"/>
         <source>File pattern has no extension. It should end with &quot;.%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="126"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="115"/>
         <source>File pattern uses a wrong extension &quot;.%1&quot;. It should end with &quot;.%2&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="139"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="128"/>
         <source>Pattern contains invalid characters, double spaces or is longer than %1 characters.%2Not allowed are: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="150"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="139"/>
         <source>Pattern is empty.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -285,74 +285,74 @@ File: &quot;%2&quot;
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="123"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="120"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>无法打开文件“%1”。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="140"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="137"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP.</source>
         <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</oldsource>
         <translation>无法打开飞行计划文件“%1”。没有检测到受支持的飞行计划文件。只支持 PLN 文件（FSX XML、FS9 INI 和 FSC）、X-Plane 的 FMS 文件、FLP 文件和 FlightGear 的 FGFP 文件。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="200"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="197"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
         <translation>无法打开空飞行计划文件“%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="474"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="471"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>无效的 FMS 文件。无法读取版本号：%1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="489"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="486"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>无效的 FMS 文件。无效版本 %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="581"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="578"/>
         <source>Invalid FMS file. Invalid coordinate in %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="593"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="590"/>
         <source>Invalid FMS file. Cannot read waypoint type in %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="619"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="616"/>
         <source>Invalid FMS file. Invalid waypoint type in %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="628"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="625"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>无效的 FMS 文件。航段数量不是 %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="859"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="997"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>无效的飞行计划文件“%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="889"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1027"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
         <oldsource>Invalid position in LNMPLN.</oldsource>
         <translation>LNMPLN 中的位置“%1”无效。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="892"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1030"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
         <translation>LNMPLN 中的位置“%1”无效。坐标超出范围：%1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="901"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1039"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
         <translation>LNMPLN 中的位置“%1”无效。坐标超出范围。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="929"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1067"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
         <translation>GPX 文件位置无效“%1”。</translation>
     </message>
@@ -365,44 +365,44 @@ File: &quot;%2&quot;
         <translation type="vanished">GPX中的位置无效。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1022"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1393"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4213"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1160"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1534"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4333"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件“%1”。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1212"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1353"/>
         <source>Invalid LNMPLN flight plan. No waypoints found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1214"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1355"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation>LNMPLN 中的位置“%1”无效。找不到航路点。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1594"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1736"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开 FlightGear 文件“%1”。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3138"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3264"/>
         <source> Flight Plan</source>
         <translation> 飞行计划</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3191"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3317"/>
         <source> Track</source>
         <translation> 航迹</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3655"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3779"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>由 %1 在 %4 创建的 PMDG RTE ，版本 %2（修订版本 %3） </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3800"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3924"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>写入 %1 时遇到了内部错误：文件大小无效 %2 != %3 这个文件将不可用。</translation>
     </message>
@@ -1269,7 +1269,7 @@ File: &quot;%2&quot;
         <location filename="src/fs/navdatabase.cpp" line="958"/>
         <location filename="src/fs/navdatabase.cpp" line="986"/>
         <location filename="src/fs/navdatabase.cpp" line="1094"/>
-        <location filename="src/fs/navdatabase.cpp" line="1240"/>
+        <location filename="src/fs/navdatabase.cpp" line="1243"/>
         <source>Creating indexes</source>
         <translation>正在创建索引</translation>
     </message>
@@ -1277,14 +1277,14 @@ File: &quot;%2&quot;
         <location filename="src/fs/navdatabase.cpp" line="961"/>
         <location filename="src/fs/navdatabase.cpp" line="991"/>
         <location filename="src/fs/navdatabase.cpp" line="1097"/>
-        <location filename="src/fs/navdatabase.cpp" line="1243"/>
+        <location filename="src/fs/navdatabase.cpp" line="1246"/>
         <source>Creating boundary indexes</source>
         <translation>正在创建边界索引</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="967"/>
         <location filename="src/fs/navdatabase.cpp" line="1110"/>
-        <location filename="src/fs/navdatabase.cpp" line="1249"/>
+        <location filename="src/fs/navdatabase.cpp" line="1252"/>
         <source>Clean up</source>
         <translation>清理</translation>
     </message>
@@ -1304,32 +1304,32 @@ File: &quot;%2&quot;
         <translation>正在准备航路</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1257"/>
+        <location filename="src/fs/navdatabase.cpp" line="1260"/>
         <source>Basic Validation</source>
         <translation>基础验证</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1376"/>
+        <location filename="src/fs/navdatabase.cpp" line="1379"/>
         <source>Creating table statistics</source>
         <translation>正在创建表格统计</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1382"/>
+        <location filename="src/fs/navdatabase.cpp" line="1385"/>
         <source>Creating report on values</source>
         <translation>正在创建数值的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1388"/>
+        <location filename="src/fs/navdatabase.cpp" line="1391"/>
         <source>Creating report on duplicates</source>
         <translation>正在创建重复项的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1426"/>
+        <location filename="src/fs/navdatabase.cpp" line="1429"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>正在创建重复坐标的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1482"/>
+        <location filename="src/fs/navdatabase.cpp" line="1485"/>
         <source>Base</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1338,34 +1338,34 @@ File: &quot;%2&quot;
         <translation type="vanished">基地机场</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1494"/>
+        <location filename="src/fs/navdatabase.cpp" line="1497"/>
         <source>Generic Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1509"/>
+        <location filename="src/fs/navdatabase.cpp" line="1512"/>
         <source>Base Navigation</source>
         <translation>基地导航</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1557"/>
-        <location filename="src/fs/navdatabase.cpp" line="1603"/>
+        <location filename="src/fs/navdatabase.cpp" line="1560"/>
+        <location filename="src/fs/navdatabase.cpp" line="1606"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1599"/>
+        <location filename="src/fs/navdatabase.cpp" line="1602"/>
         <source>Community</source>
         <translation>社区</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1688"/>
-        <location filename="src/fs/navdatabase.cpp" line="1697"/>
+        <location filename="src/fs/navdatabase.cpp" line="1691"/>
+        <location filename="src/fs/navdatabase.cpp" line="1702"/>
         <source>Custom scenery path %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1978"/>
+        <location filename="src/fs/navdatabase.cpp" line="1985"/>
         <source>Counting files for %1 ...</source>
         <translation>正在为 %1 计数文件...</translation>
     </message>
@@ -2882,18 +2882,18 @@ Night time: %5</source>
 <context>
     <name>atools::gui::TabWidgetHandler</name>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="76"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="80"/>
         <source>&amp;Open all Tabs</source>
         <oldsource>&amp;Open All</oldsource>
         <translation type="unfinished">全部打开(&amp;O)</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="77"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="81"/>
         <source>Show all tabs</source>
         <translation>显示所有选项卡</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="83"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="87"/>
         <source>&amp;Close all Tabs except Current</source>
         <oldsource>&amp;Close All Except Current</oldsource>
         <translation type="unfinished">除当前的全部关闭(&amp;C)</translation>
@@ -2903,42 +2903,42 @@ Night time: %5</source>
         <translation type="vanished">关闭除当前页的所有页</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="84"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="88"/>
         <source>Close all tabs except the currently active tab</source>
         <translation>关闭除当前活动选项卡外的所有选项卡</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="90"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="94"/>
         <source>&amp;Reset Tab Layout</source>
         <translation>重设选项卡布局(&amp;R)</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="91"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="95"/>
         <source>Show all tabs and reset order back to default</source>
         <translation>显示所有的选项卡并将排序重置为默认值</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="98"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="102"/>
         <source>&amp;Lock Tab Layout</source>
         <translation>锁定选项卡布局(&amp;L)</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="99"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="103"/>
         <source>Hides close buttons and fixes tabs at current position</source>
         <translation>隐藏关闭按钮并将选项卡固定在当期位置</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="171"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="175"/>
         <source>&amp;Close tab %1</source>
         <translation>关闭选项卡 %1(&amp;C)</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="175"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="179"/>
         <source>Close tab</source>
         <translation>关闭选项卡</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="224"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="228"/>
         <source>Open or close tab %1</source>
         <translation>打开或关闭选项卡 %1</translation>
     </message>
