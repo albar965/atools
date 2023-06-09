@@ -244,19 +244,26 @@ QFont getBestFixedFont()
   for(const QString& family : QStringList({"Andale Mono", "Consolas", "Lucida Console", "Inconsolata"}))
   {
     fixedFont = fontDb.font(family, "Normal", QApplication::font().pointSize());
-    if(fixedFont.family() == family && fixedFont.fixedPitch() && fixedFont.style() == QFont::StyleNormal)
+
+    // Get information about the actually used font
+    QFontInfo info(fixedFont);
+    if(info.family() == family && info.fixedPitch() && info.style() == QFont::StyleNormal)
     {
       found = true;
       break;
     }
   }
+
   if(!found)
+    // Fall back to default (Courier on Windows)
     fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
 #else
+  // Get system defined fixed font
   fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
 #endif
 
-#if defined(Q_OS_MACOS)
+#if defined(Q_OS_MACOS) || defined(Q_OS_WIN)
+  // Need to enlarge a bit
   fixedFont.setPointSizeF(fixedFont.pointSizeF() * 1.2);
 #endif
 
