@@ -31,6 +31,9 @@ class QAction;
 namespace atools {
 namespace gui {
 
+/* Get best fixed system font avoiding the unreadable courier on Windows */
+QFont getBestFixedFont();
+
 /* Show path in any OS dependent file manager. Selects the file in Windows Explorer.
  *  Shows a warning dialog on error.*/
 bool showInFileManager(const QString& filepath, QWidget *parent);

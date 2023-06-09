@@ -18,6 +18,7 @@
 #include "gui/tools.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
+#include "qapplication.h"
 
 #include <QDesktopServices>
 #include <QDir>
@@ -231,6 +232,35 @@ QList<int> selectedRows(QItemSelectionModel *model, bool reverse)
 bool checked(const QAction *action)
 {
   return action->isEnabled() && action->isChecked();
+}
+
+QFont getBestFixedFont()
+{
+  QFont fixedFont;
+
+#if defined(Q_OS_WINDOWS)
+  bool found = false;
+  QFontDatabase fontDb;
+  for(const QString& family : QStringList({"Andale Mono", "Consolas", "Lucida Console", "Inconsolata"}))
+  {
+    fixedFont = fontDb.font(family, "Normal", QApplication::font().pointSize());
+    if(fixedFont.family() == family && fixedFont.fixedPitch() && fixedFont.style() == QFont::StyleNormal)
+    {
+      found = true;
+      break;
+    }
+  }
+  if(!found)
+    fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+#else
+  fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+#endif
+
+#if defined(Q_OS_MACOS)
+  fixedFont.setPointSizeF(fixedFont.pointSizeF() * 1.2);
+#endif
+
+  return fixedFont;
 }
 
 } // namespace gui
