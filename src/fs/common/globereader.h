@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,8 +42,11 @@ static Q_DECL_CONSTEXPR float OCEAN = -500.f;
 class GlobeReader
 {
 public:
-  GlobeReader(const QString& dataDirParam);
+  explicit GlobeReader(const QString& dataDirParam);
   virtual ~GlobeReader();
+
+  GlobeReader(const GlobeReader& other) = delete;
+  GlobeReader& operator=(const GlobeReader& other) = delete;
 
   /* Valid if at least one file with matching name and size was found. */
   static bool isDirValid(const QString& path);
@@ -60,6 +63,12 @@ public:
    * consecutive ones with same elevation
    * "sampleRadiusMeter" defines a rectangle where five points are sampled and the maximum is used.*/
   void getElevations(geo::LineString& elevations, const atools::geo::LineString& linestring, float sampleRadiusMeter = 0.f);
+
+  /* true if folder exists and files were found */
+  bool isValid() const
+  {
+    return valid;
+  }
 
 private:
   friend class ::DtmTest;
@@ -94,6 +103,8 @@ private:
   QVector<QString> dataFilenames;
   QVector<QFile *> dataFiles;
   QVector<QDataStream *> dataStreams;
+
+  bool valid = false;
 };
 
 } // namespace common

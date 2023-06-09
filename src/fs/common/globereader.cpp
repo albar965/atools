@@ -53,8 +53,10 @@ bool GlobeReader::isDirValid(const QString& path)
 {
   QDir dir(path);
   for(const QFileInfo& file : dir.entryInfoList({"???g"}, QDir::Files, QDir::Name | QDir::IgnoreCase))
+  {
     if(fileEntryValid(file))
       return true;
+  }
 
   return false;
 }
@@ -69,6 +71,8 @@ bool GlobeReader::fileEntryValid(const QFileInfo& fileEntry)
 bool GlobeReader::openFiles()
 {
   closeFiles();
+  valid = false;
+
   if(!isDirValid(dataDir))
     return false;
 
@@ -82,6 +86,7 @@ bool GlobeReader::openFiles()
       // Revised files will be overwritten
       int index = static_cast<int>(fileEntry.fileName().at(0).toLatin1() - 'a');
       dataFilenames[index] = fileEntry.filePath();
+      valid = true;
     }
     else
       qWarning() << "Found invalid file" << fileEntry.filePath();
@@ -135,6 +140,9 @@ void GlobeReader::closeFiles()
 
 float GlobeReader::getElevation(const atools::geo::Pos& pos, float sampleRadiusMeter)
 {
+  if(!valid || !pos.isValid())
+    return atools::fs::common::INVALID;
+
   if(sampleRadiusMeter > 0.f)
     // Get maximum around pos
     return elevationMax(pos, sampleRadiusMeter);
@@ -148,7 +156,6 @@ float GlobeReader::getElevation(const atools::geo::Pos& pos, float sampleRadiusM
 
 float GlobeReader::elevationMax(const geo::Pos& pos, float sampleRadiusMeter)
 {
-
   // Collect file indexes and offsets - use set to remove duplicates
   QSet<std::pair<int, qint64> > indexes;
   // Center point
@@ -210,7 +217,7 @@ float GlobeReader::elevationFromIndexAndOffset(int fileIndex, qint64 fileOffset)
 
 void GlobeReader::getElevations(atools::geo::LineString& elevations, const atools::geo::LineString& linestring, float sampleRadiusMeter)
 {
-  if(linestring.isEmpty())
+  if(linestring.isEmpty() || !valid)
     return;
 
   if(linestring.size() == 1)
