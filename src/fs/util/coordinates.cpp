@@ -542,11 +542,11 @@ geo::Pos fromAnyFormatInternal(const QString& coords, bool replaceDecimals, bool
 #endif
 
   // Replace variations for minute and degree signs like they are using in Wikipedia
-  coordStr.replace(L'″', '\"');
-  coordStr.replace(L'′', '\'');
-  coordStr.replace(L'’', '\'');
-  coordStr.replace(L'`', '\'');
-  coordStr.replace(L'´', '\'');
+  coordStr.replace(QChar(L'″'), '\"');
+  coordStr.replace(QChar(L'′'), '\'');
+  coordStr.replace(QChar(L'’'), '\'');
+  coordStr.replace(QChar(L'`'), '\'');
+  coordStr.replace(QChar(L'´'), '\'');
 
   // Remove various separators
   coordStr.replace('|', ' ');
@@ -557,7 +557,7 @@ geo::Pos fromAnyFormatInternal(const QString& coords, bool replaceDecimals, bool
   coordStr = coordStr.simplified().toUpper();
 
   if(replaceDecimals)
-    coordStr = coordStr.replace(QLocale().decimalPoint(), '.').replace(',', '.');
+    coordStr = coordStr.replace(QLocale().decimalPoint(), QChar('.')).replace(',', '.');
 
   coordStr = coordStr.simplified();
 
