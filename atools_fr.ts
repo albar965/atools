@@ -1940,108 +1940,108 @@ Fichier: &quot;%2&quot;
         <translation>P3D</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="93"/>
-        <location filename="src/gui/tools.cpp" line="113"/>
+        <location filename="src/gui/tools.cpp" line="94"/>
+        <location filename="src/gui/tools.cpp" line="114"/>
         <source>Error opening path &quot;%1&quot;</source>
         <translation type="unfinished">Erreur lors de l&apos;ouverture du chemin d&apos;accès &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="140"/>
+        <location filename="src/gui/tools.cpp" line="141"/>
         <source>File or directory &quot;%1&quot; does not exist.</source>
         <translation type="unfinished">Fichier ou répertoire &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="158"/>
+        <location filename="src/gui/tools.cpp" line="159"/>
         <source>%1 pt</source>
         <translation type="unfinished">%1 pt</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="160"/>
+        <location filename="src/gui/tools.cpp" line="161"/>
         <source>%1 px</source>
         <translation type="unfinished">%1 px</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="164"/>
+        <location filename="src/gui/tools.cpp" line="165"/>
         <source>thin</source>
         <translation type="unfinished">mince</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="166"/>
+        <location filename="src/gui/tools.cpp" line="167"/>
         <source>extra light</source>
         <translation type="unfinished">extra léger</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="168"/>
+        <location filename="src/gui/tools.cpp" line="169"/>
         <source>light</source>
         <translation type="unfinished">léger</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="170"/>
+        <location filename="src/gui/tools.cpp" line="171"/>
         <source>normal</source>
         <translation type="unfinished">normal</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="172"/>
+        <location filename="src/gui/tools.cpp" line="173"/>
         <source>medium</source>
         <translation type="unfinished">médium</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="174"/>
+        <location filename="src/gui/tools.cpp" line="175"/>
         <source>demi bold</source>
         <translation type="unfinished">demi gras</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="176"/>
+        <location filename="src/gui/tools.cpp" line="177"/>
         <source>bold</source>
         <translation type="unfinished">gras</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="178"/>
+        <location filename="src/gui/tools.cpp" line="179"/>
         <source>extra bold</source>
         <translation type="unfinished">extra gras</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="180"/>
+        <location filename="src/gui/tools.cpp" line="181"/>
         <source>black</source>
         <translation type="unfinished">noire</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="183"/>
+        <location filename="src/gui/tools.cpp" line="184"/>
         <source>italic</source>
         <translation type="unfinished">italique</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="185"/>
+        <location filename="src/gui/tools.cpp" line="186"/>
         <source>overline</source>
         <translation type="unfinished">surligner</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="187"/>
+        <location filename="src/gui/tools.cpp" line="188"/>
         <source>underline</source>
         <translation type="unfinished">souligner</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="189"/>
+        <location filename="src/gui/tools.cpp" line="190"/>
         <source>strike out</source>
         <translation type="unfinished">rayer</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="192"/>
+        <location filename="src/gui/tools.cpp" line="193"/>
         <source>fixed pitch</source>
         <translation type="unfinished">pas fixe</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="196"/>
+        <location filename="src/gui/tools.cpp" line="197"/>
         <source>System font: %1</source>
         <translation type="unfinished">System font: %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="198"/>
+        <location filename="src/gui/tools.cpp" line="199"/>
         <source>User selected font: %1</source>
         <translation type="unfinished">Police choisie par l&apos;utilisateur: %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="200"/>
+        <location filename="src/gui/tools.cpp" line="201"/>
         <source>, </source>
         <translation type="unfinished">, </translation>
     </message>
