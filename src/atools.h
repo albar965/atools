@@ -332,6 +332,7 @@ QString at(const QStringList& columns, int index, bool error);
 /* Both write a warning message if number format is wrong */
 int atInt(const QStringList& columns, int index, bool error);
 float atFloat(const QStringList& columns, int index, bool error);
+double atDouble(const QStringList& columns, int index, bool error);
 
 template<typename TYPE>
 inline TYPE *firstPtrOrNull(QList<TYPE>& list)

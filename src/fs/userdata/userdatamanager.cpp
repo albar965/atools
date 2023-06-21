@@ -21,6 +21,7 @@
 #include "exception.h"
 #include "fs/common/magdecreader.h"
 #include "fs/util/fsutil.h"
+#include "geo/calculations.h"
 #include "geo/pos.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlexport.h"
@@ -50,7 +51,7 @@ using Qt::endl;
 #endif
 
 /* Default visibility. Waypoint is shown on the map at a view distance below this value  */
-const static int VISIBLE_FROM_DEFAULT_NM = 250;
+const static double VISIBLE_FROM_DEFAULT_NM = 250.;
 
 namespace csv {
 /* Column indexes in CSV format */
@@ -258,17 +259,26 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
           insertQuery.bindValue(":last_edit_timestamp", now.toString(Qt::ISODate));
 
         bool ok;
-        int visibleFrom = atools::roundToInt(at(values, csv::VISIBLE_FROM, true /* no warning */).toFloat(&ok));
-        if(visibleFrom > 0 && ok)
+        float visibleFrom = at(values, csv::VISIBLE_FROM, true /* no warning */).toFloat(&ok);
+        if(visibleFrom > 0.f && ok)
           insertQuery.bindValue(":visible_from", visibleFrom);
         else
           insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
 
-        insertQuery.bindValue(":altitude", at(values, csv::ALT));
+        QString altStr = at(values, csv::ALT).trimmed();
+        float alt = 0.f;
+        if(altStr.endsWith("f"))
+          alt = altStr.leftRef(altStr.size() - 1).toFloat();
+        else if(altStr.endsWith("m"))
+          alt = atools::geo::meterToFeet(altStr.leftRef(altStr.size() - 1).toFloat());
+        else
+          alt = altStr.toFloat();
+
+        insertQuery.bindValue(":altitude", alt);
 
         validateCoordinates(line, at(values, csv::LONX), at(values, csv::LATY), false /* checkNull */);
-        insertQuery.bindValue(":lonx", atFloat(values, csv::LONX, true));
-        insertQuery.bindValue(":laty", atFloat(values, csv::LATY, true));
+        insertQuery.bindValue(":lonx", at(values, csv::LONX, true));
+        insertQuery.bindValue(":laty", at(values, csv::LATY, true));
         insertQuery.exec();
         lineNum++;
         numImported++;

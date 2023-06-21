@@ -526,6 +526,20 @@ float atFloat(const QStringList& columns, int index, bool error)
   return num;
 }
 
+double atDouble(const QStringList& columns, int index, bool error)
+{
+  float num = 0.f;
+  QString str = at(columns, index).trimmed();
+  if(!str.isEmpty())
+  {
+    bool ok;
+    num = str.toDouble(&ok);
+    if(!ok && error)
+      qWarning() << "Invalid double floating point number" << str << "at" << index << "for" << columns;
+  }
+  return num;
+}
+
 QDateTime atDateTime(const QStringList& columns, int index, bool error)
 {
   return QDateTime::fromString(at(columns, index, error), Qt::ISODate);
