@@ -263,11 +263,8 @@ public:
     return lonX >= -180.f && lonX <= 180.f && latY >= -90.f && latY <= 90.f;
   }
 
-  /* false if position is null */
-  bool isNull() const
-  {
-    return lonX == 0.f && latY == 0.f;
-  }
+  /* true if position is null */
+  bool isNull() const;
 
   bool isNull(float epsilonDegree) const;
 
@@ -397,9 +394,17 @@ public:
 
   explicit PosD(const atools::geo::Pos& pos)
   {
-    lonX = pos.getLonX();
-    latY = pos.getLatY();
-    altitude = pos.getAltitude();
+    if(pos.isValid())
+    {
+      lonX = pos.getLonX();
+      latY = pos.getLatY();
+      altitude = pos.getAltitude();
+    }
+    else
+    {
+      lonX = latY = INVALID_VALUE;
+      altitude = 0.;
+    }
   }
 
   explicit PosD(double longitudeX, double latitudeY, double alt = 0.)
@@ -415,9 +420,17 @@ public:
 
   atools::geo::PosD& operator=(const atools::geo::PosD& other)
   {
-    lonX = other.lonX;
-    latY = other.latY;
-    altitude = other.altitude;
+    if(other.isValid())
+    {
+      lonX = other.lonX;
+      latY = other.latY;
+      altitude = other.altitude;
+    }
+    else
+    {
+      lonX = latY = INVALID_VALUE;
+      altitude = 0.;
+    }
     return *this;
   }
 
@@ -426,7 +439,7 @@ public:
 
   atools::geo::Pos asPos() const
   {
-    return atools::geo::Pos(lonX, latY, altitude);
+    return isValid() ? atools::geo::Pos(lonX, latY, altitude) : atools::geo::Pos();
   }
 
   double getLonX() const
@@ -446,11 +459,14 @@ public:
     return lonX < INVALID_VALUE / 2. && latY < INVALID_VALUE / 2.;
   }
 
-  /* false if position is null */
-  bool isNull() const
+  /* false if ordinates exceed range -180 < +180 and -90 < +90 */
+  bool isValidRange() const
   {
-    return lonX == 0. && latY == 0.;
+    return lonX >= -180. && lonX <= 180. && latY >= -90. && latY <= 90.;
   }
+
+  /* true if position is null */
+  bool isNull() const;
 
   double getAltitude() const
   {

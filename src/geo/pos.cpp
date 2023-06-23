@@ -572,6 +572,11 @@ QString Pos::toHumanReadableString() const
          arg(absInt(getLonXDeg())).arg(absInt(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2);
 }
 
+bool Pos::isNull() const
+{
+  return atools::almostEqual(lonX, 0.f) && atools::almostEqual(latY, 0.f);
+}
+
 bool Pos::isNull(float epsilonDegree) const
 {
   return atools::almostEqual(lonX, 0.f, epsilonDegree) && atools::almostEqual(latY, 0.f, epsilonDegree);
@@ -821,6 +826,11 @@ void Pos::toCartesian(double& x, double& y, double& z) const
 bool PosD::almostEqual(const PosD& other, double epsilon) const
 {
   return atools::almostEqual(lonX, other.lonX, epsilon) && atools::almostEqual(latY, other.latY, epsilon);
+}
+
+bool PosD::isNull() const
+{
+  return atools::almostEqual(lonX, 0.) && atools::almostEqual(latY, 0.);
 }
 
 QDebug operator<<(QDebug out, const Pos& pos)
