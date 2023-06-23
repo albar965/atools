@@ -429,25 +429,28 @@ SqlRecord DataManagerBase::getEmptyRecord() const
   return rec;
 }
 
-atools::geo::Pos DataManagerBase::validateCoordinates(const QString& line, const QString& lonx, const QString& laty, bool checkNull)
+atools::geo::Pos DataManagerBase::validateCoordinates(const QString& line, const QString& lonx, const QString& laty, int lineNum,
+                                                      bool checkNull)
 {
   bool lonxOk = true, latyOk = true;
   Pos pos(lonx.toFloat(&lonxOk), laty.toFloat(&latyOk));
 
+  QString lineNumber = tr("\nLine number %1").arg(lineNum);
+
   if(!lonxOk)
-    throw Exception(tr("Longitude is not a valid number in line\n\n\"%1\"\n\nImport stopped.").arg(line));
+    throw Exception(tr("Longitude is not a valid number in line\n\n\"%1\"\n\nImport stopped.").arg(line) % lineNumber);
 
   if(!latyOk)
-    throw Exception(tr("Latitude is not a valid number in line\n\n\"%1\"\n\nImport stopped.").arg(line));
+    throw Exception(tr("Latitude is not a valid number in line\n\n\"%1\"\n\nImport stopped.").arg(line) % lineNumber);
 
   if(!pos.isValid())
-    throw Exception(tr("Coordinates are not valid in line\n\n\"%1\"\n\nImport stopped.").arg(line));
+    throw Exception(tr("Coordinates are not valid in line\n\n\"%1\"\n\nImport stopped.").arg(line) % lineNumber);
 
   if(checkNull && pos.isNull())
-    throw Exception(tr("Coordinates are null in line\n\n\"%1\"\n\nImport stopped.").arg(line));
+    throw Exception(tr("Coordinates are null in line\n\n\"%1\"\n\nImport stopped.").arg(line) % lineNumber);
 
   if(!pos.isValidRange())
-    throw Exception(tr("Coordinates are not in a valid range in line\n\n\"%1\"\n\nImport stopped.").arg(line));
+    throw Exception(tr("Coordinates are not in a valid range in line\n\n\"%1\"\n\nImport stopped.").arg(line) % lineNumber);
   return pos;
 }
 
@@ -527,6 +530,11 @@ void DataManagerBase::preUndoBulkInsert(int idFrom)
     // Remember current id
     preBulkInsertId = currentId = idFrom;
   }
+}
+
+void DataManagerBase::abortUndoBulkInsert()
+{
+  preBulkInsertId = currentId = -1;
 }
 
 void DataManagerBase::postUndoBulkInsert()

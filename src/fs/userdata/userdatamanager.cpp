@@ -57,21 +57,23 @@ namespace csv {
 /* Column indexes in CSV format */
 enum Index
 {
-  TYPE = 0,
-  NAME = 1,
-  IDENT = 2,
-  LATY = 3,
-  LONX = 4,
-  ALT = 5,
-  MAGVAR = 6,
-  TAGS = 7,
-  DESCRIPTION = 8,
-  REGION = 9,
-  VISIBLE_FROM = 10,
-  LAST_EDIT = 11,
-  IMPORT_FILENAME = 12
+  TYPE,
+  NAME,
+  IDENT,
+  LATY,
+  LONX,
+  ALT,
+  MAGVAR,
+  TAGS,
+  DESCRIPTION,
+  REGION,
+  VISIBLE_FROM,
+  LAST_EDIT,
+  IMPORT_FILENAME
 };
 
+/* Minimum number of columns required */
+const static int MIN_NUM_COLS = LONX + 1;
 }
 
 namespace xp {
@@ -189,7 +191,7 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
   int numImported = 0;
 
   int id = getCurrentId() + 1;
-  preUndoBulkInsert(id);
+  atools::sql::DataManagerUndoHandler undoHandler(this, id);
 
   for(const QString& filepath : filepaths)
   {
@@ -214,12 +216,12 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
       QTextStream stream(&file);
       stream.setCodec("UTF-8");
 
-      int lineNum = 0;
+      int lineNum = 1;
       while(!stream.atEnd())
       {
         QString line = stream.readLine();
 
-        if(lineNum == 0)
+        if(lineNum == 1)
         {
           QString header = QString(line).simplified().replace(' ', QString()).replace('"', QString()).toLower();
           if(flags & CSV_HEADER || header.startsWith("type,name,ident,latitude,longitude"))
@@ -240,6 +242,9 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
           continue;
 
         const QStringList& values = reader.getValues();
+
+        if(values.size() < csv::MIN_NUM_COLS)
+          throw atools::Exception(tr("File contains invalid data.\n\"%1\"\nLine %2.").arg(line).arg(lineNum));
 
         insertQuery.bindValue(idBinding, id++);
         insertQuery.bindValue(":type", at(values, csv::TYPE));
@@ -276,10 +281,13 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
 
         insertQuery.bindValue(":altitude", alt);
 
-        validateCoordinates(line, at(values, csv::LONX), at(values, csv::LATY), false /* checkNull */);
+        validateCoordinates(line, at(values, csv::LONX), at(values, csv::LATY), lineNum, false /* checkNull */);
         insertQuery.bindValue(":lonx", at(values, csv::LONX, true));
         insertQuery.bindValue(":laty", at(values, csv::LATY, true));
+
         insertQuery.exec();
+        undoHandler.inserted();
+
         lineNum++;
         numImported++;
       }
@@ -287,8 +295,10 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
     }
     else
       throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
-  }
-  postUndoBulkInsert();
+
+  } // for(const QString& filepath : filepaths)
+
+  undoHandler.finish();
 
   return numImported;
 }
@@ -306,7 +316,7 @@ int UserdataManager::importXplane(const QString& filepath)
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     int id = getCurrentId() + 1;
-    preUndoBulkInsert(id);
+    atools::sql::DataManagerUndoHandler undoHandler(this, id);
     QString idBinding(":" % idColumnName);
 
     QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(), {"description", "altitude"}, true /* namedBindings */);
@@ -331,6 +341,7 @@ int UserdataManager::importXplane(const QString& filepath)
     if(!line.isEmpty())
       throw atools::Exception(tr("File is not an X-Plane user_fix.dat file."));
 
+    int lineNum = 1;
     while(!stream.atEnd())
     {
       line = stream.readLine().simplified();
@@ -359,18 +370,23 @@ int UserdataManager::importXplane(const QString& filepath)
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
       insertQuery.bindValue(":temp", 0);
 
-      validateCoordinates(line, at(cols, xp::LONX), at(cols, xp::LATY), false /* checkNull */);
+      validateCoordinates(line, at(cols, xp::LONX), at(cols, xp::LATY), lineNum, false /* checkNull */);
       insertQuery.bindValue(":lonx", at(cols, xp::LONX));
       insertQuery.bindValue(":laty", at(cols, xp::LATY));
-      insertQuery.exec();
-      numImported++;
-    }
-    file.close();
 
-    postUndoBulkInsert();
-  }
+      insertQuery.exec();
+      undoHandler.inserted();
+
+      numImported++;
+      lineNum++;
+    } // while(!stream.atEnd())
+
+    file.close();
+    undoHandler.finish();
+  } // if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+
   return numImported;
 }
 
@@ -402,7 +418,7 @@ int UserdataManager::importGarmin(const QString& filepath)
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     int id = getCurrentId() + 1;
-    preUndoBulkInsert(id);
+    atools::sql::DataManagerUndoHandler undoHandler(this, id);
     QString idBinding(":" % idColumnName);
 
     QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(),
@@ -416,6 +432,7 @@ int UserdataManager::importGarmin(const QString& filepath)
     QTextStream stream(&file);
     stream.setCodec("UTF-8");
 
+    int lineNum = 1;
     while(!stream.atEnd())
     {
       QString line = stream.readLine().simplified();
@@ -433,16 +450,20 @@ int UserdataManager::importGarmin(const QString& filepath)
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
       insertQuery.bindValue(":temp", 0);
 
-      validateCoordinates(line, at(cols, gm::LONX), at(cols, gm::LATY), false /* checkNull */);
+      validateCoordinates(line, at(cols, gm::LONX), at(cols, gm::LATY), lineNum, false /* checkNull */);
       insertQuery.bindValue(":lonx", at(cols, gm::LONX));
       insertQuery.bindValue(":laty", at(cols, gm::LATY));
-      insertQuery.exec();
-      numImported++;
-    }
-    file.close();
 
-    postUndoBulkInsert();
-  }
+      insertQuery.exec();
+      undoHandler.inserted();
+
+      numImported++;
+      lineNum++;
+    }
+
+    file.close();
+    undoHandler.finish();
+  } // if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
   return numImported;
@@ -558,12 +579,10 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
         tempOutFile.rename(filepath);
       }
       else
-        throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").
-                                arg(inFile.fileName()).arg(inFile.errorString()));
+        throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(inFile.fileName()).arg(inFile.errorString()));
     }
     else
-      throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").
-                              arg(tempOutFile.fileName()).arg(tempOutFile.errorString()));
+      throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(tempOutFile.fileName()).arg(tempOutFile.errorString()));
   }
 
   int numExported = 0;

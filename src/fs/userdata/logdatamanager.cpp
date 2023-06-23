@@ -94,6 +94,8 @@ enum Index
   LAST_COL = AIRCRAFT_TRAIL
 };
 
+const static int MIN_NUM_COLS = DESTINATION_TIME_SIM + 1;
+
 const static QString HEADER_LINE = "aircraftname,aircrafttype,aircraftregistration,flightplannumber,";
 const static QString HEADER_LINE2 = "aircraft_name,aircraft_type,aircraft_registration,flightplan_number,";
 
@@ -157,18 +159,18 @@ LogdataManager::~LogdataManager()
 
 int LogdataManager::importCsv(const QString& filepath)
 {
-  int id = getCurrentId() + 1;
-  preUndoBulkInsert(id);
-  QString idBinding(":" % idColumnName);
-
-  // Autogenerate id - exclude logbook_id from insert
-  SqlQuery insertQuery(db);
-  insertQuery.prepare(SqlUtil(db).buildInsertStatement(tableName, QString(), QStringList(), true /* namedBindings */));
-
   int numImported = 0;
   QFile file(filepath);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
+    int id = getCurrentId() + 1;
+    atools::sql::DataManagerUndoHandler undoHandler(this, id);
+    QString idBinding(":" % idColumnName);
+
+    // Autogenerate id - exclude logbook_id from insert
+    SqlQuery insertQuery(db);
+    insertQuery.prepare(SqlUtil(db).buildInsertStatement(tableName, QString(), QStringList(), true /* namedBindings */));
+
     atools::util::CsvReader reader;
 
     QTextStream stream(&file);
@@ -176,12 +178,12 @@ int LogdataManager::importCsv(const QString& filepath)
     stream.setCodec("UTF-8");
 #endif
 
-    int lineNum = 0;
+    int lineNum = 1;
     while(!stream.atEnd())
     {
       QString line = stream.readLine();
 
-      if(lineNum == 0)
+      if(lineNum == 1)
       {
         QString header = QString(line).simplified().replace(' ', QString()).replace('"', QString()).toLower();
         if(header.startsWith(csv::HEADER_LINE) || header.startsWith(csv::HEADER_LINE2))
@@ -202,6 +204,12 @@ int LogdataManager::importCsv(const QString& filepath)
         continue;
 
       const QStringList& values = reader.getValues();
+
+      if(values.size() < csv::MIN_NUM_COLS)
+        throw atools::Exception(tr("File contains invalid data.\n\"%1\"\nLine %2.").arg(line).arg(lineNum));
+
+      if(at(values, csv::DEPARTURE_IDENT).isEmpty() && at(values, csv::DESTINATION_IDENT).isEmpty())
+        throw atools::Exception(tr("File is not valid. Neither departure nor destination ident is set.\n\"%1\"\nLine %2.").arg(line).arg(lineNum));
 
       insertQuery.bindValue(idBinding, id++);
 
@@ -240,7 +248,8 @@ int LogdataManager::importCsv(const QString& filepath)
 
       if(!at(values, csv::DEPARTURE_LONX).isEmpty() && !at(values, csv::DEPARTURE_LATY).isEmpty())
       {
-        Pos departPos = validateCoordinates(line, at(values, csv::DEPARTURE_LONX), at(values, csv::DEPARTURE_LATY));
+        Pos departPos = validateCoordinates(line, at(values, csv::DEPARTURE_LONX), at(values, csv::DEPARTURE_LATY),
+                                            lineNum, true /* checkNull */);
 
         if(departPos.isValid())
         {
@@ -261,7 +270,8 @@ int LogdataManager::importCsv(const QString& filepath)
 
       if(!at(values, csv::DESTINATION_LONX).isEmpty() && !at(values, csv::DESTINATION_LATY).isEmpty())
       {
-        Pos destPos = validateCoordinates(line, at(values, csv::DESTINATION_LONX), at(values, csv::DESTINATION_LATY));
+        Pos destPos = validateCoordinates(line, at(values, csv::DESTINATION_LONX), at(values, csv::DESTINATION_LATY),
+                                          lineNum, true /* checkNull */);
         if(destPos.isValid())
         {
           insertQuery.bindValue(":destination_lonx", destPos.getLonX());
@@ -290,6 +300,7 @@ int LogdataManager::importCsv(const QString& filepath)
       fixEmptyFields(insertQuery);
 
       insertQuery.exec();
+      undoHandler.inserted();
 
       // Reset unassigned fields to null
       insertQuery.clearBoundValues();
@@ -297,12 +308,13 @@ int LogdataManager::importCsv(const QString& filepath)
       lineNum++;
       numImported++;
     }
+
     file.close();
-  }
+    undoHandler.finish();
+  } // if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
 
-  postUndoBulkInsert();
   return numImported;
 }
 
@@ -357,10 +369,6 @@ int LogdataManager::importXplane(const QString& filepath,
     AIRCRAFT_TYPE
   };
 
-  int id = getCurrentId() + 1;
-  preUndoBulkInsert(id);
-  QString idBinding(":" % idColumnName);
-
   // Autogenerate id
   SqlQuery insertQuery(db);
   insertQuery.prepare(SqlUtil(db).buildInsertStatement(tableName, QString(), QStringList(), true /* namedBindings */));
@@ -369,13 +377,17 @@ int LogdataManager::importXplane(const QString& filepath,
   QFile file(filepath);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
+    int id = getCurrentId() + 1;
+    atools::sql::DataManagerUndoHandler undoHandler(this, id);
+    QString idBinding(":" % idColumnName);
+
     QString filename = QFileInfo(filepath).fileName();
 
     QTextStream stream(&file);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     stream.setCodec("UTF-8");
 #endif
-    int lineNum = 0;
+    int lineNum = 1;
     while(!stream.atEnd())
     {
       QString readline = stream.readLine();
@@ -478,17 +490,20 @@ int LogdataManager::importXplane(const QString& filepath,
         fixEmptyFields(insertQuery);
 
         insertQuery.exec();
+        undoHandler.inserted();
+
         insertQuery.clearBoundValues();
       } // if(line.size() >= 10)
 
       lineNum++;
-    }
+    } // while(!stream.atEnd())
+
     file.close();
-  }
+    undoHandler.finish();
+  } // if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
 
-  postUndoBulkInsert();
   return numImported;
 
 }

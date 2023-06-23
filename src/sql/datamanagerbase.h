@@ -228,6 +228,9 @@ public:
    * table between previously remembered and current rowid. */
   void postUndoBulkInsert();
 
+  /* Reset ids after exception */
+  void abortUndoBulkInsert();
+
   /* Maximum undo steps. Not number of changed rows */
   void setMaximumUndoSteps(int value)
   {
@@ -316,7 +319,7 @@ private:
   QString at(const QStringList& line, int index, bool nowarn = false);
 
   /* throws an exception if the coodinates are not valid */
-  geo::Pos validateCoordinates(const QString& line, const QString& lonx, const QString& laty, bool checkNull = true);
+  geo::Pos validateCoordinates(const QString& line, const QString& lonx, const QString& laty, int lineNum, bool checkNull);
 
   /* Add column with given name and type to table and undo table if not already present.
    * Returns true if table was changed. */
@@ -388,6 +391,41 @@ private:
 
   UndoRedoCallbackType callback;
   qint64 callbackTime = 0L;
+};
+
+/* Creates bulk before insert. Aborts bulk insert in destructor. */
+class DataManagerUndoHandler
+{
+public:
+  /* Prepares undo operation */
+  explicit DataManagerUndoHandler(DataManagerBase *datamanagerParam, int id)
+    : datamanager(datamanagerParam), numInserted(0)
+  {
+    datamanager->preUndoBulkInsert(id);
+  }
+
+  /* Abort insert assuming that transaction will not be commited in case of exception. */
+  ~DataManagerUndoHandler()
+  {
+    datamanager->abortUndoBulkInsert();
+  }
+
+  /* Increment number of inserted columns. */
+  void inserted()
+  {
+    numInserted++;
+  }
+
+  /* Finishes undo operation assuming transaction will be commited. */
+  void finish()
+  {
+    if(numInserted > 0)
+      datamanager->postUndoBulkInsert();
+  }
+
+private:
+  DataManagerBase *datamanager;
+  int numInserted;
 };
 
 } // namespace sql
