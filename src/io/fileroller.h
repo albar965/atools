@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,10 +33,6 @@ class FileRoller
 public:
   /*
    *  @param maxNumFiles Maximum number of backups to keep.
-   */
-  FileRoller(int maxNumFiles);
-  /*
-   *  @param maxNumFiles Maximum number of backups to keep.
    *  @parm filePattern
    *     ${base}: Complete basename.
    *     ${sep}: fileSeparator.
@@ -44,7 +40,7 @@ public:
    *     ${ext}: File extension.
    *     Directory is always prepended.
    */
-  FileRoller(int maxNumFiles, const QString& filePattern);
+  FileRoller(int maxNumFiles, const QString& filePattern = QString(), bool keepOriginalFileParam = false);
 
   /*
    * Create numbered backups of a file. Maximum number of files results in:
@@ -61,10 +57,11 @@ public:
   void rollFiles(const QStringList& filenames);
 
 private:
-  void renameSafe(const QString& oldFile, const QString& newFile) const;
+  void renameSafe(const QString& fromFile, const QString& toFile, bool originalFile) const;
   QString buildFilename(const QString& filename, int num) const;
 
   int maxFiles = 0;
+  bool keepOriginalFile = false;
 
   // "${base}${sep}${num}.${ext}"
   QString pattern = "${base}.${ext}.${num}";

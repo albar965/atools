@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,14 +25,8 @@
 namespace atools {
 namespace io {
 
-FileRoller::FileRoller(int maxNumFiles)
-  : maxFiles(maxNumFiles)
-{
-
-}
-
-FileRoller::FileRoller(int maxNumFiles, const QString& filePattern)
-  : maxFiles(maxNumFiles), pattern(filePattern)
+FileRoller::FileRoller(int maxNumFiles, const QString& filePattern, bool keepOriginalFileParam)
+  : maxFiles(maxNumFiles), keepOriginalFile(keepOriginalFileParam), pattern(filePattern)
 {
 
 }
@@ -57,12 +51,12 @@ void FileRoller::rollFile(const QString& filename)
         oldFile.remove();
       else
         // Move all other to higher number
-        renameSafe(oldFile.fileName(), newFile.fileName());
+        renameSafe(oldFile.fileName(), newFile.fileName(), false /* originalFile */);
     }
   }
 
   if(maxFiles > 0)
-    renameSafe(filename, buildFilename(filename, 1));
+    renameSafe(filename, buildFilename(filename, 1), true /* originalFile */);
 }
 
 QString FileRoller::buildFilename(const QString& filename, int num) const
@@ -74,11 +68,15 @@ QString FileRoller::buildFilename(const QString& filename, int num) const
          replace("${ext}", fileinfo.suffix());
 }
 
-void FileRoller::renameSafe(const QString& oldFile, const QString& newFile) const
+void FileRoller::renameSafe(const QString& fromFile, const QString& toFile, bool originalFile) const
 {
-  if(QFile::exists(newFile))
-    QFile(newFile).remove();
-  QFile(oldFile).rename(newFile);
+  if(QFile::exists(toFile))
+    QFile(toFile).remove();
+
+  if(keepOriginalFile && originalFile)
+    QFile(fromFile).copy(toFile);
+  else
+    QFile(fromFile).rename(toFile);
 }
 
 } /* namespace io */
