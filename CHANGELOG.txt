@@ -4,6 +4,17 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.16
+
+* Extended FileRoller to optionally keep files
+* Fixed several issues in Pos and PosD conversion
+* Fixed issues where no error was shown when importing invalid userpoint or logbook CSV files.
+  Fixed issue where an aborted import might corrupt the undo data.
+* Update CSV import and export for userpoints to allow unit suffixes in altitude
+  Now detecting suffixes m and f to import altitude in respective units
+
+===============================================================================
+
 # Version 3.8.15
 
 * Added option and properties to determine SID/STAR transitions by last or first waypoint when
