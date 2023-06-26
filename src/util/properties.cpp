@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include <QTextStream>
 #include <QIODevice>
+#include <QDataStream>
 
 namespace atools {
 namespace util {
@@ -30,6 +31,11 @@ using Qt::endl;
 Properties::Properties()
 {
 
+}
+
+Properties::Properties(const QByteArray& bytes)
+{
+  fromByteArray(bytes);
 }
 
 Properties::Properties(const QHash<QString, QString>& other)
@@ -58,6 +64,20 @@ void Properties::read(QTextStream& stream)
 
     insert(line.section('=', 0, 0).trimmed(), line.section('=', 1, 1).trimmed());
   }
+}
+
+QByteArray Properties::asByteArray() const
+{
+  QByteArray bytes;
+  QDataStream out(&bytes, QIODevice::WriteOnly);
+  out << *this;
+  return bytes;
+}
+
+void Properties::fromByteArray(const QByteArray& bytes)
+{
+  QDataStream in(bytes);
+  in >> *this;
 }
 
 QString Properties::writeString() const

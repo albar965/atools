@@ -64,6 +64,12 @@ public:
   /* Detect format by reading the first few lines */
   static atools::fs::pln::FileFormat detectFormat(const QString& file);
 
+  /* true for any supported flight plan file */
+  static bool isFlightplanFile(const QString& file)
+  {
+    return detectFormat(file) != atools::fs::pln::NONE;
+  }
+
   /* LNM own XML format
    * Save a flightplan. An exception is thrown if the flight plan contents are not valid.
    * Although the flight simulator cannot deal with flight plans that have no valid start

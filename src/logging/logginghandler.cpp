@@ -109,8 +109,6 @@ void LoggingHandler::shutdown()
     delete instance;
     instance = nullptr;
   }
-  else
-    qWarning() << "LoggingHandler::shutdown called more than once";
 }
 
 QStringList LoggingHandler::getLogFiles()
