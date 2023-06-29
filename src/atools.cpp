@@ -1402,4 +1402,11 @@ QString canonicalFilePath(const QFileInfo& path)
 #endif
 }
 
+QString strToPlainText(QString str)
+{
+  // Either "<span>", "<span style=\"color: ... bold">" or "</span>", for example
+  const static QRegularExpression regexp("<\\w+>|<\\w+\\s+.*\"\\s*>|</\\w+>", QRegularExpression::InvertedGreedinessOption);
+  return str.replace(regexp, QString());
+}
+
 } // namespace atools

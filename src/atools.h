@@ -97,6 +97,9 @@ bool strStartsWith(const QStringList& list, const QString& str);
 /* true if any string in the list starts str */
 bool strAnyStartsWith(const QStringList& list, const QString& str);
 
+/* Very simple HTML strip */
+QString strToPlainText(QString str);
+
 template<typename TYPE1, typename TYPE2>
 void convertList(QList<TYPE1>& dest, const QList<TYPE2>& src)
 {
@@ -423,7 +426,7 @@ constexpr int roundToInt(TYPE value)
 template<typename TYPE>
 constexpr int ceilToInt(TYPE value)
 {
-    return static_cast<int>(std::ceil(value));
+  return static_cast<int>(std::ceil(value));
 }
 
 /* Linear interpolation
@@ -500,7 +503,7 @@ inline TYPE roundToNearest(TYPE value, TYPE round)
 template<typename TYPE>
 inline TYPE ceilToNearest(TYPE value, TYPE ceil)
 {
-    return ceil > 0. ? std::ceil(value / ceil) * ceil : value;
+  return ceil > 0. ? std::ceil(value / ceil) * ceil : value;
 }
 
 /* To string with changing precision */
