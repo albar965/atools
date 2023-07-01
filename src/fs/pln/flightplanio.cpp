@@ -2100,8 +2100,16 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       writeTextElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
     }
 
-    if(entry.getWaypointType() != atools::fs::pln::entry::USER &&
-       (!entry.getRegion().isEmpty() || !entry.getIdent().isEmpty()))
+    bool regionOrIdent = !entry.getRegion().isEmpty() || !entry.getIdent().isEmpty();
+    bool writeIdent;
+    if(msfs)
+      // For MSFS also required for userpoints to avoid waypoints moved to north
+      writeIdent = regionOrIdent;
+    else
+      // Other simulators do not need this for user waypoints
+      writeIdent = entry.getWaypointType() != atools::fs::pln::entry::USER && regionOrIdent;
+
+    if(writeIdent)
     {
       writer.writeStartElement("ICAO");
 
