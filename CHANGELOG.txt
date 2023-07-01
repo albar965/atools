@@ -6,12 +6,12 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 # Version 3.8.16
 
-* Extended FileRoller to optionally keep files
-* Fixed several issues in Pos and PosD conversion
+* Fix in flight plan export for MSFS where waypoints are moved to North. albar965/littlenavmap#1038
 * Fixed issues where no error was shown when importing invalid userpoint or logbook CSV files.
-  Fixed issue where an aborted import might corrupt the undo data.
-* Update CSV import and export for userpoints to allow unit suffixes in altitude
-  Now detecting suffixes m and f to import altitude in respective units
+* Fixed issue where an aborted CSV import might corrupt the undo data.
+* Update CSV import and export for userpoints to allow unit suffixes in altitude. Now detecting
+  suffixes `m` for meter and `f` for feet to import altitude in respective units. Feet is still
+  default without suffix.
 
 ===============================================================================
 
