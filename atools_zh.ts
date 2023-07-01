@@ -367,7 +367,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1160"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1534"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4333"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4341"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件“%1”。原因是：%2</translation>
     </message>
@@ -387,22 +387,22 @@ File: &quot;%2&quot;
         <translation>无法打开 FlightGear 文件“%1”。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3264"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3272"/>
         <source> Flight Plan</source>
         <translation> 飞行计划</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3317"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3325"/>
         <source> Track</source>
         <translation> 航迹</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3779"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3787"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>由 %1 在 %4 创建的 PMDG RTE ，版本 %2（修订版本 %3） </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3924"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3932"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>写入 %1 时遇到了内部错误：文件大小无效 %2 != %3 这个文件将不可用。</translation>
     </message>
@@ -1446,47 +1446,47 @@ File: &quot;%2&quot;
         <translation>无法打开文件“%1”。原因是：%2。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="852"/>
+        <location filename="src/atools.cpp" line="866"/>
         <source>Directory name is empty.</source>
         <translation>目录名是空的。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="861"/>
+        <location filename="src/atools.cpp" line="875"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation>目录“%1”不存在。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="869"/>
+        <location filename="src/atools.cpp" line="883"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation>文件“%1”不是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="875"/>
+        <location filename="src/atools.cpp" line="889"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation>目录“%1”不可读。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="893"/>
+        <location filename="src/atools.cpp" line="907"/>
         <source>Filepath is empty.</source>
         <translation>文件路径是空的。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="902"/>
+        <location filename="src/atools.cpp" line="916"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation>文件“%1”不存在。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="910"/>
+        <location filename="src/atools.cpp" line="924"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation>文件“%1”是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="915"/>
+        <location filename="src/atools.cpp" line="929"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation>文件“%1”不可读。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="921"/>
+        <location filename="src/atools.cpp" line="935"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation>文件“%1”是空的。</translation>
     </message>
@@ -2667,14 +2667,28 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
 <context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="303"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="489"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="563"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="209"/>
+        <source>File contains invalid data.
+&quot;%1&quot;
+Line %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="212"/>
+        <source>File is not valid. Neither departure nor destination ident is set.
+&quot;%1&quot;
+Line %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="316"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="505"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="578"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>无法打开文件“%1”。原因是：%2。</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="464"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="476"/>
         <source>Imported from X-Plane logbook %1
 Number of landings: %2
 Cross country time: %3
@@ -2695,21 +2709,28 @@ Night time: %5</source>
 <context>
     <name>atools::fs::userdata::UserdataManager</name>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="279"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="363"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="437"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="509"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="551"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="555"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="637"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="681"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="247"/>
+        <source>File contains invalid data.
+&quot;%1&quot;
+Line %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="297"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="388"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="468"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="540"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="582"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="585"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="666"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="710"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>无法打开文件“%1”。原因是：%2。</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="314"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="318"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="322"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="334"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="338"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="342"/>
         <source>File is not an X-Plane user_fix.dat file.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2955,6 +2976,12 @@ Night time: %5</source>
     <name>atools::sql::DataManagerBase</name>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="438"/>
+        <source>
+Line number %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/sql/datamanagerbase.cpp" line="441"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -2966,7 +2993,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="441"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="444"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -2978,7 +3005,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="444"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="447"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -2990,7 +3017,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="447"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="450"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -3002,7 +3029,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="450"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="453"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -3014,84 +3041,84 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="537"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="545"/>
         <source>preUndoBulkInsert() not called</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="641"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="649"/>
         <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="751"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="757"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="759"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="765"/>
         <source>&amp;%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="751"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="759"/>
         <source>&amp;Undo %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="757"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="765"/>
         <source>&amp;Redo %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="843"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="851"/>
         <source>no %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="845"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="853"/>
         <source>one %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="847"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="855"/>
         <source>two %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="849"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="857"/>
         <source>%1 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="851"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="859"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="851"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="859"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="856"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="864"/>
         <source>Invalid undo action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="860"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="868"/>
         <source>%1 adding of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="864"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="872"/>
         <source>%1 editing of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="868"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="876"/>
         <source>%1 deleting of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="907"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="919"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="915"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="927"/>
         <source>Table undo_current is empty.</source>
         <translation type="unfinished"></translation>
     </message>

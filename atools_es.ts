@@ -2190,6 +2190,18 @@ Night time: %5</source>
         <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in LogdataController::importXplane</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>File contains invalid data.
+&quot;%1&quot;
+Line %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File is not valid. Neither departure nor destination ident is set.
+&quot;%1&quot;
+Line %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>atools::fs::userdata::UserdataManager</name>
@@ -2199,6 +2211,12 @@ Night time: %5</source>
     </message>
     <message>
         <source>File is not an X-Plane user_fix.dat file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File contains invalid data.
+&quot;%1&quot;
+Line %2.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2527,6 +2545,11 @@ Importación detenida.</translation>
     </message>
     <message>
         <source>Invalid undo action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+Line number %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

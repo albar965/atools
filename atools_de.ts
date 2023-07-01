@@ -2299,6 +2299,22 @@ Nachtzeit: %5</translation>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
         <translation type="vanished">Kann Sicherheitskopie %1 nicht öffnen. Grund: %2 (%3)</translation>
     </message>
+    <message>
+        <source>File contains invalid data.
+&quot;%1&quot;
+Line %2.</source>
+        <translation>Datei enthält ungültige Daten.
+&quot;%1&quot;
+Zeile %2.</translation>
+    </message>
+    <message>
+        <source>File is not valid. Neither departure nor destination ident is set.
+&quot;%1&quot;
+Line %2.</source>
+        <translation>Datei ist ungültig. Weder Start- noch Zielkennung gesetzt.
+&quot;%1&quot;
+Zeile %2.</translation>
+    </message>
 </context>
 <context>
     <name>atools::fs::userdata::UserdataManager</name>
@@ -2309,6 +2325,14 @@ Nachtzeit: %5</translation>
     <message>
         <source>File is not an X-Plane user_fix.dat file.</source>
         <translation>Datei ist keine X-Plane user_fix-Datei.</translation>
+    </message>
+    <message>
+        <source>File contains invalid data.
+&quot;%1&quot;
+Line %2.</source>
+        <translation>Datei enthält ungültige Daten.
+&quot;%1&quot;
+Zeile %2.</translation>
     </message>
 </context>
 <context>
@@ -2664,6 +2688,12 @@ Importieren gestoppt.</translation>
     <message>
         <source>Invalid undo action</source>
         <translation>Ungültige Rückgängig Aktion</translation>
+    </message>
+    <message>
+        <source>
+Line number %1</source>
+        <translation>
+Zeilennummer %1</translation>
     </message>
 </context>
 <context>

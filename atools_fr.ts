@@ -376,7 +376,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1160"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1534"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4333"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4341"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2</translation>
     </message>
@@ -404,12 +404,12 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Impossible d&apos;ouvrir le fichier FLP %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3264"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3272"/>
         <source> Flight Plan</source>
         <translation> Plan de vol</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3317"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3325"/>
         <source> Track</source>
         <translation> Trace</translation>
     </message>
@@ -418,7 +418,7 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Impossible d&apos;ouvrir le fichier FMS %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3779"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3787"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Créé par %1 Version %2 (révision %3) sur %4 </translation>
     </message>
@@ -427,7 +427,7 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Impossible d&apos;ouvrir le fichier RTE %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3924"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3932"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erreur interne d&apos;écriture %1: Le fichier a une taille invalide %2 != %3 ne sera pas utilisable.</translation>
     </message>
@@ -1525,47 +1525,47 @@ Fichier: &quot;%2&quot;
         <translation>Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="852"/>
+        <location filename="src/atools.cpp" line="866"/>
         <source>Directory name is empty.</source>
         <translation type="unfinished">Le nom du répertoire est vide.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="861"/>
+        <location filename="src/atools.cpp" line="875"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation type="unfinished">Le répertoire &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="869"/>
+        <location filename="src/atools.cpp" line="883"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;est pas un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="875"/>
+        <location filename="src/atools.cpp" line="889"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation type="unfinished">Le répertoire &quot;%1&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="893"/>
+        <location filename="src/atools.cpp" line="907"/>
         <source>Filepath is empty.</source>
         <translation type="unfinished">Le chemin d&apos;accès au fichier est vide.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="902"/>
+        <location filename="src/atools.cpp" line="916"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="910"/>
+        <location filename="src/atools.cpp" line="924"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; est un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="915"/>
+        <location filename="src/atools.cpp" line="929"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="921"/>
+        <location filename="src/atools.cpp" line="935"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; est vide.</translation>
     </message>
@@ -2732,14 +2732,28 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
 <context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="303"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="489"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="563"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="209"/>
+        <source>File contains invalid data.
+&quot;%1&quot;
+Line %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="212"/>
+        <source>File is not valid. Neither departure nor destination ident is set.
+&quot;%1&quot;
+Line %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="316"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="505"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="578"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="464"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="476"/>
         <source>Imported from X-Plane logbook %1
 Number of landings: %2
 Cross country time: %3
@@ -2760,21 +2774,28 @@ Période nocturne : %5</translation>
 <context>
     <name>atools::fs::userdata::UserdataManager</name>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="279"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="363"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="437"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="509"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="551"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="555"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="637"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="681"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="247"/>
+        <source>File contains invalid data.
+&quot;%1&quot;
+Line %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="297"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="388"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="468"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="540"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="582"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="585"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="666"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="710"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="314"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="318"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="322"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="334"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="338"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="342"/>
         <source>File is not an X-Plane user_fix.dat file.</source>
         <translation type="unfinished">Le fichier n&apos;est pas un fichier X-Plane user_fix.dat.</translation>
     </message>
@@ -3029,7 +3050,7 @@ Période nocturne : %5</translation>
 <context>
     <name>atools::sql::DataManagerBase</name>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="438"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="441"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -3042,7 +3063,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="441"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="444"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -3055,7 +3076,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="444"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="447"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -3068,7 +3089,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="447"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="450"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -3081,7 +3102,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="450"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="453"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -3094,18 +3115,18 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="537"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="545"/>
         <source>preUndoBulkInsert() not called</source>
         <translation type="unfinished">preUndoBulkInsert() not called</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="641"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="649"/>
         <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
         <translation type="unfinished">Tentative de modification de la table &quot;%1&quot; en contournant la fonction d&apos;annulation active.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="751"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="757"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="759"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="765"/>
         <source>&amp;%1</source>
         <translation type="unfinished">&amp;%1</translation>
     </message>
@@ -3118,68 +3139,74 @@ Importation arrêtée.</translation>
         <translation type="obsolete">&amp;Refaire%1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="751"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="438"/>
+        <source>
+Line number %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/sql/datamanagerbase.cpp" line="759"/>
         <source>&amp;Undo %1</source>
         <translation type="unfinished">&amp;Défaire %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="757"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="765"/>
         <source>&amp;Redo %1</source>
         <translation type="unfinished">&amp;Rétablir %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="843"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="851"/>
         <source>no %1</source>
         <translation type="unfinished">aucun %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="845"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="853"/>
         <source>one %1</source>
         <translation type="unfinished">un %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="847"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="855"/>
         <source>two %1</source>
         <translation type="unfinished">deux %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="849"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="857"/>
         <source>%1 %2</source>
         <translation type="unfinished">%1 %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="851"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="859"/>
         <source>Undo</source>
         <translation type="unfinished">Défaire</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="851"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="859"/>
         <source>Redo</source>
         <translation type="unfinished">Rétablir</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="856"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="864"/>
         <source>Invalid undo action</source>
         <translation type="unfinished">Action d&apos;annulation invalide</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="860"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="868"/>
         <source>%1 adding of %2</source>
         <translation type="unfinished">%1 ajout de %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="864"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="872"/>
         <source>%1 editing of %2</source>
         <translation type="unfinished">%1 édition de %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="868"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="876"/>
         <source>%1 deleting of %2</source>
         <translation type="unfinished">%1 suppression de %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="907"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="919"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="915"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="927"/>
         <source>Table undo_current is empty.</source>
         <translation type="unfinished">La table d&apos;annulation actuelle est vide.</translation>
     </message>
