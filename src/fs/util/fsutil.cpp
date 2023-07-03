@@ -507,7 +507,7 @@ QString adjustFsxUserWpName(QString name, int length)
   return name;
 }
 
-QString adjustMsfsUserWpName(QString name, int length)
+QString adjustMsfsUserWpName(QString name, int length, int *number)
 {
   static const QRegularExpression USER_WP_NAME_REGEXP_MSFS("[^A-Za-z0-9\\ \\/\\(\\)\\=\\?\\;\\,\\:\\.\\_\\-\\*]");
 
@@ -515,7 +515,12 @@ QString adjustMsfsUserWpName(QString name, int length)
   name.replace(USER_WP_NAME_REGEXP_MSFS, "");
   name = name.left(length).trimmed();
   if(name.isEmpty())
-    name = "User_WP";
+  {
+    if(number != nullptr)
+      name = QString("AUTOWP%1").arg((*number)++);
+    else
+      name = "AUTOWP";
+  }
   return name;
 }
 

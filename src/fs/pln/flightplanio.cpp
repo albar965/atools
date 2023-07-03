@@ -2065,7 +2065,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   writer.writeTextElement("AppVersionBuild", msfs ? "282174" : "61472");
   writer.writeEndElement(); // AppVersion
 
-  int i = 0;
+  int i = 0, wpNum = 1;
   for(const FlightplanEntry& entry : plan)
   {
     if(entry.isNoSave())
@@ -2075,10 +2075,10 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     writer.writeStartElement("ATCWaypoint");
 
     // Trim to max allowed length for FSX/P3D and remove any special chars otherwise FSX/P3D will ignore the plan
-    if(msfs)
-      writer.writeAttribute("id", atools::fs::util::adjustMsfsUserWpName(entry.getIdent(), userWpLength));
-    else
-      writer.writeAttribute("id", atools::fs::util::adjustFsxUserWpName(entry.getIdent(), userWpLength));
+    QString ident = msfs ? atools::fs::util::adjustMsfsUserWpName(entry.getIdent(), userWpLength, &wpNum) :
+                    atools::fs::util::adjustFsxUserWpName(entry.getIdent(), userWpLength);
+
+    writer.writeAttribute("id", ident);
 
     writer.writeTextElement("ATCWaypointType", entry.getWaypointTypeAsFsxString());
 
@@ -2100,16 +2100,8 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       writeTextElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
     }
 
-    bool regionOrIdent = !entry.getRegion().isEmpty() || !entry.getIdent().isEmpty();
-    bool writeIdent;
-    if(msfs)
-      // For MSFS also required for userpoints to avoid waypoints moved to north
-      writeIdent = regionOrIdent;
-    else
-      // Other simulators do not need this for user waypoints
-      writeIdent = entry.getWaypointType() != atools::fs::pln::entry::USER && regionOrIdent;
-
-    if(writeIdent)
+    // Write always for MSFS - for FSX/P3D only if not user and values valid
+    if(msfs || (entry.getWaypointType() != atools::fs::pln::entry::USER && (!entry.getRegion().isEmpty() || !entry.getIdent().isEmpty())))
     {
       writer.writeStartElement("ICAO");
 
@@ -2118,7 +2110,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
         // the sim garbles the flight plan when loading
         writeTextElementIf(writer, "ICAORegion", entry.getRegion());
 
-      writeTextElementIf(writer, "ICAOIdent", entry.getIdent());
+      writeTextElementIf(writer, "ICAOIdent", ident);
 
       if(msfs)
         // Write airport for waypoint if available

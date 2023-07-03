@@ -128,8 +128,8 @@ QString adjustRegion(QString region);
 /* Max 10 characters, digits, space and underscore */
 QString adjustFsxUserWpName(QString name, int length = 10);
 
-/* More relaxed than FSX */
-QString adjustMsfsUserWpName(QString name, int length = 10);
+/* More relaxed than FSX. Uses default name if the result is empty and increments number. */
+QString adjustMsfsUserWpName(QString name, int length = 10, int *number = nullptr);
 
 /* Upper case characters and digits and length between 2 and 5 */
 bool isValidIdent(const QString& ident);
