@@ -285,12 +285,12 @@ Ocorreu um erro no Sql
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3272"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3264"/>
         <source> Flight Plan</source>
         <translation> Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3325"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3317"/>
         <source> Track</source>
         <translation> Rastrear</translation>
     </message>
@@ -330,7 +330,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1160"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1534"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4341"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4333"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -340,7 +340,7 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3932"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3924"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
@@ -431,7 +431,7 @@ Ocorreu um erro no Sql
         <translation>Não é possível abrir o arquivo FlightGear &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3787"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3779"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -1092,40 +1092,40 @@ Ocorreu um erro no Sql
         <translation type="vanished">&quot;%1&quot; não encontrado</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="816"/>
+        <location filename="src/fs/navdatabase.cpp" line="817"/>
         <source>Creating indexes for route</source>
         <translation>Criando índices para rota</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="822"/>
+        <location filename="src/fs/navdatabase.cpp" line="823"/>
         <source>Loading translations</source>
         <translation>Carregando traduções</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="902"/>
+        <location filename="src/fs/navdatabase.cpp" line="903"/>
         <source>Analyze Database</source>
         <translation>Analizando Banco de Dados</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="961"/>
-        <location filename="src/fs/navdatabase.cpp" line="991"/>
-        <location filename="src/fs/navdatabase.cpp" line="1097"/>
-        <location filename="src/fs/navdatabase.cpp" line="1246"/>
+        <location filename="src/fs/navdatabase.cpp" line="962"/>
+        <location filename="src/fs/navdatabase.cpp" line="992"/>
+        <location filename="src/fs/navdatabase.cpp" line="1098"/>
+        <location filename="src/fs/navdatabase.cpp" line="1247"/>
         <source>Creating boundary indexes</source>
         <translation>Criando índices de limite</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="975"/>
+        <location filename="src/fs/navdatabase.cpp" line="976"/>
         <source>Creating waypoints for procedures</source>
         <translation>Criando waypoints para procedimentos</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="997"/>
+        <location filename="src/fs/navdatabase.cpp" line="998"/>
         <source>Updating Navids in Waypoint</source>
         <translation>Atualizando Navaids nos Waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1260"/>
+        <location filename="src/fs/navdatabase.cpp" line="1261"/>
         <source>Basic Validation</source>
         <translation>Validação Básica</translation>
     </message>
@@ -1134,96 +1134,96 @@ Ocorreu um erro no Sql
         <translation type="vanished">Aeroportos Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1497"/>
+        <location filename="src/fs/navdatabase.cpp" line="1498"/>
         <source>Generic Airports</source>
         <translation>Aeroportos Genéricos</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1512"/>
+        <location filename="src/fs/navdatabase.cpp" line="1513"/>
         <source>Base Navigation</source>
         <translation>Navegação Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1560"/>
-        <location filename="src/fs/navdatabase.cpp" line="1606"/>
+        <location filename="src/fs/navdatabase.cpp" line="1561"/>
+        <location filename="src/fs/navdatabase.cpp" line="1607"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation>Complemento criptografado &quot;%1&quot; encontrado. O complemento pode não aparecer corretamente.</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1602"/>
+        <location filename="src/fs/navdatabase.cpp" line="1603"/>
         <source>Community</source>
         <translation>Comunidade</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1691"/>
-        <location filename="src/fs/navdatabase.cpp" line="1702"/>
+        <location filename="src/fs/navdatabase.cpp" line="1692"/>
+        <location filename="src/fs/navdatabase.cpp" line="1703"/>
         <source>Custom scenery path %1</source>
         <translation>Caminho personalizado do cenário: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1985"/>
+        <location filename="src/fs/navdatabase.cpp" line="1988"/>
         <source>Counting files for %1 ...</source>
         <translation>Contando arquivos para %1 ...</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="967"/>
-        <location filename="src/fs/navdatabase.cpp" line="1110"/>
-        <location filename="src/fs/navdatabase.cpp" line="1252"/>
+        <location filename="src/fs/navdatabase.cpp" line="968"/>
+        <location filename="src/fs/navdatabase.cpp" line="1111"/>
+        <location filename="src/fs/navdatabase.cpp" line="1253"/>
         <source>Clean up</source>
         <translation>Limpando</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="801"/>
+        <location filename="src/fs/navdatabase.cpp" line="802"/>
         <source>Clean up runways</source>
         <translation>Limpar pistas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="776"/>
+        <location filename="src/fs/navdatabase.cpp" line="777"/>
         <source>Collecting navaids for search</source>
         <translation>Coletando navaids para pesquisa</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="148"/>
+        <location filename="src/fs/navdatabase.cpp" line="149"/>
         <source>Cleaning Database</source>
         <translation>Limpeza do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="163"/>
+        <location filename="src/fs/navdatabase.cpp" line="164"/>
         <source>Creating Database Schema</source>
         <translation>Criando Esquema do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="190"/>
+        <location filename="src/fs/navdatabase.cpp" line="191"/>
         <source>&quot;%1&quot; does not contain any scenery areas</source>
         <translation>&quot;%1&quot; não contém nenhuma área de cenário</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="200"/>
+        <location filename="src/fs/navdatabase.cpp" line="201"/>
         <source>Unknown exception while reading file</source>
         <translation>Exceção desconhecida ao ler o arquivo</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="739"/>
+        <location filename="src/fs/navdatabase.cpp" line="740"/>
         <source>Updating Navaids</source>
         <translation>Atualizando Navaids</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="746"/>
+        <location filename="src/fs/navdatabase.cpp" line="747"/>
         <source>Cleaning up waypoints</source>
         <translation>Limpando waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="810"/>
+        <location filename="src/fs/navdatabase.cpp" line="811"/>
         <source>Creating medium and large airport tables</source>
         <translation>Criando tabelas de aeroportos médios e grandes</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="863"/>
+        <location filename="src/fs/navdatabase.cpp" line="864"/>
         <source>Creating Database preparation Script</source>
         <translation>Criando Script de preparação do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1485"/>
+        <location filename="src/fs/navdatabase.cpp" line="1486"/>
         <source>Base</source>
         <translation></translation>
     </message>
@@ -1232,50 +1232,50 @@ Ocorreu um erro no Sql
         <translation type="vanished">Criando airways</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="958"/>
-        <location filename="src/fs/navdatabase.cpp" line="986"/>
-        <location filename="src/fs/navdatabase.cpp" line="1094"/>
-        <location filename="src/fs/navdatabase.cpp" line="1243"/>
+        <location filename="src/fs/navdatabase.cpp" line="959"/>
+        <location filename="src/fs/navdatabase.cpp" line="987"/>
+        <location filename="src/fs/navdatabase.cpp" line="1095"/>
+        <location filename="src/fs/navdatabase.cpp" line="1244"/>
         <source>Creating indexes</source>
         <translation>Criando índices</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="796"/>
+        <location filename="src/fs/navdatabase.cpp" line="797"/>
         <source>Creating indexes for airport</source>
         <translation>Criando índices para o aeroporto</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="805"/>
+        <location filename="src/fs/navdatabase.cpp" line="806"/>
         <source>Creating indexes for search</source>
         <translation>Criando índices para fazer a procura</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1429"/>
+        <location filename="src/fs/navdatabase.cpp" line="1430"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Criando relatório em coordenadas duplicadas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1391"/>
+        <location filename="src/fs/navdatabase.cpp" line="1392"/>
         <source>Creating report on duplicates</source>
         <translation>Criando relatório em duplicata</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1385"/>
+        <location filename="src/fs/navdatabase.cpp" line="1386"/>
         <source>Creating report on values</source>
         <translation>Criando relatório em valores</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="785"/>
+        <location filename="src/fs/navdatabase.cpp" line="786"/>
         <source>Creating route edges for VOR and NDB</source>
         <translation>Criando pontos de rotas para VOR e NDB</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="792"/>
+        <location filename="src/fs/navdatabase.cpp" line="793"/>
         <source>Creating route edges waypoints</source>
         <translation>Criando pontas de rotas waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1379"/>
+        <location filename="src/fs/navdatabase.cpp" line="1380"/>
         <source>Creating table statistics</source>
         <translation>Criando tabela de estatísticas</translation>
     </message>
@@ -1292,7 +1292,7 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não contém o diretório do &quot;Scenery&quot;</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="887"/>
+        <location filename="src/fs/navdatabase.cpp" line="888"/>
         <source>Dropping All Indexes</source>
         <translation>Retirando todos os índices</translation>
     </message>
@@ -1313,22 +1313,22 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é o diretório</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="728"/>
+        <location filename="src/fs/navdatabase.cpp" line="729"/>
         <source>Merging VOR and TACAN to VORTAC</source>
         <translation>Fundindo VOR e TACAN para VORTAC</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="632"/>
+        <location filename="src/fs/navdatabase.cpp" line="633"/>
         <source>Navigraph</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="782"/>
+        <location filename="src/fs/navdatabase.cpp" line="783"/>
         <source>Populating routing tables</source>
         <translation>Preenchendo tabelas de rotas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1120"/>
+        <location filename="src/fs/navdatabase.cpp" line="1121"/>
         <source>Preparing Airways</source>
         <translation>Preparando Airways</translation>
     </message>
@@ -1361,38 +1361,38 @@ Ocorreu um erro no Sql
         <translation type="vanished">Removendo visualização</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="755"/>
+        <location filename="src/fs/navdatabase.cpp" line="756"/>
         <source>Updating Airports</source>
         <translation>Atualizando Aeroportos</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="760"/>
-        <location filename="src/fs/navdatabase.cpp" line="767"/>
+        <location filename="src/fs/navdatabase.cpp" line="761"/>
+        <location filename="src/fs/navdatabase.cpp" line="768"/>
         <source>Updating ILS</source>
         <translation>Atualizando ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="772"/>
+        <location filename="src/fs/navdatabase.cpp" line="773"/>
         <source>Updating ILS Count</source>
         <translation>Atualizando contagem do ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="751"/>
+        <location filename="src/fs/navdatabase.cpp" line="752"/>
         <source>Updating approaches</source>
         <translation>Atualizando aproximações</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="733"/>
+        <location filename="src/fs/navdatabase.cpp" line="734"/>
         <source>Updating waypoints</source>
         <translation>Atualizando waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="894"/>
+        <location filename="src/fs/navdatabase.cpp" line="895"/>
         <source>Vacuum Database</source>
         <translation>Banco de Dados de Vácuo</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="646"/>
+        <location filename="src/fs/navdatabase.cpp" line="647"/>
         <source>X-Plane</source>
         <translation></translation>
     </message>
