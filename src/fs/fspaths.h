@@ -62,6 +62,9 @@ public:
     /* Platform: Prepar3d Version 5 */
     P3D_V5 = 9,
 
+    /* Platform: Prepar3d Version 6 */
+    P3D_V6 = 12,
+
     /* X-Plane 11 */
     XPLANE_11 = 7,
 

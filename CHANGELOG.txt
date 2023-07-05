@@ -6,6 +6,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 # Version 3.8.16
 
+* Added support for Prepar3D v6. Note that this is untested. Let me know if you find any issues.
 * Fix in flight plan export for MSFS where waypoints are moved to North. albar965/littlenavmap#1038
 * Fixed issues where no error was shown when importing invalid userpoint or logbook CSV files.
 * Fixed issue where an aborted CSV import might corrupt the undo data.

@@ -43,14 +43,14 @@ static QHash<atools::fs::FsPaths::SimulatorType, QString> sceneryFilepathMap;
 /* All supported simulators. Order in this vector defines order of detection. */
 static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
     {
-      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
+      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::P3D_V6,
       FsPaths::XPLANE_11, FsPaths::XPLANE_12, FsPaths::MSFS
     });
 
 /* All supported MS simulators using SimConnect on Windows */
 static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_MS(
     {
-      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::MSFS
+      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::P3D_V6, FsPaths::MSFS
     });
 
 /* All supported X-Plane simulators using Xpconnect */
@@ -66,6 +66,7 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TY
       {FsPaths::P3D_V3, "P3DV3"},
       {FsPaths::P3D_V4, "P3DV4"},
       {FsPaths::P3D_V5, "P3DV5"},
+      {FsPaths::P3D_V6, "P3DV6"},
       {FsPaths::XPLANE_11, "XP11"},
       {FsPaths::XPLANE_12, "XP12"},
       {FsPaths::MSFS, "MSFS"},
@@ -79,6 +80,7 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_DI
       {FsPaths::P3D_V3, "Prepar3D v3"},
       {FsPaths::P3D_V4, "Prepar3D v4"},
       {FsPaths::P3D_V5, "Prepar3D v5"},
+      {FsPaths::P3D_V6, "Prepar3D v6"},
       {FsPaths::XPLANE_11, "X-Plane 11"},
       {FsPaths::XPLANE_12, "X-Plane 12"},
       {FsPaths::MSFS, "Microsoft Flight Simulator 2020"},
@@ -93,6 +95,7 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_SH
       {FsPaths::P3D_V3, "P3D v3"},
       {FsPaths::P3D_V4, "P3D v4"},
       {FsPaths::P3D_V5, "P3D v5"},
+      {FsPaths::P3D_V6, "P3D v6"},
       {FsPaths::XPLANE_11, "X-Plane 11"},
       {FsPaths::XPLANE_12, "X-Plane 12"},
       {FsPaths::MSFS, "MSFS"},
@@ -122,12 +125,17 @@ const QStringList P3D_V4_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v4", "AppP
 const QLatin1String P3D_V5_REGISTRY_PATH("HKEY_CURRENT_USER\\Software");
 const QStringList P3D_V5_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v5", "AppPath"};
 
+/* Platform: Prepar3d Version 6 */
+const QLatin1String P3D_V6_REGISTRY_PATH("HKEY_CURRENT_USER\\Software");
+const QStringList P3D_V6_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v6", "AppPath"};
+
 /* Settings keys */
 const QLatin1String SETTINGS_FSX_PATH("FsPaths/FsxPath");
 const QLatin1String SETTINGS_FSX_SE_PATH("FsPaths/FsxSePath");
 const QLatin1String SETTINGS_P3D_V3_PATH("FsPaths/P3dV3Path");
 const QLatin1String SETTINGS_P3D_V4_PATH("FsPaths/P3dV4Path");
 const QLatin1String SETTINGS_P3D_V5_PATH("FsPaths/P3dV5Path");
+const QLatin1String SETTINGS_P3D_V6_PATH("FsPaths/P3dV6Path");
 const QLatin1String SETTINGS_XPLANE_11_PATH("FsPaths/XPlane11Path");
 const QLatin1String SETTINGS_XPLANE_12_PATH("FsPaths/XPlane12Path");
 const QLatin1String SETTINGS_MSFS_PATH("FsPaths/MsfsPath");
@@ -138,6 +146,7 @@ const QLatin1String FSX_SE_NO_WINDOWS_PATH("Flight Simulator - Steam Edition");
 const QLatin1String P3D_V3_NO_WINDOWS_PATH("Prepar3D v3");
 const QLatin1String P3D_V4_NO_WINDOWS_PATH("Prepar3D v4");
 const QLatin1String P3D_V5_NO_WINDOWS_PATH("Prepar3D v5");
+const QLatin1String P3D_V6_NO_WINDOWS_PATH("Prepar3D v6");
 const QLatin1String MSFS_NO_WINDOWS_PATH("MSFS2020");
 
 static FsPaths::MsfsInstallType msfsInstallType = FsPaths::MSFS_INSTALL_NONE;
@@ -559,6 +568,7 @@ QString FsPaths::initFilesPath(SimulatorType type)
     case atools::fs::FsPaths::P3D_V3:
     case atools::fs::FsPaths::P3D_V4:
     case atools::fs::FsPaths::P3D_V5:
+    case atools::fs::FsPaths::P3D_V6:
 #if defined(Q_OS_WIN32)
       {
         QString languageDll(getBasePath(type) % SEP % "language.dll");
@@ -692,6 +702,17 @@ QString FsPaths::initSceneryLibraryPath(SimulatorType type)
 #endif
       break;
 
+    case P3D_V6:
+      // P3D v6 C:\ProgramData\Lockheed Martin\Prepar3D v6
+      // %PROGRAMDATA%\Lockheed Martin\Prepar3D v6
+#if defined(Q_OS_WIN32)
+      sceneryPath = programData % SEP % "Lockheed Martin\\Prepar3D v6\\Scenery.CFG";
+
+#elif defined(DEBUG_FS_PATHS)
+      sceneryPath = getBasePath(type) % SEP % "scenery.cfg";
+#endif
+      break;
+
     // Disable compiler warnings - simulators that dont have a file reference
     case MSFS:
     case XPLANE_11:
@@ -741,6 +762,8 @@ FsPaths::SimulatorType FsPaths::stringToType(const QString& typeStr)
     return P3D_V4;
   else if(type == "P3DV5")
     return P3D_V5;
+  else if(type == "P3DV6")
+    return P3D_V6;
   else if(type == "XP11")
     return XPLANE_11;
   else if(type == "XP12")
@@ -776,6 +799,9 @@ QString FsPaths::settingsKey(SimulatorType type)
 
     case P3D_V5:
       return SETTINGS_P3D_V5_PATH;
+
+    case P3D_V6:
+      return SETTINGS_P3D_V6_PATH;
 
     case XPLANE_11:
       return SETTINGS_XPLANE_11_PATH;
@@ -813,6 +839,9 @@ QString FsPaths::registryPath(SimulatorType type)
     case P3D_V5:
       return P3D_V5_REGISTRY_PATH;
 
+    case P3D_V6:
+      return P3D_V6_REGISTRY_PATH;
+
     case MSFS:
     case XPLANE_11:
     case XPLANE_12:
@@ -843,6 +872,9 @@ QStringList FsPaths::registryKey(SimulatorType type)
     case P3D_V5:
       return P3D_V5_REGISTRY_KEY;
 
+    case P3D_V6:
+      return P3D_V6_REGISTRY_KEY;
+
     case MSFS:
     case XPLANE_11:
     case XPLANE_12:
@@ -872,6 +904,9 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
 
     case P3D_V5:
       return P3D_V5_NO_WINDOWS_PATH;
+
+    case P3D_V6:
+      return P3D_V6_NO_WINDOWS_PATH;
 
     case MSFS:
       return MSFS_NO_WINDOWS_PATH;

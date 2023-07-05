@@ -97,8 +97,9 @@ atools::fs::ResultFlags NavDatabase::compileDatabase()
   QString sceneryCfgCodec;
 
   if(options != nullptr)
-    sceneryCfgCodec = (options->getSimulatorType() == FsPaths::P3D_V4 ||
-                       options->getSimulatorType() == FsPaths::P3D_V5) ? "UTF-8" : QString();
+    sceneryCfgCodec =
+      (options->getSimulatorType() == FsPaths::P3D_V4 || options->getSimulatorType() == FsPaths::P3D_V5 ||
+       options->getSimulatorType() == FsPaths::P3D_V6) ? "UTF-8" : QString();
 
   atools::fs::ResultFlags result = createInternal(sceneryCfgCodec);
   if(aborted)
@@ -1723,7 +1724,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
   bool readInactive = options->isReadInactive();
   FsPaths::SimulatorType sim = options->getSimulatorType();
 
-  if(options->isReadAddOnXml() && (sim == FsPaths::P3D_V3 || sim == FsPaths::P3D_V4 || sim == FsPaths::P3D_V5))
+  if(options->isReadAddOnXml() && (sim == FsPaths::P3D_V3 || sim == FsPaths::P3D_V4 || sim == FsPaths::P3D_V5 || sim == FsPaths::P3D_V6))
   {
     // Read the Prepar3D add on packages and add them to the scenery list ===============================
     QString documents(atools::documentsDir());
@@ -1735,6 +1736,8 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       simNum = 4;
     else if(sim == FsPaths::P3D_V5)
       simNum = 5;
+    else if(sim == FsPaths::P3D_V6)
+        simNum = 6;
 
     // Calculate maximum area number
     int areaNum = nextAreaNum(cfg.getAreas());
