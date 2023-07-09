@@ -222,7 +222,8 @@ void FileSystemWatcher::setFilenameAndStart(const QString& path)
 
 void FileSystemWatcher::setFilenamesAndStart(const QStringList& pathList)
 {
-  qDebug() << Q_FUNC_INFO << pathList;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << pathList;
 
   stopWatching();
 

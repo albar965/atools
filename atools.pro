@@ -244,6 +244,7 @@ HEADERS += \
   src/settings/settings.h \
   src/util/average.h \
   src/util/csvreader.h \
+  src/util/filechecker.h \
   src/util/filesystemwatcher.h \
   src/util/flags.h \
   src/util/heap.h \
@@ -304,6 +305,7 @@ SOURCES += \
   src/settings/settings.cpp \
   src/util/average.cpp \
   src/util/csvreader.cpp \
+  src/util/filechecker.cpp \
   src/util/filesystemwatcher.cpp \
   src/util/flags.cpp \
   src/util/heap.cpp \
