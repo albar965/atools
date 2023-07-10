@@ -280,7 +280,7 @@ void LoggingConfig::readConfigurationSection(QSettings *settings)
 
   // Use different patterns for debug and release builds
 #ifdef QT_NO_DEBUG
-  QString pattern = settings->value("configuration/messagepattern", QVariant(defaultPattern)).toString();
+  QString pattern = settings->value("configuration/messagepattern", DEFAULTPATTERN).toString();
 #else
   // Use release pattern as fallback in debug builds
   QString pattern = settings->value("configuration/messagepatterndebug",
