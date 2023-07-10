@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ private:
   friend class atools::logging::LoggingHandler;
 
   /* get a list of log files (excluding stdout and stderr) */
-  QStringList getLogFiles();
+  QStringList getLogFiles() const;
 
   /* Get the message level that should cause the application to abort */
   QtMsgType getAbortType() const
@@ -98,19 +98,19 @@ private:
   int readFilesMaxParameter(QSettings *settings) const;
   void readConfigurationSection(QSettings *settings);
 
-  void closeStreams(QSet<Channel *>& channels,
-                    const ChannelMap& channelMap);
+  void closeStreams(QSet<Channel *>& channels, const ChannelMap& channelMap);
 
   void closeStreams(QSet<Channel *>& channels, const ChannelVector& channelVector);
 
   /* Collects all log files names into set */
-  void collectFileNames(QSet<QString>& filenames, const ChannelVector& channelVector);
-  void collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap);
+  void collectFileNames(QSet<QString>& filenames, const ChannelVector& channelVector) const;
+  void collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap) const;
 
   /* Check if file size exceeds limit. Rolls files, creates a new one and replaces device in text stream */
   void checkStreamSize(Channel *channel);
 
-  QIODevice::OpenMode mode = QIODevice::NotOpen;
+  // Will be assigned later
+  QIODevice::OpenMode fileOpenMode = QIODevice::NotOpen;
   bool rolling = false;
   int maximumBackupFiles = 0;
 
@@ -127,13 +127,12 @@ private:
 
   // Streams for default logging category one for each message type
   // Channel objects can be shared between lists
-  ChannelVector debugStreams, infoStreams, warningStreams, criticalStreams, fatalStreams,
-                emptyStreams;
+  ChannelVector debugStreams, infoStreams, warningStreams, criticalStreams, fatalStreams, emptyStreams;
+
   // Streams for all other categories in a hash-list where the key is the category name.
   // One container for each message type
   // Channel objects can be shared between lists
-  ChannelMap debugStreamsCat, infoStreamsCat, warningStreamsCat,
-             criticalStreamsCat, fatalStreamsCat, emptyStreamsCat;
+  ChannelMap debugStreamsCat, infoStreamsCat, warningStreamsCat, criticalStreamsCat, fatalStreamsCat, emptyStreamsCat;
 };
 
 } // namespace internal

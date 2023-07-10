@@ -61,9 +61,12 @@ void FileRoller::rollFile(const QString& filename)
 
 QString FileRoller::buildFilename(const QString& filename, int num) const
 {
+  // ${base}: Complete basename, ${num}: Counting number, ${ext}: File extension.
+  const static QLatin1String DEFAULT_PATTERN("${base}.${ext}.${num}");
+
   QFileInfo fileinfo(filename);
-  return fileinfo.path() + QDir::separator() +
-         QString(pattern).replace("${base}", fileinfo.completeBaseName()).
+  return fileinfo.path() + QDir::separator() + QString(pattern.isEmpty() ? DEFAULT_PATTERN : pattern).
+         replace("${base}", fileinfo.completeBaseName()).
          replace("${num}", QString::number(num)).
          replace("${ext}", fileinfo.suffix());
 }

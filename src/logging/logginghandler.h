@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -110,13 +110,24 @@ public:
 
   typedef std::function<void (QtMsgType type, const QMessageLogContext& context, const QString& msg)> LogFunctionType;
   /* Function will be called on the calling thread context */
-  static void setLogFunction(LogFunctionType loggingFunction);
+  static void setLogFunction(LogFunctionType loggingFunction)
+  {
+    logFunc = loggingFunction;
+  }
 
   typedef std::function<void (QtMsgType type, const QMessageLogContext& context, const QString& msg)> AbortFunctionType;
 
   /* All functions will be called on the calling thread context - do not use GUI elements there */
-  static void setAbortFunction(AbortFunctionType abortFunction);
-  static void resetAbortFunction();
+  static void setAbortFunction(AbortFunctionType abortFunction)
+  {
+    abortFunc = abortFunction;
+  }
+
+  static void resetAbortFunction()
+  {
+    abortFunc = nullptr;
+    parentWidget = nullptr;
+  }
 
 signals:
   /* Sent to main thread to allow GUI handling */
@@ -132,8 +143,7 @@ private:
   LoggingHandler(const LoggingHandler& other) = delete;
   LoggingHandler& operator=(const LoggingHandler& other) = delete;
 
-  void logToCatChannels(atools::logging::internal::ChannelMap& streamListCat,
-                        atools::logging::internal::ChannelVector& streamList,
+  void logToCatChannels(atools::logging::internal::ChannelMap& streamListCat, atools::logging::internal::ChannelVector& streamList,
                         const QString& message, const QString& category = QString());
 
   void checkAbortType(QtMsgType type, const QMessageLogContext& context, const QString& msg);
@@ -149,7 +159,7 @@ private:
   QtMessageHandler oldMessageHandler = nullptr;
   QLoggingCategory::CategoryFilter oldCategoryFilter = nullptr;
 
-  mutable QMutex mutex;
+  QMutex mutex;
 
   static LogFunctionType logFunc;
   static AbortFunctionType abortFunc;

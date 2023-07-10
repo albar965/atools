@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,7 @@ namespace atools {
 namespace logging {
 namespace internal {
 
-LoggingConfig::LoggingConfig(const QString& logConfiguration, const QString& logDirectory,
-                             const QString& logFilePrefix)
+LoggingConfig::LoggingConfig(const QString& logConfiguration, const QString& logDirectory, const QString& logFilePrefix)
   : logConfig(logConfiguration), logDir(logDirectory), logPrefix(logFilePrefix)
 {
   QSettings *settings = nullptr;
@@ -102,30 +101,24 @@ void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelVector&
   for(Channel *channel : channelVector)
   {
     if(channel->stream != nullptr)
-      channel->stream->flush();
+    {
+      delete channel->stream;
+      channel->stream = nullptr;
+    }
 
     if(channel->file != nullptr)
     {
       // This is a log file and not stderr or stdout
-      if(channel->file->isOpen())
-        channel->file->close();
-
-      if(channel->stream != nullptr)
-        channel->stream->setDevice(nullptr);
-
       delete channel->file;
       channel->file = nullptr;
     }
-
-    delete channel->stream;
-    channel->stream = nullptr;
 
     // Remember object for later deletion
     channels.insert(channel);
   }
 }
 
-QStringList LoggingConfig::getLogFiles()
+QStringList LoggingConfig::getLogFiles() const
 {
   QSet<QString> filenames;
   collectFileNames(filenames, debugStreams);
@@ -151,13 +144,13 @@ QStringList LoggingConfig::getLogFiles()
 #endif
 }
 
-void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap)
+void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap) const
 {
   for(auto it = channelMap.constBegin(); it != channelMap.constEnd(); ++it)
     collectFileNames(filenames, {it.value()});
 }
 
-void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelVector& channelVector)
+void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelVector& channelVector) const
 {
   for(const Channel *channel : channelVector)
   {
@@ -177,27 +170,26 @@ void LoggingConfig::checkStreamSize(Channel *channel)
   if(maximumFileSizeBytes > 0 && channel->file != nullptr && channel->file->size() > maximumFileSizeBytes)
   {
     // Maximum size is active and exceeded
-    channel->stream->flush();
+    channel->stream->setDevice(nullptr);
 
     // Remember filename
     QString filename = channel->file->fileName();
 
     // Close file and delete file object
-    channel->file->close();
-    channel->stream->setDevice(nullptr);
     delete channel->file;
     channel->file = nullptr;
 
-    // Backup and delete log
+    // Backup and delete original log
     io::FileRoller(maximumBackupFiles).rollFile(filename);
 
     // Create new log file
     QFile *file = new QFile(filename);
-    if(file->open(mode))
+    if(file->open(fileOpenMode))
     {
       // Put log file into stream
       channel->file = file;
       channel->stream->setDevice(channel->file);
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
       channel->stream->setCodec("UTF-8");
 #endif
@@ -250,8 +242,7 @@ ChannelMap& LoggingConfig::getCatStream(QtMsgType type)
   return emptyStreamsCat;
 }
 
-void LoggingConfig::addDefaultChannels(const QStringList& channelsForLevel,
-                                       const QHash<QString, Channel *>& channelMap,
+void LoggingConfig::addDefaultChannels(const QStringList& channelsForLevel, const QHash<QString, Channel *>& channelMap,
                                        ChannelVector& channelList)
 {
   for(QString name : channelsForLevel)
@@ -260,8 +251,7 @@ void LoggingConfig::addDefaultChannels(const QStringList& channelsForLevel,
 }
 
 void LoggingConfig::addCatChannels(const QString& category, const QStringList& channelsForLevel,
-                                   const QHash<QString, Channel *>& channelMap,
-                                   ChannelMap& streamList)
+                                   const QHash<QString, Channel *>& channelMap, ChannelMap& streamList)
 {
   for(QString name : channelsForLevel)
   {
@@ -281,12 +271,12 @@ void LoggingConfig::addCatChannels(const QString& category, const QStringList& c
 
 void LoggingConfig::readConfigurationSection(QSettings *settings)
 {
-  QString defaultPattern("[%{time yyyy-MM-dd h:mm:ss.zzz} %{category} "
-                         "%{if-debug}DEBUG%{endif}"
-                         "%{if-info}INFO %{endif}"
-                         "%{if-warning}WARN %{endif}"
-                         "%{if-critical}CRIT %{endif}"
-                         "%{if-fatal}FATAL%{endif}]: %{message}");
+  const static QLatin1String DEFAULTPATTERN("[%{time yyyy-MM-dd h:mm:ss.zzz} %{category} "
+                                            "%{if-debug}DEBUG%{endif}"
+                                            "%{if-info}INFO %{endif}"
+                                            "%{if-warning}WARN %{endif}"
+                                            "%{if-critical}CRIT %{endif}"
+                                            "%{if-fatal}FATAL%{endif}]: %{message}");
 
   // Use different patterns for debug and release builds
 #ifdef QT_NO_DEBUG
@@ -294,7 +284,7 @@ void LoggingConfig::readConfigurationSection(QSettings *settings)
 #else
   // Use release pattern as fallback in debug builds
   QString pattern = settings->value("configuration/messagepatterndebug",
-                                    settings->value("configuration/messagepattern", defaultPattern)).toString();
+                                    settings->value("configuration/messagepattern", DEFAULTPATTERN)).toString();
 #endif
 
   // Set the configured message pattern
@@ -308,19 +298,18 @@ void LoggingConfig::readConfigurationSection(QSettings *settings)
 
   QString filesParameter = settings->value("configuration/files").toString();
   if(filesParameter == "truncate" || filesParameter == "roll")
-    mode = QIODevice::WriteOnly | QIODevice::Text;
+    fileOpenMode = QIODevice::WriteOnly | QIODevice::Text;
   else if(filesParameter == "append")
-    mode = QIODevice::Append | QIODevice::Text;
+    fileOpenMode = QIODevice::Append | QIODevice::Text;
   else
   {
-    qWarning() << "Invalid value for configuration/files:" << filesParameter
-               << "use either truncate, append or roll.";
-    mode = QIODevice::WriteOnly | QIODevice::Text;
+    qWarning() << "Invalid value for configuration/files:" << filesParameter << "use either truncate, append or roll.";
+    fileOpenMode = QIODevice::WriteOnly | QIODevice::Text;
   }
 
   // Always append if rolling by size - rolling is done in the logging function
   if(maximumFileSizeBytes > 0)
-    mode = QIODevice::Append | QIODevice::Text;
+    fileOpenMode = QIODevice::Append | QIODevice::Text;
 
   rolling = settings->value("configuration/files").toString() == "roll";
   maximumBackupFiles = settings->value("configuration/maxfiles").toInt();
@@ -389,7 +378,7 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>&
         io::FileRoller(maximumBackupFiles).rollFile(filename);
 
       QFile *file = new QFile(filename);
-      if(file->open(mode))
+      if(file->open(fileOpenMode))
       {
         QTextStream *stream = new QTextStream(file);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)

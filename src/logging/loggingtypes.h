@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ namespace internal {
 /* Combines the file and use text stream which allows to exchange the file during logging. */
 struct Channel
 {
-  QTextStream *stream;
-  QFile *file; /* Null if this channel is stdou or stderr */
+  QTextStream *stream = nullptr;
+  QFile *file = nullptr; /* Null if this channel is stdout or stderr */
 };
 
 typedef  QVector<Channel *> ChannelVector;

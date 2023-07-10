@@ -35,7 +35,6 @@ public:
    *  @param maxNumFiles Maximum number of backups to keep.
    *  @parm filePattern
    *     ${base}: Complete basename.
-   *     ${sep}: fileSeparator.
    *     ${num}: Counting number.
    *     ${ext}: File extension.
    *     Directory is always prepended.
@@ -63,8 +62,8 @@ private:
   int maxFiles = 0;
   bool keepOriginalFile = false;
 
-  // "${base}${sep}${num}.${ext}"
-  QString pattern = "${base}.${ext}.${num}";
+  // Default ${base}.${ext}.${num}
+  QString pattern;
 };
 
 } /* namespace io */

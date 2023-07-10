@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ using Qt::flush;
 #endif
 
 LoggingHandler *LoggingHandler::instance = nullptr;
-LoggingHandler::LogFunctionType LoggingHandler::logFunc = nullptr;
-LoggingHandler::AbortFunctionType LoggingHandler::abortFunc = nullptr;
+LoggingHandler::LogFunctionType LoggingHandler::logFunc;
+LoggingHandler::AbortFunctionType LoggingHandler::abortFunc;
 QWidget *LoggingHandler::parentWidget = nullptr;
 
 LoggingHandler::LoggingHandler(const QString& logConfiguration,
@@ -119,31 +119,10 @@ QStringList LoggingHandler::getLogFiles()
     return QStringList();
 }
 
-void LoggingHandler::setLogFunction(LoggingHandler::LogFunctionType loggingFunction)
-{
-  logFunc = loggingFunction;
-}
-
-void LoggingHandler::setAbortFunction(LoggingHandler::AbortFunctionType abortFunction)
-{
-  qDebug() << Q_FUNC_INFO;
-
-  abortFunc = abortFunction;
-}
-
-void LoggingHandler::resetAbortFunction()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  abortFunc = nullptr;
-  parentWidget = nullptr;
-}
-
 void LoggingHandler::logToCatChannels(internal::ChannelMap& streamListCat,
-                                      internal::ChannelVector& streamList, const QString& message,
-                                      const QString& category)
+                                      internal::ChannelVector& streamList, const QString& message, const QString& category)
 {
-  mutex.lock();
+  QMutexLocker locker(&instance->mutex);
 
   if(category.isEmpty())
   {
@@ -161,7 +140,6 @@ void LoggingHandler::logToCatChannels(internal::ChannelMap& streamListCat,
       instance->logConfig->checkStreamSize(channel);
     }
   }
-  mutex.unlock();
 }
 
 void LoggingHandler::checkAbortType(QtMsgType type, const QMessageLogContext& context, const QString& msg)
@@ -200,17 +178,15 @@ void LoggingHandler::messageHandler(QtMsgType type, const QMessageLogContext& co
 {
   static const QLatin1String DEFAULT("default");
 
-  if(logFunc != nullptr)
+  if(logFunc)
     logFunc(type, context, msg);
 
   QString category = context.category;
   if(category == DEFAULT)
     category.clear();
 
-  instance->logToCatChannels(instance->logConfig->getCatStream(type),
-                             instance->logConfig->getStream(type),
-                             qFormatLogMessage(type, context, msg),
-                             category);
+  instance->logToCatChannels(instance->logConfig->getCatStream(type), instance->logConfig->getStream(type),
+                             qFormatLogMessage(type, context, msg), category);
 
   instance->checkAbortType(type, context, msg);
 }
@@ -289,7 +265,7 @@ void LoggingHandler::messageHandlerNarrow(QtMsgType type, const QMessageLogConte
   ctx.function = functionBytes.constData();
   ctx.category = context.category;
 
-  if(logFunc != nullptr)
+  if(logFunc)
     logFunc(type, ctx, message);
 
   QString category = ctx.category;
@@ -297,10 +273,8 @@ void LoggingHandler::messageHandlerNarrow(QtMsgType type, const QMessageLogConte
   if(category == DEFAULT)
     category.clear();
 
-  instance->logToCatChannels(instance->logConfig->getCatStream(type),
-                             instance->logConfig->getStream(type),
-                             qFormatLogMessage(type, ctx, message),
-                             category);
+  instance->logToCatChannels(instance->logConfig->getCatStream(type), instance->logConfig->getStream(type),
+                             qFormatLogMessage(type, ctx, message), category);
 
   instance->checkAbortType(type, ctx, message);
 
