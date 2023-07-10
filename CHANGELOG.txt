@@ -4,6 +4,15 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 3.8.17
+
+* Code cleanup and optimizations in BGL reading code.
+* Fixed obscure crash when rotating log file on size overflow.
+  Corrected file roller to remove original file when using default backup pattern.
+* Added file checker and reduced logging in filesystem watcher.
+
+===============================================================================
+
 # Version 3.8.16
 
 * Added support for Prepar3D v6. Note that this is untested. Let me know if you find any issues.
