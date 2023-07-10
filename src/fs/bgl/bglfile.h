@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ public:
    * airports and so on.
    * @param file BGL filename
    */
-  void readFile(QString file, const scenery::SceneryArea& area);
+  void readFile(const QString& filenameParam, const scenery::SceneryArea& area);
 
   QString getFilepath() const
   {
@@ -183,7 +183,7 @@ private:
 
   QString filename;
   qint64 size;
-  const NavDatabaseOptions *options;
+  const NavDatabaseOptions *options = nullptr;
 
   /* Keep a list of all records to make object deletion easier */
   QList<const atools::fs::bgl::Record *> allRecords;

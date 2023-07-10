@@ -30,16 +30,6 @@ namespace fs {
 
 const static QList<QRegExp> EMPTY_REGEXP_LIST;
 
-void NavDatabaseOptions::setProgressCallback(ProgressCallbackType func)
-{
-  progressCallback = func;
-}
-
-NavDatabaseOptions::ProgressCallbackType NavDatabaseOptions::getProgressCallback() const
-{
-  return progressCallback;
-}
-
 void NavDatabaseOptions::setLanguage(const QString& value)
 {
   language = value.isEmpty() ? "en-US" : value;

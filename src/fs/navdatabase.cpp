@@ -97,9 +97,8 @@ atools::fs::ResultFlags NavDatabase::compileDatabase()
   QString sceneryCfgCodec;
 
   if(options != nullptr)
-    sceneryCfgCodec =
-      (options->getSimulatorType() == FsPaths::P3D_V4 || options->getSimulatorType() == FsPaths::P3D_V5 ||
-       options->getSimulatorType() == FsPaths::P3D_V6) ? "UTF-8" : QString();
+    sceneryCfgCodec = (options->getSimulatorType() == FsPaths::P3D_V4 || options->getSimulatorType() == FsPaths::P3D_V5 ||
+                       options->getSimulatorType() == FsPaths::P3D_V6) ? "UTF-8" : QString();
 
   atools::fs::ResultFlags result = createInternal(sceneryCfgCodec);
   if(aborted)
@@ -559,8 +558,9 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   QElapsedTimer timer;
   timer.start();
 
-  FsPaths::SimulatorType sim = options->getSimulatorType();
-  ProgressHandler progress(options);
+  ProgressHandler progress;
+  progress.setProgressCallback(options->getProgressCallback());
+  progress.setCallDefaultCallback(options->isCallDefaultCallback());
 
   progress.setTotal(1000000000);
 
@@ -569,6 +569,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
 
   // ==============================================================================
   // Calculate the total number of progress steps
+  FsPaths::SimulatorType sim = options->getSimulatorType();
   int total = 0;
   if(FsPaths::isAnyXplane(sim))
     total = countXplaneSteps(&progress);
@@ -1737,7 +1738,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
     else if(sim == FsPaths::P3D_V5)
       simNum = 5;
     else if(sim == FsPaths::P3D_V6)
-        simNum = 6;
+      simNum = 6;
 
     // Calculate maximum area number
     int areaNum = nextAreaNum(cfg.getAreas());

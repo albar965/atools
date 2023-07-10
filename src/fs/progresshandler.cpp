@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,6 @@
 
 namespace atools {
 namespace fs {
-
-ProgressHandler::ProgressHandler(const NavDatabaseOptions *options)
-{
-  if(options->getProgressCallback() != nullptr)
-    handler = options->getProgressCallback();
-}
 
 void ProgressHandler::increaseCurrent(int increase)
 {
@@ -149,11 +143,12 @@ bool ProgressHandler::callHandler()
   bool retval = false;
 
   // Alway call default handler - this one cannot call cancel
-  defaultHandler(info);
+  if(callDefaultCallback)
+    defaultProgressCallback();
 
-  if(handler != nullptr)
+  if(progressCallback)
     // Call user handler
-    retval = handler(info);
+    retval = progressCallback(info);
 
   if(info.firstCall)
     info.firstCall = false;
@@ -164,26 +159,22 @@ bool ProgressHandler::callHandler()
 /*
  * Default handler prints to console or log only
  */
-void ProgressHandler::defaultHandler(const atools::fs::NavDatabaseProgress& inf)
+void ProgressHandler::defaultProgressCallback()
 {
   // Using "=P===" for easier recognition in the log file
 
-  if(inf.isNewFile())
-  {
-    qInfo() << "=P===" << numbersAsString(inf) << inf.getFileName();
-  }
+  if(info.isNewFile())
+    qInfo() << "=P===" << numbersAsString(info) << info.getFileName();
 
-  if(inf.isNewSceneryArea())
+  if(info.isNewSceneryArea())
   {
     qInfo() << "=P=====================================================================";
-    qInfo() << "=P===" << numbersAsString(inf) << inf.getSceneryTitle();
-    qInfo() << "=P===" << inf.getSceneryPath();
+    qInfo() << "=P===" << numbersAsString(info) << info.getSceneryTitle();
+    qInfo() << "=P===" << info.getSceneryPath();
   }
 
-  if(inf.isNewOther())
-  {
-    qInfo() << "=P===" << numbersAsString(inf) << inf.getOtherAction();
-  }
+  if(info.isNewOther())
+    qInfo() << "=P===" << numbersAsString(info) << info.getOtherAction();
 }
 
 QString ProgressHandler::numbersAsString(const atools::fs::NavDatabaseProgress& inf)

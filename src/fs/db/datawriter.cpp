@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -238,10 +238,6 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
     // Write the scenery area metadata
     sceneryAreaWriter->writeOne(area);
 
-    BglFile bglFile(&options);
-
-    bglFile.setSupportedSectionTypes(SUPPORTED_SECTION_TYPES);
-
     for(int i = 0; i < filepaths.size(); i++)
     {
       progressHandler->setNumFiles(numFiles);
@@ -255,15 +251,17 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
       progressHandler->setNumWaypoints(numWaypoints);
       progressHandler->setNumObjectsWritten(numObjectsWritten);
 
-      if((aborted = progressHandler->reportBglFile(filepaths.at(i))) == true)
-        return;
-
       QString currentBglFilePath = filepaths.at(i);
+
+      if((aborted = progressHandler->reportBglFile(currentBglFilePath)) == true)
+        return;
 
       try
       {
         // ================================================================================
         // Read all records into a internal object tree (atools::fs::bgl namespace)
+        BglFile bglFile(&options);
+        bglFile.setSupportedSectionTypes(SUPPORTED_SECTION_TYPES);
         bglFile.readFile(currentBglFilePath, area);
 
         if(bglFile.hasContent() && bglFile.isValid())

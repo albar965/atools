@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,22 +36,16 @@ using Qt::dec;
  * Little endian 1A2B3C4D =  4D 3C 2B 1A in mem
  */
 BinaryStream::BinaryStream(QFile *binaryFile, QDataStream::ByteOrder order)
-  : file(binaryFile)
+  : is(binaryFile), filename(binaryFile->fileName()), filesize(binaryFile->size())
 {
-  this->is = new QDataStream(file);
-  this->is->setByteOrder(order);
+  is.setByteOrder(order);
   checkStream("constructor");
-}
-
-BinaryStream::~BinaryStream()
-{
-  delete is;
 }
 
 quint32 BinaryStream::readUInt()
 {
   quint32 retval;
-  (*is) >> retval;
+  is >> retval;
 
   checkStream("readInt");
 
@@ -60,14 +54,14 @@ quint32 BinaryStream::readUInt()
 
 int BinaryStream::readBytes(char bytes[], int size)
 {
-  int numRead = is->readRawData(bytes, size);
+  int numRead = is.readRawData(bytes, size);
   checkStream("readBytes");
   return numRead;
 }
 
 int BinaryStream::readUBytes(unsigned char bytes[], int size)
 {
-  int numRead = is->readRawData(reinterpret_cast<char *>(bytes), size);
+  int numRead = is.readRawData(reinterpret_cast<char *>(bytes), size);
   checkStream("readBytes");
   return numRead;
 }
@@ -87,35 +81,25 @@ QUuid BinaryStream::readUuid()
 qint64 BinaryStream::tellg() const
 {
   checkStream("tellg");
-  return is->device()->pos();
+  return is.device()->pos();
 }
 
 void BinaryStream::skip(qint64 bytes)
 {
   checkStream("skip");
   if(bytes != 0)
-    is->device()->seek(tellg() + bytes);
+    is.device()->seek(tellg() + bytes);
 }
 
 void BinaryStream::seekg(qint64 pos)
 {
   checkStream("seekg");
-  is->device()->seek(pos);
-}
-
-qint64 BinaryStream::getFileSize() const
-{
-  return file->size();
-}
-
-QString BinaryStream::getFilename() const
-{
-  return file->fileName();
+  is.device()->seek(pos);
 }
 
 QString BinaryStream::getFilenameOnly() const
 {
-  return QFileInfo(file->fileName()).fileName();
+  return QFileInfo(getFilename()).fileName();
 }
 
 float BinaryStream::readFloat()
@@ -137,7 +121,7 @@ float BinaryStream::readFloat()
 quint16 BinaryStream::readUShort()
 {
   quint16 retval;
-  (*is) >> retval;
+  is >> retval;
 
   checkStream("readShort");
 
@@ -147,7 +131,7 @@ quint16 BinaryStream::readUShort()
 quint8 BinaryStream::readUByte()
 {
   quint8 retval;
-  (*is) >> retval;
+  is >> retval;
 
   checkStream("readByte");
 
@@ -157,7 +141,7 @@ quint8 BinaryStream::readUByte()
 qint32 BinaryStream::readInt()
 {
   qint32 retval;
-  (*is) >> retval;
+  is >> retval;
 
   checkStream("readInt");
 
@@ -167,7 +151,7 @@ qint32 BinaryStream::readInt()
 qint16 BinaryStream::readShort()
 {
   qint16 retval;
-  (*is) >> retval;
+  is >> retval;
 
   checkStream("readShort");
 
@@ -177,7 +161,7 @@ qint16 BinaryStream::readShort()
 qint8 BinaryStream::readByte()
 {
   qint8 retval;
-  (*is) >> retval;
+  is >> retval;
 
   checkStream("readByte");
 
@@ -233,10 +217,10 @@ QString BinaryStream::readString(int length, Encoding encoding)
 
 void BinaryStream::checkStream(const QString& what) const
 {
-  if(is->status() != QDataStream::Ok)
+  if(is.status() != QDataStream::Ok)
   {
     QString statusText(tr("Unknown"));
-    switch(is->status())
+    switch(is.status())
     {
       case QDataStream::Ok:
         statusText = tr("No error");
@@ -252,9 +236,9 @@ void BinaryStream::checkStream(const QString& what) const
         break;
     }
 
-    QString msg = QString("%1 for file \"%2\" failed. Reason: %3 (%4).").arg(what).arg(getFilename()).arg(statusText).arg(is->status());
+    QString msg = QString("%1 for file \"%2\" failed. Reason: %3 (%4).").arg(what).arg(getFilename()).arg(statusText).arg(is.status());
 
-    qWarning() << msg << "Position" << hex << "0x" << is->device()->pos() << dec << is->device()->pos();
+    qWarning() << msg << "Position" << hex << "0x" << is.device()->pos() << dec << is.device()->pos();
     throw Exception(msg);
   }
 }

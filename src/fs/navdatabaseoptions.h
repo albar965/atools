@@ -294,8 +294,26 @@ public:
 
   typedef std::function<bool (const atools::fs::NavDatabaseProgress&)> ProgressCallbackType;
 
+  const ProgressCallbackType& getProgressCallback() const
+  {
+    return progressCallback;
+  }
+
   /* Set progress callback function/method */
-  void setProgressCallback(ProgressCallbackType func);
+  void setProgressCallback(ProgressCallbackType func)
+  {
+    progressCallback = func;
+  }
+
+  bool isCallDefaultCallback() const
+  {
+    return callDefaultCallback;
+  }
+
+  void setCallDefaultCallback(bool value)
+  {
+    callDefaultCallback = value;
+  }
 
   /* Include absolute directories paths. Used by the GUI options dialog. Not saved. */
   void addIncludeGui(const QFileInfo& path);
@@ -449,8 +467,6 @@ public:
     return dirIncludesGui;
   }
 
-  ProgressCallbackType getProgressCallback() const;
-
   atools::fs::FsPaths::SimulatorType getSimulatorType() const
   {
     return simulatorType;
@@ -531,7 +547,9 @@ private:
   QStringList dirIncludesGui;
 
   QSet<atools::fs::type::NavDbObjectType> navDbObjectTypeFiltersInc, navDbObjectTypeFiltersExcl;
-  ProgressCallbackType progressCallback = nullptr;
+
+  ProgressCallbackType progressCallback;
+  bool callDefaultCallback = true;
 
   atools::fs::FsPaths::SimulatorType simulatorType = atools::fs::FsPaths::FSX;
 };

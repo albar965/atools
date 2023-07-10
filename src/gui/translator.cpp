@@ -200,7 +200,7 @@ bool Translator::loadAndInstall(const QString& name, const QString& dir, const Q
   QTranslator *t = new QTranslator();
   if(!t->load(locale, name, "_", dir))
     qDebug() << "Qt translation file" << name << "not loaded from dir" << dir << "locale" << locale.name();
-  else if(QCoreApplication::instance()->installTranslator(t))
+  else if(QCoreApplication::installTranslator(t))
   {
     qInfo() << "Qt translation file" << name << "from dir" << dir << "installed" << "locale" << locale.name();
     translators.append(t);

@@ -16,7 +16,6 @@
 *****************************************************************************/
 
 #include "fs/bgl/converter.h"
-#include "exception.h"
 
 #include <QVarLengthArray>
 #include <QDebug>

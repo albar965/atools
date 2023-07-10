@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,15 @@ class SceneryArea;
 class ProgressHandler
 {
 public:
-  ProgressHandler(const atools::fs::NavDatabaseOptions *options);
+  void setProgressCallback(const atools::fs::NavDatabaseOptions::ProgressCallbackType& value)
+  {
+    progressCallback = value;
+  }
+
+  void setCallDefaultCallback(bool value)
+  {
+    callDefaultCallback = value;
+  }
 
   /*
    * Increment progress by one and send message about new scenery area
@@ -180,9 +188,10 @@ public:
   }
 
 private:
-  void defaultHandler(const atools::fs::NavDatabaseProgress& inf);
+  bool callDefaultCallback = true;
+  void defaultProgressCallback();
 
-  atools::fs::NavDatabaseOptions::ProgressCallbackType handler = nullptr;
+  atools::fs::NavDatabaseOptions::ProgressCallbackType progressCallback;
 
   atools::fs::NavDatabaseProgress info;
 

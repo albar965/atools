@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -61,38 +61,38 @@ BglFile::~BglFile()
   deleteAllObjects();
 }
 
-void BglFile::readFile(QString file, const atools::fs::scenery::SceneryArea& area)
+void BglFile::readFile(const QString& filenameParam, const atools::fs::scenery::SceneryArea& area)
 {
   deleteAllObjects();
-  filename = file;
+  filename = filenameParam;
 
-  QFile ifs(filename);
+  QFile file(filename);
 
-  if(ifs.size() < Header::HEADER_SIZE)
+  if(file.size() < Header::HEADER_SIZE)
   {
-    qWarning() << "File is too small:" << ifs.size();
+    qWarning() << "File is too small:" << file.size();
     return;
   }
 
-  if(ifs.open(QIODevice::ReadOnly))
+  if(file.open(QIODevice::ReadOnly))
   {
-    BinaryStream bs(&ifs);
+    BinaryStream stream(&file);
 
-    this->filename = file;
-    this->size = bs.getFileSize();
+    size = stream.getFileSize();
 
-    readHeader(&bs);
+    readHeader(&stream);
     if(!header.isValid())
       // Skip any obscure BGL files that do not contain a section structure or are too small
       return;
 
-    readSections(&bs);
+    readSections(&stream);
 
     if(options->isIncludedNavDbObject(type::BOUNDARY))
-      readBoundaryRecords(&bs);
+      readBoundaryRecords(&stream);
 
-    readRecords(&bs, area);
-    ifs.close();
+    readRecords(&stream, area);
+
+    file.close();
   }
 }
 
@@ -383,7 +383,6 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
         case section::FAKE_TYPES:
         case section::ICAO_RUNWAY:
           break;
-
         default:
           qWarning().nospace().noquote() << "Unknown section type at offset " << bs->tellg() << ": " << type;
 
@@ -419,7 +418,7 @@ void BglFile::deleteAllObjects()
   qDeleteAll(allRecords);
   allRecords.clear();
 
-  filename = QString();
+  filename.clear();
   size = 0;
 }
 
