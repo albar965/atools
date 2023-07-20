@@ -76,27 +76,27 @@
 <context>
     <name>BinaryStream</name>
     <message>
-        <location filename="src/io/binarystream.cpp" line="238"/>
+        <location filename="src/io/binarystream.cpp" line="222"/>
         <source>Unknown</source>
         <translation type="unfinished">Inconnu</translation>
     </message>
     <message>
-        <location filename="src/io/binarystream.cpp" line="242"/>
+        <location filename="src/io/binarystream.cpp" line="226"/>
         <source>No error</source>
         <translation type="unfinished">Aucune erreur</translation>
     </message>
     <message>
-        <location filename="src/io/binarystream.cpp" line="245"/>
+        <location filename="src/io/binarystream.cpp" line="229"/>
         <source>Read past file end</source>
         <translation type="unfinished">Lire la fin du fichier passé</translation>
     </message>
     <message>
-        <location filename="src/io/binarystream.cpp" line="248"/>
+        <location filename="src/io/binarystream.cpp" line="232"/>
         <source>Read corrupted data</source>
         <translation type="unfinished">Lire des données corrompues</translation>
     </message>
     <message>
-        <location filename="src/io/binarystream.cpp" line="251"/>
+        <location filename="src/io/binarystream.cpp" line="235"/>
         <source>Write failed</source>
         <translation type="unfinished">Échec de l&apos;écriture</translation>
     </message>
@@ -139,17 +139,17 @@
 <context>
     <name>DataWriter</name>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="404"/>
+        <location filename="src/fs/db/datawriter.cpp" line="402"/>
         <source>Cannot read file. Falling back to world magnetic model.</source>
         <translation type="unfinished">Impossible de lire le fichier. Retour au modèle magnétique mondial.</translation>
     </message>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="417"/>
+        <location filename="src/fs/db/datawriter.cpp" line="415"/>
         <source>File not valid. Falling back to world magnetic model.</source>
         <translation type="unfinished">Fichier non valide. Retour au modèle magnétique mondial.</translation>
     </message>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="424"/>
+        <location filename="src/fs/db/datawriter.cpp" line="422"/>
         <source>File not found. Falling back to world magnetic model.</source>
         <translation type="unfinished">Fichier non trouvé. Retour au modèle magnétique mondial.</translation>
     </message>
@@ -234,12 +234,12 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="112"/>
         <source>File pattern has no extension. It should end with &quot;.%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le modèle de fichier n&apos;a pas d&apos;extension. Il doit se terminer par &quot;.%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="115"/>
         <source>File pattern uses a wrong extension &quot;.%1&quot;. It should end with &quot;.%2&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le modèle de fichier utilise une mauvaise extension &quot;.%1&quot;. Il doit se terminer par &quot;.%2&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="128"/>
@@ -322,17 +322,17 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="578"/>
         <source>Invalid FMS file. Invalid coordinate in %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fichier FMS non valide. Coordonnées non valides en %1</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="590"/>
         <source>Invalid FMS file. Cannot read waypoint type in %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fichier FMS non valide. Impossible de lire le type de point de route dans %1</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="616"/>
         <source>Invalid FMS file. Invalid waypoint type in %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fichier FMS non valide. Type de waypoint non valide en %1</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="625"/>
@@ -462,7 +462,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/grib/gribreader.cpp" line="466"/>
         <source>Wrong GRIB file type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Type de fichier GRIB incorrect</translation>
     </message>
     <message>
         <location filename="src/grib/gribreader.cpp" line="104"/>
@@ -1116,7 +1116,7 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Suppression des métadonnées</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="164"/>
+        <location filename="src/fs/navdatabase.cpp" line="163"/>
         <source>Creating Database Schema</source>
         <translation>Création d&apos;un schéma de base de données</translation>
     </message>
@@ -1153,95 +1153,95 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Le répertoire n&apos;existe pas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="633"/>
+        <location filename="src/fs/navdatabase.cpp" line="634"/>
         <source>Navigraph</source>
         <translation>Navigraph</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="647"/>
+        <location filename="src/fs/navdatabase.cpp" line="648"/>
         <source>X-Plane</source>
         <translation>X-Plane</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="756"/>
+        <location filename="src/fs/navdatabase.cpp" line="757"/>
         <source>Updating Airports</source>
         <translation>Mise à jour des aéroports</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="797"/>
+        <location filename="src/fs/navdatabase.cpp" line="798"/>
         <source>Creating indexes for airport</source>
         <translation type="unfinished">Création d&apos;index pour les aéroports</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="802"/>
+        <location filename="src/fs/navdatabase.cpp" line="803"/>
         <source>Clean up runways</source>
         <translation>Nettoyage des pistes</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="817"/>
+        <location filename="src/fs/navdatabase.cpp" line="818"/>
         <source>Creating indexes for route</source>
         <translation type="unfinished">Création d&apos;index pour l&apos;itinéraire</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="864"/>
+        <location filename="src/fs/navdatabase.cpp" line="865"/>
         <source>Creating Database preparation Script</source>
         <translation>Création d&apos;un script de préparation de base de données</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="888"/>
+        <location filename="src/fs/navdatabase.cpp" line="889"/>
         <source>Dropping All Indexes</source>
         <translation>Abandonner tous les indexes</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="895"/>
+        <location filename="src/fs/navdatabase.cpp" line="896"/>
         <source>Vacuum Database</source>
         <translation>Base de données vide</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="903"/>
+        <location filename="src/fs/navdatabase.cpp" line="904"/>
         <source>Analyze Database</source>
         <translation>Analyser la base de données</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="962"/>
-        <location filename="src/fs/navdatabase.cpp" line="992"/>
-        <location filename="src/fs/navdatabase.cpp" line="1098"/>
-        <location filename="src/fs/navdatabase.cpp" line="1247"/>
+        <location filename="src/fs/navdatabase.cpp" line="963"/>
+        <location filename="src/fs/navdatabase.cpp" line="993"/>
+        <location filename="src/fs/navdatabase.cpp" line="1099"/>
+        <location filename="src/fs/navdatabase.cpp" line="1248"/>
         <source>Creating boundary indexes</source>
         <translation type="unfinished">Création d&apos;index des limites</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="976"/>
+        <location filename="src/fs/navdatabase.cpp" line="977"/>
         <source>Creating waypoints for procedures</source>
         <translation type="unfinished">Création de waypoints pour les procédures</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="998"/>
+        <location filename="src/fs/navdatabase.cpp" line="999"/>
         <source>Updating Navids in Waypoint</source>
         <translation type="unfinished">Mise à jour des Navids dans le Waypoint</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1121"/>
+        <location filename="src/fs/navdatabase.cpp" line="1122"/>
         <source>Preparing Airways</source>
         <translation>Préparation des voies aériennes</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="959"/>
-        <location filename="src/fs/navdatabase.cpp" line="987"/>
-        <location filename="src/fs/navdatabase.cpp" line="1095"/>
-        <location filename="src/fs/navdatabase.cpp" line="1244"/>
+        <location filename="src/fs/navdatabase.cpp" line="960"/>
+        <location filename="src/fs/navdatabase.cpp" line="988"/>
+        <location filename="src/fs/navdatabase.cpp" line="1096"/>
+        <location filename="src/fs/navdatabase.cpp" line="1245"/>
         <source>Creating indexes</source>
         <translation>Création d&apos;index</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="149"/>
+        <location filename="src/fs/navdatabase.cpp" line="148"/>
         <source>Cleaning Database</source>
         <translation type="unfinished">Nettoyage de la base de données</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="968"/>
-        <location filename="src/fs/navdatabase.cpp" line="1111"/>
-        <location filename="src/fs/navdatabase.cpp" line="1253"/>
+        <location filename="src/fs/navdatabase.cpp" line="969"/>
+        <location filename="src/fs/navdatabase.cpp" line="1112"/>
+        <location filename="src/fs/navdatabase.cpp" line="1254"/>
         <source>Clean up</source>
         <translation>Nettoyage</translation>
     </message>
@@ -1250,113 +1250,113 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Création des voies aériennes</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="191"/>
+        <location filename="src/fs/navdatabase.cpp" line="190"/>
         <source>&quot;%1&quot; does not contain any scenery areas</source>
         <translation type="unfinished">&quot;%1&quot; ne contient aucune zone de paysage</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="201"/>
+        <location filename="src/fs/navdatabase.cpp" line="200"/>
         <source>Unknown exception while reading file</source>
         <translation type="unfinished">Exception inconnue lors de la lecture du dossier</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="729"/>
+        <location filename="src/fs/navdatabase.cpp" line="730"/>
         <source>Merging VOR and TACAN to VORTAC</source>
         <translation>Fusion VOR et TACAN en VORTAC</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="734"/>
+        <location filename="src/fs/navdatabase.cpp" line="735"/>
         <source>Updating waypoints</source>
         <translation>Mise à jour des waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="740"/>
+        <location filename="src/fs/navdatabase.cpp" line="741"/>
         <source>Updating Navaids</source>
         <translation type="unfinished">Mise à jour des Navaids</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="747"/>
+        <location filename="src/fs/navdatabase.cpp" line="748"/>
         <source>Cleaning up waypoints</source>
         <translation type="unfinished">Cleaning up waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="752"/>
+        <location filename="src/fs/navdatabase.cpp" line="753"/>
         <source>Updating approaches</source>
         <translation>Actualisation des approches</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="761"/>
-        <location filename="src/fs/navdatabase.cpp" line="768"/>
+        <location filename="src/fs/navdatabase.cpp" line="762"/>
+        <location filename="src/fs/navdatabase.cpp" line="769"/>
         <source>Updating ILS</source>
         <translation>Actualisation des ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="773"/>
+        <location filename="src/fs/navdatabase.cpp" line="774"/>
         <source>Updating ILS Count</source>
         <translation>Mise à jour du nombre d&apos;ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="777"/>
+        <location filename="src/fs/navdatabase.cpp" line="778"/>
         <source>Collecting navaids for search</source>
         <translation>Collecte de navaids pour la recherche</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="783"/>
+        <location filename="src/fs/navdatabase.cpp" line="784"/>
         <source>Populating routing tables</source>
         <translation>Remplissage des tables de routage</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="786"/>
+        <location filename="src/fs/navdatabase.cpp" line="787"/>
         <source>Creating route edges for VOR and NDB</source>
         <translation>Création des limites d&apos;itinéraire pour VOR et NDB</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="793"/>
+        <location filename="src/fs/navdatabase.cpp" line="794"/>
         <source>Creating route edges waypoints</source>
         <translation>Création de waypoints de limite d&apos;itinéraire</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="806"/>
+        <location filename="src/fs/navdatabase.cpp" line="807"/>
         <source>Creating indexes for search</source>
         <translation>Création d&apos;index pour la recherche</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="811"/>
+        <location filename="src/fs/navdatabase.cpp" line="812"/>
         <source>Creating medium and large airport tables</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Création de tables d&apos;aéroports de taille moyenne et grande</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="823"/>
+        <location filename="src/fs/navdatabase.cpp" line="824"/>
         <source>Loading translations</source>
         <translation type="unfinished">Chargement des traductions</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1261"/>
+        <location filename="src/fs/navdatabase.cpp" line="1262"/>
         <source>Basic Validation</source>
         <translation>Validation de base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1380"/>
+        <location filename="src/fs/navdatabase.cpp" line="1381"/>
         <source>Creating table statistics</source>
         <translation>Création de statistiques de table</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1386"/>
+        <location filename="src/fs/navdatabase.cpp" line="1387"/>
         <source>Creating report on values</source>
         <translation>Création d&apos;un rapport sur les valeurs</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1392"/>
+        <location filename="src/fs/navdatabase.cpp" line="1393"/>
         <source>Creating report on duplicates</source>
         <translation>Création d&apos;un rapport sur les doublons</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1430"/>
+        <location filename="src/fs/navdatabase.cpp" line="1431"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Création d&apos;un rapport sur les doublons de coordonnées</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1486"/>
+        <location filename="src/fs/navdatabase.cpp" line="1487"/>
         <source>Base</source>
         <translation type="unfinished">Base</translation>
     </message>
@@ -1365,34 +1365,34 @@ Fichier: &quot;%2&quot;
         <translation type="obsolete">Aéroports de base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1498"/>
+        <location filename="src/fs/navdatabase.cpp" line="1499"/>
         <source>Generic Airports</source>
         <translation type="unfinished">Aéroports génériques</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1513"/>
+        <location filename="src/fs/navdatabase.cpp" line="1514"/>
         <source>Base Navigation</source>
         <translation type="unfinished">Navigation de base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1561"/>
-        <location filename="src/fs/navdatabase.cpp" line="1607"/>
+        <location filename="src/fs/navdatabase.cpp" line="1562"/>
+        <location filename="src/fs/navdatabase.cpp" line="1608"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation type="unfinished">L&apos;add-on crypté &quot;%1&quot; a été trouvé. Le module complémentaire peut ne pas s&apos;afficher correctement.</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1603"/>
+        <location filename="src/fs/navdatabase.cpp" line="1604"/>
         <source>Community</source>
         <translation type="unfinished">Communauté</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1692"/>
-        <location filename="src/fs/navdatabase.cpp" line="1703"/>
+        <location filename="src/fs/navdatabase.cpp" line="1693"/>
+        <location filename="src/fs/navdatabase.cpp" line="1704"/>
         <source>Custom scenery path %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chemin d&apos;accès personnalisé à la scène %1</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1988"/>
+        <location filename="src/fs/navdatabase.cpp" line="1989"/>
         <source>Counting files for %1 ...</source>
         <translation type="unfinished">Comptage des fichiers pour %1 ...</translation>
     </message>
@@ -2306,7 +2306,7 @@ Importation arrêtée.</translation>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="937"/>
         <source>Counting files for User Included Path ...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Comptage des fichiers pour le chemin d&apos;accès inclus par l&apos;utilisateur ...</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="1001"/>
@@ -2736,14 +2736,18 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
         <source>File contains invalid data.
 &quot;%1&quot;
 Line %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le fichier contient des données non valides.
+&quot;%1&quot;
+Ligne %2.</translation>
     </message>
     <message>
         <location filename="src/fs/userdata/logdatamanager.cpp" line="212"/>
         <source>File is not valid. Neither departure nor destination ident is set.
 &quot;%1&quot;
 Line %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le fichier n&apos;est pas valide. Aucun identifiant de départ ou de destination n&apos;est défini.
+&quot;%1&quot;
+Ligne %2.</translation>
     </message>
     <message>
         <location filename="src/fs/userdata/logdatamanager.cpp" line="316"/>
@@ -2778,7 +2782,9 @@ Période nocturne : %5</translation>
         <source>File contains invalid data.
 &quot;%1&quot;
 Line %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le fichier contient des données non valides.
+&quot;%1&quot;
+Ligne %2.</translation>
     </message>
     <message>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="297"/>
@@ -2943,7 +2949,7 @@ Line %2.</source>
     <message>
         <location filename="src/gui/helphandler.cpp" line="109"/>
         <source>URL &quot;%1&quot; not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">URL &quot;%1&quot; introuvable</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="112"/>
@@ -2956,7 +2962,7 @@ Line %2.</source>
         <location filename="src/gui/helphandler.cpp" line="155"/>
         <location filename="src/gui/helphandler.cpp" line="164"/>
         <source>File &quot;%1&quot; not found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fichier &quot;%1&quot; introuvable</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="183"/>
@@ -3142,7 +3148,8 @@ Importation arrêtée.</translation>
         <location filename="src/sql/datamanagerbase.cpp" line="438"/>
         <source>
 Line number %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">
+Numéro de ligne %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="759"/>
