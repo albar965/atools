@@ -60,7 +60,6 @@ VERSION_NUMBER=3.9.0.develop
 QT += sql xml core network
 
 versionAtLeast(QT_VERSION, 6.0.0): QT += core5compat
-QT -= gui
 CONFIG += build_all c++14 staticlib
 CONFIG -= gui debug_and_release debug_and_release_target
 
@@ -92,6 +91,7 @@ ATOOLS_NO_GRIB=$$(ATOOLS_NO_GRIB)
 ATOOLS_NO_WMM=$$(ATOOLS_NO_WMM)
 
 !isEqual(ATOOLS_NO_GUI, "true"): QT += svg widgets
+isEqual(ATOOLS_NO_GUI, "true"): QT -= gui
 !isEqual(ATOOLS_NO_GUI, "true"): CONFIG += svg widgets
 
 # =======================================================================
@@ -192,6 +192,7 @@ message(QT_INSTALL_LIBS: $$[QT_INSTALL_LIBS])
 message(QT_INSTALL_PLUGINS: $$[QT_INSTALL_PLUGINS])
 message(QT_INSTALL_TRANSLATIONS: $$[QT_INSTALL_TRANSLATIONS])
 message(CONFIG: $$CONFIG)
+message(QT: $$QT)
 message(-----------------------------------)
 }
 

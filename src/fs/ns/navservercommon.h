@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,7 @@ enum NavServerOption
 {
   NONE = 0x00,
   VERBOSE = 0x01,
-  HIDE_HOST = 0x02,
-  NO_HTML = 0x04
+  HIDE_HOST = 0x02
 };
 
 Q_DECLARE_FLAGS(NavServerOptions, NavServerOption);

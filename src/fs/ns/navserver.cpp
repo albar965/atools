@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "fs/ns/navservercommon.h"
 #include "fs/ns/navserverworker.h"
 #include "fs/sc/datareaderthread.h"
-#include "settings/settings.h"
+#include "util/htmlbuilder.h"
 
 #include <QNetworkInterface>
 #include <QHostInfo>
@@ -28,9 +28,6 @@
 namespace atools {
 namespace fs {
 namespace ns {
-
-const QString BLUESPAN("<span style=\"color: #0000ff; font-weight:bold\">"), ENDSPAN("</span>");
-const QString REDSPAN("<span style=\"color: #ff0000; font-weight:bold\">");
 
 NavServer::NavServer(QObject *parent, atools::fs::ns::NavServerOptions optionFlags, int inetPort)
   : QTcpServer(parent), options(optionFlags), port(inetPort)
@@ -67,69 +64,73 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
   dataReader = dataReaderThread;
   qDebug() << "Navserver starting";
 
-  QStringList hostNameList, hostIpList;
-  bool retval = listen(QHostAddress::AnyIPv4, static_cast<quint16>(port));
+  // hostname/ip/v6
+  QVector<std::tuple<QString, QString, bool> > hosts;
 
-  qDebug() << "localHostName" << QHostInfo::localHostName()
-           << "localDomainName" << QHostInfo::localDomainName();
+  // Listen on all network interfaces =================================
+  bool retval = listen(QHostAddress::Any, static_cast<quint16>(port));
 
-  // Collect hostnames and IPs from all interfaces
-  QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
-  for(const QHostAddress& ip : ipAddressesList)
+  qDebug() << "retval" << retval << "serverAddress" << serverAddress()
+           << "localHostName" << QHostInfo::localHostName() << "localDomainName" << QHostInfo::localDomainName();
+
+  if(retval)
   {
-    if(!ip.isLoopback() && !ip.isNull() && ip.protocol() == QAbstractSocket::IPv4Protocol)
+    // Collect usable hostnames and IPs from all interfaces =================================
+    for(const QHostAddress& hostAddr : QNetworkInterface::allAddresses())
     {
-      QString name = QHostInfo::fromName(ip.toString()).hostName();
-      qDebug() << "Found valid IP" << ip.toString() << "name" << name;
-      if(!name.isEmpty() && name != ip.toString())
-        hostNameList.append(name);
-      hostIpList.append(ip.toString());
+      // No loopback and only IPv4 and IPv6
+      if(!hostAddr.isLoopback() && !hostAddr.isNull() &&
+         (hostAddr.protocol() == QAbstractSocket::IPv4Protocol || hostAddr.protocol() == QAbstractSocket::IPv6Protocol))
+      {
+        QString name = QHostInfo::fromName(hostAddr.toString()).hostName();
+        hosts.append(std::make_tuple(name, hostAddr.toString(), hostAddr.protocol() == QAbstractSocket::IPv6Protocol));
+
+        qDebug() << "Using address" << hostAddr.toString() << "name" << name;
+      }
+      else
+        qDebug() << "Ignoring address" << hostAddr.toString();
     }
-    else
-      qDebug() << "Found IP" << ip.toString();
-  }
 
-  // Add localhost if nothing was found
-  if(hostNameList.isEmpty())
-    hostNameList.append("localhost");
+    // Add IPv4 localhost if nothing was found =================================
+    if(hosts.isEmpty())
+      hosts.append(std::make_tuple("localhost", QHostAddress(QHostAddress::LocalHost).toString(), false));
 
-  if(hostIpList.isEmpty())
-    hostIpList.append(QHostAddress(QHostAddress::LocalHost).toString());
-
-  qDebug() << "Server address IP" << serverAddress();
-
-  if(!retval)
-    qCritical(gui).noquote().nospace() << tr("Unable to start the server: %1.").arg(errorString());
-  else
-  {
-    if(options & HIDE_HOST)
+    if(options.testFlag(HIDE_HOST))
       qInfo(gui).noquote().nospace() << tr("Server is listening.");
-    else if(options & NO_HTML)
-    {
-      QString hostname = hostNameList.size() > 1 ? tr("Server is listening on hostnames %1 ") :
-                         tr("Server is listening on hostname %1 ");
-
-      QString ipaddr = hostIpList.size() > 1 ? tr("(IP addresses %2) ") : tr("(IP address %2) ");
-
-      qInfo(gui).noquote().nospace() << QString(hostname + ipaddr + tr("port %3.")).
-        arg(hostNameList.join(", ")).arg(hostIpList.join(", ")).arg(serverPort());
-    }
     else
     {
-      QString hostnameStr = hostNameList.size() > 1 ? tr("Server is listening on hostnames %1 ") :
-                            tr("Server is listening on hostname %1 ");
+      // Log addresses to output window =============================
+      // Header
+      atools::util::HtmlBuilder html;
+      if(hosts.size() > 1)
+        html.text(tr("Server is listening on hostnames (IP-addresses) on port "));
+      else
+        html.text(tr("Server is listening on hostname (IP-address) on port "));
+      html.text(QString::number(serverPort()), atools::util::html::BOLD, QColor(Qt::red));
+      qInfo(gui).noquote().nospace() << html.getHtml();
 
-      QString ipAddrStr = hostIpList.size() > 1 ? tr("(IP addresses %2) ") : tr("(IP address %2) ");
-      QString portStr = tr("port <span style=\"color: #ff0000; font-weight:bold\">%3</span>.");
-      QString str(hostnameStr + ipAddrStr + portStr);
+      // Addresses
+      int num = 1;
+      for(const std::tuple<QString, QString, bool>& host : hosts)
+      {
+        html.clear();
 
-      qInfo(gui).noquote().nospace()
-        << str.
-        arg(BLUESPAN + hostNameList.join(ENDSPAN + ", " + BLUESPAN) + ENDSPAN).
-        arg(BLUESPAN + hostIpList.join(ENDSPAN + ", " + BLUESPAN) + ENDSPAN).
-        arg(serverPort());
+        if(std::get<2>(host))
+          html.text(tr("%1 (IPv6): ").arg(num++));
+        else
+          html.text(tr("%1: ").arg(num++));
+
+        // Name
+        html.text(tr("%1 ").arg(std::get<0>(host)), atools::util::html::BOLD, QColor(Qt::blue));
+
+        // Address
+        html.text(tr(" (%1)").arg(std::get<1>(host)), atools::util::html::NONE, QColor(Qt::blue));
+        qInfo(gui).noquote().nospace() << html.getHtml();
+      }
     }
   }
+  else
+    qCritical(gui).noquote().nospace() << tr("Unable to start the server: %1.").arg(errorString());
 
   return retval;
 }
