@@ -106,7 +106,7 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
         html.text(tr("Server is listening on hostnames (IP-addresses) on port "));
       else
         html.text(tr("Server is listening on hostname (IP-address) on port "));
-      html.text(QString::number(serverPort()), atools::util::html::BOLD, QColor(Qt::red));
+      html.text(QString::number(serverPort()), atools::util::html::BOLD, QColor(Qt::red)).text(tr(":"));
       qInfo(gui).noquote().nospace() << html.getHtml();
 
       // Addresses
@@ -116,17 +116,19 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
         html.clear();
 
         if(std::get<2>(host))
-          html.text(tr("%1 (IPv6): ").arg(num++));
+          html.text(tr("%1. IPv6 ").arg(num++));
         else
-          html.text(tr("%1: ").arg(num++));
+          html.text(tr("%1. IPv4 ").arg(num++));
 
         // Name
         html.text(tr("%1 ").arg(std::get<0>(host)), atools::util::html::BOLD, QColor(Qt::blue));
 
         // Address
-        html.text(tr(" (%1)").arg(std::get<1>(host)), atools::util::html::NONE, QColor(Qt::blue));
+        html.text(tr(" (%1)").arg(std::get<1>(host)), atools::util::html::SMALL, QColor(Qt::blue));
         qInfo(gui).noquote().nospace() << html.getHtml();
       }
+      qInfo(gui).noquote().nospace() << tr("Use the mouse to select a hostname or IP-address.");
+      qInfo(gui).noquote().nospace() << tr("Then copy the selected text to the clipboard using the context menu.");
     }
   }
   else
