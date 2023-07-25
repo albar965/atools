@@ -75,12 +75,25 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
 
   if(retval)
   {
+    QHostAddress localhostIpv4, localhostIpv6;
     // Collect usable hostnames and IPs from all interfaces =================================
     for(const QHostAddress& hostAddr : QNetworkInterface::allAddresses())
     {
+      if(hostAddr.isNull())
+        continue;
+
+      if(hostAddr.isLoopback())
+      {
+        // Add loopback addresses later if nothing else was found
+        if(hostAddr.protocol() == QAbstractSocket::IPv4Protocol)
+          localhostIpv4 = hostAddr;
+        else if(hostAddr.protocol() == QAbstractSocket::IPv6Protocol)
+          localhostIpv6 = hostAddr;
+        continue;
+      }
+
       // No loopback and only IPv4 and IPv6
-      if(!hostAddr.isLoopback() && !hostAddr.isNull() &&
-         (hostAddr.protocol() == QAbstractSocket::IPv4Protocol || hostAddr.protocol() == QAbstractSocket::IPv6Protocol))
+      if(hostAddr.protocol() == QAbstractSocket::IPv4Protocol || hostAddr.protocol() == QAbstractSocket::IPv6Protocol)
       {
         QString name = QHostInfo::fromName(hostAddr.toString()).hostName();
         hosts.append(std::make_tuple(name, hostAddr.toString(), hostAddr.protocol() == QAbstractSocket::IPv6Protocol));
@@ -91,45 +104,55 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
         qDebug() << "Ignoring address" << hostAddr.toString();
     }
 
-    // Add IPv4 localhost if nothing was found =================================
+    // Add localhost if nothing was found =================================
     if(hosts.isEmpty())
-      hosts.append(std::make_tuple("localhost", QHostAddress(QHostAddress::LocalHost).toString(), false));
-
-    if(options.testFlag(HIDE_HOST))
-      qInfo(gui).noquote().nospace() << tr("Server is listening.");
-    else
     {
-      // Log addresses to output window =============================
-      // Header
-      atools::util::HtmlBuilder html;
-      if(hosts.size() > 1)
-        html.text(tr("Server is listening on hostnames (IP-addresses) on port "));
-      else
-        html.text(tr("Server is listening on hostname (IP-address) on port "));
-      html.text(QString::number(serverPort()), atools::util::html::BOLD, QColor(Qt::red)).text(tr(":"));
-      qInfo(gui).noquote().nospace() << html.getHtml();
-
-      // Addresses
-      int num = 1;
-      for(const std::tuple<QString, QString, bool>& host : hosts)
-      {
-        html.clear();
-
-        if(std::get<2>(host))
-          html.text(tr("%1. IPv6 ").arg(num++));
-        else
-          html.text(tr("%1. IPv4 ").arg(num++));
-
-        // Name
-        html.text(tr("%1 ").arg(std::get<0>(host)), atools::util::html::BOLD, QColor(Qt::blue));
-
-        // Address
-        html.text(tr(" (%1)").arg(std::get<1>(host)), atools::util::html::SMALL, QColor(Qt::blue));
-        qInfo(gui).noquote().nospace() << html.getHtml();
-      }
-      qInfo(gui).noquote().nospace() << tr("Use the mouse to select a hostname or IP-address.");
-      qInfo(gui).noquote().nospace() << tr("Then copy the selected text to the clipboard using the context menu.");
+      if(!localhostIpv4.isNull())
+        hosts.append(std::make_tuple("localhost", localhostIpv4.toString(), false));
+      if(!localhostIpv6.isNull())
+        hosts.append(std::make_tuple("localhost", localhostIpv6.toString(), true));
     }
+
+    if(!hosts.isEmpty())
+    {
+      if(options.testFlag(HIDE_HOST))
+        qInfo(gui).noquote().nospace() << tr("Server is listening.");
+      else
+      {
+        // Log addresses to output window =============================
+        // Header
+        atools::util::HtmlBuilder html;
+        if(hosts.size() > 1)
+          html.text(tr("Server is listening on hostnames (IP-addresses) on port "));
+        else
+          html.text(tr("Server is listening on hostname (IP-address) on port "));
+        html.text(QString::number(serverPort()), atools::util::html::BOLD, QColor(Qt::red)).text(tr(":"));
+        qInfo(gui).noquote().nospace() << html.getHtml();
+
+        // Addresses
+        int num = 1;
+        for(const std::tuple<QString, QString, bool>& host : hosts)
+        {
+          html.clear();
+
+          if(std::get<2>(host))
+            html.text(tr("%1. IPv6 ").arg(num++));
+          else
+            html.text(tr("%1. IPv4 ").arg(num++));
+
+          // Name
+          html.text(tr("%1 ").arg(std::get<0>(host)), atools::util::html::BOLD, QColor(Qt::blue));
+
+          // Address
+          html.text(tr(" (%1)").arg(std::get<1>(host)), atools::util::html::SMALL, QColor(Qt::blue));
+          qInfo(gui).noquote().nospace() << html.getHtml();
+        }
+        qInfo(gui).noquote().nospace() << tr("Use the mouse to select a hostname or IP-address.");
+        qInfo(gui).noquote().nospace() << tr("Then copy the selected text to the clipboard using the context menu.");
+      }
+    }
+    else
+      qCritical(gui).noquote().nospace() << tr("Error: No network found.");
   }
   else
     qCritical(gui).noquote().nospace() << tr("Unable to start the server: %1.").arg(errorString());
