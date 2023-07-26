@@ -65,7 +65,18 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
   qDebug() << "Navserver starting";
 
   // hostname/ip/v6
-  QVector<std::tuple<QString, QString, bool> > hosts;
+  struct Host
+  {
+    Host(QString nameParam, QString ipParam, bool isIpv6Param)
+      : name(nameParam), ip(ipParam), ipv6(isIpv6Param)
+    {
+    }
+
+    QString name, ip;
+    bool ipv6;
+  };
+
+  QVector<Host> hosts;
 
   // Listen on all network interfaces =================================
   bool retval = listen(QHostAddress::Any, static_cast<quint16>(port));
@@ -96,7 +107,7 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
       if(hostAddr.protocol() == QAbstractSocket::IPv4Protocol || hostAddr.protocol() == QAbstractSocket::IPv6Protocol)
       {
         QString name = QHostInfo::fromName(hostAddr.toString()).hostName();
-        hosts.append(std::make_tuple(name, hostAddr.toString(), hostAddr.protocol() == QAbstractSocket::IPv6Protocol));
+        hosts.append(Host(name, hostAddr.toString(), hostAddr.protocol() == QAbstractSocket::IPv6Protocol));
 
         qDebug() << "Using address" << hostAddr.toString() << "name" << name;
       }
@@ -104,13 +115,18 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
         qDebug() << "Ignoring address" << hostAddr.toString();
     }
 
+    // Ensure IPv4 in front
+    std::sort(hosts.begin(), hosts.end(), [ = ](const Host& host1, const Host& host2) {
+            return host1.ipv6 < host2.ipv6;
+          });
+
     // Add localhost if nothing was found =================================
     if(hosts.isEmpty())
     {
       if(!localhostIpv4.isNull())
-        hosts.append(std::make_tuple("localhost", localhostIpv4.toString(), false));
+        hosts.append(Host("localhost", localhostIpv4.toString(), false));
       if(!localhostIpv6.isNull())
-        hosts.append(std::make_tuple("localhost", localhostIpv6.toString(), true));
+        hosts.append(Host("localhost", localhostIpv6.toString(), true));
     }
 
     if(!hosts.isEmpty())
@@ -131,20 +147,20 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
 
         // Addresses
         int num = 1;
-        for(const std::tuple<QString, QString, bool>& host : hosts)
+        for(const Host& host : hosts)
         {
           html.clear();
 
-          if(std::get<2>(host))
+          if(host.ipv6)
             html.text(tr("%1. IPv6 ").arg(num++));
           else
             html.text(tr("%1. IPv4 ").arg(num++));
 
           // Name
-          html.text(tr("%1 ").arg(std::get<0>(host)), atools::util::html::BOLD, QColor(Qt::blue));
+          html.text(tr("%1 ").arg(host.name), atools::util::html::BOLD, QColor(Qt::blue));
 
           // Address
-          html.text(tr(" (%1)").arg(std::get<1>(host)), atools::util::html::SMALL, QColor(Qt::blue));
+          html.text(tr(" (%1)").arg(host.ip), atools::util::html::SMALL, QColor(Qt::blue));
           qInfo(gui).noquote().nospace() << html.getHtml();
         }
         qInfo(gui).noquote().nospace() << tr("Use the mouse to select a hostname or IP-address.");
