@@ -3593,7 +3593,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
 
       // Departure - SID
       if(!plan.properties.value(SIDRW).isEmpty())
-        stream << "DEPRWY RW" << plan.properties.value(SIDRW) << endl;
+        stream << "DEPRWY RW" << xplaneRunway(plan.properties.value(SIDRW)) << endl;
 
       if(!plan.properties.value(SID).isEmpty())
         stream << "SID " << plan.properties.value(SID) << endl;
@@ -3612,10 +3612,10 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       // Arrival runway
       if(!plan.properties.value(APPROACHRW).isEmpty())
         // Use approach runway if there is an approach
-        stream << "DESRWY RW" << plan.properties.value(APPROACHRW) << endl;
+        stream << "DESRWY RW" << xplaneRunway(plan.properties.value(APPROACHRW)) << endl;
       else if(!plan.properties.value(STARRW).isEmpty())
         // Use STAR runway if no approach but STAR
-        stream << "DESRWY RW" << plan.properties.value(STARRW) << endl;
+        stream << "DESRWY RW" << xplaneRunway(plan.properties.value(STARRW)) << endl;
 
       // Arrival approach and transition
       // Arrival STAR
@@ -4915,6 +4915,17 @@ QString FlightplanIO::identOrDegMinFormat(const atools::fs::pln::FlightplanEntry
     return atools::fs::util::toDegMinFormat(entry.getPosition());
   else
     return entry.getIdent();
+}
+
+QString FlightplanIO::xplaneRunway(QString runway)
+{
+  if(runway.startsWith("RW"))
+    runway = runway.mid(2);
+
+  if(runway.size() == 1)
+    runway.prepend('0');
+
+  return runway;
 }
 
 } // namespace pln

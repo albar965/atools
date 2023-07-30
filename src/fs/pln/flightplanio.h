@@ -275,6 +275,9 @@ private:
   void saveFlpKeyValue(QTextStream& stream, const atools::fs::pln::Flightplan& plan, const QString& prefix,
                        const QString& key, const QString& property);
 
+  /* Add zero prefix for X-Plane runway numbers */
+  QString xplaneRunway(QString runway);
+
   QString errorMsg;
 
 };
