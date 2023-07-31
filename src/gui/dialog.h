@@ -27,8 +27,25 @@ namespace atools {
 namespace gui {
 
 /* Allows to set a text for each button */
-struct DialogButton
+class DialogButton
 {
+public:
+  DialogButton(const QString& textParam, QMessageBox::StandardButtons buttonParam)
+    : text(textParam), button(buttonParam)
+  {
+  }
+
+  const QString& getText() const
+  {
+    return text;
+  }
+
+  QMessageBox::StandardButtons getButton() const
+  {
+    return button;
+  }
+
+private:
   QString text; /* Text for button */
   QMessageBox::StandardButtons button; /* Button type */
 };

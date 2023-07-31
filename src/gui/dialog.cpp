@@ -248,7 +248,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     // Build button field
     QMessageBox::StandardButtons buttons = QMessageBox::NoButton;
     for(const DialogButton& db : buttonList)
-      buttons |= db.button;
+      buttons |= db.getButton();
 
     QMessageBox msg(QMessageBox::Question, QCoreApplication::applicationName(), message, buttons, parent);
     if(!settingsKey.isEmpty() && !checkBoxMessage.isEmpty())
@@ -259,8 +259,8 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
 
     // Set the button texts
     for(const DialogButton& db : buttonList)
-      if(!db.text.isEmpty())
-        msg.setButtonText(db.button, db.text);
+      if(!db.getText().isEmpty())
+        msg.setButtonText(db.getButton(), db.getText());
 
     retval = msg.exec();
 

@@ -106,7 +106,7 @@ private:
     }
 
     PathInfo(const QString& pathParam, const QDateTime& timestampLastReadParam, qint64 sizeLastReadParam)
-      : path(pathParam), timestampLastRead(timestampLastReadParam), sizeLastRead(std::move(sizeLastReadParam))
+      : path(pathParam), timestampLastRead(timestampLastReadParam), sizeLastRead(sizeLastReadParam)
     {
     }
 
