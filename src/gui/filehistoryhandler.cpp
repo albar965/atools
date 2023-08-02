@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "gui/filehistoryhandler.h"
+
+#include "atools.h"
 #include "settings/settings.h"
 
 #include <QMenu>
@@ -156,10 +158,7 @@ void FileHistoryHandler::updateMenu()
 
 QString FileHistoryHandler::correctPath(const QString& filename)
 {
-  const static QString SEP = QString(QDir::separator());
-  const static QString SEP_SEP = QString(QDir::separator()) + QString(QDir::separator());
-
-  return QDir::toNativeSeparators(filename).replace(SEP_SEP, SEP);
+  return atools::nativeCleanPath(filename);
 }
 
 void FileHistoryHandler::clearMenu()

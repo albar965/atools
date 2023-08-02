@@ -327,7 +327,7 @@ bool XpDataCompiler::compileCifp()
 
       if((row % rowsPerStep) == 0)
       {
-        if(progress->reportOther(tr("Reading: %1").arg(QDir::toNativeSeparators(QDir::cleanPath(file)))))
+        if(progress->reportOther(tr("Reading: %1").arg(atools::nativeCleanPath(file))))
           return true;
 
         steps++;
@@ -424,7 +424,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
   stream.setCodec("UTF-8");
   bool aborted = false;
 
-  QString progressMsg = tr("Reading: %1").arg(QDir::toNativeSeparators(QDir::cleanPath(filepath)));
+  QString progressMsg = tr("Reading: %1").arg(atools::nativeCleanPath(filepath));
   QFileInfo fileinfo(filepath);
 
   if(!includeFile(fileinfo))
@@ -445,7 +445,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
       context.curFileId = curFileId;
       context.fileName = fileinfo.fileName();
       context.filePath = fileinfo.filePath();
-      context.localPath = QDir::toNativeSeparators(QDir::cleanPath(QDir(options.getBasepath()).relativeFilePath(fileinfo.path())));
+      context.localPath = atools::nativeCleanPath(QDir(options.getBasepath()).relativeFilePath(fileinfo.path()));
       context.flags = flags | flagsFromOptions();
       context.fileVersion = fileVersion;
       context.magDecReader = magDecReader;
@@ -1064,9 +1064,9 @@ QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts, const QStr
   {
     // Determine path for given file - return full filepath
     if(includeFile(opts, customPath) && checkFile(Q_FUNC_INFO, buildPathNoCase({customPath, filename})))
-      basePath = customPath + QDir::separator() + filename;
+      basePath = customPath + atools::SEP + filename;
     else if(checkFile(Q_FUNC_INFO, buildPathNoCase({defaultPath, filename})))
-      basePath = defaultPath + QDir::separator() + filename;
+      basePath = defaultPath + atools::SEP + filename;
   }
   qDebug() << Q_FUNC_INFO << "basePath" << basePath;
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 
 #include "fs/scenery/materiallib.h"
 
-#include "util/xmlstream.h"
-#include "fs/scenery/layoutjson.h"
-#include "fs/navdatabaseoptions.h"
 #include "atools.h"
+#include "fs/navdatabaseoptions.h"
+#include "fs/scenery/layoutjson.h"
+#include "util/xmlstream.h"
 
 #include <QDir>
 #include <QFile>
@@ -41,23 +41,23 @@ MaterialLib::MaterialLib(const NavDatabaseOptions *opts)
 void MaterialLib::readCommunity(const QString& basePath)
 {
   LayoutJson layout;
-  layout.read(basePath + QDir::separator() + "layout.json");
+  layout.read(basePath + atools::SEP + "layout.json");
   for(const QString& str : layout.getMaterialPaths())
-    read(basePath + QDir::separator() + str);
+    read(basePath + atools::SEP + str);
 }
 
 void MaterialLib::readOfficial(const QString& basePath)
 {
   LayoutJson layout;
 
-  layout.read(basePath + QDir::separator() + "asobo-material-lib" + QDir::separator() + "layout.json");
+  layout.read(basePath + atools::SEP + "asobo-material-lib" + atools::SEP + "layout.json");
   for(const QString& str : layout.getMaterialPaths())
-    read(basePath + QDir::separator() + "asobo-material-lib" + QDir::separator() + str);
+    read(basePath + atools::SEP + "asobo-material-lib" + atools::SEP + str);
 
   layout.clear();
-  layout.read(basePath + QDir::separator() + "fs-base-material-lib" + QDir::separator() + "layout.json");
+  layout.read(basePath + atools::SEP + "fs-base-material-lib" + atools::SEP + "layout.json");
   for(const QString& str : layout.getMaterialPaths())
-    read(basePath + QDir::separator() + "fs-base-material-lib" + QDir::separator() + str);
+    read(basePath + atools::SEP + "fs-base-material-lib" + atools::SEP + str);
 }
 
 /*

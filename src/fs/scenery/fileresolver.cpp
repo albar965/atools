@@ -15,10 +15,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/scenery/fileresolver.h"
-#include "fs/scenery/sceneryarea.h"
+#include "atools.h"
 #include "fs/navdatabaseoptions.h"
+#include "fs/scenery/fileresolver.h"
 #include "fs/scenery/layoutjson.h"
+#include "fs/scenery/sceneryarea.h"
 
 #include <QtDebug>
 #include <QFile>
@@ -27,8 +28,6 @@
 namespace atools {
 namespace fs {
 namespace scenery {
-
-const static QChar SEP(QDir::separator());
 
 FileResolver::FileResolver(const NavDatabaseOptions& opts, bool noWarnings)
   : options(opts), quiet(noWarnings)
@@ -64,14 +63,14 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
         sceneryAreaDirStr = areaLocalPathStr;
       else if(area.isCommunity())
         // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
-        sceneryAreaDirStr = options.getMsfsCommunityPath() + SEP + areaLocalPathStr;
+        sceneryAreaDirStr = options.getMsfsCommunityPath() + atools::SEP + areaLocalPathStr;
       else
         // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
-        sceneryAreaDirStr = options.getMsfsOfficialPath() + SEP + areaLocalPathStr;
+        sceneryAreaDirStr = options.getMsfsOfficialPath() + atools::SEP + areaLocalPathStr;
     }
     else
       // FSX or P3D
-      sceneryAreaDirStr = options.getBasepath() + SEP + areaLocalPathStr;
+      sceneryAreaDirStr = options.getBasepath() + atools::SEP + areaLocalPathStr;
   }
 
   // Remove any .. in the path but do not change symlinks
@@ -114,10 +113,10 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
             {
               // Read MSFS layout file and add all BGL files ================
               layout.clear();
-              layout.read(scenery.absoluteFilePath() + SEP + "layout.json");
+              layout.read(scenery.absoluteFilePath() + atools::SEP + "layout.json");
 
               for(const QString& path : layout.getBglPaths())
-                bglFiles.append(sceneryArea.filePath() + SEP + path);
+                bglFiles.append(sceneryArea.filePath() + atools::SEP + path);
             }
             else
             {

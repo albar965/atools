@@ -189,11 +189,11 @@ void AirportWriter::writeObject(const Airport *type)
 
     QStringList sceneryLocalPaths, bglFilenames;
     if(!deleteProcessor.getSceneryLocalPath().isEmpty())
-      sceneryLocalPaths.append(QDir::toNativeSeparators(QDir::cleanPath(deleteProcessor.getSceneryLocalPath())));
+      sceneryLocalPaths.append(atools::nativeCleanPath(deleteProcessor.getSceneryLocalPath()));
     if(!deleteProcessor.getBglFilename().isEmpty())
       bglFilenames.append(deleteProcessor.getBglFilename());
 
-    sceneryLocalPaths.append(QDir::toNativeSeparators(QDir::cleanPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath())));
+    sceneryLocalPaths.append(atools::nativeCleanPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath()));
     bglFilenames.append(bglFileWriter->getCurrentFilename());
 
     // Write admin names =====================

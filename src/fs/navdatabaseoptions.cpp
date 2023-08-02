@@ -330,7 +330,7 @@ void NavDatabaseOptions::addToFilter(const QString& filter, QList<QRegExp>& filt
 QString NavDatabaseOptions::adaptDir(const QString& filepath) const
 {
   // make sure that backslashes are replaced and path is suffixed with a slash
-  QString newFilename = QDir::cleanPath(filepath);
+  QString newFilename = atools::cleanPath(filepath);
   if(!filepath.endsWith('/'))
     newFilename.append('/');
 
@@ -341,7 +341,7 @@ QStringList NavDatabaseOptions::fromNativeSeparatorList(const QStringList& paths
 {
   QStringList retval;
   for(const QString& p : paths)
-    retval.append(QDir::cleanPath(p));
+    retval.append(atools::cleanPath(p));
   return retval;
 }
 

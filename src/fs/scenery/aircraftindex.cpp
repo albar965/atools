@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "fs/scenery/aircraftindex.h"
+
+#include "atools.h"
 #include "fs/scenery/manifestjson.h"
 #include "fs/scenery/layoutjson.h"
 
@@ -64,7 +66,7 @@ void AircraftIndex::loadIndex(const QStringList& basePaths)
               QFileInfo fullCfgPathValue(addonDir.filePath() + QDir::separator() + cfgPathKey);
 
               if(fullCfgPathValue.exists() && fullCfgPathValue.isFile())
-                aircraftShortToFullPathMap.insert(cfgPathKey.toLower(), QDir::cleanPath(fullCfgPathValue.canonicalFilePath()));
+                aircraftShortToFullPathMap.insert(cfgPathKey.toLower(), atools::cleanPath(fullCfgPathValue.canonicalFilePath()));
             }
           }
         }

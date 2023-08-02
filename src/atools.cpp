@@ -23,7 +23,6 @@
 #include <QLocale>
 #include <QRegularExpression>
 #include <QVector>
-#include <QDir>
 #include <QTextCodec>
 #include <QCoreApplication>
 #include <QDateTime>
@@ -59,7 +58,7 @@ extern "C" {
 
 namespace atools {
 
-const static QChar SEP(QDir::separator());
+const QChar SEP(QDir::separator());
 
 QString version()
 {
@@ -1407,6 +1406,26 @@ QString strToPlainText(QString str)
   // Either "<span>", "<span style=\"color: ... bold">" or "</span>", for example
   const static QRegularExpression regexp("<\\w+>|<\\w+\\s+.*\"\\s*>|</\\w+>", QRegularExpression::InvertedGreedinessOption);
   return str.replace(regexp, QString());
+}
+
+QString cleanPath(const QString& filename)
+{
+#ifdef Q_OS_WIN
+  if(filename.startsWith(QLatin1String("//")) || filename.startsWith(QLatin1String("\\\\")))
+    // clean replaces \\ in UNC paths
+    return "//" % QDir::cleanPath(filename.mid(2));
+  else
+    return QDir::cleanPath(filename);
+
+#else
+  return QDir::cleanPath(filename);
+
+#endif
+}
+
+QString nativeCleanPath(const QString& filename)
+{
+  return QDir::toNativeSeparators(atools::cleanPath(filename));
 }
 
 } // namespace atools

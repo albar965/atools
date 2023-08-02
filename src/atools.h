@@ -21,6 +21,7 @@
 #include <cmath>
 
 #include <QDebug>
+#include <QDir>
 #include <QLineF>
 #include <QPointF>
 #include <QTextCodec>
@@ -34,6 +35,9 @@ namespace atools {
 QString version();
 
 QString gitRevision();
+
+/* QDir:: separator() */
+extern const QChar SEP;
 
 /* replace variables in a string like "${LANG}" */
 QString replaceVar(QString str, const QString& name, const QVariant& value);
@@ -56,6 +60,10 @@ QString linkTarget(const QFileInfo& path);
  * Returns a cleaned path with '/' as separators. */
 QString canonicalFilePath(const QFileInfo& path);
 QString canonicalPath(const QFileInfo& path);
+
+/* Does note break UNC paths on Windows */
+QString cleanPath(const QString& filename);
+QString nativeCleanPath(const QString& filename);
 
 /* Return true if one of the elements in list is equal to str */
 bool contains(const QString& name, const std::initializer_list<QString>& list);

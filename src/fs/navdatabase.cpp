@@ -67,8 +67,6 @@ static const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1000;
 // createSchemaInternal()
 static const int PROGRESS_NUM_SCHEMA_STEPS = 8;
 
-const static QChar SEP(QDir::separator());
-
 using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -1679,12 +1677,13 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
 
   // All included paths in GUI
   int num = 1;
-  for(int i = 0; i < options->getDirIncludesGui().size(); i++)
+  const QStringList& dirs = options->getDirIncludesGui();
+  for(int i = 0; i < dirs.size(); i++)
   {
     bool added = false;
 
     // Get all folders in the directory where each one is an add-on
-    for(const QFileInfo& addonDir : QDir(options->getDirIncludesGui().at(i)).entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+    for(const QFileInfo& addonDir : QDir(dirs.at(i)).entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
       // The MSFS add-on dir needs two JSON files to be valid
       bool msfsFiles = QDir(addonDir.canonicalFilePath()).entryList({"layout.json", "manifest.json"}, QDir::Files, QDir::Name).size() == 2;
