@@ -49,6 +49,7 @@
 #include <QRegularExpression>
 #include <QStandardPaths>
 #include <QTextCodec>
+#include <QQueue>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -759,7 +760,34 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
   QDir::Filters filters = QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot;
 #endif
 
-  for(QFileInfo fileinfo : QDir(path, QString(), QDir::Name, filters).entryInfoList())
+  QFileInfoList entries;
+  if(!userInclude)
+    entries = QDir(path, QString(), QDir::Name, filters).entryInfoList();
+  else
+  {
+    // Read entries recursively for user added folder ===================
+    QQueue<QFileInfo> queue;
+    // Add intial path
+    queue.enqueue(path);
+
+    while(!queue.isEmpty())
+    {
+      for(QFileInfo fileinfo : QDir(queue.dequeue().absoluteFilePath(), QString(), QDir::Name, filters).entryInfoList())
+      {
+        if(atools::checkFile(Q_FUNC_INFO, QFileInfo(buildPathNoCase({fileinfo.absoluteFilePath(), "Earth nav data", "apt.dat"})), false))
+          // Folder contains airport - add to list and do not descent further
+          entries.append(fileinfo);
+        else
+          // Folder does not contain airport - enqueue and descent further
+          queue.enqueue(fileinfo);
+      }
+    }
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "User defined dir content" << entries;
+#endif
+  }
+
+  for(QFileInfo fileinfo : entries)
   {
     QString name = fileinfo.fileName();
     fileinfo.setFile(atools::canonicalFilePath(fileinfo));

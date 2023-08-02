@@ -42,6 +42,7 @@
 #include <QDir>
 #include <QElapsedTimer>
 #include <QProcessEnvironment>
+#include <QQueue>
 #include <QStandardPaths>
 #include <QStringBuilder>
 
@@ -1677,13 +1678,46 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
 
   // All included paths in GUI
   int num = 1;
+  QDir::Filters filters = QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot;
   const QStringList& dirs = options->getDirIncludesGui();
   for(int i = 0; i < dirs.size(); i++)
   {
+    // Read entries recursively for user added folder ===================
+    QQueue<QFileInfo> queue;
+    // Add intial path
+    queue.enqueue(dirs.at(i));
+
+    QFileInfoList entries(QDir(dirs.at(i)).entryInfoList(filters));
+    while(!queue.isEmpty())
+    {
+      for(QFileInfo fileinfo : QDir(queue.dequeue().absoluteFilePath(), QString(), QDir::Name, filters).entryInfoList())
+      {
+        bool ok = false;
+        if(options->getSimulatorType() == atools::fs::FsPaths::MSFS)
+          // Detect MSFS by looking for the two JSON files
+          ok = atools::checkFile(Q_FUNC_INFO, fileinfo.absoluteFilePath() % atools::SEP % "manifest.json") &&
+               atools::checkFile(Q_FUNC_INFO, fileinfo.absoluteFilePath() % atools::SEP % "layout.json");
+        else
+          // FSX and P3D scenery is detected by folder "scenery"
+          ok = atools::checkDir(Q_FUNC_INFO, fileinfo.absoluteFilePath() % atools::SEP % "scenery");
+
+        // Folder contains airport - add to list and do not descent further
+        if(ok)
+          entries.append(fileinfo);
+        else
+          // Folder does not contain airport - enqueue and descent further
+          queue.enqueue(fileinfo);
+      }
+    }
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "User defined dir content" << entries;
+#endif
+
     bool added = false;
 
     // Get all folders in the directory where each one is an add-on
-    for(const QFileInfo& addonDir : QDir(dirs.at(i)).entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+    for(const QFileInfo& addonDir : entries)
     {
       // The MSFS add-on dir needs two JSON files to be valid
       bool msfsFiles = QDir(addonDir.canonicalFilePath()).entryList({"layout.json", "manifest.json"}, QDir::Files, QDir::Name).size() == 2;
