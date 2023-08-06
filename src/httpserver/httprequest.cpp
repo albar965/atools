@@ -39,7 +39,9 @@ void HttpRequest::readRequest(QTcpSocket *socket)
   lineBuffer.clear();
   if(!newData.isEmpty())
   {
-    qDebug("HttpRequest: from %s: %s", qPrintable(socket->peerAddress().toString()), newData.constData());
+#ifdef DEBUG_INFORMATION_WEB
+       qDebug("HttpRequest: from %s: %s", qPrintable(socket->peerAddress().toString()), newData.constData());
+#endif
     QList<QByteArray> list = newData.split(' ');
     if(list.count() != 3 || !list.at(2).contains("HTTP"))
     {
@@ -398,7 +400,9 @@ QByteArray HttpRequest::urlDecode(const QByteArray source)
 
 void HttpRequest::parseMultiPartFile()
 {
+#ifdef DEBUG_INFORMATION_WEB
   qDebug("HttpRequest: parsing multipart temp file");
+#endif
   tempFile->seek(0);
   bool finished = false;
   while(!tempFile->atEnd() && !finished && !tempFile->error())
@@ -459,7 +463,9 @@ void HttpRequest::parseMultiPartFile()
           // last field was a form field
           fieldValue.remove(fieldValue.size() - 2, 2);
           parameters.insert(fieldName, fieldValue);
+#ifdef DEBUG_INFORMATION_WEB
           qDebug("HttpRequest: set parameter %s=%s", fieldName.constData(), fieldValue.constData());
+#endif
         }
         else if(!fileName.isEmpty() && !fieldName.isEmpty())
         {
@@ -473,9 +479,13 @@ void HttpRequest::parseMultiPartFile()
             uploadedFile->flush();
             uploadedFile->seek(0);
             parameters.insert(fieldName, fileName);
+#ifdef DEBUG_INFORMATION_WEB
             qDebug("HttpRequest: set parameter %s=%s", fieldName.constData(), fileName.constData());
+#endif
             uploadedFiles.insert(fieldName, uploadedFile);
+#ifdef DEBUG_INFORMATION_WEB
             qDebug("HttpRequest: uploaded file size is %lli", uploadedFile->size());
+#endif
           }
           else
           {

@@ -44,7 +44,9 @@ void StaticFileController::service(HttpRequest& request, HttpResponse& response)
     QByteArray document = entry->document;   // copy the cached document, because other threads may destroy the cached entry immediately after mutex unlock.
     QByteArray filename = entry->filename;
     mutex.unlock();
+#ifdef DEBUG_INFORMATION_WEB
     qDebug("StaticFileController: Cache hit for %s", path.constData());
+#endif
     setContentType(filename, response);
     response.setHeader("Cache-Control", "max-age=" + QByteArray::number(maxAge / 1000));
     response.write(document);
@@ -53,7 +55,9 @@ void StaticFileController::service(HttpRequest& request, HttpResponse& response)
   {
     mutex.unlock();
     // The file is not in cache.
+#ifdef DEBUG_INFORMATION_WEB
     qDebug("StaticFileController: Cache miss for %s", path.constData());
+#endif
     // Forbid access to files outside the docroot directory
     if(path.contains("/.."))
     {
@@ -69,7 +73,9 @@ void StaticFileController::service(HttpRequest& request, HttpResponse& response)
     }
     // Try to open the file
     QFile file(docroot + path);
+#ifdef DEBUG_INFORMATION_WEB
     qDebug("StaticFileController: Open file %s", qPrintable(file.fileName()));
+#endif
     if(file.open(QIODevice::ReadOnly))
     {
       setContentType(path, response);
@@ -186,6 +192,8 @@ void StaticFileController::setContentType(const QString fileName, HttpResponse& 
   // Todo: add all of your content types
   else
   {
+#ifdef DEBUG_INFORMATION_WEB
     qDebug("StaticFileController: unknown MIME type for filename '%s'", qPrintable(fileName));
+#endif
   }
 }
