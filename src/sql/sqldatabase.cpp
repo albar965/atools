@@ -489,7 +489,7 @@ bool SqlDatabase::isDriverAvailable(const QString& name)
 void SqlDatabase::checkError(bool retval, const QString& msg) const
 {
   if(!retval || db.lastError().isValid())
-    throw SqlException(db.lastError(), msg);
+    throw SqlException(db.lastError(), msg + " Name \"" + name + "\"" + " Database Name \"" + databaseName() + "\"");
 }
 
 const QSqlDatabase& SqlDatabase::getQSqlDatabase() const
