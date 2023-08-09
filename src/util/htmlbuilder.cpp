@@ -524,20 +524,21 @@ HtmlBuilder& HtmlBuilder::trEnd()
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::table(int border, int padding, int spacing, int widthPercent, QColor bgcolor)
+HtmlBuilder& HtmlBuilder::table(int border, int padding, int spacing, int widthPercent, QColor bgcolor, QColor bordercolor)
 {
   htmlText.append("<table border=\"" % QString::number(border) % "\" cellpadding=\"" %
                   QString::number(padding) % "\" cellspacing=\"" % QString::number(spacing) % "\"" %
                   (bgcolor.isValid() ? " bgcolor=\"" % bgcolor.name(QColor::HexRgb) % "\"" : QString()) %
+                  (bordercolor.isValid() ? " border-color=\"" % bordercolor.name(QColor::HexRgb) % "\"" : QString()) %
                   (widthPercent > 0 ? " width=\"" % QString::number(widthPercent) % "%\"" : QString()) % ">\n<tbody>\n");
   tableRowsCur = 0;
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::tableIf(int border, int padding, int spacing, int widthPercent, QColor bgcolor)
+HtmlBuilder& HtmlBuilder::tableIf(int border, int padding, int spacing, int widthPercent, QColor bgcolor, QColor bordercolor)
 {
   mark();
-  return table(border, padding, spacing, widthPercent, bgcolor);
+  return table(border, padding, spacing, widthPercent, bgcolor, bordercolor);
 }
 
 HtmlBuilder& HtmlBuilder::tableAtts(const QHash<QString, QString>& attributes)

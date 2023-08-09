@@ -270,10 +270,12 @@ public:
                   QColor color = QColor(), const QString& id = QString());
 
   /* Add table and table body */
-  HtmlBuilder& table(int border = 0, int padding = 2, int spacing = 0, int widthPercent = 0, QColor bgcolor = QColor());
+  HtmlBuilder& table(int border = 0, int padding = 2, int spacing = 0, int widthPercent = 0, QColor bgcolor = QColor(),
+                     QColor bordercolor = QColor());
 
   /* Sets a stream mark and opens a table for use wit htableEndIf(). */
-  HtmlBuilder& tableIf(int border = 0, int padding = 2, int spacing = 0, int widthPercent = 0, QColor bgcolor = QColor());
+  HtmlBuilder& tableIf(int border = 0, int padding = 2, int spacing = 0, int widthPercent = 0, QColor bgcolor = QColor(),
+                       QColor bordercolor = QColor());
   HtmlBuilder& tableAtts(const QHash<QString, QString>& attributes);
 
   HtmlBuilder& tableEnd();
