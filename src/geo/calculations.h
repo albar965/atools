@@ -140,7 +140,7 @@ float windCorrectedHeading(float& groundSpeed, float windSpeed, float windDirect
 float windCorrectedHeading(float windSpeed, float windDirectionDeg, float courseDeg, float trueAirspeed);
 float windCorrectedGroundSpeed(float windSpeed, float windDirectionDeg, float courseDeg, float trueAirspeed);
 
-/* Calculate head and cross wind for a given course and wind direction.
+/* Calculate head and cross wind for a given course and wind direction. Speed can be any unit.
  *  If head wind is < 0 it is a tail wind.
  *  If cross wind is < 0 wind is from left */
 void windForCourse(float& headWind, float& crossWind, float windSpeed, float windDirectionDeg, float courseDeg);
@@ -392,7 +392,7 @@ constexpr TYPE knotsToMeterPerSec(TYPE value)
 template<typename TYPE>
 constexpr TYPE knotsToKmh(TYPE value)
 {
-    return static_cast<TYPE>((value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<double>(value) * 1.852);
+  return static_cast<TYPE>((value > std::numeric_limits<TYPE>::max() / 2) ? value : static_cast<double>(value) * 1.852);
 }
 
 template<typename TYPE>

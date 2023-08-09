@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -85,13 +85,6 @@ bool testUrl(QStringList& result, const QString& urlStr, const QString& airportI
                     arg(urlStr).arg(QObject::tr("File does not exist")));
   }
   return false;
-}
-
-void MetarResult::init(const QString& station, const geo::Pos& pos)
-{
-  requestIdent = station;
-  requestPos = pos;
-  timestamp = QDateTime::currentDateTimeUtc();
 }
 
 QDebug operator<<(QDebug out, const MetarResult& record)
