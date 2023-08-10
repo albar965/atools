@@ -905,6 +905,31 @@ bool runwayNameSplit(const QString& name, QString *number, QString *designator, 
   return retval;
 }
 
+inline int runwayDesignatorNumber(const QString& designator)
+{
+  if(designator.startsWith('L'))
+    return 0;
+  else if(designator.startsWith('C'))
+    return 1;
+  else if(designator.startsWith('R'))
+    return 2;
+
+  return 3;
+}
+
+int compareRunwayNumber(const QString& rw1, const QString& rw2)
+{
+  QString designator1, designator2;
+  int number1, number2;
+  atools::fs::util::runwayNameSplit(rw1, &number1, &designator1);
+  atools::fs::util::runwayNameSplit(rw2, &number2, &designator2);
+
+  if(number1 == number2)
+    return runwayDesignatorNumber(designator1) < runwayDesignatorNumber(designator2);
+  else
+    return number1 < number2;
+}
+
 bool hasSidStarAllRunways(const QString& approachArincName)
 {
   return approachArincName == "ALL";

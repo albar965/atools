@@ -41,6 +41,9 @@ bool runwayNameSplit(const QString& name, int *number = nullptr, QString *design
 /* Split runway name into parts and return true if name matches a runway number. Number is zero prefixed. */
 bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *designator = nullptr, bool *trueHeading = nullptr);
 
+/* Compare numerically by number and then by designator in order of L, C, R */
+int compareRunwayNumber(const QString& rw1, const QString& rw2);
+
 QString runwayDesignatorLong(const QString& name);
 
 /* Get the closes matching runway name from the list of airport runways or empty if none.
