@@ -87,7 +87,7 @@ void BglFile::readFile(const QString& filenameParam, const atools::fs::scenery::
 
     readSections(&stream);
 
-    if(options->isIncludedNavDbObject(type::BOUNDARY))
+    if(options->isIncludedNavDbObject(type::BOUNDARY) && !area.isMsfsNavigraphNavdata())
       readBoundaryRecords(&stream);
 
     readRecords(&stream, area);
@@ -259,8 +259,9 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
   bgl::flags::CreateFlags createFlags = bgl::flags::NONE;
 
   // Set flag if MSFS scenery area is only navdata and dummy airports
+  bool msfsNavigraphNavdata = area.isMsfsNavigraphNavdata();
+  createFlags.setFlag(bgl::flags::AIRPORT_MSFS_NAVIGRAPH_NAVDATA, msfsNavigraphNavdata);
   createFlags.setFlag(bgl::flags::AIRPORT_MSFS_DUMMY, area.isNavdata());
-  createFlags.setFlag(bgl::flags::AIRPORT_NAVIGRAPH_NAVDATA, area.isNavigraphNavdata());
 
   for(Subsection& subsection : subsections)
   {
@@ -309,21 +310,22 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
           break;
 
         case section::ILS_VOR:
-          rec = handleIlsVor(bs);
+          if(!msfsNavigraphNavdata)
+            rec = handleIlsVor(bs);
           break;
 
         case section::NDB:
-          if(options->isIncludedNavDbObject(type::NDB))
+          if(options->isIncludedNavDbObject(type::NDB) && !msfsNavigraphNavdata)
             rec = createRecord<Ndb>(bs, &ndbs);
           break;
 
         case section::MARKER:
-          if(options->isIncludedNavDbObject(type::MARKER))
+          if(options->isIncludedNavDbObject(type::MARKER) && !msfsNavigraphNavdata)
             rec = createRecord<Marker>(bs, &marker);
           break;
 
         case section::WAYPOINT:
-          if(options->isIncludedNavDbObject(type::WAYPOINT))
+          if(options->isIncludedNavDbObject(type::WAYPOINT) && !msfsNavigraphNavdata)
             // Read waypoints and airways
             rec = createRecord<Waypoint>(bs, &waypoints);
           break;

@@ -154,7 +154,7 @@ public:
   }
 
   /* MSFS only. Indicates special handling for third-party navdata update scenery areas. */
-  bool isNavigraphNavdata() const
+  bool isMsfsNavigraphNavdata() const
   {
     return navigraphNavdata;
   }

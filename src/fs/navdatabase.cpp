@@ -584,7 +584,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     // Check for Navigraph packages to report back to caller
     for(const SceneryArea& area : sceneryCfg.getAreas())
     {
-      if(area.isNavigraphNavdata())
+      if(area.isMsfsNavigraphNavdata())
       {
         if(options->isIncludedGui(area.getLocalPath()))
         {

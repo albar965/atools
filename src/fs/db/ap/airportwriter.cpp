@@ -159,7 +159,7 @@ void AirportWriter::writeObject(const Airport *type)
     addon = getOptions().isAddonGui(QFileInfo(bglFileWriter->getCurrentFilepath())) && realAddon;
 
     // Third party navdata update or MSFS stock airport in official - not an addon
-    if(currentArea.isNavigraphNavdata())
+    if(currentArea.isMsfsNavigraphNavdata())
       addon = false;
 
 #ifdef DEBUG_INFORMATION
@@ -329,7 +329,7 @@ void AirportWriter::writeObject(const Airport *type)
     RunwayWriter *rwWriter = dw.getRunwayWriter();
     rwWriter->write(type->getRunways());
 
-    if(!currentArea.isNavigraphNavdata())
+    if(!currentArea.isMsfsNavigraphNavdata())
     {
       WaypointWriter *waypointWriter = dw.getWaypointWriter();
       waypointWriter->write(type->getWaypoints());
@@ -338,7 +338,7 @@ void AirportWriter::writeObject(const Airport *type)
     ComWriter *comWriter = dw.getAirportComWriter();
     comWriter->write(type->getComs());
 
-    if(!currentArea.isNavigraphNavdata())
+    if(!currentArea.isMsfsNavigraphNavdata())
     {
       ApproachWriter *appWriter = dw.getApproachWriter();
       appWriter->write(type->getApproaches());

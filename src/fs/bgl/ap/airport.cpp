@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -227,7 +227,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
 
       case rec::APPROACH:
       case rec::MSFS_APPROACH_NEW:
-        if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::flags::AIRPORT_NAVIGRAPH_NAVDATA))
+        if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::flags::AIRPORT_MSFS_NAVIGRAPH_NAVDATA))
         {
           r.seekToStart();
           approaches.append(Approach(options, bs, type));
@@ -236,7 +236,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
 
       case rec::MSFS_SID:
       case rec::MSFS_STAR:
-        if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::flags::AIRPORT_NAVIGRAPH_NAVDATA))
+        if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::flags::AIRPORT_MSFS_NAVIGRAPH_NAVDATA))
         {
           r.seekToStart();
           sidsAndStars.append(SidStar(options, bs));

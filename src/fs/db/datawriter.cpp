@@ -291,7 +291,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
           airportFileWriter->write(bglFile.getAirports());
 
           // Ignore navaids from the Navigraph update
-          if(!area.isNavigraphNavdata())
+          if(!area.isMsfsNavigraphNavdata())
           {
             // Write all navaids to the database
             waypointWriter->write(bglFile.getWaypoints());
@@ -303,7 +303,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
           ilsWriter->write(bglFile.getIls());
 
-          if(!area.isNavigraphNavdata())
+          if(!area.isMsfsNavigraphNavdata())
             // Ignore boundaries from the Navigraph update
             boundaryWriter->write(bglFile.getBoundaries());
 
@@ -313,7 +313,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
           numNamelists += bglFile.getNamelists().size();
 
           // Ignore navaids from the Navigraph update
-          if(!area.isNavigraphNavdata())
+          if(!area.isMsfsNavigraphNavdata())
           {
             numVors += bglFile.getVors().size() + bglFile.getTacans().size();
             numNdbs += bglFile.getNdbs().size();
