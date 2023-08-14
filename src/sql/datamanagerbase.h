@@ -407,7 +407,8 @@ public:
   /* Abort insert assuming that transaction will not be commited in case of exception. */
   ~DataManagerUndoHandler()
   {
-    datamanager->abortUndoBulkInsert();
+    if(!finished)
+      datamanager->abortUndoBulkInsert();
   }
 
   /* Increment number of inserted columns. */
@@ -421,11 +422,13 @@ public:
   {
     if(numInserted > 0)
       datamanager->postUndoBulkInsert();
+    finished = true;
   }
 
 private:
   DataManagerBase *datamanager;
   int numInserted;
+  bool finished = false;
 };
 
 } // namespace sql
