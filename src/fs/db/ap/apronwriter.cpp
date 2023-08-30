@@ -16,14 +16,14 @@
 *****************************************************************************/
 
 #include "fs/db/ap/apronwriter.h"
-#include "fs/db/datawriter.h"
-#include "fs/bgl/util.h"
-#include "fs/bgl/surface.h"
-#include "fs/navdatabaseoptions.h"
-#include "fs/db/ap/airportwriter.h"
+
 #include "fs/bgl/ap/rw/runway.h"
-#include "geo/linestring.h"
+#include "fs/bgl/surface.h"
 #include "fs/common/binarygeometry.h"
+#include "fs/db/ap/airportwriter.h"
+#include "fs/db/datawriter.h"
+#include "fs/navdatabaseoptions.h"
+#include "geo/linestring.h"
 
 namespace atools {
 namespace fs {

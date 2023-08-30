@@ -19,7 +19,6 @@
 #define ATOOLS_FS_FB_SIDSTARAPPROACHLEGWRITER_H
 
 #include "fs/db/ap/legbasewriter.h"
-#include "fs/bgl/ap/approachleg.h"
 #include "fs/db/ap/approachlegwriter.h"
 #include "fs/db/datawriter.h"
 

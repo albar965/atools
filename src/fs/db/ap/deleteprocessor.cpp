@@ -16,16 +16,15 @@
 *****************************************************************************/
 
 #include "fs/db/ap/deleteprocessor.h"
-#include "sql/sqldatabase.h"
-#include "sql/sqlquery.h"
-#include "geo/calculations.h"
-#include "sql/sqlutil.h"
-#include "fs/db/datawriter.h"
+
+#include "fs/bgl/ap/airport.h"
 #include "fs/bgl/ap/del/deleteairport.h"
 #include "fs/bgl/util.h"
-#include "fs/bgl/ap/airport.h"
-#include "fs/db/ap/transitionwriter.h"
 #include "fs/navdatabaseoptions.h"
+#include "geo/calculations.h"
+#include "sql/sqldatabase.h"
+#include "sql/sqlquery.h"
+#include "sql/sqlutil.h"
 
 #include <QDebug>
 

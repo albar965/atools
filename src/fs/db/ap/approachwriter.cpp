@@ -16,16 +16,16 @@
 *****************************************************************************/
 
 #include "fs/db/ap/approachwriter.h"
-#include "fs/db/meta/bglfilewriter.h"
-#include "fs/db/datawriter.h"
+
+#include "atools.h"
+#include "fs/bgl/ap/approachtypes.h"
 #include "fs/bgl/util.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/db/ap/approachlegwriter.h"
-#include "fs/db/runwayindex.h"
 #include "fs/db/ap/transitionwriter.h"
-#include "fs/bgl/ap/approachtypes.h"
+#include "fs/db/datawriter.h"
+#include "fs/db/runwayindex.h"
 #include "geo/calculations.h"
-#include "atools.h"
 
 #include <QString>
 

@@ -16,15 +16,14 @@
 *****************************************************************************/
 
 #include "fs/db/datawriter.h"
-#include "fs/bgl/util.h"
+
+#include "atools.h"
+#include "fs/db/ap/airportwriter.h"
+#include "fs/db/ap/approachwriter.h"
+#include "fs/db/ap/transitionlegwriter.h"
 #include "fs/db/ap/transitionwriter.h"
 #include "fs/navdatabaseoptions.h"
-#include "fs/db/ap/approachwriter.h"
-#include "fs/bgl/ap/approachtypes.h"
-#include "fs/db/ap/airportwriter.h"
-#include "fs/db/ap/transitionlegwriter.h"
 #include "geo/calculations.h"
-#include "atools.h"
 
 namespace atools {
 namespace fs {

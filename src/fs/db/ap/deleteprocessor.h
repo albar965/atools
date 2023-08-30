@@ -18,16 +18,7 @@
 #ifndef ATOOLS_FS_DB_AP_DELETEPROCESSOR_H
 #define ATOOLS_FS_DB_AP_DELETEPROCESSOR_H
 
-#include "fs/bgl/ap/airport.h"
-
-namespace bgl {
-namespace ap {
-class Airport;
-namespace del {
-class DeleteAirport;
-}
-}
-}
+#include "fs/bgl/ap/del/deleteairport.h"
 
 namespace atools {
 namespace sql {
@@ -35,6 +26,14 @@ class SqlQuery;
 class SqlDatabase;
 }
 namespace fs {
+
+namespace bgl {
+
+class Airport;
+class DeleteAirport;
+}
+
+class NavDatabaseOptions;
 namespace db {
 
 class DataWriter;
@@ -90,8 +89,7 @@ private:
 
   QString updateAptFeatureStmt(const QString& table);
   QString delAptFeatureStmt(const QString& table);
-  void removeOrUpdate(sql::SqlQuery *deleteStmt, sql::SqlQuery *updateStmt,
-                      atools::fs::bgl::del::DeleteAllFlags flag);
+  void removeOrUpdate(sql::SqlQuery *deleteStmt, sql::SqlQuery *updateStmt, atools::fs::bgl::del::DeleteAllFlags flag);
   QString updateAptFeatureToNullStmt(const QString& table);
   void removeApproachesAndTransitions(const QList<int>& ids);
   void extractDeleteFlags();

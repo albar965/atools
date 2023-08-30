@@ -18,7 +18,6 @@
 #ifndef ATOOLS_FS_DB_SIDSTARTRANSITIONWRITER_H
 #define ATOOLS_FS_DB_SIDSTARTRANSITIONWRITER_H
 
-#include "fs/bgl/ap/approachleg.h"
 #include "fs/db/writerbase.h"
 #include "fs/db/ap/transitionwriter.h"
 #include "fs/db/datawriter.h"

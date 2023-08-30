@@ -135,6 +135,7 @@ void LineString::removeInvalid()
 
 void LineString::removeDuplicates(float epsilon)
 {
+  // Remove all consecutive duplicate elements from the range
   erase(std::unique(begin(), end(), [ = ](atools::geo::Pos& p1, atools::geo::Pos& p2) -> bool {
         return p1.almostEqual(p2, epsilon);
       }), end());

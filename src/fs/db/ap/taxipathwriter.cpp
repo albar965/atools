@@ -16,15 +16,16 @@
 *****************************************************************************/
 
 #include "fs/db/ap/taxipathwriter.h"
-#include "fs/db/datawriter.h"
-#include "fs/bgl/util.h"
-#include "fs/bgl/surface.h"
-#include "fs/navdatabaseoptions.h"
-#include "fs/db/ap/airportwriter.h"
+
+#include "atools.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/bgl/ap/taxipoint.h"
+#include "fs/bgl/surface.h"
+#include "fs/bgl/util.h"
+#include "fs/db/ap/airportwriter.h"
+#include "fs/db/datawriter.h"
+#include "fs/navdatabaseoptions.h"
 #include "geo/calculations.h"
-#include "atools.h"
 
 namespace atools {
 namespace fs {

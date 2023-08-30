@@ -20,7 +20,6 @@
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/ap/airport.h"
-#include "fs/db/datawriter.h"
 
 namespace atools {
 namespace fs {

@@ -19,7 +19,6 @@
 #define ATOOLS_FS_DB_SIDSTARWRITER_H
 
 #include "fs/bgl/ap/sidstar.h"
-#include "fs/bgl/ap/approachleg.h"
 #include "fs/db/writerbase.h"
 #include "fs/db/ap/approachwriter.h"
 #include "fs/db/datawriter.h"

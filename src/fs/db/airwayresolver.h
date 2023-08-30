@@ -19,7 +19,6 @@
 #define ATOOLS_FS_DB_AIRWAYRESOLVER_H
 
 #include "sql/sqlquery.h"
-#include "geo/pos.h"
 
 #include <QSet>
 #include <QCoreApplication>

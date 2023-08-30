@@ -16,10 +16,10 @@
 *****************************************************************************/
 
 #include "fs/db/ap/transitionlegwriter.h"
-#include "fs/db/datawriter.h"
+
 #include "fs/db/ap/airportwriter.h"
 #include "fs/db/ap/transitionwriter.h"
-#include "fs/bgl/util.h"
+#include "fs/db/datawriter.h"
 #include "fs/navdatabaseoptions.h"
 
 #include <QDebug>

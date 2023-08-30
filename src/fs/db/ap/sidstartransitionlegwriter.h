@@ -20,7 +20,6 @@
 
 #include "fs/db/ap/legbasewriter.h"
 #include "fs/db/ap/transitionlegwriter.h"
-#include "fs/bgl/ap/approachleg.h"
 #include "fs/db/datawriter.h"
 
 namespace atools {

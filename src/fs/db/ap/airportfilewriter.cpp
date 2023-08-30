@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "fs/db/ap/airportfilewriter.h"
+
+#include "fs/db/datawriter.h"
 #include "fs/db/meta/bglfilewriter.h"
 
 namespace atools {

@@ -16,13 +16,12 @@
 *****************************************************************************/
 
 #include "fs/db/ap/legbasewriter.h"
-#include "fs/db/datawriter.h"
-#include "fs/bgl/util.h"
-#include "fs/db/meta/bglfilewriter.h"
-#include "fs/navdatabaseoptions.h"
-#include "geo/calculations.h"
+
 #include "atools.h"
-#include "fs/db/ap/airportwriter.h"
+#include "fs/bgl/util.h"
+#include "fs/db/datawriter.h"
+#include "fs/db/meta/bglfilewriter.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {

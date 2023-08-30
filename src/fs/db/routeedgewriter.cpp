@@ -23,7 +23,6 @@
 #include "geo/calculations.h"
 #include "sql/sqlutil.h"
 #include "sql/sqlquery.h"
-#include "fs/progresshandler.h"
 
 #include <QElapsedTimer>
 

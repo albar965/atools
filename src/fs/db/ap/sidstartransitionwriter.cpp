@@ -16,13 +16,13 @@
 *****************************************************************************/
 
 #include "fs/db/datawriter.h"
-#include "fs/db/ap/sidstartransitionwriter.h"
-#include "fs/db/ap/sidstartransitionlegwriter.h"
-#include "fs/db/ap/airportwriter.h"
-#include "fs/db/ap/sidstarwriter.h"
+
 #include "fs/bgl/util.h"
+#include "fs/db/ap/airportwriter.h"
+#include "fs/db/ap/sidstartransitionlegwriter.h"
+#include "fs/db/ap/sidstartransitionwriter.h"
+#include "fs/db/ap/sidstarwriter.h"
 #include "fs/navdatabaseoptions.h"
-#include "atools.h"
 
 namespace atools {
 namespace fs {
