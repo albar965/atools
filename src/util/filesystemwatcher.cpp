@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ void FileSystemWatcher::pathUpdatedDelayed()
 
   // Collect existing changed files and the parent directory if changed
   QStringList updatedFiles, updatedDirs;
-  for(int index : changedPathIndexes)
+  for(int index : qAsConst(changedPathIndexes))
   {
     if(!atools::inRange(paths, index))
     {

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,9 @@
 
 #include "fs/xp/airwaypostprocess.h"
 
-#include "fs/navdatabaseoptions.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
-#include "exception.h"
 #include "atools.h"
 
 #include <QDebug>
@@ -368,14 +366,12 @@ bool AirwayPostProcess::findSegment(QVector<AirwaySegment>& found, QSet<AirwaySe
   else
     segment.next = airwayPoint;
 
-  QVector<AirwaySegment>::const_iterator lower =
-    std::lower_bound(segments.constBegin(), segments.constEnd(), segment, searchPrevious ? prevOrderFunc : nextOrderFunc);
-  QVector<AirwaySegment>::const_iterator upper =
-    std::upper_bound(segments.constBegin(), segments.constEnd(), segment, searchPrevious ? prevOrderFunc : nextOrderFunc);
+  auto lower = std::lower_bound(segments.constBegin(), segments.constEnd(), segment, searchPrevious ? prevOrderFunc : nextOrderFunc);
+  auto upper = std::upper_bound(segments.constBegin(), segments.constEnd(), segment, searchPrevious ? prevOrderFunc : nextOrderFunc);
 
   // qDebug() << "SEARCH" << idx.ident << idx.region << idx.type << prev;
 
-  for(QVector<AirwaySegment>::const_iterator it = lower; it < upper; ++it)
+  for(auto it = lower; it < upper; ++it)
   {
     // qDebug() << "FOUND" << (*it).prev.ident << (*it).prev.region << (*it).prev.type
     // << (*it).next.ident << (*it).next.region << (*it).next.type;

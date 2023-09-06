@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 #include "fs/bgl/ap/approachleg.h"
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
-#include "fs/bgl/ap/approach.h"
 #include "atools.h"
 
 #include <QDebug>

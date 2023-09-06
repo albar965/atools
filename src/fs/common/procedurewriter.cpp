@@ -411,7 +411,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
       Procedure& appr = approaches.first();
 
       // Collect flags from legs
-      for(const SqlRecord& legRec : appr.legRecords)
+      for(const SqlRecord& legRec : qAsConst(appr.legRecords))
       {
         if(legRec.valueFloat(":vertical_angle", 0.f) < 0.1f)
           appr.record.setValue(":has_vertical_angle", 1);
@@ -456,7 +456,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
     else
     {
       int numCommon = 0;
-      for(const Procedure& appr : approaches)
+      for(const Procedure& appr : qAsConst(approaches))
       {
         if(appr.isCommonRoute)
           numCommon++;
@@ -501,7 +501,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
       }
 
       // Write all procedures - get a copy of the object since it is modified
-      for(Procedure appr : approaches)
+      for(Procedure appr : qAsConst(approaches))
       {
         assignApproachIds(appr);
         // qDebug() << appr.legRecords;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -205,7 +205,7 @@ bool AirwayResolver::run(int numReportSteps)
         // Remove all fragments that are contained by others
         cleanFragments(fragments);
 
-        for(const Fragment& fragment : fragments)
+        for(const Fragment& fragment : qAsConst(fragments))
         {
           for(const TypeRowValueVector& bindRow : fragment.boundValues)
           {

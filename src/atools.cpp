@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -210,8 +210,8 @@ QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues)
   return retval;
 }
 
-// \\  /  :  \'  *  &amp;  &gt;  &lt;  ?  $  |
-static const QString INVALID_FILENAME_CHARACTERS("\\/:\'\"*<>?$|");
+// \  /  : ; '  *  &amp;  &gt;  &lt;  ?  $  |
+static const QString INVALID_FILENAME_CHARACTERS("\\/:;\'\"*<>?$|");
 
 QString invalidFilenameCharacters(bool html)
 {
@@ -527,7 +527,7 @@ float atFloat(const QStringList& columns, int index, bool error)
 
 double atDouble(const QStringList& columns, int index, bool error)
 {
-  float num = 0.f;
+  double num = 0.;
   QString str = at(columns, index).trimmed();
   if(!str.isEmpty())
   {
@@ -551,7 +551,7 @@ QTime timeFromHourMinStr(const QString& timeStr)
   if(timeStr.contains(":"))
     time = QTime(timeStr.section(':', 0, 0).toInt(&okHours), timeStr.section(':', 1, 1).toInt(&okMinutes));
   else if(timeStr.length() == 3 || timeStr.length() == 4)
-    time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.right(2).toInt(&okMinutes));
+    time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.rightRef(2).toInt(&okMinutes));
 
   return !okHours || !okMinutes ? QTime() : time;
 }
@@ -804,7 +804,7 @@ QString buildPathNoCase(const QStringList& paths)
         bool found = false;
         entries = dir.entryList();
 
-        for(const QString& str : entries)
+        for(const QString& str : qAsConst(entries))
         {
           if(str.compare(path, Qt::CaseInsensitive) == 0)
           {
@@ -1069,7 +1069,8 @@ QString normalizeStr(QString str)
   // Check some special charaters which are omitted by above
   str = str.replace("ø", "o").replace("Ø", "O").replace("æ", "ae").replace("Æ", "Ae").replace("×", "x");
 
-  QString retval, norm = str.normalized(QString::NormalizationForm_KD);
+  QString retval;
+  const QString norm = str.normalized(QString::NormalizationForm_KD);
 
   for(QChar c : norm)
   {
