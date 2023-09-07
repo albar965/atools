@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,8 @@ class ApproachWriter;
 /*
  * Deletes stock/default airports for a new airport. Uses the delete records and removes or updates all
  * old airports and their facilities.
+ *
+ * Copies values from previous airport to new and current airport. The previous airport is then deleted.
  */
 class DeleteProcessor
 {
@@ -53,19 +55,19 @@ public:
   DeleteProcessor& operator=(const DeleteProcessor& other) = delete;
 
   /*
-   * Initialize the process for one airport before it is stored in the database.
+   * Initialize the process for one airport before it is stored in the database. Extracts all features for the current airport.
    */
-  void init(const atools::fs::bgl::DeleteAirport *deleteAirportRec,
-            const atools::fs::bgl::Airport *airport, int airportId, const QString& name, const QString& city, const QString& state,
-            const QString& country, const QString& region);
+  void init(const atools::fs::bgl::DeleteAirport *deleteAirportRec, const atools::fs::bgl::Airport *airport, int airportId,
+            const QString& name, const QString& city, const QString& state, const QString& country, const QString& region);
 
   /*
-   * Start the update or removal process of airports before the new airport is stored in the databas.
+   * Start the update or removal process of the previous airport before the new/current airport is stored in the database.
+   * Extracts most important features of the previous airport.
    */
   void preProcessDelete();
 
   /*
-   * Start the update or removal process of airports. The current/new airport has to
+   * Start the update of the current and removal process of the previous airport. The current/new airport has to
    * be stored in the database already.
    */
   void postProcessDelete();
@@ -85,7 +87,7 @@ private:
   void fetchIds(sql::SqlQuery *stmt, QList<int>& ids, const QString& what);
 
   void removeRunways();
-  void removeAirport();
+  void removePrevAirport();
 
   QString updateAptFeatureStmt(const QString& table);
   QString delAptFeatureStmt(const QString& table);
@@ -125,9 +127,9 @@ private:
 
   const atools::fs::bgl::DeleteAirport *deleteAirport = nullptr;
   atools::fs::bgl::del::DeleteAllFlags deleteFlags = atools::fs::bgl::del::NONE;
-  const atools::fs::bgl::Airport *newAirport = nullptr;
-  int currentAirportId = 0;
-  QString ident, bglFilename, sceneryLocalPath;
+  const atools::fs::bgl::Airport *curAirport = nullptr;
+  int curAirportId = 0;
+  QString curIdent, bglFilename, sceneryLocalPath;
   atools::sql::SqlDatabase *db = nullptr;
 
   bool prevHasApproach = false, prevHasApron = false, prevHasCom = false, prevHasHelipad = false,

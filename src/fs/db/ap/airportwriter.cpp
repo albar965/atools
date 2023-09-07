@@ -99,9 +99,10 @@ void AirportWriter::writeObject(const Airport *type)
   DataWriter& dw = getDataWriter();
   const SceneryAreaWriter *sceneryAreaWriter = dw.getSceneryAreaWriter();
   const scenery::SceneryArea& currentArea = sceneryAreaWriter->getCurrentArea();
+  const NavDatabaseOptions& options = getOptions();
 
   bool msfsNavdata = currentArea.isNavdata();
-  bool msfs = getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS;
+  bool msfs = options.getSimulatorType() == atools::fs::FsPaths::MSFS;
 
   int predId = airportIdByIdent(ident, msfsNavdata /* warn */);
 
@@ -120,7 +121,7 @@ void AirportWriter::writeObject(const Airport *type)
 
     // Update index
     currentIdent = ident;
-    currentPos = type->getPosition().getPos();
+    currentPos = type->getPos();
 
     // Write features with other airport id
     ComWriter *comWriter = dw.getAirportComWriter();
@@ -153,10 +154,10 @@ void AirportWriter::writeObject(const Airport *type)
     else
       // Check if this is an addon airport - if yes start the delete processor
       // Airport is add-on if it is not in the default scenery and not excluded from add-on recognition
-      realAddon = getOptions().isAddonLocalPath(sceneryAreaWriter->getCurrentSceneryLocalPath());
+      realAddon = options.isAddonLocalPath(sceneryAreaWriter->getCurrentSceneryLocalPath());
 
     // This is the shown add-on status - can be changed by filter in GUI
-    addon = getOptions().isAddonGui(QFileInfo(bglFileWriter->getCurrentFilepath())) && realAddon;
+    addon = options.isAddonGui(QFileInfo(bglFileWriter->getCurrentFilepath())) && realAddon;
 
     // Third party navdata update or MSFS stock airport in official - not an addon
     if(currentArea.isMsfsNavigraphNavdata())
@@ -180,7 +181,7 @@ void AirportWriter::writeObject(const Airport *type)
 
     deleteProcessor.init(delAp, type, getCurrentId(), name, city, state, country, region);
 
-    if(getOptions().isDeletes())
+    if(options.isDeletes())
     {
       if(delAp != nullptr || realAddon)
         // Now delete the stock/default airport
@@ -298,12 +299,12 @@ void AirportWriter::writeObject(const Airport *type)
     bind(":right_lonx", type->getBoundingRect().getBottomRight().getLonX());
     bind(":bottom_laty", type->getBoundingRect().getBottomRight().getLatY());
 
-    bind(":mag_var", getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
+    bind(":mag_var", getDataWriter().getMagVar(type->getPos(), type->getMagVar()));
 
     if(!type->getTowerPosition().getPos().isNull() && type->getTowerPosition().getPos().isValidRange() &&
        !type->getTowerPosition().getPos().isPole())
     {
-      bind(":tower_altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
+      bind(":tower_altitude", roundToInt(meterToFeet(type->getPos().getAltitude())));
       bind(":tower_lonx", type->getTowerPosition().getLonX());
       bind(":tower_laty", type->getTowerPosition().getLatY());
     }
@@ -314,16 +315,16 @@ void AirportWriter::writeObject(const Airport *type)
       bindNullFloat(":tower_laty");
     }
 
-    bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
-    bind(":lonx", type->getPosition().getLonX());
-    bind(":laty", type->getPosition().getLatY());
+    bind(":altitude", roundToInt(meterToFeet(type->getPos().getAltitude())));
+    bind(":lonx", type->getPos().getLonX());
+    bind(":laty", type->getPos().getLatY());
 
     // Write the airport to the database
     executeStatement();
 
     // Update index
     currentIdent = ident;
-    currentPos = type->getPosition().getPos();
+    currentPos = type->getPos();
 
     // Write all subrecords now since the airport id is not available - this keeps the foreign keys valid
     RunwayWriter *rwWriter = dw.getRunwayWriter();
@@ -368,17 +369,9 @@ void AirportWriter::writeObject(const Airport *type)
     TaxiPathWriter *taxiWriter = dw.getTaxiPathWriter();
     taxiWriter->write(type->getTaxiPaths());
 
-    if(getOptions().isDeletes())
-    {
-      if(delAp != nullptr)
-      {
-        if(getOptions().isDeletes())
-          // Now delete the stock/default airport
-          deleteProcessor.postProcessDelete();
-      }
-      else if(realAddon)
-        deleteProcessor.postProcessDelete();
-    }
+    if(options.isDeletes() && (delAp != nullptr || realAddon))
+      // Now delete the stock/default/prev airport if there is any
+      deleteProcessor.postProcessDelete();
   }
 }
 

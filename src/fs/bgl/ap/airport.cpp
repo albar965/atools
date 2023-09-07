@@ -180,7 +180,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
           {
             // append if it not a dummy runway
             if(!options->isFilterRunways() ||
-               rw.getPosition().getPos().distanceMeterTo(getPosition().getPos()) < MAX_RUNWAY_DISTANCE_METER)
+                rw.getPosition().getPos().distanceMeterTo(getPos()) < MAX_RUNWAY_DISTANCE_METER)
               // Omit all dummies that are far away from the airport center position
               runways.append(rw);
           }
@@ -443,7 +443,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
     qWarning() << "Found more than one delete record in" << getObjectName();
 
   // Print warnings for any invalid procedure legs =========================
-  for(const Approach& app : approaches)
+  for(const Approach& app : qAsConst(approaches))
   {
     for(const ApproachLeg& leg: app.getLegs())
     {
@@ -468,7 +468,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
     }
   }
 
-  for(const SidStar& sidStar : sidsAndStars)
+  for(const SidStar& sidStar : qAsConst(sidsAndStars))
   {
     for(const ApproachLeg& leg: sidStar.getCommonRouteLegs())
     {
@@ -594,7 +594,7 @@ void Airport::updateSummaryFields()
     boundingRect.extend(towerPosition.getPos());
   }
 
-  for(const Runway& rw : runways)
+  for(const Runway& rw : qAsConst(runways))
   {
     // Count runway types
     if(rw.getEdgeLight() != rw::NO_LIGHT)
@@ -655,7 +655,7 @@ void Airport::updateSummaryFields()
     airportClosed = !runways.isEmpty() && numRunwayFullClosed == runways.size();
 
     // ... except if there are open helipads
-    for(const Helipad& pad : helipads)
+    for(const Helipad& pad : qAsConst(helipads))
     {
       if(!pad.isClosed())
       {
@@ -665,7 +665,7 @@ void Airport::updateSummaryFields()
     }
   }
 
-  for(const Parking& p : parkings)
+  for(const Parking& p : qAsConst(parkings))
   {
     reportFarCoordinate(p.getPosition().getPos(), "parking");
     boundingRect.extend(p.getPosition().getPos());
@@ -703,7 +703,7 @@ void Airport::updateSummaryFields()
       numParkingMilitaryCombat++;
   }
 
-  for(const Apron& a : aprons)
+  for(const Apron& a : qAsConst(aprons))
   {
     // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
@@ -713,7 +713,7 @@ void Airport::updateSummaryFields()
     }
   }
 
-  for(const Apron2& a : aprons2)
+  for(const Apron2& a : qAsConst(aprons2))
   {
     // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
@@ -723,19 +723,19 @@ void Airport::updateSummaryFields()
     }
   }
 
-  for(const Start& s : starts)
+  for(const Start& s : qAsConst(starts))
   {
     reportFarCoordinate(s.getPosition().getPos(), "start");
     boundingRect.extend(s.getPosition().getPos());
   }
 
-  for(const Helipad& h : helipads)
+  for(const Helipad& h : qAsConst(helipads))
   {
     reportFarCoordinate(h.getPosition().getPos(), "helipad");
     boundingRect.extend(h.getPosition().getPos());
   }
 
-  for(const TaxiPath& p : taxipaths)
+  for(const TaxiPath& p : qAsConst(taxipaths))
   {
     reportFarCoordinate(p.getStartPoint().getPosition().getPos(), "taxipath start");
     boundingRect.extend(p.getStartPoint().getPosition().getPos());
@@ -774,7 +774,7 @@ void Airport::updateHelipads()
   for(Helipad& helipad : helipads)
   {
     int startIdx = 1;
-    for(const Start& start : starts)
+    for(const Start& start : qAsConst(starts))
     {
       if(start.getPosition().getPos().almostEqual(helipad.getPosition().getPos(),
                                                   atools::geo::Pos::POS_EPSILON_5M))
