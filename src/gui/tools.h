@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,16 @@ class QFont;
 class QLabel;
 class QItemSelectionModel;
 class QAction;
+class QTableView;
 
 namespace atools {
 namespace gui {
 
 /* Get best fixed system font avoiding the unreadable courier on Windows */
 QFont getBestFixedFont();
+
+/* Make selection color of inactive table elements the same as active on Windows */
+void adjustTableColors(QTableView *tableView);
 
 /* Show path in any OS dependent file manager. Selects the file in Windows Explorer.
  *  Shows a warning dialog on error.*/

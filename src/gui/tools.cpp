@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include <QLabel>
 #include <QItemSelectionModel>
 #include <QAction>
+#include <QTableView>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -268,6 +269,18 @@ QFont getBestFixedFont()
 #endif
 
   return fixedFont;
+}
+
+void adjustTableColors(QTableView *tableView)
+{
+#if defined(Q_OS_WIN32)
+  QPalette palette = tableView->palette();
+  palette.setColor(QPalette::Inactive, QPalette::Highlight, palette.color(QPalette::Active, QPalette::Highlight));
+  palette.setColor(QPalette::Inactive, QPalette::HighlightedText, palette.color(QPalette::Active, QPalette::HighlightedText));
+  tableView->setPalette(palette);
+#else
+  Q_UNUSED(tableView)
+#endif
 }
 
 } // namespace gui
