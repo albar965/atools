@@ -64,7 +64,7 @@ public:
     return entries;
   }
 
-  QList<atools::fs::scenery::AddOnCfgEntry>& getEntriesDiscovery()
+  const QList<atools::fs::scenery::AddOnCfgEntry>& getEntriesDiscovery()
   {
     return entriesDiscovery;
   }

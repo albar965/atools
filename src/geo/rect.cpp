@@ -425,7 +425,7 @@ bool Rect::crossesAntiMeridian() const
          (atools::almostEqual(getEast(), 180.f) && atools::almostEqual(getWest(), -180.f));
 }
 
-QList<Rect> Rect::splitAtAntiMeridian() const
+const QList<Rect> Rect::splitAtAntiMeridian() const
 {
   if(isValid())
   {

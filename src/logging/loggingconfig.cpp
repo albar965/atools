@@ -245,15 +245,17 @@ ChannelMap& LoggingConfig::getCatStream(QtMsgType type)
 void LoggingConfig::addDefaultChannels(const QStringList& channelsForLevel, const QHash<QString, Channel *>& channelMap,
                                        ChannelVector& channelList)
 {
-  for(QString name : channelsForLevel)
+  for(const QString& name : qAsConst(channelsForLevel))
+  {
     if(channelMap.contains(name))
       channelList.append(channelMap.value(name));
+  }
 }
 
 void LoggingConfig::addCatChannels(const QString& category, const QStringList& channelsForLevel,
                                    const QHash<QString, Channel *>& channelMap, ChannelMap& streamList)
 {
-  for(QString name : channelsForLevel)
+  for(const QString& name : qAsConst(channelsForLevel))
   {
     if(channelMap.contains(name))
     {
@@ -329,7 +331,8 @@ void LoggingConfig::readConfigurationSection(QSettings *settings)
 void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>& channelMap)
 {
   settings->beginGroup("channels");
-  for(QString key : settings->allKeys())
+  const QStringList keys = settings->allKeys();
+  for(const QString& key : keys)
   {
     QString channelName = settings->value(key).toString();
 
@@ -395,7 +398,8 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>&
 void LoggingConfig::readLevels(QSettings *settings, QHash<QString, Channel *>& channelMap)
 {
   settings->beginGroup("levels");
-  for(QString levelName : settings->allKeys())
+  const QStringList keys = settings->allKeys();
+  for(const QString& levelName : keys)
   {
     // Split the "level.channel" string
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)

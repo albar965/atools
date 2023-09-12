@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,7 @@ void LoggingUtil::logSystemInformation()
   qInfo() << "Starting" << QCoreApplication::applicationName()
           << "version" << QCoreApplication::applicationVersion();
 
-  qInfo() << "Organization" << QCoreApplication::organizationName()
-          << "domain" << QCoreApplication::organizationDomain();
+  qInfo() << "Organization" << QCoreApplication::organizationName() << "domain" << QCoreApplication::organizationDomain();
   qInfo() << "Application file path" << QCoreApplication::applicationFilePath();
   qInfo() << "Application dir path" << QCoreApplication::applicationDirPath();
   qInfo() << "Application arguments" << QCoreApplication::arguments();
@@ -42,8 +41,8 @@ void LoggingUtil::logSystemInformation()
   qInfo() << "Library paths" << QCoreApplication::libraryPaths();
 
   int i = 1;
-  for(const QString& f : LoggingHandler::getLogFiles())
-    qInfo() << "Log file" << i++ << f;
+  for(const QString& file : LoggingHandler::getLogFiles())
+    qInfo() << "Log file" << i++ << file;
 
   qInfo() << "Default text codec" << QTextCodec::codecForLocale()->name();
   qInfo() << "Locale BCP47 name" << QLocale::system().bcp47Name();
@@ -63,7 +62,7 @@ void LoggingUtil::logSystemInformation()
   qInfo() << "Qt version" << QT_VERSION_STR;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    qInfo() << "Product name" << QSysInfo::prettyProductName();
+  qInfo() << "Product name" << QSysInfo::prettyProductName();
 #else
   if(QSysInfo::windowsVersion() != QSysInfo::WV_None)
     qInfo() << "Windows version" << QSysInfo::windowsVersion();

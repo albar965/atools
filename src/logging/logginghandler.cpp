@@ -111,7 +111,7 @@ void LoggingHandler::shutdown()
   }
 }
 
-QStringList LoggingHandler::getLogFiles()
+const QStringList LoggingHandler::getLogFiles()
 {
   if(instance != nullptr)
     return instance->logConfig->getLogFiles();
@@ -134,7 +134,7 @@ void LoggingHandler::logToCatChannels(internal::ChannelMap& streamListCat,
   }
   else if(streamListCat.contains(category))
   {
-    for(Channel *channel : streamListCat[category])
+    for(Channel *channel : qAsConst(streamListCat[category]))
     {
       (*channel->stream) << message << endl << flush;
       instance->logConfig->checkStreamSize(channel);

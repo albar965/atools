@@ -582,7 +582,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     total = countMsfsSteps(&progress, sceneryCfg);
 
     // Check for Navigraph packages to report back to caller
-    for(const SceneryArea& area : sceneryCfg.getAreas())
+    for(const SceneryArea& area : qAsConst(sceneryCfg.getAreas()))
     {
       if(area.isMsfsNavigraphNavdata())
       {
@@ -1529,7 +1529,8 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   const QDir dirOfficial(options->getMsfsOfficialPath(), QString(),
                          QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
   QString baseName = dirOfficial.dirName();
-  for(QFileInfo fileinfo : dirOfficial.entryInfoList())
+  const QFileInfoList entriesOfficial = dirOfficial.entryInfoList();
+  for(QFileInfo fileinfo : entriesOfficial)
   {
     QString name = fileinfo.fileName();
     fileinfo.setFile(atools::canonicalFilePath(fileinfo));
@@ -1579,7 +1580,8 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   const QDir dirCommunity(options->getMsfsCommunityPath(), QString(),
                           QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
-  for(QFileInfo fileinfo : dirCommunity.entryInfoList())
+  const QFileInfoList entriesCommunity = dirCommunity.entryInfoList();
+  for(QFileInfo fileinfo : entriesCommunity)
   {
     QString name = fileinfo.fileName();
     fileinfo.setFile(atools::canonicalFilePath(fileinfo));
@@ -1690,7 +1692,8 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
     QFileInfoList entries(QDir(dirs.at(i)).entryInfoList(filters));
     while(!queue.isEmpty())
     {
-      for(QFileInfo fileinfo : QDir(queue.dequeue().absoluteFilePath(), QString(), QDir::Name, filters).entryInfoList())
+      const QFileInfoList entriesDir = QDir(queue.dequeue().absoluteFilePath(), QString(), QDir::Name, filters).entryInfoList();
+      for(const QFileInfo& fileinfo : entriesDir)
       {
         bool ok = false;
         if(options->getSimulatorType() == atools::fs::FsPaths::MSFS)
@@ -1717,7 +1720,7 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
     bool added = false;
 
     // Get all folders in the directory where each one is an add-on
-    for(const QFileInfo& addonDir : entries)
+    for(const QFileInfo& addonDir : qAsConst(entries))
     {
       // The MSFS add-on dir needs two JSON files to be valid
       bool msfsFiles = QDir(addonDir.canonicalFilePath()).entryList({"layout.json", "manifest.json"}, QDir::Files, QDir::Name).size() == 2;
@@ -1855,7 +1858,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
             addonDiscoveryPaths.append(QFileInfo(entry.path).canonicalFilePath());
         }
 
-        for(const AddOnCfgEntry& entry : addonConfigProgramData.getEntries())
+        for(const AddOnCfgEntry& entry : qAsConst(addonConfigProgramData.getEntries()))
         {
           if(entry.active || readInactive)
             readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));
@@ -1883,10 +1886,10 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       QDir addonDir(addonPath);
       if(addonDir.exists())
       {
-        QFileInfoList addonEntries(addonDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot));
+        const QFileInfoList addonEntries(addonDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot));
 
         // Read addon directories as they appear in the file system
-        for(QFileInfo addonEntry : addonEntries)
+        for(const QFileInfo& addonEntry : addonEntries)
         {
           if(readInactive || !inactiveAddOnPaths.contains(buildAddonFile(addonEntry).canonicalFilePath().toLower()))
             readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, addonEntry);
@@ -1904,7 +1907,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
     // Calculate maximum layer and area number
     int lastLayer = std::numeric_limits<int>::min();
     int lastArea = std::numeric_limits<int>::min();
-    for(const SceneryArea& area : cfg.getAreas())
+    for(const SceneryArea& area : qAsConst(cfg.getAreas()))
     {
       lastArea = std::max(lastArea, area.getAreaNumber());
       lastLayer = std::max(lastLayer, area.getLayer());
@@ -1994,7 +1997,7 @@ void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::Scenery
 void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util,
                                              const QStringList& tables)
 {
-  for(QString table : tables)
+  for(const QString& table : qAsConst(tables))
   {
     out << "==================================================================" << endl;
     util.reportRangeViolations(out, table, {table % "_id", "ident"}, "lonx", -180.f, 180.f);

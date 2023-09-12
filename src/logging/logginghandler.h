@@ -106,7 +106,7 @@ public:
   /*
    * @return A list of log files using absolute path
    */
-  static QStringList getLogFiles();
+  static const QStringList getLogFiles();
 
   typedef std::function<void (QtMsgType type, const QMessageLogContext& context, const QString& msg)> LogFunctionType;
   /* Function will be called on the calling thread context */

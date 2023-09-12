@@ -59,7 +59,7 @@ QStringList runwayNameVariants(QString name);
 
 /* Returns all variants of zero prefixed runways 09 vs 9. E.g. for "09C" returns "9C".
  *  Can deal with prefix "RW" and keeps it. */
-QStringList runwayNameZeroPrefixVariants(const QString& name);
+const QStringList runwayNameZeroPrefixVariants(const QString& name);
 
 /* Prefixes any runway number with zeros if needed. "9C" to "09C", for example. Returns "name" if not a runway. */
 QString runwayNamePrefixZero(const QString& name);

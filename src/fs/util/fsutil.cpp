@@ -746,7 +746,7 @@ QStringList runwayNameVariants(QString name)
   return retval;
 }
 
-QStringList runwayNameZeroPrefixVariants(const QString& name)
+const QStringList runwayNameZeroPrefixVariants(const QString& name)
 {
   QStringList retval({name});
 
