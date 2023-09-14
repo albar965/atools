@@ -27,7 +27,6 @@ class QFont;
 class QLabel;
 class QItemSelectionModel;
 class QAction;
-class QTableView;
 
 namespace atools {
 namespace gui {
@@ -36,7 +35,7 @@ namespace gui {
 QFont getBestFixedFont();
 
 /* Make selection color of inactive table elements the same as active on Windows */
-void adjustTableColors(QTableView *tableView);
+void adjustSelectionColors(QWidget *widget);
 
 /* Show path in any OS dependent file manager. Selects the file in Windows Explorer.
  *  Shows a warning dialog on error.*/

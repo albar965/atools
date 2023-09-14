@@ -29,7 +29,6 @@
 #include <QLabel>
 #include <QItemSelectionModel>
 #include <QAction>
-#include <QTableView>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -208,7 +207,7 @@ QList<int> selectedRows(QItemSelectionModel *model, bool reverse)
 
   if(model != nullptr)
   {
-    QItemSelection sm = model->selection();
+    const QItemSelection sm = model->selection();
     for(const QItemSelectionRange& rng : sm)
     {
       for(int row = rng.top(); row <= rng.bottom(); row++)
@@ -271,15 +270,15 @@ QFont getBestFixedFont()
   return fixedFont;
 }
 
-void adjustTableColors(QTableView *tableView)
+void adjustSelectionColors(QWidget *widget)
 {
 #if defined(Q_OS_WIN32)
-  QPalette palette = tableView->palette();
+  QPalette palette = widget->palette();
   palette.setColor(QPalette::Inactive, QPalette::Highlight, palette.color(QPalette::Active, QPalette::Highlight));
   palette.setColor(QPalette::Inactive, QPalette::HighlightedText, palette.color(QPalette::Active, QPalette::HighlightedText));
-  tableView->setPalette(palette);
+  widget->setPalette(palette);
 #else
-  Q_UNUSED(tableView)
+  Q_UNUSED(widget)
 #endif
 }
 
