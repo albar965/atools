@@ -322,8 +322,10 @@ QDebug operator<<(QDebug out, const Flightplan& record)
   QDebugStateSaver saver(out);
 
   out.noquote().nospace() << "Flightplan[ "
-                          << ", " << record.getDepartureIdent()
-                          << " -> " << record.getDestinationIdent()
+                          << ", " << record.getDepartureIdent() << " -> " << record.getDestinationIdent()
+                          << ", parking name " << record.departureParkingName
+                          << ", parking type " << record.departureParkingType
+                          << ", parking heading " << record.departureParkingHeading
                           << ", lnm format " << record.lnmFormat
                           << ", properties " << record.properties;
 

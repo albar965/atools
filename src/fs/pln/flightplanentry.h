@@ -179,7 +179,7 @@ public:
   }
 
   /* Name is not saved with PLN file */
-  QString getName() const
+  const QString& getName() const
   {
     return name;
   }

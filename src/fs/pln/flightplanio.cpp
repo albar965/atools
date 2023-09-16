@@ -1381,7 +1381,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
         if(comment.startsWith("LNMDATA"))
         {
           comment.remove(0, 7);
-          QStringList data = comment.split("|");
+          const QStringList data = comment.split("|");
           for(const QString& prop : data)
             insertPropertyIf(plan, prop.section("=", 0, 0).trimmed(), prop.section("=", 1, 1).trimmed());
         }
@@ -1926,7 +1926,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
 
   // Alternates =======================================================
   // First collect all alternates to check if there are any
-  QVector<const FlightplanEntry *> alternates = plan.getAlternates();
+  const QVector<const FlightplanEntry *> alternates = plan.getAlternates();
   if(!alternates.isEmpty())
   {
     writer.writeStartElement("Alternates");
@@ -2026,8 +2026,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
                           plan.getDepartureParkingPosition().toLongString() : QString());
 
   writer.writeTextElement("DestinationID", plan.destinationIdent);
-  writer.writeTextElement("DestinationLLA",
-                          plan.destinationPos.isValid() ? plan.destinationPos.toLongString() : QString());
+  writer.writeTextElement("DestinationLLA", plan.destinationPos.isValid() ? plan.destinationPos.toLongString() : QString());
   writer.writeTextElement("Descr", plan.getDescr());
 
   QString parking;
@@ -3554,6 +3553,7 @@ void FlightplanIO::saveFms11(const atools::fs::pln::Flightplan& plan, const QStr
 void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format,
                                    bool iniBuildsFormat)
 {
+  const static QRegularExpression SPACE_REGEXP("[\\s]");
   QFile fmsFile(filename);
 
   if(fmsFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -3704,7 +3704,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
           stream << atools::fs::util::toDegMinFormat(entry.getPosition()) << " ";
         else
           // Replace spaces
-          stream << ident.replace(QRegularExpression("[\\s]"), "_") << " ";
+          stream << ident.replace(SPACE_REGEXP, "_") << " ";
 
         // Disabled user waypoints as coordinates
         // +12.345_+009.459 Correct for a waypoint at 12.345°/0.459°.
@@ -4131,6 +4131,8 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename)
 
 void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString& filename, bool saveAsUserWaypoints)
 {
+  const static QRegularExpression INVALID_REGEXP("[^A-Z0-9]");
+
   // Create a copy so we can easily change all waypoints to user defined is this is desired
   if(saveAsUserWaypoints)
   {
@@ -4202,7 +4204,7 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
         ident = entry.getIdent();
 
         // Remove all invalid characters
-        ident.replace(QRegularExpression("[^A-Z0-9]"), "");
+        ident.replace(INVALID_REGEXP, "");
         ident = ident.left(12);
 
         if(ident.isEmpty() || addedUserWaypoints.contains(ident))
