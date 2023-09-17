@@ -87,13 +87,15 @@ void FileHistoryHandler::removeFile(const QString& filename)
 
 void FileHistoryHandler::enableAll()
 {
-  for(QAction *a : recentMenu->actions())
+  const QList<QAction *> actions = recentMenu->actions();
+  for(QAction *a : actions)
     a->setEnabled(true);
 }
 
 void FileHistoryHandler::disableAll()
 {
-  for(QAction *a : recentMenu->actions())
+  const QList<QAction *> actions = recentMenu->actions();
+  for(QAction *a : actions)
   {
     if(a != clearAction)
       a->setEnabled(false);
@@ -126,7 +128,7 @@ void FileHistoryHandler::updateMenu()
   recentMenu->clear();
 
   int i = 1;
-  for(const QString& filepath : filePaths)
+  for(const QString& filepath : qAsConst(filePaths))
   {
     QString fname = QFileInfo(filepath).fileName();
     // Add number for selection

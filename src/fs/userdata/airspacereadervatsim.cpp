@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,6 @@
 
 #include "fs/userdata/airspacereadervatsim.h"
 
-#include "geo/calculations.h"
-#include "fs/util/coordinates.h"
 #include "fs/common/binarygeometry.h"
 #include "exception.h"
 #include "sql/sqlquery.h"
@@ -138,6 +136,8 @@ AirspaceReaderVatsim::~AirspaceReaderVatsim()
 // .);
 bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
 {
+  const static QRegularExpression REGEXP_DESCR("[\\-_]");
+
   reset();
   resetErrors();
   resetNumRead();
@@ -151,7 +151,8 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
     if(error.error == QJsonParseError::NoError)
     {
-      for(QJsonValue featureValue : doc.object().value("features").toArray())
+      const QJsonArray featureArray = doc.object().value("features").toArray();
+      for(const QJsonValue& featureValue : featureArray)
       {
         QJsonObject featureObj = featureValue.toObject();
         QJsonObject propertiesObj = featureObj.value("properties").toObject();
@@ -166,7 +167,8 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
 
         // Collect prefixes from array
         QStringList prefixes;
-        for(QJsonValue prefix :  propertiesObj.value("prefix").toArray(QJsonArray())) // only traconboundaries.json
+        const QJsonArray prefixArray = propertiesObj.value("prefix").toArray(QJsonArray());
+        for(const QJsonValue& prefix :  prefixArray) // only traconboundaries.json
           prefixes.append(prefix.toString());
 
         // Skip unknown polygon types =====
@@ -179,7 +181,8 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
         }
 
         // Read array of polygons ==============
-        for(QJsonValue geometryValue : geometryObj.value("coordinates").toArray())
+        const QJsonArray geoArray = geometryObj.value("coordinates").toArray();
+        for(const QJsonValue& geometryValue : geoArray)
         {
           // Read array of polygon rings - first is outer ==============
           QJsonArray ringArr = geometryValue.toArray();
@@ -195,7 +198,8 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
 
             // Read coordinate pairs of a ring ===================
             LineString line;
-            for(QJsonValue ringValue : ringArr.at(ringIndex).toArray())
+            const QJsonArray ringArrays = ringArr.at(ringIndex).toArray();
+            for(const QJsonValue& ringValue : ringArrays)
             {
               QJsonArray ringArray = ringValue.toArray();
               if(ringArray.size() == 2)
@@ -227,7 +231,7 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
                 ident.removeAll(QString());
                 insertAirspaceQuery->bindValue(":type", "C");
                 insertAirspaceQuery->bindValue(":name", ident.join('_'));
-                insertAirspaceQuery->bindValue(":description", QString(id.section(QRegularExpression("[\\-_]"), 0, 0) % " Center"));
+                insertAirspaceQuery->bindValue(":description", QString(id.section(REGEXP_DESCR, 0, 0) % " Center"));
               }
               else
               {

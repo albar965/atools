@@ -276,7 +276,7 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
   QHash<int, AirwaySegment> segsByToWpId;
 
   // Fill the index
-  for(const AirwaySegment& segment : airway)
+  for(const AirwaySegment& segment : qAsConst(airway))
   {
     segsByFromWpId[segment.fromWaypointId] = segment;
     segsByToWpId[segment.toWaypointId] = segment;
@@ -336,7 +336,7 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
     int seqNo = 1;
     Fragment fragment;
 
-    for(const AirwaySegment& newSegment : newAirway)
+    for(const AirwaySegment& newSegment : qAsConst(newAirway))
     {
       last = newSegment;
 

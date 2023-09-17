@@ -88,7 +88,8 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
   {
     QHostAddress localhostIpv4, localhostIpv6;
     // Collect usable hostnames and IPs from all interfaces =================================
-    for(const QHostAddress& hostAddr : QNetworkInterface::allAddresses())
+    const QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
+    for(const QHostAddress& hostAddr : addresses)
     {
       if(hostAddr.isNull())
         continue;
@@ -147,7 +148,7 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
 
         // Addresses
         int num = 1;
-        for(const Host& host : hosts)
+        for(const Host& host : qAsConst(hosts))
         {
           html.clear();
 

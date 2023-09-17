@@ -308,7 +308,7 @@ void FileSystemWatcher::setPathsToFsWatcher(bool update)
 
   QStringList files = fsWatcher->files();
   QStringList directories = fsWatcher->directories();
-  for(const PathInfo& info : paths)
+  for(const PathInfo& info : qAsConst(paths))
   {
     // Watch file to get changes
     if(!files.contains(info.path) && !directories.contains(info.path))

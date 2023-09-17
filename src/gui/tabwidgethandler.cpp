@@ -127,7 +127,7 @@ TabWidgetHandler::~TabWidgetHandler()
 
 void TabWidgetHandler::clear()
 {
-  for(const Tab& tab : tabs)
+  for(const Tab& tab : qAsConst(tabs))
   {
     toolButtonCorner->menu()->removeAction(tab.action);
     delete tab.action;
@@ -152,7 +152,7 @@ void TabWidgetHandler::reset()
 void TabWidgetHandler::resetInternal()
 {
   clearTabWidget();
-  for(const Tab& tab : tabs)
+  for(const Tab& tab : qAsConst(tabs))
     addTab(tab.action->data().toInt());
 
   // Activate first
@@ -191,7 +191,7 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
   menu.addAction(closeAction);
   menu.addSeparator();
 
-  for(const Tab& tab : tabs)
+  for(const Tab& tab : qAsConst(tabs))
     menu.addAction(tab.action);
 
   // Open menu
@@ -241,7 +241,7 @@ void TabWidgetHandler::restoreState()
   settings::Settings& settings = atools::settings::Settings::instance();
 
   // A list of tab ids in the same order as contained by the tab widget
-  QStringList tabList = settings.valueStrList(settingsPrefix + "TabIds");
+  const QStringList tabList = settings.valueStrList(settingsPrefix + "TabIds");
 
   if(!tabList.isEmpty())
   {
@@ -392,8 +392,7 @@ void TabWidgetHandler::toolbarActionTriggered()
     if(sendAction == actionOpenAll)
     {
       // Add all closed tabs at the end of the list - keep current selected ==============================
-      QVector<int> missing = missingTabIds();
-
+      const QVector<int> missing = missingTabIds();
       for(int id : missing)
         addTab(id);
       tabWidget->setCurrentWidget(current);
@@ -488,7 +487,7 @@ void TabWidgetHandler::clearTabWidget()
   tabWidget->blockSignals(false);
 }
 
-QVector<int> TabWidgetHandler::missingTabIds() const
+const QVector<int> TabWidgetHandler::missingTabIds() const
 {
   QVector<int> retval;
 
@@ -554,7 +553,7 @@ void TabWidgetHandler::updateTabs()
 
 void TabWidgetHandler::updateWidgets()
 {
-  for(const Tab& tab : tabs)
+  for(const Tab& tab : qAsConst(tabs))
   {
     QSignalBlocker actionBlocker(tab.action);
     tab.action->setChecked(false);

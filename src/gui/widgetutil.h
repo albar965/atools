@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ namespace gui {
 namespace util {
 
 /* Returns indexes in reverse order so that items can be deleted from the end of the list. */
-QVector<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionModel);
+const QVector<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionModel);
 
 /* Changes the background color of the widget using stylesheets and adapts text color for readability */
 void changeWidgetColor(QWidget *widget, QColor backgroundColor);

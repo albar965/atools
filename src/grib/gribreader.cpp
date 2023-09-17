@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -483,7 +483,7 @@ void GribReader::readData(const QByteArray& data)
   if(verbose)
   {
     qDebug() << Q_FUNC_INFO << "Datasets ============================================================";
-    for(const GribDataset& dataset : datasets)
+    for(const GribDataset& dataset : qAsConst(datasets))
       qDebug() << dataset;
   }
 }

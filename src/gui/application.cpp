@@ -198,7 +198,7 @@ QString Application::getReportPathHtml()
   std::sort(keys.begin(), keys.end());
 
   QString fileStr;
-  for(QString header : keys)
+  for(QString header : qAsConst(keys))
   {
     fileStr.append(tr("<b>%1</b><br/>").arg(header));
     const QStringList paths = reportFiles.value(header);

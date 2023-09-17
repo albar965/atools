@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -156,11 +156,11 @@ bool Approach::isValid() const
 {
   bool valid = !legs.isEmpty();
   valid &= ap::approachTypeToStr(type) != "UNKN";
-  for(const ApproachLeg& leg : legs)
+  for(const ApproachLeg& leg : qAsConst(legs))
     valid &= leg.isValid();
-  for(const ApproachLeg& leg : missedLegs)
+  for(const ApproachLeg& leg : qAsConst(missedLegs))
     valid &= leg.isValid();
-  for(const Transition& trans: transitions)
+  for(const Transition& trans: qAsConst(transitions))
     valid &= trans.isValid();
   return valid;
 

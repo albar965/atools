@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -396,7 +396,8 @@ void TrackReader::extractNatTracks(const QStringList& lines)
     else if(line.startsWith("EAST LVLS"))
     {
       // EAST LVLS NIL
-      for(const QString& level : line.split(' ').mid(2))
+      const QStringList levels = line.split(' ').mid(2);
+      for(const QString& level : levels)
       {
         if(level != "NIL" && !temp.isEmpty())
           temp.last().eastLevels.append(level.toUShort());
@@ -405,7 +406,8 @@ void TrackReader::extractNatTracks(const QStringList& lines)
     else if(line.startsWith("WEST LVLS"))
     {
       // WEST LVLS 310 320 330 340 350 360 370 380 390
-      for(const QString& level : line.split(' ').mid(2))
+      const QStringList levels = line.split(' ').mid(2);
+      for(const QString& level : levels)
       {
         if(level != "NIL" && !temp.isEmpty())
           temp.last().westLevels.append(level.toUShort());

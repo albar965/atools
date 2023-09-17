@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -222,7 +222,7 @@ void TrackDownloader::setUrl(TrackType type, const QString& url, const QStringLi
 
 void TrackDownloader::startAllDownloads()
 {
-  for(HttpDownloader *downloader : downloaders)
+  for(HttpDownloader *downloader : qAsConst(downloaders))
     downloader->startDownload();
 }
 
@@ -233,7 +233,7 @@ void TrackDownloader::startDownload(TrackType type)
 
 void TrackDownloader::cancelAllDownloads()
 {
-  for(HttpDownloader *downloader : downloaders)
+  for(HttpDownloader *downloader : qAsConst(downloaders))
     downloader->cancelDownload();
 }
 
@@ -251,7 +251,7 @@ void TrackDownloader::clearTracks()
 bool TrackDownloader::hasAnyTracks()
 {
   int num = 0;
-  for(const TrackVectorType& tracks : trackList)
+  for(const TrackVectorType& tracks : qAsConst(trackList))
     num += tracks.size();
   return num > 0;
 }
@@ -271,7 +271,7 @@ int TrackDownloader::removeInvalid()
 
 void TrackDownloader::setIgnoreSslErrors(bool value)
 {
-  for(HttpDownloader *downloader : downloaders)
+  for(HttpDownloader *downloader : qAsConst(downloaders))
     downloader->setIgnoreSslErrors(value);
 }
 

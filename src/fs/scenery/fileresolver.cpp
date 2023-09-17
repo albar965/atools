@@ -128,7 +128,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
             }
 
             // Get all BGL files
-            for(const QFileInfo& bglFile : bglFiles)
+            for(const QFileInfo& bglFile : qAsConst(bglFiles))
             {
               if(bglFile.isFile() && bglFile.isReadable())
               {

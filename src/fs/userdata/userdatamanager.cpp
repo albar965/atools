@@ -136,11 +136,13 @@ void UserdataManager::updateSchema()
 
 int UserdataManager::cleanupUserdata(const QStringList& columns, bool duplicateCoordinates, bool empty)
 {
+  const static QStringList COLS({"type", "name", "ident", "region", "description", "tags"});
+
   qDebug() << Q_FUNC_INFO;
 
   // Clean up - set null string columns empty to allow join - hidden compatibility change, no need to undo ======================
   SqlQuery query(db);
-  for(QString column : {"type", "name", "ident", "region", "description", "tags"})
+  for(const QString& column : COLS)
     query.exec("update userdata set " % column % " = '' where " % column % " is null");
   db->analyze();
 
@@ -168,7 +170,7 @@ int UserdataManager::cleanupUserdata(const QStringList& columns, bool duplicateC
   }
 
   // Clean up - set empty string columns back to null - no need to undo ======================
-  for(QString column : {"type", "name", "ident", "region", "description", "tags"})
+  for(const QString& column : COLS)
     query.exec("update userdata set " % column % " = null where " % column % " = ''");
   db->analyze();
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -300,7 +300,8 @@ void WidgetState::restore(QObject *widget) const
       if(v.isValid())
       {
         QStringList actions(v.toStringList());
-        for(QAction *act : ag->actions())
+        const QList<QAction *> acts = ag->actions();
+        for(QAction *act : acts)
         {
           if(actions.contains(act->objectName()))
             act->setChecked(true);
@@ -446,7 +447,8 @@ void WidgetState::restore(QObject *widget) const
         QString value = settings.valueStr(key);
         if(!value.isEmpty())
         {
-          for(QAbstractButton *button : g->buttons())
+          const QList<QAbstractButton *> buttons = g->buttons();
+          for(QAbstractButton *button : buttons)
           {
             if(button->objectName() == value)
               button->setChecked(true);

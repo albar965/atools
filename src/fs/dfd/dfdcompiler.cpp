@@ -239,7 +239,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
   Rect airportRect = airportRectMap.value(apt);
 
   // Iterate over all runways / end pairs
-  for(const std::pair<SqlRecord, SqlRecord>& runwaypair : runwaypairs)
+  for(const std::pair<SqlRecord, SqlRecord>& runwaypair : qAsConst(runwaypairs))
   {
     SqlRecord primaryRec = runwaypair.first;
     SqlRecord secondaryRec = runwaypair.second;

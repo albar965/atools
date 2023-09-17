@@ -55,7 +55,7 @@ QString runwayBestFitFromList(const QString& runwayName, const QStringList& airp
 
 /* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list.
  *  Can deal with prefix "RW" and keeps it. */
-QStringList runwayNameVariants(QString name);
+const QStringList runwayNameVariants(QString name);
 
 /* Returns all variants of zero prefixed runways 09 vs 9. E.g. for "09C" returns "9C".
  *  Can deal with prefix "RW" and keeps it. */

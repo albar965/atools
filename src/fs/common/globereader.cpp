@@ -52,7 +52,8 @@ GlobeReader::~GlobeReader()
 bool GlobeReader::isDirValid(const QString& path)
 {
   QDir dir(path);
-  for(const QFileInfo& file : dir.entryInfoList({"???g"}, QDir::Files, QDir::Name | QDir::IgnoreCase))
+  const QFileInfoList entries = dir.entryInfoList({"???g"}, QDir::Files, QDir::Name | QDir::IgnoreCase);
+  for(const QFileInfo& file : entries)
   {
     if(fileEntryValid(file))
       return true;
@@ -79,7 +80,8 @@ bool GlobeReader::openFiles()
   QDir dir(dataDir);
 
   // Read only filenames here
-  for(const QFileInfo& fileEntry : dir.entryInfoList({"????"}, QDir::Files, QDir::Name | QDir::IgnoreCase))
+  const QFileInfoList entries = dir.entryInfoList({"????"}, QDir::Files, QDir::Name | QDir::IgnoreCase);
+  for(const QFileInfo& fileEntry : entries)
   {
     if(fileEntryValid(fileEntry))
     {
@@ -235,7 +237,7 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
       line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH_M), positions);
 
       Pos lastDropped;
-      for(const Pos& pos : positions)
+      for(const Pos& pos : qAsConst(positions))
       {
         float elevation = getElevation(pos, sampleRadiusMeter);
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,8 @@ QStringList XpWeatherReader::collectWeatherFiles()
     // METAR-2022-9-6-19.00-ZULU.txt, METAR-2022-9-6-20.00-ZULU.txt
     // METAR-2022-9-6-19.00.txt, METAR-2022-9-6-20.00.txt
     QDir weatherDir(weatherPath, "METAR-*.txt", QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
-    for(QFileInfo entry : weatherDir.entryInfoList())
+    const QFileInfoList entries = weatherDir.entryInfoList();
+    for(QFileInfo entry : entries)
       metarFiles.append(entry);
 
     // Sort by timestamp - put latest at begin of list

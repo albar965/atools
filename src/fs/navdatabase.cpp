@@ -1360,7 +1360,7 @@ void NavDatabase::dropAllIndexes()
       stmts.append("drop index if exists " % indexQuery.valueStr("name"));
   }
 
-  for(const QString& stmt : stmts)
+  for(const QString& stmt : qAsConst(stmts))
     db->exec(stmt);
   db->commit();
 }
@@ -1844,7 +1844,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
     QStringList addonDiscoveryPaths;
     QSet<QString> inactiveAddOnPaths;
 
-    for(const QString& addonsCfg : addonsCfgFiles)
+    for(const QString& addonsCfg : qAsConst(addonsCfgFiles))
     {
       if(QFileInfo::exists(addonsCfg))
       {
@@ -1881,7 +1881,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
 
     // ====================================================================================
     // Read add-on.xml files from the discovery paths
-    for(const QString& addonPath : addonDiscoveryPaths)
+    for(const QString& addonPath : qAsConst(addonDiscoveryPaths))
     {
       QDir addonDir(addonPath);
       if(addonDir.exists())

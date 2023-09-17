@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ AbstractIniReader::~AbstractIniReader()
 
 void AbstractIniReader::handleComment()
 {
-  for(const QString& comment : commentCharacters)
+  for(const QString& comment : qAsConst(commentCharacters))
   {
     int c = currentLine.indexOf(comment);
     if(c >= 0)

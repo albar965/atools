@@ -139,7 +139,7 @@ private:
   int idForWidget(QWidget *widget) const;
 
   /* Get a list of tabs that are not part of the widget - i.e. currently closed */
-  QVector<int> missingTabIds() const;
+  const QVector<int> missingTabIds() const;
 
   /* Add tab at the end or at index */
   int addTab(int id);

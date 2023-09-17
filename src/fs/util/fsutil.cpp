@@ -716,7 +716,7 @@ QString runwayNameJoin(int number, const QString& designator)
 }
 
 /* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list */
-QStringList runwayNameVariants(QString name)
+const QStringList runwayNameVariants(QString name)
 {
   QString prefix;
   if(name.startsWith("RW"))

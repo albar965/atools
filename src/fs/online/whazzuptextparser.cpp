@@ -186,13 +186,15 @@ void WhazzupTextParser::readTransceivers(const QString& file)
     qWarning() << Q_FUNC_INFO << "Error reading data" << jsonErr.errorString() << "at offset" << jsonErr.offset;
 
   // Top level is an array or unnamed objects
-  for(QJsonValue transVal : doc.array())
+  const QJsonArray transValues = doc.array();
+  for(const QJsonValue& transVal : transValues)
   {
     QJsonObject transObj = transVal.toObject();
     QString callsign = transObj.value("callsign").toString();
 
     // Get all transceivers with coordinates and frequency for this callsign
-    for(QJsonValue transceiverVal : transObj.value("transceivers").toArray())
+    const QJsonArray transceiverValues = transObj.value("transceivers").toArray();
+    for(const QJsonValue& transceiverVal : transceiverValues)
     {
       QJsonObject transceiverObj = transceiverVal.toObject();
       Pos pos(transceiverObj.value("lonDeg"), transceiverObj.value("latDeg"));
@@ -313,9 +315,9 @@ void WhazzupTextParser::readAtisJson(const QJsonObject& obj)
   // "last_updated": "2021-03-14T16:07:01.3407158Z",
   // "logon_time": "2021-03-14T11:51:43.3004568Z"
   // },
-  QJsonArray atisArr = obj.value("atis").toArray();
+  const QJsonArray atisArr = obj.value("atis").toArray();
 
-  for(QJsonValue atisVal : atisArr)
+  for(const QJsonValue& atisVal : atisArr)
   {
     QJsonObject atisObj = atisVal.toObject();
 
@@ -327,7 +329,8 @@ void WhazzupTextParser::readAtisJson(const QJsonObject& obj)
 
     // Build a comma separated list of ATIS lines
     QStringList atisList;
-    for(QJsonValue value : atisObj.value("text_atis").toArray())
+    const QJsonArray atisArray = atisObj.value("text_atis").toArray();
+    for(const QJsonValue& value : atisArray)
       atisList.append(value.toString());
     atisList.removeAll(QString());
     columns.append(atisList.join(", "));
@@ -336,7 +339,7 @@ void WhazzupTextParser::readAtisJson(const QJsonObject& obj)
 
 void WhazzupTextParser::readServersJson(const QJsonArray& serversArr, bool voice)
 {
-  for(QJsonValue serverVal : serversArr)
+  for(const QJsonValue& serverVal : serversArr)
   {
     QJsonObject serverObj = serverVal.toObject();
 
@@ -392,7 +395,7 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
 {
   // Open and check for errors =========================================
   // Prefill with empty strings for pilots/clients delimited format
-  for(QJsonValue atcVal : controllersArr)
+  for(const QJsonValue& atcVal : controllersArr)
   {
     QStringList columns(defaultColumns);
     QJsonObject atcObj = atcVal.toObject();
@@ -427,7 +430,8 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
 
       // Read ATIS message array into linefeed separated string =========
       QStringList atisStrList;
-      for(QJsonValue value : atcObj.value("text_atis").toArray())
+      const QJsonArray atisArray = atcObj.value("text_atis").toArray();
+      for(const QJsonValue& value : atisArray)
         atisStrList.append(value.toString());
       atisStrList.removeAll(QString());
       columns[v::ATIS_MESSAGE] = atisStrList.join('\n');
@@ -443,7 +447,7 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
         frequencies.insert(atools::roundToInt(atcObj.value("frequency").toVariant().toDouble() * 1000.f));
 
         // Read all frequencies and build a bounding rectangle from positions
-        QList<Transceiver> transceivers = transceiverMap.values(callsign);
+        const QList<Transceiver> transceivers = transceiverMap.values(callsign);
         for(const Transceiver& transceiver : transceivers)
         {
           frequencies.unite(transceiver.frequency);
@@ -518,7 +522,7 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
 
       // Read ATIS message array =========
       QStringList atisList;
-      for(QJsonValue value : atcObj.value("atis").toObject().value("lines").toArray())
+      for(const QJsonValue& value : atcObj.value("atis").toObject().value("lines").toArray())
         atisList.append(value.toString());
       atisList.removeAll(QString());
       columns[i::ATIS] = atisList.join('\n');
@@ -548,7 +552,7 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
 void WhazzupTextParser::readPilotsJson(const QJsonArray& pilotsArr)
 {
   // Prefill with empty strings for pilots/clients delimited format
-  for(QJsonValue pilotVal : pilotsArr)
+  for(const QJsonValue& pilotVal : pilotsArr)
   {
     QStringList columns(defaultColumns);
     QJsonObject pilotObj = pilotVal.toObject();
@@ -725,8 +729,8 @@ void WhazzupTextParser::readPrefilesJson(const QJsonObject& obj)
   // "last_updated": "2021-03-14T13:19:23.9417633Z"
   // },
   // Prefill with empty strings for pilots/clients delimited format
-  QJsonArray prefilesArr = obj.value("prefiles").toArray();
-  for(QJsonValue prefileVal : prefilesArr)
+  const QJsonArray prefilesArr = obj.value("prefiles").toArray();
+  for(const QJsonValue& prefileVal : prefilesArr)
   {
     QStringList columns(defaultColumns);
     QJsonObject pilotObj = prefileVal.toObject();
@@ -1054,7 +1058,8 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
   {
     // Add frequencies separated by "&" ====================
     QStringList freqStrToBind;
-    for(const QString& str : at(line, c::FREQUENCY, error).split("&"))
+    const QStringList split = at(line, c::FREQUENCY, error).split("&");
+    for(const QString& str : split)
     {
       // MHz to kHz
       QString freqStr = QString::number(atools::roundToInt(str.trimmed().toDouble() * 1000.));

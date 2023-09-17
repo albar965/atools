@@ -90,7 +90,7 @@ Metar::Metar(const QString& metarString, const QString& metarStation, const QDat
   {
     parsed = new MetarParser(cleanMetar);
   }
-  catch(const std::exception& e)
+  catch(const std::exception&)
   {
     delete parsed;
     parsed = new MetarParser(QString());
@@ -128,7 +128,7 @@ void Metar::buildCleanMetar()
   if(simFormat)
   {
     // FSX gives the precipidation indication only in the cloud extension
-    QStringList met = metar.section("@@@", 0, 0).simplified().split(" ");
+    const QStringList met = metar.section("@@@", 0, 0).simplified().split(" ");
     QString precipitation;
     for(const QString& str : met)
     {

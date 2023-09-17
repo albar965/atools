@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -581,7 +581,7 @@ void XpAirportWriter::bindVasi(const QStringList& line, const atools::fs::xp::Xp
     atools::geo::LineDistance curResult, nearestResult;
     QString closestRunwayName;
     // Find nearest runway by distance where VASI is along line
-    for(const RunwayGeo& rg: runwayGeometry)
+    for(const RunwayGeo& rg: qAsConst(runwayGeometry))
     {
       // Calculate distance from VASI to runway
       rg.runway.distanceMeterToLine(vasiPos, curResult);
@@ -1632,7 +1632,7 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
     Pos center = airportPos.isValid() ? airportPos : airportRect.getCenter();
 
     airportIndex->addAirportId(airportIdent, curAirportId, center);
-    for(const Runway& rw : runways)
+    for(const Runway& rw : qAsConst(runways))
     {
       airportIndex->addRunwayEnd(airportIdent, rw.primaryName, rw.primaryEndId, rw.primaryPos);
       airportIndex->addRunwayEnd(airportIdent, rw.secondaryName, rw.secondaryEndId, rw.secondaryPos);

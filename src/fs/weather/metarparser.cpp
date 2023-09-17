@@ -1413,7 +1413,7 @@ double MetarParser::getRelHumidity() const
   return dewp * 100 / temp;
 }
 
-QHash<QString, MetarRunway> MetarParser::getRunways() const
+const QHash<QString, MetarRunway> MetarParser::getRunways() const
 {
   QHash<QString, MetarRunway> retval;
 
@@ -1423,7 +1423,7 @@ QHash<QString, MetarRunway> MetarParser::getRunways() const
   return retval;
 }
 
-QStringList MetarParser::getWeather() const
+const QStringList MetarParser::getWeather() const
 {
   QStringList retval;
 

@@ -149,8 +149,8 @@ public:
 private:
   const SqlDatabase *db;
 
-  QStringList buildTableList(const QStringList& tables) const;
-  QStringList buildResultList(atools::sql::SqlQuery& query) const;
+  const QStringList buildTableList(const QStringList& tables) const;
+  const QStringList buildResultList(atools::sql::SqlQuery& query) const;
 
   static void copyRowValuesInternal(const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to,
                                     const atools::sql::SqlRecord& fromRec, const QMap<QString, QVariant>& bound);

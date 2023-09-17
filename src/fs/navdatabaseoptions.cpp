@@ -266,7 +266,8 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
 
   QString simStr = simulatorType == FsPaths::DFD ? "DFD" : FsPaths::typeToShortName(simulatorType);
 
-  for(const QString& key : settings.childKeys())
+  const QStringList childKeys = settings.childKeys();
+  for(const QString& key : childKeys)
   {
     // Addd keys without prefix or keys with matching prefix
     if(!key.contains('.') || key.section('.', 0, 0) == simStr)

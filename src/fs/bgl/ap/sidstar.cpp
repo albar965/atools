@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -211,16 +211,16 @@ bool SidStar::isValid() const
   // Need at least one leg
   bool valid = commonRouteLegs.size() + runwayTransitionLegs.size() + enrouteTransitions.size() > 0;
 
-  for(const ApproachLeg& leg: commonRouteLegs)
+  for(const ApproachLeg& leg: qAsConst(commonRouteLegs))
     valid &= leg.isValid();
 
-  for(const QList<atools::fs::bgl::ApproachLeg>& legs : enrouteTransitions)
+  for(const QList<atools::fs::bgl::ApproachLeg>& legs : qAsConst(enrouteTransitions))
   {
     for(const ApproachLeg& leg: legs)
       valid &= leg.isValid();
   }
 
-  for(const QList<atools::fs::bgl::ApproachLeg>& legs : runwayTransitionLegs)
+  for(const QList<atools::fs::bgl::ApproachLeg>& legs : qAsConst(runwayTransitionLegs))
   {
     for(const ApproachLeg& leg: legs)
       valid &= leg.isValid();

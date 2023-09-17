@@ -562,7 +562,7 @@ WindData WindQuery::windAverageForLine(geo::Pos pos1, geo::Pos pos2) const
 
   WindRect windRectLower, windRectUpper;
 
-  for(const atools::geo::Pos& pos : positions)
+  for(const atools::geo::Pos& pos : qAsConst(positions))
   {
     Rect global = globalRect(pos);
     GridRect grid = gridRect(global);

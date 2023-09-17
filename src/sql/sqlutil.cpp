@@ -295,13 +295,13 @@ void SqlUtil::printTableStats(QDebug& out, const QStringList& tables, bool brief
   if(!brief)
     out << "Statistics for database (tables / rows):" << endl;
 
-  QStringList tableList = buildTableList(tables);
+  const QStringList tableList = buildTableList(tables);
 
   SqlQuery query(db);
 
   int totalCount = 0;
 
-  for(QString name : tableList)
+  for(const QString& name : tableList)
   {
     if(hasTable(name))
     {
@@ -345,12 +345,12 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables) const
 
   out << "Column value report for database:" << endl;
 
-  QStringList tableList = buildTableList(tables);
+  const QStringList tableList = buildTableList(tables);
 
   SqlQuery querySelCount(db);
   SqlQuery queryGroup(db);
 
-  for(QString name : tableList)
+  for(const QString& name : tableList)
   {
     if(hasTable(name))
     {
@@ -443,17 +443,14 @@ void SqlUtil::reportRangeViolations(QDebug& out,
     out << table << " does not exist" << endl;
 }
 
-void SqlUtil::reportDuplicates(QDebug& out,
-                               const QString& table,
-                               const QString& idColumn,
-                               const QStringList& identityColumns) const
+void SqlUtil::reportDuplicates(QDebug& out, const QString& table, const QString& idColumn, const QStringList& identityColumns) const
 {
   QDebugStateSaver saver(out);
   out.noquote().nospace();
 
   QStringList where;
   QStringList colList;
-  for(QString icol : identityColumns)
+  for(const QString& icol : identityColumns)
   {
     where.append("t1." % icol % " = t2." % icol);
     colList.append("t1." % icol);
@@ -499,7 +496,7 @@ int SqlUtil::bindAndExec(const QString& sql, QVector<std::pair<QString, QVariant
   return query.numRowsAffected();
 }
 
-QStringList SqlUtil::buildTableList(const QStringList& tables) const
+const QStringList SqlUtil::buildTableList(const QStringList& tables) const
 {
   QStringList tableList;
   if(tables.isEmpty())
@@ -511,7 +508,7 @@ QStringList SqlUtil::buildTableList(const QStringList& tables) const
   return tableList;
 }
 
-QStringList SqlUtil::buildResultList(SqlQuery& query) const
+const QStringList SqlUtil::buildResultList(SqlQuery& query) const
 {
   QStringList retval;
 

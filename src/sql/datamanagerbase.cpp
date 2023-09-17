@@ -80,7 +80,7 @@ void DataManagerBase::createSchema(bool verboseLogging)
   SqlTransaction transaction(db);
   SqlScript script(db, verboseLogging);
 
-  for(const QString& createScript : createScripts)
+  for(const QString& createScript : qAsConst(createScripts))
     script.executeScript(createScript);
 
   if(!createUndoScript.isEmpty())

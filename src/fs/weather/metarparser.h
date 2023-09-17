@@ -452,16 +452,16 @@ public:
 
   double getRelHumidity() const;
 
-  inline QList<MetarCloud> getClouds() const
+  inline const QList<MetarCloud> getClouds() const
   {
     return QList<MetarCloud>(_clouds.begin(), _clouds.end());
   }
 
-  inline QHash<QString, MetarRunway> getRunways() const;
+  inline const QHash<QString, MetarRunway> getRunways() const;
 
-  QStringList getWeather() const;
+  const QStringList getWeather() const;
 
-  inline QList<Weather> getWeather2() const
+  inline const QList<Weather> getWeather2() const
   {
     return QList<Weather>(_weather2.begin(), _weather2.end());
   }
