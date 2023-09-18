@@ -551,7 +551,7 @@ QTime timeFromHourMinStr(const QString& timeStr)
   if(timeStr.contains(":"))
     time = QTime(timeStr.section(':', 0, 0).toInt(&okHours), timeStr.section(':', 1, 1).toInt(&okMinutes));
   else if(timeStr.length() == 3 || timeStr.length() == 4)
-    time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.rightRef(2).toInt(&okMinutes));
+    time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.right(2).toInt(&okMinutes));
 
   return !okHours || !okMinutes ? QTime() : time;
 }
