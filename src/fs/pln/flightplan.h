@@ -184,7 +184,8 @@ public:
   void setDeparturePosition(const atools::geo::Pos& value, float altitude);
 
   /*
-   * @return departure parking name like "PARKING 2"
+   * @return departure parking name like "PARKING 2" or "27" for runway. Empty for type AIRPORT.
+   * Zero prefixed number like "01" for helipad.
    */
   const QString& getDepartureParkingName() const
   {
