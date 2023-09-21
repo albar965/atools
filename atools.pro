@@ -343,6 +343,7 @@ SOURCES += \
 
 !isEqual(ATOOLS_NO_SQL, "true") {
 HEADERS += \
+  src/sql/sqlcolumn.h \
   src/sql/sqldatabase.h \
   src/sql/sqlexception.h \
   src/sql/sqlexport.h \
@@ -354,6 +355,7 @@ HEADERS += \
   src/sql/sqlutil.h
 
 SOURCES += \
+  src/sql/sqlcolumn.cpp \
   src/sql/sqldatabase.cpp \
   src/sql/sqlexception.cpp \
   src/sql/sqlexport.cpp \
@@ -427,6 +429,7 @@ HEADERS += \
   src/gui/mapposhistory.h \
   src/gui/palettesettings.h \
   src/gui/signalblocker.h \
+  src/gui/sqlquerydialog.h \
   src/gui/tabwidgethandler.h \
   src/gui/tools.h \
   src/gui/translator.h \
@@ -455,6 +458,7 @@ SOURCES += \
   src/gui/mapposhistory.cpp \
   src/gui/palettesettings.cpp \
   src/gui/signalblocker.cpp \
+  src/gui/sqlquerydialog.cpp \
   src/gui/tabwidgethandler.cpp \
   src/gui/tools.cpp \
   src/gui/translator.cpp \
@@ -909,7 +913,8 @@ SOURCES += \
 !isEqual(ATOOLS_NO_GUI, "true") {
 FORMS += \
   src/gui/choicedialog.ui \
-  src/gui/treedialog.ui
+  src/gui/treedialog.ui \
+  src/gui/sqlquerydialog.ui
 } # ATOOLS_NO_GUI
 
 
@@ -1012,3 +1017,4 @@ win32 {
 deploy.depends = all
 
 QMAKE_EXTRA_TARGETS += deploy all
+
