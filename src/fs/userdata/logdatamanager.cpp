@@ -26,6 +26,7 @@
 #include "geo/calculations.h"
 #include "exception.h"
 #include "geo/linestring.h"
+#include "sql/sqlcolumn.h"
 #include "fs/pln/flightplanio.h"
 
 #include <QDateTime>
@@ -47,6 +48,7 @@ using atools::sql::SqlQuery;
 using atools::sql::SqlExport;
 using atools::sql::SqlRecord;
 using atools::sql::SqlTransaction;
+using atools::sql::SqlColumn;
 
 /* *INDENT-OFF* */
 namespace csv {
@@ -99,46 +101,47 @@ const static int MIN_NUM_COLS = DESTINATION_TIME_SIM + 1;
 const static QString HEADER_LINE = "aircraftname,aircrafttype,aircraftregistration,flightplannumber,";
 const static QString HEADER_LINE2 = "aircraft_name,aircraft_type,aircraft_registration,flightplan_number,";
 
-/* Map index to column names. Needed to keep the export order independent of the column order in the table */
-const static QHash<int, std::pair<QString,QString>> COL_MAP =
+/* Map index to column names. Needed to keep the export order independent of the column order in the table.
+ * Columns display names are used in CSV and are not to be translated. */
+const static QHash<int, SqlColumn> COL_MAP =
 {
   // LOGBOOK_ID,- not in CSV    logbook_id
-  { AIRCRAFT_NAME,              std::make_pair("aircraft_name",              "Aircraft Name"              )},
-  { AIRCRAFT_TYPE,              std::make_pair("aircraft_type",              "Aircraft Type"              )},
-  { AIRCRAFT_REGISTRATION,      std::make_pair("aircraft_registration",      "Aircraft Registration"      )},
-  { FLIGHTPLAN_NUMBER,          std::make_pair("flightplan_number",          "Flightplan Number"          )},
-  { FLIGHTPLAN_CRUISE_ALTITUDE, std::make_pair("flightplan_cruise_altitude", "Flightplan Cruise Altitude" )},
-  { FLIGHTPLAN_FILE,            std::make_pair("flightplan_file",            "Flightplan File"            )},
-  { PERFORMANCE_FILE,           std::make_pair("performance_file",           "Performance File"           )},
-  { BLOCK_FUEL,                 std::make_pair("block_fuel",                 "Block Fuel"                 )},
-  { TRIP_FUEL,                  std::make_pair("trip_fuel",                  "Trip Fuel"                  )},
-  { USED_FUEL,                  std::make_pair("used_fuel",                  "Used Fuel"                  )},
-  { IS_JETFUEL,                 std::make_pair("is_jetfuel",                 "Is Jetfuel"                 )},
-  { GROSSWEIGHT,                std::make_pair("grossweight",                "Grossweight"                )},
-  { DISTANCE,                   std::make_pair("distance",                   "Distance"                   )},
-  { DISTANCE_FLOWN,             std::make_pair("distance_flown",             "Distance Flown"             )},
-  { DEPARTURE_IDENT,            std::make_pair("departure_ident",            "Departure Ident"            )},
-  { DEPARTURE_NAME,             std::make_pair("departure_name",             "Departure Name"             )},
-  { DEPARTURE_RUNWAY,           std::make_pair("departure_runway",           "Departure Runway"           )},
-  { DEPARTURE_LONX,             std::make_pair("departure_lonx",             "Departure Lonx"             )},
-  { DEPARTURE_LATY,             std::make_pair("departure_laty",             "Departure Laty"             )},
-  { DEPARTURE_ALT,              std::make_pair("departure_alt",              "Departure Alt"              )},
-  { DEPARTURE_TIME,             std::make_pair("departure_time",             "Departure Time"             )},
-  { DEPARTURE_TIME_SIM,         std::make_pair("departure_time_sim",         "Departure Time Sim"         )},
-  { DESTINATION_IDENT,          std::make_pair("destination_ident",          "Destination Ident"          )},
-  { DESTINATION_NAME,           std::make_pair("destination_name",           "Destination Name"           )},
-  { DESTINATION_RUNWAY,         std::make_pair("destination_runway",         "Destination Runway"         )},
-  { DESTINATION_LONX,           std::make_pair("destination_lonx",           "Destination Lonx"           )},
-  { DESTINATION_LATY,           std::make_pair("destination_laty",           "Destination Laty"           )},
-  { DESTINATION_ALT,            std::make_pair("destination_alt",            "Destination Alt"            )},
-  { DESTINATION_TIME,           std::make_pair("destination_time",           "Destination Time"           )},
-  { DESTINATION_TIME_SIM,       std::make_pair("destination_time_sim",       "Destination Time Sim"       )},
-  { ROUTE_STRING,               std::make_pair("route_string",               "Route String"               )},
-  { SIMULATOR,                  std::make_pair("simulator",                  "Simulator"                  )},
-  { DESCRIPTION,                std::make_pair("description",                "Description"                )},
-  { FLIGHTPLAN,                 std::make_pair("flightplan",                 "Flightplan"                 )},
-  { AIRCRAFT_PERF,              std::make_pair("aircraft_perf",              "Aircraft Perf"              )},
-  { AIRCRAFT_TRAIL,             std::make_pair("aircraft_trail",             "Aircraft Trail"             )}
+  {AIRCRAFT_NAME,              SqlColumn(AIRCRAFT_NAME,              "aircraft_name",              "Aircraft Name"             )},
+  {AIRCRAFT_TYPE,              SqlColumn(AIRCRAFT_TYPE,              "aircraft_type",              "Aircraft Type"             )},
+  {AIRCRAFT_REGISTRATION,      SqlColumn(AIRCRAFT_REGISTRATION,      "aircraft_registration",      "Aircraft Registration"     )},
+  {FLIGHTPLAN_NUMBER,          SqlColumn(FLIGHTPLAN_NUMBER,          "flightplan_number",          "Flightplan Number"         )},
+  {FLIGHTPLAN_CRUISE_ALTITUDE, SqlColumn(FLIGHTPLAN_CRUISE_ALTITUDE, "flightplan_cruise_altitude", "Flightplan Cruise Altitude")},
+  {FLIGHTPLAN_FILE,            SqlColumn(FLIGHTPLAN_FILE,            "flightplan_file",            "Flightplan File"           )},
+  {PERFORMANCE_FILE,           SqlColumn(PERFORMANCE_FILE,           "performance_file",           "Performance File"          )},
+  {BLOCK_FUEL,                 SqlColumn(BLOCK_FUEL,                 "block_fuel",                 "Block Fuel"                )},
+  {TRIP_FUEL,                  SqlColumn(TRIP_FUEL,                  "trip_fuel",                  "Trip Fuel"                 )},
+  {USED_FUEL,                  SqlColumn(USED_FUEL,                  "used_fuel",                  "Used Fuel"                 )},
+  {IS_JETFUEL,                 SqlColumn(IS_JETFUEL,                 "is_jetfuel",                 "Is Jetfuel"                )},
+  {GROSSWEIGHT,                SqlColumn(GROSSWEIGHT,                "grossweight",                "Grossweight"               )},
+  {DISTANCE,                   SqlColumn(DISTANCE,                   "distance",                   "Distance"                  )},
+  {DISTANCE_FLOWN,             SqlColumn(DISTANCE_FLOWN,             "distance_flown",             "Distance Flown"            )},
+  {DEPARTURE_IDENT,            SqlColumn(DEPARTURE_IDENT,            "departure_ident",            "Departure Ident"           )},
+  {DEPARTURE_NAME,             SqlColumn(DEPARTURE_NAME,             "departure_name",             "Departure Name"            )},
+  {DEPARTURE_RUNWAY,           SqlColumn(DEPARTURE_RUNWAY,           "departure_runway",           "Departure Runway"          )},
+  {DEPARTURE_LONX,             SqlColumn(DEPARTURE_LONX,             "departure_lonx",             "Departure Lonx"            )},
+  {DEPARTURE_LATY,             SqlColumn(DEPARTURE_LATY,             "departure_laty",             "Departure Laty"            )},
+  {DEPARTURE_ALT,              SqlColumn(DEPARTURE_ALT,              "departure_alt",              "Departure Alt"             )},
+  {DEPARTURE_TIME,             SqlColumn(DEPARTURE_TIME,             "departure_time",             "Departure Time"            )},
+  {DEPARTURE_TIME_SIM,         SqlColumn(DEPARTURE_TIME_SIM,         "departure_time_sim",         "Departure Time Sim"        )},
+  {DESTINATION_IDENT,          SqlColumn(DESTINATION_IDENT,          "destination_ident",          "Destination Ident"         )},
+  {DESTINATION_NAME,           SqlColumn(DESTINATION_NAME,           "destination_name",           "Destination Name"          )},
+  {DESTINATION_RUNWAY,         SqlColumn(DESTINATION_RUNWAY,         "destination_runway",         "Destination Runway"        )},
+  {DESTINATION_LONX,           SqlColumn(DESTINATION_LONX,           "destination_lonx",           "Destination Lonx"          )},
+  {DESTINATION_LATY,           SqlColumn(DESTINATION_LATY,           "destination_laty",           "Destination Laty"          )},
+  {DESTINATION_ALT,            SqlColumn(DESTINATION_ALT,            "destination_alt",            "Destination Alt"           )},
+  {DESTINATION_TIME,           SqlColumn(DESTINATION_TIME,           "destination_time",           "Destination Time"          )},
+  {DESTINATION_TIME_SIM,       SqlColumn(DESTINATION_TIME_SIM,       "destination_time_sim",       "Destination Time Sim"      )},
+  {ROUTE_STRING,               SqlColumn(ROUTE_STRING,               "route_string",               "Route String"              )},
+  {SIMULATOR,                  SqlColumn(SIMULATOR,                  "simulator",                  "Simulator"                 )},
+  {DESCRIPTION,                SqlColumn(DESCRIPTION,                "description",                "Description"               )},
+  {FLIGHTPLAN,                 SqlColumn(FLIGHTPLAN,                 "flightplan",                 "Flightplan"                )},
+  {AIRCRAFT_PERF,              SqlColumn(AIRCRAFT_PERF,              "aircraft_perf",              "Aircraft Perf"             )},
+  {AIRCRAFT_TRAIL,             SqlColumn(AIRCRAFT_TRAIL,             "aircraft_trail",             "Aircraft Trail"            )}
 };
 }
 /* *INDENT-ON* */
@@ -209,7 +212,8 @@ int LogdataManager::importCsv(const QString& filepath)
         throw atools::Exception(tr("File contains invalid data.\n\"%1\"\nLine %2.").arg(line).arg(lineNum));
 
       if(at(values, csv::DEPARTURE_IDENT).isEmpty() && at(values, csv::DESTINATION_IDENT).isEmpty())
-        throw atools::Exception(tr("File is not valid. Neither departure nor destination ident is set.\n\"%1\"\nLine %2.").arg(line).arg(lineNum));
+        throw atools::Exception(tr("File is not valid. Neither departure nor destination ident is set.\n\"%1\"\nLine %2.").arg(line).arg(
+                                  lineNum));
 
       insertQuery.bindValue(idBinding, id++);
 
@@ -509,8 +513,7 @@ int LogdataManager::importXplane(const QString& filepath,
 }
 
 int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, bool exportPlan, bool exportPerf, bool exportGpx,
-                              bool header,
-                              bool append)
+                              bool header, bool append)
 {
   bool endsWithEol = atools::fileEndsWithEol(filepath);
   int numExported = 0;
@@ -522,9 +525,9 @@ int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, 
     QStringList columns;
     for(int i = csv::FIRST_COL; i <= csv::LAST_COL; i++)
     {
-      std::pair<QString, QString> col = csv::COL_MAP.value(i);
-      if(col.first != idColumnName)
-        columns.append(col.first % " as \"" % col.second % "\"");
+      const SqlColumn col = csv::COL_MAP.value(i);
+      if(col.getName() != idColumnName)
+        columns.append(col.getSelectStmt());
     }
 
     // Use query wrapper to automatically use passed ids or all rows
@@ -549,11 +552,11 @@ int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, 
     // Add callbacks to converting Gzipped BLOBs to strings
     // Convert to empty string if export should be skipped
     sqlExport.addConversionFunc(exportPlan ? blobConversionFunction : blobConversionFunctionEmpty,
-                                csv::COL_MAP.value(csv::FLIGHTPLAN).second);
+                                csv::COL_MAP.value(csv::FLIGHTPLAN).getDisplayName());
     sqlExport.addConversionFunc(exportPerf ? blobConversionFunction : blobConversionFunctionEmpty,
-                                csv::COL_MAP.value(csv::AIRCRAFT_PERF).second);
+                                csv::COL_MAP.value(csv::AIRCRAFT_PERF).getDisplayName());
     sqlExport.addConversionFunc(exportGpx ? blobConversionFunction : blobConversionFunctionEmpty,
-                                csv::COL_MAP.value(csv::AIRCRAFT_TRAIL).second);
+                                csv::COL_MAP.value(csv::AIRCRAFT_TRAIL).getDisplayName());
 
     bool first = true;
     query.exec();
@@ -607,26 +610,46 @@ void LogdataManager::clearGeometryCache()
   cache.clear();
 }
 
+QString LogdataManager::getCleanupPreview(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance,
+                                          const QVector<SqlColumn>& columns)
+{
+  return "select " % SqlColumn::getColumnList(columns) % " from " % tableName % " where " %
+         cleanupWhere(departureAndDestEqual, departureOrDestEmpty, minFlownDistance);
+}
+
 int LogdataManager::cleanupLogEntries(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance)
 {
-  QSet<int> ids;
-  SqlUtil util(getDatabase());
+  // Avoid long running queries
   db->analyze();
 
-  if(departureAndDestEqual)
-    util.getIds(ids, tableName, idColumnName,
-                "departure_ident is not null and destination_ident is not null and departure_ident = destination_ident");
+  // Fetch ids and delete
+  QSet<int> ids;
+  SqlUtil(getDatabase()).getIds(ids, tableName, idColumnName, cleanupWhere(departureAndDestEqual, departureOrDestEmpty, minFlownDistance));
 
-  if(departureOrDestEmpty)
-    util.getIds(ids, tableName, idColumnName, "departure_ident is null or destination_ident is null");
-
-  if(minFlownDistance >= 0.f)
-    util.getIds(ids, tableName, idColumnName, QString("distance_flown <= %1").arg(minFlownDistance));
-
+  // Also takes care of undo/redo
   deleteRows(ids);
   db->analyze();
 
   return ids.size();
+}
+
+QString LogdataManager::cleanupWhere(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance)
+{
+  QStringList queryWhere;
+  if(departureAndDestEqual)
+    queryWhere.append("(departure_ident is not null and destination_ident is not null and departure_ident = destination_ident)");
+
+  if(departureOrDestEmpty)
+    queryWhere.append("(departure_ident is null or destination_ident is null)");
+
+  if(minFlownDistance >= 0.f)
+    queryWhere.append(QString("(distance_flown <= %1)").arg(minFlownDistance));
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << queryWhere;
+#endif
+
+  return queryWhere.join(" or ");
 }
 
 bool LogdataManager::hasRouteAttached(int id)
@@ -662,7 +685,7 @@ void LogdataManager::loadGpx(int id)
     entry->routeRect = entry->route.boundingRect();
 
     entry->trackRect = atools::geo::Rect();
-    for(const atools::geo::LineString& line : entry->tracks)
+    for(const atools::geo::LineString& line : qAsConst(entry->tracks))
       entry->trackRect.extend(line);
     cache.insert(id, entry);
   }

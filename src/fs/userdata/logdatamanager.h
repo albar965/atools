@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@ namespace geo {
 class LineString;
 }
 namespace sql {
+
+class SqlColumn;
 class SqlDatabase;
 }
 
@@ -81,6 +83,11 @@ public:
   /* Remove entries by criteria */
   int cleanupLogEntries(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance);
 
+  /* Get a SQL select query string which can be used to show a preview of the affected rows for cleanupLogEntries().
+   * columns have to exist in the table. */
+  QString getCleanupPreview(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance,
+                            const QVector<atools::sql::SqlColumn>& columns);
+
   /* true if any of the files/BLOBs is present (length > 0) for the dataset */
   bool hasRouteAttached(int id);
   bool hasPerfAttached(int id);
@@ -120,6 +127,9 @@ private:
 
   /* Generate empty column if disabled in export options */
   static QString blobConversionFunctionEmpty(const QVariant&);
+
+  /* Returns with "or" concatenated where clause for query */
+  QString cleanupWhere(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance);
 
   /* Prime cache by loading the GpxCacheEntry */
   void loadGpx(int id);

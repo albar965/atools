@@ -23,6 +23,8 @@
 namespace atools {
 
 namespace sql {
+
+class SqlColumn;
 class SqlDatabase;
 }
 namespace fs {
@@ -87,13 +89,28 @@ public:
     magDec = reader;
   }
 
+  /* Run this to replace null values with empty strings to allow queries in cleanupUserdata() and getCleanupPreview().
+   * Clean up - set null string columns empty to allow join - hidden compatibility change, no need to undo */
+  void preCleanup();
+
+  /* Reverse preCleanup() action.
+   * Clean up - set empty string columns back to null - no need to undo. */
+  void postCleanup();
+
   /* Columns: type name ident region description tags. Removes duplicates by columns and flag duplicateCoordinates.
    * Empty removes empty userpoints. */
-  int cleanupUserdata(const QStringList& columns, bool duplicateCoordinates, bool empty);
+  int cleanupUserdata(const QStringList& duplicateColumns, bool duplicateCoordinates, bool empty);
+
+  /* Get a SQL query string which can be used to show a preview of the affected rows for cleanupUserdata().
+   * columns have to exist in the table. */
+  QString getCleanupPreview(const QStringList& duplicateColumns, bool duplicateCoordinates, bool empty,
+                            const QVector<atools::sql::SqlColumn>& columns);
 
 private:
-  atools::fs::common::MagDecReader *magDec;
+  /* Returns a union query returning the ids to delete */
+  QString cleanupWhere(const QStringList& duplicateColumns, bool duplicateCoordinates, bool empty);
 
+  atools::fs::common::MagDecReader *magDec;
 };
 
 } // namespace userdata

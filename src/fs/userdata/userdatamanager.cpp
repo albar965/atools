@@ -23,6 +23,7 @@
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
 #include "geo/pos.h"
+#include "sql/sqlcolumn.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlexport.h"
 #include "sql/sqltransaction.h"
@@ -45,6 +46,7 @@ using atools::sql::SqlQuery;
 using atools::sql::SqlExport;
 using atools::sql::SqlRecord;
 using atools::sql::SqlTransaction;
+using atools::sql::SqlColumn;
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
@@ -52,6 +54,7 @@ using Qt::endl;
 
 /* Default visibility. Waypoint is shown on the map at a view distance below this value  */
 const static double VISIBLE_FROM_DEFAULT_NM = 250.;
+const static QStringList CLEANUP_COLUMNS({"type", "name", "ident", "region", "description", "tags"});
 
 namespace csv {
 /* Column indexes in CSV format */
@@ -134,50 +137,70 @@ void UserdataManager::updateSchema()
   DataManagerBase::updateUndoSchema();
 }
 
-int UserdataManager::cleanupUserdata(const QStringList& columns, bool duplicateCoordinates, bool empty)
+void UserdataManager::preCleanup()
 {
-  const static QStringList COLS({"type", "name", "ident", "region", "description", "tags"});
-
-  qDebug() << Q_FUNC_INFO;
-
-  // Clean up - set null string columns empty to allow join - hidden compatibility change, no need to undo ======================
   SqlQuery query(db);
-  for(const QString& column : COLS)
+  for(const QString& column : CLEANUP_COLUMNS)
     query.exec("update userdata set " % column % " = '' where " % column % " is null");
   db->analyze();
+}
 
-  QSet<int> ids;
-  // Get ids to delete empty rows ==================================================
-  SqlUtil util(db);
-  if(empty)
-    util.getIds(ids, tableName, idColumnName, "name = '' and ident = '' and region = '' and description = '' and tags = ''");
-
-  if(!columns.isEmpty())
-  {
-    // Remove duplicates ========================================
-    QStringList joinCols;
-    for(const QString& column : columns)
-      joinCols.append(QString(" u1.%1 = u2.%1 ").arg(column));
-
-    QString queryStr("select distinct u1.userdata_id from userdata u1 join userdata u2 on " % joinCols.join(" and ") %
-                     " where u1.userdata_id < u2.userdata_id");
-
-    if(duplicateCoordinates)
-      queryStr.append(" and (abs(u1.lonx - u2.lonx) + abs(u1.laty - u2.laty)) < 0.0001");
-
-    // Get duplicates by name from userpoint table =================================================
-    util.getIds(ids, queryStr);
-  }
-
-  // Clean up - set empty string columns back to null - no need to undo ======================
-  for(const QString& column : COLS)
+void UserdataManager::postCleanup()
+{
+  SqlQuery query(db);
+  for(const QString& column : CLEANUP_COLUMNS)
     query.exec("update userdata set " % column % " = null where " % column % " = ''");
   db->analyze();
+}
+
+int UserdataManager::cleanupUserdata(const QStringList& duplicateColumns, bool duplicateCoordinates, bool empty)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QSet<int> ids;
+  SqlUtil(db).getIds(ids, cleanupWhere(duplicateColumns, duplicateCoordinates, empty));
+
+  postCleanup();
 
   // Delete duplicates with undo ==================================================
   deleteRows(ids);
 
   return ids.size();
+}
+
+QString UserdataManager::getCleanupPreview(const QStringList& duplicateColumns, bool duplicateCoordinates, bool empty,
+                                           const QVector<sql::SqlColumn>& columns)
+{
+  return "select " % SqlColumn::getColumnList(columns) % " from " % tableName % " where " % idColumnName %
+         " in (" % cleanupWhere(duplicateColumns, duplicateCoordinates, empty) % ")";
+}
+
+QString UserdataManager::cleanupWhere(const QStringList& duplicateColumns, bool duplicateCoordinates, bool empty)
+{
+  QStringList whereStmt;
+
+  // Sub-query to delete empty rows ==================================================
+  if(empty)
+    // Query for empty using empty column values as prepared by preCleanup() - avoid null compare
+    whereStmt.append("select " % idColumnName % " from " % tableName %
+                     " where name = '' and ident = '' and region = '' and description = '' and tags = ''");
+
+  // Sub-query to remove duplicates ========================================
+  if(!duplicateColumns.isEmpty())
+  {
+    QStringList joinCols;
+    for(const QString& column : duplicateColumns)
+      joinCols.append(QString(" u1.%1 = u2.%1 ").arg(column));
+
+    QString queryStr("select u1.userdata_id from userdata u1 join userdata u2 on " % joinCols.join(" and ") %
+                     " where u1.userdata_id < u2.userdata_id");
+
+    if(duplicateCoordinates)
+      queryStr.append(" and (abs(u1.lonx - u2.lonx) + abs(u1.laty - u2.laty)) < 0.0001");
+
+    whereStmt.append(queryStr);
+  }
+  return whereStmt.join(" union ");
 }
 
 void UserdataManager::clearTemporary()
