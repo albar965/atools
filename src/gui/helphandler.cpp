@@ -97,7 +97,7 @@ void HelpHandler::openUrl(QWidget *parent, const QUrl& url)
   if(QFile::exists("/usr/bin/xdg-open"))
   {
     QStringList env = QProcess::systemEnvironment();
-    env.erase(std::remove_if(env.begin(), env.end(), [ = ](const QString& str) {
+    env.erase(std::remove_if(env.begin(), env.end(), [](const QString& str) {
           return str.startsWith("LD_LIBRARY_PATH=");
         }), env.end());
 
@@ -143,7 +143,7 @@ void HelpHandler::openFile(QWidget *parent, const QString& filepath)
     if(QFile::exists("/usr/bin/xdg-open"))
     {
       QStringList env = QProcess::systemEnvironment();
-      env.erase(std::remove_if(env.begin(), env.end(), [ = ](const QString& str) {
+      env.erase(std::remove_if(env.begin(), env.end(), [](const QString& str) {
             return str.startsWith("LD_LIBRARY_PATH=");
           }), env.end());
 

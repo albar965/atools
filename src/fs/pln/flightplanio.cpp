@@ -1525,7 +1525,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
 
       // Remove the procedure legs ============================
       plan.erase(std::remove_if(plan.begin(), plan.end(),
-                                [ = ](const FlightplanEntry& entry) -> bool {
+                                [](const FlightplanEntry& entry) -> bool {
               return !entry.getSid().isEmpty() || !entry.getStar().isEmpty() || !entry.getApproach().isEmpty();
             }), plan.end());
     }
@@ -3482,7 +3482,7 @@ void FlightplanIO::saveIniBuildsMsfs(const atools::fs::pln::Flightplan& plan, co
 void FlightplanIO::saveCivaFms(atools::fs::pln::Flightplan plan, const QString& file)
 {
   // Create a copy and erase all consecutive waypoints having the same position
-  plan.erase(std::unique(plan.begin(), plan.end(), [ = ](FlightplanEntry& entry1, FlightplanEntry& entry2) -> bool {
+  plan.erase(std::unique(plan.begin(), plan.end(), [](FlightplanEntry& entry1, FlightplanEntry& entry2) -> bool {
           return entry1.getPosition().almostEqual(entry2.getPosition(), atools::geo::Pos::POS_EPSILON_10M);
         }), plan.end());
 

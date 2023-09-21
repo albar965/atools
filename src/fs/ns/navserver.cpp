@@ -117,7 +117,7 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
     }
 
     // Ensure IPv4 in front
-    std::sort(hosts.begin(), hosts.end(), [ = ](const Host& host1, const Host& host2) {
+    std::sort(hosts.begin(), hosts.end(), [](const Host& host1, const Host& host2) {
             return host1.ipv6 < host2.ipv6;
           });
 

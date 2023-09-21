@@ -180,7 +180,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
           {
             // append if it not a dummy runway
             if(!options->isFilterRunways() ||
-                rw.getPosition().getPos().distanceMeterTo(getPos()) < MAX_RUNWAY_DISTANCE_METER)
+               rw.getPosition().getPos().distanceMeterTo(getPos()) < MAX_RUNWAY_DISTANCE_METER)
               // Omit all dummies that are far away from the airport center position
               runways.append(rw);
           }
@@ -498,12 +498,12 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
   // =====================================================
   // Now remove all procedures which are not valid in any way
   approaches.erase(std::remove_if(approaches.begin(), approaches.end(),
-                                  [ = ](const Approach& approach) -> bool {
+                                  [](const Approach& approach) -> bool {
           return !approach.isValid();
         }), approaches.end());
 
   sidsAndStars.erase(std::remove_if(sidsAndStars.begin(), sidsAndStars.end(),
-                                    [ = ](const SidStar& sidStar) -> bool {
+                                    [](const SidStar& sidStar) -> bool {
           return !sidStar.isValid();
         }), sidsAndStars.end());
 }
