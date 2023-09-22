@@ -3292,11 +3292,7 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
       writer.writeStartElement("rtept");
       writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
       writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
-
-      if(i > 0 && i < plan.size() - 1)
-        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(cruiseAltFt)));
-      else
-        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(entry.getPosition().getAltitude())));
+      writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(entry.getAltitude())));
 
       writer.writeTextElement("name", entry.getIdent());
       writer.writeTextElement("desc", entry.getWaypointTypeAsFsxString());
