@@ -63,6 +63,18 @@ public:
   void initQuery(atools::sql::SqlDatabase *db, const QString& queryString, const QVector<atools::sql::SqlColumn>& columns,
                  const SqlQueryDialogDataFunc& dataFunc = nullptr);
 
+  /* For atools::gui::HelpHandler::openHelpUrlWeb() */
+  void setHelpOnlineUrl(const QString& value)
+  {
+    helpOnlineUrl = value;
+  }
+
+  /* For atools::gui::HelpHandler::openHelpUrlWeb() */
+  void setHelpLanguageOnline(const QString& value)
+  {
+    helpLanguageOnline = value;
+  }
+
 private:
   void buttonBoxClicked(QAbstractButton *button);
   void restoreState();
