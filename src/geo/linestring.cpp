@@ -353,6 +353,22 @@ LineString LineString::normalized() const
   return retval.normalize();
 }
 
+float LineString::getStartCourse() const
+{
+  if(size() >= 2)
+    return at(0).angleDegTo(at(1));
+  else
+    return Pos::INVALID_VALUE;
+}
+
+float LineString::getEndCourse() const
+{
+  if(size() >= 2)
+    return at(size() - 1).angleDegTo(at(size() - 2));
+  else
+    return Pos::INVALID_VALUE;
+}
+
 QDataStream& operator<<(QDataStream& out, const LineString& obj)
 {
   out << static_cast<quint32>(obj.size());

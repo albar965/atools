@@ -203,6 +203,12 @@ public:
   /* Return a normalized copy of this */
   atools::geo::LineString normalized() const;
 
+  /* Course from first to second point or INVALID_VALUE if isPoint() == true */
+  float getStartCourse() const;
+
+  /* Course from last to second last point or INVALID_VALUE if isPoint() == true */
+  float getEndCourse() const;
+
 private:
   friend QDebug operator<<(QDebug out, const atools::geo::LineString& record);
   friend QDataStream& operator<<(QDataStream& out, const atools::geo::LineString& obj);
