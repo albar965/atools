@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -96,6 +96,8 @@ public:
   /* Joins the list of builders using <br> or <p> */
   static QString joinBr(std::initializer_list<atools::util::HtmlBuilder> builders);
   static QString joinP(std::initializer_list<atools::util::HtmlBuilder> builders);
+  static QString joinBr(QStringList strings);
+  static QString joinP(QStringList strings);
 
   /* Clears this instance except settings */
   HtmlBuilder& clear();
@@ -123,6 +125,7 @@ public:
 
   /* Appends raw data without conversion */
   atools::util::HtmlBuilder& append(const QString& other);
+  atools::util::HtmlBuilder& append(const char *other);
 
   /* Default flags for error, warning and note messages. Combine these with any other flags if needed. */
   const static html::Flags MSG_FLAGS; /* html::BOLD | html::NO_ENTITIES */

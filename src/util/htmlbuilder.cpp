@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "util/htmlbuilder.h"
+
+#include "atools.h"
 
 #include <QApplication>
 #include <QPalette>
@@ -99,8 +101,7 @@ QString HtmlBuilder::joinBr(std::initializer_list<HtmlBuilder> builders)
   QStringList texts;
   for(const HtmlBuilder& builder : builders)
     texts.append(builder.getHtml());
-  texts.removeAll(QString());
-  return texts.join("<br/>");
+  return joinBr(texts);
 }
 
 QString HtmlBuilder::joinP(std::initializer_list<HtmlBuilder> builders)
@@ -108,12 +109,17 @@ QString HtmlBuilder::joinP(std::initializer_list<HtmlBuilder> builders)
   QStringList texts;
   for(const HtmlBuilder& builder : builders)
     texts.append(builder.getHtml());
-  texts.removeAll(QString());
+  return joinP(texts);
+}
 
-  if(!texts.isEmpty())
-    return "<p>" % texts.join("<p/><p>") % "</p>";
+QString HtmlBuilder::joinBr(QStringList strings)
+{
+  return atools::strJoin(strings, "<br/>");
+}
 
-  return QString();
+QString HtmlBuilder::joinP(QStringList strings)
+{
+  return atools::strJoin("<p>", strings, "<p/><p>", "<p/><p>", "</p>");
 }
 
 void HtmlBuilder::initColors(const QColor& rowColor, const QColor& rowColorAlt)
@@ -174,6 +180,12 @@ HtmlBuilder& HtmlBuilder::append(const HtmlBuilder& other)
 HtmlBuilder& HtmlBuilder::append(const QString& other)
 {
   htmlText.append(other);
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::append(const char *other)
+{
+  htmlText.append(QString(other));
   return *this;
 }
 
