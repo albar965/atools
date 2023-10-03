@@ -398,7 +398,7 @@ QString elideTextLinesShort(QString str, int maxLines, int maxLength, bool compr
 }
 
 #if defined(QT_WIDGETS_LIB)
-QStringList elidedTexts(const QFontMetrics& metrics, const QStringList& texts, Qt::TextElideMode mode, int width)
+QStringList elidedTexts(const QFontMetricsF& metrics, const QStringList& texts, Qt::TextElideMode mode, float width)
 {
   QStringList retval(texts);
   for(QString& str : retval)
@@ -406,7 +406,7 @@ QStringList elidedTexts(const QFontMetrics& metrics, const QStringList& texts, Q
   return retval;
 }
 
-QString elidedText(const QFontMetrics& metrics, QString text, Qt::TextElideMode mode, int width)
+QString elidedText(const QFontMetricsF& metrics, QString text, Qt::TextElideMode mode, float width)
 {
   if(metrics.horizontalAdvance(text) >= width)
   {

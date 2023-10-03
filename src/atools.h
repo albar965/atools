@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 class QFile;
 class QFileInfo;
 class QFontMetrics;
+class QFontMetricsF;
 
 namespace atools {
 
@@ -171,8 +172,8 @@ QString elideTextShortMiddle(const QString& str, int maxLength);
 
 #if defined(QT_WIDGETS_LIB)
 /* Elide text for pixel size. Returns single "..." for less than three characters, a single "." if it fits and empty text if not. */
-QString elidedText(const QFontMetrics& metrics, QString text, Qt::TextElideMode mode, int width);
-QStringList elidedTexts(const QFontMetrics& metrics, const QStringList& texts, Qt::TextElideMode mode, int width);
+QString elidedText(const QFontMetricsF& metrics, QString text, Qt::TextElideMode mode, float width);
+QStringList elidedTexts(const QFontMetricsF& metrics, const QStringList& texts, Qt::TextElideMode mode, float width);
 
 #endif
 
