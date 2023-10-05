@@ -108,7 +108,7 @@ LineString LineString::reversed()
   return linestring;
 }
 
-LineString LineString::alt(float alt) const
+const LineString LineString::alt(float alt) const
 {
   LineString retval(*this);
   retval.setAltitude(alt);
@@ -347,7 +347,7 @@ LineString& LineString::normalize()
   return *this;
 }
 
-LineString LineString::normalized() const
+const LineString LineString::normalized() const
 {
   LineString retval(*this);
   return retval.normalize();

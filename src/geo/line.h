@@ -160,7 +160,7 @@ public:
   bool crossesAntiMeridian() const;
 
   /* Returns two lines if it crosses. Otherwise a copy of this or empty list if invalid. */
-  QList<Line> splitAtAntiMeridian(bool *crossed = nullptr) const;
+  const QList<Line> splitAtAntiMeridian(bool *crossed = nullptr) const;
 
   /* true if heading of "from" to "to" is towards west or east. */
   bool isWestCourse() const;

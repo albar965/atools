@@ -279,7 +279,7 @@ bool Line::crossesAntiMeridian() const
   return atools::geo::crossesAntiMeridian(pos1.getLonX(), pos2.getLonX());
 }
 
-QList<Line> Line::splitAtAntiMeridian(bool *crossed) const
+const QList<Line> Line::splitAtAntiMeridian(bool *crossed) const
 {
   if(crossed != nullptr)
     *crossed = false;

@@ -111,7 +111,7 @@ public:
   }
 
   /* Set altitude to all points and return a copy */
-  atools::geo::LineString alt(float alt) const;
+  const atools::geo::LineString alt(float alt) const;
 
   /* Set altitude to all points */
   void setAltitude(float alt);
@@ -124,8 +124,7 @@ public:
   void removeDuplicates();
 
   /* Calculate status, cross track distance and more to this line. */
-  void distanceMeterToLineString(const atools::geo::Pos& pos, atools::geo::LineDistance& result,
-                                 int *index = nullptr) const;
+  void distanceMeterToLineString(const atools::geo::Pos& pos, atools::geo::LineDistance& result, int *index = nullptr) const;
 
   /* Line with first and last point */
   atools::geo::Line toLine() const;
@@ -149,19 +148,19 @@ public:
    * Returns a sub-vector which contains elements from this vector, starting at position pos.
    * If length is -1 (the default), all elements after pos are included; otherwise length elements
    * (or all remaining elements if there are less than length elements) are included.*/
-  atools::geo::LineString mid(int pos, int len = -1) const
+  const atools::geo::LineString mid(int pos, int len = -1) const
   {
     return atools::geo::LineString(QList::mid(pos, len));
   }
 
   /* Returns a string with len number of coordinates from the beginning of the list */
-  atools::geo::LineString left(int len) const
+  const atools::geo::LineString left(int len) const
   {
     return atools::geo::LineString(QList::mid(0, len));
   }
 
   /* Returns a string with len number of coordinates from the end of the list */
-  atools::geo::LineString right(int len) const
+  const atools::geo::LineString right(int len) const
   {
     return atools::geo::LineString(QList::mid(size() - len));
   }
@@ -201,7 +200,7 @@ public:
   atools::geo::LineString& normalize();
 
   /* Return a normalized copy of this */
-  atools::geo::LineString normalized() const;
+  const atools::geo::LineString normalized() const;
 
   /* Course from first to second point or INVALID_VALUE if isPoint() == true */
   float getStartCourse() const;

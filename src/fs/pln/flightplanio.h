@@ -132,15 +132,15 @@ public:
 
   /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
   void saveGpx(const atools::fs::pln::Flightplan& plan, const QString& filename, const QVector<geo::LineString>& tracks,
-               const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt);
+               const QVector<QVector<qint64> >& timestampsMs);
 
   /* Same as above but returns the file in a string */
   QString saveGpxStr(const atools::fs::pln::Flightplan& plan, const QVector<geo::LineString>& tracks,
-                     const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt);
+                     const QVector<QVector<qint64> >& timestampsMs);
 
   /* Same as above but returns the file in a Gzip compressed byte array */
   QByteArray saveGpxGz(const atools::fs::pln::Flightplan& plan, const QVector<geo::LineString>& tracks,
-                       const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt);
+                       const QVector<QVector<qint64> >& timestampsMs);
 
   /* Loads GPX route coordinates and track points into LineStrings.
    * Reading is limited to files exported by this class.
@@ -204,8 +204,7 @@ private:
   void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format, bool iniBuildsFormat);
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
   void saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer,
-                       const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs,
-                       int cruiseAltFt);
+                       const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs);
   void saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj, bool msfs);
   void loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream);
   void loadGpxInternal(atools::geo::LineString *route, QStringList *routenames, QVector<geo::LineString> *tracks,

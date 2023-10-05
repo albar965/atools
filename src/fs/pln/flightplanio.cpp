@@ -3179,30 +3179,30 @@ void FlightplanIO::saveIfly(const Flightplan& plan, const QString& filename)
 }
 
 QString FlightplanIO::saveGpxStr(const Flightplan& plan, const QVector<geo::LineString>& tracks,
-                                 const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt)
+                                 const QVector<QVector<qint64> >& timestampsMs)
 {
   QString gpxString;
   QXmlStreamWriter writer(&gpxString);
-  saveGpxInternal(plan, writer, tracks, timestampsMs, cruiseAltFt);
+  saveGpxInternal(plan, writer, tracks, timestampsMs);
   return gpxString;
 }
 
 QByteArray FlightplanIO::saveGpxGz(const Flightplan& plan, const QVector<geo::LineString>& tracks,
-                                   const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt)
+                                   const QVector<QVector<qint64> >& timestampsMs)
 {
   QByteArray retval;
-  atools::zip::gzipCompress(saveGpxStr(plan, tracks, timestampsMs, cruiseAltFt).toUtf8(), retval);
+  atools::zip::gzipCompress(saveGpxStr(plan, tracks, timestampsMs).toUtf8(), retval);
   return retval;
 }
 
 void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QString& filename,
-                           const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt)
+                           const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs)
 {
   QFile gpxFile(filename);
   if(gpxFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QXmlStreamWriter writer(&gpxFile);
-    saveGpxInternal(plan, writer, tracks, timestampsMs, cruiseAltFt);
+    saveGpxInternal(plan, writer, tracks, timestampsMs);
     gpxFile.close();
   }
   else
@@ -3210,7 +3210,7 @@ void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QStrin
 }
 
 void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer,
-                                   const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt)
+                                   const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs)
 {
   writer.setCodec("UTF-8");
   writer.setAutoFormatting(true);
