@@ -73,16 +73,16 @@ void PaletteSettings::syncPalette(QPalette& palette)
   settings->setValue("Options/Version", QCoreApplication::applicationVersion());
 
   settings->beginGroup(group);
-  for(const QString& groupKey : GROUP_NAME_MAP.keys())
+  for(auto groupIt = GROUP_NAME_MAP.begin(); groupIt != GROUP_NAME_MAP.end(); ++groupIt)
   {
-    for(const QString& roleKey : ROLE_NAME_MAP.keys())
+    for(auto roleIt = ROLE_NAME_MAP.begin(); roleIt != ROLE_NAME_MAP.end(); ++roleIt)
     {
-      QString key(prefix + groupKey + "_" + roleKey);
+      QString key(prefix + groupIt.key() + "_" + roleIt.key());
       if(settings->contains(key))
-        palette.setColor(GROUP_NAME_MAP.value(groupKey), ROLE_NAME_MAP.value(roleKey),
+        palette.setColor(GROUP_NAME_MAP.value(groupIt.key()), ROLE_NAME_MAP.value(roleIt.key()),
                          QColor(settings->value(key).toString()));
       else
-        settings->setValue(key, palette.color(GROUP_NAME_MAP.value(groupKey), ROLE_NAME_MAP.value(roleKey)).name());
+        settings->setValue(key, palette.color(GROUP_NAME_MAP.value(groupIt.key()), ROLE_NAME_MAP.value(roleIt.key())).name());
     }
   }
   settings->endGroup();
@@ -92,12 +92,12 @@ void PaletteSettings::syncPalette(QPalette& palette)
 void PaletteSettings::savePalette(const QPalette& palette)
 {
   settings->beginGroup(group);
-  for(const QString& groupKey : GROUP_NAME_MAP.keys())
+  for(auto groupIt = GROUP_NAME_MAP.begin(); groupIt != GROUP_NAME_MAP.end(); ++groupIt)
   {
-    for(const QString& roleKey : ROLE_NAME_MAP.keys())
+    for(auto roleIt = ROLE_NAME_MAP.begin(); roleIt != ROLE_NAME_MAP.end(); ++roleIt)
     {
-      QString key(prefix + groupKey + "_" + roleKey);
-      settings->setValue(key, palette.color(GROUP_NAME_MAP.value(groupKey), ROLE_NAME_MAP.value(roleKey)).name());
+      QString key(prefix + groupIt.key() + "_" + roleIt.key());
+      settings->setValue(key, palette.color(GROUP_NAME_MAP.value(groupIt.key()), ROLE_NAME_MAP.value(roleIt.key())).name());
     }
   }
   settings->endGroup();
@@ -107,13 +107,13 @@ void PaletteSettings::savePalette(const QPalette& palette)
 void PaletteSettings::loadPalette(QPalette& palette)
 {
   settings->beginGroup(group);
-  for(const QString& groupKey : GROUP_NAME_MAP.keys())
+  for(auto groupIt = GROUP_NAME_MAP.begin(); groupIt != GROUP_NAME_MAP.end(); ++groupIt)
   {
-    for(const QString& roleKey : ROLE_NAME_MAP.keys())
+    for(auto roleIt = ROLE_NAME_MAP.begin(); roleIt != ROLE_NAME_MAP.end(); ++roleIt)
     {
-      QString key(prefix + groupKey + "_" + roleKey);
+      QString key(prefix + groupIt.key() + "_" + roleIt.key());
       if(settings->contains(key))
-        palette.setColor(GROUP_NAME_MAP.value(groupKey), ROLE_NAME_MAP.value(roleKey),
+        palette.setColor(GROUP_NAME_MAP.value(groupIt.key()), ROLE_NAME_MAP.value(roleIt.key()),
                          QColor(settings->value(key).toString()));
     }
   }

@@ -49,7 +49,7 @@ public:
 private:
   QPointF lineStart(int i) const;
   QPointF lineEnd(int i) const;
-  double distance(QPointF pt1, QPointF pt2) const;
+  double distance(const QPointF& pt1, const QPointF& pt2) const;
 
   float radius;
 };

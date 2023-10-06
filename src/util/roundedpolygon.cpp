@@ -23,7 +23,7 @@
 namespace atools {
 namespace util {
 
-double RoundedPolygon::distance(QPointF pt1, QPointF pt2) const
+double RoundedPolygon::distance(const QPointF& pt1, const QPointF& pt2) const
 {
   return std::sqrt((pt1.x() - pt2.x()) * (pt1.x() - pt2.x()) +
                    (pt1.y() - pt2.y()) * (pt1.y() - pt2.y()));

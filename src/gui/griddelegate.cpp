@@ -31,7 +31,7 @@ GridDelegate::GridDelegate(QObject *parent) :
 
 void GridDelegate::styleChanged()
 {
-  gridPen = QPen(QApplication::palette().color(QPalette::All, QPalette::Window), borderPenWidth);
+  gridPen = QPen(QApplication::palette().color(QPalette::Active, QPalette::Window), borderPenWidth);
 }
 
 QSize GridDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
