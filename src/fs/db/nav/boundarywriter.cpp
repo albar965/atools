@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #include "fs/db/datawriter.h"
 #include "fs/common/binarygeometry.h"
 #include "fs/bgl/util.h"
-#include "fs/db/ap/airportwriter.h"
 #include "fs/navdatabaseoptions.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "geo/calculations.h"
@@ -80,13 +79,15 @@ void BoundaryWriter::writeObject(const Boundary *type)
   bind(":min_lonx", type->getMinPosition().getLonX());
   bind(":min_laty", type->getMinPosition().getLatY());
 
-  atools::fs::common::BinaryGeometry geo(fetchAirspaceLines(type));
-  bind(":geometry", geo.writeToByteArray());
+  bind(":geometry", atools::fs::common::BinaryGeometry(fetchAirspaceLines(type)).writeToByteArray());
   executeStatement();
 }
 
 atools::geo::LineString BoundaryWriter::fetchAirspaceLines(const Boundary *type)
 {
+  // Related to full circle - 7.5°
+  const static int CIRCLE_SEGMENTS = 48;
+
   const QList<bgl::BoundarySegment>& segments = type->getSegments();
   LineString processedLines;
 
@@ -98,14 +99,14 @@ atools::geo::LineString BoundaryWriter::fetchAirspaceLines(const Boundary *type)
       // Origin needed later
       continue;
     else if(segment.getType() == bl::CIRCLE)
-      // Append line string build from circle parameters - one point every 15 degrees
-      processedLines.append(LineString(segments.at(i - 1).getPosition(), segment.getRadius(), 24));
+      // Append line string build from circle parameters - one point every 5 degrees
+      processedLines.append(LineString(segments.at(i - 1).getPosition(), segment.getRadius(), CIRCLE_SEGMENTS));
     else if(segment.getType() == bl::ARC_CCW || segment.getType() == bl::ARC_CW)
       // Build an arc
       processedLines.append(LineString(segments.at(i - 1).getPosition(),
                                        segments.at(i - 2).getPosition(),
                                        segments.at(i).getPosition(),
-                                       segment.getType() == bl::ARC_CW, 24));
+                                       segment.getType() == bl::ARC_CW, CIRCLE_SEGMENTS));
     else
       processedLines.append(segment.getPosition());
   }

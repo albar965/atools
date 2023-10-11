@@ -181,6 +181,8 @@ void AirspaceReaderOpenAir::writeBoundary()
 
 void AirspaceReaderOpenAir::bindCoordinate(const QStringList& line)
 {
+  // Related to full circle - 7.5°
+  const static int CIRCLE_SEGMENTS = 48;
   QString key = at(line, 0).toUpper();
   QString value = mid(line, 1).trimmed().toUpper();
 
@@ -206,7 +208,7 @@ void AirspaceReaderOpenAir::bindCoordinate(const QStringList& line)
       Pos pos1 = center.endpoint(atools::geo::nmToMeter(radius), angleStart);
       Pos pos2 = center.endpoint(atools::geo::nmToMeter(radius), angleEnd);
       if(pos1.isValid() && pos2.isValid() && center.isValidRange())
-        curLine.append(LineString(center, pos1, pos2, clockwise, 24));
+        curLine.append(LineString(center, pos1, pos2, clockwise, CIRCLE_SEGMENTS));
       else
         errWarn("Found invalid coordinates in airspace record DA: \"" + value + "\"");
     }
@@ -219,7 +221,7 @@ void AirspaceReaderOpenAir::bindCoordinate(const QStringList& line)
     Pos pos2 = fromOpenAirFormat(value.section(',', 1, 1).trimmed());
 
     if(pos1.isValid() && pos2.isValid() && center.isValidRange())
-      curLine.append(LineString(center, pos1, pos2, clockwise, 24));
+      curLine.append(LineString(center, pos1, pos2, clockwise, CIRCLE_SEGMENTS));
     else
       errWarn("Found invalid coordinates in airspace record DB: \"" + value + "\"");
     clockwise = true;
@@ -229,7 +231,7 @@ void AirspaceReaderOpenAir::bindCoordinate(const QStringList& line)
     // DC radius - draw a circle (center taken from the previous V X=... record, radius in nm
     float radius = value.toFloat();
     if(radius > 0.2f && center.isValidRange())
-      curLine.append(LineString(center, atools::geo::nmToMeter(radius), 24));
+      curLine.append(LineString(center, atools::geo::nmToMeter(radius), CIRCLE_SEGMENTS));
     else
       // Small values are apparently used to define colors
       qWarning() << filename << ":" << lineNumber <<

@@ -1053,6 +1053,9 @@ int DfdCompiler::airspaceAlt(const QString& altStr)
 
 void DfdCompiler::finishAirspace()
 {
+  // Related to full circle - 7.5°
+  const int CIRCLE_SEGMENTS = 48;
+
   // Do not write if type was not found
   if(!airspaceWriteQuery->boundValue(":type").isNull())
   {
@@ -1065,8 +1068,8 @@ void DfdCompiler::finishAirspace()
       Pos nextPos = i < airspaceSegments.size() - 1 ? airspaceSegments.at(i + 1).pos : airspaceSegments.constFirst().pos;
 
       if(seg.pos.isNull() && !seg.center.isNull())
-        // Create a circular polygon with 24 segments
-        curAirspaceLine.append(LineString(seg.center, ageo::nmToMeter(seg.distance), 24));
+        // Create a circular polygon
+        curAirspaceLine.append(LineString(seg.center, ageo::nmToMeter(seg.distance), CIRCLE_SEGMENTS));
       else
       {
         if(seg.center.isNull())
@@ -1075,13 +1078,17 @@ void DfdCompiler::finishAirspace()
         {
           // Create an arc
           bool clockwise = seg.via.isEmpty() ? true : seg.via.at(0) == "R";
-          curAirspaceLine.append(LineString(seg.center, seg.pos, nextPos, clockwise, 24));
+          LineString arc(seg.center, seg.pos, nextPos, clockwise, CIRCLE_SEGMENTS);
+
+          if(!arc.isEmpty())
+            arc.removeLast();
+          curAirspaceLine.append(arc);
         }
       }
     }
 
     // Move points away from the poles to avoid display artifacts
-    for(Pos& pos:curAirspaceLine)
+    for(Pos& pos : curAirspaceLine)
     {
       if(pos.getLatY() > 89.f)
         pos.setLatY(89.f);
