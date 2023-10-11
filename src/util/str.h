@@ -22,7 +22,6 @@
 #include <tuple>
 #include <cstring>
 
-
 namespace atools {
 namespace util {
 
@@ -223,7 +222,6 @@ public:
 private:
   Str<SIZE> first, second, third;
 };
-
 
 } // namespace util
 } // namespace atools

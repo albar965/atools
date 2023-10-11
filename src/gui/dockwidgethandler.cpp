@@ -332,12 +332,11 @@ void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
   if(checked)
   {
     // Find a stack that contains the widget ==================
-    auto it = std::find_if(dockStackList.begin(), dockStackList.end(), [dockWidget](QList<QDockWidget *>& list)
-        {
+    auto it = std::find_if(dockStackList.constBegin(), dockStackList.constEnd(), [&dockWidget](const QList<QDockWidget *>& list) {
           return list.contains(dockWidget);
         });
 
-    if(it != dockStackList.end())
+    if(it != dockStackList.constEnd())
     {
       // Found a stack now show all stack member widgets
       for(QDockWidget *dock : *it)
