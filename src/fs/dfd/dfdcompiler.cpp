@@ -1053,7 +1053,7 @@ int DfdCompiler::airspaceAlt(const QString& altStr)
 
 void DfdCompiler::finishAirspace()
 {
-  // Related to full circle - 7.5°
+  // Related to full circle - 7.5° - number is checked in MapPainterAirspace::render()
   const int CIRCLE_SEGMENTS = 48;
 
   // Do not write if type was not found

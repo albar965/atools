@@ -181,7 +181,7 @@ void AirspaceReaderOpenAir::writeBoundary()
 
 void AirspaceReaderOpenAir::bindCoordinate(const QStringList& line)
 {
-  // Related to full circle - 7.5°
+  // Related to full circle - 7.5° - number is checked in MapPainterAirspace::render()
   const static int CIRCLE_SEGMENTS = 48;
   QString key = at(line, 0).toUpper();
   QString value = mid(line, 1).trimmed().toUpper();

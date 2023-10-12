@@ -689,6 +689,12 @@ inline void freeArray(TYPE *& arr)
   arr = nullptr;
 }
 
+/* Wrap index around for an array of the given size */
+inline int wrapIndex(int index, int size)
+{
+  return (index + size) % size;
+}
+
 /* Functions to convert integer and float lists and vectors to string lists and back.
  * Can be used to store configuration lists.
  * Uses the C locale for number conversion.

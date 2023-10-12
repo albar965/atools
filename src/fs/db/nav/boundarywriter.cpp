@@ -85,7 +85,7 @@ void BoundaryWriter::writeObject(const Boundary *type)
 
 atools::geo::LineString BoundaryWriter::fetchAirspaceLines(const Boundary *type)
 {
-  // Related to full circle - 7.5°
+  // Related to full circle - 7.5° - number is checked in MapPainterAirspace::render()
   const static int CIRCLE_SEGMENTS = 48;
 
   const QList<bgl::BoundarySegment>& segments = type->getSegments();
