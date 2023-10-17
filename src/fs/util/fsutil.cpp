@@ -477,7 +477,9 @@ QString capNavString(const QString& str)
           "MATZ", "MOA", "RMZ", "TIZ", "TMA", "TMZ", "TRA", "TRSA", "TWEB", "ARSA",
           "AAS", "CARS", "FIS", "AFIS", "ATF", "VDF", "PCL", "RCO", "RCAG",
           "NOTAM", "CERAP", "ARTCC",
-          "TCA", "MCTR", "VFR", "IFR", "DFS", "TNA", "CAE"
+          "TCA", "MCTR", "VFR", "IFR", "DFS", "TNA", "CAE",
+          "TSRA" "AFB", "OCA", "ARB", "MCAS", "NAS", "NOLF", "NS", "NAWS", "USAF", "TMAD", "CON", "ATS", "MTMA",
+          "TRSA", "SFB", "AAF", "DC", "CGAS"
         });
 
   return atools::capString(str, FORCE_UPPER);
@@ -490,7 +492,7 @@ QString capAirportName(const QString& str)
           "AAC", "AAF", "AB", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CFB", "CGS", "DGAC",
           "FAA", "FBO", "GTS", "HSC", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK",
           "NOLF", "NRC", "NRC", "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RLA", "RNAS",
-          "USFS", "CGAS", "TV", "NVC"});
+          "USFS", "CGAS", "TV", "NVC", "USAF"});
 
   return atools::capString(str, FORCE_UPPER).replace("-O-", "-o-").replace("-N-", "-n-").replace("-A-", "-a-");
 }

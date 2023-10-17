@@ -749,8 +749,7 @@ atools::geo::Pos Pos::intersectingRadials(const atools::geo::Pos& p1, float brng
   double brg13 = atools::geo::toRadians(brng1), brg23 = atools::geo::toRadians(brng2);
   double dlat = lat2 - lat1, dlon = lon2 - lon1;
 
-  double dst12 = 2. * asin(sqrt(sin(dlat / 2.) * sin(dlat / 2.) +
-                                cos(lat1) * cos(lat2) * sin(dlon / 2.) * sin(dlon / 2.)));
+  double dst12 = 2. * asin(sqrt(sin(dlat / 2.) * sin(dlat / 2.) + cos(lat1) * cos(lat2) * sin(dlon / 2.) * sin(dlon / 2.)));
   if(dst12 == 0.)
     return EMPTY_POS;
 
@@ -778,7 +777,10 @@ atools::geo::Pos Pos::intersectingRadials(const atools::geo::Pos& p1, float brng
   double dlon13 = atan2(sin(brg13) * sin(dist13) * cos(lat1), cos(dist13) - sin(lat1) * sin(lat3));
   double lon3 = lon1 + dlon13;
 
-  return Pos(lon3, lat3).toDeg().normalize();
+  if(std::isnan(lon3) || std::isnan(lat3))
+    return EMPTY_POS;
+  else
+    return Pos(lon3, lat3).toDeg().normalize();
 }
 
 atools::geo::Point3D Pos::toCartesian() const

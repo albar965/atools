@@ -193,8 +193,12 @@ public:
   /* true if longitude values cross the anti-meridian independent of direction but unreliable for large rectangles. */
   bool crossesAntiMeridian() const;
 
-  /* Returns two lines if it crosses. Otherwise a copy of this or empty list if invalid. */
+  /* Returns a line with additional points added at the anti-meridian if it crosses.
+   * Otherwise a copy of this or empty list if invalid. */
   LineString splitAtAntiMeridian(bool *crossed = nullptr) const;
+
+  /* Returns a list of lines split at the anti-meridian if it crosses. List size is > 1 if crossed. */
+  const QVector<LineString> splitAtAntiMeridianList() const;
 
   /* Normalize all positions to -180 < lonx < 180 and -90 < laty < 90 and return reference */
   atools::geo::LineString& normalize();

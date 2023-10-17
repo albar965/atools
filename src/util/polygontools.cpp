@@ -26,15 +26,25 @@
 namespace atools {
 namespace util {
 
-PolygonLineDistance::PolygonLineDistance(const QLineF& lineParam, double lengthParam, double angleParam, int indexFromParam,
-                                         int indexToParam)
-  : length(lengthParam), angle(angleParam), indexFrom(indexFromParam), indexTo(indexToParam), line(lineParam)
+bool PolygonLineDistance::hasSameAngle(const PolygonLineDistance& other, double maxAngle, Direction& directionParam) const
 {
-}
+  // Clockwise is positive and counter-clockwise is negative
+  double angleDiff = atools::geo::angleAbsDiffSign(angle, other.angle);
 
-bool PolygonLineDistance::hasSameAngle(const PolygonLineDistance& other, double maxAngle) const
-{
-  return atools::geo::angleAbsDiff(angle, other.angle) < maxAngle;
+  if(std::abs(angleDiff) < maxAngle)
+  {
+    if(angleDiff > 1.)
+      directionParam = DIR_LEFT;
+    else if(angleDiff < -1.)
+      directionParam = DIR_RIGHT;
+    return true;
+  }
+  else
+  {
+    // Zig-zag - no clear direction
+    directionParam = DIR_NONE;
+    return false;
+  }
 }
 
 // Find point along one edge of bounding box.
@@ -111,19 +121,14 @@ bool PolygonLineDistance::isLineInsideRect(const QLineF& line, const QRectF& rec
 }
 
 PolygonLineDistances PolygonLineDistance::createPolyLines(const QVector<QLineF>& lines, const QRectF& screenRect, int size,
-                                                          bool checkIntersect, double *anglesStdDev)
+                                                          bool checkIntersect)
 {
   // Collect relative angles for later calculation of standard deviation
-  QVector<double> angles;
   PolygonLineDistances distLines;
   for(int i = 0; i < size; i++)
   {
     const QLineF& line = lines.at(i);
     double angle = atools::geo::angleFromQt(line.angle());
-
-    if(anglesStdDev != nullptr && !distLines.isEmpty())
-      // Calculate relative angle
-      angles.append(atools::geo::angleAbsDiff(angle, distLines.constLast().angle));
 
     if(checkIntersect ? isLineIntersectingRect(line, screenRect) : isLineInsideRect(line, screenRect))
       // Either fully visible or overlapping - append distance
@@ -133,26 +138,10 @@ PolygonLineDistances PolygonLineDistance::createPolyLines(const QVector<QLineF>&
       distLines.append(PolygonLineDistance(line, 0.f, angle, -1, -1));
   }
 
-  if(anglesStdDev != nullptr)
-  {
-    *anglesStdDev = 0.;
-
-    // Sum all values
-    double sum = std::accumulate(angles.constBegin(), angles.constEnd(), 0.);
-
-    // Average
-    double avg = sum / angles.size();
-
-    // Calculate standard deviation
-    for(double angle : angles)
-      *anglesStdDev += (angle - avg) * (angle - avg);
-  }
-
   return distLines;
 }
 
-PolygonLineDistances PolygonLineDistance::getLongPolygonLines(const QPolygonF& polygon, const QRectF& screenRect, int limit, float maxAngle,
-                                                              bool *circle)
+PolygonLineDistances PolygonLineDistance::getLongPolygonLines(const QPolygonF& polygon, const QRectF& screenRect, int limit, float maxAngle)
 {
   PolygonLineDistances distLines;
   int size = polygon.size();
@@ -169,16 +158,11 @@ PolygonLineDistances PolygonLineDistance::getLongPolygonLines(const QPolygonF& p
   for(int i = 0; i < size; i++)
     lines.append(QLineF(polygon.at(atools::wrapIndex(i, size)), polygon.at(atools::wrapIndex(i + 1, size))));
 
-  double anglesStdDev = 0.;
   // Collect lines fully visible
-  distLines = createPolyLines(lines, screenRect, size, false /* checkIntersect */, circle != nullptr ? &anglesStdDev : nullptr);
+  distLines = createPolyLines(lines, screenRect, size, false /* checkIntersect */);
   if(distLines.isEmpty())
     // Nothing found - collect lines touching screen rectangle
-    distLines = createPolyLines(lines, screenRect, size, true /* checkIntersect */, circle != nullptr ? &anglesStdDev : nullptr);
-
-  if(circle != nullptr)
-    // Low standard deviation means circular polygon where all segments have the same relative angle
-    *circle = anglesStdDev > 0. && anglesStdDev < 100.;
+    distLines = createPolyLines(lines, screenRect, size, true /* checkIntersect */);
 
   if(!distLines.isEmpty())
   {
@@ -212,12 +196,22 @@ PolygonLineDistances PolygonLineDistance::getLongPolygonLines(const QPolygonF& p
 
           PolygonLineDistance& lastLineDist = consecutiveLines.last();
 
-          if(curLineDist.hasSameAngle(lastLineDist, maxAngle))
+          Direction direction = DIR_NONE;
+          if(curLineDist.hasSameAngle(lastLineDist, maxAngle, direction))
           {
             // Same angle - adjust index, sum up length and adapt points of last
+            // curLineDist is skipped and merged into lastLineDist
             lastLineDist.indexTo = i + 1;
             lastLineDist.length += curLineDist.length;
             lastLineDist.line.setP2(curLineDist.line.p2());
+            lastLineDist.angle = atools::geo::angleFromQt(lastLineDist.line.angle());
+
+            if(lastLineDist.direction == DIR_UNKNOWN)
+              // First entry - update, will be either left or right
+              lastLineDist.direction = direction;
+            else if(lastLineDist.direction != DIR_NONE && lastLineDist.direction != direction)
+              // Set to zig-zag since direction changes
+              lastLineDist.direction = DIR_NONE;
           }
           else
             // Different angle
@@ -226,8 +220,8 @@ PolygonLineDistances PolygonLineDistance::getLongPolygonLines(const QPolygonF& p
 
         // Move over
         distLines = std::move(consecutiveLines);
-      }
-    }
+      } // if(firstIdx != -1)
+    } // if(maxAngle > 0.)
 
     // Sort by length or from index if length is equal
     std::sort(distLines.begin(), distLines.end(), [](const PolygonLineDistance& ld1, const PolygonLineDistance& ld2)->bool {
@@ -237,7 +231,7 @@ PolygonLineDistances PolygonLineDistance::getLongPolygonLines(const QPolygonF& p
     // Prune if requested
     if(distLines.size() > limit)
       distLines.erase(std::next(distLines.begin(), limit), distLines.end());
-  }
+  } // if(!distLines.isEmpty())
 
   return distLines;
 }

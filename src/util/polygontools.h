@@ -55,10 +55,8 @@ public:
   /* Factory method to create a list of visible polygon segments ordered by length descending.
    * screenRect: Tries to ensure full visibility. Otherwise tries to find overlapping polygons.
    * limit: returns only the longest number of polygons.
-   * maxAngle: Maximum angle difference for combining segments.
-   * circle Function checks if this is a circular polygon by looking at the standard deviation of the relative angles. Omitted it nullptr.*/
-  static PolygonLineDistances getLongPolygonLines(const QPolygonF& polygon, const QRectF& screenRect, int limit, float maxAngle,
-                                                  bool *circle = nullptr);
+   * maxAngle: Maximum angle difference for combining segments.*/
+  static PolygonLineDistances getLongPolygonLines(const QPolygonF& polygon, const QRectF& screenRect, int limit, float maxAngle);
 
   /* Length of this line segment or line segments in pixel. */
   float getLength() const
@@ -102,6 +100,20 @@ public:
     return line.center();
   }
 
+  /* Line direction for a collapsed list of segments. */
+  enum Direction
+  {
+    DIR_UNKNOWN, /* Uninitialized */
+    DIR_NONE, /* Mixed left/right turn directions */
+    DIR_RIGHT, /* All turning right in line order */
+    DIR_LEFT /* All turning left in line order */
+  };
+
+  Direction getDirection() const
+  {
+    return direction;
+  }
+
 private:
   /* true if line is fully inside the rectangle */
   static bool isLineInsideRect(const QLineF& line, const QRectF& rect);
@@ -110,10 +122,12 @@ private:
   static bool isLineIntersectingRect(const QLineF& line, const QRectF& rect);
 
   /* Create a list of polygon lines without combining them. Not visible lines are invalid */
-  static PolygonLineDistances createPolyLines(const QVector<QLineF>& lines, const QRectF& screenRect, int size, bool checkIntersect,
-                                              double *anglesStdDev);
+  static PolygonLineDistances createPolyLines(const QVector<QLineF>& lines, const QRectF& screenRect, int size, bool checkIntersect);
 
-  PolygonLineDistance(const QLineF& line, double distanceParam, double angleParam, int indexFromParam, int indexToParam);
+  PolygonLineDistance(const QLineF& lineParam, double lengthParam, double angleParam, int indexFromParam, int indexToParam)
+    : length(lengthParam), angle(angleParam), indexFrom(indexFromParam), indexTo(indexToParam), line(lineParam), direction(DIR_UNKNOWN)
+  {
+  }
 
   PolygonLineDistance()
     : length(0.)
@@ -121,12 +135,13 @@ private:
   }
 
   /* Check if this line has the same orientation up to maxAngle */
-  bool hasSameAngle(const PolygonLineDistance& other, double maxAngle) const;
+  bool hasSameAngle(const PolygonLineDistance& other, double maxAngle, Direction& directionParam) const;
 
   double length, /* Distance in pixel */
          angle; /* Line angle - not Qt angle */
   int indexFrom, indexTo; /* Index of first and last point in segment i -> i+1 */
   QLineF line;
+  Direction direction;
 };
 
 } // namespace util

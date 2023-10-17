@@ -308,15 +308,18 @@ LineString LineString::splitAtAntiMeridian(bool *crossed) const
   if(crossed != nullptr)
     *crossed = false;
 
-  LineString split;
+  LineString linestring;
 
-  if(size() > 1)
+  int correctedSize = size();
+  if(isClosed())
+    correctedSize--;
+
+  if(correctedSize > 1)
   {
-    for(int i = 0; i < size() - 1; i++)
+    for(int i = 0; i < correctedSize; i++)
     {
-      Line line(at(i), at(i + 1));
-
-      QList<Line> splitLines = line.splitAtAntiMeridian();
+      QList<Line> splitLines =
+        Line(at(atools::wrapIndex(i, correctedSize)), at(atools::wrapIndex(i + 1, correctedSize))).splitAtAntiMeridian();
       if(splitLines.size() == 2)
       {
         // Crossing confirmed
@@ -324,20 +327,58 @@ LineString LineString::splitAtAntiMeridian(bool *crossed) const
           *crossed = true;
 
         // Add split line segments
+        linestring.append(splitLines.at(0).getPos1());
+        linestring.append(splitLines.at(0).getPos2());
+        linestring.append(splitLines.at(1).getPos1());
+      }
+      else if(!splitLines.isEmpty())
+        linestring.append(splitLines.constFirst().getPos1());
+    }
+
+    linestring.append(constLast());
+  }
+  else if(correctedSize == 1)
+    linestring.append(constFirst());
+
+  return linestring;
+}
+
+const QVector<LineString> LineString::splitAtAntiMeridianList() const
+{
+  QVector<LineString> splits;
+  int correctedSize = size();
+  if(isClosed())
+    correctedSize--;
+
+  if(correctedSize > 1)
+  {
+    LineString split;
+    for(int i = 0; i < correctedSize; i++)
+    {
+      QList<Line> splitLines =
+        Line(at(atools::wrapIndex(i, correctedSize)), at(atools::wrapIndex(i + 1, correctedSize))).splitAtAntiMeridian();
+      if(splitLines.size() == 2)
+      {
+        // Add split line segments
         split.append(splitLines.at(0).getPos1());
-        split.append(splitLines.at(0).getPos2());
-        split.append(splitLines.at(1).getPos1());
+        split.append(splitLines.at(0).getPos2()); // On anti-meridian
+
+        // Add segment and start a new one
+        splits.append(split);
+        split.clear();
+
+        split.append(splitLines.at(1).getPos1()); // On anti-meridian
       }
       else if(!splitLines.isEmpty())
         split.append(splitLines.constFirst().getPos1());
     }
-
-    split.append(constLast());
+    if(!splits.isEmpty())
+      splits.first().append(split);
+    else
+      splits.append(split);
   }
-  else if(size() == 1)
-    split.append(constFirst());
 
-  return split;
+  return splits;
 }
 
 LineString& LineString::normalize()
