@@ -329,16 +329,22 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
         if(!bglFile.getAirports().isEmpty())
         {
           QStringList apIcaos;
+#ifdef DEBUG_INFORMATION
+          for(const atools::fs::bgl::Airport *ap : bglFile.getAirports())
+            apIcaos.append(ap->getIdent());
+#else
           for(const atools::fs::bgl::Airport *ap : bglFile.getAirports())
           {
-            // Truncate at 10
-            if(apIcaos.size() < 10)
+            // Truncate at 20
+            if(apIcaos.size() < 20)
               apIcaos.append(ap->getIdent());
             else
               break;
           }
-          if(bglFile.getAirports().size() > 10)
+          if(bglFile.getAirports().size() > 20)
             apIcaos.append("...");
+#endif
+
           qDebug() << "Found" << bglFile.getAirports().size() << "airports. idents:" << apIcaos.join(",");
         }
       }
