@@ -250,7 +250,6 @@ HEADERS += \
   src/util/flags.h \
   src/util/heap.h \
   src/util/httpdownloader.h \
-  src/util/polygontools.h \
   src/util/properties.h \
   src/util/props.h \
   src/util/simplecrypt.h \
@@ -312,7 +311,6 @@ SOURCES += \
   src/util/flags.cpp \
   src/util/heap.cpp \
   src/util/httpdownloader.cpp \
-  src/util/polygontools.cpp \
   src/util/properties.cpp \
   src/util/props.cpp \
   src/util/simplecrypt.cpp \
@@ -440,6 +438,7 @@ HEADERS += \
   src/gui/widgetutil.h \
   src/util/htmlbuilder.h \
   src/util/paintercontextsaver.h \
+  src/util/polygontools.h \
   src/util/roundedpolygon.h
 
 SOURCES += \
@@ -469,6 +468,7 @@ SOURCES += \
   src/gui/widgetutil.cpp \
   src/util/htmlbuilder.cpp \
   src/util/paintercontextsaver.cpp \
+  src/util/polygontools.cpp \
   src/util/roundedpolygon.cpp
 } # ATOOLS_NO_GUI
 
