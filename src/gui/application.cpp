@@ -17,6 +17,8 @@
 
 #include "gui/application.h"
 #include "atools.h"
+#include "io/fileroller.h"
+#include "zip/zipwriter.h"
 
 #include <cstdlib>
 #include <QDebug>
@@ -31,7 +33,11 @@ namespace gui {
 
 QHash<QString, QStringList> Application::reportFiles;
 QStringList Application::emailAddresses;
+QString Application::contactUrl;
 QSet<QObject *> Application::tooltipExceptions;
+
+QString Application::lockFile;
+bool Application::safeMode = false;
 
 bool Application::showExceptionDialog = true;
 bool Application::restartProcess = false;
@@ -59,6 +65,86 @@ Application::~Application()
 Application *Application::applicationInstance()
 {
   return dynamic_cast<Application *>(QCoreApplication::instance());
+}
+
+void Application::recordStart(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile, const QStringList& filenames)
+{
+  qDebug() << Q_FUNC_INFO << "Lock file" << lockFileParam;
+
+  // Check if lock file exists - no for last clean exit and yes for crash
+  int result = QMessageBox::No;
+  if(QFile::exists(lockFileParam))
+  {
+    qWarning() << Q_FUNC_INFO << "Found previous crash";
+
+    // Build a report with all relevant files in a Zip archive
+    qWarning() << Q_FUNC_INFO << "Creating crash report" << crashReportFile << filenames;
+    buildCrashReport(crashReportFile, filenames);
+
+    QFileInfo crashReportFileinfo(crashReportFile);
+    QUrl crashReportUrl = QUrl::fromLocalFile(crashReportFileinfo.absoluteFilePath());
+
+    QString message = tr("<p style=\"white-space:pre\"><b>%1 did not exit cleanly the last time.</b></p>"
+                           "<p style=\"white-space:pre\">This was most likely caused by a crash.</p>"
+                             "<p style=\"white-space:pre\">A crash report was generated and saved with all related files in a Zip archive.</p>"
+                               "<p style=\"white-space:pre\"><a href=\"%2\"><b>Click here to open the crash report \"%3\"</b></a></p>"
+                                 "<p style=\"white-space:pre\">You might want to send this file to the author to investigate the crash.</p>"
+                                   "<p style=\"white-space:pre\"><a href=\"%4\"><b>Click here for contact information</b></a></p>"
+                                     "<hr/>"
+                                     "<p><b>Start in safe mode now which means to skip loading of all default files like "
+                                       "flight plans and other settings now which may have caused the previous crash?</b></p>").
+                      arg(applicationName()).arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).arg(contactUrl);
+
+    result = QMessageBox::critical(parent, applicationName(), message, QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
+  }
+
+  // Remember lock file and write PID into it (not used yet)
+  lockFile = lockFileParam;
+  atools::strToFile(lockFile, QString::number(applicationPid()));
+
+  // Switch to safe mode to avoid loading any files if user selected this
+  safeMode = result == QMessageBox::Yes;
+
+  if(safeMode)
+    qWarning() << Q_FUNC_INFO << "Starting safe mode";
+}
+
+void Application::recordExit()
+{
+  QFile::remove(lockFile);
+  lockFile.clear();
+}
+
+void Application::buildCrashReport(const QString& crashReportFile, const QStringList& filenames)
+{
+  // Create path if missing
+  QDir().mkpath(QFileInfo(crashReportFile).absolutePath());
+
+  // Roll files over and keep three copies: little_navmap_crashreport_1.zip little_navmap_crashreport_2.zip little_navmap_crashreport.zip
+  // Keep zip extension
+  atools::io::FileRoller(3, "${base}_${num}.${ext}", false /* keepOriginalFile */).rollFile(crashReportFile);
+
+  zip::ZipWriter zipWriter(crashReportFile);
+  zipWriter.setCompressionPolicy(zip::ZipWriter::AlwaysCompress);
+  zipWriter.setCreationPermissions(QFile::ReadOwner | QFile::ReadGroup | QFile::ReadOther | QFile::ReadUser |
+                                   QFile::WriteOwner | QFile::WriteGroup | QFile::WriteOther | QFile::WriteUser);
+
+  // Add files to zip if they exist - ignore original path
+  for(const QString& str : filenames)
+  {
+    QFile file(str);
+    if(atools::checkFile(Q_FUNC_INFO, file))
+    {
+      // Get plain name from file - QFile returns full path
+      zipWriter.addFile(QFileInfo(file.fileName()).fileName(), &file);
+      if(zipWriter.status() != zip::ZipWriter::NoError)
+        qWarning() << Q_FUNC_INFO << "Error adding" << file << "to" << crashReportFile << "status" << zipWriter.status();
+    }
+  }
+
+  zipWriter.close();
+  if(zipWriter.status() != zip::ZipWriter::NoError)
+    qWarning() << Q_FUNC_INFO << "Error closing" << crashReportFile << "status" << zipWriter.status();
 }
 
 bool Application::notify(QObject *receiver, QEvent *event)
@@ -166,11 +252,8 @@ void Application::addReportPath(const QString& header, const QStringList& paths)
 
 QString Application::getContactHtml()
 {
-  QString contactStr(tr("<b>Contact:</b><br/>"));
-
-  contactStr.append(tr("<a href=\"https://www.littlenavmap.org/contact.html\">"
-                         "Little Navmap - Contact and Support</a>"));
-  return contactStr;
+  return tr("<b>Contact:</b><br/>"
+            "<a href=\"%1\">%2 - Contact and Support</a>").arg(contactUrl).arg(applicationName());
 }
 
 QString Application::getEmailHtml()
@@ -178,7 +261,7 @@ QString Application::getEmailHtml()
   QString mailStr(tr("<b>Contact:</b><br/>"));
 
   QStringList emails;
-  for(QString mail : emailAddresses)
+  for(const QString& mail : qAsConst(emailAddresses))
     emails.append(QString("<a href=\"mailto:%1\">%1</a>").arg(mail));
   mailStr.append(emails.join(" or "));
   return mailStr;
@@ -198,7 +281,7 @@ QString Application::getReportPathHtml()
   std::sort(keys.begin(), keys.end());
 
   QString fileStr;
-  for(QString header : qAsConst(keys))
+  for(const QString& header : qAsConst(keys))
   {
     fileStr.append(tr("<b>%1</b><br/>").arg(header));
     const QStringList paths = reportFiles.value(header);

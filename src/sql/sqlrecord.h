@@ -89,6 +89,16 @@ public:
     return value(name).toString();
   }
 
+  QChar valueChar(int i) const
+  {
+    return value(i).toChar();
+  }
+
+  QChar valueChar(const QString& name) const
+  {
+    return value(name).toChar();
+  }
+
   QDateTime valueDateTime(int i) const;
 
   QDateTime valueDateTime(const QString& name) const;

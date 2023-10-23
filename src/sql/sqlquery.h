@@ -84,6 +84,11 @@ public:
     return value(name).toString();
   }
 
+  QChar valueChar(const QString& name) const
+  {
+    return value(name).toChar();
+  }
+
   int valueInt(int i) const
   {
     return value(i).toInt();
@@ -143,6 +148,11 @@ public:
   QString valueStr(const QString& name, const QString& defaultValue) const
   {
     return hasField(name) ? valueStr(name) : defaultValue;
+  }
+
+  QChar valueChar(const QString& name, const QChar& defaultValue) const
+  {
+    return hasField(name) ? valueChar(name) : defaultValue;
   }
 
   int valueInt(const QString& name, int defaultValue) const

@@ -46,6 +46,23 @@ public:
   /* Instance of this or null if not applicable */
   static atools::gui::Application *applicationInstance();
 
+  /* Creates a lock file and shows a warning dialog if this is already present from a former crash.
+   * Sets safe mode if user chooses to skip file loading.
+   * Always creates a crash report in case of previous unsafe exit. */
+  static void recordStart(QWidget* parent, const QString& lockFileParam, const QString& crashReportFile, const QStringList& filenames);
+
+  /* Removes lock file */
+  static void recordExit();
+
+  /* Record files and pack them into a zip for a crash report */
+  static void buildCrashReport(const QString& crashReportFile, const QStringList& filenames);
+
+  /* User decided to skip loading of files due to earlier crash */
+  static bool isSafeMode()
+  {
+    return safeMode;
+  }
+
   /*
    * Shows an error dialog with the exception message and after that exits the application with code 1.
    *
@@ -83,6 +100,11 @@ public:
   static void setEmailAddresses(const QStringList& value)
   {
     emailAddresses = value;
+  }
+
+  static void setContactUrl(const QString& value)
+  {
+    contactUrl = value;
   }
 
   /* Process twice and wait 10 ms inbetween */
@@ -133,6 +155,10 @@ private:
   static QSet<QObject *> tooltipExceptions;
 
   static QStringList emailAddresses;
+  static QString contactUrl;
+
+  static QString lockFile;
+  static bool safeMode;
 
   static bool showExceptionDialog, restartProcess, tooltipsDisabled;
 

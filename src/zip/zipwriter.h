@@ -46,8 +46,7 @@ class ZipWriterPrivate;
 class ZipWriter
 {
 public:
-  explicit ZipWriter(const QString& fileName, QIODevice::OpenMode mode =
-                       (QIODevice::WriteOnly | QIODevice::Truncate));
+  explicit ZipWriter(const QString& fileName, QIODevice::OpenMode mode = (QIODevice::WriteOnly | QIODevice::Truncate));
 
   explicit ZipWriter(QIODevice *device);
   ~ZipWriter();

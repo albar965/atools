@@ -575,7 +575,6 @@ void strToFile(const QString& filename, const QString& text)
     QTextStream stream(&file);
     stream << text;
   }
-
 }
 
 QString homeDir()
