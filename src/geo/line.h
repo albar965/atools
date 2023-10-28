@@ -35,16 +35,46 @@ class LineString;
 class Line
 {
 public:
-  Line();
-  Line(const atools::geo::Line& other);
-  Line(const atools::geo::Pos& p1, const atools::geo::Pos& p2);
-  Line(const atools::geo::Pos& pos, float distanceMeter, float course);
+  Line()
+  {
+
+  }
+
+  Line(const atools::geo::Line& other)
+  {
+    this->operator=(other);
+
+  }
+
+  Line(const atools::geo::Pos& p1, const atools::geo::Pos& p2)
+  {
+    pos1 = p1;
+    pos2 = p2;
+  }
+
+  Line(const atools::geo::Pos& pos, float distanceMeter, float course)
+  {
+    pos1 = pos;
+    pos2 = pos1.endpoint(distanceMeter, course);
+  }
 
   /* Create a line with length 0 */
-  explicit Line(const atools::geo::Pos& p);
+  explicit Line(const atools::geo::Pos& p)
+  {
+    pos1 = pos2 = p;
+  }
 
-  explicit Line(float longitudeX1, float latitudeY1, float longitudeX2, float latitudeY2);
-  explicit Line(double longitudeX1, double latitudeY1, double longitudeX2, double latitudeY2);
+  explicit Line(float longitudeX1, float latitudeY1, float longitudeX2, float latitudeY2)
+    : pos1(longitudeX1, latitudeY1), pos2(longitudeX2, latitudeY2)
+  {
+
+  }
+
+  explicit Line(double longitudeX1, double latitudeY1, double longitudeX2, double latitudeY2)
+    : pos1(longitudeX1, latitudeY1), pos2(longitudeX2, latitudeY2)
+  {
+
+  }
 
   atools::geo::Line& operator=(const atools::geo::Line& other)
   {
@@ -54,7 +84,10 @@ public:
   }
 
   /* Does not compare altitude */
-  bool operator==(const atools::geo::Line& other) const;
+  bool operator==(const atools::geo::Line& other) const
+  {
+    return pos1 == other.pos1 && pos2 == other.pos2;
+  }
 
   /* Does not compare altitude */
   bool operator!=(const atools::geo::Line& other) const
@@ -63,37 +96,69 @@ public:
   }
 
   /* Distance to other point in simple units. Uses manhattan distance in degrees. */
-  float lengthSimple() const;
+  float lengthSimple() const
+  {
+    return pos1.distanceSimpleTo(pos2);
+  }
 
   /* Distance to other point for great circle route */
-  float lengthMeter() const;
+  float lengthMeter() const
+  {
+    return pos1.distanceMeterTo(pos2);
+  }
+
+  double lengthMeterDouble() const
+  {
+    return pos1.distanceMeterToDouble(pos2);
+  }
 
   /* Calculate status, cross track distance and more to this line. */
-  void distanceMeterToLine(const atools::geo::Pos& pos, atools::geo::LineDistance& result) const;
+  void distanceMeterToLine(const atools::geo::Pos& pos, atools::geo::LineDistance& result) const
+  {
+    pos.distanceMeterToLine(pos1, pos2, result);
+  }
 
   /* Angle of line (initial course) */
-  float angleDeg() const;
+  float angleDeg() const
+  {
+    return pos1.angleDegTo(pos2);
+  }
 
   /* Distance to other point for rhumb line */
-  float distanceMeterRhumb() const;
+  float distanceMeterRhumb() const
+  {
+    return pos1.distanceMeterToRhumb(pos2);
+  }
 
   /* Angleto other point using a rhumb line */
-  float angleDegRhumb() const;
+  float angleDegRhumb() const
+  {
+    return pos1.angleDegToRhumb(pos2);
+  }
 
   /* Find point between start and end on GC route if distance between points is already known.
    *  fraction is 0 <= fraction <= 1 where 0 equals this and 1 equal other pos */
-  atools::geo::Pos interpolate(float lengthMeter, float fraction) const;
+  atools::geo::Pos interpolate(float distanceMeter, float fraction) const
+  {
+    return pos1.interpolate(pos2, distanceMeter, fraction);
+  }
 
   /* Find point between start and end on GC route if distance between points is not known. 0 < fraction <= 1.*/
-  atools::geo::Pos interpolate(float fraction) const;
+  atools::geo::Pos interpolate(float fraction) const
+  {
+    return pos1.interpolate(pos2, fraction);
+  }
 
   /* Returns a list of points which includes pos1 and not pos2. */
-  void interpolatePoints(float distanceMeter, int numPoints, atools::geo::LineString& positions) const;
-  void interpolatePointsRhumb(float distanceMeter, int numPoints, atools::geo::LineString& positions) const;
+  void interpolatePoints(float distanceMeter, int numPoints, atools::geo::LineString& positions) const
+  {
+    pos1.interpolatePoints(pos2, distanceMeter, numPoints, positions);
+  }
 
-  /* Find point between start and end on rhumb line */
-  atools::geo::Pos interpolateRhumb(float lengthMeter, float fraction) const;
-  atools::geo::Pos interpolateRhumb(float fraction) const;
+  void interpolatePointsRhumb(float distanceMeter, int numPoints, atools::geo::LineString& positions) const
+  {
+    pos1.interpolatePointsRhumb(pos2, distanceMeter, numPoints, positions);
+  }
 
   /* Find the intersection of the GC line with the circle - numerical method.
    * Will find the nearest intersection point. */
@@ -182,6 +247,17 @@ public:
 
   /* Return a normalized copy of this */
   atools::geo::Line normalized() const;
+
+  /* Find point between start and end on rhumb line */
+  atools::geo::Pos interpolateRhumb(float distanceMeter, float fraction) const
+  {
+    return pos1.interpolateRhumb(pos2, distanceMeter, fraction);
+  }
+
+  atools::geo::Pos interpolateRhumb(float fraction) const
+  {
+    return pos1.interpolateRhumb(pos2, fraction);
+  }
 
 private:
   friend QDataStream& operator<<(QDataStream& out, const atools::geo::Line& obj);

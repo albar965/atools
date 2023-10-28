@@ -18,7 +18,6 @@
 #include "geo/spatialindex.h"
 #include "geo/nanoflann.h"
 #include "geo/pos.h"
-#include "geo/calculations.h"
 
 using namespace std;
 using namespace nanoflann;

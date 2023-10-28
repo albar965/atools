@@ -123,8 +123,11 @@ public:
   void removeDuplicates(float epsilon);
   void removeDuplicates();
 
-  /* Calculate status, cross track distance and more to this line. */
-  void distanceMeterToLineString(const atools::geo::Pos& pos, atools::geo::LineDistance& result, int *index = nullptr) const;
+  /* Calculate status, cross track distance and more to this line.
+   * Index is for Line(at(i), at(i + 1)) */
+  void distanceMeterToLineString(const atools::geo::Pos& pos, atools::geo::LineDistance& result,
+                                 atools::geo::LineDistance *closestLineResult = nullptr, int *index = nullptr,
+                                 const Rect *screenRect = nullptr) const;
 
   /* Line with first and last point */
   atools::geo::Line toLine() const;

@@ -147,11 +147,6 @@ Pos::Pos(const QString& str, bool errorOnInvalid)
     throw Exception("Invalid lat/long format \"" + str + "\"");
 }
 
-bool Pos::operator==(const Pos& other) const
-{
-  return atools::almostEqual(lonX, other.lonX) && atools::almostEqual(latY, other.latY);
-}
-
 bool Pos::almostEqual(const Pos& other, float epsilon) const
 {
   return atools::almostEqual(lonX, other.lonX, epsilon) && atools::almostEqual(latY, other.latY, epsilon);
@@ -823,6 +818,17 @@ void Pos::toCartesian(double& x, double& y, double& z) const
   }
   else
     x = y = z = 0.;
+}
+
+double PosD::distanceMeterToDouble(const PosD& otherPos) const
+{
+  if(!isValid() || !otherPos.isValid())
+    return INVALID_VALUE;
+  else if(this->almostEqual(otherPos))
+    return 0.;
+  else
+    return Pos::distanceRad(toRadians(lonX), toRadians(latY),
+                            toRadians(otherPos.lonX), toRadians(otherPos.latY)) * Pos::EARTH_RADIUS_METER_DOUBLE;
 }
 
 bool PosD::almostEqual(const PosD& other, double epsilon) const

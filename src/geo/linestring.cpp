@@ -146,28 +146,36 @@ void LineString::removeDuplicates()
   removeDuplicates(std::numeric_limits<float>::epsilon());
 }
 
-void LineString::distanceMeterToLineString(const Pos& pos, LineDistance& result, int *index) const
+void LineString::distanceMeterToLineString(const Pos& pos, LineDistance& result,
+                                           LineDistance *closestLineResult, int *index, const atools::geo::Rect *screenRect) const
 {
-  LineDistance lineResult, closestLineResult;
+  LineDistance lineResult, closestResult;
   int closestIndex = -1;
 
   lineResult.distance = std::numeric_limits<float>::max();
-  closestLineResult.distance = std::numeric_limits<float>::max();
+  closestResult.distance = std::numeric_limits<float>::max();
 
   for(int i = 0; i < size() - 1; i++)
   {
-    pos.distanceMeterToLine(at(i), at(i + 1), lineResult);
-    if(lineResult.status != INVALID &&
-       std::abs(lineResult.distance) < std::abs(closestLineResult.distance))
+    Line line(at(i), at(i + 1));
+
+    if(screenRect != nullptr && !line.boundingRect().overlaps(*screenRect))
+      continue;
+
+    pos.distanceMeterToLine(line.getPos1(), line.getPos2(), lineResult);
+    if(lineResult.status != INVALID && std::abs(lineResult.distance) < std::abs(closestResult.distance))
     {
-      closestLineResult = lineResult;
+      closestResult = lineResult;
       closestIndex = i;
     }
   }
 
   if(closestIndex != -1)
   {
-    result = closestLineResult;
+    result = closestResult;
+
+    if(closestLineResult != nullptr)
+      *closestLineResult = closestResult;
 
     for(int i = 0; i < closestIndex; i++)
       result.distanceFrom1 += at(i).distanceMeterTo(at(i + 1));

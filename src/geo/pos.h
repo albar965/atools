@@ -98,7 +98,10 @@ public:
   }
 
   /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
-  bool operator==(const atools::geo::Pos& other) const;
+  bool operator==(const atools::geo::Pos& other) const
+  {
+    return almostEqual(other, std::numeric_limits<double>::epsilon());
+  }
 
   /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
   bool operator!=(const atools::geo::Pos& other) const
@@ -359,8 +362,9 @@ public:
     return meterForDegreeLonx(latY);
   }
 
-private:
   Q_DECL_CONSTEXPR static double EARTH_RADIUS_METER_DOUBLE = 6371. * 1000.;
+
+private:
   // Länge (x),Breite (y)
   float lonX, latY, altitude;
 
@@ -433,6 +437,17 @@ public:
     }
     return *this;
   }
+
+  /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
+  bool operator==(const atools::geo::PosD& other) const;
+
+  /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
+  bool operator!=(const atools::geo::PosD& other) const
+  {
+    return !(*this == other);
+  }
+
+  double distanceMeterToDouble(const PosD& otherPos) const;
 
   /* Compare for equal with accuracy depending on epsilon. Does not compare altitude. */
   bool almostEqual(const atools::geo::PosD& other, double epsilon = DPOS_EPSILON_MIN) const;

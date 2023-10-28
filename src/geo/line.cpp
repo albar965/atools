@@ -17,8 +17,8 @@
 
 #include "geo/line.h"
 
-#include "geo/linestring.h"
 #include "geo/calculations.h"
+#include "geo/rect.h"
 
 namespace atools {
 namespace geo {
@@ -26,111 +26,6 @@ namespace geo {
 uint qHash(const atools::geo::Line& line)
 {
   return qHash(line.getPos1()) ^ qHash(line.getPos2());
-}
-
-Line::Line()
-{
-
-}
-
-Line::Line(const Line& other)
-{
-  this->operator=(other);
-
-}
-
-Line::Line(const Pos& p1, const Pos& p2)
-{
-  pos1 = p1;
-  pos2 = p2;
-}
-
-Line::Line(const Pos& pos, float distanceMeter, float course)
-{
-  pos1 = pos;
-  pos2 = pos1.endpoint(distanceMeter, course);
-}
-
-Line::Line(const Pos& p)
-{
-  pos1 = pos2 = p;
-}
-
-Line::Line(float longitudeX1, float latitudeY1, float longitudeX2, float latitudeY2)
-  : pos1(longitudeX1, latitudeY1), pos2(longitudeX2, latitudeY2)
-{
-
-}
-
-Line::Line(double longitudeX1, double latitudeY1, double longitudeX2, double latitudeY2)
-  : pos1(longitudeX1, latitudeY1), pos2(longitudeX2, latitudeY2)
-{
-
-}
-
-bool Line::operator==(const Line& other) const
-{
-  return pos1 == other.pos1 && pos2 == other.pos2;
-}
-
-float Line::lengthSimple() const
-{
-  return pos1.distanceSimpleTo(pos2);
-}
-
-float Line::lengthMeter() const
-{
-  return pos1.distanceMeterTo(pos2);
-}
-
-void Line::distanceMeterToLine(const Pos& pos, LineDistance& result) const
-{
-  pos.distanceMeterToLine(pos1, pos2, result);
-}
-
-float Line::angleDeg() const
-{
-  return pos1.angleDegTo(pos2);
-}
-
-float Line::distanceMeterRhumb() const
-{
-  return pos1.distanceMeterToRhumb(pos2);
-}
-
-float Line::angleDegRhumb() const
-{
-  return pos1.angleDegToRhumb(pos2);
-}
-
-Pos Line::interpolate(float distanceMeter, float fraction) const
-{
-  return pos1.interpolate(pos2, distanceMeter, fraction);
-}
-
-Pos Line::interpolate(float fraction) const
-{
-  return pos1.interpolate(pos2, fraction);
-}
-
-void Line::interpolatePoints(float distanceMeter, int numPoints, atools::geo::LineString& positions) const
-{
-  pos1.interpolatePoints(pos2, distanceMeter, numPoints, positions);
-}
-
-void Line::interpolatePointsRhumb(float distanceMeter, int numPoints, atools::geo::LineString& positions) const
-{
-  pos1.interpolatePointsRhumb(pos2, distanceMeter, numPoints, positions);
-}
-
-Pos Line::interpolateRhumb(float distanceMeter, float fraction) const
-{
-  return pos1.interpolateRhumb(pos2, distanceMeter, fraction);
-}
-
-Pos Line::interpolateRhumb(float fraction) const
-{
-  return pos1.interpolateRhumb(pos2, fraction);
 }
 
 Pos Line::intersectionWithCircle(const Pos& center, float radiusMeter, float accuracyMeter) const
