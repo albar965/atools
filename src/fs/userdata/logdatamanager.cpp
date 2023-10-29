@@ -17,6 +17,7 @@
 
 #include "fs/userdata/logdatamanager.h"
 
+#include "fs/gpx/gpxio.h"
 #include "sql/sqlutil.h"
 #include "sql/sqlexport.h"
 #include "sql/sqldatabase.h"
@@ -25,9 +26,7 @@
 #include "zip/gzip.h"
 #include "geo/calculations.h"
 #include "exception.h"
-#include "geo/linestring.h"
 #include "sql/sqlcolumn.h"
-#include "fs/pln/flightplanio.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -667,7 +666,7 @@ bool LogdataManager::hasTrackAttached(int id)
   return hasBlob(id, "aircraft_trail");
 }
 
-const LogEntryGeometry *LogdataManager::getGeometry(int id)
+const gpx::GpxData *LogdataManager::getGpxData(int id)
 {
   loadGpx(id);
   return cache.object(id);
@@ -677,16 +676,8 @@ void LogdataManager::loadGpx(int id)
 {
   if(!cache.contains(id))
   {
-    LogEntryGeometry *entry = new LogEntryGeometry;
-
-    // Do not load timestamps
-    atools::fs::pln::FlightplanIO().loadGpxGz(&entry->route, &entry->names, &entry->tracks, nullptr /* timestampsMs */,
-                                              getValue(id, "aircraft_trail").toByteArray());
-    entry->routeRect = entry->route.boundingRect();
-
-    entry->trackRect = atools::geo::Rect();
-    for(const atools::geo::LineString& line : qAsConst(entry->tracks))
-      entry->trackRect.extend(line);
+    gpx::GpxData *entry = new gpx::GpxData;
+    atools::fs::gpx::GpxIO().loadGpxGz(*entry, getValue(id, "aircraft_trail").toByteArray());
     cache.insert(id, entry);
   }
 }

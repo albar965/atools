@@ -130,28 +130,6 @@ public:
   /* MSFS IniBuilds A310 */
   void saveIniBuildsMsfs(const atools::fs::pln::Flightplan& plan, const QString& file);
 
-  /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
-  void saveGpx(const atools::fs::pln::Flightplan& plan, const QString& filename, const QVector<geo::LineString>& tracks,
-               const QVector<QVector<qint64> >& timestampsMs);
-
-  /* Same as above but returns the file in a string */
-  QString saveGpxStr(const atools::fs::pln::Flightplan& plan, const QVector<geo::LineString>& tracks,
-                     const QVector<QVector<qint64> >& timestampsMs);
-
-  /* Same as above but returns the file in a Gzip compressed byte array */
-  QByteArray saveGpxGz(const atools::fs::pln::Flightplan& plan, const QVector<geo::LineString>& tracks,
-                       const QVector<QVector<qint64> >& timestampsMs);
-
-  /* Loads GPX route coordinates and track points into LineStrings.
-   * Reading is limited to files exported by this class.
-   * track, route and routenames can be null and will be ignored then */
-  void loadGpxStr(atools::geo::LineString *route, QStringList *routenames, QVector<geo::LineString> *tracks,
-                  QVector<QVector<qint64> > *timestampsMs, const QString& string);
-  void loadGpxGz(atools::geo::LineString *route, QStringList *routenames, QVector<geo::LineString> *tracks,
-                 QVector<QVector<qint64> > *timestampsMs, const QByteArray& bytes);
-  void loadGpx(atools::geo::LineString *route, QStringList *routenames, QVector<geo::LineString> *tracks,
-               QVector<QVector<qint64> > *timestampsMs, const QString& filename);
-
   /* Garmin FPL (XML) format for Reality XP GNS XML. */
   void loadGarminFpl(atools::fs::pln::Flightplan& plan, const QString& filename);
   void saveGarminFpl(Flightplan flightplan, const QString& filename, bool saveAsUserWaypoints);
@@ -203,12 +181,8 @@ private:
   void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, int userWpLength);
   void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format, bool iniBuildsFormat);
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
-  void saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer,
-                       const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs);
   void saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj, bool msfs);
   void loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream);
-  void loadGpxInternal(atools::geo::LineString *route, QStringList *routenames, QVector<geo::LineString> *tracks,
-                       QVector<QVector<qint64> > *timestampsMs, util::XmlStream& xmlStream);
   void loadGarminFplInternal(Flightplan& plan, util::XmlStream& xmlStream);
   atools::fs::pln::entry::WaypointType garminToWaypointType(const QString& typeStr) const;
 
@@ -224,11 +198,6 @@ private:
   void writeBinaryString(char *mem, QString str, int length);
 
   QString identOrDegMinFormat(const atools::fs::pln::FlightplanEntry& entry);
-
-  static QString flightplanTypeToString(atools::fs::pln::FlightplanType type);
-  static atools::fs::pln::FlightplanType stringFlightplanType(const QString& str);
-  static QString routeTypeToString(atools::fs::pln::RouteType type);
-  static atools::fs::pln::RouteType stringToRouteType(const QString& str);
 
   RouteType stringToRouteTypeFs9(const QString& str);
   int routeTypeToStringFs9(atools::fs::pln::RouteType type);
@@ -256,7 +225,6 @@ private:
 
   /* Read "Pos" element and attributes from stream in LNM XML format */
   atools::geo::Pos readPosLnm(util::XmlStream& xmlStream);
-  void readPosGpx(geo::Pos& pos, QString& name, QDateTime& timestamp, util::XmlStream& xmlStream);
 
   /* Read waypoint elements and attributes from stream */
   void readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries,

@@ -202,6 +202,8 @@ message(-----------------------------------)
 HEADERS += \
   src/atools.h \
   src/exception.h \
+  src/fs/gpx/gpxio.h \
+  src/fs/gpx/gpxtypes.h \
   src/fs/navdatabaseflags.h \
   src/fs/sc/connecthandler.h \
   src/fs/sc/datareaderthread.h \
@@ -278,6 +280,8 @@ HEADERS += \
 SOURCES += \
   src/atools.cpp \
   src/exception.cpp \
+  src/fs/gpx/gpxio.cpp \
+  src/fs/gpx/gpxtypes.cpp \
   src/fs/navdatabaseflags.cpp \
   src/fs/sc/connecthandler.cpp \
   src/fs/sc/datareaderthread.cpp \

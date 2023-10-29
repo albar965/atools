@@ -488,6 +488,21 @@ public:
     return altitude;
   }
 
+  void setLonX(double value)
+  {
+    lonX = value;
+  }
+
+  void setLatY(double value)
+  {
+    latY = value;
+  }
+
+  void setAltitude(double value)
+  {
+    altitude = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::geo::PosD& record);
   friend QDataStream& operator<<(QDataStream& out, const atools::geo::PosD& obj);

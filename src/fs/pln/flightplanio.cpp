@@ -22,7 +22,6 @@
 #include "geo/calculations.h"
 #include "atools.h"
 #include "fs/util/fsutil.h"
-#include "geo/linestring.h"
 #include "fs/util/coordinates.h"
 #include "fs/pln/flightplan.h"
 #include "util/xmlstream.h"
@@ -40,6 +39,7 @@
 #include <QDir>
 
 using atools::geo::Pos;
+using atools::geo::PosD;
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
 
@@ -935,7 +935,7 @@ void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& fil
 
         if(key == "type")
           // type=IFR
-          plan.flightplanType = stringFlightplanType(value);
+          plan.flightplanType = Flightplan::stringFlightplanType(value);
         else if(key == "cruising_altitude")
           plan.cruiseAltitudeFt = value.toFloat();
         else if(key == "departure_id")
@@ -1038,46 +1038,6 @@ atools::geo::Pos FlightplanIO::readPosLnm(atools::util::XmlStream& xmlStream)
   else
     throw Exception(tr("Invalid position in LNMPLN file \"%1\". Ordinate(s) are not numbers.").
                     arg(xmlStream.getFilename()));
-}
-
-void FlightplanIO::readPosGpx(atools::geo::Pos& pos, QString& name, QDateTime& timestamp, atools::util::XmlStream& xmlStream)
-{
-  bool lonOk, latOk;
-  QXmlStreamReader& reader = xmlStream.getReader();
-  float lon = reader.attributes().value("lon").toFloat(&lonOk);
-  float lat = reader.attributes().value("lat").toFloat(&latOk);
-
-  if(lonOk && latOk)
-  {
-    pos.setLonX(lon);
-    pos.setLatY(lat);
-
-    if(!pos.isValid())
-    {
-      qWarning() << Q_FUNC_INFO << "Invalid position in GPX. Ordinates out of range" << pos.toString();
-      pos = atools::geo::EMPTY_POS;
-    }
-    else if(!pos.isValidRange())
-    {
-      qWarning() << Q_FUNC_INFO << "Invalid position in GPX. Ordinates out of range" << pos.toString();
-      pos = atools::geo::EMPTY_POS;
-    }
-  }
-  else
-    throw Exception(tr("Invalid position in GPX file \"%1\".").arg(xmlStream.getFilename()));
-
-  while(xmlStream.readNextStartElement())
-  {
-    if(reader.name() == "name")
-      name = reader.readElementText();
-    else if(reader.name() == "time")
-      // Reads with or without milliseconds and returns UTC without changed hour number
-      timestamp = QDateTime::fromString(reader.readElementText(), Qt::ISODate);
-    else if(reader.name() == "ele")
-      pos.setAltitude(atools::geo::meterToFeet(reader.readElementText().toFloat()));
-    else
-      xmlStream.skipCurrentElement(false /* warn */);
-  }
 }
 
 void FlightplanIO::insertPropertyIf(atools::fs::pln::Flightplan& plan, const QString& key, const QString& value)
@@ -1189,7 +1149,7 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
         }
 
         if(reader.name() == "FlightplanType")
-          plan.flightplanType = stringFlightplanType(reader.readElementText());
+          plan.flightplanType = Flightplan::stringFlightplanType(reader.readElementText());
         else if(reader.name() == "CruisingAltF")
           plan.cruiseAltitudeFt = reader.readElementText().toFloat(); // Always prefer more accurate value
         else if(reader.name() == "CruisingAlt")
@@ -1400,7 +1360,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       // plan.title = reader.readElementText();
       // else
       if(name == "FPType")
-        plan.flightplanType = stringFlightplanType(reader.readElementText());
+        plan.flightplanType = Flightplan::stringFlightplanType(reader.readElementText());
       else if(name == "CruisingAlt")
         plan.cruiseAltitudeFt = reader.readElementText().toFloat();
       else if(name == "DepartureID")
@@ -1821,7 +1781,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
 
   // Save header and metadata =======================================================
   writer.writeStartElement("Header");
-  writeTextElementIf(writer, "FlightplanType", flightplanTypeToString(plan.flightplanType));
+  writeTextElementIf(writer, "FlightplanType", Flightplan::flightplanTypeToString(plan.flightplanType));
   writeTextElementIf(writer, "CruisingAlt", QString::number(atools::roundToInt(plan.cruiseAltitudeFt)));
   writeTextElementIf(writer, "CruisingAltF", QString::number(plan.cruiseAltitudeFt, 'f', 8));
   writeTextElementIf(writer, "Comment", plan.comment);
@@ -2013,9 +1973,9 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   writer.writeStartElement("FlightPlan.FlightPlan");
 
   writer.writeTextElement("Title", plan.getTitle());
-  writer.writeTextElement("FPType", flightplanTypeToString(plan.flightplanType));
+  writer.writeTextElement("FPType", Flightplan::flightplanTypeToString(plan.flightplanType));
 
-  writer.writeTextElement("RouteType", routeTypeToString(plan.getRouteType()));
+  writer.writeTextElement("RouteType", Flightplan::routeTypeToString(plan.getRouteType()));
 
   writer.writeTextElement("CruisingAlt", QString::number(atools::roundToInt(plan.cruiseAltitudeFt)));
   writer.writeTextElement("DepartureID", plan.departureIdent);
@@ -3178,285 +3138,6 @@ void FlightplanIO::saveIfly(const Flightplan& plan, const QString& filename)
     throw Exception(errorMsg.arg(filename).arg(routeFile.errorString()));
 }
 
-QString FlightplanIO::saveGpxStr(const Flightplan& plan, const QVector<geo::LineString>& tracks,
-                                 const QVector<QVector<qint64> >& timestampsMs)
-{
-  QString gpxString;
-  QXmlStreamWriter writer(&gpxString);
-  saveGpxInternal(plan, writer, tracks, timestampsMs);
-  return gpxString;
-}
-
-QByteArray FlightplanIO::saveGpxGz(const Flightplan& plan, const QVector<geo::LineString>& tracks,
-                                   const QVector<QVector<qint64> >& timestampsMs)
-{
-  QByteArray retval;
-  atools::zip::gzipCompress(saveGpxStr(plan, tracks, timestampsMs).toUtf8(), retval);
-  return retval;
-}
-
-void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QString& filename,
-                           const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs)
-{
-  QFile gpxFile(filename);
-  if(gpxFile.open(QIODevice::WriteOnly | QIODevice::Text))
-  {
-    QXmlStreamWriter writer(&gpxFile);
-    saveGpxInternal(plan, writer, tracks, timestampsMs);
-    gpxFile.close();
-  }
-  else
-    throw Exception(errorMsg.arg(filename).arg(gpxFile.errorString()));
-}
-
-void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer,
-                                   const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs)
-{
-  writer.setCodec("UTF-8");
-  writer.setAutoFormatting(true);
-  writer.setAutoFormattingIndent(2);
-
-  // <?xml version="1.0" encoding="UTF-8"?>
-  writer.writeStartDocument("1.0");
-
-  // <gpx
-  // xmlns="http://www.topografix.com/GPX/1/1"
-  // version="1.1"
-  // creator="Program"
-  // xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
-
-  writer.writeStartElement("gpx");
-
-  writer.writeDefaultNamespace("http://www.topografix.com/GPX/1/1");
-  writer.writeAttribute("version", "1.1");
-  writer.writeAttribute("creator", "Little Navmap");
-  writer.writeNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-  writer.writeAttribute("xsi:schemaLocation", "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
-
-  // writer.writeComment(programFileInfo());
-
-  // <metadata>
-  // <link href="http://www.garmin.com">
-  // <text>Garmin International</text>
-  // </link>
-  // <time>2009-10-17T22:58:43Z</time>
-  // </metadata>
-  writer.writeStartElement("metadata");
-  writer.writeStartElement("link");
-  writer.writeAttribute("href", "https://www.littlenavmap.org");
-  writer.writeTextElement("text", atools::programFileInfo());
-  writer.writeEndElement(); // link
-  writer.writeEndElement(); // metadata
-
-  QString descr;
-
-  if(!plan.isEmpty())
-  {
-    descr = QString("%1 (%2) to %3 (%4) at %5 ft, %6").
-            arg(plan.departNameOrIdent()).arg(plan.departureIdent).
-            arg(plan.destNameOrIdent()).arg(plan.destinationIdent).
-            arg(atools::roundToInt(plan.getCruiseAltitudeFt())).
-            arg(flightplanTypeToString(plan.flightplanType));
-
-    writer.writeStartElement("rte");
-    writer.writeTextElement("name", plan.getTitle() + tr(" Flight Plan"));
-    writer.writeTextElement("desc", descr);
-
-    // Write route ========================================================
-    for(int i = 0; i < plan.size(); i++)
-    {
-      const FlightplanEntry& entry = plan.at(i);
-      // <rtept lat="52.0" lon="13.5">
-      // <ele>33.0</ele>
-      // <time>2011-12-13T23:59:59Z</time>
-      // <name>rtept 1</name>
-      // </rtept>
-
-      if(!entry.getPosition().isValidRange())
-      {
-        qWarning() << Q_FUNC_INFO << "Invalid position" << entry.getPosition();
-        continue;
-      }
-
-      if(i > 0)
-      {
-        // Remove duplicates with same name and almost same position
-        const FlightplanEntry& prev = plan.at(i - 1);
-        if(entry.getIdent() == prev.getIdent() &&
-           entry.getRegion() == prev.getRegion() &&
-           entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
-          continue;
-      }
-
-      writer.writeStartElement("rtept");
-      writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
-      writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
-      writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(entry.getAltitude())));
-
-      writer.writeTextElement("name", entry.getIdent());
-      writer.writeTextElement("desc", entry.getWaypointTypeAsFsxString());
-
-      writer.writeEndElement(); // rtept
-    }
-
-    writer.writeEndElement(); // rte
-  }
-
-  // Write track ========================================================
-  if(!tracks.isEmpty())
-  {
-    writer.writeStartElement("trk");
-
-    if(!plan.isEmpty())
-      writer.writeTextElement("name", QCoreApplication::applicationName() + tr(" Track"));
-
-    for(int segIdx = 0; segIdx < tracks.size(); ++segIdx)
-    {
-      const geo::LineString& track = tracks.at(segIdx);
-      if(track.isEmpty())
-        continue;
-
-      writer.writeStartElement("trkseg");
-
-      for(int ptIdx = 0; ptIdx < track.size(); ++ptIdx)
-      {
-        const Pos& pos = track.at(ptIdx);
-        writer.writeStartElement("trkpt");
-
-        writer.writeAttribute("lon", QString::number(pos.getLonX(), 'f', 6));
-        writer.writeAttribute("lat", QString::number(pos.getLatY(), 'f', 6));
-        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(pos.getAltitude())));
-
-        if(!timestampsMs.isEmpty())
-        {
-          // (UTC/Zulu) in ISO 8601 format: "yyyy-mm-ddThh:mm:ssZ" or "yyyy-MM-ddTHH:mm:ss.zzzZ"
-          // <time>2011-01-16T23:59:01Z</time>
-          // Changes time number to local if Qt::UTC is omitted
-          qint64 timestampMs = timestampsMs.at(segIdx).at(ptIdx);
-          writer.writeTextElement("time", QDateTime::fromMSecsSinceEpoch(timestampMs, Qt::UTC).toString(Qt::ISODateWithMs));
-        }
-        writer.writeEndElement(); // trkpt
-      }
-      writer.writeEndElement(); // trkseg
-    }
-    writer.writeEndElement(); // trk
-  }
-
-  writer.writeEndElement(); // gpx
-  writer.writeEndDocument();
-}
-
-void FlightplanIO::loadGpxStr(atools::geo::LineString *route, QStringList *routenames,
-                              QVector<atools::geo::LineString> *tracks, QVector<QVector<qint64> > *timestampsMs,
-                              const QString& string)
-{
-  if(!string.isEmpty())
-  {
-    atools::util::XmlStream xmlStream(string);
-    loadGpxInternal(route, routenames, tracks, timestampsMs, xmlStream);
-  }
-}
-
-void FlightplanIO::loadGpxGz(atools::geo::LineString *route, QStringList *routenames,
-                             QVector<atools::geo::LineString> *tracks, QVector<QVector<qint64> > *timestampsMs,
-                             const QByteArray& bytes)
-{
-  if(!bytes.isEmpty())
-    loadGpxStr(route, routenames, tracks, timestampsMs, atools::zip::gzipDecompress(bytes));
-}
-
-void FlightplanIO::loadGpx(atools::geo::LineString *route, QStringList *routenames,
-                           QVector<atools::geo::LineString> *tracks, QVector<QVector<qint64> > *timestampsMs,
-                           const QString& filename)
-{
-  QFile gpxFile(filename);
-  if(gpxFile.open(QIODevice::ReadOnly | QIODevice::Text))
-  {
-    atools::util::XmlStream xmlStream(&gpxFile);
-    loadGpxInternal(route, routenames, tracks, timestampsMs, xmlStream);
-    gpxFile.close();
-  }
-  else
-    throw Exception(errorMsg.arg(filename).arg(gpxFile.errorString()));
-}
-
-void FlightplanIO::loadGpxInternal(atools::geo::LineString *route, QStringList *routenames,
-                                   QVector<atools::geo::LineString> *tracks, QVector<QVector<qint64> > *timestampsMs,
-                                   atools::util::XmlStream& xmlStream)
-{
-  QXmlStreamReader& reader = xmlStream.getReader();
-  xmlStream.readUntilElement("gpx");
-  Pos pos;
-  QString name;
-  QDateTime dummy;
-  while(xmlStream.readNextStartElement())
-  {
-    // Read route elements if needed ======================================================
-    if(reader.name() == "rte" && (route != nullptr || routenames != nullptr))
-    {
-      while(xmlStream.readNextStartElement())
-      {
-        if(reader.name() == "rtept")
-        {
-          readPosGpx(pos, name, dummy, xmlStream);
-          if(pos.isValidRange())
-          {
-            if(route != nullptr)
-              route->append(pos);
-            if(routenames != nullptr)
-              routenames->append(name);
-          }
-        }
-        else
-          xmlStream.skipCurrentElement(false /* warn */);
-      }
-    }
-    // Read track elements if needed ======================================================
-    else if(reader.name() == "trk" && (tracks != nullptr || timestampsMs != nullptr))
-    {
-      atools::geo::LineString line;
-      QVector<qint64> times;
-      while(xmlStream.readNextStartElement())
-      {
-        if(reader.name() == "trkseg")
-        {
-          line.clear();
-          times.clear();
-          while(xmlStream.readNextStartElement())
-          {
-            if(reader.name() == "trkpt")
-            {
-              QDateTime datetetime;
-              readPosGpx(pos, name, datetetime, xmlStream);
-              if(pos.isValidRange())
-              {
-                if(tracks != nullptr)
-                  line.append(pos);
-
-                if(timestampsMs != nullptr)
-                  times.append(datetetime.toMSecsSinceEpoch());
-              }
-            }
-            else
-              xmlStream.skipCurrentElement(false /* warn */);
-          }
-
-          if(tracks != nullptr)
-            tracks->append(line);
-
-          if(timestampsMs != nullptr)
-            timestampsMs->append(times);
-        }
-        else
-          xmlStream.skipCurrentElement(false /* warn */);
-      }
-    }
-    else
-      xmlStream.skipCurrentElement(false /* warn */);
-  }
-}
-
 void FlightplanIO::saveIniBuildsMsfs(const atools::fs::pln::Flightplan& plan, const QString& file)
 {
   saveFmsInternal(plan, file, false /* version11Format */, true /* iniBuildsFormat */);
@@ -4084,7 +3765,7 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename)
     stream << "[flightplan]" << endl;
     stream << "title=" << plan.getDepartureIdent() << " to " << plan.getDestinationIdent() << endl;
     stream << "description=" << plan.getDepartureIdent() << ", " << plan.getDestinationIdent() << endl;
-    stream << "type=" << flightplanTypeToString(plan.getFlightplanType()) << endl;
+    stream << "type=" << Flightplan::flightplanTypeToString(plan.getFlightplanType()) << endl;
     stream << "routetype=3" << endl;
 
     // cruising_altitude=29000
@@ -4614,64 +4295,6 @@ atools::fs::pln::entry::WaypointType FlightplanIO::garminToWaypointType(const QS
     return atools::fs::pln::entry::WAYPOINT;
 
   return atools::fs::pln::entry::USER;
-}
-
-QString FlightplanIO::flightplanTypeToString(atools::fs::pln::FlightplanType type)
-{
-  switch(type)
-  {
-    case atools::fs::pln::NO_TYPE:
-      return "NONE";
-
-    case atools::fs::pln::IFR:
-      return "IFR";
-
-    case atools::fs::pln::VFR:
-      return "VFR";
-  }
-  return QString();
-}
-
-FlightplanType FlightplanIO::stringFlightplanType(const QString& str)
-{
-  if(str.compare("IFR", Qt::CaseInsensitive) == 0)
-    return IFR;
-  else if(str.compare("VFR", Qt::CaseInsensitive) == 0)
-    return VFR;
-
-  return NO_TYPE;
-}
-
-QString FlightplanIO::routeTypeToString(RouteType type)
-{
-  switch(type)
-  {
-    case atools::fs::pln::LOW_ALTITUDE:
-      return "LowAlt";
-
-    case atools::fs::pln::HIGH_ALTITUDE:
-      return "HighAlt";
-
-    case atools::fs::pln::VOR:
-      return "VOR";
-
-    case atools::fs::pln::UNKNOWN:
-    case atools::fs::pln::DIRECT:
-      return "Direct"; // Not an actual value in the XML
-  }
-  return QString();
-}
-
-RouteType FlightplanIO::stringToRouteType(const QString& str)
-{
-  if(str == "LowAlt")
-    return LOW_ALTITUDE;
-  else if(str == "HighAlt")
-    return HIGH_ALTITUDE;
-  else if(str == "VOR")
-    return VOR;
-
-  return DIRECT;
 }
 
 RouteType FlightplanIO::stringToRouteTypeFs9(const QString& str)

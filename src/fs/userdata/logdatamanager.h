@@ -19,7 +19,7 @@
 #define ATOOLS_FS_LOGDATAMANAGER_H
 
 #include "sql/datamanagerbase.h"
-#include "geo/linestring.h"
+#include "fs/gpx/gpxtypes.h"
 
 #include <QCache>
 
@@ -35,17 +35,6 @@ class SqlDatabase;
 
 namespace fs {
 namespace userdata {
-
-/* Flight plan geometry, waypoint names and track geometry for a logbook entry */
-struct LogEntryGeometry
-{
-  atools::geo::LineString route;
-  QVector<atools::geo::LineString> tracks;
-
-  /* Flight plan waypoint names. String list has the same size as route */
-  QStringList names;
-  atools::geo::Rect routeRect, trackRect;
-};
 
 /*
  * Contains special functionality around the logbook database.
@@ -75,7 +64,7 @@ public:
 
   /* Get flight plan and track and route points from GPX attachment or database BLOB. Request is cached.
    *  Also includes route waypoint names. */
-  const atools::fs::userdata::LogEntryGeometry *getGeometry(int id);
+  const atools::fs::gpx::GpxData *getGpxData(int id);
 
   /* Clear cache used by getRouteGeometry and getTrackGeometry */
   void clearGeometryCache();
@@ -135,7 +124,7 @@ private:
   void loadGpx(int id);
 
   /* Cache to avoid reading BLOBs */
-  QCache<int, LogEntryGeometry> cache;
+  QCache<int, atools::fs::gpx::GpxData> cache;
 
 };
 

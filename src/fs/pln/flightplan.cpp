@@ -92,6 +92,32 @@ void Flightplan::setDepartureParkingType(QString type)
     departureParkingType = atools::fs::pln::NO_POS;
 }
 
+QString Flightplan::getDescription() const
+{
+  QString text;
+  QString depart, dest;
+  if(departureIdent == departureName || departureName.isEmpty())
+    depart = departureIdent;
+  else
+    depart = QString("%1 (%2)").arg(departureName).arg(departureIdent);
+
+  if(destinationIdent == destinationName || destinationName.isEmpty())
+    dest = destinationIdent;
+  else
+    dest = QString("%1 (%2)").arg(destinationName).arg(destinationIdent);
+
+  text.append(atools::strJoin(QStringList({depart, dest}), " to "));
+
+  if(getCruiseAltitudeFt() > FLIGHTPLAN_ALTITUDE_FT_MIN && getCruiseAltitudeFt() < FLIGHTPLAN_ALTITUDE_FT_MAX)
+    text.append(QString(" at %1 ft").arg(atools::roundToInt(getCruiseAltitudeFt())));
+
+  QString type = getFlightplanTypeStr();
+  if(!type.isEmpty())
+    text.append(QString(", %1").arg(type));
+
+  return text;
+}
+
 QString Flightplan::getDescr() const
 {
   return QString("%1, %2 created by %3 %4").
@@ -334,6 +360,64 @@ QDebug operator<<(QDebug out, const Flightplan& record)
     out << endl << i++ << " " << entry;
   out << "]";
   return out;
+}
+
+QString Flightplan::flightplanTypeToString(atools::fs::pln::FlightplanType type)
+{
+  switch(type)
+  {
+    case atools::fs::pln::NO_TYPE:
+      return "NONE";
+
+    case atools::fs::pln::IFR:
+      return "IFR";
+
+    case atools::fs::pln::VFR:
+      return "VFR";
+  }
+  return QString();
+}
+
+FlightplanType Flightplan::stringFlightplanType(const QString& str)
+{
+  if(str.compare("IFR", Qt::CaseInsensitive) == 0)
+    return IFR;
+  else if(str.compare("VFR", Qt::CaseInsensitive) == 0)
+    return VFR;
+
+  return NO_TYPE;
+}
+
+QString Flightplan::routeTypeToString(RouteType type)
+{
+  switch(type)
+  {
+    case atools::fs::pln::LOW_ALTITUDE:
+      return "LowAlt";
+
+    case atools::fs::pln::HIGH_ALTITUDE:
+      return "HighAlt";
+
+    case atools::fs::pln::VOR:
+      return "VOR";
+
+    case atools::fs::pln::UNKNOWN:
+    case atools::fs::pln::DIRECT:
+      return "Direct"; // Not an actual value in the XML
+  }
+  return QString();
+}
+
+RouteType Flightplan::stringToRouteType(const QString& str)
+{
+  if(str == "LowAlt")
+    return LOW_ALTITUDE;
+  else if(str == "HighAlt")
+    return HIGH_ALTITUDE;
+  else if(str == "VOR")
+    return VOR;
+
+  return DIRECT;
 }
 
 } // namespace pln

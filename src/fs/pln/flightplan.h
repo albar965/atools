@@ -30,6 +30,10 @@ namespace geo {
 class LineString;
 }
 namespace fs {
+
+namespace gpx {
+class GpxIO;
+}
 namespace pln {
 
 class FlightplanIO;
@@ -259,6 +263,10 @@ public:
     return departureIdent + " to " + destinationIdent;
   }
 
+  /* EINN to ENKR at 10000 ft, VFR */
+  QString getDescription() const;
+
+  /* "FROM to TO ... created by ..." */
   QString getDescr() const;
 
   /* true if this was detected and loaded from LNMPLN */
@@ -340,11 +348,17 @@ public:
           }), end());
   }
 
+  static QString flightplanTypeToString(atools::fs::pln::FlightplanType type);
+  static atools::fs::pln::FlightplanType stringFlightplanType(const QString& str);
+  static QString routeTypeToString(atools::fs::pln::RouteType type);
+  static atools::fs::pln::RouteType stringToRouteType(const QString& str);
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
 
   /* Required to fill this structure */
   friend class atools::fs::pln::FlightplanIO;
+  friend class atools::fs::gpx::GpxIO;
 
   const QString& departNameOrIdent() const
   {
