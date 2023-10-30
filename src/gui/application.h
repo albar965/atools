@@ -49,7 +49,8 @@ public:
   /* Creates a lock file and shows a warning dialog if this is already present from a former crash.
    * Sets safe mode if user chooses to skip file loading.
    * Always creates a crash report in case of previous unsafe exit. */
-  static void recordStart(QWidget* parent, const QString& lockFileParam, const QString& crashReportFile, const QStringList& filenames);
+  static void recordStart(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile, const QStringList& filenames,
+                          const QString& helpOnlineUrl, const QString& helpLanguageOnline);
 
   /* Removes lock file */
   static void recordExit();

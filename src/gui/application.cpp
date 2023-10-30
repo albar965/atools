@@ -17,12 +17,12 @@
 
 #include "gui/application.h"
 #include "atools.h"
+#include "gui/messagebox.h"
 #include "io/fileroller.h"
 #include "zip/zipwriter.h"
 
 #include <cstdlib>
 #include <QDebug>
-#include <QMessageBox>
 #include <QUrl>
 #include <QThread>
 #include <QTimer>
@@ -67,7 +67,8 @@ Application *Application::applicationInstance()
   return dynamic_cast<Application *>(QCoreApplication::instance());
 }
 
-void Application::recordStart(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile, const QStringList& filenames)
+void Application::recordStart(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile, const QStringList& filenames,
+                              const QString& helpOnlineUrl, const QString& helpLanguageOnline)
 {
   qDebug() << Q_FUNC_INFO << "Lock file" << lockFileParam;
 
@@ -95,7 +96,16 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
                                        "flight plans and other settings now which may have caused the previous crash?</b></p>").
                       arg(applicationName()).arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).arg(contactUrl);
 
-    result = QMessageBox::critical(parent, applicationName(), message, QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
+    atools::gui::MessageBox box(parent, applicationName(), "CRASH.html");
+    box.setHelpOnlineUrl(helpOnlineUrl);
+    box.setHelpLanguageOnline(helpLanguageOnline);
+
+    box.addRejectButton(QDialogButtonBox::No);
+    box.addAcceptButton(QDialogButtonBox::Yes);
+    box.addButton(QDialogButtonBox::Help);
+    box.setText(message);
+    box.setIcon(QMessageBox::Critical);
+    result = box.exec();
   }
 
   // Remember lock file and write PID into it (not used yet)

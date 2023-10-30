@@ -458,6 +458,7 @@ HEADERS += \
   src/gui/helphandler.h \
   src/gui/itemviewzoomhandler.h \
   src/gui/mapposhistory.h \
+  src/gui/messagebox.h \
   src/gui/palettesettings.h \
   src/gui/signalblocker.h \
   src/gui/sqlquerydialog.h \
@@ -488,6 +489,7 @@ SOURCES += \
   src/gui/helphandler.cpp \
   src/gui/itemviewzoomhandler.cpp \
   src/gui/mapposhistory.cpp \
+  src/gui/messagebox.cpp \
   src/gui/palettesettings.cpp \
   src/gui/signalblocker.cpp \
   src/gui/sqlquerydialog.cpp \
@@ -946,6 +948,7 @@ SOURCES += \
 !isEqual(ATOOLS_NO_GUI, "true") {
 FORMS += \
   src/gui/choicedialog.ui \
+  src/gui/messagebox.ui \
   src/gui/treedialog.ui \
   src/gui/sqlquerydialog.ui
 } # ATOOLS_NO_GUI
