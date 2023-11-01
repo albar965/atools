@@ -61,11 +61,9 @@ bool GpxIO::isGpxFile(const QString& file)
   if(lines.isEmpty())
     throw Exception(tr("Cannot open empty GPX file \"%1\".").arg(file));
 
-  // Detect XML and UTF-8
-  const static QRegularExpression REGEXP("^\\<\\?xml version=.*encoding=\\\"UTF-8\\\"");
-
   // Next or same line with "<gpx"
-  return REGEXP.match(lines.constFirst()).hasMatch() && (lines.at(1).startsWith("<gpx ") || lines.constFirst().contains("<gpx "));
+  return lines.constFirst().startsWith("<?xml", Qt::CaseInsensitive) &&
+         (lines.at(1).startsWith("<gpx ", Qt::CaseInsensitive) || lines.constFirst().contains("<gpx ", Qt::CaseInsensitive));
 }
 
 void GpxIO::readPosGpx(atools::geo::PosD& pos, QString& name, atools::util::XmlStream& xmlStream, QDateTime *timestamp)
