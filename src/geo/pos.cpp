@@ -820,7 +820,7 @@ void Pos::toCartesian(double& x, double& y, double& z) const
     x = y = z = 0.;
 }
 
-double PosD::distanceMeterToDouble(const PosD& otherPos) const
+double PosD::distanceMeterTo(const PosD& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
     return INVALID_VALUE;
@@ -829,6 +829,16 @@ double PosD::distanceMeterToDouble(const PosD& otherPos) const
   else
     return Pos::distanceRad(toRadians(lonX), toRadians(latY),
                             toRadians(otherPos.lonX), toRadians(otherPos.latY)) * Pos::EARTH_RADIUS_METER_DOUBLE;
+}
+
+double PosD::angleDegTo(const PosD& otherPos) const
+{
+  if(!isValid() || !otherPos.isValid())
+    return INVALID_VALUE;
+  else if(*this == otherPos)
+    return INVALID_VALUE;
+
+  return normalizeCourse(toDegree(Pos::courseRad(toRadians(lonX), toRadians(latY), toRadians(otherPos.lonX), toRadians(otherPos.latY))));
 }
 
 bool PosD::almostEqual(const PosD& other, double epsilon) const

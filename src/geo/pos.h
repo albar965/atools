@@ -100,7 +100,7 @@ public:
   /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
   bool operator==(const atools::geo::Pos& other) const
   {
-    return almostEqual(other, std::numeric_limits<double>::epsilon());
+    return almostEqual(other, std::numeric_limits<float>::epsilon());
   }
 
   /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
@@ -439,7 +439,10 @@ public:
   }
 
   /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
-  bool operator==(const atools::geo::PosD& other) const;
+  bool operator==(const atools::geo::PosD& other) const
+  {
+    return almostEqual(other, std::numeric_limits<double>::epsilon());
+  }
 
   /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
   bool operator!=(const atools::geo::PosD& other) const
@@ -447,7 +450,11 @@ public:
     return !(*this == other);
   }
 
-  double distanceMeterToDouble(const PosD& otherPos) const;
+  /* Distance to other point for great circle route */
+  double distanceMeterTo(const PosD& otherPos) const;
+
+  /* Angle to other point (initial course) */
+  double angleDegTo(const atools::geo::PosD& otherPos) const;
 
   /* Compare for equal with accuracy depending on epsilon. Does not compare altitude. */
   bool almostEqual(const atools::geo::PosD& other, double epsilon = DPOS_EPSILON_MIN) const;
