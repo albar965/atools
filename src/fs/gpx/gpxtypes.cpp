@@ -23,9 +23,11 @@ namespace gpx {
 
 void GpxData::clear()
 {
-  tracks.clear();
+  trails.clear();
   flightplan.clearAll();
-  flightplanRect = trackRect = atools::geo::Rect();
+  flightplanRect = trailRect = atools::geo::Rect();
+  minTrailAltitude = std::numeric_limits<float>::max();
+  maxTrailAltitude = std::numeric_limits<float>::min();
 }
 
 } // namespace gpx

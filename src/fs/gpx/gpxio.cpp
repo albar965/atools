@@ -225,21 +225,21 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
   }
 
   // Write track ========================================================
-  if(!gpxData.tracks.isEmpty())
+  if(!gpxData.trails.isEmpty())
   {
     writer.writeStartElement("trk");
 
     if(!gpxData.flightplan.isEmpty())
       writer.writeTextElement("name", QCoreApplication::applicationName() + tr(" - Track"));
 
-    for(const TrackPoints& track : gpxData.tracks)
+    for(const TrailPoints& track : gpxData.trails)
     {
       if(track.isEmpty())
         continue;
 
       writer.writeStartElement("trkseg");
 
-      for(const TrackPoint& pos : track)
+      for(const TrailPoint& pos : track)
       {
         writer.writeStartElement("trkpt");
 
@@ -328,7 +328,7 @@ void GpxIO::loadGpxInternal(atools::fs::gpx::GpxData& gpxData, atools::util::Xml
     // Read track elements if needed ======================================================
     else if(reader.name() == "trk")
     {
-      TrackPoints line;
+      TrailPoints line;
       while(xmlStream.readNextStartElement())
       {
         if(reader.name() == "trkseg")
@@ -342,15 +342,15 @@ void GpxIO::loadGpxInternal(atools::fs::gpx::GpxData& gpxData, atools::util::Xml
               readPosGpx(pos, name, xmlStream, &datetetime);
               if(pos.isValidRange())
               {
-                line.append(atools::fs::gpx::TrackPoint(pos, datetetime.toMSecsSinceEpoch()));
-                gpxData.trackRect.extend(pos.asPos());
+                line.append(atools::fs::gpx::TrailPoint(pos, datetetime.toMSecsSinceEpoch()));
+                gpxData.updateBoundaries(pos.asPos());
               }
             }
             else
               xmlStream.skipCurrentElement(false /* warn */);
           }
 
-          gpxData.tracks.append(line);
+          gpxData.trails.append(line);
         }
         else
           xmlStream.skipCurrentElement(false /* warn */);

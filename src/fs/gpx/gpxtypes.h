@@ -26,9 +26,9 @@ namespace fs {
 
 namespace gpx {
 
-struct TrackPoint
+struct TrailPoint
 {
-  TrackPoint(const atools::geo::PosD& posParam, qint64 timestampParam)
+  TrailPoint(const atools::geo::PosD& posParam, qint64 timestampParam)
     : pos(posParam), timestampMs(timestampParam)
   {
   }
@@ -37,20 +37,28 @@ struct TrackPoint
   qint64 timestampMs;
 };
 
-typedef QVector<TrackPoint> TrackPoints;
-typedef QVector<TrackPoints> Tracks;
+typedef QVector<TrailPoint> TrailPoints;
+typedef QVector<TrailPoints> Trails;
 
-/* Flight plan geometry, waypoint names and track geometry for a logbook entry */
+/* Flight plan geometry, waypoint names and trail geometry for a logbook entry */
 struct GpxData
 {
   /* Saved to one of more <trk> elements */
-  Tracks tracks;
+  Trails trails;
 
   /* Saved to <rte> */
   atools::fs::pln::Flightplan flightplan;
 
   /* Bounding rectangles are filled after loading */
-  atools::geo::Rect flightplanRect, trackRect;
+  atools::geo::Rect flightplanRect, trailRect;
+  float maxTrailAltitude, minTrailAltitude;
+
+  void updateBoundaries(const atools::geo::Pos& pos)
+  {
+    trailRect.extend(pos);
+    minTrailAltitude = std::min(minTrailAltitude, pos.getAltitude());
+    maxTrailAltitude = std::max(maxTrailAltitude, pos.getAltitude());
+  }
 
   void clear();
 
@@ -60,6 +68,6 @@ struct GpxData
 } // namespace fs
 } // namespace atools
 
-Q_DECLARE_TYPEINFO(atools::fs::gpx::TrackPoint, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(atools::fs::gpx::TrailPoint, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_GPXTYPES_H
