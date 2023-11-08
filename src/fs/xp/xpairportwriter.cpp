@@ -482,7 +482,7 @@ void XpAirportWriter::bindPavement(const QStringList& line, const XpWriterContex
   Surface surface = static_cast<Surface>(at(line, p::SURFACE).toInt());
   insertApronQuery->bindValue(":apron_id", ++curApronId);
   insertApronQuery->bindValue(":airport_id", curAirportId);
-  insertApronQuery->bindValue(":is_draw_surface", surface != TRANSPARENT);
+  insertApronQuery->bindValue(":is_draw_surface", 1);
   insertApronQuery->bindValue(":is_draw_detail", 1);
   insertApronQuery->bindValue(":surface", surfaceToDb(surface, &context));
 }
