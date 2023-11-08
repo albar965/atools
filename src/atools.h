@@ -80,6 +80,26 @@ bool contains(const TYPE& str, const std::initializer_list<TYPE>& list)
   return false;
 }
 
+template<typename TYPE>
+bool contains(const TYPE& str, const QVector<TYPE>& list)
+{
+  for(const TYPE& val : list)
+    if(val == str)
+      return true;
+
+  return false;
+}
+
+template<typename TYPE>
+bool contains(const TYPE& str, const QList<TYPE>& list)
+{
+  for(const TYPE& val : list)
+    if(val == str)
+      return true;
+
+  return false;
+}
+
 /* Returns true if the string contains one of the list */
 bool strContains(const QString& name, const std::initializer_list<QString>& list);
 bool strContains(const QString& name, const std::initializer_list<const char *>& list);
