@@ -894,6 +894,25 @@ quint32 textFileHash(const QString& filename);
  * Can be used to obfuscate keys. Prints a warning and returns an empty string if the file does not exist. */
 QString strFromCryptFile(const QString& filename, quint64 key);
 
+/* Safe delete functions which assign nullptr to deleted pointer and optionally log deletion. */
+#define ATOOLS_DELETE(ptr) (atools::deleteSafe(ptr))
+#define ATOOLS_DELETE_LOG(ptr) (atools::deleteSafeLog(Q_FUNC_INFO, __FILE__, __LINE__, # ptr, (ptr)))
+
+template<typename TYPE>
+void deleteSafe(TYPE *& ptr)
+{
+  delete ptr;
+  ptr = nullptr;
+}
+
+template<typename TYPE>
+void deleteSafeLog(const char *funcInfo, const char *file, int line, const char *obj, TYPE *& ptr)
+{
+  qDebug().noquote().nospace() << funcInfo << " " << file << "#" << line << " delete " << obj;
+  delete ptr;
+  ptr = nullptr;
+}
+
 } // namespace atools
 
 #endif // ATOOLS_ATOOLS_H
