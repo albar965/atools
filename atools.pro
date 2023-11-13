@@ -457,6 +457,7 @@ HEADERS += \
   src/gui/griddelegate.h \
   src/gui/helphandler.h \
   src/gui/itemviewzoomhandler.h \
+  src/gui/listwidgetindex.h \
   src/gui/mapposhistory.h \
   src/gui/messagebox.h \
   src/gui/palettesettings.h \
@@ -488,6 +489,7 @@ SOURCES += \
   src/gui/griddelegate.cpp \
   src/gui/helphandler.cpp \
   src/gui/itemviewzoomhandler.cpp \
+  src/gui/listwidgetindex.cpp \
   src/gui/mapposhistory.cpp \
   src/gui/messagebox.cpp \
   src/gui/palettesettings.cpp \
