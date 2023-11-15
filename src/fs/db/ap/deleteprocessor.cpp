@@ -50,7 +50,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   fetchRunwayEndIdStmt = new SqlQuery(sqlDb);
   deleteRunwayEndStmt = new SqlQuery(sqlDb);
 
-  updateApprochRwIds = new SqlQuery(sqlDb);
+  updateApproachRwIds = new SqlQuery(sqlDb);
   updateApproachStmt = new SqlQuery(sqlDb);
   deleteApproachStmt = new SqlQuery(sqlDb);
 
@@ -131,7 +131,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   updateTaxiPathStmt->prepare(updateAptFeatureStmt("taxi_path"));
 
   // Relink approach (and everything dependent) to a new airport
-  updateApprochRwIds->prepare("update approach set runway_end_id = :newRwId where runway_end_id = :oldRwId");
+  updateApproachRwIds->prepare("update approach set runway_end_id = :newRwId where runway_end_id = :oldRwId");
   updateApproachStmt->prepare(updateAptFeatureStmt("approach"));
   deleteApproachStmt->prepare(delAptFeatureStmt("approach"));
 
@@ -165,7 +165,7 @@ DeleteProcessor::~DeleteProcessor()
   delete updateParkingStmt;
   delete fetchRunwayEndIdStmt;
   delete deleteRunwayEndStmt;
-  delete updateApprochRwIds;
+  delete updateApproachRwIds;
   delete updateApproachStmt;
   delete deleteApproachStmt;
   delete updateWpStmt;

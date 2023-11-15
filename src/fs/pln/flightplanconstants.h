@@ -124,6 +124,7 @@ const QLatin1String SIDRW("sidapprrw"); /* SID runway */
 const QLatin1String SIDTRANS("sidtrans"); /* SID transition name */
 const QLatin1String SIDTRANSWP("sidtranswp"); /* Alternative to above, the endpoint of the SID transition */
 const QLatin1String SIDTYPE("sidtype"); /* Optional type of SID, CUSTOMDEPART for selected runway */
+const QLatin1String SIDTYPECUSTOM("CUSTOMDEPART"); /* SIDTYPE for user defined departure */
 
 /* STAR, runway and transiton */
 const QLatin1String STAR("star"); /* STAR name */
@@ -138,6 +139,7 @@ const QLatin1String APPROACH_ARINC("approacharinc"); /* ARINC short name for FMS
 const QLatin1String APPROACHTYPE("approachtype"); /* Optional type like ILS, RNAV, etc. CUSTOM for selected arrival runway and leg distances. */
 const QLatin1String APPROACHRW("approachrw"); /* Runway for approach */
 const QLatin1String APPROACHSUFFIX("approachsuffix"); /* Suffix like Z for ILS-Z */
+const QLatin1String APPROACHTYPECUSTOM("CUSTOM"); /* User defined departure in APPROACHTYPE */
 
 /* Approach transiton */
 const QLatin1String TRANSITION("transition"); /* Transition name */
