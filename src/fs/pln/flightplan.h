@@ -324,7 +324,7 @@ public:
   QString toShortString() const;
 
   /* Pointer to alternates are valid until flight plan is modified */
-  QVector<const FlightplanEntry *> getAlternates() const;
+  const QVector<const FlightplanEntry*> getAlternates() const;
 
   /* Clear out all entries with no save, alternate or procedure = true */
   void removeIsNoSaveEntries()

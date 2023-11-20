@@ -319,7 +319,7 @@ QString Flightplan::toShortString() const
   return str.join(' ');
 }
 
-QVector<const FlightplanEntry *> Flightplan::getAlternates() const
+const QVector<const FlightplanEntry *> Flightplan::getAlternates() const
 {
   QVector<const FlightplanEntry *> alternates;
 

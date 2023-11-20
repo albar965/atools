@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,21 +33,22 @@ void copyProperty(QHash<QString, QString>& to, const QHash<QString, QString>& fr
 void copySidProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from)
 {
   copyProperty(to, from, SID);
-  copyProperty(to, from, SIDRW);
-  copyProperty(to, from, SIDTYPE);
-  copyProperty(to, from, SIDTRANS);
+  copyProperty(to, from, SID_RW);
+  copyProperty(to, from, SID_TYPE);
+  copyProperty(to, from, SID_TRANS);
+  copyProperty(to, from, SID_TRANS_WP);
   copyProperty(to, from, DEPARTURE_CUSTOM_DISTANCE);
 }
 
 void copyArrivalProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from)
 {
   copyProperty(to, from, TRANSITION);
-  copyProperty(to, from, TRANSITIONTYPE);
+  copyProperty(to, from, TRANSITION_TYPE);
   copyProperty(to, from, APPROACH);
   copyProperty(to, from, APPROACH_ARINC);
-  copyProperty(to, from, APPROACHTYPE);
-  copyProperty(to, from, APPROACHRW);
-  copyProperty(to, from, APPROACHSUFFIX);
+  copyProperty(to, from, APPROACH_TYPE);
+  copyProperty(to, from, APPROACH_RW);
+  copyProperty(to, from, APPROACH_SUFFIX);
   copyProperty(to, from, APPROACH_CUSTOM_DISTANCE);
   copyProperty(to, from, APPROACH_CUSTOM_ALTITUDE);
   copyProperty(to, from, APPROACH_CUSTOM_OFFSET);
@@ -56,7 +57,9 @@ void copyArrivalProcedureProperties(QHash<QString, QString>& to, const QHash<QSt
 void copyStarProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from)
 {
   copyProperty(to, from, STAR);
-  copyProperty(to, from, STARRW);
+  copyProperty(to, from, STAR_RW);
+  copyProperty(to, from, STAR_TRANS);
+  copyProperty(to, from, STAR_TRANS_WP);
 }
 
 } // namespace pln

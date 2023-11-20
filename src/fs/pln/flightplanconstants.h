@@ -120,30 +120,30 @@ enum RouteType
 /* Keys that describe procedures */
 /* SID, runway and transiton */
 const QLatin1String SID("sidappr"); /* SID name */
-const QLatin1String SIDRW("sidapprrw"); /* SID runway */
-const QLatin1String SIDTRANS("sidtrans"); /* SID transition name */
-const QLatin1String SIDTRANSWP("sidtranswp"); /* Alternative to above, the endpoint of the SID transition */
-const QLatin1String SIDTYPE("sidtype"); /* Optional type of SID, CUSTOMDEPART for selected runway */
-const QLatin1String SIDTYPECUSTOM("CUSTOMDEPART"); /* SIDTYPE for user defined departure */
+const QLatin1String SID_RW("sidapprrw"); /* SID runway */
+const QLatin1String SID_TRANS("sidtrans"); /* SID transition name */
+const QLatin1String SID_TRANS_WP("sidtranswp"); /* Alternative to above, the endpoint of the SID transition */
+const QLatin1String SID_TYPE("sidtype"); /* Optional type of SID, CUSTOMDEPART for selected runway */
+const QLatin1String SID_TYPE_CUSTOM("CUSTOMDEPART"); /* SIDTYPE for user defined departure */
 
 /* STAR, runway and transiton */
 const QLatin1String STAR("star"); /* STAR name */
-const QLatin1String STARRW("starrw"); /* STAR runway */
-const QLatin1String STARTRANS("startrans"); /* STAR transition name */
-const QLatin1String STARTRANSWP("startranswp"); /* Alternative to above, the possible startpoints of a STAR transition
-                                                 *  separated by PROPERTY_LIST_SEP */
+const QLatin1String STAR_RW("starrw"); /* STAR runway */
+const QLatin1String STAR_TRANS("startrans"); /* STAR transition name */
+const QLatin1String STAR_TRANS_WP("startranswp"); /* Alternative to above, the possible startpoints of a STAR transition
+                                                   *  separated by PROPERTY_LIST_SEP */
 
 /* Approach, runway and more */
 const QLatin1String APPROACH("approach"); /* Approach name like waypoint */
 const QLatin1String APPROACH_ARINC("approacharinc"); /* ARINC short name for FMS files */
-const QLatin1String APPROACHTYPE("approachtype"); /* Optional type like ILS, RNAV, etc. CUSTOM for selected arrival runway and leg distances. */
-const QLatin1String APPROACHRW("approachrw"); /* Runway for approach */
-const QLatin1String APPROACHSUFFIX("approachsuffix"); /* Suffix like Z for ILS-Z */
-const QLatin1String APPROACHTYPECUSTOM("CUSTOM"); /* User defined departure in APPROACHTYPE */
+const QLatin1String APPROACH_TYPE("approachtype"); /* Optional type like ILS, RNAV, etc. CUSTOM for selected arrival runway and leg distances. */
+const QLatin1String APPROACH_RW("approachrw"); /* Runway for approach */
+const QLatin1String APPROACH_SUFFIX("approachsuffix"); /* Suffix like Z for ILS-Z */
+const QLatin1String APPROACH_TYPE_CUSTOM("CUSTOM"); /* User defined departure in APPROACHTYPE */
 
 /* Approach transiton */
 const QLatin1String TRANSITION("transition"); /* Transition name */
-const QLatin1String TRANSITIONTYPE("transitiontype"); /* Type: Full, etc. */
+const QLatin1String TRANSITION_TYPE("transitiontype"); /* Type: Full, etc. */
 
 /* Name of airway which leads to IAF of a STAR or an approach (-transition) */
 const QLatin1String PROCAIRWAY("procairway");
@@ -171,11 +171,11 @@ const QLatin1String AIRCRAFT_PERF_FILE("aircraftperffile");
 
 /* Source database navigation data */
 const QLatin1String NAVDATA("navdata");
-const QLatin1String NAVDATACYCLE("navdatacycle");
+const QLatin1String NAVDATA_CYCLE("navdatacycle");
 
 /* Source database simulator */
 const QLatin1String SIMDATA("simdata");
-const QLatin1String SIMDATACYCLE("simdatacycle");
+const QLatin1String SIMDATA_CYCLE("simdatacycle");
 
 /* Set if any of the airports to use DEP/DES instead of ADES/ADEP for loading in X-Plane FMS.
  * Read by FlightplanIO::saveFmsInternal() */

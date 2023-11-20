@@ -375,23 +375,23 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
         else if(!value.isEmpty())
         {
           if(key == "rwydep")
-            insertPropertyIf(plan, SIDRW, value.mid(plan.departureIdent.size()));
+            insertPropertyIf(plan, SID_RW, value.mid(plan.departureIdent.size()));
           else if(key == "sid")
             insertPropertyIf(plan, SID, value);
           else if(key == "sid_trans" || key == "sidenrtrans") // TODO Might result in loading errors for SID transitions
           {
             if(value != "VECTORS")
-              insertPropertyIf(plan, SIDTRANS, value);
+              insertPropertyIf(plan, SID_TRANS, value);
           }
           else if(key == STAR)
             insertPropertyIf(plan, STAR, value);
           else if(key == "star_trans" || key == "enrstartrans") // TODO Might result in loading errors for STAR transitions
           {
             if(value != "VECTORS")
-              insertPropertyIf(plan, STARTRANS, value);
+              insertPropertyIf(plan, STAR_TRANS, value);
           }
           else if(key == "rwyarr")
-            insertPropertyIf(plan, APPROACHRW, value.mid(plan.destinationIdent.size()));
+            insertPropertyIf(plan, APPROACH_RW, value.mid(plan.destinationIdent.size()));
           else if(key == "rwyarrfinal")
             insertPropertyIf(plan, APPROACH_ARINC, value);
           else if(key == "appr_trans")
@@ -507,12 +507,12 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
           if(key == "CYCLE")
           {
             insertPropertyIf(plan, SIMDATA, "XP11");
-            insertPropertyIf(plan, SIMDATACYCLE, value);
+            insertPropertyIf(plan, SIMDATA_CYCLE, value);
             continue;
           }
           else if(key == "DEPRWY")
           {
-            insertPropertyIf(plan, SIDRW, value.mid(2));
+            insertPropertyIf(plan, SID_RW, value.mid(2));
             continue;
           }
           else if(key == "SID")
@@ -522,7 +522,7 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
           }
           else if(key == "SIDTRANS")
           {
-            insertPropertyIf(plan, SIDTRANS, value);
+            insertPropertyIf(plan, SID_TRANS, value);
             continue;
           }
           else if(key == "STAR")
@@ -532,7 +532,7 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
           }
           else if(key == "STARTRANS")
           {
-            insertPropertyIf(plan, STARTRANS, value);
+            insertPropertyIf(plan, STAR_TRANS, value);
             continue;
           }
           else if(key == "APP")
@@ -631,9 +631,9 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
     if(!destinationRwy.isEmpty())
     {
       if(plan.properties.contains(APPROACH))
-        insertPropertyIf(plan, APPROACHRW, destinationRwy);
+        insertPropertyIf(plan, APPROACH_RW, destinationRwy);
       else if(plan.properties.contains(STAR))
-        insertPropertyIf(plan, STARRW, destinationRwy);
+        insertPropertyIf(plan, STAR_RW, destinationRwy);
     }
 
     plan.flightplanType = NO_TYPE;
@@ -822,8 +822,8 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
       if(sidFound)
       {
         insertPropertyIf(plan, SID, sid);
-        insertPropertyIf(plan, SIDRW, rw);
-        insertPropertyIf(plan, SIDTRANSWP, transWp);
+        insertPropertyIf(plan, SID_RW, rw);
+        insertPropertyIf(plan, SID_TRANS_WP, transWp);
       }
     }
 
@@ -856,8 +856,8 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
       if(starFound)
       {
         insertPropertyIf(plan, STAR, star);
-        insertPropertyIf(plan, STARRW, rw);
-        insertPropertyIf(plan, STARTRANSWP, transWp);
+        insertPropertyIf(plan, STAR_RW, rw);
+        insertPropertyIf(plan, STAR_TRANS_WP, transWp);
       }
     }
 
@@ -1166,12 +1166,12 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
     // Simulator and navdata type and cycle =========================================
     else if(reader.name() == "SimData")
     {
-      insertPropertyIf(plan, SIMDATACYCLE, reader.attributes().value("Cycle").toString());
+      insertPropertyIf(plan, SIMDATA_CYCLE, reader.attributes().value("Cycle").toString());
       insertPropertyIf(plan, SIMDATA, reader.readElementText());
     }
     else if(reader.name() == "NavData")
     {
-      insertPropertyIf(plan, NAVDATACYCLE, reader.attributes().value("Cycle").toString());
+      insertPropertyIf(plan, NAVDATA_CYCLE, reader.attributes().value("Cycle").toString());
       insertPropertyIf(plan, NAVDATA, reader.readElementText());
     }
     // Used aircraft performance =========================================
@@ -1233,11 +1233,11 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
             if(reader.name() == "Name")
               insertPropertyIf(plan, SID, reader.readElementText());
             else if(reader.name() == "Runway")
-              insertPropertyIf(plan, SIDRW, reader.readElementText());
+              insertPropertyIf(plan, SID_RW, reader.readElementText());
             else if(reader.name() == "Transition")
-              insertPropertyIf(plan, SIDTRANS, reader.readElementText());
+              insertPropertyIf(plan, SID_TRANS, reader.readElementText());
             else if(reader.name() == "Type")
-              insertPropertyIf(plan, SIDTYPE, reader.readElementText());
+              insertPropertyIf(plan, SID_TYPE, reader.readElementText());
             else if(reader.name() == "CustomDistance")
               insertPropertyIf(plan, DEPARTURE_CUSTOM_DISTANCE, reader.readElementText());
             else
@@ -1251,9 +1251,9 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
             if(reader.name() == "Name")
               insertPropertyIf(plan, STAR, reader.readElementText());
             else if(reader.name() == "Runway")
-              insertPropertyIf(plan, STARRW, reader.readElementText());
+              insertPropertyIf(plan, STAR_RW, reader.readElementText());
             else if(reader.name() == "Transition")
-              insertPropertyIf(plan, STARTRANS, reader.readElementText());
+              insertPropertyIf(plan, STAR_TRANS, reader.readElementText());
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
@@ -1267,16 +1267,16 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
             else if(reader.name() == "ARINC")
               insertPropertyIf(plan, APPROACH_ARINC, reader.readElementText());
             else if(reader.name() == "Runway")
-              insertPropertyIf(plan, APPROACHRW, reader.readElementText());
+              insertPropertyIf(plan, APPROACH_RW, reader.readElementText());
             else if(reader.name() == "Type")
-              insertPropertyIf(plan, APPROACHTYPE, reader.readElementText());
+              insertPropertyIf(plan, APPROACH_TYPE, reader.readElementText());
             else if(reader.name() == "Suffix")
-              insertPropertyIf(plan, APPROACHSUFFIX, reader.readElementText());
+              insertPropertyIf(plan, APPROACH_SUFFIX, reader.readElementText());
             // Transition ========================================
             else if(reader.name() == "Transition")
               insertPropertyIf(plan, TRANSITION, reader.readElementText());
             else if(reader.name() == "TransitionType")
-              insertPropertyIf(plan, TRANSITIONTYPE, reader.readElementText());
+              insertPropertyIf(plan, TRANSITION_TYPE, reader.readElementText());
             // Custom approach data ========================================
             else if(reader.name() == "CustomDistance")
               insertPropertyIf(plan, APPROACH_CUSTOM_DISTANCE, reader.readElementText());
@@ -1467,21 +1467,21 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
 
       // Add MSFS procedure information to properties ========================================
       insertPropertyIf(plan, SID, sid);
-      insertPropertyIf(plan, SIDTRANSWP, sidWp);
-      insertPropertyIf(plan, SIDRW, sidRunway + strAt(sidRunwayDesignator, 0));
+      insertPropertyIf(plan, SID_TRANS_WP, sidWp);
+      insertPropertyIf(plan, SID_RW, sidRunway + strAt(sidRunwayDesignator, 0));
 
       insertPropertyIf(plan, STAR, star);
-      insertPropertyIf(plan, STARTRANSWP, atools::strJoin(QStringList({starWp, starWpPrev}), PROPERTY_LIST_SEP));
-      insertPropertyIf(plan, STARRW, starRunway + strAt(starRunwayDesignator, 0));
+      insertPropertyIf(plan, STAR_TRANS_WP, atools::strJoin(QStringList({starWp, starWpPrev}), PROPERTY_LIST_SEP));
+      insertPropertyIf(plan, STAR_RW, starRunway + strAt(starRunwayDesignator, 0));
 
       // insertPropertyIf(plan, TRANSITIONTYPE, );
       // insertPropertyIf(plan, APPROACH, approach);
       // insertPropertyIf(plan, APPROACH_ARINC, approach);
-      insertPropertyIf(plan, APPROACHTYPE, msfsToApproachType(approach));
-      insertPropertyIf(plan, APPROACHSUFFIX, approachSuffix);
+      insertPropertyIf(plan, APPROACH_TYPE, msfsToApproachType(approach));
+      insertPropertyIf(plan, APPROACH_SUFFIX, approachSuffix);
 
       if(!approachRunway.isEmpty())
-        insertPropertyIf(plan, APPROACHRW, approachRunway + strAt(approachRunwayDesignator, 0));
+        insertPropertyIf(plan, APPROACH_RW, approachRunway + strAt(approachRunwayDesignator, 0));
 
       // Remove the procedure legs ============================
       plan.erase(std::remove_if(plan.begin(), plan.end(),
@@ -1671,19 +1671,19 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
 
     // Set departure procedure =========================================================
     if(!departureRunway.isEmpty())
-      plan.getProperties().insert(SIDRW, departureRunway);
+      plan.getProperties().insert(SID_RW, departureRunway);
     if(!sid.isEmpty())
       plan.getProperties().insert(SID, sid);
     if(!sidTransition.isEmpty())
-      plan.getProperties().insert(SIDTRANS, sidTransition);
+      plan.getProperties().insert(SID_TRANS, sidTransition);
 
     // Set arrival procedure =========================================================
     if(!destinationRunway.isEmpty())
-      plan.getProperties().insert(STARRW, destinationRunway);
+      plan.getProperties().insert(STAR_RW, destinationRunway);
     if(!star.isEmpty())
       plan.getProperties().insert(STAR, star);
     if(!starTransition.isEmpty())
-      plan.getProperties().insert(STARTRANS, starTransition);
+      plan.getProperties().insert(STAR_TRANS, starTransition);
 
     xmlFile.close();
 
@@ -1793,23 +1793,23 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   writer.writeEndElement(); // Header
 
   // Nav and sim metadata =======================================================
-  QString cycle = plan.properties.value(SIMDATACYCLE);
+  QString cycle = plan.properties.value(SIMDATA_CYCLE);
   QString data = plan.properties.value(SIMDATA);
   if(!data.isEmpty())
   {
     writer.writeStartElement("SimData");
     if(!cycle.isEmpty())
-      writer.writeAttribute("Cycle", plan.properties.value(SIMDATACYCLE));
+      writer.writeAttribute("Cycle", plan.properties.value(SIMDATA_CYCLE));
     writer.writeCharacters(data);
     writer.writeEndElement(); // SimData
   }
-  cycle = plan.properties.value(NAVDATACYCLE);
+  cycle = plan.properties.value(NAVDATA_CYCLE);
   data = plan.properties.value(NAVDATA);
   if(!data.isEmpty())
   {
     writer.writeStartElement("NavData");
     if(!cycle.isEmpty())
-      writer.writeAttribute("Cycle", plan.properties.value(NAVDATACYCLE));
+      writer.writeAttribute("Cycle", plan.properties.value(NAVDATA_CYCLE));
     writer.writeCharacters(data);
     writer.writeEndElement(); // NavData
   }
@@ -1846,9 +1846,9 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
     {
       writer.writeStartElement("SID");
       writeTextElementIf(writer, "Name", plan.properties.value(SID));
-      writeTextElementIf(writer, "Runway", plan.properties.value(SIDRW));
-      writeTextElementIf(writer, "Transition", plan.properties.value(SIDTRANS));
-      writeTextElementIf(writer, "Type", plan.properties.value(SIDTYPE));
+      writeTextElementIf(writer, "Runway", plan.properties.value(SID_RW));
+      writeTextElementIf(writer, "Transition", plan.properties.value(SID_TRANS));
+      writeTextElementIf(writer, "Type", plan.properties.value(SID_TYPE));
       writeTextElementIf(writer, "CustomDistance", plan.properties.value(DEPARTURE_CUSTOM_DISTANCE));
       writer.writeEndElement(); // SID
     }
@@ -1857,8 +1857,8 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
     {
       writer.writeStartElement("STAR");
       writeTextElementIf(writer, "Name", plan.properties.value(STAR));
-      writeTextElementIf(writer, "Runway", plan.properties.value(STARRW));
-      writeTextElementIf(writer, "Transition", plan.properties.value(STARTRANS));
+      writeTextElementIf(writer, "Runway", plan.properties.value(STAR_RW));
+      writeTextElementIf(writer, "Transition", plan.properties.value(STAR_TRANS));
       writer.writeEndElement(); // STAR
     }
 
@@ -1867,13 +1867,13 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
       writer.writeStartElement("Approach");
       writeTextElementIf(writer, "Name", plan.properties.value(APPROACH));
       writeTextElementIf(writer, "ARINC", plan.properties.value(APPROACH_ARINC));
-      writeTextElementIf(writer, "Runway", plan.properties.value(APPROACHRW));
-      writeTextElementIf(writer, "Type", plan.properties.value(APPROACHTYPE));
-      writeTextElementIf(writer, "Suffix", plan.properties.value(APPROACHSUFFIX));
+      writeTextElementIf(writer, "Runway", plan.properties.value(APPROACH_RW));
+      writeTextElementIf(writer, "Type", plan.properties.value(APPROACH_TYPE));
+      writeTextElementIf(writer, "Suffix", plan.properties.value(APPROACH_SUFFIX));
 
       // Transition =============================================
       writeTextElementIf(writer, "Transition", plan.properties.value(TRANSITION));
-      writeTextElementIf(writer, "TransitionType", plan.properties.value(TRANSITIONTYPE));
+      writeTextElementIf(writer, "TransitionType", plan.properties.value(TRANSITION_TYPE));
 
       // Custom approach data =============================================
       writeTextElementIf(writer, "CustomDistance", plan.properties.value(APPROACH_CUSTOM_DISTANCE));
@@ -2206,12 +2206,12 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
     writePropertyStr(writer, "airport", plan.getDepartureIdent());
 
     // Writer departure procedure information ===============================================================
-    if(!plan.properties.value(SIDRW).isEmpty())
-      writePropertyStr(writer, "runway", plan.properties.value(SIDRW));
+    if(!plan.properties.value(SID_RW).isEmpty())
+      writePropertyStr(writer, "runway", plan.properties.value(SID_RW));
     if(!plan.properties.value(SID).isEmpty())
       writePropertyStr(writer, "sid", plan.properties.value(SID));
-    if(!plan.properties.value(SIDTRANS).isEmpty())
-      writePropertyStr(writer, "transition", plan.properties.value(SIDTRANS));
+    if(!plan.properties.value(SID_TRANS).isEmpty())
+      writePropertyStr(writer, "transition", plan.properties.value(SID_TRANS));
 
     writer.writeEndElement(); // departure
 
@@ -2219,12 +2219,12 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
     writer.writeStartElement("destination");
     writePropertyStr(writer, "airport", plan.getDestinationIdent());
 
-    if(!plan.properties.value(STARRW).isEmpty())
-      writePropertyStr(writer, "runway", plan.properties.value(STARRW));
+    if(!plan.properties.value(STAR_RW).isEmpty())
+      writePropertyStr(writer, "runway", plan.properties.value(STAR_RW));
     if(!plan.properties.value(STAR).isEmpty())
       writePropertyStr(writer, "star", plan.properties.value(STAR));
-    if(!plan.properties.value(STARTRANS).isEmpty())
-      writePropertyStr(writer, "transition", plan.properties.value(STARTRANS));
+    if(!plan.properties.value(STAR_TRANS).isEmpty())
+      writePropertyStr(writer, "transition", plan.properties.value(STAR_TRANS));
 
     writer.writeEndElement(); // destination
 
@@ -2249,13 +2249,13 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
         // Departure airport ===========================================
         // <departure type="bool">true</departure>
         writePropertyBool(writer, "departure");
-        if(!plan.properties.value(SIDRW).isEmpty())
+        if(!plan.properties.value(SID_RW).isEmpty())
         {
           // <type type="string">runway</type>
           // <ident type="string">07R</ident>
           // <icao type="string">EDDF</icao>
           writePropertyStr(writer, "type", "runway");
-          writePropertyStr(writer, "ident", plan.properties.value(SIDRW));
+          writePropertyStr(writer, "ident", plan.properties.value(SID_RW));
           writePropertyStr(writer, "icao", entry.getIdent());
           hasProcedure = true;
         }
@@ -2266,13 +2266,13 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
         // <approach type="bool">true</approach>
         writePropertyBool(writer, "approach");
 
-        if(!plan.properties.value(STARRW).isEmpty())
+        if(!plan.properties.value(STAR_RW).isEmpty())
         {
           // <type type="string">runway</type>
           // <ident type="string">07</ident>
           // <icao type="string">LIRF</icao>
           writePropertyStr(writer, "type", "runway");
-          writePropertyStr(writer, "ident", plan.properties.value(STARRW));
+          writePropertyStr(writer, "ident", plan.properties.value(STAR_RW));
           writePropertyStr(writer, "icao", entry.getIdent());
           hasProcedure = true;
         }
@@ -2457,10 +2457,10 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
     // CoRte ==============================================
     stream << "[CoRte]" << endl;
     stream << "ArptDep=" << pln.departureIdent << endl;
-    saveFlpKeyValue(stream, pln, pln.departureIdent, "RwyDep", SIDRW);
+    saveFlpKeyValue(stream, pln, pln.departureIdent, "RwyDep", SID_RW);
 
     stream << "ArptArr=" << pln.destinationIdent << endl;
-    saveFlpKeyValue(stream, pln, pln.destinationIdent, "RwyArr", APPROACHRW);
+    saveFlpKeyValue(stream, pln, pln.destinationIdent, "RwyArr", APPROACH_RW);
 
     if(alternateFmt)
     {
@@ -2474,11 +2474,11 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
 
     // Departure - SID ============================================
     saveFlpKeyValue(stream, pln, QString(), "SID", SID);
-    saveFlpKeyValue(stream, pln, QString(), alternateFmt ? "SIDEnrTrans" : "SID_Trans", SIDTRANS);
+    saveFlpKeyValue(stream, pln, QString(), alternateFmt ? "SIDEnrTrans" : "SID_Trans", SID_TRANS);
 
     // Arrival STAR ============================================
     saveFlpKeyValue(stream, pln, QString(), "STAR", STAR);
-    saveFlpKeyValue(stream, pln, QString(), alternateFmt ? "EnrSTARTrans" : "STAR_Trans", STARTRANS);
+    saveFlpKeyValue(stream, pln, QString(), alternateFmt ? "EnrSTARTrans" : "STAR_Trans", STAR_TRANS);
     if(alternateFmt)
       stream << "STARApprTrans=" << endl;
 
@@ -3246,9 +3246,9 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
     // File version
     QString departureIdent = plan.getDepartureIdent().left(8);
     QString destinationIdent = plan.getDestinationIdent().left(8);
-    QString cycle = plan.properties.value(NAVDATACYCLE);
+    QString cycle = plan.properties.value(NAVDATA_CYCLE);
     if(cycle.isEmpty())
-      cycle = plan.properties.value(SIMDATACYCLE);
+      cycle = plan.properties.value(SIMDATA_CYCLE);
     if(cycle.isEmpty())
       // Fake a cycle by using current year and month
       cycle = QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyMM");
@@ -3269,14 +3269,14 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
         stream << "DEP " << departureIdent << endl;
 
       // Departure - SID
-      if(!plan.properties.value(SIDRW).isEmpty())
-        stream << "DEPRWY RW" << xplaneRunway(plan.properties.value(SIDRW)) << endl;
+      if(!plan.properties.value(SID_RW).isEmpty())
+        stream << "DEPRWY RW" << xplaneRunway(plan.properties.value(SID_RW)) << endl;
 
       if(!plan.properties.value(SID).isEmpty())
         stream << "SID " << plan.properties.value(SID) << endl;
 
-      if(!plan.properties.value(SIDTRANS).isEmpty())
-        stream << "SIDTRANS " << plan.properties.value(SIDTRANS) << endl;
+      if(!plan.properties.value(SID_TRANS).isEmpty())
+        stream << "SIDTRANS " << plan.properties.value(SID_TRANS) << endl;
 
       // Destination =============================
       if(plan.constLast().getWaypointType() == entry::AIRPORT && !plan.properties.contains(AIRPORT_DESTINATION_NO_AIRPORT))
@@ -3287,20 +3287,20 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
         stream << "DES " << destinationIdent << endl;
 
       // Arrival runway
-      if(!plan.properties.value(APPROACHRW).isEmpty())
+      if(!plan.properties.value(APPROACH_RW).isEmpty())
         // Use approach runway if there is an approach
-        stream << "DESRWY RW" << xplaneRunway(plan.properties.value(APPROACHRW)) << endl;
-      else if(!plan.properties.value(STARRW).isEmpty())
+        stream << "DESRWY RW" << xplaneRunway(plan.properties.value(APPROACH_RW)) << endl;
+      else if(!plan.properties.value(STAR_RW).isEmpty())
         // Use STAR runway if no approach but STAR
-        stream << "DESRWY RW" << xplaneRunway(plan.properties.value(STARRW)) << endl;
+        stream << "DESRWY RW" << xplaneRunway(plan.properties.value(STAR_RW)) << endl;
 
       // Arrival approach and transition
       // Arrival STAR
       if(!plan.properties.value(STAR).isEmpty())
         stream << "STAR " << plan.properties.value(STAR) << endl;
 
-      if(!plan.properties.value(STARTRANS).isEmpty())
-        stream << "STARTRANS " << plan.properties.value(STARTRANS) << endl;
+      if(!plan.properties.value(STAR_TRANS).isEmpty())
+        stream << "STARTRANS " << plan.properties.value(STAR_TRANS) << endl;
 
       // Approach
       if(!plan.properties.value(APPROACH_ARINC).isEmpty())
@@ -4104,14 +4104,14 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
           // SID ...WENAS7.PERTT... ====================
           QString sid = value.section('(', 0, 0);
           insertPropertyIf(plan, SID, sid.section('.', 0, 0));
-          insertPropertyIf(plan, SIDTRANS, sid.section('.', 1, 1));
+          insertPropertyIf(plan, SID_TRANS, sid.section('.', 1, 1));
         }
         else if(lastKey == "R")
         {
           // Runway ...09O... ====================
           QString rw = value;
           rw.remove('O');
-          insertPropertyIf(plan, SIDRW, rw);
+          insertPropertyIf(plan, SID_RW, rw);
         }
         else if(lastKey == "AA")
         {
@@ -4126,10 +4126,10 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
           // STAR ...PIGLU4.YDC(16O)... ====================
           QString star = value.section('(', 0, 0);
           insertPropertyIf(plan, STAR, star.section('.', 0, 0));
-          insertPropertyIf(plan, STARTRANS, star.section('.', 1, 1));
+          insertPropertyIf(plan, STAR_TRANS, star.section('.', 1, 1));
           QString rw = value.section('(', 1, 1).section(')', 0, 0);
           rw.remove('O');
-          insertPropertyIf(plan, STARRW, rw);
+          insertPropertyIf(plan, STAR_RW, rw);
         }
         else if(lastKey == "AP")
         {
