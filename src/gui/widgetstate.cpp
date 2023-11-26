@@ -65,7 +65,10 @@ void WidgetState::save(const QObject *widget) const
     if(const QLayout *layout = dynamic_cast<const QLayout *>(widget))
     {
       for(int i = 0; i < layout->count(); i++)
+      {
         save(layout->itemAt(i)->widget());
+        save(layout->itemAt(i)->layout());
+      }
     }
     else if(const QLineEdit *lineEdit = dynamic_cast<const QLineEdit *>(widget))
     {
@@ -205,7 +208,10 @@ void WidgetState::restore(QObject *widget) const
     if(const QLayout *layout = dynamic_cast<const QLayout *>(widget))
     {
       for(int i = 0; i < layout->count(); i++)
+      {
         restore(layout->itemAt(i)->widget());
+        restore(layout->itemAt(i)->layout());
+      }
     }
     else if(QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget))
     {

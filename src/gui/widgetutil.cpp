@@ -77,8 +77,7 @@ void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, 
   }
 }
 
-void showHideLayoutElements(const QList<QLayout *> layouts, bool visible,
-                            const QList<QWidget *>& otherWidgets)
+void showHideLayoutElements(const QList<QLayout *> layouts, const QList<QWidget *>& otherWidgets, bool visible, bool disable)
 {
   for(QWidget *w : otherWidgets)
     w->setVisible(visible);
@@ -89,10 +88,17 @@ void showHideLayoutElements(const QList<QLayout *> layouts, bool visible,
     {
       QLayoutItem *item = layout->itemAt(i);
       if(item->widget() != nullptr)
+      {
         item->widget()->setVisible(visible);
 
+        if(disable)
+          // Do not only hide but also disable
+          item->widget()->setEnabled(visible);
+      }
+
       if(item->layout() != nullptr)
-        showHideLayoutElements({item->layout()}, visible, otherWidgets);
+        // Recurse
+        showHideLayoutElements({item->layout()}, otherWidgets, visible, disable);
     }
   }
 }
@@ -105,8 +111,13 @@ bool anyWidgetChanged(const QList<const QObject *>& widgets)
     if(widget != nullptr)
     {
       if(const QLayout *layout = dynamic_cast<const QLayout *>(widget))
+      {
         for(int i = 0; i < layout->count(); i++)
+        {
           changed |= anyWidgetChanged({layout->itemAt(i)->widget()});
+          changed |= anyWidgetChanged({layout->itemAt(i)->layout()});
+        }
+      }
       else if(const QCheckBox *cbx = dynamic_cast<const QCheckBox *>(widget))
         changed |= cbx->isTristate() ?
                    cbx->checkState() != Qt::PartiallyChecked :
