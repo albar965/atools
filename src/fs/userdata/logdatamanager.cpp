@@ -145,6 +145,8 @@ const static QHash<int, SqlColumn> COL_MAP =
 }
 /* *INDENT-ON* */
 
+const static QStringList CLEANUP_COLUMNS({"departure_ident", "destination_ident", "distance_flown"});
+
 LogdataManager::LogdataManager(sql::SqlDatabase *sqlDb)
   : DataManagerBase(sqlDb, "logbook", "logbook_id",
                     {":/atools/resources/sql/fs/logbook/create_logbook_schema.sql"},
@@ -609,6 +611,16 @@ void LogdataManager::clearGeometryCache()
   cache.clear();
 }
 
+void LogdataManager::preCleanup()
+{
+  sql::DataManagerBase::preCleanup(CLEANUP_COLUMNS);
+}
+
+void LogdataManager::postCleanup()
+{
+  sql::DataManagerBase::postCleanup(CLEANUP_COLUMNS);
+}
+
 QString LogdataManager::getCleanupPreview(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance,
                                           const QVector<SqlColumn>& columns)
 {
@@ -625,6 +637,8 @@ int LogdataManager::cleanupLogEntries(bool departureAndDestEqual, bool departure
   QSet<int> ids;
   SqlUtil(getDatabase()).getIds(ids, tableName, idColumnName, cleanupWhere(departureAndDestEqual, departureOrDestEmpty, minFlownDistance));
 
+  postCleanup();
+
   // Also takes care of undo/redo
   deleteRows(ids);
   db->analyze();
@@ -636,10 +650,10 @@ QString LogdataManager::cleanupWhere(bool departureAndDestEqual, bool departureO
 {
   QStringList queryWhere;
   if(departureAndDestEqual)
-    queryWhere.append("(departure_ident is not null and destination_ident is not null and departure_ident = destination_ident)");
+    queryWhere.append("(departure_ident <> '' and destination_ident <> '' and departure_ident = destination_ident)");
 
   if(departureOrDestEmpty)
-    queryWhere.append("(departure_ident is null or destination_ident is null)");
+    queryWhere.append("(departure_ident = '' or destination_ident = '')");
 
   if(minFlownDistance >= 0.f)
     queryWhere.append(QString("(distance_flown <= %1)").arg(minFlownDistance));

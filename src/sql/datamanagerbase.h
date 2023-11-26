@@ -315,6 +315,14 @@ private:
     UNDO_DELETE = 'D',
   };
 
+  /* Run this to replace null values with empty strings to allow queries in cleanupUserdata() and getCleanupPreview().
+   * Clean up - set null string columns empty to allow join - hidden compatibility change, no need to undo */
+  void preCleanup(const QStringList& columns);
+
+  /* Reverse preCleanup() action.
+   * Clean up - set empty string columns back to null - no need to undo. */
+  void postCleanup(const QStringList& columns);
+
   /* Prints a warning of colummn does not exist */
   QString at(const QStringList& line, int index, bool nowarn = false);
 

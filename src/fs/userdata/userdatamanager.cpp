@@ -139,18 +139,12 @@ void UserdataManager::updateSchema()
 
 void UserdataManager::preCleanup()
 {
-  SqlQuery query(db);
-  for(const QString& column : CLEANUP_COLUMNS)
-    query.exec("update userdata set " % column % " = '' where " % column % " is null");
-  db->analyze();
+  sql::DataManagerBase::preCleanup(CLEANUP_COLUMNS);
 }
 
 void UserdataManager::postCleanup()
 {
-  SqlQuery query(db);
-  for(const QString& column : CLEANUP_COLUMNS)
-    query.exec("update userdata set " % column % " = null where " % column % " = ''");
-  db->analyze();
+  sql::DataManagerBase::postCleanup(CLEANUP_COLUMNS);
 }
 
 int UserdataManager::cleanupUserdata(const QStringList& duplicateColumns, bool duplicateCoordinates, bool empty)

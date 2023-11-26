@@ -105,6 +105,14 @@ public:
 
   static const int MAX_CACHE_ENTRIES = 100;
 
+  /* Run this to replace null values with empty strings to allow queries in cleanupUserdata() and getCleanupPreview().
+   * Clean up - set null string columns empty to allow join - hidden compatibility change, no need to undo */
+  void preCleanup();
+
+  /* Reverse preCleanup() action.
+   * Clean up - set empty string columns back to null - no need to undo. */
+  void postCleanup();
+
 private:
   static void fixEmptyStrField(atools::sql::SqlRecord& rec, const QString& name);
   static void fixEmptyStrField(atools::sql::SqlQuery& query, const QString& name);

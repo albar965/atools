@@ -1024,5 +1024,21 @@ bool DataManagerBase::invokeCallback(int totalNumber, int currentNumber)
   return true;
 }
 
+void DataManagerBase::preCleanup(const QStringList& columns)
+{
+  SqlQuery query(db);
+  for(const QString& column : columns)
+    query.exec("update " % tableName % " set " % column % " = '' where " % column % " is null");
+  db->analyze();
+}
+
+void DataManagerBase::postCleanup(const QStringList& columns)
+{
+  SqlQuery query(db);
+  for(const QString& column : columns)
+    query.exec("update " % tableName % " set " % column % " = null where " % column % " = ''");
+  db->analyze();
+}
+
 } // namespace sql
 } // namespace atools
