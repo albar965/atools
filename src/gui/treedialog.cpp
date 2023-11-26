@@ -30,7 +30,6 @@
 #include <QPushButton>
 #include <QClipboard>
 #include <QDebug>
-#include <QTextDocumentFragment>
 #include <QCheckBox>
 
 namespace atools {

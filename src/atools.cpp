@@ -1401,13 +1401,6 @@ QString canonicalFilePath(const QFileInfo& path)
 #endif
 }
 
-QString strToPlainText(QString str)
-{
-  // Either "<span>", "<span style=\"color: ... bold">" or "</span>", for example
-  const static QRegularExpression regexp("<\\w+>|<\\w+\\s+.*\"\\s*>|</\\w+>", QRegularExpression::InvertedGreedinessOption);
-  return str.replace(regexp, QString());
-}
-
 QString cleanPath(const QString& filename)
 {
 #ifdef Q_OS_WIN
@@ -1426,6 +1419,37 @@ QString cleanPath(const QString& filename)
 QString nativeCleanPath(const QString& filename)
 {
   return QDir::toNativeSeparators(atools::cleanPath(filename));
+}
+
+QStringList splitStringAtQuotes(const QString& str, QChar quote, QChar spaceSeparator)
+{
+  QStringList textList;
+  QString curText;
+  bool inQuote = false;
+  for(QChar c : str)
+  {
+    if(c == quote)
+    {
+      inQuote = !inQuote;
+      curText.append(c);
+    }
+    else if(c == spaceSeparator)
+    {
+      if(!inQuote)
+      {
+        textList.append(curText);
+        curText.clear();
+      }
+      else
+        curText.append(c);
+    }
+    else
+      curText.append(c);
+  }
+
+  if(!curText.isEmpty())
+    textList.append(curText);
+  return textList;
 }
 
 } // namespace atools

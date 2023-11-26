@@ -126,8 +126,8 @@ bool strStartsWith(const QStringList& list, const QString& str);
 /* true if any string in the list starts str */
 bool strAnyStartsWith(const QStringList& list, const QString& str);
 
-/* Very simple HTML strip */
-QString strToPlainText(QString str);
+/* Return a string list split at space boundaries except in quotes */
+QStringList splitStringAtQuotes(const QString& str, QChar quote = '"', QChar spaceSeparator = ' ');
 
 template<typename TYPE1, typename TYPE2>
 void convertList(QList<TYPE1>& dest, const QList<TYPE2>& src)
