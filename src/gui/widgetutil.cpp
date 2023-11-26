@@ -146,18 +146,19 @@ bool noneChecked(const QList<const QAction *>& actions)
   return !checked;
 }
 
-void changeStarIndication(QAction *action, bool changed)
+void changeIndication(QAction *action, bool changed)
 {
+  QString changeText(QObject::tr(" (changed)", "Indication for search menu button items"));
+  QString changeUnusedText(QObject::tr(" (changed, unused)", "Indication for search menu button items"));
+
+  if(action->text().endsWith(changeText))
+    action->setText(action->text().remove(changeText));
+
+  if(action->text().endsWith(changeUnusedText))
+    action->setText(action->text().remove(changeUnusedText));
+
   if(changed)
-  {
-    if(!action->text().startsWith("* "))
-      action->setText("* " + action->text());
-  }
-  else
-  {
-    if(action->text().startsWith("* "))
-      action->setText(action->text().remove(0, 2));
-  }
+    action->setText(action->text() + (action->isChecked() ? changeText : changeUnusedText));
 }
 
 void changeWidgetColor(QWidget *widget, QColor backgroundColor)

@@ -50,10 +50,11 @@ void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, 
  * Shows or hides all widgets in a list of layouts.
  * @param layouts all widgets in these layouts will have their visibility changed
  * @param visible hide or show widgets
+ * @param disable disable hidden widgets if true. Enable if unhidden
  * @param otherWidgets other widgets not part of the layout that will have their visibility changed
  */
-void showHideLayoutElements(const QList<QLayout *> layouts, bool visible,
-                            const QList<QWidget *>& otherWidgets);
+void showHideLayoutElements(const QList<QLayout *> layouts,
+                            const QList<QWidget *>& otherWidgets, bool visible, bool disable);
 
 /*
  * Check is a list of widgets has their state at default (i.e. a checkbox is
@@ -73,8 +74,8 @@ bool allChecked(const QList<const QAction *>& actions);
  */
 bool noneChecked(const QList<const QAction *>& actions);
 
-/* Add a "* " to an action text or remove it */
-void changeStarIndication(QAction *action, bool changed);
+/* Add a " (changed)"/" (changed, unused)" to an action text or removes it. Latter text if action is not checked. */
+void changeIndication(QAction *action, bool changed);
 
 /* Remember text, clear label and set text again to force update after style changes */
 void labelForcedUpdate(QLabel *label);
