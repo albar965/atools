@@ -39,24 +39,44 @@ public:
   /* Will not support any zooming but set the initial cell and font size
    * if constructed with tableview parameter only. Otherwise font size can be changed using the given
    * actions*/
-  ItemViewZoomHandler(QAbstractItemView *view, QAction *actionZoomIn, QAction *actionZoomOut,
-                      QAction *actionZoomDefault, QString settingsKeyStr = QString(), double marginParm = 0.);
-  ItemViewZoomHandler(QAbstractItemView *view, double marginParam);
-  ItemViewZoomHandler(QAbstractItemView *view);
+  ItemViewZoomHandler(QAbstractItemView *view, QAction *zoomInAction, QAction *zoomOutAction, QAction *zoomDefaultAction,
+                      QString settingsKeyStr, double marginParm)
+  {
+    init(view, zoomInAction, zoomOutAction, zoomDefaultAction, settingsKeyStr, marginParm);
+  }
+
+  ItemViewZoomHandler(QAbstractItemView *view, double marginParam)
+  {
+    init(view, nullptr, nullptr, nullptr, QString(), marginParam);
+  }
+
+  ItemViewZoomHandler(QAbstractItemView *view)
+  {
+    init(view, nullptr, nullptr, nullptr, QString(), 0.);
+  }
 
   virtual ~ItemViewZoomHandler() override;
 
-  /* Call slot for application font changes. Resets back to default size */
-  void fontChanged();
-
   /* Use zoom methods for direct changes instead actions */
   void zoomTableView(int value);
-  void zoomIn();
-  void zoomOut();
-  void zoomDefault();
+
+  void zoomIn()
+  {
+    zoomTableView(1);
+  }
+
+  void zoomOut()
+  {
+    zoomTableView(-1);
+  }
+
+  void zoomDefault()
+  {
+    zoomTableView(0);
+  }
 
   /* Bypasses all in/out/default methods and increases/decreases the size. */
-  void zoomPercent(int percent);
+  void zoomPercent(int percent = 100);
 
   /* Section height will be font height plus this value */
   float getSectionToFontSize() const
@@ -107,7 +127,6 @@ private:
   void setTableViewFontSize(double pointSize);
 
 private:
-  double defaultTableViewFontPointSize = 0.;
   double sectionToFontSize = 2.;
   double minFontSize = 7.;
   double maxFontSize = 16.;
