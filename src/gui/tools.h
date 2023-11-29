@@ -27,6 +27,7 @@ class QFont;
 class QLabel;
 class QItemSelectionModel;
 class QAction;
+class QObject;
 
 namespace atools {
 namespace gui {
@@ -49,6 +50,12 @@ QString fontDescription(const QFont& font);
 
 /* Sets label text and label font */
 void fontDescription(const QFont& font, QLabel *label);
+
+/* Updates all fonts for object and all children */
+void updateAllFonts(QObject *object, const QFont& font);
+
+/* Set font size in widgets and layouts recursively based on percent application font size. */
+void setWidgetFontSize(QWidget *widget, int percent);
 
 /* Get a list of all selected rows in given order ignoring any selection ranges */
 QList<int> selectedRows(QItemSelectionModel *model, bool reverse);

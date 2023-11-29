@@ -29,6 +29,7 @@
 #include <QLabel>
 #include <QItemSelectionModel>
 #include <QAction>
+#include <QLayout>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -280,6 +281,47 @@ void adjustSelectionColors(QWidget *widget)
 #else
   Q_UNUSED(widget)
 #endif
+}
+
+void updateAllFonts(QObject *object, const QFont& font)
+{
+  if(object != nullptr)
+  {
+    QWidget *widget = dynamic_cast<QWidget *>(object);
+    if(widget != nullptr)
+    {
+      if(widget->font() != font)
+        widget->setFont(font);
+
+      // Recurse for widget children
+      for(QObject *obj : widget->children())
+        updateAllFonts(obj, font);
+    }
+    else
+    {
+      QLayout *layout = dynamic_cast<QLayout *>(object);
+      if(layout != nullptr)
+      {
+        // Recurse for layout children
+        for(int i = 0; i < layout->count(); i++)
+        {
+          updateAllFonts(layout->itemAt(i)->widget(), font);
+          updateAllFonts(layout->itemAt(i)->layout(), font);
+        }
+      }
+    }
+  }
+}
+
+void setWidgetFontSize(QWidget *widget, int percent)
+{
+  QFont font = QApplication::font();
+  double size = font.pointSizeF() * percent / 100.;
+  if(size > 0.5 && size < 90.)
+  {
+    font.setPointSizeF(size);
+    widget->setFont(font);
+  }
 }
 
 } // namespace gui
