@@ -249,12 +249,8 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
 
   using namespace atools::fs::sc;
 
-  ac.headingMagDeg =
-    ac.indicatedAltitudeFt =
-      ac.indicatedSpeedKts =
-        ac.trueAirspeedKts =
-          ac.machSpeed =
-            ac.verticalSpeedFeetPerMin = atools::fs::sc::SC_INVALID_FLOAT;
+  ac.headingMagDeg = ac.indicatedAltitudeFt = ac.indicatedSpeedKts = ac.trueAirspeedKts = ac.machSpeed = ac.verticalSpeedFeetPerMin =
+    atools::fs::sc::SC_INVALID_FLOAT;
 
   if(simShadowAircraft.isValid())
   {

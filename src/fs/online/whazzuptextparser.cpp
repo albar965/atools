@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -205,8 +205,7 @@ void WhazzupTextParser::readTransceivers(const QString& file)
       // frequency in kHz
       int frequency = atools::roundToInt(transceiverObj.value("frequency").toDouble() / 1000.f);
       if(frequency < 100 && error)
-        qWarning() << Q_FUNC_INFO << "Invalid frequency" << transceiverObj.value("frequency").toInt()
-                   << "for" << callsign;
+        qWarning() << Q_FUNC_INFO << "Invalid frequency" << transceiverObj.value("frequency").toInt() << "for" << callsign;
       else
         transceiver.frequency.insert(frequency);
       transceiver.pos = Pos(transceiverObj.value("lonDeg"), transceiverObj.value("latDeg"));
@@ -264,6 +263,7 @@ bool WhazzupTextParser::readInternalJson(const QString& file, const QDateTime& l
   QJsonArray pilotsArr = clients.value("pilots").toArray();
   if(!pilotsArr.isEmpty())
     db->exec("delete from client");
+
   readPilotsJson(pilotsArr);
 
   // Controllers/atcs and observers =================================
@@ -272,6 +272,7 @@ bool WhazzupTextParser::readInternalJson(const QString& file, const QDateTime& l
   if(!controllersArr.isEmpty())
     db->exec("delete from atc");
   readControllersJson(controllersArr, false /* observer */);
+
   if(format == IVAO_JSON2)
     readControllersJson(clients.value("observers").toArray(), true /* observer */);
 
@@ -280,6 +281,7 @@ bool WhazzupTextParser::readInternalJson(const QString& file, const QDateTime& l
   if(!serversArr.isEmpty())
     db->exec("delete from server");
   readServersJson(serversArr, false /* voice */);
+
   if(format == IVAO_JSON2)
     readServersJson(obj.value("voiceServers").toArray(), true /* voice */);
 
@@ -436,7 +438,6 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
       atisStrList.removeAll(QString());
       columns[v::ATIS_MESSAGE] = atisStrList.join('\n');
       columns[v::TIME_LAST_ATIS_RECEIVED] = atcObj.value("last_updated").toVariant().toString();
-
       columns[v::TIME_LOGON] = atcObj.value("logon_time").toVariant().toString();
 
       // Get all transceivers with callsign =========
@@ -514,15 +515,14 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
       // },
       columns[c::CID] = atcObj.value("id").toVariant().toString();
       columns[c::REALNAME] = atcObj.value("name").toVariant().toString();
-
       columns[c::SERVER] = atcObj.value("serverId").toVariant().toString();
-
       columns[i::SOFTWARE_NAME] = atcObj.value("softwareTypeId").toVariant().toString();
       columns[i::SOFTWARE_VERSION] = atcObj.value("softwareVersion").toVariant().toString();
 
       // Read ATIS message array =========
       QStringList atisList;
-      for(const QJsonValue& value : atcObj.value("atis").toObject().value("lines").toArray())
+      const QJsonArray atisArr = atcObj.value("atis").toObject().value("lines").toArray();
+      for(const QJsonValue& value : atisArr)
         atisList.append(value.toString());
       atisList.removeAll(QString());
       columns[i::ATIS] = atisList.join('\n');
@@ -1129,33 +1129,41 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
     {
       case atools::fs::online::fac::UNKNOWN:
         break;
+
       case atools::fs::online::fac::OBSERVER:
         boundaryType = "OBS";
         break;
+
       case atools::fs::online::fac::FLIGHT_INFORMATION:
         boundaryType = "C"; // Center
         comType = "INF"; // Information
         break;
+
       case atools::fs::online::fac::DELIVERY:
         boundaryType = "CL"; // Clearance
         comType = "C"; // Clearance delivery
         break;
+
       case atools::fs::online::fac::GROUND:
         boundaryType = "G";
         comType = "G"; // Ground control
         break;
+
       case atools::fs::online::fac::TOWER:
         boundaryType = "T";
         comType = "T"; // Tower, Air Traffic Control
         break;
+
       case atools::fs::online::fac::APPROACH:
         boundaryType = "A";
         comType = "A"; // Approach control
         break;
+
       case atools::fs::online::fac::ACC:
         boundaryType = "C"; // Center
         comType = "CTR"; // Area control center
         break;
+
       case atools::fs::online::fac::DEPARTURE:
         boundaryType = "D";
         comType = "D"; // Departure control
@@ -1177,9 +1185,11 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
   {
     // Not ATC - client ====================
     insertQuery->bindValue(":flightplan_flight_rules", at(line, c::PLANNED_FLIGHTTYPE, error));
+
     QString departureTime = at(line, c::PLANNED_DEPTIME, error);
     if(!departureTime.isEmpty() && departureTime != "0")
       insertQuery->bindValue(":flightplan_departure_time", departureTime);
+
     QString actualDepartureTime = at(line, c::PLANNED_ACTDEPTIME, error);
     if(!actualDepartureTime.isEmpty() && actualDepartureTime != "0")
       insertQuery->bindValue(":flightplan_actual_departure_time", actualDepartureTime);
@@ -1220,14 +1230,12 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
 
   if(format == IVAO || format == IVAO_JSON2)
   {
-    insertQuery->bindValue(":connection_time",
-                           parseDateTime(line, i::CONNECTION_TIME, format == IVAO_JSON2 /* jsonFormat */));
+    insertQuery->bindValue(":connection_time", parseDateTime(line, i::CONNECTION_TIME, format == IVAO_JSON2 /* jsonFormat */));
 
     if(atc)
     {
       insertQuery->bindValue(":atis", convertAtisText(at(line, i::ATIS, error)));
-      insertQuery->bindValue(":atis_time",
-                             parseDateTime(line, i::ATIS_TIME, format == IVAO_JSON2 /* jsonFormat */));
+      insertQuery->bindValue(":atis_time", parseDateTime(line, i::ATIS_TIME, format == IVAO_JSON2 /* jsonFormat */));
     }
     else
     {
@@ -1244,8 +1252,8 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
   }
   else if(format == VATSIM || format == VATSIM_JSON3)
   {
-    insertQuery->bindValue(":connection_time",
-                           parseDateTime(line, v::TIME_LOGON, format == VATSIM_JSON3 /* jsonFormat */));
+    insertQuery->bindValue(":connection_time", parseDateTime(line, v::TIME_LOGON, format == VATSIM_JSON3 /* jsonFormat */));
+
     if(atc)
     {
       insertQuery->bindValue(":atis", convertAtisText(at(line, v::ATIS_MESSAGE, error)));
@@ -1284,9 +1292,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
         // Create a circular polygon with 10 degree segments
 
         // at least 1/10 nm radius
-        lineString = LineString(position,
-                                atools::geo::nmToMeter(
-                                  std::min(1000.f, std::max(1.f, static_cast<float>(circleRadius)))), 36);
+        lineString = LineString(position, atools::geo::nmToMeter(std::min(1000.f, std::max(1.f, static_cast<float>(circleRadius)))), 36);
       }
 
       // Add bounding rectangle
