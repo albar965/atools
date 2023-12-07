@@ -80,6 +80,7 @@ bool contains(const TYPE& str, const std::initializer_list<TYPE>& list)
   return false;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 template<typename TYPE>
 bool contains(const TYPE& str, const QVector<TYPE>& list)
 {
@@ -89,6 +90,7 @@ bool contains(const TYPE& str, const QVector<TYPE>& list)
 
   return false;
 }
+#endif
 
 template<typename TYPE>
 bool contains(const TYPE& str, const QList<TYPE>& list)

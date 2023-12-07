@@ -41,7 +41,7 @@ class Pos;
 namespace fs {
 namespace gpx {
 
-class GpxData;
+struct GpxData;
 
 /*
  * Collects all save and load methods for GPX files.
