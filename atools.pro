@@ -246,6 +246,7 @@ HEADERS += \
   src/logging/loggingutil.h \
   src/settings/settings.h \
   src/util/average.h \
+  src/util/contextsaver.h \
   src/util/csvreader.h \
   src/util/filechecker.h \
   src/util/filesystemwatcher.h \
@@ -321,6 +322,7 @@ SOURCES += \
   src/logging/loggingutil.cpp \
   src/settings/settings.cpp \
   src/util/average.cpp \
+  src/util/contextsaver.cpp \
   src/util/csvreader.cpp \
   src/util/filechecker.cpp \
   src/util/filesystemwatcher.cpp \
