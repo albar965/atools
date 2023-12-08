@@ -33,6 +33,11 @@ struct TrailPoint
   {
   }
 
+  TrailPoint()
+    : timestampMs(0L)
+  {
+  }
+
   atools::geo::PosD pos;
   qint64 timestampMs;
 };
