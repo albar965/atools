@@ -38,6 +38,7 @@ MessageBox::MessageBox(QWidget *parent, const QString& title, const QString& hel
   // Hide icon per default
   ui->labelIcon->hide();
 
+  connect(ui->label, &QLabel::linkActivated, this, &MessageBox::linkActivated);
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &MessageBox::buttonBoxClicked);
 }
 

@@ -77,7 +77,7 @@ public:
 
   /* Open a file using the default application. If that fails show an error dialog */
   void openFile(const QString& filepath);
-  static void openFile(QWidget *parent, const QString& filepath);
+  static void openFile(QWidget *parent, QString filepath);
 
 private:
   /* Returns a valid help URL and also replaces the variable ${LANG} with one of the

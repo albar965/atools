@@ -132,9 +132,12 @@ void HelpHandler::openFile(const QString& filepath)
   openFile(parentWidget, filepath);
 }
 
-void HelpHandler::openFile(QWidget *parent, const QString& filepath)
+void HelpHandler::openFile(QWidget *parent, QString filepath)
 {
   qDebug() << Q_FUNC_INFO << filepath;
+
+  if(filepath.startsWith("file://"))
+    filepath.remove(0, 7);
 
   if(QFile::exists(filepath))
   {

@@ -34,7 +34,8 @@ namespace gui {
 
 /*
  * Message box class which allows to add buttons like help which do not close the dialog window.
- * Clicking the help button will open the related URL but not close the dialog.
+ * Clicking the help button will open the related URL but not close this one.
+ * Additionally the linkActivated() signal is sent if a link is clicked in the label.
  */
 class MessageBox :
   public QDialog
@@ -72,6 +73,9 @@ public:
 
   /* Set a standard icon for the top left label.  */
   void setIcon(QMessageBox::Icon dialogIcon);
+
+signals:
+  void linkActivated(const QString& link);
 
 private:
   Ui::MessageBox *ui;

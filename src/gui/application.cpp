@@ -18,6 +18,8 @@
 #include "gui/application.h"
 #include "atools.h"
 #include "gui/messagebox.h"
+#include "gui/tools.h"
+#include "gui/helphandler.h"
 #include "io/fileroller.h"
 #include "zip/zipwriter.h"
 
@@ -88,15 +90,17 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
     QString message = tr("<p style=\"white-space:pre\"><b>%1 did not exit cleanly the last time.</b></p>"
                            "<p style=\"white-space:pre\">This was most likely caused by a crash.</p>"
                              "<p style=\"white-space:pre\">A crash report was generated and saved with all related files in a Zip archive.</p>"
-                               "<p style=\"white-space:pre\"><a href=\"%2\"><b>Click here to open the crash report \"%3\"</b></a></p>"
-                                 "<p style=\"white-space:pre\">You might want to send this file to the author to investigate the crash.</p>"
-                                   "<p style=\"white-space:pre\"><a href=\"%4\"><b>Click here for contact information</b></a></p>"
+                               "<p style=\"white-space:pre\"><a href=\"%2\"><b>Click here to open the directory containing the report \"%3\"</b></a></p>"
+                                 "<p style=\"white-space:pre\">You might want to send this file to the author of %4 to investigate the crash.</p>"
+                                   "<p style=\"white-space:pre\"><a href=\"%5\"><b>Click here for contact information</b></a></p>"
                                      "<hr/>"
                                      "<p><b>Start in safe mode now which means to skip loading of all default files like "
-                                       "flight plans and other settings now which may have caused the previous crash?</b></p>").
-                      arg(applicationName()).arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).arg(contactUrl);
+                                       "flight plans, window layout and other settings now which may have "
+                                       "caused the previous crash?</b></p>").
+                      arg(applicationName()).arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
+                      arg(QApplication::applicationName()).arg(contactUrl);
 
-    atools::gui::MessageBox box(parent, applicationName(), "CRASH.html");
+    atools::gui::MessageBox box(parent, applicationName(), "CRASHREPORT.html");
     box.setHelpOnlineUrl(helpOnlineUrl);
     box.setHelpLanguageOnline(helpLanguageOnline);
 
@@ -105,6 +109,14 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
     box.addButton(QDialogButtonBox::Help);
     box.setText(message);
     box.setIcon(QMessageBox::Critical);
+
+    connect(&box, &atools::gui::MessageBox::linkActivated, [&box](const QString& link) {
+          if(link.startsWith("https://") || link.startsWith("http://"))
+            atools::gui::HelpHandler::openUrl(&box, QUrl(link));
+          else
+            atools::gui::showInFileManager(link, &box);
+        });
+
     result = box.exec();
   }
 

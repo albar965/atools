@@ -38,8 +38,11 @@
 namespace atools {
 namespace gui {
 
-bool showInFileManager(const QString& filepath, QWidget *parent)
+bool showInFileManager(QString filepath, QWidget *parent)
 {
+  if(filepath.startsWith("file://"))
+    filepath.remove(0, 7);
+
 #ifdef Q_OS_WIN32
   QFileInfo fp(filepath);
   fp.makeAbsolute();

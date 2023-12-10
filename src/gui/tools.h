@@ -40,7 +40,7 @@ void adjustSelectionColors(QWidget *widget);
 
 /* Show path in any OS dependent file manager. Selects the file in Windows Explorer.
  *  Shows a warning dialog on error.*/
-bool showInFileManager(const QString& filepath, QWidget *parent);
+bool showInFileManager(QString filepath, QWidget *parent);
 
 /* Open HTTP, HTTPS, FTP or FILE link in browser or file manager */
 void anchorClicked(QWidget *parent, const QUrl& url);
