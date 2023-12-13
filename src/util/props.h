@@ -329,12 +329,12 @@ public:
 
 #endif
 
-  atools::util::Prop getProp(int key)
+  atools::util::Prop getProp(int key) const
   {
     return value(key);
   }
 
-  QList<atools::util::Prop> getProps(int key)
+  QList<atools::util::Prop> getProps(int key) const
   {
     return values(key);
   }
