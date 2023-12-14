@@ -18,6 +18,7 @@
 #include "fs/userdata/logdatamanager.h"
 
 #include "fs/gpx/gpxio.h"
+#include "sql/sqltransaction.h"
 #include "sql/sqlutil.h"
 #include "sql/sqlexport.h"
 #include "sql/sqldatabase.h"
@@ -603,7 +604,41 @@ void LogdataManager::updateSchema()
   addColumnIf("aircraft_perf", "blob");
   addColumnIf("aircraft_trail", "blob");
 
+  repairDateTime("departure_time");
+  repairDateTime("destination_time");
+
   DataManagerBase::updateUndoSchema();
+}
+
+void LogdataManager::repairDateTime(const QString& column)
+{
+  int offsetMin = QDateTime::currentDateTime().offsetFromUtc() / 60;
+  int offsetH = offsetMin / 60;
+  int offsetM = offsetMin % 60;
+
+  QString offsetStr = QString("%1%2:%3").arg(offsetMin < 0 ? "-" : "+").arg(offsetH, 2, 10, QChar('0')).arg(offsetM, 2, 10, QChar('0'));
+
+  SqlTransaction transaction(db);
+
+  int num = 0;
+  SqlQuery update(db);
+  update.prepare("update logbook set " % column % " = :datetime where logbook_id = :id");
+
+  // WRONG: 2023-02-08T22:01:31.360
+  // REPLACEMENT: 2023-02-07T19:44:31.764-08:00
+  SqlQuery query("select logbook_id, " % column % "  from logbook where " % column % " like '____-__-__T__:__:__.___'", db);
+  query.exec();
+  while(query.next())
+  {
+    update.bindValue(":id", query.value(0));
+    update.bindValue(":datetime", QString(query.value(1).toString().trimmed() % offsetStr));
+    update.exec();
+    num++;
+  }
+
+  if(num > 0)
+    qDebug() << Q_FUNC_INFO << "Updated" << num << "rows with new date in logbook." << column << "using timezone" << offsetStr;
+  transaction.commit();
 }
 
 void LogdataManager::clearGeometryCache()

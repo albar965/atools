@@ -131,6 +131,8 @@ private:
   /* Prime cache by loading the GpxCacheEntry */
   void loadGpx(int id);
 
+  void repairDateTime(const QString& column);
+
   /* Cache to avoid reading BLOBs */
   QCache<int, atools::fs::gpx::GpxData> cache;
 
