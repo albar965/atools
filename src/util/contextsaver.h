@@ -22,13 +22,13 @@ namespace atools {
 namespace util {
 
 /*
- * Saves remembers a value reference, sets variable to value and restores it on destruction.
+ * Saves a value reference, sets variable to value and restores it on destruction.
  */
 template<typename TYPE>
 class ContextSaver
 {
 public:
-  /* Resets back to previous value */
+  /* Sets value and resets back to previous value on destruction. */
   ContextSaver(TYPE& valueReference, TYPE value)
     : valueSaved(valueReference), valueRef(valueReference)
   {
@@ -36,7 +36,7 @@ public:
     valueRef = value;
   }
 
-  /* Resets back to resetValue */
+  /* Sets value and resets back to resetValue on destruction. */
   ContextSaver(TYPE& valueReference, TYPE value, TYPE resetValue)
     : valueSaved(resetValue), valueRef(valueReference)
   {
@@ -53,6 +53,22 @@ public:
 private:
   TYPE valueSaved;
   TYPE& valueRef;
+};
+
+/*
+ * Saves a boolean value reference, sets variable to value and restores it on destruction.
+ */
+class ContextSaverBool
+  : public atools::util::ContextSaver<bool>
+{
+public:
+  /* Sets value and resets back to resetValue on destruction. */
+  ContextSaverBool(bool& valueReference, bool value = true, bool resetValue = false)
+    : atools::util::ContextSaver<bool>(valueReference, value, resetValue)
+  {
+
+  }
+
 };
 
 } // namespace util
