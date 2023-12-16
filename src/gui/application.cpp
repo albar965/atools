@@ -69,8 +69,48 @@ Application *Application::applicationInstance()
   return dynamic_cast<Application *>(QCoreApplication::instance());
 }
 
+void Application::createIssueReport(QWidget *parent, const QString& crashReportFile, const QStringList& filenames,
+                                    const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline,
+                                    const QString& contactHtml)
+{
+  qDebug() << Q_FUNC_INFO << crashReportFile << filenames;
+
+  // Build a report with all relevant files in a Zip archive
+  qWarning() << Q_FUNC_INFO << "Creating crash report" << crashReportFile << filenames;
+  buildCrashReport(crashReportFile, filenames);
+
+  QFileInfo crashReportFileinfo(crashReportFile);
+  QUrl crashReportUrl = QUrl::fromLocalFile(crashReportFileinfo.absoluteFilePath());
+
+  QString message = tr("<p style=\"white-space:pre\">An issue report was generated and saved with all related files in a Zip archive.</p>"
+                         "<p style=\"white-space:pre\"><a href=\"%1\"><b>Click here to open the directory containing the report \"%2\"</b></a></p>"
+                           "<p style=\"white-space:pre\">You can send this file to the author of %3 to investigate a problem.</p>"
+                             "<p style=\"white-space:pre\">%4</p>").
+                    arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
+                    arg(QApplication::applicationName()).arg(contactHtml);
+
+  atools::gui::MessageBox box(parent, QApplication::applicationName());
+  box.setHelpDocument(helpDocument);
+  box.setHelpOnlineUrl(helpOnlineUrl);
+  box.setHelpLanguageOnline(helpLanguageOnline);
+
+  box.addAcceptButton(QDialogButtonBox::Ok);
+  box.addButton(QDialogButtonBox::Help);
+  box.setText(message);
+  box.setIcon(QMessageBox::Information);
+
+  connect(&box, &atools::gui::MessageBox::linkActivated, [&box](const QString& link) {
+        if(link.startsWith("https://") || link.startsWith("http://"))
+          atools::gui::HelpHandler::openUrl(&box, QUrl(link));
+        else
+          atools::gui::showInFileManager(link, &box);
+      });
+
+  box.exec();
+}
+
 void Application::recordStart(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile, const QStringList& filenames,
-                              const QString& helpOnlineUrl, const QString& helpLanguageOnline)
+                              const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline)
 {
   qDebug() << Q_FUNC_INFO << "Lock file" << lockFileParam;
 
@@ -100,7 +140,8 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
                       arg(applicationName()).arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
                       arg(QApplication::applicationName()).arg(contactUrl);
 
-    atools::gui::MessageBox box(parent, applicationName(), "CRASHREPORT.html");
+    atools::gui::MessageBox box(parent, applicationName());
+    box.setHelpDocument(helpDocument);
     box.setHelpOnlineUrl(helpOnlineUrl);
     box.setHelpLanguageOnline(helpLanguageOnline);
 

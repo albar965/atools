@@ -50,13 +50,17 @@ public:
    * Sets safe mode if user chooses to skip file loading.
    * Always creates a crash report in case of previous unsafe exit. */
   static void recordStart(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile, const QStringList& filenames,
-                          const QString& helpOnlineUrl, const QString& helpLanguageOnline);
+                          const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline);
 
   /* Removes lock file */
   static void recordExit();
 
   /* Record files and pack them into a zip for a crash report */
   static void buildCrashReport(const QString& crashReportFile, const QStringList& filenames);
+
+  /* Record files and pack them into a zip for a crash report */
+  static void createIssueReport(QWidget *parent, const QString& crashReportFile, const QStringList& filenames, const QString& helpOnlineUrl,
+                                const QString& helpDocument, const QString& helpLanguageOnline, const QString& contactHtml);
 
   /* User decided to skip loading of files due to earlier crash */
   static bool isSafeMode()

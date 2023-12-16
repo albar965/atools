@@ -43,17 +43,25 @@ class MessageBox :
   Q_OBJECT
 
 public:
-  explicit MessageBox(QWidget *parent, const QString& title, const QString& helpBaseUrlParam);
+  explicit MessageBox(QWidget *parent, const QString& title);
   virtual ~MessageBox() override;
 
   /* Adjusts contents before exec() */
   virtual int exec() override;
 
+  /* E.g. "CRASHREPORT.html" */
+  void setHelpDocument(const QString& value)
+  {
+    helpDocument = value;
+  }
+
+  /* Full URL with optional language placeholder like "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/${LANG}/" */
   void setHelpOnlineUrl(const QString& value)
   {
     helpOnlineUrl = value;
   }
 
+  /* Language like "en" for online access. */
   void setHelpLanguageOnline(const QString& value)
   {
     helpLanguageOnline = value;
@@ -84,7 +92,7 @@ private:
   QVector<QDialogButtonBox::StandardButton> acceptButtons;
   QVector<QDialogButtonBox::StandardButton> rejectButtons;
 
-  QString helpBaseUrl, settingsPrefix, helpOnlineUrl, helpLanguageOnline;
+  QString helpDocument, settingsPrefix, helpOnlineUrl, helpLanguageOnline;
 
 };
 

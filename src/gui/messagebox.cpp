@@ -26,8 +26,8 @@
 namespace atools {
 namespace gui {
 
-MessageBox::MessageBox(QWidget *parent, const QString& title, const QString& helpBaseUrlParam)
-  : QDialog(parent), ui(new Ui::MessageBox), helpBaseUrl(helpBaseUrlParam)
+MessageBox::MessageBox(QWidget *parent, const QString& title)
+  : QDialog(parent), ui(new Ui::MessageBox)
 {
   ui->setupUi(this);
 
@@ -127,8 +127,8 @@ void MessageBox::buttonBoxClicked(QAbstractButton *button)
     accept();
   else if(rejectButtons.contains(buttonType))
     reject();
-  else if(buttonType == QDialogButtonBox::Help && !helpBaseUrl.isEmpty())
-    atools::gui::HelpHandler::openHelpUrlWeb(this, helpOnlineUrl + helpBaseUrl, helpLanguageOnline);
+  else if(buttonType == QDialogButtonBox::Help && !helpDocument.isEmpty())
+    atools::gui::HelpHandler::openHelpUrlWeb(this, helpOnlineUrl + helpDocument, helpLanguageOnline);
 }
 
 } // namespace gui
