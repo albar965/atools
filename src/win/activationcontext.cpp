@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "win/activationcontext.h"
+#include "atools.h"
 
 #include <QDebug>
 #include <QDir>
@@ -89,7 +90,7 @@ bool ActivationContext::isAvailable() const
 
 bool ActivationContext::create(QString manifestPath)
 {
-  manifestPath = QDir::toNativeSeparators(manifestPath);
+  manifestPath = atools::nativeCleanPath(manifestPath);
 
   qDebug() << Q_FUNC_INFO << manifestPath;
 #if defined(Q_OS_WIN32)
@@ -190,7 +191,7 @@ unsigned int ActivationContext::getErrorNumber() const
 
 bool ActivationContext::loadLibrary(QString libraryName)
 {
-  libraryName = QDir::toNativeSeparators(libraryName);
+  libraryName = atools::nativeCleanPath(libraryName);
 
   qDebug() << Q_FUNC_INFO << libraryName;
 
@@ -220,7 +221,7 @@ bool ActivationContext::loadLibrary(QString libraryName)
 bool ActivationContext::freeLibrary(QString libraryName)
 {
 #if defined(Q_OS_WIN32)
-  libraryName = QDir::toNativeSeparators(libraryName);
+  libraryName = atools::nativeCleanPath(libraryName);
   QString libraryKey = QFileInfo(libraryName).fileName();
   bool retval = true;
   if(p->loadedLibraries.contains(libraryKey))

@@ -1235,7 +1235,7 @@ QString linkTarget(const QFileInfo& path)
   // Windows ==========================================================
   if(path.isJunction())
   {
-    QString str = QDir::toNativeSeparators(path.absoluteFilePath());
+    QString str = atools::nativeCleanPath(path.absoluteFilePath());
     wchar_t *filepathW = new wchar_t[str.size() + 1];
     str.toWCharArray(filepathW);
     filepathW[str.size()] = 0;
@@ -1258,7 +1258,7 @@ QString linkTarget(const QFileInfo& path)
         target.remove("\\\\?\\");
 
         // Clear path if target is the same. This can happen with mounted drives which are also identified as Junctions
-        if(QDir::cleanPath(target) == QDir::cleanPath(path.absoluteFilePath()))
+        if(atools::cleanPath(target) == atools::cleanPath(path.absoluteFilePath()))
           target = QString();
       }
 
@@ -1326,7 +1326,7 @@ QString linkTarget(const QFileInfo& path)
     target = path.symLinkTarget();
 #endif
 
-  return QDir::cleanPath(target);
+  return atools::cleanPath(target);
 }
 
 QString canonicalPath(const QFileInfo& path)
@@ -1381,7 +1381,7 @@ QString canonicalFilePath(const QFileInfo& path)
             target.append(slash);
           target.append(tmpPath.mid(separatorPos));
         }
-        tmpPath = QDir::cleanPath(target);
+        tmpPath = atools::cleanPath(target);
         separatorPos = 0;
         if(known.contains(tmpPath))
           return QString();
@@ -1393,7 +1393,7 @@ QString canonicalFilePath(const QFileInfo& path)
     }
   } while(separatorPos != -1);
 
-  return QDir::cleanPath(tmpPath);
+  return atools::cleanPath(tmpPath);
 
 #else
   return QDir::cleanPath(path.canonicalFilePath());

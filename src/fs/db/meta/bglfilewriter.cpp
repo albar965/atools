@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "fs/db/meta/bglfilewriter.h"
+#include "atools.h"
 #include "fs/db/datawriter.h"
 #include "fs/db/meta/sceneryareawriter.h"
 
@@ -43,8 +44,8 @@ void BglFileWriter::writeObject(const BglFile *type)
   bind(":scenery_area_id", getDataWriter().getSceneryAreaWriter()->getCurrentId());
   bind(":bgl_create_time", static_cast<int>(type->getHeader().getCreationTimestamp()));
   bind(":file_modification_time", static_cast<int>(fi.lastModified().toTime_t()));
-  bind(":filepath", QDir::toNativeSeparators(currentFilepath));
-  bind(":filename", QDir::toNativeSeparators(currentFilename));
+  bind(":filepath", atools::nativeCleanPath(currentFilepath));
+  bind(":filename", atools::nativeCleanPath(currentFilename));
   bind(":size", type->getFilesize());
 
   executeStatement();

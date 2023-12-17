@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "gui/tools.h"
+#include "atools.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
 #include "qapplication.h"
@@ -72,7 +73,7 @@ bool showInFileManager(QString filepath, QWidget *parent)
     PROCESS_INFORMATION processInfo;
     ::ZeroMemory(&processInfo, sizeof(processInfo));
 
-    QString nativePath(QDir::toNativeSeparators(fp.canonicalFilePath()));
+    QString nativePath(atools::nativeCleanPath(fp.canonicalFilePath()));
     QString cmd = QString("explorer /select,\"%1\"").arg(nativePath);
     qDebug() << Q_FUNC_INFO << "command" << cmd;
     LPWSTR lpCmd = new WCHAR[cmd.size() + 1];

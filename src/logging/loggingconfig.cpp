@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "logging/loggingconfig.h"
+#include "atools.h"
 #include "settings/settings.h"
 #include "io/fileroller.h"
 
@@ -159,7 +160,7 @@ void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelVect
       QString filename = channel->file->fileName();
 
       if(!filename.isEmpty())
-        filenames.insert(QDir::toNativeSeparators(QFileInfo(filename).absoluteFilePath()));
+        filenames.insert(atools::nativeCleanPath(QFileInfo(filename).absoluteFilePath()));
     }
   }
 }

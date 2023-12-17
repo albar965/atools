@@ -62,7 +62,7 @@ void AircraftIndex::loadIndex(const QStringList& basePaths)
             {
               // This is the hashmap key returned by SimConnect_RequestSystemState(EVENT_AIRCRAFT_LOADED, ...)
               // SimObjects/Airplanes/Asobo_208B_GRAND_CARAVAN_EX/aircraft.cfg
-              QString cfgPathKey = QDir::cleanPath(layoutPath);
+              QString cfgPathKey = atools::cleanPath(layoutPath);
               QFileInfo fullCfgPathValue(addonDir.filePath() + QDir::separator() + cfgPathKey);
 
               if(fullCfgPathValue.exists() && fullCfgPathValue.isFile())
@@ -78,7 +78,7 @@ void AircraftIndex::loadIndex(const QStringList& basePaths)
 
 QString AircraftIndex::getIcaoTypeDesignator(const QString& aircraftCfgFilepath)
 {
-  QString aircraftCfgKey = QDir::cleanPath(aircraftCfgFilepath).toLower();
+  QString aircraftCfgKey = atools::cleanPath(aircraftCfgFilepath).toLower();
   QString typeDesignator = shortPathToTypeDesMap.value(aircraftCfgKey);
 
   if(typeDesignator.isEmpty())

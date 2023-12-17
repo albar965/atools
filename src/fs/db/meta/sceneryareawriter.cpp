@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "fs/db/meta/sceneryareawriter.h"
+#include "atools.h"
 #include "fs/navdatabaseoptions.h"
 
 #include <QDebug>
@@ -39,8 +40,8 @@ void SceneryAreaWriter::writeObject(const SceneryArea *type)
   bind(":number", type->getAreaNumber());
   bind(":layer", type->getLayer());
   bind(":title", type->getTitle());
-  bind(":remote_path", QDir::toNativeSeparators(type->getRemotePath()));
-  bind(":local_path", QDir::toNativeSeparators(type->getLocalPath()));
+  bind(":remote_path", atools::nativeCleanPath(type->getRemotePath()));
+  bind(":local_path", atools::nativeCleanPath(type->getLocalPath()));
   bind(":active", type->isActive());
   bind(":required", type->isRequired());
   bind(":exclude", type->getExclude());

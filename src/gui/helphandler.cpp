@@ -152,15 +152,15 @@ void HelpHandler::openFile(QWidget *parent, QString filepath)
 
       QProcess process;
       process.setEnvironment(env);
-      process.setArguments({QDir::toNativeSeparators(filepath)});
+      process.setArguments({atools::nativeCleanPath(filepath)});
       process.setProgram("/usr/bin/xdg-open");
       if(!process.startDetached())
         atools::gui::Dialog::warning(parent, tr("File \"%1\" not found").arg(filepath));
     }
     else
-      openUrl(parent, QUrl::fromLocalFile(QDir::toNativeSeparators(filepath)));
+      openUrl(parent, QUrl::fromLocalFile(atools::nativeCleanPath(filepath)));
 #else
-    openUrl(parent, QUrl::fromLocalFile(QDir::toNativeSeparators(filepath)));
+    openUrl(parent, QUrl::fromLocalFile(atools::nativeCleanPath(filepath)));
 #endif
   }
   else

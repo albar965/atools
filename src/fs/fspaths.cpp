@@ -212,9 +212,9 @@ void FsPaths::loadAllPaths()
   for(atools::fs::FsPaths::SimulatorType type : ALL_SIMULATOR_TYPES)
   {
     qInfo() << Q_FUNC_INFO << "============";
-    basePathMap.insert(type, QDir::toNativeSeparators(initBasePath(type)));
-    filesPathMap.insert(type, QDir::toNativeSeparators(initFilesPath(type)));
-    sceneryFilepathMap.insert(type, QDir::toNativeSeparators(initSceneryLibraryPath(type)));
+    basePathMap.insert(type, atools::nativeCleanPath(initBasePath(type)));
+    filesPathMap.insert(type, atools::nativeCleanPath(initFilesPath(type)));
+    sceneryFilepathMap.insert(type, atools::nativeCleanPath(initSceneryLibraryPath(type)));
   }
   qInfo() << Q_FUNC_INFO << "Done ======================================";
 }
