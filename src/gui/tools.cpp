@@ -41,6 +41,11 @@ namespace gui {
 
 bool showInFileManager(QString filepath, QWidget *parent)
 {
+  // Windows
+  if(filepath.startsWith("file:///"))
+    filepath.remove(0, 8);
+
+  // Unix
   if(filepath.startsWith("file://"))
     filepath.remove(0, 7);
 
@@ -123,6 +128,8 @@ bool showInFileManager(QString filepath, QWidget *parent)
     return true;
 
 #endif
+  // gdbus call --session --dest org.freedesktop.FileManager1 --object-path /org/freedesktop/FileManager1
+  // --method org.freedesktop.FileManager1.ShowItems "['file://$FILE']" ""
 
 #endif
 }
