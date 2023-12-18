@@ -4,6 +4,59 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 4.0.0.beta
+
+* Added LogdataManager::repairDateTime. Fixes local time in logbook without timezone.
+* Added SimConnectAircraft property PROP_XPCONNECT_VERSION to track Xpconnect version.
+* GUI tool updated. showInFileManager and HelpHandler::openFile can now deal with
+  file:// URLs Updated crash report to  open folder containing report files from dialog.
+  Added linkActivated to MessageBox.
+* Changed ItemViewZoomHandler to use application font as a base for size
+* Better cleanup functions that can deal with empty or null columns in databases.
+* Fixed issue where widgetutils did not recurse into nested layouts. Added option to
+  showHideLayoutElements to disable widgets.
+* Function changeIndication now using text instead of star.
+* Refactoring and renaming around flight plan properties. Fixed issue where not all STAR properties
+  were copied.
+* Added definitions for user approach and departure.
+* Added ListWidgetIndex for searching in options dialogs. Added stop-word list with all relevant
+  languages.
+* Added ATOOLS_DELETE macro for logging and reset of pointers.
+* Now setting "is_draw_surface" always to 1 for X-Plane to avoid transparent aprons.
+  albar965/littlenavmap#1059
+* Adde min and max altitude to GpxData class. albar965/littlenavmap#97
+* Added message box which stays open when clicking help button for crash handler, for example.
+* Added zlib to atools to create Zip files.
+* Added functionality to automatically generate a crash report on startup.
+* Optional full debug output on read airports when reading BGL.
+* Added polygon tools as an aid to label airspace polygons.
+* Fixed Pos::intersectingRadials to return invalid point in case of NaN.
+* Added military base acronyms to capNavString for airspaces.
+* Added polygon tools as an aid to label airspace polygons.
+* Fixed issue in DFD compiler where circular airspace arcs resulted in self crossing polygons.
+* Doubled number or arc and circle segments for more accuracy in map display airspaces.
+* elidedTexts to QFontMetricsF for more text placement accuracy.
+* LineString getStartCourse and getEndCourse added.
+* Fixed wrong altitude in route section for GPX export. albar965/littlenavmap#1053
+* Added cleanup preview functions to LogdataManager and UserdataManager.
+* Optimizations in flight plan export.
+* Made selection color of inactive table elements the same as active on Windows.
+* Fixed issues with moved or updated airports in MSFS when reading scenery library.
+* Added semicolon to invalid characters in filename.
+* Fixed crash for second userpoint or logbook import.
+* Now excluding all navaids in detected Navigraph update when reading scenery library of MSFS.
+* Database name and file in SQL exception now.
+* Reduced logging in HTTP server.
+* Additional scenery folder is now read recursively for all simulators
+* Added methods cleanPath and nativeCleanPath to avoid breaking UNC paths.
+* Now prefixing one digit runway numbers with zero on X-Plane FMS export to avoid issues when
+  loading into GPS.
+* Fixed detection of loopback device.
+* Adjusted listening hostname list report.
+* Added support for IPv6 in navserver and webserver.
+
+===============================================================================
+
 # Version 3.8.17
 
 * Code cleanup and optimizations in BGL reading code.
