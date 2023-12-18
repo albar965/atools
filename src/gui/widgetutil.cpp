@@ -160,7 +160,7 @@ bool noneChecked(const QList<const QAction *>& actions)
 void changeIndication(QAction *action, bool changed)
 {
   QString changeText(QObject::tr(" (changed)", "Indication for search menu button items"));
-  QString changeUnusedText(QObject::tr(" (changed, unused)", "Indication for search menu button items"));
+  QString changeUnusedText(QObject::tr(" (changed, not used)", "Indication for search menu button items"));
 
   if(action->text().endsWith(changeText))
     action->setText(action->text().remove(changeText));
