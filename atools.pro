@@ -89,6 +89,7 @@ ATOOLS_NO_WEB=$$(ATOOLS_NO_WEB)
 ATOOLS_NO_FS=$$(ATOOLS_NO_FS)
 ATOOLS_NO_GRIB=$$(ATOOLS_NO_GRIB)
 ATOOLS_NO_WMM=$$(ATOOLS_NO_WMM)
+ATOOLS_NO_NAVSERVER=$$(ATOOLS_NO_NAVSERVER)
 
 !isEqual(ATOOLS_NO_GUI, "true"): QT += svg widgets
 isEqual(ATOOLS_NO_GUI, "true"): QT -= gui
@@ -181,6 +182,7 @@ message(ATOOLS_NO_WEB: $$ATOOLS_NO_WEB)
 message(ATOOLS_NO_FS: $$ATOOLS_NO_FS)
 message(ATOOLS_NO_GRIB: $$ATOOLS_NO_GRIB)
 message(ATOOLS_NO_WMM: $$ATOOLS_NO_WMM)
+message(ATOOLS_NO_NAVSERVER: $$ATOOLS_NO_NAVSERVER)
 message(SIMCONNECT_PATH_WIN32: $$SIMCONNECT_PATH_WIN32)
 message(SIMCONNECT_PATH_WIN64: $$SIMCONNECT_PATH_WIN64)
 message(DEFINES: $$DEFINES)
@@ -509,6 +511,14 @@ SOURCES += \
   src/util/roundedpolygon.cpp
 } # ATOOLS_NO_GUI
 
+!isEqual(ATOOLS_NO_GUI, "true") {
+FORMS += \
+  src/gui/choicedialog.ui \
+  src/gui/messagebox.ui \
+  src/gui/treedialog.ui \
+  src/gui/sqlquerydialog.ui
+} # ATOOLS_NO_GUI
+
 # =====================================================================
 # WMM
 
@@ -684,9 +694,6 @@ HEADERS += \
   src/fs/navdatabaseerrors.h \
   src/fs/navdatabaseoptions.h \
   src/fs/navdatabaseprogress.h \
-  src/fs/ns/navserver.h \
-  src/fs/ns/navservercommon.h \
-  src/fs/ns/navserverworker.h \
   src/fs/online/onlinedatamanager.h \
   src/fs/online/onlinetypes.h \
   src/fs/online/statustextparser.h \
@@ -836,9 +843,6 @@ SOURCES += \
   src/fs/navdatabaseerrors.cpp \
   src/fs/navdatabaseoptions.cpp \
   src/fs/navdatabaseprogress.cpp \
-  src/fs/ns/navserver.cpp \
-  src/fs/ns/navservercommon.cpp \
-  src/fs/ns/navserverworker.cpp \
   src/fs/online/onlinedatamanager.cpp \
   src/fs/online/onlinetypes.cpp \
   src/fs/online/statustextparser.cpp \
@@ -949,13 +953,20 @@ SOURCES += \
   src/grib/gribreader.cpp
 } # ATOOLS_NO_GRIB
 
-!isEqual(ATOOLS_NO_GUI, "true") {
-FORMS += \
-  src/gui/choicedialog.ui \
-  src/gui/messagebox.ui \
-  src/gui/treedialog.ui \
-  src/gui/sqlquerydialog.ui
-} # ATOOLS_NO_GUI
+# =====================================================================
+# Navserver decoding files
+
+!isEqual(ATOOLS_NO_NAVSERVER, "true") {
+HEADERS += \
+  src/fs/ns/navserver.h \
+  src/fs/ns/navservercommon.h \
+  src/fs/ns/navserverworker.h
+
+SOURCES += \
+  src/fs/ns/navserver.cpp \
+  src/fs/ns/navservercommon.cpp \
+  src/fs/ns/navserverworker.cpp
+} # ATOOLS_NO_NAVSERVER
 
 
 RESOURCES += \
