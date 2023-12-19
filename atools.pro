@@ -975,7 +975,6 @@ RESOURCES += \
 OTHER_FILES += \
   resources/sql/fs/db/README.txt \
   *.ts \
-  .travis.yml \
   .gitignore \
   BUILD.txt \
   CHANGELOG.txt \
