@@ -270,11 +270,11 @@ Atrapada excepción
     </message>
     <message>
         <source> Flight Plan</source>
-        <translation> Plan de Vuelo</translation>
+        <translation type="vanished"> Plan de Vuelo</translation>
     </message>
     <message>
         <source> Track</source>
-        <translation> Pista</translation>
+        <translation type="vanished"> Pista</translation>
     </message>
     <message>
         <source>Cannot open FMS file %1. Reason: %2</source>
@@ -321,10 +321,6 @@ Atrapada excepción
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid position in GPX file &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -342,6 +338,29 @@ Atrapada excepción
     </message>
     <message>
         <source>Invalid FMS file. Invalid waypoint type in %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GpxIO</name>
+    <message>
+        <source>Cannot open file %1. Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open empty GPX file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in GPX file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> - Flight Plan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> - Track</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -422,6 +441,13 @@ Atrapada excepción
     </message>
     <message>
         <source>Cannot open geoid buffer &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MessageBox</name>
+    <message>
+        <source>Dialog</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1652,12 +1678,29 @@ Atrapada excepción
         <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source> (changed)</source>
+        <comment>Indication for search menu button items</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (changed, not used)</source>
+        <comment>Indication for search menu button items</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
     <message>
         <source>No valid scenery areas found</source>
         <translation>No se encontraron áreas de escenario válidas</translation>
+    </message>
+</context>
+<context>
+    <name>SqlQueryDialog</name>
+    <message>
+        <source>Little Navmap - </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1947,27 +1990,67 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
     <message>
         <source>Server is listening on hostnames %1 </source>
-        <translation>Servidor escuchando en nombre de Host %1 </translation>
+        <translation type="vanished">Servidor escuchando en nombre de Host %1 </translation>
     </message>
     <message>
         <source>Server is listening on hostname %1 </source>
-        <translation>Servidor escuchando en Host %1 </translation>
+        <translation type="vanished">Servidor escuchando en Host %1 </translation>
     </message>
     <message>
         <source>(IP addresses %2) </source>
-        <translation>(Direcciones IP %2) </translation>
+        <translation type="vanished">(Direcciones IP %2) </translation>
     </message>
     <message>
         <source>(IP address %2) </source>
-        <translation>(Dirección IP %2) </translation>
+        <translation type="vanished">(Dirección IP %2) </translation>
     </message>
     <message>
         <source>port %3.</source>
-        <translation>Puerto %3.</translation>
+        <translation type="vanished">Puerto %3.</translation>
     </message>
     <message>
         <source>port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</source>
-        <translation>Puerto &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</translation>
+        <translation type="vanished">Puerto &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</translation>
+    </message>
+    <message>
+        <source>Server is listening on hostnames (IP-addresses) on port </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server is listening on hostname (IP-address) on port </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1. IPv6 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1. IPv4 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use the mouse to select a hostname or IP-address.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Then copy the selected text to the clipboard using the context menu.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error: No network found.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2276,11 +2359,19 @@ Line %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
+        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2367,6 +2458,13 @@ Line %2.</source>
     </message>
     <message>
         <source>URL &quot;%1&quot; not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::gui::SqlQueryDialog</name>
+    <message>
+        <source>Nothing found to delete.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

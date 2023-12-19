@@ -279,11 +279,11 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source> Flight Plan</source>
-        <translation> Flugplan</translation>
+        <translation type="vanished"> Flugplan</translation>
     </message>
     <message>
         <source> Track</source>
-        <translation> Pfad</translation>
+        <translation type="vanished"> Pfad</translation>
     </message>
     <message>
         <source>Cannot open FMS file %1. Reason: %2</source>
@@ -355,7 +355,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
-        <translation>Ungültige Position in GPX-Datei &quot;%1&quot;.</translation>
+        <translation type="vanished">Ungültige Position in GPX-Datei &quot;%1&quot;.</translation>
     </message>
     <message>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
@@ -380,6 +380,29 @@ Datei: &quot;%2&quot;
     <message>
         <source>Invalid FMS file. Invalid waypoint type in %1</source>
         <translation>Ungültige FMS-Datei. Ungültiger Wegpunkttyp in %1</translation>
+    </message>
+</context>
+<context>
+    <name>GpxIO</name>
+    <message>
+        <source>Cannot open file %1. Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open empty GPX file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in GPX file &quot;%1&quot;.</source>
+        <translation type="unfinished">Ungültige Position in GPX-Datei &quot;%1&quot;.</translation>
+    </message>
+    <message>
+        <source> - Flight Plan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> - Track</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -460,6 +483,13 @@ Datei: &quot;%2&quot;
     <message>
         <source>Cannot open geoid buffer &quot;%1&quot;.</source>
         <translation>Kann Geoid-Puffer &quot;%1&quot; nicht öffnen.</translation>
+    </message>
+</context>
+<context>
+    <name>MessageBox</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1717,12 +1747,29 @@ Datei: &quot;%2&quot;
         <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Ein fataler Fehler ist aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Klicken Sie OK, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
     </message>
+    <message>
+        <source> (changed)</source>
+        <comment>Indication for search menu button items</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (changed, not used)</source>
+        <comment>Indication for search menu button items</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
     <message>
         <source>No valid scenery areas found</source>
         <translation>Keine gültigen Szeneriebereiche gefunden</translation>
+    </message>
+</context>
+<context>
+    <name>SqlQueryDialog</name>
+    <message>
+        <source>Little Navmap - </source>
+        <translation type="unfinished">Little Navmap - </translation>
     </message>
 </context>
 <context>
@@ -2036,27 +2083,67 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Server is listening on hostnames %1 </source>
-        <translation>Server wartet auf Computer %1 </translation>
+        <translation type="vanished">Server wartet auf Computer %1 </translation>
     </message>
     <message>
         <source>Server is listening on hostname %1 </source>
-        <translation>Server wartet auf Computer %1 </translation>
+        <translation type="vanished">Server wartet auf Computer %1 </translation>
     </message>
     <message>
         <source>(IP addresses %2) </source>
-        <translation>(IP-Adressen %2) </translation>
+        <translation type="vanished">(IP-Adressen %2) </translation>
     </message>
     <message>
         <source>(IP address %2) </source>
-        <translation>(IP-Adresse %2) </translation>
+        <translation type="vanished">(IP-Adresse %2) </translation>
     </message>
     <message>
         <source>port %3.</source>
-        <translation>Port %3.</translation>
+        <translation type="vanished">Port %3.</translation>
     </message>
     <message>
         <source>port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</source>
-        <translation>Port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</translation>
+        <translation type="vanished">Port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</translation>
+    </message>
+    <message>
+        <source>Server is listening on hostnames (IP-addresses) on port </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Server is listening on hostname (IP-address) on port </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1. IPv6 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1. IPv4 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 </source>
+        <translation type="unfinished">%1 </translation>
+    </message>
+    <message>
+        <source> (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use the mouse to select a hostname or IP-address.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Then copy the selected text to the clipboard using the context menu.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error: No network found.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2396,11 +2483,23 @@ Zeile %2.</translation>
     </message>
     <message>
         <source>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
-        <translation>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Kontakt und Support&lt;/a&gt;</translation>
+        <translation type="vanished">&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Kontakt und Support&lt;/a&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Wenn der Fehler weiterhin besteht oder während des Programmstarts auftritt, löschen Sie alle Einstellungen und Datenbankdateien von %1 und versuchen Sie es erneut.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Wenn Sie diesen Fehler melden wollen, hängen Sie die Log- und Konfigurationsdateien an Ihren Bericht an, fügen alle anderen verfügbaren Informationen hinzu und senden alles an die unten genannte Kontaktadresse.&lt;/b&gt;&lt;br/&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2487,6 +2586,13 @@ Zeile %2.</translation>
     <message>
         <source>URL &quot;%1&quot; not found</source>
         <translation>URL &quot;%1&quot; nicht gefunden</translation>
+    </message>
+</context>
+<context>
+    <name>atools::gui::SqlQueryDialog</name>
+    <message>
+        <source>Nothing found to delete.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
