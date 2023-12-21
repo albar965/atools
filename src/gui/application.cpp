@@ -189,8 +189,6 @@ void Application::buildCrashReport(const QString& crashReportFile, const QString
 
   zip::ZipWriter zipWriter(crashReportFile);
   zipWriter.setCompressionPolicy(zip::ZipWriter::AlwaysCompress);
-  zipWriter.setCreationPermissions(QFile::ReadOwner | QFile::ReadGroup | QFile::ReadOther | QFile::ReadUser |
-                                   QFile::WriteOwner | QFile::WriteGroup | QFile::WriteOther | QFile::WriteUser);
 
   // Add files to zip if they exist - ignore original path
   for(const QString& str : filenames)

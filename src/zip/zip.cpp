@@ -258,11 +258,11 @@ static QFile::Permissions modeToPermissions(quint32 mode)
 static quint32 permissionsToMode(QFile::Permissions perms)
 {
   quint32 mode = 0;
-  if(mode & (QFile::ReadOwner | QFile::ReadUser))
+  if(perms & (QFile::ReadOwner | QFile::ReadUser))
     mode |= UnixFileAttributes::ReadUser;
-  if(mode & (QFile::WriteOwner | QFile::WriteUser))
+  if(perms & (QFile::WriteOwner | QFile::WriteUser))
     mode |= UnixFileAttributes::WriteUser;
-  if(mode & (QFile::ExeOwner | QFile::ExeUser))
+  if(perms & (QFile::ExeOwner | QFile::ExeUser))
     mode |= UnixFileAttributes::WriteUser;
   if(perms & QFile::ReadGroup)
     mode |= UnixFileAttributes::ReadGroup;
@@ -517,7 +517,7 @@ void ZipPrivate::fillFileInfo(int index, ZipReader::FileInfo& fileInfo) const
           break;
       }
       fileInfo.permissions |= QFile::ReadOwner | QFile::ReadUser | QFile::ReadGroup | QFile::ReadOther;
-      if((mode & WindowsFileAttributes::ReadOnly) == 0)
+      if((mode& WindowsFileAttributes::ReadOnly) == 0)
         fileInfo.permissions |= QFile::WriteOwner | QFile::WriteUser | QFile::WriteGroup | QFile::WriteOther;
       if(fileInfo.isDir)
         fileInfo.permissions |= QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther;
@@ -564,9 +564,9 @@ class ZipWriterPrivate :
 {
 public:
   ZipWriterPrivate(QIODevice *device, bool ownDev)
-    : ZipPrivate(device,
-                 ownDev), status(ZipWriter::NoError), permissions(QFile::ReadOwner | QFile::WriteOwner),
-      compressionPolicy(ZipWriter::AlwaysCompress)
+    : ZipPrivate(device, ownDev), status(ZipWriter::NoError),
+    permissions(QFile::ReadOwner | QFile::ReadGroup | QFile::ReadOther | QFile::ReadUser | QFile::WriteOwner | QFile::WriteUser),
+    compressionPolicy(ZipWriter::AlwaysCompress)
   {
   }
 
@@ -708,7 +708,8 @@ void ZipReaderPrivate::scanFiles()
   }
 }
 
-void ZipWriterPrivate::addEntry(EntryType type, const QString& fileName, const QByteArray& contents /*, QFile::Permissions permissions, QZip::Method m*/)
+void ZipWriterPrivate::addEntry(EntryType type, const QString& fileName,
+                                const QByteArray& contents /*, QFile::Permissions permissions, QZip::Method m*/)
 {
 #ifndef NDEBUG
   static const char *const entryTypes[] =
@@ -718,7 +719,7 @@ void ZipWriterPrivate::addEntry(EntryType type, const QString& fileName, const Q
     "symlink  "
   };
   ZDEBUG() << "adding" << entryTypes[type] << ":" << fileName.toUtf8().constData() <<
-  (type == 2 ? QByteArray(" -> " + contents).constData() : "");
+    (type == 2 ? QByteArray(" -> " + contents).constData() : "");
 #endif
 
   if(!(device->isOpen() || device->open(QIODevice::WriteOnly)))
@@ -832,7 +833,7 @@ void ZipWriterPrivate::addEntry(EntryType type, const QString& fileName, const Q
   dirtyFileTree = true;
 }
 
-// ////////////////////////////  Reader
+//////////////////////////////  Reader
 
 /*!
  *   \class QZipReader::FileInfo
@@ -1122,7 +1123,7 @@ bool ZipReader::extractAll(const QString& destinationDir) const
 
   // create directories first
   QList<FileInfo> allFiles = fileInfoList();
-  foreach(const FileInfo &fi, allFiles)
+  foreach(const FileInfo& fi, allFiles)
   {
     const QString absPath = destinationDir + QDir::separator() + fi.filePath;
     if(fi.isDir)
@@ -1136,7 +1137,7 @@ bool ZipReader::extractAll(const QString& destinationDir) const
   }
 
   // set up symlinks
-  foreach(const FileInfo &fi, allFiles)
+  foreach(const FileInfo& fi, allFiles)
   {
     const QString absPath = destinationDir + QDir::separator() + fi.filePath;
     if(fi.isSymLink)
@@ -1157,7 +1158,7 @@ bool ZipReader::extractAll(const QString& destinationDir) const
     }
   }
 
-  foreach(const FileInfo &fi, allFiles)
+  foreach(const FileInfo& fi, allFiles)
   {
     const QString absPath = destinationDir + QDir::separator() + fi.filePath;
     if(fi.isFile)
@@ -1204,7 +1205,7 @@ void ZipReader::close()
   d->device->close();
 }
 
-// //////////////////////////// Writer
+////////////////////////////// Writer
 
 /*!
  *   \class QZipWriter
@@ -1397,7 +1398,7 @@ void ZipWriter::addFile(const QString& fileName, QIODevice *device)
   Q_ASSERT(device);
   QIODevice::OpenMode mode = device->openMode();
   bool opened = false;
-  if((mode & QIODevice::ReadOnly) == 0)
+  if((mode& QIODevice::ReadOnly) == 0)
   {
     opened = true;
     if(!device->open(QIODevice::ReadOnly))
