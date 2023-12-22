@@ -876,21 +876,30 @@ QString runwayDesignatorLong(const QString& name)
 bool runwayNameSplit(const QString& name, int *number, QString *designator, bool *trueHeading)
 {
   // Extract runway number and designator
-  static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)(T?)$");
+  const static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)(T?)$");
 
   QString rwname(name);
   if(rwname.startsWith("RW"))
     rwname = rwname.mid(2);
+
+  if(number != nullptr)
+    *number = 0;
+
+  if(trueHeading != nullptr)
+    *trueHeading = false;
 
   QRegularExpressionMatch match = NUM_DESIGNATOR.match(rwname);
   if(match.hasMatch())
   {
     if(number != nullptr)
       *number = match.captured(1).toInt();
+
     if(designator != nullptr)
       *designator = match.captured(2);
+
     if(trueHeading != nullptr)
       *trueHeading = match.captured(3) == "T";
+
     return true;
   }
   return false;
@@ -922,7 +931,7 @@ inline int runwayDesignatorNumber(const QString& designator)
 int compareRunwayNumber(const QString& rw1, const QString& rw2)
 {
   QString designator1, designator2;
-  int number1, number2;
+  int number1 = 0, number2 = 0;
   atools::fs::util::runwayNameSplit(rw1, &number1, &designator1);
   atools::fs::util::runwayNameSplit(rw2, &number2, &designator2);
 
