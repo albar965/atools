@@ -2926,7 +2926,7 @@ Ligne %2.</translation>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="246"/>
+        <location filename="src/gui/application.cpp" line="244"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation type="unfinished">&lt;b&gt;Si le problème persiste ou se produit pendant le démarrage, supprimez tous les fichiers de configuration et de base de données de &lt;i&gt;%1&lt;/i&gt; et réessayez.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Si vous souhaitez signaler cette erreur, joignez les fichiers de configuration et de journal à votre rapport, ajoutez toutes les autres informations disponibles et envoyez-les à l&apos;une des adresses de contact ci-dessous.&lt;/b&gt;&lt;br/&gt;</translation>
@@ -2946,22 +2946,22 @@ Ligne %2.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="275"/>
+        <location filename="src/gui/application.cpp" line="273"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation type="unfinished">&lt;b&gt;Prendre une exception dans la ligne &quot;%1&quot; ligne %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Cliquez OK pour quitter le programme.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="297"/>
+        <location filename="src/gui/application.cpp" line="295"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Pris l&apos;exception inconnue dans le dossier %1 ligne %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Appuyez sur OK pour quitter l&apos;application.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="318"/>
+        <location filename="src/gui/application.cpp" line="316"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="324"/>
+        <location filename="src/gui/application.cpp" line="322"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
@@ -2970,17 +2970,17 @@ Ligne %2.</translation>
         <translation type="obsolete">&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact et Support&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="349"/>
+        <location filename="src/gui/application.cpp" line="347"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="353"/>
+        <location filename="src/gui/application.cpp" line="351"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="356"/>
+        <location filename="src/gui/application.cpp" line="354"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
