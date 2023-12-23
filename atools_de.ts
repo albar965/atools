@@ -386,23 +386,23 @@ Datei: &quot;%2&quot;
     <name>GpxIO</name>
     <message>
         <source>Cannot open file %1. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
     <message>
         <source>Cannot open empty GPX file &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Leere GPX-Datei &quot;%1&quot; kann nicht geöffnet werden.</translation>
     </message>
     <message>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
-        <translation type="unfinished">Ungültige Position in GPX-Datei &quot;%1&quot;.</translation>
+        <translation>Ungültige Position in GPX-Datei &quot;%1&quot;.</translation>
     </message>
     <message>
         <source> - Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation> - Flugplan</translation>
     </message>
     <message>
         <source> - Track</source>
-        <translation type="unfinished"></translation>
+        <translation> - Pfad</translation>
     </message>
 </context>
 <context>
@@ -489,7 +489,7 @@ Datei: &quot;%2&quot;
     <name>MessageBox</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialog</translation>
     </message>
 </context>
 <context>
@@ -1750,12 +1750,12 @@ Datei: &quot;%2&quot;
     <message>
         <source> (changed)</source>
         <comment>Indication for search menu button items</comment>
-        <translation type="unfinished"></translation>
+        <translation> (geändert)</translation>
     </message>
     <message>
         <source> (changed, not used)</source>
         <comment>Indication for search menu button items</comment>
-        <translation type="unfinished"></translation>
+        <translation> (geändert, nicht benutzt)</translation>
     </message>
 </context>
 <context>
@@ -1769,7 +1769,7 @@ Datei: &quot;%2&quot;
     <name>SqlQueryDialog</name>
     <message>
         <source>Little Navmap - </source>
-        <translation type="unfinished">Little Navmap - </translation>
+        <translation>Little Navmap - </translation>
     </message>
 </context>
 <context>
@@ -2107,43 +2107,43 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Server is listening on hostnames (IP-addresses) on port </source>
-        <translation type="unfinished"></translation>
+        <translation>Server wartet auf Computernamen (IP-Adressen) an Port </translation>
     </message>
     <message>
         <source>Server is listening on hostname (IP-address) on port </source>
-        <translation type="unfinished"></translation>
+        <translation>Server wartet auf Computername (IP-Adresse) an Port </translation>
     </message>
     <message>
         <source>:</source>
-        <translation type="unfinished"></translation>
+        <translation>:</translation>
     </message>
     <message>
         <source>%1. IPv6 </source>
-        <translation type="unfinished"></translation>
+        <translation>%1. IPv6 </translation>
     </message>
     <message>
         <source>%1. IPv4 </source>
-        <translation type="unfinished"></translation>
+        <translation>%1. IPv4 </translation>
     </message>
     <message>
         <source>%1 </source>
-        <translation type="unfinished">%1 </translation>
+        <translation>%1 </translation>
     </message>
     <message>
         <source> (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation> (%1)</translation>
     </message>
     <message>
         <source>Use the mouse to select a hostname or IP-address.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwenden Sie die Maus, um einen Computernamen oder eine IP-Adresse auszuwählen.</translation>
     </message>
     <message>
         <source>Then copy the selected text to the clipboard using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Dann den markierten Text über das Kontextmenü in die Zwischenablage kopieren.</translation>
     </message>
     <message>
         <source>Error: No network found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler: Kein Netzwerk gefunden.</translation>
     </message>
 </context>
 <context>
@@ -2491,15 +2491,15 @@ Zeile %2.</translation>
     </message>
     <message>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&quot;white-space:pre&quot;&gt;Ein Fehlerbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%2&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Sie können diese Datei an den Autor von %3 senden, um das Problem zu untersuchen.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 wurde beim letzten Mal nicht sauber beendet.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Dies wurde wahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Ein Absturzbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%3&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Sie sollten diese Datei an den Autor von %4 senden, um den Absturz zu untersuchen.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Hier für Kontaktinformationen klicken&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im abgesicherten Modus starten, was bedeutet, dass das Laden aller Standarddateien wie Flugpläne, Fensteranordnung und andere Einstellungen, die den vorherigen Absturz verursacht haben könnten, jetzt übersprungen werden?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Kontakt:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Kontakt und Unterstützung&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
@@ -2592,7 +2592,7 @@ Zeile %2.</translation>
     <name>atools::gui::SqlQueryDialog</name>
     <message>
         <source>Nothing found to delete.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nichts zum Löschen gefunden.</translation>
     </message>
 </context>
 <context>
