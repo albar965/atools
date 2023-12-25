@@ -90,6 +90,7 @@ bool contains(const TYPE& str, const QVector<TYPE>& list)
 
   return false;
 }
+
 #endif
 
 template<typename TYPE>
@@ -460,26 +461,6 @@ constexpr int ceilToInt(TYPE value)
   return static_cast<int>(std::ceil(value));
 }
 
-/* Linear interpolation
- * f(x) = f0 + ((f1 - f0) / (x1 - x0)) * (x - x0) */
-template<typename TYPE>
-constexpr TYPE interpolate(TYPE f0, TYPE f1, TYPE x0, TYPE x1, TYPE x)
-{
-  return f0 == f1 ? f0 : f0 + ((f1 - f0) / (x1 - x0)) * (x - x0);
-}
-
-/* Get coordinate where x crosses the line  */
-constexpr QPointF interpolateForX(const QLineF& line, double x)
-{
-  return line.pointAt((x - line.x1()) / line.dx());
-}
-
-/* Get coordinate where y crosses the line */
-constexpr QPointF interpolateForY(const QLineF& line, double y)
-{
-  return line.pointAt((y - line.y1()) / line.dy());
-}
-
 /* Extract the first latin1 character from string. Return null if string is empty */
 inline char strToChar(const QString& str)
 {
@@ -664,6 +645,26 @@ template<>
 constexpr bool almostNotEqual<long long>(long long f1, long long f2, long long epsilon)
 {
   return !almostEqual<long long>(f1, f2, epsilon);
+}
+
+/* Linear interpolation
+ * f(x) = f0 + ((f1 - f0) / (x1 - x0)) * (x - x0) */
+template<typename TYPE>
+constexpr TYPE interpolate(TYPE f0, TYPE f1, TYPE x0, TYPE x1, TYPE x)
+{
+  return atools::almostEqual(f0, f1) ? f0 : f0 + ((f1 - f0) / (x1 - x0)) * (x - x0);
+}
+
+/* Get coordinate where x crosses the line  */
+constexpr QPointF interpolateForX(const QLineF& line, double x)
+{
+  return line.pointAt((x - line.x1()) / line.dx());
+}
+
+/* Get coordinate where y crosses the line */
+constexpr QPointF interpolateForY(const QLineF& line, double y)
+{
+  return line.pointAt((y - line.y1()) / line.dy());
 }
 
 template<typename TYPE>
