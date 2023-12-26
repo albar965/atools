@@ -96,13 +96,6 @@ void ItemViewZoomHandler::initTableViewZoom()
 {
   // Adjust cell height to be smaller than default but according to font height
   double fontPointSize = QApplication::font().pointSizeF();
-
-  // Increase default table font size for mac
-#if defined(Q_OS_MACOS)
-  if(dynamic_cast<QTableView *>(itemView) != nullptr)
-    fontPointSize *= 1.4;
-#endif
-
   setTableViewFontSize(!settingsKey.isEmpty() ? Settings::instance().valueDouble(settingsKey, fontPointSize) : fontPointSize);
 }
 
