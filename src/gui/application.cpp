@@ -174,7 +174,11 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
 
 void Application::recordExit()
 {
-  QFile::remove(lockFile);
+  if(QFile::remove(lockFile))
+    qInfo() << Q_FUNC_INFO << "Success removing" << lockFile;
+  else
+    qWarning() << Q_FUNC_INFO << "Failed removing" << lockFile;
+
   lockFile.clear();
 }
 
