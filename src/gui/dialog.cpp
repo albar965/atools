@@ -138,25 +138,6 @@ QString Dialog::openDirectoryDialog(const QString& title, const QString& setting
   return fileDialog(dlg, title, QString(), settingsPrefix, QString(), path, QString(), false /* autonumber */).at(0);
 }
 
-QMessageBox::StandardButton Dialog::warning(QWidget *parentWidget, const QString& text, QMessageBox::StandardButtons buttons,
-                                            QMessageBox::StandardButton defaultButton)
-{
-  qWarning() << Q_FUNC_INFO << text;
-  return QMessageBox::warning(parentWidget, QCoreApplication::applicationName(), text, buttons, defaultButton);
-}
-
-int Dialog::warning(QWidget *parentWidget, const QString& text, int button0, int button1, int button2)
-{
-  qWarning() << Q_FUNC_INFO << text;
-  return QMessageBox::warning(parentWidget, QCoreApplication::applicationName(), text, button0, button1, button2);
-}
-
-int Dialog::warning(QWidget *parentWidget, const QString& text, QMessageBox::StandardButton button0, QMessageBox::StandardButton button1)
-{
-  qWarning() << Q_FUNC_INFO << text;
-  return QMessageBox::warning(parentWidget, QCoreApplication::applicationName(), text, button0, button1);
-}
-
 QString Dialog::openFileDialog(const QString& title, const QString& filter, const QString& settingsPrefix, const QString& path)
 {
   QFileDialog dlg(parent);
@@ -192,6 +173,8 @@ QString Dialog::saveFileDialog(const QString& title,
 
 void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage)
 {
+  qInfo() << Q_FUNC_INFO << message;
+
   Settings& settings = Settings::instance();
 
   // show only if the key is true
@@ -202,6 +185,7 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message, 
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
+    msg.setTextInteractionFlags(Qt::TextSelectableByMouse);
 
     msg.exec();
 
@@ -215,6 +199,8 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message, 
 
 void Dialog::showWarnMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage)
 {
+  qWarning() << Q_FUNC_INFO << message;
+
   Settings& settings = Settings::instance();
 
   // show only if the key is true
@@ -225,6 +211,7 @@ void Dialog::showWarnMsgBox(const QString& settingsKey, const QString& message, 
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
+    msg.setTextInteractionFlags(Qt::TextSelectableByMouse);
 
     msg.exec();
     if(!settingsKey.isEmpty() && msg.checkBox() != nullptr)
@@ -239,6 +226,8 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
                                DialogButtonList buttonList, QMessageBox::StandardButton dialogDefaultButton,
                                QMessageBox::StandardButton defaultButton)
 {
+  qInfo() << Q_FUNC_INFO << message;
+
   int retval = defaultButton;
   Settings& settings = Settings::instance();
 
@@ -256,6 +245,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     msg.setDefaultButton(dialogDefaultButton);
     msg.setWindowFlags(msg.windowFlags() & ~Qt::WindowContextHelpButtonHint);
     msg.setWindowModality(Qt::ApplicationModal);
+    msg.setTextInteractionFlags(Qt::TextSelectableByMouse);
 
     // Set the button texts
     for(const DialogButton& db : buttonList)
@@ -278,6 +268,8 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
                                QMessageBox::StandardButton dialogDefaultButton,
                                QMessageBox::StandardButton defaultButton)
 {
+  qInfo() << Q_FUNC_INFO << message;
+
   int retval = defaultButton;
   Settings& s = Settings::instance();
 
@@ -290,6 +282,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     msg.setDefaultButton(dialogDefaultButton);
     msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
+    msg.setTextInteractionFlags(Qt::TextSelectableByMouse);
     retval = msg.exec();
 
     if(retval != QMessageBox::Cancel && !settingsKey.isEmpty() && msg.checkBox() != nullptr)
@@ -314,6 +307,9 @@ QMessageBox *Dialog::showSimpleProgressDialog(QWidget *parentWidget, const QStri
                                              QMessageBox::NoButton, parentWidget);
   progressBox->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
   progressBox->setStandardButtons(QMessageBox::NoButton);
+  progressBox->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+  progressBox->setWindowModality(Qt::ApplicationModal);
+  progressBox->setTextInteractionFlags(Qt::TextSelectableByMouse);
   progressBox->show();
   QCoreApplication::processEvents();
   return progressBox;
@@ -325,6 +321,58 @@ void Dialog::deleteSimpleProgressDialog(QMessageBox *messageBox)
   messageBox->deleteLater();
 
   QGuiApplication::restoreOverrideCursor();
+}
+
+QMessageBox::StandardButton Dialog::information(QWidget *parent, const QString& text,
+                                                QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
+{
+  qInfo() << Q_FUNC_INFO << text;
+
+  QMessageBox box(QMessageBox::Information, QCoreApplication::applicationName(), text, buttons, parent);
+  box.setDefaultButton(defaultButton);
+  box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+  box.setWindowModality(Qt::ApplicationModal);
+  box.setTextInteractionFlags(Qt::TextSelectableByMouse);
+  return static_cast<QMessageBox::StandardButton>(box.exec());
+}
+
+QMessageBox::StandardButton Dialog::question(QWidget *parent, const QString& text,
+                                             QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
+{
+  qInfo() << Q_FUNC_INFO << text;
+
+  QMessageBox box(QMessageBox::Question, QCoreApplication::applicationName(), text, buttons, parent);
+  box.setDefaultButton(defaultButton);
+  box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+  box.setWindowModality(Qt::ApplicationModal);
+  box.setTextInteractionFlags(Qt::TextSelectableByMouse);
+  return static_cast<QMessageBox::StandardButton>(box.exec());
+}
+
+QMessageBox::StandardButton Dialog::warning(QWidget *parent, const QString& text,
+                                            QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
+{
+  qWarning() << Q_FUNC_INFO << text;
+
+  QMessageBox box(QMessageBox::Warning, QCoreApplication::applicationName(), text, buttons, parent);
+  box.setDefaultButton(defaultButton);
+  box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+  box.setWindowModality(Qt::ApplicationModal);
+  box.setTextInteractionFlags(Qt::TextSelectableByMouse);
+  return static_cast<QMessageBox::StandardButton>(box.exec());
+}
+
+QMessageBox::StandardButton Dialog::critical(QWidget *parent, const QString& text,
+                                             QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
+{
+  qCritical() << Q_FUNC_INFO << text;
+
+  QMessageBox box(QMessageBox::Critical, QCoreApplication::applicationName(), text, buttons, parent);
+  box.setDefaultButton(defaultButton);
+  box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+  box.setWindowModality(Qt::ApplicationModal);
+  box.setTextInteractionFlags(Qt::TextSelectableByMouse);
+  return static_cast<QMessageBox::StandardButton>(box.exec());
 }
 
 } // namespace gui

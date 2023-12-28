@@ -22,6 +22,7 @@
 #include "gui/helphandler.h"
 #include "io/fileroller.h"
 #include "zip/zipwriter.h"
+#include "gui/dialog.h"
 
 #include <cstdlib>
 #include <QDebug>
@@ -87,9 +88,9 @@ void Application::createIssueReport(QWidget *parent, const QString& crashReportF
                            "<p style=\"white-space:pre\">You can send this file to the author of %3 to investigate a problem.</p>"
                              "<p style=\"white-space:pre\">%4</p>").
                     arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
-                    arg(QApplication::applicationName()).arg(contactHtml);
+                    arg(QCoreApplication::applicationName()).arg(contactHtml);
 
-  atools::gui::MessageBox box(parent, QApplication::applicationName());
+  atools::gui::MessageBox box(parent, QCoreApplication::applicationName());
   box.setHelpDocument(helpDocument);
   box.setHelpOnlineUrl(helpOnlineUrl);
   box.setHelpLanguageOnline(helpLanguageOnline);
@@ -138,7 +139,7 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
                                        "flight plans, window layout and other settings now which may have "
                                        "caused the previous crash?</b></p>").
                       arg(applicationName()).arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
-                      arg(QApplication::applicationName()).arg(contactUrl);
+                      arg(QCoreApplication::applicationName()).arg(contactUrl);
 
     atools::gui::MessageBox box(parent, applicationName());
     box.setHelpDocument(helpDocument);
@@ -273,19 +274,18 @@ void Application::handleException(const char *file, int line, const std::excepti
   qCritical() << "Caught exception in file" << file << "line" << line << "what" << e.what();
 
   if(showExceptionDialog)
-    QMessageBox::critical(nullptr, QCoreApplication::applicationName(),
-                          tr("<b>Caught exception in file \"%1\" line %2.</b><br/><br/>"
-                             "<i>%3</i><br/><br/>"
-                             "%4"
-                             "<hr/>%5"
-                               "<hr/>%6<br/>"
-                               "<h3>Press OK to exit application.</h3>"
-                             ).
-                          arg(file).arg(line).
-                          arg(e.what()).
-                          arg(generalErrorMessage()).
-                          arg(getContactHtml()).
-                          arg(getReportPathHtml()));
+    atools::gui::Dialog::critical(nullptr,
+                                  tr("<b>Caught exception in file \"%1\" line %2.</b><br/><br/>"
+                                     "<i>%3</i><br/><br/>"
+                                     "%4"
+                                     "<hr/>%5"
+                                       "<hr/>%6<br/>"
+                                       "<h3>Press OK to exit application.</h3>").
+                                  arg(file).arg(line).
+                                  arg(e.what()).
+                                  arg(generalErrorMessage()).
+                                  arg(getContactHtml()).
+                                  arg(getReportPathHtml()));
 
   std::abort();
 }
@@ -295,17 +295,17 @@ void Application::handleException(const char *file, int line)
   qCritical() << "Caught unknown exception in file" << file << "line" << line;
 
   if(showExceptionDialog)
-    QMessageBox::critical(nullptr, QCoreApplication::applicationName(),
-                          tr("<b>Caught unknown exception in file %1 line %2.</b><br/><br/>"
-                             "%2"
-                             "<hr/>%4"
-                               "<hr/>%5<br/>"
-                               "<h3>Press OK to exit application.</h3>"
-                             ).
-                          arg(file).arg(line).
-                          arg(generalErrorMessage()).
-                          arg(getContactHtml()).
-                          arg(getReportPathHtml()));
+    atools::gui::Dialog::critical(nullptr,
+                                  tr("<b>Caught unknown exception in file %1 line %2.</b><br/><br/>"
+                                     "%2"
+                                     "<hr/>%4"
+                                       "<hr/>%5<br/>"
+                                       "<h3>Press OK to exit application.</h3>"
+                                     ).
+                                  arg(file).arg(line).
+                                  arg(generalErrorMessage()).
+                                  arg(getContactHtml()).
+                                  arg(getReportPathHtml()));
 
   std::abort();
 }

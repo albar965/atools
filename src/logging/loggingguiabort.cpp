@@ -16,11 +16,12 @@
 *****************************************************************************/
 
 #include "logging/loggingguiabort.h"
+
 #include "logging/logginghandler.h"
 
 #if defined(QT_WIDGETS_LIB)
 #include "gui/application.h"
-#include <QMessageBox>
+#include "gui/dialog.h"
 #include <QMainWindow>
 #endif
 
@@ -44,19 +45,15 @@ void LoggingGuiAbortHandler::guiAbortFunction(const QString& msg)
 #if defined(QT_WIDGETS_LIB)
   // Called by signal on main thread context
   if(atools::gui::Application::isShowExceptionDialog())
-    QMessageBox::warning(LoggingHandler::parentWidget, QCoreApplication::applicationName(),
-                         QObject::tr("<b>A fatal error has occured.</b><br/><br/>"
-                                     "%1<br/><br/>"
-                                     "%2"
-                                     "<hr/>%3"
-                                       "<hr/>%4<br/>"
-                                       "<h3>Press OK to exit application.</h3>"
-                                     ).
-                         arg(msg).
-                         arg(atools::gui::Application::generalErrorMessage()).
-                         arg(atools::gui::Application::getContactHtml()).
-                         arg(atools::gui::Application::getReportPathHtml())
-                         );
+    atools::gui::Dialog::warning(LoggingHandler::parentWidget,
+                                 QObject::tr("<b>A fatal error has occured.</b><br/><br/>"
+                                             "%1<br/><br/>"
+                                             "%2"
+                                             "<hr/>%3"
+                                               "<hr/>%4<br/>"
+                                               "<h3>Press OK to exit application.</h3>").
+                                 arg(msg).arg(atools::gui::Application::generalErrorMessage()).
+                                 arg(atools::gui::Application::getContactHtml()).arg(atools::gui::Application::getReportPathHtml()));
 #else
   Q_UNUSED(msg)
 #endif

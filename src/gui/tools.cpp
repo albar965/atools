@@ -55,7 +55,7 @@ bool showInFileManager(QString filepath, QWidget *parent)
 
   // if(!QProcess::startDetached("explorer.exe", {"/select", QDir::toNativeSeparators(fp.filePath())},
   // QDir::homePath()))
-  // QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
+  // QMessageBox::warning(mainWindow, QCoreApplication::applicationName(), QString(
   // tr("Error starting explorer.exe with path \"%1\"")).
   // arg(query.queryItemValue("filepath")));
 
@@ -150,8 +150,7 @@ void anchorClicked(QWidget *parent, const QUrl& url)
         // Open a file from the userpoint description
         atools::gui::HelpHandler::openUrl(parent, url);
       else
-        atools::gui::Dialog::warning(parent, QObject::tr("File or directory \"%1\" does not exist.").
-                                     arg(url.toDisplayString()));
+        atools::gui::Dialog::warning(parent, QObject::tr("File or directory \"%1\" does not exist.").arg(url.toDisplayString()));
     }
   }
 }

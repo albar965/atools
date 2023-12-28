@@ -21,7 +21,6 @@
 #include "gui/application.h"
 #include "gui/dialog.h"
 
-#include <QMessageBox>
 #include <QApplication>
 #include <QUrl>
 #include <QDir>

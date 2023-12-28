@@ -31,7 +31,7 @@ namespace settings {
  * settings directory. The settings are always stored in a file ini format.
  * Directory will be QApplication::organizationName() with
  * spaces replaced by underscrores. Filename will be
- * QApplication::applicationName() in lowercase with
+ * QCoreApplication::applicationName() in lowercase with
  * spaces replaced by underscrores.
  * If an error occurs Exception is thrown.
  */

@@ -18,6 +18,7 @@
 #include "gui/dockwidgethandler.h"
 
 #include "exception.h"
+#include "gui/dialog.h"
 
 #include <QAction>
 #include <QDockWidget>
@@ -28,7 +29,6 @@
 #include <QStatusBar>
 #include <QMenuBar>
 #include <QToolBar>
-#include <QMessageBox>
 #include <QApplication>
 #include <QScreen>
 #include <QFile>
@@ -867,8 +867,7 @@ bool DockWidgetHandler::loadWindowState(const QString& filename, bool allowUndoc
     if(allowUndock != allowUndockCentral)
       // A layout file can only be applied properly if the state of the central widget (normal or dock widget)
       // is the same - show warning
-      retval = QMessageBox::question(mainWindow, QCoreApplication::applicationName(),
-                                     allowUndockCentralErrorMessage, QMessageBox::Yes | QMessageBox::Cancel);
+      retval = atools::gui::Dialog::question(mainWindow, allowUndockCentralErrorMessage, QMessageBox::Yes | QMessageBox::Cancel);
 
     if(retval == QMessageBox::Yes)
     {
