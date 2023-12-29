@@ -178,8 +178,7 @@ Rect boundingRect(const QList<Pos>& positions)
 void boundingRect(Rect& rect, QList<atools::geo::Pos> positions)
 {
   // Remove all invalid positions
-  auto iter = std::remove_if(positions.begin(), positions.end(), [](const atools::geo::Pos& p) -> bool
-      {
+  auto iter = std::remove_if(positions.begin(), positions.end(), [](const atools::geo::Pos& p) -> bool {
         return !p.isValid();
       });
 

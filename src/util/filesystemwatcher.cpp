@@ -200,7 +200,7 @@ void FileSystemWatcher::pathUpdatedDelayed()
   {
     if(verbose)
       qDebug() << Q_FUNC_INFO << "Updated dirs" << updatedDirs;
-    emit dirUpdated(updatedDirs.first());
+    emit dirUpdated(updatedDirs.constFirst());
   }
 
   if(!updatedFiles.isEmpty())

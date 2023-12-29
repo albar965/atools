@@ -133,17 +133,17 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
           bs->skip(1); /* unknown byte, usually zero */
           if(rec::ENROUTE_TRANSITIONS_MSFS_116 == recType)
           {
-              /*
-               * Note: The name field of the EnrouteTransitions record is now unused by
-               * the current version of MSFS 2020 SDK, and hence all of its bytes are left NULL.
-               * All transitions are named after their first (STAR) or last (SID) leg.
-               *
-               * In fact, a XML file containing <EnrouteTransitions name="SAVLA"> is not compiled
-               * compiled by the SDK anymore. The SDK registers it as an invalid field error.
-               *
-               * Therefore, these 8 bytes can be skipped.
-               */
-              (void)bs->readString(8, atools::io::UTF8);
+            /*
+             * Note: The name field of the EnrouteTransitions record is now unused by
+             * the current version of MSFS 2020 SDK, and hence all of its bytes are left NULL.
+             * All transitions are named after their first (STAR) or last (SID) leg.
+             *
+             * In fact, a XML file containing <EnrouteTransitions name="SAVLA"> is not compiled
+             * compiled by the SDK anymore. The SDK registers it as an invalid field error.
+             *
+             * Therefore, these 8 bytes can be skipped.
+             */
+            (void)bs->readString(8, atools::io::UTF8);
           }
           /* Create a container for the transition legs */
           QList<ApproachLeg> legs;
@@ -153,20 +153,18 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
           for(int i = 0; i < numLegs; i++)
             legs.append(ApproachLeg(bs, legRec.getId<rec::ApprRecordType>()));
 
-          /* Get the ident (key) of the transition. Must always be done this way. */
-          if(rec::MSFS_SID == id)
-          {
-            /* For SID, the transition ident is the LAST leg's fix. */
-            name = legs.constLast().getFixIdent();
-          }
-          else if(rec::MSFS_STAR == id)
-          {
-            /* For STAR, the transition ident is the FIRST leg's fix */
-            name = legs.constFirst().getFixIdent();
-          }
-
           if(!legs.isEmpty())
+          {
+            /* Get the ident (key) of the transition. Must always be done this way. */
+            if(rec::MSFS_SID == id)
+              /* For SID, the transition ident is the LAST leg's fix. */
+              name = legs.constLast().getFixIdent();
+            else if(rec::MSFS_STAR == id)
+              /* For STAR, the transition ident is the FIRST leg's fix */
+              name = legs.constFirst().getFixIdent();
+
             enrouteTransitions.insert(name, legs);
+          }
           else
             qWarning() << Q_FUNC_INFO << "No enroute transition found" << getDescription();
         }

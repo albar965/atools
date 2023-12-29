@@ -264,7 +264,8 @@ QString WindQuery::collectGribFiles()
     weatherDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
     weatherDir.setNameFilters({"GRIB-*-wind-v*.grib", "GRIB-*-wind.grib"});
 
-    for(QFileInfo entry : weatherDir.entryInfoList())
+    const QFileInfoList entries = weatherDir.entryInfoList();
+    for(const QFileInfo& entry : entries)
       gribFiles.append(entry);
 
     // Sort by timestamp - put latest at begin of list
