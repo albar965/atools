@@ -4,6 +4,18 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 4.0.1.beta
+
+* Fixes for potential crashes when accessing empty lists.
+* Updated all message dialogs to make text in dialog boxes selectable.
+* All message box messages are now logged.
+* Now logging record exit.
+* Fixed too large font in tables on macOS
+* Fix for excessive warnings in HTTP server.
+* Updated German translation.
+
+===============================================================================
+
 # Version 4.0.0.beta
 
 * Added LogdataManager::repairDateTime. Fixes local time in logbook without timezone.
