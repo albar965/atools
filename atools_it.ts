@@ -157,7 +157,7 @@
 <context>
     <name>ErrorHandler</name>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="35"/>
+        <location filename="src/gui/errorhandler.cpp" line="34"/>
         <source>%1
 Caught exception
 
@@ -170,14 +170,14 @@ Eccezione catturata
 &quot;%2&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="44"/>
+        <location filename="src/gui/errorhandler.cpp" line="42"/>
         <source>%1
 Caught unknown exception</source>
         <translation>%1
 Eccezione sconosciuta catturata</translation>
     </message>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="54"/>
+        <location filename="src/gui/errorhandler.cpp" line="51"/>
         <source>%1
 Sql error occured
 &quot;%2&quot;</source>
@@ -186,7 +186,7 @@ Errore Sql
 &quot;%2&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="64"/>
+        <location filename="src/gui/errorhandler.cpp" line="60"/>
         <source>%1
 IO error occured
 File: &quot;%2&quot;
@@ -1545,7 +1545,7 @@ File: &quot;%2&quot;
         <translation>Stato Sconosciuto</translation>
     </message>
     <message>
-        <location filename="src/logging/loggingguiabort.cpp" line="48"/>
+        <location filename="src/logging/loggingguiabort.cpp" line="49"/>
         <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <oldsource>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</oldsource>
         <translation>&lt;b&gt;Incontrato un errore fatale.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Premere OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
@@ -2055,97 +2055,97 @@ File: &quot;%2&quot;
         <translation>Il File o la Cartella &quot;%1&quot; non esiste.</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="171"/>
+        <location filename="src/gui/tools.cpp" line="170"/>
         <source>%1 pt</source>
         <translation>%1 pt</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="173"/>
+        <location filename="src/gui/tools.cpp" line="172"/>
         <source>%1 px</source>
         <translation>%1 px</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="177"/>
+        <location filename="src/gui/tools.cpp" line="176"/>
         <source>thin</source>
         <translation>sottile</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="179"/>
+        <location filename="src/gui/tools.cpp" line="178"/>
         <source>extra light</source>
         <translation>più chiaro</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="181"/>
+        <location filename="src/gui/tools.cpp" line="180"/>
         <source>light</source>
         <translation>chiaro</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="183"/>
+        <location filename="src/gui/tools.cpp" line="182"/>
         <source>normal</source>
         <translation>normale</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="185"/>
+        <location filename="src/gui/tools.cpp" line="184"/>
         <source>medium</source>
         <translation>medio</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="187"/>
+        <location filename="src/gui/tools.cpp" line="186"/>
         <source>demi bold</source>
         <translation>semi-grassetto</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="189"/>
+        <location filename="src/gui/tools.cpp" line="188"/>
         <source>bold</source>
         <translation>grassetto</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="191"/>
+        <location filename="src/gui/tools.cpp" line="190"/>
         <source>extra bold</source>
         <translation>grassetto extra</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="193"/>
+        <location filename="src/gui/tools.cpp" line="192"/>
         <source>black</source>
         <translation>nero</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="196"/>
+        <location filename="src/gui/tools.cpp" line="195"/>
         <source>italic</source>
         <translation>italic</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="198"/>
+        <location filename="src/gui/tools.cpp" line="197"/>
         <source>overline</source>
         <translation>soprallineato</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="200"/>
+        <location filename="src/gui/tools.cpp" line="199"/>
         <source>underline</source>
         <translation>sottolineato</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="202"/>
+        <location filename="src/gui/tools.cpp" line="201"/>
         <source>strike out</source>
         <translation>barrato</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="205"/>
+        <location filename="src/gui/tools.cpp" line="204"/>
         <source>fixed pitch</source>
         <translation>inclinazione fissa</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="209"/>
+        <location filename="src/gui/tools.cpp" line="208"/>
         <source>System font: %1</source>
         <translation>Font di Sistema: %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="211"/>
+        <location filename="src/gui/tools.cpp" line="210"/>
         <source>User selected font: %1</source>
         <translation>Font selezionato dall&apos;utente: %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="213"/>
+        <location filename="src/gui/tools.cpp" line="212"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -2980,7 +2980,7 @@ Line %2.</source>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="705"/>
+        <location filename="src/grib/windquery.cpp" line="706"/>
         <source>Unknown error.</source>
         <translation>Errore sconosciuto.</translation>
     </message>
@@ -2988,7 +2988,7 @@ Line %2.</source>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="244"/>
+        <location filename="src/gui/application.cpp" line="251"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation>&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di %1 e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione al tuo report, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
@@ -2998,32 +2998,32 @@ Line %2.</source>
         <translation type="vanished">&lt;b&gt;Catturata eccezione nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="85"/>
+        <location filename="src/gui/application.cpp" line="86"/>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="130"/>
+        <location filename="src/gui/application.cpp" line="131"/>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="273"/>
+        <location filename="src/gui/application.cpp" line="280"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Catturata eccezione nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="295"/>
+        <location filename="src/gui/application.cpp" line="301"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Catturata eccezione sconosciuta nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="316"/>
+        <location filename="src/gui/application.cpp" line="322"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="322"/>
+        <location filename="src/gui/application.cpp" line="328"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contattare:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
@@ -3032,17 +3032,17 @@ Line %2.</source>
         <translation type="vanished">&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contatto e Supporto&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="347"/>
+        <location filename="src/gui/application.cpp" line="353"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="351"/>
+        <location filename="src/gui/application.cpp" line="357"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="354"/>
+        <location filename="src/gui/application.cpp" line="360"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
@@ -3052,7 +3052,7 @@ Line %2.</source>
     <message>
         <location filename="src/gui/dockwidgethandler.cpp" line="799"/>
         <location filename="src/gui/dockwidgethandler.cpp" line="804"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="890"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="889"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>Errore leggendo &quot;%1&quot;: %2</translation>
     </message>
@@ -3076,7 +3076,7 @@ Line %2.</source>
 <context>
     <name>atools::gui::HelpHandler</name>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="64"/>
+        <location filename="src/gui/helphandler.cpp" line="63"/>
         <source>About %1</source>
         <translation>A proposito di %1</translation>
     </message>
@@ -3085,7 +3085,7 @@ Line %2.</source>
         <translation type="vanished">&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Versione %3 (revisione %4)&lt;/p&gt;&lt;p&gt;atools Versione %5 (revisione %6)&lt;/p&gt;&lt;hr/&gt;%7&lt;hr/&gt;%8&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="83"/>
+        <location filename="src/gui/helphandler.cpp" line="82"/>
         <source>About Qt</source>
         <translation>A proposito di Qt</translation>
     </message>
@@ -3098,49 +3098,49 @@ Line %2.</source>
         <translation type="vanished">File Aiuto &lt;i&gt;%1&lt;/i&gt; non trovato</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="49"/>
+        <location filename="src/gui/helphandler.cpp" line="48"/>
         <source>&lt;p&gt;%1 (build and library)&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1 (costruire e memorizzare)&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="51"/>
+        <location filename="src/gui/helphandler.cpp" line="50"/>
         <source>&lt;p&gt;%1 (build)&lt;br/&gt;%2 (library)&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1 (costruire)&lt;br/&gt;%2 (archiviare)&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="56"/>
+        <location filename="src/gui/helphandler.cpp" line="55"/>
         <source> 64-bit</source>
         <translation> 64-bit</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="58"/>
+        <location filename="src/gui/helphandler.cpp" line="57"/>
         <source> 32-bit</source>
         <translation> 32-bit</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="65"/>
+        <location filename="src/gui/helphandler.cpp" line="64"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Versione %3 (revisione %4)&lt;/p&gt;&lt;p&gt;atools Versione %5 (revisione %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="109"/>
+        <location filename="src/gui/helphandler.cpp" line="108"/>
         <source>URL &quot;%1&quot; not found</source>
         <translation>URL &quot;%1&quot; non trovato</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="112"/>
-        <location filename="src/gui/helphandler.cpp" line="115"/>
+        <location filename="src/gui/helphandler.cpp" line="111"/>
+        <location filename="src/gui/helphandler.cpp" line="114"/>
         <source>Error opening help URL &quot;%1&quot;</source>
         <translation>Errore aprendo ULR di aiuto &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="158"/>
-        <location filename="src/gui/helphandler.cpp" line="167"/>
+        <location filename="src/gui/helphandler.cpp" line="157"/>
+        <location filename="src/gui/helphandler.cpp" line="166"/>
         <source>File &quot;%1&quot; not found</source>
         <translation>File &quot;%1&quot; non trovato</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="186"/>
+        <location filename="src/gui/helphandler.cpp" line="185"/>
         <source>Help file &quot;%1&quot; not found</source>
         <translation>File Aiuto &quot;%1&quot; non trovato</translation>
     </message>
@@ -3149,8 +3149,8 @@ Line %2.</source>
         <translation type="vanished">URL è vuoto per &quot;%1&quot; e ancora &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="245"/>
-        <location filename="src/gui/helphandler.cpp" line="261"/>
+        <location filename="src/gui/helphandler.cpp" line="244"/>
+        <location filename="src/gui/helphandler.cpp" line="260"/>
         <source>URL is empty for &quot;%1&quot;.</source>
         <translation>URL è vuoto per &quot;%1&quot;.</translation>
     </message>
