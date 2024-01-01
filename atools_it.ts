@@ -503,27 +503,27 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/gpx/gpxio.cpp" line="48"/>
         <source>Cannot open file %1. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire il file %1. Causa: %2</translation>
     </message>
     <message>
         <location filename="src/fs/gpx/gpxio.cpp" line="62"/>
         <source>Cannot open empty GPX file &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire un file GPX vuoto &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/gpx/gpxio.cpp" line="94"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
-        <translation type="unfinished">Posizione non valida nel file GPX &quot;%1&quot;.</translation>
+        <translation>Posizione non valida nel file GPX &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/gpx/gpxio.cpp" line="185"/>
         <source> - Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation> - Piano di Volo</translation>
     </message>
     <message>
         <location filename="src/fs/gpx/gpxio.cpp" line="235"/>
         <source> - Track</source>
-        <translation type="unfinished"></translation>
+        <translation> - Percorso</translation>
     </message>
 </context>
 <context>
@@ -631,7 +631,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/gui/messagebox.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialogo</translation>
     </message>
 </context>
 <context>
@@ -2178,13 +2178,13 @@ File: &quot;%2&quot;
         <location filename="src/gui/widgetutil.cpp" line="162"/>
         <source> (changed)</source>
         <comment>Indication for search menu button items</comment>
-        <translation type="unfinished"></translation>
+        <translation> (variato)</translation>
     </message>
     <message>
         <location filename="src/gui/widgetutil.cpp" line="163"/>
         <source> (changed, not used)</source>
         <comment>Indication for search menu button items</comment>
-        <translation type="unfinished"></translation>
+        <translation> (variato, non utilizzato)</translation>
     </message>
 </context>
 <context>
@@ -2200,7 +2200,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/gui/sqlquerydialog.ui" line="14"/>
         <source>Little Navmap - </source>
-        <translation type="unfinished">Little Navmap - </translation>
+        <translation>Little Navmap - </translation>
     </message>
 </context>
 <context>
@@ -2543,52 +2543,52 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="143"/>
         <source>Server is listening on hostnames (IP-addresses) on port </source>
-        <translation type="unfinished"></translation>
+        <translation>Server in ascolto sugli hostname (indirizzi IP) porta </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="145"/>
         <source>Server is listening on hostname (IP-address) on port </source>
-        <translation type="unfinished"></translation>
+        <translation>Server in ascolto sugli hostname (indirizzi IP) porta </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="146"/>
         <source>:</source>
-        <translation type="unfinished"></translation>
+        <translation>:</translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="156"/>
         <source>%1. IPv6 </source>
-        <translation type="unfinished"></translation>
+        <translation>%1. IPv6 </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="158"/>
         <source>%1. IPv4 </source>
-        <translation type="unfinished"></translation>
+        <translation>%1. IPv4 </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="161"/>
         <source>%1 </source>
-        <translation type="unfinished">%1 </translation>
+        <translation>%1 </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="164"/>
         <source> (%1)</source>
-        <translation type="unfinished"></translation>
+        <translation> (%1)</translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="167"/>
         <source>Use the mouse to select a hostname or IP-address.</source>
-        <translation type="unfinished"></translation>
+        <translation>Utilizzare il mouse per selezionare un nome host o un indirizzo IP.</translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="168"/>
         <source>Then copy the selected text to the clipboard using the context menu.</source>
-        <translation type="unfinished"></translation>
+        <translation>Quindi copiare il testo selezionato negli appunti utilizzando il menu contestuale.</translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="172"/>
         <source>Error: No network found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore: Nessuna rete trovata.</translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="175"/>
@@ -2897,14 +2897,18 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
         <source>File contains invalid data.
 &quot;%1&quot;
 Line %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file contiene dati non validi
+&quot;%1&quot;
+Linea %2.</translation>
     </message>
     <message>
         <location filename="src/fs/userdata/logdatamanager.cpp" line="217"/>
         <source>File is not valid. Neither departure nor destination ident is set.
 &quot;%1&quot;
 Line %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file non è valido. Non sono impostati né l&apos;identità di partenza né quella di destinazione.
+&quot;%1&quot;
+Linea %2.</translation>
     </message>
     <message>
         <location filename="src/fs/userdata/logdatamanager.cpp" line="322"/>
@@ -2939,7 +2943,9 @@ Ore Notturne: %5</translation>
         <source>File contains invalid data.
 &quot;%1&quot;
 Line %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il file contiene dati non validi
+&quot;%1&quot;
+Linea %2.</translation>
     </message>
     <message>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="316"/>
@@ -3000,12 +3006,12 @@ Line %2.</source>
     <message>
         <location filename="src/gui/application.cpp" line="86"/>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&quot;white-space:pre&quot;&gt;È stato generato un rapporto sul problema e salvato con tutti i file correlati in un archivio Zip.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Fare clic qui per aprire la cartella contenente il rapporto &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;È possibile inviare questo file all&apos;autore di %3 per indagare sul problema.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="131"/>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 non è uscito in modo pulito l&apos;ultima volta.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Molto probabilmente è stato causato da un crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;È stato generato un rapporto sul crash e salvato con tutti i file correlati in un archivio Zip.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Fare clic qui per aprire la cartella contenente il rapporto &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Si consiglia di inviare questo file all&apos;autore di %4 per indagare sul crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Fare clic qui per le informazioni di contatto&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Avviare ora in modalità sicura significa saltare il caricamento di tutti i file predefiniti come i piani di volo, il layout delle finestre e altre impostazioni che potrebbero aver causato il precedente crash?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="280"/>
@@ -3020,7 +3026,7 @@ Line %2.</source>
     <message>
         <location filename="src/gui/application.cpp" line="322"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Contatto:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contatto e Supporto&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="328"/>
@@ -3160,7 +3166,7 @@ Line %2.</source>
     <message>
         <location filename="src/gui/sqlquerydialog.cpp" line="143"/>
         <source>Nothing found to delete.</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è stato trovato nulla da eliminare.</translation>
     </message>
 </context>
 <context>
@@ -3330,7 +3336,8 @@ Importazione interrotta.</translation>
         <location filename="src/sql/datamanagerbase.cpp" line="438"/>
         <source>
 Line number %1</source>
-        <translation type="unfinished"></translation>
+        <translation>
+Linea numero %1</translation>
     </message>
     <message>
         <location filename="src/sql/datamanagerbase.cpp" line="759"/>
