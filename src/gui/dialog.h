@@ -192,6 +192,38 @@ public:
                                               QMessageBox::StandardButtons buttons = QMessageBox::Ok,
                                               QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
 
+  /* =======================================================================================================
+   * Instance methods replacing the QMessageBox methods but adding text selection and more flags
+   * plus a logging the message. */
+  QMessageBox::StandardButton information(const QString& text,
+                                          QMessageBox::StandardButtons buttons = QMessageBox::Ok,
+                                          QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+  {
+    return information(parent, text, buttons, defaultButton);
+  }
+
+  QMessageBox::StandardButton question(const QString& text,
+                                       QMessageBox::StandardButtons buttons =
+                                       QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No),
+                                       QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+  {
+    return question(parent, text, buttons, defaultButton);
+  }
+
+  QMessageBox::StandardButton warning(const QString& text,
+                                      QMessageBox::StandardButtons buttons = QMessageBox::Ok,
+                                      QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+  {
+    return warning(parent, text, buttons, defaultButton);
+  }
+
+  QMessageBox::StandardButton critical(const QString& text,
+                                       QMessageBox::StandardButtons buttons = QMessageBox::Ok,
+                                       QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+  {
+    return critical(parent, text, buttons, defaultButton);
+  }
+
 private:
   QStringList fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
                          const QString& settingsPrefix, const QString& defaultFileSuffix,
