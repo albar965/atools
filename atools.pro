@@ -55,7 +55,7 @@
 # =============================================================================
 
 # Define program version here VERSION_NUMBER_TODO
-VERSION_NUMBER=4.0.1.beta
+VERSION_NUMBER=4.0.2.beta
 
 QT += sql xml core network
 
