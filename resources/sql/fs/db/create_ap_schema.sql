@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -397,7 +397,7 @@ create table runway_end
   has_stol_markings integer not null,     -- Has STOL text
   is_takeoff integer not null,            -- Is used for takeoff or not
   is_landing integer not null,            -- Is used for landing or not
-  is_pattern varchar(10) not null,        -- see enum atools::fs::bgl::rw::Pattern
+  is_pattern varchar(10) not null,        -- LEFT = 0, RIGHT = 1, "N" = not available
   app_light_system_type varchar(15),      -- see enum atools::fs::bgl::rw::ApproachLightSystem
   has_end_lights integer not null,        -- Boolean
   has_reils integer not null,             -- Boolean has runway end identifier lights or not

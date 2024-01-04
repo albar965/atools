@@ -231,6 +231,9 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
   // llz_identifier
   // llz_mls_gls_category
 
+  if(apt == "EDDF")
+    qDebug() << Q_FUNC_INFO;
+
   // Find matching opposing ends in the list
   pairRunways(runwaypairs, runways);
 
@@ -241,8 +244,8 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
   // Iterate over all runways / end pairs
   for(const std::pair<SqlRecord, SqlRecord>& runwaypair : qAsConst(runwaypairs))
   {
-    SqlRecord primaryRec = runwaypair.first;
-    SqlRecord secondaryRec = runwaypair.second;
+    const SqlRecord& primaryRec = runwaypair.first;
+    const SqlRecord& secondaryRec = runwaypair.second;
 
     // Generate new end ids here
     int primaryEndId = ++curRunwayEndId, secondaryEndId = ++curRunwayEndId;
@@ -328,11 +331,11 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
     runwayEndWriteQuery->bindValue(":offset_threshold", primaryThreshold);
     runwayEndWriteQuery->bindValue(":blast_pad", 0.f);
     runwayEndWriteQuery->bindValue(":overrun", 0.f);
-    runwayEndWriteQuery->bindValue(":has_closed_markings", 0);
+    runwayEndWriteQuery->bindValue(":has_closed_markings", pClosed);
     runwayEndWriteQuery->bindValue(":has_stol_markings", 0);
     runwayEndWriteQuery->bindValue(":is_takeoff", !pClosed);
     runwayEndWriteQuery->bindValue(":is_landing", !pClosed);
-    runwayEndWriteQuery->bindValue(":is_pattern", 0);
+    runwayEndWriteQuery->bindValue(":is_pattern", "N");
     runwayEndWriteQuery->bindValue(":has_end_lights", 0);
     runwayEndWriteQuery->bindValue(":has_reils", 0);
     runwayEndWriteQuery->bindValue(":has_touchdown_lights", 0);
@@ -351,11 +354,11 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
     runwayEndWriteQuery->bindValue(":offset_threshold", secondaryThreshold);
     runwayEndWriteQuery->bindValue(":blast_pad", 0.f);
     runwayEndWriteQuery->bindValue(":overrun", 0.f);
-    runwayEndWriteQuery->bindValue(":has_closed_markings", 0);
+    runwayEndWriteQuery->bindValue(":has_closed_markings", sClosed);
     runwayEndWriteQuery->bindValue(":has_stol_markings", 0);
     runwayEndWriteQuery->bindValue(":is_takeoff", !sClosed);
     runwayEndWriteQuery->bindValue(":is_landing", !sClosed);
-    runwayEndWriteQuery->bindValue(":is_pattern", 0);
+    runwayEndWriteQuery->bindValue(":is_pattern", "N");
     runwayEndWriteQuery->bindValue(":has_end_lights", 0);
     runwayEndWriteQuery->bindValue(":has_reils", 0);
     runwayEndWriteQuery->bindValue(":has_touchdown_lights", 0);
@@ -414,13 +417,13 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
   QSet<QString> found;
   for(const SqlRecord& rec : runways)
   {
-    float heading = rec.valueFloat("runway_true_bearing");
-    float opposedHeading = ageo::opposedCourseDeg(heading);
     QString rwident = rec.valueStr("runway_identifier");
-
     if(found.contains(rwident))
       // Already worked on that runway end
       continue;
+
+    float headingTrue = rec.valueFloat("runway_true_bearing");
+    float opposedHeadingTrue = ageo::opposedCourseDeg(headingTrue);
 
     // Strip prefix: RW11R -> 11R
     QString rname = rwident.mid(2);
@@ -429,10 +432,8 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
     int rnum = rname.midRef(0, 2).toInt();
 
     // Get designator: R
-    QString desig = rname.size() > 2 ? rname.at(2) : QString();
-
     // Calculate opposed name
-    QString opposedDesig = desig;
+    QString opposedDesig = rname.size() > 2 ? rname.at(2) : QString();
     if(opposedDesig == "R")
       opposedDesig = "L";
     else if(opposedDesig == "L")
@@ -464,16 +465,25 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
 
     if(!foundEnd)
     {
+      qDebug() << Q_FUNC_INFO << rec.valueStr("airport_identifier") << "runway without other end"
+               << "runway" << rname << "has no" << opposedRname;
+
       // Nothing found - assume other end is closed if not found
       SqlRecord opposedRec(rec);
       opposedRec.setValue("runway_identifier", opposedRname);
       opposedRec.setValue("displaced_threshold_distance", 0);
       opposedRec.setValue("llz_identifier", QVariant(QVariant::String));
-      opposedRec.setValue("runway_true_bearing", opposedHeading);
+      opposedRec.setValue("runway_true_bearing", opposedHeadingTrue);
 
       // Set closed sign
       opposedRec.appendField("is_closed", QVariant::Bool);
       opposedRec.setValue("is_closed", true);
+
+      Pos opposedPos(rec.valueFloat("runway_longitude"), rec.valueFloat("runway_latitude"));
+      opposedPos = opposedPos.endpoint(atools::geo::feetToMeter(rec.valueFloat("runway_length")), headingTrue);
+
+      opposedRec.setValue("runway_longitude", opposedPos.getLonX());
+      opposedRec.setValue("runway_latitude", opposedPos.getLatY());
 
       runwaypairs.append(std::make_pair(rec, opposedRec));
     }
