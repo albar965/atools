@@ -49,10 +49,10 @@ public:
    *  caller should destroy it during shutdown.
    *  @param parent Parent object
    */
-  HttpSessionStore(QHash<QString, QVariant> settings, QObject *parent = nullptr);
+  HttpSessionStore(const QSettings *settings, QObject *parent = nullptr);
 
   /** Destructor */
-  virtual ~HttpSessionStore() override;
+  virtual ~HttpSessionStore();
 
   /**
    *  Get the ID of the current HTTP session, if it is valid.
@@ -95,7 +95,7 @@ protected:
 
 private:
   /** Configuration settings */
-  QHash<QString, QVariant> settings;
+  const QSettings *settings;
 
   /** Timer to remove expired sessions */
   QTimer cleanupTimer;
@@ -112,6 +112,13 @@ private:
 private slots:
   /** Called every minute to cleanup expired sessions. */
   void sessionTimerEvent();
+
+signals:
+  /**
+   *  Emitted when the session is deleted.
+   *  @param sessionId The ID number of the session.
+   */
+  void sessionDeleted(const QByteArray& sessionId);
 
 };
 

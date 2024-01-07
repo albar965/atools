@@ -6,10 +6,11 @@
 #ifndef HTTPCONNECTIONHANDLER_H
 #define HTTPCONNECTIONHANDLER_H
 
-#ifndef QT_NO_OPENSSL
+#ifndef QT_NO_SSL
    #include <QSslConfiguration>
 #endif
 #include <QTcpSocket>
+#include <QSettings>
 #include <QTimer>
 #include <QThread>
 #include "httpglobal.h"
@@ -19,14 +20,14 @@
 namespace stefanfrings {
 
 /** Alias type definition, for compatibility to different Qt versions */
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 typedef qintptr tSocketDescriptor;
 #else
 typedef int tSocketDescriptor;
 #endif
 
 /** Alias for QSslConfiguration if OpenSSL is not supported */
-#ifdef QT_NO_OPENSSL
+#ifdef QT_NO_SSL
   #define QSslConfiguration QObject
 #endif
 
@@ -43,7 +44,10 @@ typedef int tSocketDescriptor;
  *  </pre></code>
  *  <p>
  *  The readTimeout value defines the maximum time to wait for a complete HTTP request.
- *  @see HttpRequest for description of config settings maxRequestSize and maxMultiPartSize.
+ *  <p>
+ *  MaxRequestSize is the maximum size of a HTTP request. In case of
+ *  multipart/form-data requests (also known as file-upload), the maximum
+ *  size of the body must not exceed maxMultiPartSize.
  */
 class DECLSPEC HttpConnectionHandler :
   public QObject
@@ -58,11 +62,11 @@ public:
    *  @param requestHandler Handler that will process each incoming HTTP request
    *  @param sslConfiguration SSL (HTTPS) will be used if not NULL
    */
-  HttpConnectionHandler(QHash<QString, QVariant> settings, HttpRequestHandler *requestHandler,
+  HttpConnectionHandler(const QSettings *settings, HttpRequestHandler *requestHandler,
                         const QSslConfiguration *sslConfiguration = nullptr);
 
   /** Destructor */
-  virtual ~HttpConnectionHandler() override;
+  virtual ~HttpConnectionHandler();
 
   /** Returns true, if this handler is in use. */
   bool isBusy();
@@ -72,7 +76,7 @@ public:
 
 private:
   /** Configuration settings */
-  QHash<QString, QVariant> settings;
+  const QSettings *settings;
 
   /** TCP socket of the current connection  */
   QTcpSocket *socket;

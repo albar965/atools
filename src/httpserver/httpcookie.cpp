@@ -15,7 +15,8 @@ HttpCookie::HttpCookie()
 }
 
 HttpCookie::HttpCookie(const QByteArray name, const QByteArray value, const int maxAge, const QByteArray path,
-                       const QByteArray comment, const QByteArray domain, const bool secure, const bool httpOnly)
+                       const QByteArray comment, const QByteArray domain, const bool secure, const bool httpOnly,
+                       const QByteArray sameSite)
 {
   this->name = name;
   this->value = value;
@@ -25,6 +26,7 @@ HttpCookie::HttpCookie(const QByteArray name, const QByteArray value, const int 
   this->domain = domain;
   this->secure = secure;
   this->httpOnly = httpOnly;
+  this->sameSite = sameSite;
   this->version = 1;
 }
 
@@ -33,6 +35,7 @@ HttpCookie::HttpCookie(const QByteArray source)
   version = 1;
   maxAge = 0;
   secure = false;
+  httpOnly = false;
   QList<QByteArray> list = splitCSV(source);
   foreach(QByteArray part, list)
   {
@@ -77,6 +80,10 @@ HttpCookie::HttpCookie(const QByteArray source)
     {
       httpOnly = true;
     }
+    else if(name == "SameSite")
+    {
+      sameSite = value;
+    }
     else if(name == "Version")
     {
       version = value.toInt();
@@ -90,7 +97,7 @@ HttpCookie::HttpCookie(const QByteArray source)
       }
       else
       {
-        qWarning("HttpCookie: Ignoring unknown %s=%s", name.constData(), value.constData());
+        qWarning("HttpCookie: Ignoring unknown %s=%s", name.data(), value.data());
       }
     }
   }
@@ -128,6 +135,11 @@ QByteArray HttpCookie::toByteArray() const
   if(httpOnly)
   {
     buffer.append("; HttpOnly");
+  }
+  if(!sameSite.isEmpty())
+  {
+    buffer.append("; SameSite=");
+    buffer.append(sameSite);
   }
   buffer.append("; Version=");
   buffer.append(QByteArray::number(version));
@@ -174,22 +186,27 @@ void HttpCookie::setHttpOnly(const bool httpOnly)
   this->httpOnly = httpOnly;
 }
 
-QByteArray HttpCookie::getName() const
+void HttpCookie::setSameSite(const QByteArray sameSite)
+{
+  this->sameSite = sameSite;
+}
+
+const QByteArray& HttpCookie::getName() const
 {
   return name;
 }
 
-QByteArray HttpCookie::getValue() const
+const QByteArray& HttpCookie::getValue() const
 {
   return value;
 }
 
-QByteArray HttpCookie::getComment() const
+const QByteArray& HttpCookie::getComment() const
 {
   return comment;
 }
 
-QByteArray HttpCookie::getDomain() const
+const QByteArray& HttpCookie::getDomain() const
 {
   return domain;
 }
@@ -199,7 +216,7 @@ int HttpCookie::getMaxAge() const
   return maxAge;
 }
 
-QByteArray HttpCookie::getPath() const
+const QByteArray& HttpCookie::getPath() const
 {
   return path;
 }
@@ -212,6 +229,11 @@ bool HttpCookie::getSecure() const
 bool HttpCookie::getHttpOnly() const
 {
   return httpOnly;
+}
+
+const QByteArray& HttpCookie::getSameSite() const
+{
+  return sameSite;
 }
 
 int HttpCookie::getVersion() const

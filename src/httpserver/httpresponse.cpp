@@ -76,7 +76,7 @@ void HttpResponse::writeHeaders()
 bool HttpResponse::writeToSocket(QByteArray data)
 {
   int remaining = data.size();
-  const char *ptr = data.constData();
+  char *ptr = data.data();
   while(socket->isOpen() && remaining > 0)
   {
     // If the output buffer has become large, then wait until it has been sent.
@@ -110,12 +110,13 @@ void HttpResponse::write(QByteArray data, bool lastPart)
       // Automatically set the Content-Length header
       headers.insert("Content-Length", QByteArray::number(data.size()));
     }
-    // else if we will not close the connection at the end, them we must use the chunked mode.
+    // else if we will not close the connection at the end and there is no Content-Length header,
+    // then we must use the chunked mode.
     else
     {
       QByteArray connectionValue = headers.value("Connection", headers.value("connection"));
       bool connectionClose = QString::compare(connectionValue, "close", Qt::CaseInsensitive) == 0;
-      if(!connectionClose)
+      if(!connectionClose && !headers.contains("Content-Length"))
       {
         headers.insert("Transfer-Encoding", "chunked");
         chunkedMode = true;

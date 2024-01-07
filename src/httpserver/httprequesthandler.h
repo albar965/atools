@@ -37,6 +37,9 @@ public:
    */
   HttpRequestHandler(QObject *parent = nullptr);
 
+  /** Destructor */
+  virtual ~HttpRequestHandler();
+
   /**
    *  Generate a response for an incoming HTTP request.
    *  @param request The received HTTP request

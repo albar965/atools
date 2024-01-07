@@ -59,10 +59,10 @@ public:
    *  caller should destroy it during shutdown.
    *  @param parent Parent object
    */
-  StaticFileController(QHash<QString, QVariant> settings, QObject *parent = nullptr);
+  StaticFileController(const QSettings *settings, QObject *parent = nullptr);
 
   /** Generates the response */
-  virtual void service(HttpRequest& request, HttpResponse& response) override;
+  void service(HttpRequest& request, HttpResponse& response);
 
 private:
   /** Encoding of text files */

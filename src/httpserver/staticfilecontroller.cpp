@@ -7,29 +7,35 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QDateTime>
+#include <QThread>
 
 using namespace stefanfrings;
 
-StaticFileController::StaticFileController(QHash<QString, QVariant> settings, QObject *parent)
+StaticFileController::StaticFileController(const QSettings *settings, QObject *parent)
   : HttpRequestHandler(parent)
 {
-  maxAge = settings.value("maxAge", "60000").toInt();
-  encoding = settings.value("encoding", "UTF-8").toString();
-  docroot = settings.value("path", ".").toString();
+  maxAge = settings->value("maxAge", "60000").toInt();
+  encoding = settings->value("encoding", "UTF-8").toString();
+  docroot = settings->value("path", ".").toString();
   if(!(docroot.startsWith(":/") || docroot.startsWith("qrc://")))
   {
     // Convert relative path to absolute, based on the directory of the config file.
+        #ifdef Q_OS_WIN32
+    if(QDir::isRelativePath(docroot) && settings->format() != QSettings::NativeFormat)
+        #else
     if(QDir::isRelativePath(docroot))
+        #endif
     {
-      QFileInfo configFile(settings.value("filename").toString());
+      QFileInfo configFile(settings->fileName());
       docroot = QFileInfo(configFile.absolutePath(), docroot).absoluteFilePath();
     }
   }
   qDebug("StaticFileController: docroot=%s, encoding=%s, maxAge=%i", qPrintable(docroot), qPrintable(encoding), maxAge);
-  maxCachedFileSize = settings.value("maxCachedFileSize", "65536").toInt();
-  cache.setMaxCost(settings.value("cacheSize", "1000000").toInt());
-  cacheTimeout = settings.value("cacheTime", "60000").toInt();
-  qDebug("StaticFileController: cache timeout=%i, size=%i", cacheTimeout, cache.maxCost());
+  maxCachedFileSize = settings->value("maxCachedFileSize", "65536").toInt();
+  cache.setMaxCost(settings->value("cacheSize", "1000000").toInt());
+  cacheTimeout = settings->value("cacheTime", "60000").toInt();
+  long int cacheMaxCost = (long int)cache.maxCost();
+  qDebug("StaticFileController: cache timeout=%i, size=%li", cacheTimeout, cacheMaxCost);
 }
 
 void StaticFileController::service(HttpRequest& request, HttpResponse& response)
@@ -41,27 +47,23 @@ void StaticFileController::service(HttpRequest& request, HttpResponse& response)
   CacheEntry *entry = cache.object(path);
   if(entry && (cacheTimeout == 0 || entry->created > now - cacheTimeout))
   {
-    QByteArray document = entry->document;   // copy the cached document, because other threads may destroy the cached entry immediately after mutex unlock.
+    QByteArray document = entry->document; // copy the cached document, because other threads may destroy the cached entry immediately after mutex unlock.
     QByteArray filename = entry->filename;
     mutex.unlock();
-#ifdef DEBUG_INFORMATION_WEB
-    qDebug("StaticFileController: Cache hit for %s", path.constData());
-#endif
+    qDebug("StaticFileController: Cache hit for %s", path.data());
     setContentType(filename, response);
     response.setHeader("Cache-Control", "max-age=" + QByteArray::number(maxAge / 1000));
-    response.write(document);
+    response.write(document, true);
   }
   else
   {
     mutex.unlock();
     // The file is not in cache.
-#ifdef DEBUG_INFORMATION_WEB
-    qDebug("StaticFileController: Cache miss for %s", path.constData());
-#endif
+    qDebug("StaticFileController: Cache miss for %s", path.data());
     // Forbid access to files outside the docroot directory
     if(path.contains("/.."))
     {
-      qWarning("StaticFileController: detected forbidden characters in path %s", path.constData());
+      qWarning("StaticFileController: detected forbidden characters in path %s", path.data());
       response.setStatus(403, "forbidden");
       response.write("403 forbidden", true);
       return;
@@ -73,13 +75,12 @@ void StaticFileController::service(HttpRequest& request, HttpResponse& response)
     }
     // Try to open the file
     QFile file(docroot + path);
-#ifdef DEBUG_INFORMATION_WEB
     qDebug("StaticFileController: Open file %s", qPrintable(file.fileName()));
-#endif
     if(file.open(QIODevice::ReadOnly))
     {
       setContentType(path, response);
       response.setHeader("Cache-Control", "max-age=" + QByteArray::number(maxAge / 1000));
+      response.setHeader("Content-Length", QByteArray::number(file.size()));
       if(file.size() <= maxCachedFileSize)
       {
         // Return the file content and store it also in the cache
@@ -192,8 +193,6 @@ void StaticFileController::setContentType(const QString fileName, HttpResponse& 
   // Todo: add all of your content types
   else
   {
-#ifdef DEBUG_INFORMATION_WEB
     qDebug("StaticFileController: unknown MIME type for filename '%s'", qPrintable(fileName));
-#endif
   }
 }
