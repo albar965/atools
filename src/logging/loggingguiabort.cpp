@@ -46,7 +46,7 @@ void LoggingGuiAbortHandler::guiAbortFunction(const QString& msg)
   // Called by signal on main thread context
   if(atools::gui::Application::isShowExceptionDialog())
     atools::gui::Dialog::warning(LoggingHandler::parentWidget,
-                                 QObject::tr("<b>A fatal error has occured.</b><br/><br/>"
+                                 QObject::tr("<b>A fatal error has occurred.</b><br/><br/>"
                                              "%1<br/><br/>"
                                              "%2"
                                              "<hr/>%3"

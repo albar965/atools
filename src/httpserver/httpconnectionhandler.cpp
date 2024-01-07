@@ -130,7 +130,7 @@ void HttpConnectionHandler::setBusy()
 
 void HttpConnectionHandler::readTimeout()
 {
-  qDebug("HttpConnectionHandler (%p): read timeout occured", static_cast<void *>(this));
+  qDebug("HttpConnectionHandler (%p): read timeout occurred", static_cast<void *>(this));
 
   // Commented out because QWebView cannot handle this.
   // socket->write("HTTP/1.1 408 request timeout\r\nConnection: close\r\n\r\n408 request timeout\r\n");
@@ -241,7 +241,7 @@ void HttpConnectionHandler::read()
       }
       catch(...)
       {
-        qCritical("HttpConnectionHandler (%p): An uncatched exception occured in the request handler",
+        qCritical("HttpConnectionHandler (%p): An uncatched exception occurred in the request handler",
                   static_cast<void *>(this));
       }
 
