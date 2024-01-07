@@ -56,7 +56,12 @@ HttpConnectionHandler::~HttpConnectionHandler()
   qDebug("HttpConnectionHandler (%p): about to destroy", static_cast<void *>(this));
 
   thread->quit();
-  thread->wait();
+
+  // Process main events if threads do not terminate withing one second
+  // This is needed to avoid deadlocks if handlers require functions from main threads through blocking queued connections
+  while(!thread->wait(1))
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
   thread->deleteLater();
   qDebug("HttpConnectionHandler (%p): destroyed", static_cast<void *>(this));
 }
