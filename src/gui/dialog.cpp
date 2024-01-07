@@ -15,6 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "application.h"
 #include "gui/dialog.h"
 #include "settings/settings.h"
 
@@ -311,7 +312,8 @@ QMessageBox *Dialog::showSimpleProgressDialog(QWidget *parentWidget, const QStri
   progressBox->setWindowModality(Qt::ApplicationModal);
   progressBox->setTextInteractionFlags(Qt::TextSelectableByMouse);
   progressBox->show();
-  QCoreApplication::processEvents();
+
+  Application::processEventsExtended();
   return progressBox;
 }
 
