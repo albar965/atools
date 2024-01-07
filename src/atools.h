@@ -911,7 +911,7 @@ void deleteSafe(TYPE *& ptr)
 template<typename TYPE>
 void deleteSafeLog(const char *funcInfo, const char *file, int line, const char *obj, TYPE *& ptr)
 {
-  qDebug().noquote().nospace() << funcInfo << " " << file << "#" << line << " delete " << obj;
+  qDebug().noquote().nospace() << funcInfo << " " << file << "#" << line << " delete " << obj << " (" << ptr << ")";
   delete ptr;
   ptr = nullptr;
 }
