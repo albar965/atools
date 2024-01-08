@@ -40,7 +40,10 @@ void HttpRequest::readRequest(QTcpSocket *socket)
   lineBuffer.clear();
   if(!newData.isEmpty())
   {
+        #ifdef DEBUG_INFORMATION_HTTP
     qDebug("HttpRequest: from %s: %s", qPrintable(socket->peerAddress().toString()), newData.data());
+      #endif
+
     QList<QByteArray> list = newData.split(' ');
     if(list.count() != 3 || !list.at(2).contains("HTTP"))
     {

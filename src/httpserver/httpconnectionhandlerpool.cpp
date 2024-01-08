@@ -75,7 +75,9 @@ void HttpConnectionHandlerPool::cleanup()
         delete handler;
         pool.removeOne(handler);
         long int poolSize = (long int)pool.size();
+      #ifdef DEBUG_INFORMATION_HTTP
         qDebug("HttpConnectionHandlerPool: Removed connection handler (%p), pool size is now %li", handler, poolSize);
+      #endif
         break;         // remove only one handler in each interval
       }
     }

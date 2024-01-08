@@ -213,7 +213,10 @@ void HttpConnectionHandler::read()
     else if(currentRequest->getStatus() == HttpRequest::complete)
     {
       readTimer.stop();
+
+      #ifdef DEBUG_INFORMATION_HTTP
       qDebug("HttpConnectionHandler (%p): received request", static_cast<void *>(this));
+      #endif
 
       // Copy the Connection:close header to the response
       HttpResponse response(socket);
@@ -250,8 +253,9 @@ void HttpConnectionHandler::read()
       {
         response.write(QByteArray(), true);
       }
-
+      #ifdef DEBUG_INFORMATION_HTTP
       qDebug("HttpConnectionHandler (%p): finished request", static_cast<void *>(this));
+      #endif
 
       // Find out whether the connection must be closed
       if(!closeConnection)
