@@ -71,8 +71,7 @@ Application *Application::applicationInstance()
 }
 
 void Application::createIssueReport(QWidget *parent, const QString& crashReportFile, const QStringList& filenames,
-                                    const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline,
-                                    const QString& contactHtml)
+                                    const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline)
 {
   qDebug() << Q_FUNC_INFO << crashReportFile << filenames;
 

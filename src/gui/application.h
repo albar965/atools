@@ -60,7 +60,7 @@ public:
 
   /* Record files and pack them into a zip for a crash report */
   static void createIssueReport(QWidget *parent, const QString& crashReportFile, const QStringList& filenames, const QString& helpOnlineUrl,
-                                const QString& helpDocument, const QString& helpLanguageOnline, const QString& contactHtml);
+                                const QString& helpDocument, const QString& helpLanguageOnline);
 
   /* User decided to skip loading of files due to earlier crash */
   static bool isSafeMode()
