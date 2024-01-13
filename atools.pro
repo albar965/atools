@@ -251,6 +251,7 @@ HEADERS += \
   src/util/contextsaver.h \
   src/util/csvreader.h \
   src/util/filechecker.h \
+  src/util/fileoperations.h \
   src/util/filesystemwatcher.h \
   src/util/flags.h \
   src/util/heap.h \
@@ -327,6 +328,7 @@ SOURCES += \
   src/util/contextsaver.cpp \
   src/util/csvreader.cpp \
   src/util/filechecker.cpp \
+  src/util/fileoperations.cpp \
   src/util/filesystemwatcher.cpp \
   src/util/flags.cpp \
   src/util/heap.cpp \
