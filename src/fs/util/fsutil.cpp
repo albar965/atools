@@ -474,10 +474,10 @@ QString capNavString(const QString& str)
           "H", "HH", "MH", "VASI", "PAPI",
           // Airspace abbreviations
           "ALS", "ATZ", "CAE", "CTA", "CTR", "FIR", "UIR", "FIZ", "FTZ",
-          "MATZ", "MOA", "RMZ", "TIZ", "TMA", "TMZ", "TRA", "TRSA", "TWEB", "ARSA",
+          "MATZ", "MOA", "RMZ", "TIZ", "TMA", "TMZ", "TRA", "TRSA", "TWEB", "ARSA", "FBZ", "PJE", "UAF",
           "AAS", "CARS", "FIS", "AFIS", "ATF", "VDF", "PCL", "RCO", "RCAG",
           "NOTAM", "CERAP", "ARTCC",
-          "TCA", "MCTR", "VFR", "IFR", "DFS", "TNA", "CAE",
+          "TCA", "MCTR", "VFR", "IFR", "DFS", "TNA", "CAE", "LANTA",
           "TSRA" "AFB", "OCA", "ARB", "MCAS", "NAS", "NOLF", "NS", "NAWS", "USAF", "TMAD", "CON", "ATS", "MTMA",
           "TRSA", "SFB", "AAF", "DC", "CGAS"
         });
