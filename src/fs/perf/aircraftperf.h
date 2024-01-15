@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -434,6 +434,9 @@ public:
 
   /* true if this is the example performance after creating a new file */
   bool isDefault() const;
+
+  /* True if all fuel flow and speed values are zero by performance collection. */
+  bool isNull() const;
 
   /* Version number to save into LNMPERF XML files */
   static const int LNMPERF_VERSION_MAJOR = 1;
