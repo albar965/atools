@@ -52,7 +52,7 @@ public:
   static void recordStart(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile, const QStringList& filenames,
                           const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline);
 
-  /* Removes lock file */
+  /* Removes lock file. Called by QCoreApplication::aboutToQuit(). */
   static void recordExit();
 
   /* Record files and pack them into a zip for a crash report */

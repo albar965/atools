@@ -49,6 +49,8 @@ bool Application::tooltipsDisabled = false;
 Application::Application(int& argc, char **argv, int)
   : QApplication(argc, argv)
 {
+  // Needed to catch program stopping during Windows shutdown
+  connect(this, &QCoreApplication::aboutToQuit, recordExit);
 }
 
 Application::~Application()
@@ -85,9 +87,9 @@ void Application::createIssueReport(QWidget *parent, const QString& crashReportF
   QString message = tr("<p style=\"white-space:pre\">An issue report was generated and saved with all related files in a Zip archive.</p>"
                          "<p style=\"white-space:pre\"><a href=\"%1\"><b>Click here to open the directory containing the report \"%2\"</b></a></p>"
                            "<p style=\"white-space:pre\">You can send this file to the author of %3 to investigate a problem.</p>"
-                             "<p style=\"white-space:pre\"><b>Please make sure to use the latest version of %3 before reporting an issue and<br>"
-                               "describe all steps to reproduce the problem.</b></p>"
-                               "<p style=\"white-space:pre\"><a href=\"%4\"><b>Click here for contact information</b></a></p>").
+                             "<p style=\"white-space:pre\"><b>Please make sure you are using the latest version of %3 before reporting a problem,<br/>"
+                             "and if possible, describe all the steps to reproduce the problem.</b></p>"
+                             "<p style=\"white-space:pre\"><a href=\"%4\"><b>Click here for contact information</b></a></p>").
                     arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
                     arg(QCoreApplication::applicationName()).arg(contactUrl);
 
@@ -178,6 +180,7 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
 
 void Application::recordExit()
 {
+#ifndef DEBUG_DISABLE_CRASH_REPORT
   if(lockFile.isEmpty())
     qInfo() << Q_FUNC_INFO << "No lock file found";
   else if(QFile::remove(lockFile))
@@ -186,6 +189,7 @@ void Application::recordExit()
     qWarning() << Q_FUNC_INFO << "Failed removing lock file" << lockFile;
 
   lockFile.clear();
+#endif
 }
 
 void Application::buildCrashReport(const QString& crashReportFile, const QStringList& filenames)
