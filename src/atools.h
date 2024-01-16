@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,7 @@
 #include <cmath>
 
 #include <QDebug>
-#include <QDir>
 #include <QLineF>
-#include <QPointF>
-#include <QTextCodec>
 
 class QFile;
 class QFileInfo;
@@ -61,6 +58,8 @@ QString linkTarget(const QFileInfo& path);
  * Returns a cleaned path with '/' as separators. */
 QString canonicalFilePath(const QFileInfo& path);
 QString canonicalPath(const QFileInfo& path);
+QString canonicalFilePath(const QString& path);
+QString canonicalPath(const QString& path);
 
 /* Does note break UNC paths on Windows */
 QString cleanPath(const QString& filename);

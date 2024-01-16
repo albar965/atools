@@ -281,12 +281,14 @@ private:
    * 25 Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in wrong search results.
    * 26 Added parking suffix for MSFS.
    * 27 Columns "metadata.properties" added.
+   * 28 All fixes related to atools 4.0.0.beta to 4.0.2.beta.
+   *
+   * VERSION_NUMBER_TODO=
    */
   static const int DB_VERSION_MINOR = 27;
 
   /* Version of included AIRAC cycle.
-   * VERSION_NUMBER=
-   */
+   * VERSION_NUMBER_TODO= */
   static const int DB_INCLUDED_NAVDATA_CYCLE = 1801;
 
   /* Update the last loaded timestamp in the database and set it to now */

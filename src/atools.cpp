@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
 #include <QDateTime>
 #include <QStandardPaths>
 #include <QStringBuilder>
+#include <QFileInfo>
+#include <QDir>
 
 #if defined(QT_WIDGETS_LIB)
 #include <QFontMetrics>
@@ -1327,6 +1329,16 @@ QString linkTarget(const QFileInfo& path)
 #endif
 
   return atools::cleanPath(target);
+}
+
+QString canonicalFilePath(const QString& path)
+{
+  return canonicalFilePath(QFileInfo(path));
+}
+
+QString canonicalPath(const QString& path)
+{
+  return canonicalPath(QFileInfo(path));
 }
 
 QString canonicalPath(const QFileInfo& path)
