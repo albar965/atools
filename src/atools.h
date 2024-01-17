@@ -27,6 +27,7 @@ class QFile;
 class QFileInfo;
 class QFontMetrics;
 class QFontMetricsF;
+class QTextCodec;
 
 namespace atools {
 
