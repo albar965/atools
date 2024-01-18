@@ -76,8 +76,9 @@ private:
   // Notifiers activated on data sent through sockets
   QSocketNotifier *sigHupNotifier = nullptr, *sigTermNotifier = nullptr, *siglIntNotifier = nullptr;
 
-  static SignalHandler *handlerInstance;
 #endif
+
+  static SignalHandler *handlerInstance;
 };
 
 } // namespace util

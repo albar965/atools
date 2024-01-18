@@ -17,11 +17,13 @@
 
 #include "signalhandler.h"
 
+#ifdef Q_OS_LINUX
 #include <csignal>
 #include <sys/socket.h>
 #include <QSocketNotifier>
 #include <QDebug>
 #include <unistd.h>
+#endif
 
 #pragma GCC diagnostic ignored "-Wunsafe-buffer-usage"
 
