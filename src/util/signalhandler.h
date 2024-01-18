@@ -39,7 +39,7 @@ public:
   const static SignalHandler& instance();
 
   /* Deletes instance */
-  void deleteInstance();
+  static void deleteInstance();
 
 signals:
   /* SIGHUP Hangup detected on controlling terminal or death of controlling process.

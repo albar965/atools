@@ -258,6 +258,7 @@ HEADERS += \
   src/util/httpdownloader.h \
   src/util/properties.h \
   src/util/props.h \
+  src/util/signalhandler.h \
   src/util/simplecrypt.h \
   src/util/str.h \
   src/util/timedcache.h \
@@ -335,6 +336,7 @@ SOURCES += \
   src/util/httpdownloader.cpp \
   src/util/properties.cpp \
   src/util/props.cpp \
+  src/util/signalhandler.cpp \
   src/util/simplecrypt.cpp \
   src/util/str.cpp \
   src/util/timedcache.cpp \
