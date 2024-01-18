@@ -30,12 +30,13 @@ namespace util {
 
 #ifdef Q_OS_LINUX
 
-SignalHandler *SignalHandler::handlerInstance = nullptr;
 int SignalHandler::sigHupFd[2];
 int SignalHandler::sigTermFd[2];
 int SignalHandler::sigIntFd[2];
 
 #endif
+
+SignalHandler *SignalHandler::handlerInstance = nullptr;
 
 const SignalHandler& SignalHandler::instance()
 {
