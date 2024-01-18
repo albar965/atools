@@ -16,13 +16,14 @@
 *****************************************************************************/
 
 #include "gui/application.h"
+
 #include "atools.h"
+#include "gui/dialog.h"
+#include "gui/helphandler.h"
 #include "gui/messagebox.h"
 #include "gui/tools.h"
-#include "gui/helphandler.h"
 #include "io/fileroller.h"
 #include "zip/zipwriter.h"
-#include "gui/dialog.h"
 
 #include <cstdlib>
 #include <QDebug>
