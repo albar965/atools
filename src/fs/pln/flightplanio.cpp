@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1349,6 +1349,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       if(reader.isStartElement())
         break;
     }
+
     // Skip all until the flightplan is found
     xmlStream.readUntilElement("FlightPlan.FlightPlan");
     int appVersionMajor = 0, appVersionBuild = 0;
@@ -1414,7 +1415,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       }
 
       // Collect MSFS procedure information from all legs ========================================
-      QString sid, sidWp, sidRunway, sidRunwayDesignator, star, starWp, starWpPrev, starRunway, starRunwayDesignator,
+      QString sid, sidWp, sidRunway, sidRunwayDesignator, star, starWp, starWpPrev, starRunway, starRunwayDesignator, transitionWp,
               approach, approachSuffix, approachRunway, approachRunwayDesignator, approachTransition;
       for(int i = 0; i < plan.size(); i++)
       {
@@ -1457,6 +1458,10 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
           approachRunwayDesignator = entry.getRunwayDesignator();
         }
 
+        // Check if one waypoint before destination if if this is a last STAR waypoint and possbible approach transition
+        if(i == plan.size() - 2)
+          transitionWp = entry.getIdent();
+
         if(i == plan.size() - 1)
         {
           // Clear procedure information in destination airport to prevent deletion further down
@@ -1479,6 +1484,10 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       // insertPropertyIf(plan, APPROACH_ARINC, approach);
       insertPropertyIf(plan, APPROACH_TYPE, msfsToApproachType(approach));
       insertPropertyIf(plan, APPROACH_SUFFIX, approachSuffix);
+
+      // Use last STAR waypoint to guess approach transition
+      if(!approach.isEmpty())
+        insertPropertyIf(plan, TRANSITION_WP, transitionWp);
 
       if(!approachRunway.isEmpty())
         insertPropertyIf(plan, APPROACH_RW, approachRunway + strAt(approachRunwayDesignator, 0));

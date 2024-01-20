@@ -44,6 +44,7 @@ void copyArrivalProcedureProperties(QHash<QString, QString>& to, const QHash<QSt
 {
   copyProperty(to, from, TRANSITION);
   copyProperty(to, from, TRANSITION_TYPE);
+  copyProperty(to, from, TRANSITION_WP);
   copyProperty(to, from, APPROACH);
   copyProperty(to, from, APPROACH_ARINC);
   copyProperty(to, from, APPROACH_TYPE);

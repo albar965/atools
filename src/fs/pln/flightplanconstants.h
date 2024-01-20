@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -144,6 +144,7 @@ const QLatin1String APPROACH_TYPE_CUSTOM("CUSTOM"); /* User defined departure in
 /* Approach transiton */
 const QLatin1String TRANSITION("transition"); /* Transition name */
 const QLatin1String TRANSITION_TYPE("transitiontype"); /* Type: Full, etc. */
+const QLatin1String TRANSITION_WP("transitionwp"); /* Possible transition waypoint from last STAR waypoint. */
 
 /* Name of airway which leads to IAF of a STAR or an approach (-transition) */
 const QLatin1String PROCAIRWAY("procairway");
