@@ -4,6 +4,31 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 4.0.2.beta
+
+* Runways marked as closed are now shown as such in DFD compiler.
+* Airport patterns now correctly marked as not available for DFD.
+* Runways having one end closed are now positioned correctly. Example: EDDF runway 18.
+* Fixed issue where simple wait dialog did not update contents.
+* Fix for PLN in MSFS where transitions were not loaded by MSFS due to missing waypoint. Example:
+  EDDV, using STAR NIE27 via NIE and ILS-Y INSAG (I27RY) or
+  using STAR NIE27 via SAS and ILS-Z XAVER  (I27RZ).
+* Better transition detection now when loading MSFS PLN files. Using last STAR waypoint or last
+  en-route waypoint to find a matching approach transition.
+* Added SignalHandler to safely catch SIGHUP, SIGTERM or SIGINT on Linux. This avoids data loss due
+  to unsaved files when terminating with Ctrl+C.
+* Changed application to catch program stopping during Windows shutdown which resulted in wrong
+  crash reports. Now shutting program cleanly down when shutting down Windows with Little Navmap
+  running.
+* Added more upper case exceptions for airspaces.
+* Added file operations for recursive copying and deleting folders.
+* Now logging pointer value when deleting objects.
+* Fixed deadlock in HTTP server which appeared when shutting down with parallel incoming requests.
+* Updated HTTP server by  Stefan Frings to latest version from 1.9.0
+* Corrected excessive logging in HTTP server.
+
+===============================================================================
+
 # Version 4.0.1.beta
 
 * Fixes for potential crashes when accessing empty lists.
