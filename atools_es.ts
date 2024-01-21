@@ -162,6 +162,29 @@ Atrapada excepción
     </message>
 </context>
 <context>
+    <name>FileOperations</name>
+    <message>
+        <source>Cannot create directory &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot remove file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot copy file &quot;%1&quot; to &quot;%2&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot remove standard directory, root drive or system folder &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot remove directory &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FileResolver</name>
     <message>
         <source>&quot;%2&quot; does not exist.</source>
@@ -1675,10 +1698,6 @@ Atrapada excepción
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source> (changed)</source>
         <comment>Indication for search menu button items</comment>
         <translation type="unfinished"></translation>
@@ -1686,6 +1705,10 @@ Atrapada excepción
     <message>
         <source> (changed, not used)</source>
         <comment>Indication for search menu button items</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;A fatal error has occurred.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2363,15 +2386,15 @@ Line %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;Please make sure you are using the latest version of %3 before reporting a problem,&lt;br/&gt;and if possible, describe all the steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%4&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;Please make sure to use the latest version of %4 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

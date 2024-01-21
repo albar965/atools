@@ -170,6 +170,29 @@ Datei: &quot;%2&quot;
     </message>
 </context>
 <context>
+    <name>FileOperations</name>
+    <message>
+        <source>Cannot create directory &quot;%1&quot;.</source>
+        <translation>Kann Verzeichnis &quot;%1&quot; nicht erstellen.</translation>
+    </message>
+    <message>
+        <source>Cannot remove file &quot;%1&quot;.</source>
+        <translation>Kann Datei &quot;%1&quot; nicht löschen.</translation>
+    </message>
+    <message>
+        <source>Cannot copy file &quot;%1&quot; to &quot;%2&quot;.</source>
+        <translation>Kann Datei &quot;%1&quot; nicht nach &quot;%2&quot; kopieren.</translation>
+    </message>
+    <message>
+        <source>Cannot remove standard directory, root drive or system folder &quot;%1&quot;.</source>
+        <translation>Kann Standardverzeichnis, Wurzelverzeichnis oder Systemverzeichnis &quot;%1&quot; nicht löschen.</translation>
+    </message>
+    <message>
+        <source>Cannot remove directory &quot;%1&quot;.</source>
+        <translation>Kann Verzeichnis &quot;%1&quot; nicht löschen.</translation>
+    </message>
+</context>
+<context>
     <name>FileResolver</name>
     <message>
         <source>&quot;%2&quot; is not a directory.</source>
@@ -1745,7 +1768,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation>&lt;b&gt;Ein fataler Fehler ist aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Klicken Sie OK, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Ein fataler Fehler ist aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Klicken Sie OK, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
     </message>
     <message>
         <source> (changed)</source>
@@ -1756,6 +1779,10 @@ Datei: &quot;%2&quot;
         <source> (changed, not used)</source>
         <comment>Indication for search menu button items</comment>
         <translation> (geändert, nicht benutzt)</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;A fatal error has occurred.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <translation>&lt;b&gt;Ein fataler Fehler ist aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;OK klicken, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
     </message>
 </context>
 <context>
@@ -2491,15 +2518,23 @@ Zeile %2.</translation>
     </message>
     <message>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot;white-space:pre&quot;&gt;Ein Fehlerbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%2&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Sie können diese Datei an den Autor von %3 senden, um das Problem zu untersuchen.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p style=&quot;white-space:pre&quot;&gt;Ein Fehlerbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%2&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Sie können diese Datei an den Autor von %3 senden, um das Problem zu untersuchen.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 wurde beim letzten Mal nicht sauber beendet.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Dies wurde wahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Ein Absturzbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%3&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Sie sollten diese Datei an den Autor von %4 senden, um den Absturz zu untersuchen.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Hier für Kontaktinformationen klicken&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im abgesicherten Modus starten, was bedeutet, dass das Laden aller Standarddateien wie Flugpläne, Fensteranordnung und andere Einstellungen, die den vorherigen Absturz verursacht haben könnten, jetzt übersprungen werden?&lt;/b&gt;&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 wurde beim letzten Mal nicht sauber beendet.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Dies wurde wahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Ein Absturzbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%3&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Sie sollten diese Datei an den Autor von %4 senden, um den Absturz zu untersuchen.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Hier für Kontaktinformationen klicken&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im abgesicherten Modus starten, was bedeutet, dass das Laden aller Standarddateien wie Flugpläne, Fensteranordnung und andere Einstellungen, die den vorherigen Absturz verursacht haben könnten, jetzt übersprungen werden?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation>&lt;b&gt;Kontakt:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Kontakt und Unterstützung&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;Please make sure you are using the latest version of %3 before reporting a problem,&lt;br/&gt;and if possible, describe all the steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%4&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;white-space:pre&quot;&gt;Ein Fehlerbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%2&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Sie können diese Datei an den Autor von %3 senden, um das Problem zu untersuchen.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;Bitte vergewissern Sie sich, dass Sie die neueste Version von %3 verwenden, bevor Sie ein Problem melden,&lt;br/&gt;und beschreiben Sie, wenn möglich, alle Schritte, um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%4&quot;&gt;&lt;b&gt;Hier klicken für Kontaktinformationen&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;Please make sure to use the latest version of %4 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 wurde beim letzten Mal nicht sauber beendet.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Dies wurde wahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Ein Absturzbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%3&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Sie sollten diese Datei an den Autor von %4 senden, um den Absturz zu untersuchen.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;Bitte stellen Sie sicher, dass Sie die neueste Version von %4 verwenden, bevor Sie einen Absturz melden, und beschreiben Sie alle Schritte, um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Hier für Kontaktinformationen klicken&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im abgesicherten Modus starten, was bedeutet, dass das Laden aller Standarddateien wie Flugpläne, Fensteranordnung und andere Einstellungen, die den vorherigen Absturz verursacht haben könnten, jetzt übersprungen werden?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>

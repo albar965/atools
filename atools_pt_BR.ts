@@ -196,6 +196,37 @@ Ocorreu um erro no Sql
     </message>
 </context>
 <context>
+    <name>FileOperations</name>
+    <message>
+        <location filename="src/util/fileoperations.cpp" line="101"/>
+        <location filename="src/util/fileoperations.cpp" line="171"/>
+        <source>Cannot create directory &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/util/fileoperations.cpp" line="134"/>
+        <location filename="src/util/fileoperations.cpp" line="234"/>
+        <source>Cannot remove file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/util/fileoperations.cpp" line="146"/>
+        <source>Cannot copy file &quot;%1&quot; to &quot;%2&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/util/fileoperations.cpp" line="195"/>
+        <source>Cannot remove standard directory, root drive or system folder &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/util/fileoperations.cpp" line="208"/>
+        <location filename="src/util/fileoperations.cpp" line="249"/>
+        <source>Cannot remove directory &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FileResolver</name>
     <message>
         <location filename="src/fs/scenery/fileresolver.cpp" line="177"/>
@@ -327,8 +358,8 @@ Ocorreu um erro no Sql
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1120"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1494"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4012"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1503"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4021"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -338,7 +369,7 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3601"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3610"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
@@ -423,12 +454,12 @@ Ocorreu um erro no Sql
         <translation>Arquivo de plano de voo LNMPLN inválido &quot;%1&quot;. Nenhum waypoint encontrado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1696"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1705"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>Não é possível abrir o arquivo FlightGear &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3456"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3465"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -436,27 +467,27 @@ Ocorreu um erro no Sql
 <context>
     <name>GpxIO</name>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="48"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="49"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation type="unfinished">Não é possível abrir o arquivo %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="62"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="63"/>
         <source>Cannot open empty GPX file &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="94"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="95"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
         <translation type="unfinished">Posição inválida no arquivo GPX &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="185"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="186"/>
         <source> - Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="235"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="236"/>
         <source> - Track</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1557,60 +1588,60 @@ Ocorreu um erro no Sql
         <translation></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="121"/>
+        <location filename="src/atools.cpp" line="123"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>Erro de leitura &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="192"/>
+        <location filename="src/atools.cpp" line="194"/>
         <source>★</source>
         <comment>Star for rating</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="192"/>
+        <location filename="src/atools.cpp" line="194"/>
         <source>−</source>
         <comment>For empty rating</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="348"/>
-        <location filename="src/atools.cpp" line="356"/>
-        <location filename="src/atools.cpp" line="364"/>
-        <location filename="src/atools.cpp" line="416"/>
+        <location filename="src/atools.cpp" line="350"/>
+        <location filename="src/atools.cpp" line="358"/>
+        <location filename="src/atools.cpp" line="366"/>
+        <location filename="src/atools.cpp" line="418"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="392"/>
-        <location filename="src/atools.cpp" line="397"/>
+        <location filename="src/atools.cpp" line="394"/>
+        <location filename="src/atools.cpp" line="399"/>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="394"/>
+        <location filename="src/atools.cpp" line="396"/>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="395"/>
+        <location filename="src/atools.cpp" line="397"/>
         <source>…</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="417"/>
+        <location filename="src/atools.cpp" line="419"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="487"/>
+        <location filename="src/atools.cpp" line="489"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="84"/>
@@ -1618,47 +1649,47 @@ Ocorreu um erro no Sql
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="864"/>
+        <location filename="src/atools.cpp" line="866"/>
         <source>Directory name is empty.</source>
         <translation>O nome do diretório está vazio.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="873"/>
+        <location filename="src/atools.cpp" line="875"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation>O diretório &quot;%1&quot; não existe.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="881"/>
+        <location filename="src/atools.cpp" line="883"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation>O arquivo &quot;%1&quot; não é um diretório.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="887"/>
+        <location filename="src/atools.cpp" line="889"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation>O diretório &quot;%1&quot; não é legível.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="905"/>
+        <location filename="src/atools.cpp" line="907"/>
         <source>Filepath is empty.</source>
         <translation>O caminho do arquivo está vazio.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="914"/>
+        <location filename="src/atools.cpp" line="916"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation>O arquivo &quot;%1&quot; não existe.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="922"/>
+        <location filename="src/atools.cpp" line="924"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation>O arquivo &quot;%1&quot; é um diretório.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="927"/>
+        <location filename="src/atools.cpp" line="929"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation>Arquivo &quot;%1&quot; não é legível.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="933"/>
+        <location filename="src/atools.cpp" line="935"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation>Arquivo &quot;%1&quot; está vazio.</translation>
     </message>
@@ -1687,12 +1718,12 @@ Ocorreu um erro no Sql
         <translation>Piloto comercial (CP)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="462"/>
+        <location filename="src/atools.cpp" line="464"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Criado por %1 Versão %2 (revisão %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="452"/>
+        <location filename="src/atools.cpp" line="454"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Criado por %1 Versão %2 (revisão %3) em %4</translation>
     </message>
@@ -2101,8 +2132,9 @@ Ocorreu um erro no Sql
     </message>
     <message>
         <location filename="src/logging/loggingguiabort.cpp" line="49"/>
-        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation>&lt;b&gt;Ocorreu um erro fatal.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt; Pressione OK para sair do aplicativo.&lt;/h3&gt;</translation>
+        <source>&lt;b&gt;A fatal error has occurred.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <oldsource>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;Ocorreu um erro fatal.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt; Pressione OK para sair do aplicativo.&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/widgetutil.cpp" line="162"/>
@@ -2924,12 +2956,12 @@ Line %2.</source>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="357"/>
+        <location filename="src/gui/application.cpp" line="367"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="353"/>
+        <location filename="src/gui/application.cpp" line="363"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation></translation>
     </message>
@@ -2938,38 +2970,38 @@ Line %2.</source>
         <translation type="vanished">&lt;b&gt;Encontrado uma exceção de arquivo %1 linha %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK para sair do aplicativo.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="301"/>
+        <location filename="src/gui/application.cpp" line="90"/>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;Please make sure you are using the latest version of %3 before reporting a problem,&lt;br/&gt;and if possible, describe all the steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%4&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/application.cpp" line="137"/>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;Please make sure to use the latest version of %4 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/application.cpp" line="311"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Encontrado uma exceção desconhecida de arquivo %1 linha %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK para sair do aplicativo.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="322"/>
+        <location filename="src/gui/application.cpp" line="332"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="328"/>
+        <location filename="src/gui/application.cpp" line="338"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contato:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="251"/>
+        <location filename="src/gui/application.cpp" line="261"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation>&lt;b&gt;Se o problema persistir ou ocorrer durante a inicialização, exclua todas as configurações e arquivos de banco de dados de %1 e tente novamente.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se desejar relatar este erro, anexe o log e arquivos de configuração ao seu relatório, adicione todas as outras informações disponíveis e envie para o endereço de contato abaixo.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="86"/>
-        <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/application.cpp" line="131"/>
-        <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/gui/application.cpp" line="280"/>
+        <location filename="src/gui/application.cpp" line="290"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Encontrado uma exceção de arquivo &quot;%1&quot; linha %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK para sair do aplicativo.&lt;/h3&gt;</translation>
     </message>
@@ -2978,7 +3010,7 @@ Line %2.</source>
         <translation type="vanished">&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contato e Suporte&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="360"/>
+        <location filename="src/gui/application.cpp" line="370"/>
         <source>&lt;br/&gt;</source>
         <translation></translation>
     </message>

@@ -196,6 +196,37 @@ File: &quot;%2&quot;
     </message>
 </context>
 <context>
+    <name>FileOperations</name>
+    <message>
+        <location filename="src/util/fileoperations.cpp" line="101"/>
+        <location filename="src/util/fileoperations.cpp" line="171"/>
+        <source>Cannot create directory &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/util/fileoperations.cpp" line="134"/>
+        <location filename="src/util/fileoperations.cpp" line="234"/>
+        <source>Cannot remove file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/util/fileoperations.cpp" line="146"/>
+        <source>Cannot copy file &quot;%1&quot; to &quot;%2&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/util/fileoperations.cpp" line="195"/>
+        <source>Cannot remove standard directory, root drive or system folder &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/util/fileoperations.cpp" line="208"/>
+        <location filename="src/util/fileoperations.cpp" line="249"/>
+        <source>Cannot remove directory &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FileResolver</name>
     <message>
         <location filename="src/fs/scenery/fileresolver.cpp" line="170"/>
@@ -365,8 +396,8 @@ File: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1120"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1494"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4012"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1503"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4021"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件“%1”。原因是：%2</translation>
     </message>
@@ -381,7 +412,7 @@ File: &quot;%2&quot;
         <translation>LNMPLN 中的位置“%1”无效。找不到航路点。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1696"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1705"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开 FlightGear 文件“%1”。原因是：%2</translation>
     </message>
@@ -394,12 +425,12 @@ File: &quot;%2&quot;
         <translation type="vanished"> 航迹</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3456"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3465"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>由 %1 在 %4 创建的 PMDG RTE ，版本 %2（修订版本 %3） </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3601"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3610"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>写入 %1 时遇到了内部错误：文件大小无效 %2 != %3 这个文件将不可用。</translation>
     </message>
@@ -407,27 +438,27 @@ File: &quot;%2&quot;
 <context>
     <name>GpxIO</name>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="48"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="49"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="62"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="63"/>
         <source>Cannot open empty GPX file &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="94"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="95"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
         <translation type="unfinished">GPX 文件位置无效“%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="185"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="186"/>
         <source> - Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="235"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="236"/>
         <source> - Track</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1406,34 +1437,34 @@ File: &quot;%2&quot;
 <context>
     <name>QObject</name>
     <message>
-        <location filename="src/atools.cpp" line="121"/>
+        <location filename="src/atools.cpp" line="123"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>读取“%1”时发生了错误：%2</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="192"/>
+        <location filename="src/atools.cpp" line="194"/>
         <source>★</source>
         <comment>Star for rating</comment>
         <translation>★</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="192"/>
+        <location filename="src/atools.cpp" line="194"/>
         <source>−</source>
         <comment>For empty rating</comment>
         <translation>−</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="348"/>
-        <location filename="src/atools.cpp" line="356"/>
-        <location filename="src/atools.cpp" line="364"/>
-        <location filename="src/atools.cpp" line="416"/>
+        <location filename="src/atools.cpp" line="350"/>
+        <location filename="src/atools.cpp" line="358"/>
+        <location filename="src/atools.cpp" line="366"/>
+        <location filename="src/atools.cpp" line="418"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="392"/>
-        <location filename="src/atools.cpp" line="397"/>
+        <location filename="src/atools.cpp" line="394"/>
+        <location filename="src/atools.cpp" line="399"/>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
@@ -1441,7 +1472,7 @@ File: &quot;%2&quot;
 </translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="394"/>
+        <location filename="src/atools.cpp" line="396"/>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
@@ -1449,29 +1480,29 @@ File: &quot;%2&quot;
 …</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="395"/>
+        <location filename="src/atools.cpp" line="397"/>
         <source>…</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="417"/>
+        <location filename="src/atools.cpp" line="419"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="452"/>
+        <location filename="src/atools.cpp" line="454"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>由 %1 在 %4 创建，版本 %2（修订版本 %3）</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="462"/>
+        <location filename="src/atools.cpp" line="464"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>由 %1 创建，版本 %2（修订版本 %3）</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="487"/>
+        <location filename="src/atools.cpp" line="489"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="84"/>
@@ -1479,47 +1510,47 @@ File: &quot;%2&quot;
         <translation>无法打开文件“%1”。原因是：%2。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="864"/>
+        <location filename="src/atools.cpp" line="866"/>
         <source>Directory name is empty.</source>
         <translation>目录名是空的。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="873"/>
+        <location filename="src/atools.cpp" line="875"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation>目录“%1”不存在。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="881"/>
+        <location filename="src/atools.cpp" line="883"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation>文件“%1”不是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="887"/>
+        <location filename="src/atools.cpp" line="889"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation>目录“%1”不可读。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="905"/>
+        <location filename="src/atools.cpp" line="907"/>
         <source>Filepath is empty.</source>
         <translation>文件路径是空的。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="914"/>
+        <location filename="src/atools.cpp" line="916"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation>文件“%1”不存在。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="922"/>
+        <location filename="src/atools.cpp" line="924"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation>文件“%1”是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="927"/>
+        <location filename="src/atools.cpp" line="929"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation>文件“%1”不可读。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="933"/>
+        <location filename="src/atools.cpp" line="935"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation>文件“%1”是空的。</translation>
     </message>
@@ -2042,8 +2073,8 @@ File: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/logging/loggingguiabort.cpp" line="49"/>
-        <source>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <oldsource>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</oldsource>
+        <source>&lt;b&gt;A fatal error has occurred.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <oldsource>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</oldsource>
         <translation type="unfinished">&lt;b&gt;发生了一个致命错误。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;点击 OK 以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
@@ -2855,53 +2886,53 @@ Line %2.</source>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="86"/>
-        <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;%4&lt;/p&gt;</source>
+        <location filename="src/gui/application.cpp" line="90"/>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;Please make sure you are using the latest version of %3 before reporting a problem,&lt;br/&gt;and if possible, describe all the steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%4&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="131"/>
-        <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
+        <location filename="src/gui/application.cpp" line="137"/>
+        <source>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;Please make sure to use the latest version of %4 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="251"/>
+        <location filename="src/gui/application.cpp" line="261"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation type="unfinished">&lt;b&gt;如在启动时此问题持续或再次发生，删除 %1 里的所有设置和数据库再试一次。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;如您希望报告这个错误，附上日志及配置文件到您的报告，以及其他信息一起发生到一下任意一个联系地址。&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="280"/>
+        <location filename="src/gui/application.cpp" line="290"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;在文件“%1”第“%2”行捕获了一个异常。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;点击 OK 以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="301"/>
+        <location filename="src/gui/application.cpp" line="311"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;在文件“%1”第“%2”行捕获了一个未知异常。&lt;/b&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&lt;h3&gt;点击OK以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="322"/>
+        <location filename="src/gui/application.cpp" line="332"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="328"/>
+        <location filename="src/gui/application.cpp" line="338"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;联系:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="353"/>
+        <location filename="src/gui/application.cpp" line="363"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="357"/>
+        <location filename="src/gui/application.cpp" line="367"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="360"/>
+        <location filename="src/gui/application.cpp" line="370"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
