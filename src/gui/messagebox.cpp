@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,35 +16,64 @@
 *****************************************************************************/
 
 #include "gui/messagebox.h"
+#include "gui/tools.h"
 #include "ui_messagebox.h"
 
 #include "gui/helphandler.h"
+#include "settings/settings.h"
 
 #include <QAbstractButton>
 #include <QStyle>
+#include <QUrl>
+#include <QDebug>
 
 namespace atools {
 namespace gui {
 
-MessageBox::MessageBox(QWidget *parent, const QString& title)
-  : QDialog(parent), ui(new Ui::MessageBox)
+MessageBox::MessageBox(QWidget *parent, const QString& title, const QString& settingsKeyParam, const QString& checkBoxMessage,
+                       bool openLinkAuto)
+  : QDialog(parent), ui(new Ui::MessageBox), settingsKey(settingsKeyParam)
 {
   ui->setupUi(this);
 
-  setWindowTitle(title);
+  if(title.isEmpty())
+    setWindowTitle(QCoreApplication::applicationName());
+  else
+    setWindowTitle(title);
+
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
 
   // Hide icon per default
   ui->labelIcon->hide();
 
-  connect(ui->label, &QLabel::linkActivated, this, &MessageBox::linkActivated);
+  if(checkBoxMessage.isEmpty())
+    ui->checkBox->hide();
+  else
+  {
+    ui->checkBox->setText(checkBoxMessage);
+    checkBox = true;
+  }
+
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &MessageBox::buttonBoxClicked);
+
+  if(openLinkAuto)
+    connect(ui->labelText, &QLabel::linkActivated, this, &MessageBox::linkActivatedAuto);
+  else
+    connect(this, &atools::gui::MessageBox::linkActivated, this, &MessageBox::linkActivated);
 }
 
 MessageBox::~MessageBox()
 {
   delete ui;
+}
+
+void MessageBox::linkActivatedAuto(const QString& link)
+{
+  if(link.startsWith("https://") || link.startsWith("http://"))
+    atools::gui::HelpHandler::openUrl(this, QUrl(link));
+  else
+    atools::gui::showInFileManager(link, this);
 }
 
 void MessageBox::addAcceptButton(QDialogButtonBox::StandardButton button)
@@ -64,13 +93,15 @@ void MessageBox::addButton(QDialogButtonBox::StandardButton button)
   ui->buttonBox->addButton(button);
 }
 
-void MessageBox::setText(const QString& text)
+void MessageBox::setMessage(const QString& text)
 {
-  ui->label->setText(text);
+  ui->labelText->setText(text);
 }
 
-void MessageBox::setIcon(QMessageBox::Icon dialogIcon)
+void MessageBox::setIcon(QMessageBox::Icon dialogIconParam)
 {
+  dialogIcon = dialogIconParam;
+
   // Get standard icon from style
   QStyle *style = QApplication::style();
   QIcon icon;
@@ -113,22 +144,65 @@ void MessageBox::setIcon(QMessageBox::Icon dialogIcon)
 
 int MessageBox::exec()
 {
-  // Layout contents before
-  adjustSize();
+  qInfo() << Q_FUNC_INFO << ui->labelText;
 
-  return QDialog::exec();
+  if(acceptButtons.isEmpty())
+  {
+    // Set default button layout
+    switch(dialogIcon)
+    {
+      case QMessageBox::NoIcon:
+      case QMessageBox::Information:
+      case QMessageBox::Warning:
+      case QMessageBox::Critical:
+        addAcceptButton(QDialogButtonBox::Ok);
+        break;
+
+      case QMessageBox::Question:
+        addAcceptButton(QDialogButtonBox::Yes);
+        addRejectButton(QDialogButtonBox::No);
+        break;
+    }
+  }
+
+  QDialogButtonBox::StandardButton retval = defaultButton;
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+
+  // show only if the key is true or not given
+  if(settingsKey.isEmpty() || settings.valueBool(settingsKey, true))
+  {
+    // Layout contents before
+    adjustSize();
+
+    QDialog::exec();
+    retval = clickedButton;
+
+    if(acceptButtons.contains(retval) && retval != QDialogButtonBox::Help && !settingsKey.isEmpty() && checkBox)
+    {
+      settings.setValue(settingsKey, !ui->checkBox->isChecked());
+      atools::settings::Settings::syncSettings();
+    }
+  }
+  return retval;
+}
+
+void MessageBox::setHelpUrl(const QString& url, const QString& language)
+{
+  helpUrl = url;
+  helpLanguage = language;
+  addButton(QDialogButtonBox::Help);
 }
 
 void MessageBox::buttonBoxClicked(QAbstractButton *button)
 {
-  QDialogButtonBox::StandardButton buttonType = ui->buttonBox->standardButton(button);
+  clickedButton = ui->buttonBox->standardButton(button);
 
-  if(acceptButtons.contains(buttonType))
+  if(acceptButtons.contains(clickedButton))
     accept();
-  else if(rejectButtons.contains(buttonType))
+  else if(rejectButtons.contains(clickedButton))
     reject();
-  else if(buttonType == QDialogButtonBox::Help && !helpDocument.isEmpty())
-    atools::gui::HelpHandler::openHelpUrlWeb(this, helpOnlineUrl + helpDocument, helpLanguageOnline);
+  else if(clickedButton == QDialogButtonBox::Help && !helpUrl.isEmpty())
+    atools::gui::HelpHandler::openHelpUrlWeb(this, helpUrl, helpLanguage);
 }
 
 } // namespace gui

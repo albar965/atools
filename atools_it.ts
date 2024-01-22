@@ -3025,7 +3025,7 @@ Linea %2.</translation>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="261"/>
+        <location filename="src/gui/application.cpp" line="238"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation>&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di %1 e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione al tuo report, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
@@ -3049,28 +3049,28 @@ Linea %2.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="137"/>
+        <location filename="src/gui/application.cpp" line="126"/>
         <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %4 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
         <oldsource>&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;Please make sure to use the latest version of %4 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="290"/>
+        <location filename="src/gui/application.cpp" line="267"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Catturata eccezione nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="311"/>
+        <location filename="src/gui/application.cpp" line="288"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Catturata eccezione sconosciuta nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="332"/>
+        <location filename="src/gui/application.cpp" line="309"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation>&lt;b&gt;Contatto:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contatto e Supporto&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="338"/>
+        <location filename="src/gui/application.cpp" line="315"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contattare:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
@@ -3079,17 +3079,17 @@ Linea %2.</translation>
         <translation type="vanished">&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contatto e Supporto&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="363"/>
+        <location filename="src/gui/application.cpp" line="340"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="367"/>
+        <location filename="src/gui/application.cpp" line="344"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="370"/>
+        <location filename="src/gui/application.cpp" line="347"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>

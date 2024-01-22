@@ -186,7 +186,7 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message, 
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
-    msg.setTextInteractionFlags(Qt::TextSelectableByMouse);
+    msg.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
 
     msg.exec();
 
@@ -212,7 +212,7 @@ void Dialog::showWarnMsgBox(const QString& settingsKey, const QString& message, 
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
-    msg.setTextInteractionFlags(Qt::TextSelectableByMouse);
+    msg.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
 
     msg.exec();
     if(!settingsKey.isEmpty() && msg.checkBox() != nullptr)
@@ -246,7 +246,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     msg.setDefaultButton(dialogDefaultButton);
     msg.setWindowFlags(msg.windowFlags() & ~Qt::WindowContextHelpButtonHint);
     msg.setWindowModality(Qt::ApplicationModal);
-    msg.setTextInteractionFlags(Qt::TextSelectableByMouse);
+    msg.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
 
     // Set the button texts
     for(const DialogButton& db : buttonList)
@@ -255,7 +255,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
 
     retval = msg.exec();
 
-    if((retval != QMessageBox::Cancel && retval != QMessageBox::Help) && !settingsKey.isEmpty() && msg.checkBox() != nullptr)
+    if(retval != QMessageBox::Cancel && retval != QMessageBox::Help && !settingsKey.isEmpty() && msg.checkBox() != nullptr)
     {
       settings.setValue(settingsKey, !msg.checkBox()->isChecked());
       Settings::syncSettings();
@@ -283,7 +283,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     msg.setDefaultButton(dialogDefaultButton);
     msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
-    msg.setTextInteractionFlags(Qt::TextSelectableByMouse);
+    msg.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
     retval = msg.exec();
 
     if(retval != QMessageBox::Cancel && !settingsKey.isEmpty() && msg.checkBox() != nullptr)
@@ -310,7 +310,7 @@ QMessageBox *Dialog::showSimpleProgressDialog(QWidget *parentWidget, const QStri
   progressBox->setStandardButtons(QMessageBox::NoButton);
   progressBox->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   progressBox->setWindowModality(Qt::ApplicationModal);
-  progressBox->setTextInteractionFlags(Qt::TextSelectableByMouse);
+  progressBox->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
   progressBox->show();
 
   Application::processEventsExtended();
@@ -334,7 +334,7 @@ QMessageBox::StandardButton Dialog::information(QWidget *parent, const QString& 
   box.setDefaultButton(defaultButton);
   box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   box.setWindowModality(Qt::ApplicationModal);
-  box.setTextInteractionFlags(Qt::TextSelectableByMouse);
+  box.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
   return static_cast<QMessageBox::StandardButton>(box.exec());
 }
 
@@ -347,7 +347,7 @@ QMessageBox::StandardButton Dialog::question(QWidget *parent, const QString& tex
   box.setDefaultButton(defaultButton);
   box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   box.setWindowModality(Qt::ApplicationModal);
-  box.setTextInteractionFlags(Qt::TextSelectableByMouse);
+  box.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
   return static_cast<QMessageBox::StandardButton>(box.exec());
 }
 
@@ -360,7 +360,7 @@ QMessageBox::StandardButton Dialog::warning(QWidget *parent, const QString& text
   box.setDefaultButton(defaultButton);
   box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   box.setWindowModality(Qt::ApplicationModal);
-  box.setTextInteractionFlags(Qt::TextSelectableByMouse);
+  box.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
   return static_cast<QMessageBox::StandardButton>(box.exec());
 }
 
@@ -373,7 +373,8 @@ QMessageBox::StandardButton Dialog::critical(QWidget *parent, const QString& tex
   box.setDefaultButton(defaultButton);
   box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   box.setWindowModality(Qt::ApplicationModal);
-  box.setTextInteractionFlags(Qt::TextSelectableByMouse);
+  box.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+
   return static_cast<QMessageBox::StandardButton>(box.exec());
 }
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,11 @@ namespace atools {
 namespace gui {
 
 /*
- * Message box class which allows to add buttons like help which do not close the dialog window.
+ * More versatile message box class which allows to add buttons like help which do not close the dialog window.
  * Clicking the help button will open the related URL but not close this one.
- * Additionally the linkActivated() signal is sent if a link is clicked in the label.
+ * Additionally the linkActivated() signal is sent if a link is clicked in the label and openLinkAuto is false.
+ * openLinkAuto = true opens links automatically.
+ * If settingsKeyParam and checkBoxMessage are given the state is stored.
  */
 class MessageBox :
   public QDialog
@@ -43,29 +45,18 @@ class MessageBox :
   Q_OBJECT
 
 public:
-  explicit MessageBox(QWidget *parent, const QString& title);
+  explicit MessageBox(QWidget *parent, const QString& title = QString(), const QString& settingsKeyParam = QString(),
+                      const QString& checkBoxMessage = QString(), bool openLinkAuto = true);
   virtual ~MessageBox() override;
 
-  /* Adjusts contents before exec() */
+  /* Adjusts contents before exec().
+   * Returns one of QDialogButtonBox::StandardButton or QMessageBox::StandardButton. */
   virtual int exec() override;
 
-  /* E.g. "CRASHREPORT.html" */
-  void setHelpDocument(const QString& value)
-  {
-    helpDocument = value;
-  }
-
-  /* Full URL with optional language placeholder like "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/${LANG}/" */
-  void setHelpOnlineUrl(const QString& value)
-  {
-    helpOnlineUrl = value;
-  }
-
-  /* Language like "en" for online access. */
-  void setHelpLanguageOnline(const QString& value)
-  {
-    helpLanguageOnline = value;
-  }
+  /* Full URL with optional language placeholder like "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/${LANG}/CRASHREPORT.html"
+   * Language like "en" for online access.
+   * Adds help button.*/
+  void setHelpUrl(const QString& url, const QString& language);
 
   /* Add a standard button which will call accept() when clicked */
   void addAcceptButton(QDialogButtonBox::StandardButton button);
@@ -77,10 +68,16 @@ public:
   void addButton(QDialogButtonBox::StandardButton button);
 
   /* Set text for right aligned label */
-  void setText(const QString& text);
+  void setMessage(const QString& text);
 
   /* Set a standard icon for the top left label.  */
-  void setIcon(QMessageBox::Icon dialogIcon);
+  void setIcon(QMessageBox::Icon dialogIconParam);
+
+  /* Standard button function if "do not show again" is set */
+  void setDefaultButton(QDialogButtonBox::StandardButton value)
+  {
+    defaultButton = value;
+  }
 
 signals:
   void linkActivated(const QString& link);
@@ -88,12 +85,15 @@ signals:
 private:
   Ui::MessageBox *ui;
   void buttonBoxClicked(QAbstractButton *button);
+  void linkActivatedAuto(const QString& link);
 
   QVector<QDialogButtonBox::StandardButton> acceptButtons;
   QVector<QDialogButtonBox::StandardButton> rejectButtons;
+  QDialogButtonBox::StandardButton defaultButton = QDialogButtonBox::NoButton, clickedButton = QDialogButtonBox::NoButton;
+  QMessageBox::Icon dialogIcon;
 
-  QString helpDocument, settingsPrefix, helpOnlineUrl, helpLanguageOnline;
-
+  QString helpUrl, helpLanguage, settingsPrefix, settingsKey;
+  bool checkBox = false;
 };
 
 } // namespace gui

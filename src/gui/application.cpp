@@ -96,23 +96,12 @@ void Application::createIssueReport(QWidget *parent, const QString& crashReportF
                     arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
                     arg(QCoreApplication::applicationName()).arg(contactUrl);
 
-  atools::gui::MessageBox box(parent, QCoreApplication::applicationName());
-  box.setHelpDocument(helpDocument);
-  box.setHelpOnlineUrl(helpOnlineUrl);
-  box.setHelpLanguageOnline(helpLanguageOnline);
+  atools::gui::MessageBox box(parent);
+  box.setHelpUrl(helpOnlineUrl + helpDocument, helpLanguageOnline);
 
   box.addAcceptButton(QDialogButtonBox::Ok);
-  box.addButton(QDialogButtonBox::Help);
-  box.setText(message);
+  box.setMessage(message);
   box.setIcon(QMessageBox::Information);
-
-  connect(&box, &atools::gui::MessageBox::linkActivated, [&box](const QString& link) {
-        if(link.startsWith("https://") || link.startsWith("http://"))
-          atools::gui::HelpHandler::openUrl(&box, QUrl(link));
-        else
-          atools::gui::showInFileManager(link, &box);
-      });
-
   box.exec();
 }
 
@@ -149,24 +138,12 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
                       arg(applicationName()).arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
                       arg(QCoreApplication::applicationName()).arg(contactUrl);
 
-    atools::gui::MessageBox box(parent, applicationName());
-    box.setHelpDocument(helpDocument);
-    box.setHelpOnlineUrl(helpOnlineUrl);
-    box.setHelpLanguageOnline(helpLanguageOnline);
-
+    atools::gui::MessageBox box(parent);
+    box.setHelpUrl(helpOnlineUrl + helpDocument, helpLanguageOnline);
     box.addRejectButton(QDialogButtonBox::No);
     box.addAcceptButton(QDialogButtonBox::Yes);
-    box.addButton(QDialogButtonBox::Help);
-    box.setText(message);
+    box.setMessage(message);
     box.setIcon(QMessageBox::Critical);
-
-    connect(&box, &atools::gui::MessageBox::linkActivated, [&box](const QString& link) {
-          if(link.startsWith("https://") || link.startsWith("http://"))
-            atools::gui::HelpHandler::openUrl(&box, QUrl(link));
-          else
-            atools::gui::showInFileManager(link, &box);
-        });
-
     result = box.exec();
   }
 
