@@ -87,12 +87,12 @@ void Application::createIssueReport(QWidget *parent, const QString& crashReportF
   QFileInfo crashReportFileinfo(crashReportFile);
   QUrl crashReportUrl = QUrl::fromLocalFile(crashReportFileinfo.absoluteFilePath());
 
-  QString message = tr("<p style=\"white-space:pre\">An issue report was generated and saved with all related files in a Zip archive.</p>"
-                         "<p style=\"white-space:pre\"><a href=\"%1\"><b>Click here to open the directory containing the report \"%2\"</b></a></p>"
-                           "<p style=\"white-space:pre\">You can send this file to the author of %3 to investigate a problem.</p>"
-                             "<p style=\"white-space:pre\"><b>Please make sure you are using the latest version of %3 before reporting a problem,<br/>"
+  QString message = tr("<p>An issue report was generated and saved with all related files in a Zip archive.</p>"
+                         "<p><a href=\"%1\"><b>Click here to open the directory containing the report \"%2\"</b></a></p>"
+                           "<p>You can send this file to the author of %3 to investigate a problem.</p>"
+                             "<p><b>Please make sure you are using the latest version of %3 before reporting a problem,<br/>"
                              "and if possible, describe all the steps to reproduce the problem.</b></p>"
-                             "<p style=\"white-space:pre\"><a href=\"%4\"><b>Click here for contact information</b></a></p>").
+                             "<p><a href=\"%4\"><b>Click here for contact information</b></a></p>").
                     arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
                     arg(QCoreApplication::applicationName()).arg(contactUrl);
 
@@ -134,14 +134,14 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
     QFileInfo crashReportFileinfo(crashReportFile);
     QUrl crashReportUrl = QUrl::fromLocalFile(crashReportFileinfo.absoluteFilePath());
 
-    QString message = tr("<p style=\"white-space:pre\"><b>%1 did not exit cleanly the last time.</b></p>"
-                           "<p style=\"white-space:pre\">This was most likely caused by a crash.</p>"
-                             "<p style=\"white-space:pre\">A crash report was generated and saved with all related files in a Zip archive.</p>"
-                               "<p style=\"white-space:pre\"><a href=\"%2\"><b>Click here to open the directory containing the report \"%3\"</b></a></p>"
-                                 "<p style=\"white-space:pre\">You might want to send this file to the author of %4 to investigate the crash.</p>"
-                                   "<p style=\"white-space:pre\"><b>Please make sure to use the latest version of %4 before reporting a crash and "
+    QString message = tr("<p><b>%1 did not exit cleanly the last time.</b></p>"
+                           "<p>This was most likely caused by a crash.</p>"
+                             "<p>A crash report was generated and saved with all related files in a Zip archive.</p>"
+                               "<p><a href=\"%2\"><b>Click here to open the directory containing the report \"%3\"</b></a></p>"
+                                 "<p>You might want to send this file to the author of %4 to investigate the crash.</p>"
+                                   "<p><b>Please make sure to use the latest version of %4 before reporting a crash and "
                                      "describe all steps to reproduce the problem.</b></p>"
-                                     "<p style=\"white-space:pre\"><a href=\"%5\"><b>Click here for contact information</b></a></p>"
+                                     "<p><a href=\"%5\"><b>Click here for contact information</b></a></p>"
                                        "<hr/>"
                                        "<p><b>Start in safe mode now which means to skip loading of all default files like "
                                          "flight plans, window layout and other settings now which may have "
