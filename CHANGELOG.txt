@@ -26,6 +26,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Fixed deadlock in HTTP server which appeared when shutting down with parallel incoming requests.
 * Updated HTTP server by  Stefan Frings to latest version from 1.9.0
 * Corrected excessive logging in HTTP server.
+* Fixed wrong calculation for airport rating which did not update add-on airports.
 
 ===============================================================================
 

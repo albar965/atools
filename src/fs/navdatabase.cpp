@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
 #include "fs/scenery/languagejson.h"
 #include "fs/scenery/materiallib.h"
 #include "fs/scenery/contentxml.h"
+#include "fs/util/fsutil.h"
 
 #include <QDir>
 #include <QElapsedTimer>
@@ -538,6 +539,7 @@ int NavDatabase::countMsSimSteps()
   total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes for airport"
   total += PROGRESS_NUM_TASK_STEPS; // "Clean up runways"
   total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes for search"
+  total += PROGRESS_NUM_TASK_STEPS; // "Calculating airport rating"
   if(options->isVacuumDatabase())
     total += PROGRESS_NUM_TASK_STEPS; // "Vacuum Database"
   if(options->isAnalyzeDatabase())
@@ -792,6 +794,14 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
 
     if((aborted = runScript(&progress, "fs/db/populate_route_edge.sql", tr("Creating route edges waypoints"))))
       return result;
+  }
+
+  if(!FsPaths::isAnyXplane(sim) && sim != FsPaths::NAVIGRAPH)
+  {
+    if((aborted = progress.reportOther(tr("Calculating airport rating"))))
+      return result;
+
+    calculateRating(sim);
   }
 
   if((aborted = runScript(&progress, "fs/db/finish_airport_schema.sql", tr("Creating indexes for airport"))))
@@ -1446,6 +1456,38 @@ bool NavDatabase::runScript(ProgressHandler *progress, const QString& scriptFile
   script.executeScript(":/atools/resources/sql/" % scriptFile);
   db->commit();
   return false;
+}
+
+void NavDatabase::calculateRating(FsPaths::SimulatorType sim)
+{
+  // Get all airports which have no rating yet. MSFS star airports are already assigned 5 n AirportWriter
+  SqlQuery query("select airport_id, rating, is_addon, has_tower_object, num_taxi_path, "
+                 "  num_parking_gate + num_parking_ga_ramp + num_parking_cargo + num_parking_mil_cargo + "
+                 "  num_parking_mil_combat + num_helipad as num_parking, num_apron "
+                 "from airport", db);
+
+  SqlQuery update(db);
+  update.prepare("update airport set rating = :rating where airport_id = :id");
+
+  query.executedQuery();
+  while(query.next())
+  {
+    if(query.valueInt("rating") == 0)
+    {
+      // int calculateAirportRating(bool isAddon, bool hasTower, bool msfs, int numTaxiPaths, int numParkings, int numAprons)
+      int rating = util::calculateAirportRating(query.valueInt("is_addon") > 0,
+                                                query.valueInt("has_tower_object") > 0,
+                                                sim == FsPaths::MSFS,
+                                                query.valueInt("num_taxi_path") > 0,
+                                                query.valueInt("num_parking") > 0,
+                                                query.valueInt("num_apron") > 0);
+
+      update.bindValue(":rating", rating);
+      update.bindValue(":id", query.valueInt("airport_id"));
+      update.exec();
+    }
+  }
+  db->commit();
 }
 
 void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)

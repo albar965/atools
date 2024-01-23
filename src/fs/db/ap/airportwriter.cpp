@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -289,7 +289,8 @@ void AirportWriter::writeObject(const Airport *type)
          bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGaRamp()));
     bind(":largest_parking_gate", bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGate()));
 
-    bind(":rating", type->calculateRating(addon));
+    // Star get full rating and are not updated later - others are set later
+    bind(":rating", type->isMsfsStar() ? 5 : 0);
 
     bind(":scenery_local_path", sceneryLocalPaths.join(", "));
     bind(":bgl_filename", bglFilenames.join(", "));

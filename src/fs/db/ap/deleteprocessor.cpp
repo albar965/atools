@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -404,14 +404,6 @@ void DeleteProcessor::postProcessDelete()
     if(curAirport->getMagVar() == 0.f)
       // TODO FSAD does not update magvar in their airports yet
       copyAirportColumns.append("mag_var");
-
-    // Get the best rating
-    int currentRating = std::max(curAirport->calculateRating(isAddon), previousRating);
-    SqlQuery update(db);
-    update.prepare("update airport set rating = :rating where airport_id = :apid");
-    update.bindValue(":rating", currentRating);
-    update.bindValue(":apid", curAirportId);
-    update.exec();
 
     if(isAddon)
       // Previous was an addon - keep this state here, even if this airport is excluded

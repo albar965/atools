@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -357,8 +357,6 @@ public:
   /* true if this is a MSFS dummy POI airport without runways */
   bool isMsfsPoiDummy(bool addon) const;
 
-  int calculateRating(bool isAddon) const;
-
   virtual bool isValid() const override;
   virtual QString getObjectName() const override;
 
@@ -368,6 +366,11 @@ public:
   static void extractMainComFrequencies(const QList<atools::fs::bgl::Com>& coms, int& towerFrequency,
                                         int& unicomFrequency, int& awosFrequency, int& asosFrequency,
                                         int& atisFrequency);
+
+  bool isMsfsStar() const
+  {
+    return msfsStar;
+  }
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
@@ -394,7 +397,7 @@ private:
 
   atools::fs::bgl::ap::FuelFlags fuelFlags;
   bool towerObj = false, airportClosed = false, msfs = false,
-       msfsStar = false /* Will result in five stars rating*/;
+       msfsStar = false /* Will result in five stars rating */;
 
   int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numRunwayEndClosed = 0, numRunwayFullClosed = 0,
       numRunwayFullOpen = 0, numLightRunway = 0, numRunwayEndVasi = 0, numJetway = 0, numParkingGaRamp = 0,

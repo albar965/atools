@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -186,6 +186,8 @@ private:
   int countFsxP3dSteps(ProgressHandler *progress, const scenery::SceneryCfg& cfg);
   int countMsfsSteps(ProgressHandler *progress, const scenery::SceneryCfg& cfg);
   int countMsSimSteps();
+
+  void calculateRating(FsPaths::SimulatorType sim);
 
   /* Detect Navigraph navdata update packages for special handling. */
   bool isNavigraphNavdata(atools::fs::scenery::ManifestJson& manifest);

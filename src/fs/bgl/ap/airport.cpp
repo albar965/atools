@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -527,19 +527,6 @@ bool Airport::isCurrentRecordValid()
   bool valid = bgl::rec::airportRecordTypeValid(tempType) && tempRec.isFullyValid();
   tempRec.seekToStart();
   return valid;
-}
-
-int Airport::calculateRating(bool isAddon) const
-{
-  // Maximum rating is 5
-  if(msfsStar)
-    // MSFS starred airports always get highest rating
-    return 5;
-  else
-    return atools::fs::util::calculateAirportRating(isAddon, hasTowerObj(), msfs,
-                                                    getTaxiPaths().size(),
-                                                    getParkings().size() + getHelipads().size(),
-                                                    getAprons().size());
 }
 
 bool Airport::isValid() const
