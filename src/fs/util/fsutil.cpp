@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -961,40 +961,45 @@ bool hasSidStarParallelRunways(QString approachArincName)
   }
 }
 
-void sidStarMultiRunways(const QStringList& runwayNames, QString arincName, const QString& allName, QStringList *sidStarRunways,
-                         QStringList *sidStarDispNames)
+void sidStarMultiRunways(const QStringList& runwayNames, const QString& arincName, QStringList *sidStarRunways,
+                         const QString& allDisplayName, QStringList *sidStarDispNames)
 {
   if(hasSidStarAllRunways(arincName))
   {
     if(sidStarDispNames != nullptr)
-      sidStarDispNames->append(allName);
+      sidStarDispNames->append(allDisplayName);
     if(sidStarRunways != nullptr)
       sidStarRunways->append(runwayNames);
   }
   else if(hasSidStarParallelRunways(arincName))
   {
     // Check which runways are assigned from values like "RW12B"
-    arincName = arincName.mid(2, 2);
-    if(runwayContains(runwayNames, arincName % "L"))
+    QString runwayName = arincName.mid(2, 2);
+    if(runwayContains(runwayNames, runwayName % "L"))
     {
       if(sidStarDispNames != nullptr)
-        sidStarDispNames->append(arincName % "L");
+        sidStarDispNames->append(runwayName % "L");
+
       if(sidStarRunways != nullptr)
-        sidStarRunways->append(arincName % "L");
+        sidStarRunways->append(runwayName % "L");
     }
-    if(runwayContains(runwayNames, arincName % "R"))
+
+    if(runwayContains(runwayNames, runwayName % "R"))
     {
       if(sidStarDispNames != nullptr)
-        sidStarDispNames->append(arincName % "R");
+        sidStarDispNames->append(runwayName % "R");
+
       if(sidStarRunways != nullptr)
-        sidStarRunways->append(arincName % "R");
+        sidStarRunways->append(runwayName % "R");
     }
-    if(runwayContains(runwayNames, arincName % "C"))
+
+    if(runwayContains(runwayNames, runwayName % "C"))
     {
       if(sidStarDispNames != nullptr)
-        sidStarDispNames->append(arincName % "C");
+        sidStarDispNames->append(runwayName % "C");
+
       if(sidStarRunways != nullptr)
-        sidStarRunways->append(arincName % "C");
+        sidStarRunways->append(runwayName % "C");
     }
   }
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -85,8 +85,8 @@ bool hasSidStarAllRunways(const QString& approachArincName);
  * @param runwayNames List of all runway names of an airport prefixed with "RW"
  * @param arincName Name like "RW07B" or "ALL"
  */
-void sidStarMultiRunways(const QStringList& runwayNames, QString arincName, const QString& allName, QStringList *sidStarRunways,
-                         QStringList *sidStarDispNames = nullptr);
+void sidStarMultiRunways(const QStringList& runwayNames, const QString& arincName, QStringList *sidStarRunways,
+                         const QString& allDisplayName = QString(), QStringList *sidStarDispNames = nullptr);
 
 /* Converts decimals from transponder to integer.
  * Returns decimal 4095/ octal 07777 / hex 0xFFF for number 7777
