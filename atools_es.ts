@@ -1165,6 +1165,10 @@ Atrapada excepción
         <source>Custom scenery path %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Calculating airport rating</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>

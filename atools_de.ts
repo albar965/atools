@@ -1227,6 +1227,10 @@ Datei: &quot;%2&quot;
         <source>Custom scenery path %1</source>
         <translation>Benutzerdefinierter Szeneriepfad %1</translation>
     </message>
+    <message>
+        <source>Calculating airport rating</source>
+        <translation>Berechne Flugplatzwertung</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
