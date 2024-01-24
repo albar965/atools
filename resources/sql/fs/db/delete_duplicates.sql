@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ delete from transition_leg where transition_id not in (select transition_id from
 delete from ndb where ndb_id in (
 select distinct w1.ndb_id
 from ndb w1
-join ndb w2 on w1.ident = w2.ident and  w1.frequency = w2.frequency and  w1.region = w2.region
+join ndb w2 on w1.ident = w2.ident and w1.region = w2.region
 where
 w1.ndb_id < w2.ndb_id and
 (abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.1);
@@ -51,9 +51,7 @@ w1.ndb_id < w2.ndb_id and
 delete from vor where vor_id in (
 select distinct w1.vor_id
 from vor w1
-join vor w2 on w1.ident = w2.ident and  w1.frequency = w2.frequency and
-  w1.type = w2.type and  w1.region = w2.region and  w1.dme_only = w2.dme_only and
- (w1.dme_altitude is null) = (w2.dme_altitude is null)
+join vor w2 on w1.ident = w2.ident and w1.region = w2.region
 where
 w1.vor_id < w2.vor_id and
 (abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.1);

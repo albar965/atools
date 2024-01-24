@@ -27,6 +27,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Updated HTTP server by  Stefan Frings to latest version from 1.9.0
 * Corrected excessive logging in HTTP server.
 * Fixed wrong calculation for airport rating which did not update add-on airports.
+* Deleting duplicate navaids now by region, ident and position now.
 
 ===============================================================================
 
