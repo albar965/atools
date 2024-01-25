@@ -88,6 +88,10 @@ bool hasSidStarAllRunways(const QString& approachArincName);
 void sidStarMultiRunways(const QStringList& runwayNames, const QString& arincName, QStringList *sidStarRunways,
                          const QString& allDisplayName = QString(), QStringList *sidStarDispNames = nullptr);
 
+/* Turn runway names to common form. "1" to "01", "01T" to "01", "RW01" to "01" */
+QString normalizeRunway(QString runway);
+QStringList normalizeRunways(QStringList names);
+
 /* Converts decimals from transponder to integer.
  * Returns decimal 4095/ octal 07777 / hex 0xFFF for number 7777
  * -1 if number is not valid. */

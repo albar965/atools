@@ -389,7 +389,6 @@ QString runwayFlags(QString runway, bool& prefixRw, bool& noPrefixNull, bool& su
   return runway.toUpper();
 }
 
-// Turn runway names to common form. "1" to "01", "01T" to "01", "RW01" to "01"
 QString normalizeRunway(QString runway)
 {
   bool dummy;
