@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -131,7 +131,8 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
   qDebug() << Q_FUNC_INFO << "mainWindow->frameGeometry()" << mainWindow->frameGeometry();
 
   // Has to be visible for 20 pixels at least on one screen
-  for(QScreen *screen : QGuiApplication::screens())
+  const QList<QScreen *> screens = QGuiApplication::screens();
+  for(const QScreen *screen : screens)
   {
     QRect geometry = screen->availableGeometry();
     QRect intersected = geometry.intersected(mainWindow->frameGeometry());
@@ -360,7 +361,8 @@ void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
     // Even floating widgets can have tabified buddies - ignore floating
     if(!dockWidget->isFloating())
     {
-      for(QDockWidget *dock : mainWindow->tabifiedDockWidgets(dockWidget))
+      const QList<QDockWidget *> docks = mainWindow->tabifiedDockWidgets(dockWidget);
+      for(QDockWidget *dock : docks)
       {
         if(!dock->isFloating())
         {
@@ -379,7 +381,7 @@ void DockWidgetHandler::updateDockTabStatus()
   if(handleDockViews)
   {
     dockStackList.clear();
-    for(QDockWidget *dock : dockWidgets)
+    for(QDockWidget *dock : qAsConst(dockWidgets))
       updateDockTabStatus(dock);
   }
 }
@@ -431,7 +433,7 @@ void DockWidgetHandler::dockViewToggled()
     if(action != nullptr)
     {
       bool checked = action->isChecked();
-      for(QDockWidget *dock : dockWidgets)
+      for(QDockWidget *dock : qAsConst(dockWidgets))
       {
         if(action == dock->toggleViewAction())
           toggledDockWindow(dock, checked);
@@ -515,7 +517,7 @@ void DockWidgetHandler::setMovingAllowed(bool allow)
   if(features.isEmpty())
   {
     // Create backup
-    for(QDockWidget *dock : dockWidgets)
+    for(QDockWidget *dock : qAsConst(dockWidgets))
       features.append(dock->features());
   }
 
@@ -533,7 +535,7 @@ void DockWidgetHandler::setMovingAllowed(bool allow)
   else
   {
     // Forbid moving for all widgets
-    for(QDockWidget *dock : dockWidgets)
+    for(QDockWidget *dock : qAsConst(dockWidgets))
     {
       QDockWidget::DockWidgetFeatures f = dock->features();
       dock->setFeatures(allow ? (f | QDockWidget::DockWidgetMovable) : (f & ~QDockWidget::DockWidgetMovable));
@@ -548,7 +550,7 @@ void DockWidgetHandler::setDockingAllowed(bool allow)
   if(allowedAreas.isEmpty())
   {
     // Create backup
-    for(QDockWidget *dock : dockWidgets)
+    for(const QDockWidget *dock : qAsConst(dockWidgets))
       allowedAreas.append(dock->allowedAreas());
   }
 
@@ -565,7 +567,7 @@ void DockWidgetHandler::setDockingAllowed(bool allow)
   else
   {
     // Forbid docking for all widgets
-    for(QDockWidget *dock : dockWidgets)
+    for(QDockWidget *dock : qAsConst(dockWidgets))
     {
       Qt::DockWidgetAreas a = dock->allowedAreas();
       dock->setAllowedAreas(allow ? Qt::AllDockWidgetAreas : Qt::NoDockWidgetArea);
@@ -579,7 +581,7 @@ void DockWidgetHandler::setHideTitleBar(bool hide)
 {
   hideTitle = hide;
 
-  for(QDockWidget *dock : dockWidgets)
+  for(QDockWidget *dock : qAsConst(dockWidgets))
     setHideTitleBar(dock, hide);
 }
 
@@ -627,17 +629,17 @@ void DockWidgetHandler::raiseFloatingDockWidget(QDockWidget *dockWidget)
 
 void DockWidgetHandler::connectDockWindows()
 {
-  for(QDockWidget *dock : dockWidgets)
+  for(QDockWidget *dock : qAsConst(dockWidgets))
     connectDockWidget(dock);
   mainWindow->installEventFilter(dockEventFilter);
 }
 
 void DockWidgetHandler::raiseWindows()
 {
-  for(QDockWidget *dock : dockWidgets)
+  for(QDockWidget *dock : qAsConst(dockWidgets))
     raiseFloatingDockWidget(dock);
 
-  for(QDialog *dialog : dialogWidgets)
+  for(QDialog *dialog : qAsConst(dialogWidgets))
   {
     if(dialog->isVisible())
       dialog->raise();
@@ -664,13 +666,13 @@ void DockWidgetHandler::setFullScreenOn(atools::gui::DockFlags flags)
 
       if(flags.testFlag(HIDE_TOOLBARS))
       {
-        for(QToolBar *toolBar : toolBars)
+        for(QToolBar *toolBar : qAsConst(toolBars))
           toolBar->setVisible(false);
       }
 
       if(flags.testFlag(HIDE_DOCKS))
       {
-        for(QDockWidget *dockWidget : dockWidgets)
+        for(QDockWidget *dockWidget : qAsConst(dockWidgets))
           dockWidget->setVisible(false);
       }
     }
@@ -941,7 +943,7 @@ void DockWidgetHandler::setStayOnTopDialogWidgets(bool value) const
 
 void DockWidgetHandler::closeAllDialogWidgets()
 {
-  for(QDialog *dialog : dialogWidgets)
+  for(QDialog *dialog : qAsConst(dialogWidgets))
   {
     qDebug() << Q_FUNC_INFO << "Dialog" << dialog->objectName();
     dialog->close();
