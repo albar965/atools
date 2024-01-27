@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -163,10 +163,7 @@ void WidgetState::save(const QObject *widget) const
       saveWidget(settings, mainWindow, mainWindow->saveState());
     }
     else if(const QDialog *dialog = dynamic_cast<const QDialog *>(widget))
-    {
-      // s.setValueVar(keyPrefix % "_" % dlg->objectName() % "_pos", dlg->pos());
       settings.setValueVar(keyPrefix % "_" % dialog->objectName() % "_size", dialog->size());
-    }
     else if(const QSplitter *splitter = dynamic_cast<const QSplitter *>(widget))
       saveWidget(settings, splitter, splitter->saveState());
     else if(const QStatusBar *statusBar = dynamic_cast<const QStatusBar *>(widget))
@@ -533,7 +530,13 @@ bool WidgetState::containsWidget(Settings& settings, QObject *w, const QString& 
 {
   QString name = objName.isEmpty() ? w->objectName() : objName;
   if(!name.isEmpty())
-    return settings.contains(keyPrefix % "_" % name);
+  {
+    if(dynamic_cast<QDialog *>(w) != nullptr)
+      // Need to check for size since dialogs are stored using only this key
+      return settings.contains(keyPrefix % "_" % name % "_size");
+    else
+      return settings.contains(keyPrefix % "_" % name);
+  }
   else
     qWarning() << Q_FUNC_INFO << "Found widget with empty name";
   return false;

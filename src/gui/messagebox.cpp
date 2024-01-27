@@ -172,6 +172,7 @@ int MessageBox::exec()
   if(settingsKey.isEmpty() || settings.valueBool(settingsKey, true))
   {
     // Layout contents before
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
     adjustSize();
 
     QDialog::exec();
