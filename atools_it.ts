@@ -308,39 +308,39 @@ File: &quot;%2&quot;
         <translation type="vanished">Creato da %1 Versione %2 (revisione %3) il %4</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="216"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="224"/>
         <source>Empty Flightplan</source>
         <translation>Piano di volo Vuoto</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="52"/>
-        <location filename="src/fs/pln/flightplan.cpp" line="220"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="228"/>
         <source>IFR</source>
         <translation>IFR</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="54"/>
-        <location filename="src/fs/pln/flightplan.cpp" line="222"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="230"/>
         <source>VFR</source>
         <translation>VFR</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="138"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="146"/>
         <source>File pattern has no extension. It should end with &quot;.%1&quot;.</source>
         <translation>Il modello di file non ha estensione. Dovrebbe terminare con &quot;.%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="141"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="149"/>
         <source>File pattern uses a wrong extension &quot;.%1&quot;. It should end with &quot;.%2&quot;.</source>
         <translation>Il modello di file utilizza un&apos;estensione errata &quot;.%1&quot;. Dovrebbe terminare con &quot;.%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="154"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="162"/>
         <source>Pattern contains invalid characters, double spaces or is longer than %1 characters.%2Not allowed are: %3</source>
         <translation>Lo schema contiene caratteri non validi, doppi spazi o è più lungo di %1 caratteri. %2Non consentiti sono: %3</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="165"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="173"/>
         <source>Pattern is empty.</source>
         <translation>Lo schema è vuoto.</translation>
     </message>
@@ -3102,25 +3102,25 @@ Linea %2.</translation>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="799"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="804"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="889"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="801"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="806"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="891"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>Errore leggendo &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="827"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="832"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="829"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="834"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation>Errore scrivendo %1: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="850"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="852"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation>Errore leggendo &quot;%1&quot;: Numero magico non valido. Non è un file di posizionamento finestre.</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="853"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="855"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation>Errore leggendo &quot;%1&quot;: Versione non valida. File di posizionamento finestre non compatibile.</translation>
     </message>
