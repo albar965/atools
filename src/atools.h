@@ -901,6 +901,9 @@ QString strFromCryptFile(const QString& filename, quint64 key);
 #define ATOOLS_DELETE(ptr) (atools::deleteSafe(ptr))
 #define ATOOLS_DELETE_LOG(ptr) (atools::deleteSafeLog(Q_FUNC_INFO, __FILE__, __LINE__, # ptr, (ptr)))
 
+#define ATOOLS_DELETE_LATER(ptr) (atools::deleteLaterSafe(ptr))
+#define ATOOLS_DELETE_LATER_LOG(ptr) (atools::deleteLaterSafeLog(Q_FUNC_INFO, __FILE__, __LINE__, # ptr, (ptr)))
+
 template<typename TYPE>
 void deleteSafe(TYPE *& ptr)
 {
@@ -913,6 +916,23 @@ void deleteSafeLog(const char *funcInfo, const char *file, int line, const char 
 {
   qDebug().noquote().nospace() << funcInfo << " " << file << "#" << line << " delete " << obj << " (" << ptr << ")";
   delete ptr;
+  ptr = nullptr;
+}
+
+template<typename TYPE>
+void deleteLaterSafe(TYPE *& ptr)
+{
+  if(ptr != nullptr)
+    ptr->deleteLater();
+  ptr = nullptr;
+}
+
+template<typename TYPE>
+void deleteLaterSafeLog(const char *funcInfo, const char *file, int line, const char *obj, TYPE *& ptr)
+{
+  qDebug().noquote().nospace() << funcInfo << " " << file << "#" << line << " deleteLater " << obj << " (" << ptr << ")";
+  if(ptr != nullptr)
+    ptr->deleteLater();
   ptr = nullptr;
 }
 
