@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,21 +19,19 @@
 
 #include "atools.h"
 #include "gui/application.h"
+#include "gui/desktopservices.h"
 #include "gui/dialog.h"
 
-#include <QApplication>
-#include <QUrl>
 #include <QDir>
 #include <QFileInfo>
-#include <QDesktopServices>
 #include <QSslSocket>
-#include <QProcess>
+#include <QUrl>
 
 namespace atools {
 namespace gui {
 
 HelpHandler::HelpHandler(QWidget *parent, const QString& aboutMessage, const QString& gitRevision)
-  : parentWidget(parent), message(aboutMessage), rev(gitRevision)
+  : QObject(parent), parentWidget(parent), message(aboutMessage), rev(gitRevision)
 {
 
 }
@@ -80,90 +78,6 @@ void HelpHandler::about()
 void HelpHandler::aboutQt()
 {
   QMessageBox::aboutQt(parentWidget, tr("About Qt"));
-}
-
-void HelpHandler::openUrl(const QUrl& url)
-{
-  openUrl(parentWidget, url);
-}
-
-void HelpHandler::openUrl(QWidget *parent, const QUrl& url)
-{
-  qDebug() << Q_FUNC_INFO << "About to open URL" << url;
-
-#if defined(DEBUG_OPEN_FILE) && defined(Q_OS_LINUX)
-  // Workaround for a KDE bug which does not open files from the build folder
-  if(QFile::exists("/usr/bin/xdg-open"))
-  {
-    QStringList env = QProcess::systemEnvironment();
-    env.erase(std::remove_if(env.begin(), env.end(), [](const QString& str) {
-          return str.startsWith("LD_LIBRARY_PATH=");
-        }), env.end());
-
-    QProcess process;
-    process.setEnvironment(env);
-    process.setArguments({url.toString()});
-    process.setProgram("/usr/bin/xdg-open");
-    if(!process.startDetached())
-      atools::gui::Dialog::warning(parent, tr("URL \"%1\" not found").arg(url.toString()));
-  }
-  else if(!QDesktopServices::openUrl(url))
-    atools::gui::Dialog::warning(parent, tr("Error opening help URL \"%1\"").arg(url.toDisplayString()));
-#else
-  if(!QDesktopServices::openUrl(url))
-    atools::gui::Dialog::warning(parent, tr("Error opening help URL \"%1\"").arg(url.toDisplayString()));
-#endif
-}
-
-void HelpHandler::openUrlWeb(const QString& url)
-{
-  openUrlWeb(parentWidget, url);
-}
-
-void HelpHandler::openUrlWeb(QWidget *parent, const QString& url)
-{
-  qDebug() << Q_FUNC_INFO << url;
-  openUrl(parent, QUrl(url));
-}
-
-void HelpHandler::openFile(const QString& filepath)
-{
-  openFile(parentWidget, filepath);
-}
-
-void HelpHandler::openFile(QWidget *parent, QString filepath)
-{
-  qDebug() << Q_FUNC_INFO << filepath;
-
-  if(filepath.startsWith("file://"))
-    filepath.remove(0, 7);
-
-  if(QFile::exists(filepath))
-  {
-#if defined(DEBUG_OPEN_FILE) && defined(Q_OS_LINUX)
-    // Workaround for a KDE bug which does not open files from the build folder
-    if(QFile::exists("/usr/bin/xdg-open"))
-    {
-      QStringList env = QProcess::systemEnvironment();
-      env.erase(std::remove_if(env.begin(), env.end(), [](const QString& str) {
-            return str.startsWith("LD_LIBRARY_PATH=");
-          }), env.end());
-
-      QProcess process;
-      process.setEnvironment(env);
-      process.setArguments({atools::nativeCleanPath(filepath)});
-      process.setProgram("/usr/bin/xdg-open");
-      if(!process.startDetached())
-        atools::gui::Dialog::warning(parent, tr("File \"%1\" not found").arg(filepath));
-    }
-    else
-      openUrl(parent, QUrl::fromLocalFile(atools::nativeCleanPath(filepath)));
-#else
-    openUrl(parent, QUrl::fromLocalFile(atools::nativeCleanPath(filepath)));
-#endif
-  }
-  else
-    atools::gui::Dialog::warning(parent, tr("File \"%1\" not found").arg(filepath));
 }
 
 QUrl HelpHandler::getHelpUrlWeb(const QString& urlString, const QString& language)
@@ -239,7 +153,7 @@ void HelpHandler::openHelpUrlWeb(QWidget *parent, const QString& urlString, cons
 
   QUrl url = getHelpUrlWeb(urlString, language);
   if(!url.isEmpty())
-    openUrl(parent, url);
+    DesktopServices::openUrl(parent, url);
   else
     atools::gui::Dialog::warning(parent, tr("URL is empty for \"%1\".").arg(urlString));
 }
@@ -255,7 +169,7 @@ void HelpHandler::openHelpUrlFile(QWidget *parent, const QString& urlString, con
 
   QUrl url = getHelpUrlFile(parent, urlString, language);
   if(!url.isEmpty())
-    openUrl(parent, url);
+    DesktopServices::openUrl(parent, url);
   else
     atools::gui::Dialog::warning(parent, tr("URL is empty for \"%1\".").arg(urlString));
 }

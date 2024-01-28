@@ -16,11 +16,11 @@
 *****************************************************************************/
 
 #include "gui/messagebox.h"
-#include "gui/tools.h"
-#include "ui_messagebox.h"
 
+#include "gui/desktopservices.h"
 #include "gui/helphandler.h"
 #include "settings/settings.h"
+#include "ui_messagebox.h"
 
 #include <QAbstractButton>
 #include <QStyle>
@@ -70,10 +70,7 @@ MessageBox::~MessageBox()
 
 void MessageBox::linkActivatedAuto(const QString& link)
 {
-  if(link.startsWith("https://") || link.startsWith("http://"))
-    atools::gui::HelpHandler::openUrl(this, QUrl(link));
-  else
-    atools::gui::showInFileManager(link, this);
+  atools::gui::DesktopServices::openUrl(this, link, showInFileManager);
 }
 
 void MessageBox::addAcceptButton(QDialogButtonBox::StandardButton button)

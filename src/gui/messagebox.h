@@ -79,6 +79,12 @@ public:
     defaultButton = value;
   }
 
+  /* true if file links are to be shown in a file manager instead of opening */
+  void setShowInFileManager(bool value = true)
+  {
+    showInFileManager = value;
+  }
+
 signals:
   void linkActivated(const QString& link);
 
@@ -93,7 +99,7 @@ private:
   QMessageBox::Icon dialogIcon;
 
   QString helpUrl, helpLanguage, settingsPrefix, settingsKey;
-  bool checkBox = false;
+  bool checkBox = false, showInFileManager = false;
 };
 
 } // namespace gui

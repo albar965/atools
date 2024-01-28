@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,13 +37,6 @@ QFont getBestFixedFont();
 
 /* Make selection color of inactive table elements the same as active on Windows */
 void adjustSelectionColors(QWidget *widget);
-
-/* Show path in any OS dependent file manager. Selects the file in Windows Explorer.
- *  Shows a warning dialog on error.*/
-bool showInFileManager(QString filepath, QWidget *parent);
-
-/* Open HTTP, HTTPS, FTP or FILE link in browser or file manager */
-void anchorClicked(QWidget *parent, const QUrl& url);
 
 /* Return a user readable text for the given font */
 QString fontDescription(const QFont& font);

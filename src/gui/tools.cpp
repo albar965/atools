@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,20 +16,13 @@
 *****************************************************************************/
 
 #include "gui/tools.h"
-#include "atools.h"
 #include "gui/dialog.h"
-#include "gui/helphandler.h"
-#include "qapplication.h"
 
-#include <QDesktopServices>
-#include <QDir>
-#include <QFileInfo>
-#include <QUrl>
-#include <QDebug>
-#include <QFontDatabase>
-#include <QLabel>
-#include <QItemSelectionModel>
 #include <QAction>
+#include <QApplication>
+#include <QFontDatabase>
+#include <QItemSelection>
+#include <QLabel>
 #include <QLayout>
 
 #ifdef Q_OS_WIN32
@@ -38,122 +31,6 @@
 
 namespace atools {
 namespace gui {
-
-bool showInFileManager(QString filepath, QWidget *parent)
-{
-  // Windows
-  if(filepath.startsWith("file:///"))
-    filepath.remove(0, 8);
-
-  // Unix
-  if(filepath.startsWith("file://"))
-    filepath.remove(0, 7);
-
-#ifdef Q_OS_WIN32
-  QFileInfo fp(filepath);
-  fp.makeAbsolute();
-
-  // if(!QProcess::startDetached("explorer.exe", {"/select", QDir::toNativeSeparators(fp.filePath())},
-  // QDir::homePath()))
-  // QMessageBox::warning(mainWindow, QCoreApplication::applicationName(), QString(
-  // tr("Error starting explorer.exe with path \"%1\"")).
-  // arg(query.queryItemValue("filepath")));
-
-  if(fp.exists())
-  {
-    // Syntax is: explorer /select, "C:\Folder1\Folder2\file_to_select"
-    // Dir separators MUST be win-style slashes
-
-    // QProcess::startDetached() has an obscure bug. If the path has
-    // no spaces and a comma(and maybe other special characters) it doesn't
-    // get wrapped in quotes. So explorer.exe can't find the correct path and
-    // displays the default one. If we wrap the path in quotes and pass it to
-    // QProcess::startDetached() explorer.exe still shows the default path. In
-    // this case QProcess::startDetached() probably puts its own quotes around ours.
-
-    STARTUPINFO startupInfo;
-    ::ZeroMemory(&startupInfo, sizeof(startupInfo));
-    startupInfo.cb = sizeof(startupInfo);
-
-    PROCESS_INFORMATION processInfo;
-    ::ZeroMemory(&processInfo, sizeof(processInfo));
-
-    QString nativePath(atools::nativeCleanPath(fp.canonicalFilePath()));
-    QString cmd = QString("explorer /select,\"%1\"").arg(nativePath);
-    qDebug() << Q_FUNC_INFO << "command" << cmd;
-    LPWSTR lpCmd = new WCHAR[cmd.size() + 1];
-    cmd.toWCharArray(lpCmd);
-    lpCmd[cmd.size()] = 0;
-
-    bool ret = ::CreateProcessW(NULL, lpCmd, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfo);
-    delete[] lpCmd;
-
-    if(ret)
-    {
-      ::CloseHandle(processInfo.hProcess);
-      ::CloseHandle(processInfo.hThread);
-    }
-    return true;
-  }
-  else
-  {
-    // If the item to select doesn't exist, try to open its parent
-    QUrl url = QUrl::fromLocalFile(fp.path());
-    if(!QDesktopServices::openUrl(url))
-    {
-      atools::gui::Dialog::warning(parent, QObject::tr("Error opening path \"%1\"").arg(filepath));
-      return false;
-    }
-    else
-      return true;
-  }
-#else
-
-#if defined(DEBUG_OPEN_FILE) && defined(Q_OS_LINUX)
-  // Workaround for a KDE bug which does not open files from the build folder
-  atools::gui::HelpHandler::openFile(parent, QFileInfo(filepath).canonicalPath());
-  return true;
-
-#else
-  QFileInfo fi(filepath);
-  QUrl url = QUrl::fromLocalFile(fi.canonicalPath());
-  qDebug() << Q_FUNC_INFO << "url" << url;
-
-  if(!QDesktopServices::openUrl(url))
-  {
-    atools::gui::Dialog::warning(parent, QObject::tr("Error opening path \"%1\"").arg(filepath));
-    return false;
-  }
-  else
-    return true;
-
-#endif
-  // gdbus call --session --dest org.freedesktop.FileManager1 --object-path /org/freedesktop/FileManager1
-  // --method org.freedesktop.FileManager1.ShowItems "['file://$FILE']" ""
-
-#endif
-}
-
-void anchorClicked(QWidget *parent, const QUrl& url)
-{
-  qDebug() << Q_FUNC_INFO << url;
-
-  if(url.scheme() == "http" || url.scheme() == "https" || url.scheme() == "ftp")
-    // Open a normal link from the userpoint description
-    atools::gui::HelpHandler::openUrl(parent, url);
-  else if(url.scheme() == "file")
-  {
-    if(url.isLocalFile())
-    {
-      QFileInfo info(url.toLocalFile());
-      if(info.exists())
-        // Open a file from the userpoint description
-        atools::gui::HelpHandler::openUrl(parent, url);
-      else
-        atools::gui::Dialog::warning(parent, QObject::tr("File or directory \"%1\" does not exist.").arg(url.toDisplayString()));
-    }
-  }
-}
 
 void fontDescription(const QFont& font, QLabel *label)
 {

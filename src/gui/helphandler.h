@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,21 +15,20 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_HELPMENUHANDLER_H
-#define ATOOLS_HELPMENUHANDLER_H
+#ifndef ATOOLS_HELPHANDLER_H
+#define ATOOLS_HELPHANDLER_H
 
 #include <QObject>
-
-class QWidget;
 
 namespace atools {
 namespace gui {
 
 /*
  * Provides slots for the help menu to display about dialogs, etc.
+ * Also has methods to open local or remote help files for given language.
  */
-class HelpHandler :
-  public QObject
+class HelpHandler
+  : public QObject
 {
   Q_OBJECT
 
@@ -67,18 +66,6 @@ public:
   /* Display about Qt dialog */
   void aboutQt();
 
-  /* Open an URL in the default browser or application. If that fails show an error dialog */
-  void openUrl(const QUrl& url);
-  static void openUrl(QWidget *parent, const QUrl& url);
-
-  /* Open a file in the default browser. If that fails show an error dialog */
-  void openUrlWeb(const QString& url);
-  static void openUrlWeb(QWidget *parent, const QString& url);
-
-  /* Open a file using the default application. If that fails show an error dialog */
-  void openFile(const QString& filepath);
-  static void openFile(QWidget *parent, QString filepath);
-
 private:
   /* Returns a valid help URL and also replaces the variable ${LANG} with one of the
    * supported langages */
@@ -93,4 +80,4 @@ private:
 } // namespace gui
 } // namespace atools
 
-#endif // ATOOLS_HELPMENUHANDLER_H
+#endif // ATOOLS_HELPHANDLER_H

@@ -19,7 +19,6 @@
 
 #include "atools.h"
 #include "gui/dialog.h"
-#include "gui/helphandler.h"
 #include "gui/messagebox.h"
 #include "gui/tools.h"
 #include "io/fileroller.h"
@@ -88,7 +87,7 @@ void Application::createIssueReport(QWidget *parent, const QString& crashReportF
   QUrl crashReportUrl = QUrl::fromLocalFile(crashReportFileinfo.absoluteFilePath());
 
   QString message = tr("<p>An issue report was generated and saved with all related files in a Zip archive.</p>"
-                         "<p><a href=\"%1\"><b>Click here to open the directory containing the report \"%2\"</b></a></p>"
+                         "<p><a href=\"%1\">%2</a> (click to show)</p>"
                            "<p>You can send this file to the author of %3 to investigate a problem.</p>"
                              "<p><b>Please make sure you are using the latest version of %3 before reporting a problem,<br/>"
                              "and if possible, describe all the steps to reproduce the problem.</b></p>"
@@ -97,8 +96,8 @@ void Application::createIssueReport(QWidget *parent, const QString& crashReportF
                     arg(QCoreApplication::applicationName()).arg(contactUrl);
 
   atools::gui::MessageBox box(parent);
+  box.setShowInFileManager();
   box.setHelpUrl(helpOnlineUrl + helpDocument, helpLanguageOnline);
-
   box.addAcceptButton(QDialogButtonBox::Ok);
   box.setMessage(message);
   box.setIcon(QMessageBox::Information);
@@ -126,7 +125,7 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
     QString message = tr("<p><b>%1 did not exit cleanly the last time.</b></p>"
                            "<p>This was most likely caused by a crash.</p>"
                              "<p>A crash report was generated and saved with all related files in a Zip archive.</p>"
-                               "<p><a href=\"%2\"><b>Click here to open the directory containing the report \"%3\"</b></a></p>"
+                               "<p><a href=\"%2\">%3</a> (click to show)</p>"
                                  "<p>You might want to send this file to the author of %4 to investigate the crash.</p>"
                                    "<p><b>Please make sure to use the latest version of %4 before reporting a crash and "
                                      "describe all steps to reproduce the problem.</b></p>"
@@ -139,6 +138,7 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
                       arg(QCoreApplication::applicationName()).arg(contactUrl);
 
     atools::gui::MessageBox box(parent);
+    box.setShowInFileManager();
     box.setHelpUrl(helpOnlineUrl + helpDocument, helpLanguageOnline);
     box.addRejectButton(QDialogButtonBox::No);
     box.addAcceptButton(QDialogButtonBox::Yes);
@@ -331,11 +331,11 @@ void Application::processEventsExtended()
 QString Application::getReportPathHtml()
 {
   // Sort keys to avoid random order
-  QList<QString> keys = reportFiles.keys();
-  std::sort(keys.begin(), keys.end());
+  QList<QString> names = reportFiles.keys();
+  std::sort(names.begin(), names.end());
 
   QString fileStr;
-  for(const QString& header : qAsConst(keys))
+  for(const QString& header : qAsConst(names))
   {
     fileStr.append(tr("<b>%1</b><br/>").arg(header));
     const QStringList paths = reportFiles.value(header);
@@ -343,7 +343,7 @@ QString Application::getReportPathHtml()
     for(const QString& path : paths)
       fileStr += tr("<a href=\"%1\">%2</a><br/>").arg(QUrl::fromLocalFile(path).toString()).arg(atools::elideTextShortLeft(path, 80));
 
-    if(header != keys.constLast())
+    if(header != names.constLast())
       fileStr.append(tr("<br/>"));
   }
 
