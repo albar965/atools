@@ -51,7 +51,7 @@ void DesktopServices::openFile(QWidget *parent, QString path, bool showInFileMan
       // Get file managers and parameters to open and select file or dir
 #if defined(Q_OS_WIN32)
       program = "explorer.exe";
-      arguments << "/select" << atools::nativeCleanPath(path);
+      arguments << "/select," << atools::nativeCleanPath(path);
 #elif defined(Q_OS_MACOS)
       program = "/usr/bin/osascript";
       arguments << "-e" << QString("tell application \"Finder\" to select POSIX file \"%1\"").arg(atools::nativeCleanPath(path));
