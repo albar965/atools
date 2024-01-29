@@ -131,6 +131,25 @@
     </message>
 </context>
 <context>
+    <name>DesktopServices</name>
+    <message>
+        <source>Error opening path &quot;%1&quot;.</source>
+        <translation>Fehler beim Öffnen des Pfades &quot;%1&quot;.</translation>
+    </message>
+    <message>
+        <source>File does not exist &quot;%1&quot;.</source>
+        <translation>Datei &quot;%1&quot; existiert nicht.</translation>
+    </message>
+    <message>
+        <source>Error opening URL &quot;%1&quot;.</source>
+        <translation>Fehler beim Öffnen der Webadresse &quot;%1&quot;.</translation>
+    </message>
+    <message>
+        <source>Error running program &quot;%1&quot; with arguments %2.</source>
+        <translation>Fehler beim Ausführen des Programms &quot;%1&quot; mit den Argumenten %2.</translation>
+    </message>
+</context>
+<context>
     <name>ErrorHandler</name>
     <message>
         <source>%1
@@ -190,6 +209,22 @@ Datei: &quot;%2&quot;
     <message>
         <source>Cannot remove directory &quot;%1&quot;.</source>
         <translation>Kann Verzeichnis &quot;%1&quot; nicht löschen.</translation>
+    </message>
+    <message>
+        <source>Cannot create link &quot;%1&quot; to &quot;%2&quot;.</source>
+        <translation>Kann Verknüpfung &quot;%1&quot; nach &quot;%2&quot; nicht erstellen.</translation>
+    </message>
+    <message>
+        <source>Cannot move directory &quot;%1&quot; to trash.</source>
+        <translation>Kann Verzeichnis &quot;%1&quot; nicht in den Papierkorb verschieben.</translation>
+    </message>
+    <message>
+        <source>Cannot remove &quot;%1&quot;.</source>
+        <translation>Kann &quot;%1&quot; nicht löschen.</translation>
+    </message>
+    <message>
+        <source>Directory does not exist &quot;%1&quot;.</source>
+        <translation>Verzeichnis &quot;%1&quot; existiert nicht.</translation>
     </message>
 </context>
 <context>
@@ -1585,11 +1620,11 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Error opening path &quot;%1&quot;</source>
-        <translation>Fehler beim Öffnen des Pfades &quot;%1&quot;</translation>
+        <translation type="vanished">Fehler beim Öffnen des Pfades &quot;%1&quot;</translation>
     </message>
     <message>
         <source>File or directory &quot;%1&quot; does not exist.</source>
-        <translation>Datei oder Verzeichnis &quot;%1&quot; existiert nicht.</translation>
+        <translation type="vanished">Datei oder Verzeichnis &quot;%1&quot; existiert nicht.</translation>
     </message>
     <message>
         <source>Is not a file.</source>
@@ -2542,11 +2577,19 @@ Zeile %2.</translation>
     </message>
     <message>
         <source>&lt;p&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%2&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure you are using the latest version of %3 before reporting a problem,&lt;br/&gt;and if possible, describe all the steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%4&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Ein Fehlerbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%2&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Sie können diese Datei an den Autor von %3 senden, um das Problem zu untersuchen.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Bitte vergewissern Sie sich, dass Sie die neueste Version von %3 verwenden, bevor Sie ein Problem melden,&lt;br/&gt;und beschreiben Sie, wenn möglich, alle Schritte, um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%4&quot;&gt;&lt;b&gt;Hier klicken für Kontaktinformationen&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;Ein Fehlerbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%2&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Sie können diese Datei an den Autor von %3 senden, um das Problem zu untersuchen.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Bitte vergewissern Sie sich, dass Sie die neueste Version von %3 verwenden, bevor Sie ein Problem melden,&lt;br/&gt;und beschreiben Sie, wenn möglich, alle Schritte, um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%4&quot;&gt;&lt;b&gt;Hier klicken für Kontaktinformationen&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Click here to open the directory containing the report &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %4 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;%1 wurde beim letzten Mal nicht sauber beendet.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Dies wurde wahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p&gt;Ein Absturzbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%3&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Sie sollten diese Datei an den Autor von %4 senden, um den Absturz zu untersuchen.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Bitte stellen Sie sicher, dass Sie die neueste Version von %4 verwenden, bevor Sie einen Absturz melden, und beschreiben Sie alle Schritte, um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Hier für Kontaktinformationen klicken&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im abgesicherten Modus starten, was bedeutet, dass das Laden aller Standarddateien wie Flugpläne, Fensteranordnung und andere Einstellungen, die den vorherigen Absturz verursacht haben könnten, jetzt übersprungen werden?&lt;/b&gt;&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;&lt;b&gt;%1 wurde beim letzten Mal nicht sauber beendet.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Dies wurde wahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p&gt;Ein Absturzbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%3&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Sie sollten diese Datei an den Autor von %4 senden, um den Absturz zu untersuchen.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Bitte stellen Sie sicher, dass Sie die neueste Version von %4 verwenden, bevor Sie einen Absturz melden, und beschreiben Sie alle Schritte, um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Hier für Kontaktinformationen klicken&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im abgesicherten Modus starten, was bedeutet, dass das Laden aller Standarddateien wie Flugpläne, Fensteranordnung und andere Einstellungen, die den vorherigen Absturz verursacht haben könnten, jetzt übersprungen werden?&lt;/b&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt; (click to show)&lt;/p&gt;&lt;p&gt;You can send this file to the author of %3 to investigate a problem.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure you are using the latest version of %3 before reporting a problem,&lt;br/&gt;and if possible, describe all the steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%4&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Ein Fehlerbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt; (Klick zum Anzeigen)&lt;/p&gt;&lt;p&gt;Sie können diese Datei an den Autor von %3 senden, um das Problem zu untersuchen.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Bitte vergewissern Sie sich, dass Sie die neueste Version von %3 verwenden, bevor Sie ein Problem melden,&lt;br/&gt;und beschreiben Sie, wenn möglich, alle Schritte, um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%4&quot;&gt;&lt;b&gt;Hier für Kontaktinformationen klicken&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;%3&lt;/a&gt; (click to show)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %4 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %4 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%1 wurde beim letzten Mal nicht sauber beendet.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Dies wurde wahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p&gt;Ein Absturzbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;%3&lt;/a&gt; (Klick zum Anzeigen)&lt;/p&gt;&lt;p&gt;Sie sollten diese Datei an den Autor von %4 senden, um den Absturz zu untersuchen.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Bitte stellen Sie sicher, dass Sie die neueste Version von %4 verwenden, bevor Sie einen Absturz melden, und beschreiben Sie alle Schritte, um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Hier für Kontaktinformationen klicken&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im abgesicherten Modus starten, was bedeutet, dass das Laden aller Standarddateien wie Flugpläne, Fensteranordnung und andere Einstellungen, die den vorherigen Absturz verursacht haben könnten, jetzt übersprungen werden?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -2612,7 +2655,7 @@ Zeile %2.</translation>
     </message>
     <message>
         <source>Error opening help URL &quot;%1&quot;</source>
-        <translation>Fehler beim Öffnen der Webadresse für Hilfe &quot;%1&quot;</translation>
+        <translation type="vanished">Fehler beim Öffnen der Webadresse für Hilfe &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Help file &quot;%1&quot; not found</source>
@@ -2628,11 +2671,11 @@ Zeile %2.</translation>
     </message>
     <message>
         <source>File &quot;%1&quot; not found</source>
-        <translation>Datei &quot;%1&quot; wurde nicht gefunden</translation>
+        <translation type="vanished">Datei &quot;%1&quot; wurde nicht gefunden</translation>
     </message>
     <message>
         <source>URL &quot;%1&quot; not found</source>
-        <translation>URL &quot;%1&quot; nicht gefunden</translation>
+        <translation type="vanished">URL &quot;%1&quot; nicht gefunden</translation>
     </message>
 </context>
 <context>
