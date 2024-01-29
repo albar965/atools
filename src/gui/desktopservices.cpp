@@ -54,7 +54,8 @@ void DesktopServices::openFile(QWidget *parent, QString path, bool showInFileMan
       arguments << "/select," << atools::nativeCleanPath(path);
 #elif defined(Q_OS_MACOS)
       program = "/usr/bin/osascript";
-      arguments << "-e" << QString("tell application \"Finder\" to select POSIX file \"%1\" activate").arg(atools::nativeCleanPath(path));
+      arguments << "-e" << QString("tell application \"Finder\" activate "
+                                   "make new Finder window to (POSIX file \"%1\")").arg(atools::nativeCleanPath(path));
 #elif defined(DEBUG_OPEN_FILE) && defined(Q_OS_LINUX)
       // $XDG_CURRENT_DESKTOP https://wiki.archlinux.org/title/Xdg-utils
       // gdbus call --session --dest org.freedesktop.FileManager1 --object-path /org/freedesktop/FileManager1
