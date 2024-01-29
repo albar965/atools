@@ -70,7 +70,7 @@ FileOperations::FileOperations(bool verboseParam)
     path = atools::canonicalFilePath(path);
 }
 
-bool FileOperations::copyDirectory(const QString& from, const QString& to, bool overwrite, bool hidden, bool system)
+void FileOperations::copyDirectory(const QString& from, const QString& to, bool overwrite, bool hidden, bool system)
 {
   filesProcessed = 0;
   errors.clear();
@@ -80,108 +80,110 @@ bool FileOperations::copyDirectory(const QString& from, const QString& to, bool 
 
   // Check source folder
   errors.append(atools::checkDirMsg(from));
-
-  // Check parent of destination folder
-  QDir toDirParent(to);
-  toDirParent.cdUp();
-  errors.append(atools::checkDirMsg(toDirParent.absolutePath()));
-
-  // Clear empty messages
   errors.removeAll(QString());
 
-  if(hasErrors())
-    return false;
-
-  // Create destination folder if it does not exist
-  if(!QFile::exists(to))
+  if(!hasErrors())
   {
-    // Create only the top level - the parent has to exist already
-    if(!QDir().mkdir(to))
+    // Check parent of destination folder
+    QDir toDirParent(to);
+    toDirParent.cdUp();
+    errors.append(atools::checkDirMsg(toDirParent.absolutePath()));
+    errors.removeAll(QString());
+
+    if(!hasErrors())
     {
-      errors.append(tr("Cannot create directory \"%1\".").arg(to));
-      return false;
+      // Create destination folder if it does not exist
+      if(!QFile::exists(to))
+      {
+        // Create only the top level - the parent has to exist already
+        if(!QDir().mkdir(to))
+          errors.append(tr("Cannot create directory \"%1\".").arg(to));
+      }
+
+      // Copy recursively
+      if(!hasErrors())
+        copyDirectoryInternal(from, to, overwrite, hidden, system);
     }
   }
-
-  // Copy recursively
-  bool retval = copyDirectoryInternal(from, to, overwrite, hidden, system);
 
   if(hasErrors())
     qWarning().noquote().nospace() << Q_FUNC_INFO << "Errors: " << errors;
-
-  return retval;
 }
 
-bool FileOperations::copyDirectoryInternal(const QString& from, const QString& to, bool overwrite, bool hidden, bool system)
+void FileOperations::copyDirectoryInternal(const QString& from, const QString& to, bool overwrite, bool hidden, bool system)
 {
-  // Copy files first ================================================================
+  // Set up filter
+  QDir::Filters filter = QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot;
   QDir fromDir(from);
-  QDir::Filters filter = QDir::Files;
   filter.setFlag(QDir::Hidden, hidden);
   filter.setFlag(QDir::System, system);
-  const QStringList files = fromDir.entryList(filter);
-  for(const QString& file : files)
+  const QFileInfoList infoList = fromDir.entryInfoList(filter, QDir::DirsFirst); // Recurse first into directories
+
+  for(const QFileInfo& fromPath : infoList)
   {
-    // Remove existing file for overwrite
-    QString toFile = to % QDir::separator() % file;
-    if(overwrite && QFile::exists(toFile))
+    QFileInfo toPath(to % QDir::separator() % fromPath.fileName());
+
+    if(overwrite && toPath.exists() && (toPath.isFile() || toPath.isSymbolicLink() || toPath.isJunction() || toPath.isShortcut()))
     {
+      // Remove existing file or link for overwrite ====================================
       if(verbose)
-        qDebug() << Q_FUNC_INFO << "remove" << toFile;
+        qDebug() << Q_FUNC_INFO << "remove" << toPath.filePath();
 
-      if(!QFile::remove(toFile))
+      if(!QFile::remove(toPath.filePath()))
+        errors.append(tr("Cannot remove file \"%1\".").arg(toPath.filePath()));
+    }
+
+    if(!hasErrors())
+    {
+      if(fromPath.isSymbolicLink())
       {
-        errors.append(tr("Cannot remove file \"%1\".").arg(toFile));
-        return false;
+        // Create a symbolic link - needs relative links ======================================================
+        QString relativeLinkTarget = QDir(fromPath.absolutePath()).relativeFilePath(atools::linkTarget(fromPath.absoluteFilePath()));
+
+        if(verbose)
+          qDebug() << Q_FUNC_INFO << "link from" << toPath.filePath() << "to" << relativeLinkTarget;
+
+        if(!QFile::link(relativeLinkTarget, toPath.filePath()))
+          errors.append(tr("Cannot create link \"%1\" to \"%2\".").arg(toPath.absoluteFilePath()).arg(relativeLinkTarget));
+        else
+          filesProcessed++;
+      }
+      else
+      {
+        if(fromPath.isFile())
+        {
+          // Copy file ================================================================
+          if(verbose)
+            qDebug() << Q_FUNC_INFO << "copy from" << fromPath.filePath() << "to" << toPath.filePath();
+
+          if(!QFile::copy(fromPath.filePath(), toPath.filePath()))
+            errors.append(tr("Cannot copy file \"%1\" to \"%2\".").arg(fromPath.filePath()).arg(toPath.filePath()));
+          else
+            filesProcessed++;
+        }
+        else if(fromPath.isDir())
+        {
+          // Create dir ================================================================
+          if(verbose)
+            qDebug() << Q_FUNC_INFO << "mkdir" << toPath.filePath();
+
+          // Create destination dir
+          if(!toPath.exists())
+          {
+            if(!toPath.dir().mkdir(toPath.fileName()))
+              errors.append(tr("Cannot create directory \"%1\".").arg(toPath.absoluteFilePath()));
+          }
+
+          // Recurse copying ==================================================
+          if(!hasErrors())
+            copyDirectoryInternal(fromPath.filePath(), toPath.filePath(), overwrite, hidden, system);
+        }
       }
     }
-
-    QString fromFile = from % QDir::separator() % file;
-    if(verbose)
-      qDebug() << Q_FUNC_INFO << "copy" << fromFile << toFile;
-
-    // Copy file
-    if(!QFile::copy(fromFile, toFile))
-    {
-      errors.append(tr("Cannot copy file \"%1\" to \"%2\".").arg(fromFile).arg(toFile));
-      return false;
-    }
-    else
-      filesProcessed++;
   }
-
-  // Create dirs next ================================================================
-  QDir toDir(to);
-  filter = QDir::Dirs | QDir::NoDotAndDotDot;
-  filter.setFlag(QDir::Hidden, hidden);
-  filter.setFlag(QDir::System, system);
-  const QStringList dirs = fromDir.entryList(filter);
-  for(const QString& dir : dirs)
-  {
-    QString toPath = to % QDir::separator() % dir;
-
-    if(verbose)
-      qDebug() << Q_FUNC_INFO << "mkdir" << toPath;
-
-    // Create destination dir
-    if(!toDir.exists(dir))
-    {
-      if(!toDir.mkdir(dir))
-      {
-        errors.append(tr("Cannot create directory \"%1\".").arg(toPath));
-        return false;
-      }
-    }
-
-    // Recurse
-    if(!copyDirectoryInternal(from % QDir::separator() % dir, toPath, overwrite, hidden, system))
-      return false;
-  }
-
-  return true;
 }
 
-bool FileOperations::removeDirectory(const QString& directory, bool keepDirs, bool hidden, bool system)
+void FileOperations::removeDirectory(const QString& directory, bool keepDirs, bool hidden, bool system)
 {
   filesProcessed = 0;
   errors.clear();
@@ -189,7 +191,6 @@ bool FileOperations::removeDirectory(const QString& directory, bool keepDirs, bo
   if(verbose)
     qDebug() << Q_FUNC_INFO << "Current" << QDir().canonicalPath();
 
-  bool retval = false;
   if(!canRemoveDir(directory))
     // Removal not allowed since system folder
     errors.append(tr("Cannot remove standard directory, root drive or system folder \"%1\".").arg(directory));
@@ -198,58 +199,92 @@ bool FileOperations::removeDirectory(const QString& directory, bool keepDirs, bo
     errors.append(atools::checkDirMsg(directory));
     errors.removeAll(QString());
 
-    if(hasErrors())
-      return false;
+    if(!hasErrors())
+    {
+      removeDirectoryInternal(directory, keepDirs, hidden, system);
 
-    retval = removeDirectoryInternal(directory, keepDirs, hidden, system);
-
-    // Remove top level dir
-    if(!keepDirs && !QDir().rmdir(directory))
-      errors.append(tr("Cannot remove directory \"%1\".").arg(directory));
-
-    if(hasErrors())
-      qWarning().noquote().nospace() << Q_FUNC_INFO << "Errors: " << errors;
+      if(!hasErrors())
+      {
+        // Remove top level dir
+        if(!keepDirs && !QDir().rmdir(directory))
+          errors.append(tr("Cannot remove directory \"%1\".").arg(directory));
+      }
+    }
   }
 
-  return retval;
+  if(hasErrors())
+    qWarning().noquote().nospace() << Q_FUNC_INFO << "Errors: " << errors;
 }
 
-bool FileOperations::removeDirectoryInternal(const QString& directory, bool keepDirs, bool hidden, bool system)
+void FileOperations::removeDirectoryToTrash(const QString& directory)
+{
+  filesProcessed = 0;
+  errors.clear();
+
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "Current" << QDir().canonicalPath();
+
+  errors.append(atools::checkDirMsg(directory));
+  errors.removeAll(QString());
+
+  if(!hasErrors())
+  {
+    QString trashName;
+    if(!QFile::moveToTrash(directory, &trashName))
+      errors.append(tr("Cannot move directory \"%1\" to trash.").arg(directory));
+    else if(verbose)
+    {
+      filesProcessed++;
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << directory << "moved to" << trashName;
+    }
+  }
+
+  if(hasErrors())
+    qWarning().noquote().nospace() << Q_FUNC_INFO << "Errors: " << errors;
+}
+
+void FileOperations::removeDirectoryInternal(const QString& directory, bool keepDirs, bool hidden, bool system)
 {
   QDir dir(directory);
-  if(!dir.exists())
-    return false;
-
-  // Remove files first ======================================================================
-  QDir::Filters filter = QDir::Files;
-  filter.setFlag(QDir::Hidden, hidden);
-  filter.setFlag(QDir::System, system);
-  const QStringList files = dir.entryList(filter);
-  for(const QString& file : files)
+  if(dir.exists())
   {
-    if(verbose)
-      qDebug() << Q_FUNC_INFO << "remove" << file;
+    // Dive into subdirs and then remove files ======================================================================
+    QDir::Filters filter = QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot;
+    filter.setFlag(QDir::Hidden, hidden);
+    filter.setFlag(QDir::System, system);
+    const QFileInfoList infoList = dir.entryInfoList(filter, QDir::DirsFirst);
+    for(const QFileInfo& fileinfo : infoList)
+    {
+      QString absFilePath = fileinfo.absoluteFilePath();
 
-    if(!dir.remove(file))
-      errors.append(tr("Cannot remove file \"%1\".").arg(dir.absoluteFilePath(file)));
-    else
-      filesProcessed++;
+      if(fileinfo.isDir() && !fileinfo.isSymbolicLink())
+      {
+        // Recurse but not into symbolic links
+        removeDirectoryInternal(absFilePath, keepDirs, hidden, system);
+        if(!keepDirs)
+        {
+          if(verbose)
+            qDebug() << Q_FUNC_INFO << "remove dir" << absFilePath;
+
+          if(!dir.rmdir(absFilePath))
+            errors.append(tr("Cannot remove directory \"%1\".").arg(absFilePath));
+        }
+      }
+      else if(fileinfo.isFile() || fileinfo.isSymbolicLink() || fileinfo.isJunction() || fileinfo.isShortcut())
+      {
+        if(verbose)
+          qDebug() << Q_FUNC_INFO << "remove file" << absFilePath;
+
+        if(!QFile::remove(absFilePath))
+          errors.append(tr("Cannot remove \"%1\".").arg(absFilePath));
+        else
+          filesProcessed++;
+      }
+    }
   }
-
-  // Remove folders next ======================================================================
-  filter = QDir::Dirs | QDir::NoDotAndDotDot;
-  filter.setFlag(QDir::Hidden, hidden);
-  filter.setFlag(QDir::System, system);
-  const QStringList dirs = dir.entryList(filter);
-  for(const QString& d : dirs)
-  {
-    // Recurse
-    removeDirectoryInternal(dir.absoluteFilePath(d), keepDirs, hidden, system);
-    if(!keepDirs && !dir.rmdir(d))
-      errors.append(tr("Cannot remove directory \"%1\".").arg(dir.absoluteFilePath(d)));
-  }
-
-  return true;
+  else
+    errors.append(tr("Directory does not exist \"%1\".").arg(directory));
 }
 
 bool FileOperations::canRemoveDir(const QString& dir) const

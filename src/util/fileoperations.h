@@ -26,6 +26,7 @@ namespace util {
 
 /*
  * Provides operations to remove or copy folder structures recursively.
+ * Collects error texts separately.
  */
 class FileOperations
 {
@@ -38,13 +39,18 @@ public:
   /* Copies a folder structure recursively to the destination. Returns true if successfull.
    * Stops on first error. Overwrites present files if requested.
    * The parent of directory "to" has to exist. Always copying top dir "from" to "to".
-   * Optionally copies hidden and system files. */
-  bool copyDirectory(const QString& from, const QString& to, bool overwrite = false, bool hidden = false, bool system = false);
+   * Optionally copies hidden and system files.
+   * Note that hidden and system might be required to copy symbolic links and broken links.*/
+  void copyDirectory(const QString& from, const QString& to, bool overwrite = false, bool hidden = false, bool system = false);
 
   /* Deletes folders and files recursively. Returns true if successfull.
    * Continues in case of errors. Keeps folders if keepDirs is true.
-   * Optionally removes hidden and system files. */
-  bool removeDirectory(const QString& directory, bool keepDirs = false, bool hidden = false, bool system = false);
+   * Optionally removes hidden and system files.
+   * Note that hidden and system might be required to remove symbolic links and broken links. */
+  void removeDirectory(const QString& directory, bool keepDirs = false, bool hidden = false, bool system = false);
+
+  /* Moves folder to system trash */
+  void removeDirectoryToTrash(const QString& directory);
 
   /* Get errors from previous operation */
   const QStringList& getErrors() const
@@ -67,8 +73,8 @@ public:
   }
 
 private:
-  bool copyDirectoryInternal(const QString& from, const QString& to, bool overwrite, bool hidden, bool system);
-  bool removeDirectoryInternal(const QString& directory, bool keepDirs, bool hidden, bool system);
+  void copyDirectoryInternal(const QString& from, const QString& to, bool overwrite, bool hidden, bool system);
+  void removeDirectoryInternal(const QString& directory, bool keepDirs, bool hidden, bool system);
 
   QStringList errors, allDefaultPaths;
   bool verbose = false;
