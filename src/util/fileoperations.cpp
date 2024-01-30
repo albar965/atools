@@ -123,7 +123,11 @@ void FileOperations::copyDirectoryInternal(const QString& from, const QString& t
   {
     QFileInfo toPath(to % QDir::separator() % fromPath.fileName());
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    if(overwrite && toPath.exists() && (toPath.isFile() || toPath.isSymLink()))
+#else
     if(overwrite && toPath.exists() && (toPath.isFile() || toPath.isSymbolicLink() || toPath.isJunction() || toPath.isShortcut()))
+#endif
     {
       // Remove existing file or link for overwrite ====================================
       if(verbose)
@@ -135,7 +139,11 @@ void FileOperations::copyDirectoryInternal(const QString& from, const QString& t
 
     if(!hasErrors())
     {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+      if(fromPath.isSymLink())
+#else
       if(fromPath.isSymbolicLink())
+#endif
       {
         // Create a symbolic link - needs relative links ======================================================
         QString relativeLinkTarget = QDir(fromPath.absolutePath()).relativeFilePath(atools::linkTarget(fromPath));
@@ -258,7 +266,11 @@ void FileOperations::removeDirectoryInternal(const QString& directory, bool keep
     {
       QString absFilePath = fileinfo.absoluteFilePath();
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+      if(fileinfo.isDir() && !fileinfo.isSymLink())
+#else
       if(fileinfo.isDir() && !fileinfo.isSymbolicLink())
+#endif
       {
         // Recurse but not into symbolic links
         removeDirectoryInternal(absFilePath, keepDirs, hidden, system);
@@ -271,7 +283,11 @@ void FileOperations::removeDirectoryInternal(const QString& directory, bool keep
             errors.append(tr("Cannot remove directory \"%1\".").arg(absFilePath));
         }
       }
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+      else if(fileinfo.isFile() || fileinfo.isSymLink())
+#else
       else if(fileinfo.isFile() || fileinfo.isSymbolicLink() || fileinfo.isJunction() || fileinfo.isShortcut())
+#endif
       {
         if(verbose)
           qDebug() << Q_FUNC_INFO << "remove file" << absFilePath;
