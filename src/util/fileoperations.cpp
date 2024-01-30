@@ -138,7 +138,7 @@ void FileOperations::copyDirectoryInternal(const QString& from, const QString& t
       if(fromPath.isSymbolicLink())
       {
         // Create a symbolic link - needs relative links ======================================================
-        QString relativeLinkTarget = QDir(fromPath.absolutePath()).relativeFilePath(atools::linkTarget(fromPath.absoluteFilePath()));
+        QString relativeLinkTarget = QDir(fromPath.absolutePath()).relativeFilePath(atools::linkTarget(fromPath));
 
         if(verbose)
           qDebug() << Q_FUNC_INFO << "link from" << toPath.filePath() << "to" << relativeLinkTarget;
