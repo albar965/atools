@@ -50,42 +50,51 @@ void DesktopServices::openFile(QWidget *parent, QString path, bool showInFileMan
     {
       // Get file managers and parameters to open and select file or dir
 #if defined(Q_OS_WIN32)
+
       program = "explorer.exe";
       arguments << "/select," << atools::nativeCleanPath(path);
+
 #elif defined(Q_OS_MACOS)
+
       // tell application "Finder" to (reveal POSIX file "FILENAME") activate
-      program = "/usr/bin/osascript";
-      arguments << "-e" << QString("tell application \"Finder\" to (reveal POSIX file \"%1\") activate").arg(atools::nativeCleanPath(path));
-#elif defined(DEBUG_OPEN_FILE) && defined(Q_OS_LINUX)
-      // $XDG_CURRENT_DESKTOP https://wiki.archlinux.org/title/Xdg-utils
-      // gdbus call --session --dest org.freedesktop.FileManager1 --object-path /org/freedesktop/FileManager1
-      // --method org.freedesktop.FileManager1.ShowItems "['file://$FILE']" ""
-      program = "/usr/bin/gdbus";
-      arguments << "call" << "--session" << "--dest" << "org.freedesktop.FileManager1" << "--object-path" <<
-        "/org/freedesktop/FileManager1" << "--method" << "org.freedesktop.FileManager1.ShowItems"
-                << QString("['file://%1']").arg(atools::nativeCleanPath(path)) << "\"\"";
+      if(QFile::exists("/usr/bin/osascript"))
+      {
+        program = "/usr/bin/osascript";
+        arguments << "-e" << QString("tell application \"Finder\" to (reveal POSIX file \"%1\") activate").
+          arg(atools::nativeCleanPath(path));
+      }
+
+#elif defined(Q_OS_LINUX)
+
+      if(QFile::exists("/usr/bin/gdbus"))
+      {
+        // Use dbus to select file on linux
+        // $XDG_CURRENT_DESKTOP https://wiki.archlinux.org/title/Xdg-utils
+        // gdbus call --session --dest org.freedesktop.FileManager1 --object-path /org/freedesktop/FileManager1
+        // --method org.freedesktop.FileManager1.ShowItems "['file://$FILE']" ""
+        program = "/usr/bin/gdbus";
+        arguments << "call" << "--session" << "--dest" << "org.freedesktop.FileManager1" << "--object-path" <<
+          "/org/freedesktop/FileManager1" << "--method" << "org.freedesktop.FileManager1.ShowItems"
+                  << QString("['file://%1']").arg(atools::nativeCleanPath(path)) << "\"\"";
+      }
 #endif
     }
     else
     {
-#if defined(DEBUG_OPEN_FILE) && defined(Q_OS_LINUX)
-      // Do not use QDesktopServices for debugging and development
-      if(fileinfo.isDir())
+#if defined(Q_OS_LINUX)
+      // Use dbus to show file on linux
+      if(QFile::exists("/usr/bin/gdbus") && fileinfo.isDir())
       {
         program = "/usr/bin/gdbus";
         arguments << "call" << "--session" << "--dest" << "org.freedesktop.FileManager1" << "--object-path" <<
           "/org/freedesktop/FileManager1" << "--method" << "org.freedesktop.FileManager1.ShowFolders"
                   << QString("['file://%1']").arg(atools::nativeCleanPath(path)) << "\"\"";
       }
-      else
-      {
-        program = "/usr/bin/xdg-open";
-        arguments << atools::nativeCleanPath(path);
-      }
 #endif
     }
 
     if(!program.isEmpty())
+      // Start process - otherwise fall back to QDesktopServices
       runProcess(parent, program, arguments);
     else
     {
