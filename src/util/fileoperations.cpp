@@ -226,6 +226,7 @@ void FileOperations::removeDirectory(const QString& directory, bool keepDirs, bo
 
 void FileOperations::removeDirectoryToTrash(const QString& directory)
 {
+#if QT_VERSION > QT_VERSION_CHECK(5, 15, 0)
   filesProcessed = 0;
   errors.clear();
 
@@ -247,6 +248,9 @@ void FileOperations::removeDirectoryToTrash(const QString& directory)
         qDebug() << Q_FUNC_INFO << directory << "moved to" << trashName;
     }
   }
+#else
+  errors.append(tr("Trash not supported by Qt library."));
+#endif
 
   if(hasErrors())
     qWarning().noquote().nospace() << Q_FUNC_INFO << "Errors: " << errors;
