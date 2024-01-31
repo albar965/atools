@@ -90,6 +90,12 @@ void DesktopServices::openFile(QWidget *parent, QString path, bool showInFileMan
           "/org/freedesktop/FileManager1" << "--method" << "org.freedesktop.FileManager1.ShowFolders"
                   << QString("['file://%1']").arg(atools::nativeCleanPath(path)) << "\"\"";
       }
+
+      if(QFile::exists("/usr/bin/xdg-open") && fileinfo.isFile())
+      {
+        program = "/usr/bin/xdg-open";
+        arguments << atools::nativeCleanPath(path);
+      }
 #endif
     }
 
