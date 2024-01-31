@@ -174,7 +174,7 @@ QString Dialog::saveFileDialog(const QString& title,
 
 void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage)
 {
-  qInfo() << Q_FUNC_INFO << message;
+  qInfo().noquote().nospace() << Q_FUNC_INFO << message;
 
   Settings& settings = Settings::instance();
 
@@ -200,7 +200,7 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message, 
 
 void Dialog::showWarnMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage)
 {
-  qWarning() << Q_FUNC_INFO << message;
+  qWarning().noquote().nospace() << Q_FUNC_INFO << message;
 
   Settings& settings = Settings::instance();
 
@@ -227,7 +227,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
                                DialogButtonList buttonList, QMessageBox::StandardButton dialogDefaultButton,
                                QMessageBox::StandardButton defaultButton)
 {
-  qInfo() << Q_FUNC_INFO << message;
+  qInfo().noquote().nospace() << Q_FUNC_INFO << message;
 
   int retval = defaultButton;
   Settings& settings = Settings::instance();
@@ -269,7 +269,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
                                QMessageBox::StandardButton dialogDefaultButton,
                                QMessageBox::StandardButton defaultButton)
 {
-  qInfo() << Q_FUNC_INFO << message;
+  qInfo().noquote().nospace() << Q_FUNC_INFO << message;
 
   int retval = defaultButton;
   Settings& s = Settings::instance();
@@ -328,7 +328,7 @@ void Dialog::deleteSimpleProgressDialog(QMessageBox *messageBox)
 QMessageBox::StandardButton Dialog::information(QWidget *parent, const QString& text,
                                                 QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
 {
-  qInfo() << Q_FUNC_INFO << text;
+  qInfo().noquote().nospace() << Q_FUNC_INFO << text;
 
   QMessageBox box(QMessageBox::Information, QCoreApplication::applicationName(), text, buttons, parent);
   box.setDefaultButton(defaultButton);
@@ -341,7 +341,7 @@ QMessageBox::StandardButton Dialog::information(QWidget *parent, const QString& 
 QMessageBox::StandardButton Dialog::question(QWidget *parent, const QString& text,
                                              QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
 {
-  qInfo() << Q_FUNC_INFO << text;
+  qInfo().noquote().nospace() << Q_FUNC_INFO << text;
 
   QMessageBox box(QMessageBox::Question, QCoreApplication::applicationName(), text, buttons, parent);
   box.setDefaultButton(defaultButton);
@@ -354,7 +354,7 @@ QMessageBox::StandardButton Dialog::question(QWidget *parent, const QString& tex
 QMessageBox::StandardButton Dialog::warning(QWidget *parent, const QString& text,
                                             QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
 {
-  qWarning() << Q_FUNC_INFO << text;
+  qWarning().noquote().nospace() << Q_FUNC_INFO << text;
 
   QMessageBox box(QMessageBox::Warning, QCoreApplication::applicationName(), text, buttons, parent);
   box.setDefaultButton(defaultButton);

@@ -141,7 +141,7 @@ void MessageBox::setIcon(QMessageBox::Icon dialogIconParam)
 
 int MessageBox::exec()
 {
-  qInfo() << Q_FUNC_INFO << ui->labelText;
+  qInfo().noquote().nospace() << Q_FUNC_INFO << ui->labelText->text();
 
   if(acceptButtons.isEmpty())
   {
