@@ -22,6 +22,7 @@
 #include "gui/messagebox.h"
 #include "gui/tools.h"
 #include "io/fileroller.h"
+#include "util/htmlbuilder.h"
 #include "zip/zipwriter.h"
 
 #include <cstdlib>
@@ -83,16 +84,14 @@ void Application::createIssueReport(QWidget *parent, const QString& crashReportF
   qWarning() << Q_FUNC_INFO << "Creating crash report" << crashReportFile << filenames;
   buildCrashReport(crashReportFile, filenames);
 
-  QFileInfo crashReportFileinfo(crashReportFile);
-  QUrl crashReportUrl = QUrl::fromLocalFile(crashReportFileinfo.absoluteFilePath());
-
   QString message = tr("<p>An issue report was generated and saved with all related files in a Zip archive.</p>"
-                         "<p><a href=\"%1\">%2</a> (click to show)</p>"
-                           "<p>You can send this file to the author of %3 to investigate a problem.</p>"
-                             "<p><b>Please make sure you are using the latest version of %3 before reporting a problem,<br/>"
+                         "<p>%1&nbsp;(click to show)</p>"
+                           "<p>You can send this file to the author of %2 to investigate a problem. "
+                             "This is a Zip-file and you can look into the contents if needed.</p>"
+                             "<p><b>Please make sure you are using the latest version of %2 before reporting a problem,<br/>"
                              "and if possible, describe all the steps to reproduce the problem.</b></p>"
-                             "<p><a href=\"%4\"><b>Click here for contact information</b></a></p>").
-                    arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
+                             "<p><a href=\"%3\"><b>Click here for contact information</b></a></p>").
+                    arg(atools::util::HtmlBuilder::aFilePath(crashReportFile, atools::util::html::NOBR_WHITESPACE)).
                     arg(QCoreApplication::applicationName()).arg(contactUrl);
 
   atools::gui::MessageBox box(parent);
@@ -119,23 +118,21 @@ void Application::recordStart(QWidget *parent, const QString& lockFileParam, con
     qWarning() << Q_FUNC_INFO << "Creating crash report" << crashReportFile << filenames;
     buildCrashReport(crashReportFile, filenames);
 
-    QFileInfo crashReportFileinfo(crashReportFile);
-    QUrl crashReportUrl = QUrl::fromLocalFile(crashReportFileinfo.absoluteFilePath());
-
     QString message = tr("<p><b>%1 did not exit cleanly the last time.</b></p>"
                            "<p>This was most likely caused by a crash.</p>"
                              "<p>A crash report was generated and saved with all related files in a Zip archive.</p>"
-                               "<p><a href=\"%2\">%3</a> (click to show)</p>"
-                                 "<p>You might want to send this file to the author of %4 to investigate the crash.</p>"
-                                   "<p><b>Please make sure to use the latest version of %4 before reporting a crash and "
+                               "<p>%2&nbsp;(click to show)</p>"
+                                 "<p>You might want to send this file to the author of %1 to investigate the crash.</p>"
+                                   "<p><b>Please make sure to use the latest version of %1 before reporting a crash and "
                                      "describe all steps to reproduce the problem.</b></p>"
-                                     "<p><a href=\"%5\"><b>Click here for contact information</b></a></p>"
+                                     "<p><a href=\"%3\"><b>Click here for contact information</b></a></p>"
                                        "<hr/>"
                                        "<p><b>Start in safe mode now which means to skip loading of all default files like "
                                          "flight plans, window layout and other settings now which may have "
                                          "caused the previous crash?</b></p>").
-                      arg(applicationName()).arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
-                      arg(QCoreApplication::applicationName()).arg(contactUrl);
+                      arg(applicationName()).
+                      arg(atools::util::HtmlBuilder::aFilePath(crashReportFile, atools::util::html::NOBR_WHITESPACE)).
+                      arg(contactUrl);
 
     atools::gui::MessageBox box(parent);
     box.setShowInFileManager();
