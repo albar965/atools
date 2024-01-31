@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
 #include <QIcon>
 #include <QRegularExpression>
 #include <QStringBuilder>
+#include <QFileInfo>
+#include <QUrl>
 
 namespace atools {
 namespace util {
@@ -850,12 +852,47 @@ HtmlBuilder& HtmlBuilder::hr(int size, int widthPercent)
 HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flags flags, QColor color)
 {
   QString styleTxt;
+
   if(flags & html::LINK_NO_UL)
     styleTxt = "style=\"text-decoration:none;\"";
 
   htmlText.append("<a " % styleTxt % " " % (href.isEmpty() ? QString() : " href=\"" % href % "\"") % ">" %
                   asText(text, flags, color) % "</a>");
+
   return *this;
+}
+
+QString HtmlBuilder::aUrl(const QString& text, const QString& href, html::Flags flags, QColor color, int elideText)
+{
+  QStringList styles;
+  if(flags & html::LINK_NO_UL)
+    styles.append("text-decoration: none;");
+
+  if(flags & html::NOBR_WHITESPACE)
+    styles.append("white-space: pre;");
+
+  QString divStart, divEnd;
+  if(!styles.isEmpty())
+  {
+    divStart = "<div style=\"" % styles.join(' ') % "\">";
+    divEnd = "</div>";
+  }
+
+  return "<a" % (href.isEmpty() ? QString() : " href=\"" % href % "\"") % ">" % divStart %
+         asText(atools::elideTextShortMiddle(text, elideText), flags, color) % divEnd % "</a>";
+}
+
+QString HtmlBuilder::aFilePath(const QString& filepath, html::Flags flags, QColor color, int elideText)
+{
+  QFileInfo info(filepath);
+  return aUrl(atools::nativeCleanPath(info.absoluteFilePath()),
+              QUrl::fromLocalFile(info.absoluteFilePath()).toString(), flags, color, elideText);
+}
+
+QString HtmlBuilder::aFileName(const QString& filepath, html::Flags flags, QColor color, int elideText)
+{
+  QFileInfo info(filepath);
+  return aUrl(info.fileName(), QUrl::fromLocalFile(info.absoluteFilePath()).toString(), flags, color, elideText);
 }
 
 HtmlBuilder& HtmlBuilder::img(const QIcon& icon, const QString& alt, const QString& style, QSize size)
@@ -1034,22 +1071,22 @@ bool HtmlBuilder::checklength(int maxLines, const QString& msg)
   return false;
 }
 
-bool HtmlBuilder::checklengthTextBar(int maxLines, const QString& msg, int lenght)
+bool HtmlBuilder::checklengthTextBar(int maxLines, const QString& msg, int length)
 {
   QString dotText(QString("<b>%1</b>").arg(msg));
   if(numLines > maxLines)
   {
     if(!htmlText.endsWith(dotText))
-      textBar(lenght).b(msg);
+      textBar(length).b(msg);
     return true;
   }
   return false;
 }
 
-HtmlBuilder& HtmlBuilder::textBar(int lenght, html::Flags flags, QColor color)
+HtmlBuilder& HtmlBuilder::textBar(int length, html::Flags flags, QColor color)
 {
   QString str;
-  str.resize(lenght, QChar(L'—'));
+  str.resize(length, QChar(L'—'));
   text(str, flags, color).br();
   return *this;
 }

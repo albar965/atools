@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -202,19 +202,28 @@ public:
   HtmlBuilder& hr(int size = 1, int widthPercent = 100);
 
   /* Ruler made of a number of dashes and br */
-  HtmlBuilder& textBar(int lenght = 10, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& textBar(int length = 10, html::Flags flags = html::NONE, QColor color = QColor());
 
-  /* Add link (anchor/href) */
-  HtmlBuilder& a(const QString& text, const QString& href,
-                 html::Flags flags = html::NONE, QColor color = QColor());
+  /* Add link (anchor/href). Only allowed style is LINK_NO_UL */
+  HtmlBuilder& a(const QString& text, const QString& href, html::Flags flags = html::NONE, QColor color = QColor());
+
+  /* Returns anchor with unchanged URL and elided text. Creates a "<div>" if a style NOBR_WHITESPACE or LINK_NO_UL is given. */
+  static QString aUrl(const QString& text, const QString& href, html::Flags flags = html::NONE,
+                      QColor color = QColor(), int elideText = 60);
+
+  /* Returns anchor with file absolute path URL in href and elided text with absolute native file path.
+   * Creates a "<div>" if a style NOBR_WHITESPACE or LINK_NO_UL is given. */
+  static QString aFilePath(const QString& filepath, html::Flags flags = html::NONE, QColor color = QColor(), int elideText = 60);
+
+  /* Returns anchor with file absolute path URL in href and elided text with absolute native file name.
+   * Creates a "<div>" if a style NOBR_WHITESPACE or LINK_NO_UL is given. */
+  static QString aFileName(const QString& filepath, html::Flags flags = html::NONE, QColor color = QColor(), int elideText = 60);
 
   /* Add image */
-  HtmlBuilder& img(const QString& src, const QString& alt = QString(),
-                   const QString& style = QString(), QSize size = QSize());
+  HtmlBuilder& img(const QString& src, const QString& alt = QString(), const QString& style = QString(), QSize size = QSize());
 
   /* Add inline base64 encoded image */
-  HtmlBuilder& img(const QIcon& icon, const QString& alt = QString(),
-                   const QString& style = QString(), QSize size = QSize());
+  HtmlBuilder& img(const QIcon& icon, const QString& alt = QString(), const QString& style = QString(), QSize size = QSize());
 
   /* List functions */
   HtmlBuilder& ol();
@@ -301,32 +310,24 @@ public:
   /* all row2 methods add two rows to a table.
    * The first one contains bold text (like a heading) the second one contains text according to attributes.
    * Text background may alternate depending on configuration */
-  HtmlBuilder& row2(const QString& name, const atools::util::HtmlBuilder& value,
-                    html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& row2(const QString& name, const QString& value = QString(),
-                    html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& row2(const QString& name, float value, int precision = -1,
-                    html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& row2(const QString& name, double value, int precision = -1,
-                    html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& row2(const QString& name, int value,
-                    html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& row2Var(const QString& name, const QVariant& value,
-                       html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& row2(const QString& name, const atools::util::HtmlBuilder& value, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& row2(const QString& name, const QString& value = QString(), html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& row2(const QString& name, float value, int precision = -1, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& row2(const QString& name, double value, int precision = -1, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& row2(const QString& name, int value, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& row2Var(const QString& name, const QVariant& value, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Set alignment globally for the value colums for all row2 methods */
   HtmlBuilder& row2AlignRight(bool alignRight = true);
 
   /* Adds row if string is not empty*/
-  HtmlBuilder& row2If(const QString& name, const QString& value, html::Flags flags = html::NONE,
-                      QColor color = QColor());
+  HtmlBuilder& row2If(const QString& name, const QString& value, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Adds row if value > 0 */
   HtmlBuilder& row2If(const QString& name, int value, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Adds row if value is valid and not null */
-  HtmlBuilder& row2IfVar(const QString& name, const QVariant& value, html::Flags flags = html::NONE,
-                         QColor color = QColor());
+  HtmlBuilder& row2IfVar(const QString& name, const QVariant& value, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Display two column row with value as warning or error */
   HtmlBuilder& row2Warning(const QString& name, const QString& value, html::Flags flags = html::NONE);
@@ -361,7 +362,7 @@ public:
    * @return true if text is too long
    */
   bool checklength(int maxLines, const QString& msg);
-  bool checklengthTextBar(int maxLines, const QString& msg, int lenght);
+  bool checklengthTextBar(int maxLines, const QString& msg, int length);
 
   bool isEmpty() const
   {
