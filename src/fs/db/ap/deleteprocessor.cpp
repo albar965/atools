@@ -219,19 +219,6 @@ void DeleteProcessor::preProcessDelete()
   // Get facility counts for current airport
   extractPreviousAirportFeatures();
 
-  // Delete the whole tree of approaches, transitions and legs on the old airport later in
-  // ":/atools/resources/sql/fs/db/delete_duplicates.sql"
-
-  // if(prevHasApproach && isFlagSet(deleteFlags, bgl::del::APPROACHES))
-  // {
-  // SqlUtil sql(db);
-  // sql.bindAndExec("delete from transition where transition.approach_id in "
-  // "(select a.approach_id from approach a where a.airport_id = :prevApId)",
-  // ":prevApId", prevAirportId);
-  // sql.bindAndExec("delete from approach where airport_id = :prevApId",
-  // ":prevApId", prevAirportId);
-  // }
-
   // ILS will be deleted later by deduplication
 }
 
@@ -596,12 +583,13 @@ void DeleteProcessor::extractDeleteFlags()
     // qDebug() << "processDelete Made up flags" << deleteFlags;
   }
 
+  // Do not delete anything if the new airport has no corresponding features
+  // Also do this as a workaround for MSFS airports like MKJS_Scene.bgl
+  if(curAirport->getApproaches().isEmpty())
+    deleteFlags &= ~bgl::del::APPROACHES;
+
   if(options.getSimulatorType() != atools::fs::FsPaths::MSFS)
   {
-    // Do not delete anything if the new airport has no corresponding features
-    if(curAirport->getApproaches().isEmpty())
-      deleteFlags &= ~bgl::del::APPROACHES;
-
     // if(newAirport->getAprons().isEmpty())
     // deleteFlags &= ~bgl::del::APRONS;
 

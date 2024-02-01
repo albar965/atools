@@ -29,6 +29,8 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Fixed wrong calculation for airport rating which did not update add-on airports.
 * Deleting duplicate navaids now by region, ident and position now.
 * Fixed issue where widget state could not find saved dialog state.
+* Wrongly built airports like the MS MKJS now keep their procedure information in MSFS despite
+  trying to override it with an empty procedure set. #1085
 
 ===============================================================================
 
