@@ -4,6 +4,12 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 4.0.3.rc1
+
+* Updated to release candidate.
+
+===============================================================================
+
 # Version 4.0.2.beta
 
 * Runways marked as closed are now shown as such in DFD compiler.
