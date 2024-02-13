@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -45,17 +45,17 @@ public:
 
   bool isEmpty() const
   {
-      return aircraftShortToFullPathMap.isEmpty();
+    return aircraftShortToFullPathMap.isEmpty();
   }
 
   int size() const
   {
-      return aircraftShortToFullPathMap.size();
+    return aircraftShortToFullPathMap.size();
   }
 
 private:
   /* Maps short path "SimObjects/Airplanes/Asobo_B787_10/aircraft.cfg" to aircraft type "B787" */
-  QHash<QString, QString> shortPathToTypeDesMap;
+  QHash<QString, QString> shortPathToTypeDesignatorMap;
 
   /* Maps short path to full canonical path */
   QHash<QString, QString> aircraftShortToFullPathMap;

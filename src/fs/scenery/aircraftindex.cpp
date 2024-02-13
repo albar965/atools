@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -78,49 +78,57 @@ void AircraftIndex::loadIndex(const QStringList& basePaths)
 
 QString AircraftIndex::getIcaoTypeDesignator(const QString& aircraftCfgFilepath)
 {
-  QString aircraftCfgKey = atools::cleanPath(aircraftCfgFilepath).toLower();
-  QString typeDesignator = shortPathToTypeDesMap.value(aircraftCfgKey);
+  const QString aircraftCfgKey = atools::cleanPath(aircraftCfgFilepath).toLower();
 
-  if(typeDesignator.isEmpty())
+  if(shortPathToTypeDesignatorMap.contains(aircraftCfgKey))
+    // Already in index - either empty (indicator for nothing found) or not empty (found)
+    return shortPathToTypeDesignatorMap.value(aircraftCfgKey);
+  else
   {
     // Nothing in index yet - read aircraft.cfg file
+    QString typeDesignator;
 
     // Get full filename for key
-    QString aircraftCfgPath = aircraftShortToFullPathMap.value(aircraftCfgKey);
-
-    // Read type designator from aircraft.cfg file
-    QFile file(aircraftCfgPath);
-    if(file.open(QIODevice::ReadOnly))
+    QString aircraftCfgFullPath = aircraftShortToFullPathMap.value(aircraftCfgKey);
+    if(!aircraftCfgFullPath.isEmpty() && QFile::exists(aircraftCfgFullPath))
     {
-      QTextStream stream(&file);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-      stream.setCodec("UTF-8");
-#endif
-      stream.setAutoDetectUnicode(true);
-
-      while(!stream.atEnd())
+      // Read type designator from aircraft.cfg file
+      QFile file(aircraftCfgFullPath);
+      if(file.open(QIODevice::ReadOnly))
       {
-        QString line = stream.readLine().trimmed();
+        QTextStream stream(&file);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        stream.setCodec("UTF-8");
+#endif
+        stream.setAutoDetectUnicode(true);
 
-        if(line.startsWith("icao_type_designator", Qt::CaseInsensitive)) // icao_type_designator = "A20N"
+        while(!stream.atEnd())
         {
-          typeDesignator = line.section('=', 1).remove('"').trimmed();
-          break;
+          QString line = stream.readLine().trimmed();
+
+          if(line.startsWith("icao_type_designator", Qt::CaseInsensitive)) // icao_type_designator = "A20N"
+          {
+            typeDesignator = line.section('=', 1).remove('"').trimmed();
+            break;
+          }
         }
+
+        file.close();
       }
-      file.close();
     }
 
-    // Add designator to index or empty value in case of missing file to avoid re-reading
-    shortPathToTypeDesMap.insert(aircraftCfgKey, typeDesignator);
-  }
+    // Log only once after loading
+    qDebug() << Q_FUNC_INFO << "Loaded" << aircraftCfgFullPath << "found" << typeDesignator;
 
-  return typeDesignator;
+    // Add designator to index or empty value in case of missing file to avoid re-reading
+    shortPathToTypeDesignatorMap.insert(aircraftCfgKey, typeDesignator);
+    return typeDesignator;
+  }
 }
 
 void AircraftIndex::clear()
 {
-  shortPathToTypeDesMap.clear();
+  shortPathToTypeDesignatorMap.clear();
   aircraftShortToFullPathMap.clear();
   loadedBasePaths.clear();
 }
