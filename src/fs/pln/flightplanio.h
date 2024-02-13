@@ -178,7 +178,7 @@ public:
   static const int LNMPLN_VERSION_MINOR = 2;
 
 private:
-  void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, int userWpLength);
+  void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, bool simavionics, int userWpLength);
   void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format, bool iniBuildsFormat);
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
   void saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj, bool msfs);

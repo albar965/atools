@@ -1926,25 +1926,26 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
 
 void FlightplanIO::savePln(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, 10 /* userWpLength */);
+  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, false /* simavionics */, 10 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnMsfs(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, true /* msfs */, 80 /* userWpLength */);
+  savePlnInternal(plan, file, false /* annotated */, true /* msfs */, false /* simavionics */, 80 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnIsg(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, 12 /* userWpLength */);
+  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, true /* simavionics */, 12 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnAnnotated(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, true /* annotated */, false /* msfs */, 10 /* userWpLength */);
+  savePlnInternal(plan, file, true /* annotated */, false /* msfs */, false /* simavionics */, 10 /* userWpLength */);
 }
 
-void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, int userWpLength)
+void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, bool simavionics,
+                                   int userWpLength)
 {
   // Write XML to string first ===================
   QString xmlString;
@@ -2068,21 +2069,52 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       writeTextElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
     }
 
-    // Write always for MSFS - for FSX/P3D only if not user and values valid
-    if(msfs || (entry.getWaypointType() != atools::fs::pln::entry::USER && (!entry.getRegion().isEmpty() || !entry.getIdent().isEmpty())))
+    if(msfs)
     {
+      // Write always for MSFS ==================
       writer.writeStartElement("ICAO");
 
-      if(!msfs || entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
+      if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
         // Avoid region since it is not reliable for airports in MSFS and
         // the sim garbles the flight plan when loading
         writeTextElementIf(writer, "ICAORegion", entry.getRegion());
 
       writeTextElementIf(writer, "ICAOIdent", ident);
 
-      if(msfs)
+      // Write airport for waypoint if available
+      writeTextElementIf(writer, "ICAOAirport", entry.getAirport());
+
+      writer.writeEndElement(); // ICAO
+    }
+    else if(simavionics)
+    {
+      if(entry.getWaypointType() != atools::fs::pln::entry::USER)
+      {
+        // Write for FSX/P3D only if values are valid ==================
+        writer.writeStartElement("ICAO");
+
+        writeTextElementIf(writer, "ICAORegion", entry.getRegion());
+        writeTextElementIf(writer, "ICAOIdent", ident);
+
         // Write airport for waypoint if available
         writeTextElementIf(writer, "ICAOAirport", entry.getAirport());
+
+        writer.writeEndElement(); // ICAO
+      }
+    }
+    else if(!entry.getIdent().isEmpty()) // FSX and P3D
+    {
+      // Write for FSX/P3D only if values are valid ==================
+      writer.writeStartElement("ICAO");
+
+      if(entry.getWaypointType() != atools::fs::pln::entry::USER && entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
+        // No region for user waypoints and airports
+        writeTextElementIf(writer, "ICAORegion", entry.getRegion());
+
+      writeTextElementIf(writer, "ICAOIdent", ident);
+
+      // Write airport for waypoint if available
+      writeTextElementIf(writer, "ICAOAirport", entry.getAirport());
 
       writer.writeEndElement(); // ICAO
     }
