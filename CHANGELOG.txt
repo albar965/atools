@@ -6,7 +6,10 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 # Version 4.0.3.rc1
 
-* Updated to release candidate.
+* Fixed aircraft index flooding log with messages when loading MSFS aircraft files. Now avoiding
+  re-reading if files are not available.
+* Now writing ICAOIdent field for userpoints in FSX/P3D flight plan export to fix userpoint display
+  in GPS.
 
 ===============================================================================
 

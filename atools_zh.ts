@@ -444,7 +444,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1120"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1503"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4021"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4053"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件“%1”。原因是：%2</translation>
     </message>
@@ -472,12 +472,12 @@ File: &quot;%2&quot;
         <translation type="vanished"> 航迹</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3465"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3497"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>由 %1 在 %4 创建的 PMDG RTE ，版本 %2（修订版本 %3） </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3610"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3642"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>写入 %1 时遇到了内部错误：文件大小无效 %2 != %3 这个文件将不可用。</translation>
     </message>
