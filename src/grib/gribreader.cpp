@@ -101,10 +101,10 @@ GribReader::GribReader(bool verboseParam)
 void GribReader::readFile(const QString& filename)
 {
   if(QFileInfo(filename).size() == 0)
-    throw atools::Exception(tr("GRIB data empty"));
+    throw atools::Exception(tr("GRIB file \"%1\" is empty").arg(filename));
 
   if(!validateGribFile(filename))
-    throw atools::Exception(tr("Not a GRIB file"));
+    throw atools::Exception(tr("Not a valid GRIB file: \"%1\"").arg(filename));
 
   unsigned char *cgrib;
   g2int listSection0[3], listSection1[13], numlocal, numfields;
