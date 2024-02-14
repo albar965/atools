@@ -10,6 +10,7 @@ This text is partially Markdown, hence sometimes strange formatting.
   re-reading if files are not available.
 * Now writing ICAOIdent field for userpoints in FSX/P3D flight plan export to fix userpoint display
   in GPS.
+* Now ignoring empty GRIB files from the X-Plane weather folder.
 
 ===============================================================================
 

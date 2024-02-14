@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,8 @@ GribReader::GribReader(bool verboseParam)
 void GribReader::readFile(const QString& filename)
 {
   if(QFileInfo(filename).size() == 0)
-    throw atools::Exception(tr("GRIB file \"%1\" is empty").arg(filename));
+    // Print only a warning since X-Plane seems to download zero length files from time to time
+    qWarning() << Q_FUNC_INFO << "GRIB file" << filename << "is empty";
 
   if(!validateGribFile(filename))
     throw atools::Exception(tr("Not a valid GRIB file: \"%1\"").arg(filename));
