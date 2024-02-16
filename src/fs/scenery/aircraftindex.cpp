@@ -30,6 +30,11 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
+AircraftIndex::AircraftIndex(bool verboseParm) :
+  verbose(verboseParm)
+{
+}
+
 void AircraftIndex::loadIndex(const QStringList& basePaths)
 {
   if(loadedBasePaths != basePaths || aircraftShortToFullPathMap.isEmpty())
@@ -43,7 +48,8 @@ void AircraftIndex::loadIndex(const QStringList& basePaths)
     {
       // dir = .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore
       QDir dir(path);
-      for(const QFileInfo& addonDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+      const QFileInfoList entries = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+      for(const QFileInfo& addonDir : entries)
       {
         // addonDir = .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/asobo-aircraft-208b-grand-caravan-ex
 
@@ -58,12 +64,12 @@ void AircraftIndex::loadIndex(const QStringList& basePaths)
           if(layout.isValid())
           {
             // There may be more than one aircraft.cfg, e.g. for wheeled and floats
-            for(const QString& layoutPath : layout.getAircraftCfgPaths())
+            for(QString layoutPath : layout.getAircraftCfgPaths())
             {
               // This is the hashmap key returned by SimConnect_RequestSystemState(EVENT_AIRCRAFT_LOADED, ...)
               // SimObjects/Airplanes/Asobo_208B_GRAND_CARAVAN_EX/aircraft.cfg
-              QString cfgPathKey = atools::cleanPath(layoutPath);
-              QFileInfo fullCfgPathValue(addonDir.filePath() + QDir::separator() + cfgPathKey);
+              QString cfgPathKey = layoutPath.replace('\\', '/').toLower(); // Clean path needs an existing path
+              QFileInfo fullCfgPathValue(addonDir.filePath() + QDir::separator() + layoutPath);
 
               if(fullCfgPathValue.exists() && fullCfgPathValue.isFile())
                 aircraftShortToFullPathMap.insert(cfgPathKey.toLower(), atools::cleanPath(fullCfgPathValue.canonicalFilePath()));
@@ -73,18 +79,25 @@ void AircraftIndex::loadIndex(const QStringList& basePaths)
       }
     }
     qDebug() << Q_FUNC_INFO << "loading done.";
+
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "aircraftShortToFullPathMap" << aircraftShortToFullPathMap;
   }
 }
 
 QString AircraftIndex::getIcaoTypeDesignator(const QString& aircraftCfgFilepath)
 {
-  const QString aircraftCfgKey = atools::cleanPath(aircraftCfgFilepath).toLower();
+  QString aircraftCfgKey = aircraftCfgFilepath;
+  aircraftCfgKey = aircraftCfgKey.replace('\\', '/').toLower(); // Clean path needs an existing path
 
   if(shortPathToTypeDesignatorMap.contains(aircraftCfgKey))
     // Already in index - either empty (indicator for nothing found) or not empty (found)
     return shortPathToTypeDesignatorMap.value(aircraftCfgKey);
   else
   {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "aircraftCfgKey" << aircraftCfgKey;
+
     // Nothing in index yet - read aircraft.cfg file
     QString typeDesignator;
 

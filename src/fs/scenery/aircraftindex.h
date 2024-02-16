@@ -31,10 +31,14 @@ namespace scenery {
 class AircraftIndex
 {
 public:
+  AircraftIndex(bool verboseParm);
+
   /* Load manifest and layout JSON and look for type AIRCRAFT in manifest and aircraft.cfg location in layout.
    * Store aircraft.cfg
    * layout.json "path": "SimObjects/Airplanes/Asobo_B787_10/aircraft.cfg",
    * manifest.json   "content_type": "AIRCRAFT",
+   *
+   * Only for user aircraft.
    */
   void loadIndex(const QStringList& paths);
 
@@ -62,6 +66,8 @@ private:
 
   /* Used by load index to avoid unneeded reload */
   QStringList loadedBasePaths;
+
+  bool verbose = false;
 };
 
 } // namespace scenery
