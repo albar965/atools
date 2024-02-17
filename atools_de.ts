@@ -497,6 +497,10 @@ Datei: &quot;%2&quot;
         <source>Wrong GRIB file type</source>
         <translation>Falsche GRIB-Dateityp</translation>
     </message>
+    <message>
+        <source>Not a valid GRIB file: &quot;%1&quot;</source>
+        <translation>Keine gültige GRIB-Datei: &quot;%1&quot;</translation>
+    </message>
 </context>
 <context>
     <name>HtmlBuilder</name>

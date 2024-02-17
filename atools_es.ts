@@ -456,6 +456,10 @@ Atrapada excepción
         <source>Wrong GRIB file type</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Not a valid GRIB file: &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>HtmlBuilder</name>

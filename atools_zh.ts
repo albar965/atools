@@ -518,35 +518,38 @@ File: &quot;%2&quot;
         <translation>，</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="140"/>
+        <location filename="src/grib/gribreader.cpp" line="108"/>
+        <source>Not a valid GRIB file: &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/grib/gribreader.cpp" line="141"/>
         <source>Cannot seek in file %1</source>
         <translation>无法在文件 %1 中寻找</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="145"/>
-        <location filename="src/grib/gribreader.cpp" line="150"/>
+        <location filename="src/grib/gribreader.cpp" line="146"/>
+        <location filename="src/grib/gribreader.cpp" line="151"/>
         <source>Cannot read file %1</source>
         <translation>无法读取文件 %1</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="459"/>
+        <location filename="src/grib/gribreader.cpp" line="460"/>
         <source>Cannot open file %1</source>
         <translation>无法打开文件 %1</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="466"/>
+        <location filename="src/grib/gribreader.cpp" line="467"/>
         <source>Wrong GRIB file type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="104"/>
-        <location filename="src/grib/gribreader.cpp" line="472"/>
+        <location filename="src/grib/gribreader.cpp" line="473"/>
         <source>GRIB data empty</source>
         <translation>GRIB 数据是空的</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="107"/>
-        <location filename="src/grib/gribreader.cpp" line="475"/>
+        <location filename="src/grib/gribreader.cpp" line="476"/>
         <source>Not a GRIB file</source>
         <translation>不是一个 GRIB 文件</translation>
     </message>
