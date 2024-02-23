@@ -8,15 +8,17 @@
 #include <QDir>
 #include <QDateTime>
 #include <QThread>
+#include <QCoreApplication>
 
 using namespace stefanfrings;
 
-StaticFileController::StaticFileController(const QSettings *settings, QObject *parent)
+StaticFileController::StaticFileController(const QHash<QString, QVariant>& settings, QObject *parent)
   : HttpRequestHandler(parent)
 {
-  maxAge = settings->value("maxAge", "60000").toInt();
-  encoding = settings->value("encoding", "UTF-8").toString();
-  docroot = settings->value("path", ".").toString();
+  maxAge = settings.value("maxAge", "60000").toInt();
+  encoding = settings.value("encoding", "UTF-8").toString();
+  docroot = settings.value("path", ".").toString();
+
   if(!(docroot.startsWith(":/") || docroot.startsWith("qrc://")))
   {
     // Convert relative path to absolute, based on the directory of the config file.
@@ -26,14 +28,16 @@ StaticFileController::StaticFileController(const QSettings *settings, QObject *p
     if(QDir::isRelativePath(docroot))
         #endif
     {
-      QFileInfo configFile(settings->fileName());
+      // Use the directory that contains the application executable
+      QFileInfo configFile(QCoreApplication::applicationDirPath());
       docroot = QFileInfo(configFile.absolutePath(), docroot).absoluteFilePath();
     }
   }
+
   qDebug("StaticFileController: docroot=%s, encoding=%s, maxAge=%i", qPrintable(docroot), qPrintable(encoding), maxAge);
-  maxCachedFileSize = settings->value("maxCachedFileSize", "65536").toInt();
-  cache.setMaxCost(settings->value("cacheSize", "1000000").toInt());
-  cacheTimeout = settings->value("cacheTime", "60000").toInt();
+  maxCachedFileSize = settings.value("maxCachedFileSize", "65536").toInt();
+  cache.setMaxCost(settings.value("cacheSize", "1000000").toInt());
+  cacheTimeout = settings.value("cacheTime", "60000").toInt();
   long int cacheMaxCost = (long int)cache.maxCost();
   qDebug("StaticFileController: cache timeout=%i, size=%li", cacheTimeout, cacheMaxCost);
 }

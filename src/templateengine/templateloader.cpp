@@ -10,6 +10,7 @@
 #include <QDir>
 #include <QSet>
 #include <QRegularExpression>
+#include <QCoreApplication>
 
 using namespace stefanfrings;
 
@@ -20,7 +21,8 @@ TemplateLoader::TemplateLoader(QHash<QString, QVariant> settings, QObject *paren
   // Convert relative path to absolute, based on the directory of the config file.
   if(QDir::isRelativePath(templatePath))
   {
-    QFileInfo configFile(settings.value("filename").toString());
+    // Use the directory that contains the application executable
+    QFileInfo configFile(QCoreApplication::applicationDirPath());
     templatePath = QFileInfo(configFile.absolutePath(), templatePath).absoluteFilePath();
   }
   fileNameSuffix = settings.value("suffix", ".tpl").toString();
@@ -61,7 +63,7 @@ QString TemplateLoader::tryFile(QString localizedName)
 
 Template TemplateLoader::getTemplate(QString templateName, QString locales)
 {
-  QSet<QString> tried;   // used to suppress duplicate attempts
+  QSet<QString> tried; // used to suppress duplicate attempts
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
   QStringList locs = locales.split(',', Qt::SkipEmptyParts);

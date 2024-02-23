@@ -9,14 +9,14 @@
 
 using namespace stefanfrings;
 
-HttpSessionStore::HttpSessionStore(const QSettings *settings, QObject *parent)
+HttpSessionStore::HttpSessionStore(const QHash<QString, QVariant>& settings, QObject *parent)
   : QObject(parent)
 {
   this->settings = settings;
   connect(&cleanupTimer, SIGNAL(timeout()), this, SLOT(sessionTimerEvent()));
   cleanupTimer.start(60000);
-  cookieName = settings->value("cookieName", "sessionid").toByteArray();
-  expirationTime = settings->value("expirationTime", 3600000).toInt();
+  cookieName = settings.value("cookieName", "sessionid").toByteArray();
+  expirationTime = settings.value("expirationTime", 3600000).toInt();
   qDebug("HttpSessionStore: Sessions expire after %i milliseconds", expirationTime);
 }
 
@@ -60,10 +60,10 @@ HttpSession HttpSessionStore::getSession(HttpRequest& request, HttpResponse& res
     {
       mutex.unlock();
       // Refresh the session cookie
-      QByteArray cookieName = settings->value("cookieName", "sessionid").toByteArray();
-      QByteArray cookiePath = settings->value("cookiePath").toByteArray();
-      QByteArray cookieComment = settings->value("cookieComment").toByteArray();
-      QByteArray cookieDomain = settings->value("cookieDomain").toByteArray();
+      QByteArray cookieName = settings.value("cookieName", "sessionid").toByteArray();
+      QByteArray cookiePath = settings.value("cookiePath").toByteArray();
+      QByteArray cookieComment = settings.value("cookieComment").toByteArray();
+      QByteArray cookieDomain = settings.value("cookieDomain").toByteArray();
       response.setCookie(HttpCookie(cookieName, session.getId(), expirationTime / 1000,
                                     cookiePath, cookieComment, cookieDomain, false, false, "Lax"));
       session.setLastAccess();
@@ -73,10 +73,10 @@ HttpSession HttpSessionStore::getSession(HttpRequest& request, HttpResponse& res
   // Need to create a new session
   if(allowCreate)
   {
-    QByteArray cookieName = settings->value("cookieName", "sessionid").toByteArray();
-    QByteArray cookiePath = settings->value("cookiePath").toByteArray();
-    QByteArray cookieComment = settings->value("cookieComment").toByteArray();
-    QByteArray cookieDomain = settings->value("cookieDomain").toByteArray();
+    QByteArray cookieName = settings.value("cookieName", "sessionid").toByteArray();
+    QByteArray cookiePath = settings.value("cookiePath").toByteArray();
+    QByteArray cookieComment = settings.value("cookieComment").toByteArray();
+    QByteArray cookieDomain = settings.value("cookieDomain").toByteArray();
     HttpSession session(true);
     qDebug("HttpSessionStore: create new session with ID %s", session.getId().data());
     sessions.insert(session.getId(), session);

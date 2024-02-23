@@ -49,7 +49,7 @@ public:
    *  caller should destroy it during shutdown.
    *  @param parent Parent object
    */
-  HttpSessionStore(const QSettings *settings, QObject *parent = nullptr);
+  HttpSessionStore(const QHash<QString, QVariant>& settings, QObject *parent = nullptr);
 
   /** Destructor */
   virtual ~HttpSessionStore();
@@ -95,7 +95,7 @@ protected:
 
 private:
   /** Configuration settings */
-  const QSettings *settings;
+  QHash<QString, QVariant> settings;
 
   /** Timer to remove expired sessions */
   QTimer cleanupTimer;
