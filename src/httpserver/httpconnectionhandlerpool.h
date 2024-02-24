@@ -93,7 +93,7 @@ public:
    *  @param settings Configuration settings for the HTTP server. Must not be 0.
    *  @param requestHandler The handler that will process each received HTTP request.
    */
-  HttpConnectionHandlerPool(const QSettings *settings, HttpRequestHandler *requestHandler);
+  HttpConnectionHandlerPool(const QHash<QString, QVariant>& settings, HttpRequestHandler *requestHandler);
 
   /** Destructor */
   virtual ~HttpConnectionHandlerPool();
@@ -103,7 +103,7 @@ public:
 
 private:
   /** Settings for this pool */
-  const QSettings *settings;
+  QHash<QString, QVariant> settings;
 
   /** Will be assigned to each Connectionhandler during their creation */
   HttpRequestHandler *requestHandler;

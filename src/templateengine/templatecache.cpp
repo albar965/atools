@@ -2,10 +2,11 @@
 #include <QDateTime>
 #include <QStringList>
 #include <QSet>
+#include <QVariant>
 
 using namespace stefanfrings;
 
-TemplateCache::TemplateCache(QHash<QString, QVariant> settings, QObject *parent)
+TemplateCache::TemplateCache(const QHash<QString, QVariant>& settings, QObject *parent)
   : TemplateLoader(settings, parent)
 {
   cache.setMaxCost(settings.value("cacheSize", "1000000").toInt());

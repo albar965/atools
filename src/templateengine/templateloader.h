@@ -7,7 +7,6 @@
 #define TEMPLATELOADER_H
 
 #include <QString>
-#include <QSettings>
 #include <QTextCodec>
 #include <QMutex>
 #include "templateglobal.h"

@@ -18,12 +18,11 @@ TemplateLoader::TemplateLoader(QHash<QString, QVariant> settings, QObject *paren
   : QObject(parent)
 {
   templatePath = settings.value("path", ".").toString();
-  // Convert relative path to absolute, based on the directory of the config file.
+  // Convert relative path to absolute, based on the directory of the application.
   if(QDir::isRelativePath(templatePath))
   {
     // Use the directory that contains the application executable
-    QFileInfo configFile(QCoreApplication::applicationDirPath());
-    templatePath = QFileInfo(configFile.absolutePath(), templatePath).absoluteFilePath();
+    templatePath = QFileInfo(QCoreApplication::applicationDirPath(), templatePath).absoluteFilePath();
   }
   fileNameSuffix = settings.value("suffix", ".tpl").toString();
   QString encoding = settings.value("encoding").toString();

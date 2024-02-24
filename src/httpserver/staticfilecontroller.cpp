@@ -21,12 +21,11 @@ StaticFileController::StaticFileController(const QHash<QString, QVariant>& setti
 
   if(!(docroot.startsWith(":/") || docroot.startsWith("qrc://")))
   {
-    // Convert relative path to absolute, based on the directory of the config file.
+    // Convert relative path to absolute, based on the directory of the application.
     if(QDir::isRelativePath(docroot))
     {
       // Use the directory that contains the application executable
-      QFileInfo configFile(QCoreApplication::applicationDirPath());
-      docroot = QFileInfo(configFile.absolutePath(), docroot).absoluteFilePath();
+      docroot = QFileInfo(QCoreApplication::applicationDirPath(), docroot).absoluteFilePath();
     }
   }
 

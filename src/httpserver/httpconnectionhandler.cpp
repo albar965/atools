@@ -10,11 +10,10 @@
 
 using namespace stefanfrings;
 
-HttpConnectionHandler::HttpConnectionHandler(const QSettings *settings, HttpRequestHandler *requestHandler,
+HttpConnectionHandler::HttpConnectionHandler(const QHash<QString, QVariant>& settings, HttpRequestHandler *requestHandler,
                                              const QSslConfiguration *sslConfiguration)
   : QObject()
 {
-  Q_ASSERT(settings != nullptr);
   Q_ASSERT(requestHandler != nullptr);
   this->settings = settings;
   this->requestHandler = requestHandler;
@@ -111,7 +110,7 @@ void HttpConnectionHandler::handleConnection(tSocketDescriptor socketDescriptor)
     #endif
 
   // Start timer for read timeout
-  int readTimeout = settings->value("readTimeout", 10000).toInt();
+  int readTimeout = settings.value("readTimeout", 10000).toInt();
   readTimer.start(readTimeout);
   // delete previous request
   delete currentRequest;
@@ -178,7 +177,7 @@ void HttpConnectionHandler::read()
       {
         // Restart timer for read timeout, otherwise it would
         // expire during large file uploads.
-        int readTimeout = settings->value("readTimeout", 10000).toInt();
+        int readTimeout = settings.value("readTimeout", 10000).toInt();
         readTimer.start(readTimeout);
       }
     }
@@ -294,7 +293,7 @@ void HttpConnectionHandler::read()
       else
       {
         // Start timer for next request
-        int readTimeout = settings->value("readTimeout", 10000).toInt();
+        int readTimeout = settings.value("readTimeout", 10000).toInt();
         readTimer.start(readTimeout);
       }
       delete currentRequest;

@@ -7,7 +7,6 @@
 #define HTTPLISTENER_H
 
 #include <QTcpServer>
-#include <QSettings>
 #include <QBasicTimer>
 #include "httpglobal.h"
 #include "httpconnectionhandler.h"
@@ -74,7 +73,7 @@ public:
    *  @param parent Parent object.
    *  @warning Ensure to close or delete the listener before deleting the request handler.
    */
-  HttpListener(const QSettings *settings, HttpRequestHandler *requestHandler, QObject *parent = nullptr);
+  HttpListener(const QHash<QString, QVariant>& settings, HttpRequestHandler *requestHandler, QObject *parent = nullptr);
 
   /** Destructor */
   virtual ~HttpListener();
@@ -96,7 +95,7 @@ protected:
 
 private:
   /** Configuration settings for the HTTP server */
-  const QSettings *settings;
+  QHash<QString, QVariant> settings;
 
   /** Point to the reuqest handler which processes all HTTP requests */
   HttpRequestHandler *requestHandler;

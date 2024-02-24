@@ -10,7 +10,6 @@
    #include <QSslConfiguration>
 #endif
 #include <QTcpSocket>
-#include <QSettings>
 #include <QTimer>
 #include <QThread>
 #include "httpglobal.h"
@@ -62,7 +61,7 @@ public:
    *  @param requestHandler Handler that will process each incoming HTTP request
    *  @param sslConfiguration SSL (HTTPS) will be used if not NULL
    */
-  HttpConnectionHandler(const QSettings *settings, HttpRequestHandler *requestHandler,
+  HttpConnectionHandler(const QHash<QString, QVariant>& settings, HttpRequestHandler *requestHandler,
                         const QSslConfiguration *sslConfiguration = nullptr);
 
   /** Destructor */
@@ -76,7 +75,7 @@ public:
 
 private:
   /** Configuration settings */
-  const QSettings *settings;
+  QHash<QString, QVariant> settings;
 
   /** TCP socket of the current connection  */
   QTcpSocket *socket;

@@ -58,7 +58,7 @@ public:
    *  should destroy it during shutdown.
    *  @param parent Parent object
    */
-  TemplateCache(QHash<QString, QVariant> settings, QObject *parent = nullptr);
+  TemplateCache(const QHash<QString, QVariant>& settings, QObject *parent = nullptr);
 
 protected:
   /**
