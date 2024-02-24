@@ -2096,9 +2096,6 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
         writeTextElementIf(writer, "ICAORegion", entry.getRegion());
         writeTextElementIf(writer, "ICAOIdent", ident);
 
-        // Write airport for waypoint if available
-        writeTextElementIf(writer, "ICAOAirport", entry.getAirport());
-
         writer.writeEndElement(); // ICAO
       }
     }
