@@ -4,7 +4,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
-# Version 4.0.3.rc2
+# Version 4.0.4
 
 * Fixed wong usage of QSettings in httpserver and replaced it with a hash map to avoid
   unwanted creation of registry entries due to QSettings abuse.
@@ -12,6 +12,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Application folder is now used as base if docroot is relative for HTTP server.
 * Removed ICAOAirport from Simavionics PLN export.
 * Fixed aircraft index which loads aircraft ICAO codes from MSFS aircraft files for the user aircraft.
+* Updated database version to 28.
 
 ===============================================================================
 
