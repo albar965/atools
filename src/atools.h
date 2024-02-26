@@ -198,6 +198,18 @@ QString elideTextShortMiddle(const QString& str, int maxLength);
 QString elidedText(const QFontMetricsF& metrics, QString text, Qt::TextElideMode mode, float width);
 QStringList elidedTexts(const QFontMetricsF& metrics, const QStringList& texts, Qt::TextElideMode mode, float width);
 
+/* "…" depending on translation used in elidedText and elidedTexts */
+inline QString elidedStrDots()
+{
+  return QObject::tr("…", "Dots used to shorten texts");
+}
+
+/* "." depending on translation used in elidedText and elidedTexts */
+inline QString elidedStrDot()
+{
+  return QObject::tr(".", "Dot used to shorten texts");
+}
+
 #endif
 
 /* Remove any non printable characters from string */

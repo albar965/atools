@@ -415,8 +415,8 @@ QString elidedText(const QFontMetricsF& metrics, QString text, Qt::TextElideMode
     text = metrics.elidedText(text, mode, width);
     if(text.length() < 3)
     {
-      QString dots(QObject::tr("…", "Dots used to shorten texts"));
-      QString dot(QObject::tr(".", "Dot used to shorten texts"));
+      const QString dots(elidedStrDots());
+      const QString dot(elidedStrDot());
 
       if(metrics.horizontalAdvance(dots) < width)
         return dots;
