@@ -285,7 +285,7 @@ private:
    *
    * VERSION_NUMBER_TODO=
    */
-  static const int DB_VERSION_MINOR = 27;
+  static const int DB_VERSION_MINOR = 28;
 
   /* Version of included AIRAC cycle.
    * VERSION_NUMBER_TODO= */
