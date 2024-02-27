@@ -123,10 +123,11 @@ void FileOperations::copyDirectoryInternal(const QString& from, const QString& t
   {
     QFileInfo toPath(to % QDir::separator() % fromPath.fileName());
 
+    // Cannot check for exists since broken symbolic links are reported as not existing
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    if(overwrite && toPath.exists() && (toPath.isFile() || toPath.isSymLink()))
+    if(overwrite && (toPath.isFile() || toPath.isSymLink()))
 #else
-    if(overwrite && toPath.exists() && (toPath.isFile() || toPath.isSymbolicLink() || toPath.isJunction() || toPath.isShortcut()))
+    if(overwrite && (toPath.isFile() || toPath.isSymbolicLink() || toPath.isJunction() || toPath.isShortcut()))
 #endif
     {
       // Remove existing file or link for overwrite ====================================
