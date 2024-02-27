@@ -22,6 +22,7 @@
 
 #include <QDebug>
 #include <QLineF>
+#include <QObject>
 
 class QFile;
 class QFileInfo;
