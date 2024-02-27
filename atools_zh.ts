@@ -222,53 +222,53 @@ File: &quot;%2&quot;
     <name>FileOperations</name>
     <message>
         <location filename="src/util/fileoperations.cpp" line="100"/>
-        <location filename="src/util/fileoperations.cpp" line="182"/>
+        <location filename="src/util/fileoperations.cpp" line="183"/>
         <source>Cannot create directory &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="137"/>
+        <location filename="src/util/fileoperations.cpp" line="138"/>
         <source>Cannot remove file &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="155"/>
+        <location filename="src/util/fileoperations.cpp" line="156"/>
         <source>Cannot create link &quot;%1&quot; to &quot;%2&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="168"/>
+        <location filename="src/util/fileoperations.cpp" line="169"/>
         <source>Cannot copy file &quot;%1&quot; to &quot;%2&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="204"/>
+        <location filename="src/util/fileoperations.cpp" line="205"/>
         <source>Cannot remove standard directory, root drive or system folder &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="218"/>
-        <location filename="src/util/fileoperations.cpp" line="287"/>
+        <location filename="src/util/fileoperations.cpp" line="219"/>
+        <location filename="src/util/fileoperations.cpp" line="288"/>
         <source>Cannot remove directory &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="243"/>
+        <location filename="src/util/fileoperations.cpp" line="244"/>
         <source>Cannot move directory &quot;%1&quot; to trash.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="252"/>
+        <location filename="src/util/fileoperations.cpp" line="253"/>
         <source>Trash not supported by Qt library.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="300"/>
+        <location filename="src/util/fileoperations.cpp" line="301"/>
         <source>Cannot remove &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="307"/>
+        <location filename="src/util/fileoperations.cpp" line="308"/>
         <source>Directory does not exist &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1512,7 +1512,7 @@ File: &quot;%2&quot;
         <location filename="src/atools.cpp" line="350"/>
         <location filename="src/atools.cpp" line="358"/>
         <location filename="src/atools.cpp" line="366"/>
-        <location filename="src/atools.cpp" line="418"/>
+        <location filename="src/atools.h" line="205"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translation>…</translation>
@@ -1541,7 +1541,7 @@ File: &quot;%2&quot;
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="419"/>
+        <location filename="src/atools.h" line="211"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
         <translation type="unfinished"></translation>

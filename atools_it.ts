@@ -159,22 +159,22 @@
     <message>
         <location filename="src/gui/desktopservices.cpp" line="108"/>
         <source>Error opening path &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore aprendo il percorso &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/gui/desktopservices.cpp" line="112"/>
         <source>File does not exist &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Il File non esiste &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/gui/desktopservices.cpp" line="124"/>
         <source>Error opening URL &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore aprendo l&apos;ULR &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/gui/desktopservices.cpp" line="145"/>
         <source>Error running program &quot;%1&quot; with arguments %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore nell&apos;esecuzione del programma &quot;%1&quot; con argomenti %2.</translation>
     </message>
 </context>
 <context>
@@ -224,55 +224,55 @@ File: &quot;%2&quot;
     <name>FileOperations</name>
     <message>
         <location filename="src/util/fileoperations.cpp" line="100"/>
-        <location filename="src/util/fileoperations.cpp" line="182"/>
+        <location filename="src/util/fileoperations.cpp" line="183"/>
         <source>Cannot create directory &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile creare la cartella &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="137"/>
+        <location filename="src/util/fileoperations.cpp" line="138"/>
         <source>Cannot remove file &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile rimuovere il file &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="155"/>
+        <location filename="src/util/fileoperations.cpp" line="156"/>
         <source>Cannot create link &quot;%1&quot; to &quot;%2&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile creare il collegamento &quot;%1&quot; to &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="168"/>
+        <location filename="src/util/fileoperations.cpp" line="169"/>
         <source>Cannot copy file &quot;%1&quot; to &quot;%2&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile copiare il file &quot;%1&quot; to &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="204"/>
+        <location filename="src/util/fileoperations.cpp" line="205"/>
         <source>Cannot remove standard directory, root drive or system folder &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile rimuovere la cartella standard, l&apos;unità principale o la cartella di sistema &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="218"/>
-        <location filename="src/util/fileoperations.cpp" line="287"/>
+        <location filename="src/util/fileoperations.cpp" line="219"/>
+        <location filename="src/util/fileoperations.cpp" line="288"/>
         <source>Cannot remove directory &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile rimuovere la cartella &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="243"/>
+        <location filename="src/util/fileoperations.cpp" line="244"/>
         <source>Cannot move directory &quot;%1&quot; to trash.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile spostare la cartella &quot;%1&quot; nel cestino.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="252"/>
+        <location filename="src/util/fileoperations.cpp" line="253"/>
         <source>Trash not supported by Qt library.</source>
-        <translation type="unfinished"></translation>
+        <translation>Cestino non supportato dalla libreria Qt.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="300"/>
+        <location filename="src/util/fileoperations.cpp" line="301"/>
         <source>Cannot remove &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile rimuovere &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="307"/>
+        <location filename="src/util/fileoperations.cpp" line="308"/>
         <source>Directory does not exist &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>La cartella non esiste &quot;%1&quot;.</translation>
     </message>
 </context>
 <context>
@@ -614,7 +614,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/grib/gribreader.cpp" line="108"/>
         <source>Not a valid GRIB file: &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è un file GRIB valido: &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="src/grib/gribreader.cpp" line="141"/>
@@ -1424,7 +1424,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="801"/>
         <source>Calculating airport rating</source>
-        <translation type="unfinished"></translation>
+        <translation>Calcolo del rating aeroportuale</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="807"/>
@@ -1634,7 +1634,7 @@ File: &quot;%2&quot;
         <location filename="src/logging/loggingguiabort.cpp" line="49"/>
         <source>&lt;b&gt;A fatal error has occurred.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <oldsource>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;Incontrato un errore fatale.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Premere OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
+        <translation>&lt;b&gt;Incontrato un errore fatale.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Premere OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="src/atools.cpp" line="123"/>
@@ -1659,7 +1659,7 @@ File: &quot;%2&quot;
         <location filename="src/atools.cpp" line="350"/>
         <location filename="src/atools.cpp" line="358"/>
         <location filename="src/atools.cpp" line="366"/>
-        <location filename="src/atools.cpp" line="418"/>
+        <location filename="src/atools.h" line="205"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translatorcomment>Puntini usati per abbreviare il testo</translatorcomment>
@@ -1691,7 +1691,7 @@ File: &quot;%2&quot;
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="419"/>
+        <location filename="src/atools.h" line="211"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
         <translation>.</translation>
@@ -3097,12 +3097,12 @@ Linea %2.</translation>
     <message>
         <location filename="src/gui/application.cpp" line="87"/>
         <source>&lt;p&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You can send this file to the author of %2 to investigate a problem. This is a Zip-file and you can look into the contents if needed.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure you are using the latest version of %2 before reporting a problem,&lt;br/&gt;and if possible, describe all the steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;È stato generato un rapporto sul problema e salvato con tutti i file correlati in un archivio Zip.&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click per mostrare)&lt;/p&gt;&lt;p&gt;È possibile inviare questo file all&apos;autore di %2 per indagare sul problema. Si tratta di un file Zip e, se necessario, è possibile esaminarne il contenuto.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Assicurarsi di utilizzare la versione più recente di %2 prima di segnalare un problema,&lt;br/&gt;e, se possibile, descrivere tutti i passaggi per riprodurre il problema.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Clicca qui per le informazioni sul contatto&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="121"/>
         <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %1 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %1 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;b&gt;%1 non è uscito correttamente l&apos;ultima volta.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Molto probabilmente è stato causato da un crash.&lt;/p&gt;&lt;p&gt;È stato generato un rapporto sull&apos;incidente e salvato con tutti i file correlati in un archivio Zip.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click per mostrare)&lt;/p&gt;&lt;p&gt;Si consiglia di inviare questo file all&apos;autore di %1 per indagare sull&apos;arresto anomalo.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Assicurarsi di utilizzare la versione più recente di %1 prima di segnalare un arresto anomalo e descrivere tutti i passaggi per riprodurre il problema.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Clicca qui per le informazioni sul contatto&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Avviare ora in modalità sicura significa saltare il caricamento di tutti i file predefiniti come i piani di volo, il layout delle finestre e altre impostazioni che potrebbero aver causato il precedente crash?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="264"/>
