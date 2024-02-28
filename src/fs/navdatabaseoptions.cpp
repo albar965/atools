@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,19 @@ namespace fs {
 
 const static QList<QRegExp> EMPTY_REGEXP_LIST;
 
-void NavDatabaseOptions::setLanguage(const QString& value)
+void NavDatabaseOptions::setLanguage(const QString& lang)
 {
-  language = value.isEmpty() ? "en-US" : value;
-  language.replace('_', '-');
-  language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
+  if(lang.isEmpty())
+    language = "en-US";
+  else
+  {
+    language = lang;
+    language.replace('_', '-');
+
+    if(language.contains('-'))
+      // Make second section upper case
+      language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
+  }
 }
 
 void NavDatabaseOptions::addIncludeGui(const QFileInfo& path)
@@ -359,6 +367,13 @@ QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
   QDebugStateSaver saver(out);
   out.nospace().noquote() << "NavDatabaseOptions[flags " << opts.flags;
 
+  out << ", language \"" << opts.language << "\"";
+  out << ", sceneryFile \"" << opts.sceneryFile << "\"";
+  out << ", basepath \"" << opts.basepath << "\"";
+  out << ", msfsCommunityPath \"" << opts.msfsCommunityPath << "\"";
+  out << ", msfsOfficialPath \"" << opts.msfsOfficialPath << "\"";
+  out << ", sourceDatabase \"" << opts.sourceDatabase << "\"";
+  out << ", basicValidationTables \"" << opts.basicValidationTables << "\"";
   out << ", fileFiltersInc [" << patternStr(opts.fileFiltersInc) << "]";
   out << ", fileFiltersExcl [" << patternStr(opts.fileFiltersExcl) << "]";
   out << ", pathFiltersInc [" << patternStr(opts.pathFiltersInc) << "]";

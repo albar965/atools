@@ -118,7 +118,7 @@ This text is partially Markdown, hence sometimes strange formatting.
   loading into GPS.
 * Fixed detection of loopback device.
 * Adjusted listening hostname list report.
-* Added support for IPv6 in navserver and webserver.
+* Added support for IPv6 in navserver and web server.
 
 ===============================================================================
 
