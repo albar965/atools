@@ -75,8 +75,8 @@ Application *Application::applicationInstance()
   return dynamic_cast<Application *>(QCoreApplication::instance());
 }
 
-void Application::createIssueReport(QWidget *parent, const QString& crashReportFile, const QStringList& filenames,
-                                    const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline)
+void Application::createReport(QWidget *parent, const QString& crashReportFile, const QStringList& filenames,
+                               const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline)
 {
   qDebug() << Q_FUNC_INFO << crashReportFile << filenames;
 
@@ -103,8 +103,9 @@ void Application::createIssueReport(QWidget *parent, const QString& crashReportF
   box.exec();
 }
 
-void Application::recordStart(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile, const QStringList& filenames,
-                              const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline)
+void Application::recordStartAndDetectCrash(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile,
+                                            const QStringList& filenames,
+                                            const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline)
 {
   qDebug() << Q_FUNC_INFO << "Lock file" << lockFileParam;
 

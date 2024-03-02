@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -49,8 +49,9 @@ public:
   /* Creates a lock file and shows a warning dialog if this is already present from a former crash.
    * Sets safe mode if user chooses to skip file loading.
    * Always creates a crash report in case of previous unsafe exit. */
-  static void recordStart(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile, const QStringList& filenames,
-                          const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline);
+  static void recordStartAndDetectCrash(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile,
+                                        const QStringList& filenames, const QString& helpOnlineUrl, const QString& helpDocument,
+                                        const QString& helpLanguageOnline);
 
   /* Removes lock file. Called by QCoreApplication::aboutToQuit(). */
   static void recordExit();
@@ -59,8 +60,8 @@ public:
   static void buildCrashReport(const QString& crashReportFile, const QStringList& filenames);
 
   /* Record files and pack them into a zip for a crash report */
-  static void createIssueReport(QWidget *parent, const QString& crashReportFile, const QStringList& filenames, const QString& helpOnlineUrl,
-                                const QString& helpDocument, const QString& helpLanguageOnline);
+  static void createReport(QWidget *parent, const QString& crashReportFile, const QStringList& filenames, const QString& helpOnlineUrl,
+                           const QString& helpDocument, const QString& helpLanguageOnline);
 
   /* User decided to skip loading of files due to earlier crash */
   static bool isSafeMode()
