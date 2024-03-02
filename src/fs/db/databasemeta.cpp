@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ void DatabaseMeta::logInfo() const
 
 util::Version DatabaseMeta::getDatabaseVersion() const
 {
-  return util::Version(majorVersion, minorVersion);
+  return util::Version(majorVersionDb, minorVersionDb);
 }
 
 util::Version DatabaseMeta::getApplicationVersion()
@@ -90,8 +90,8 @@ void DatabaseMeta::init()
       if(query.next())
       {
         sql::SqlRecord rec = query.record();
-        majorVersion = rec.valueInt("db_version_major");
-        minorVersion = rec.valueInt("db_version_minor");
+        majorVersionDb = rec.valueInt("db_version_major");
+        minorVersionDb = rec.valueInt("db_version_minor");
         lastLoadTime = rec.value("last_load_timestamp").toDateTime();
         sidStar = rec.valueBool("has_sid_star", false);
         airacCycle = rec.valueStr("airac_cycle", QString());
@@ -125,15 +125,15 @@ void DatabaseMeta::updateVersion(int majorVer, int minorVer)
   if(db == nullptr)
     throw atools::Exception("Database is null");
 
-  majorVersion = majorVer;
-  minorVersion = minorVer;
+  majorVersionDb = majorVer;
+  minorVersionDb = minorVer;
 
   SqlQuery query(db);
   query.exec("delete from metadata");
 
   query.prepare("insert into metadata (db_version_major, db_version_minor) values(:major, :minor)");
-  query.bindValue(":major", majorVersion);
-  query.bindValue(":minor", minorVersion);
+  query.bindValue(":major", majorVersionDb);
+  query.bindValue(":minor", minorVersionDb);
   query.exec();
   db->commit();
 }
@@ -264,13 +264,14 @@ void DatabaseMeta::updateAll()
 
 bool DatabaseMeta::isDatabaseCompatible() const
 {
-  return isDatabaseCompatible(DB_VERSION_MAJOR);
-}
-
-bool DatabaseMeta::isDatabaseCompatible(int major) const
-{
-  if(isValid())
-    return major == majorVersion;
+  if(valid)
+  {
+    if(majorVersionDb == DB_VERSION_MAJOR)
+      // Major version is ok. Check if minor version is outdated
+      return minorVersionDb > DB_VERSION_MINOR_OUTDATED;
+    else
+      return majorVersionDb == DB_VERSION_MAJOR;
+  }
 
   return false;
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,6 @@ public:
    * @return true if application major version and database major version are equal
    */
   bool isDatabaseCompatible() const;
-  bool isDatabaseCompatible(int major) const;
 
   /* Update the version information in the database and insert first row. */
   void updateVersion(int majorVer, int minorVer);
@@ -268,7 +267,7 @@ private:
    * 19 Complete MSFS support. New waypoint types and new ramp and gate extra types.
    *    Removed fence and apron light tables. Delete edge and center line light columns from taxipath.
    *    New table translation for MSFS language files.
-   * 20 Added faa and local columns to database tables. Remove xpident column.
+   * 20 Added faa and local columns to database tables. Removed xpident column.
    * 21 Added arinc_type to tables waypoint and nav_search.
    *    Type and more for ils added. Also added GBAS stations, LPV approaches and more.
    * 22 Rho and theta in approach and transition legs can now be null
@@ -287,6 +286,9 @@ private:
    */
   static const int DB_VERSION_MINOR = 28;
 
+  /* Additionally checking for last schema change using minor version to avoid user. Usually version of last version change. */
+  static const int DB_VERSION_MINOR_OUTDATED = 24;
+
   /* Version of included AIRAC cycle.
    * VERSION_NUMBER_TODO= */
   static const int DB_INCLUDED_NAVDATA_CYCLE = 1801;
@@ -297,7 +299,9 @@ private:
 
   atools::sql::SqlDatabase *db = nullptr;
 
-  int majorVersion = 0, minorVersion = 0;
+  /* Values loaded from database */
+  int majorVersionDb = 0, minorVersionDb = 0;
+
   QDateTime lastLoadTime;
   bool valid = false, sidStar = false, routeType = false, data = false, schema = false, script = false, boundary = false;
   QString airacCycle, validThrough, dataSource, compilerVersion;
