@@ -2289,7 +2289,7 @@ File: &quot;%2&quot;
 <context>
     <name>TempFile</name>
     <message>
-        <location filename="src/io/tempfile.cpp" line="41"/>
+        <location filename="src/io/tempfile.cpp" line="42"/>
         <source>Cannot read from &quot;%1&quot;. Error: %2</source>
         <translation>Impossibile leggere da %1. Errore: %2</translation>
     </message>
@@ -2299,7 +2299,7 @@ File: &quot;%2&quot;
         <translation>Impossibile aprire &quot;%1&quot; per la lettura. Errore: %2</translation>
     </message>
     <message>
-        <location filename="src/io/tempfile.cpp" line="92"/>
+        <location filename="src/io/tempfile.cpp" line="96"/>
         <source>Cannot open &quot;%1&quot; for writing. Error: %2</source>
         <translation>Impossibile aprire &quot;%1&quot; per la scrittura. Errore: %2</translation>
     </message>
@@ -3077,7 +3077,7 @@ Linea %2.</translation>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="235"/>
+        <location filename="src/gui/application.cpp" line="236"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation>&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di %1 e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione al tuo report, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
@@ -3100,27 +3100,27 @@ Linea %2.</translation>
         <translation>&lt;p&gt;È stato generato un rapporto sul problema e salvato con tutti i file correlati in un archivio Zip.&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click per mostrare)&lt;/p&gt;&lt;p&gt;È possibile inviare questo file all&apos;autore di %2 per indagare sul problema. Si tratta di un file Zip e, se necessario, è possibile esaminarne il contenuto.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Assicurarsi di utilizzare la versione più recente di %2 prima di segnalare un problema,&lt;br/&gt;e, se possibile, descrivere tutti i passaggi per riprodurre il problema.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Clicca qui per le informazioni sul contatto&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="121"/>
+        <location filename="src/gui/application.cpp" line="122"/>
         <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %1 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %1 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%1 non è uscito correttamente l&apos;ultima volta.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Molto probabilmente è stato causato da un crash.&lt;/p&gt;&lt;p&gt;È stato generato un rapporto sull&apos;incidente e salvato con tutti i file correlati in un archivio Zip.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click per mostrare)&lt;/p&gt;&lt;p&gt;Si consiglia di inviare questo file all&apos;autore di %1 per indagare sull&apos;arresto anomalo.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Assicurarsi di utilizzare la versione più recente di %1 prima di segnalare un arresto anomalo e descrivere tutti i passaggi per riprodurre il problema.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Clicca qui per le informazioni sul contatto&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Avviare ora in modalità sicura significa saltare il caricamento di tutti i file predefiniti come i piani di volo, il layout delle finestre e altre impostazioni che potrebbero aver causato il precedente crash?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="264"/>
+        <location filename="src/gui/application.cpp" line="265"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Catturata eccezione nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="285"/>
+        <location filename="src/gui/application.cpp" line="286"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Catturata eccezione sconosciuta nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="306"/>
+        <location filename="src/gui/application.cpp" line="307"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation>&lt;b&gt;Contatto:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contatto e Supporto&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="312"/>
+        <location filename="src/gui/application.cpp" line="313"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contattare:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
@@ -3129,17 +3129,17 @@ Linea %2.</translation>
         <translation type="vanished">&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contatto e Supporto&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="337"/>
+        <location filename="src/gui/application.cpp" line="338"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="341"/>
+        <location filename="src/gui/application.cpp" line="342"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="344"/>
+        <location filename="src/gui/application.cpp" line="345"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
