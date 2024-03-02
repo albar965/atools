@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ class TempFile
 
 public:
   /* Default suffix is ".temp" if empty */
-  TempFile(const QString& filepathParam, const QString& suffix = QString());
-  TempFile(const QByteArray& bytes, const QString& suffix = QString());
+  TempFile(const QString& filepathParam, const QString& suffix = QString(), bool deleteOnExitParam = true);
+  TempFile(const QByteArray& bytes, const QString& suffix = QString(), bool deleteOnExitParam = true);
   ~TempFile();
 
   /* Get full path and filename */
@@ -56,6 +56,8 @@ private:
 
   // Need a separate copy to avoid temporary objects when returning pointer to data
   QByteArray filepathData;
+
+  bool deleteOnExit = true;
 };
 
 } // namespace io

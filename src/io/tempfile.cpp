@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,8 @@
 namespace atools {
 namespace io {
 
-TempFile::TempFile(const QString& filepathParam, const QString& suffix)
+TempFile::TempFile(const QString& filepathParam, const QString& suffix, bool deleteOnExitParam)
+  : deleteOnExit(deleteOnExitParam)
 {
   QFile src(filepathParam);
 
@@ -38,8 +39,7 @@ TempFile::TempFile(const QString& filepathParam, const QString& suffix)
     QByteArray bytes = src.readAll();
 
     if(bytes.isEmpty() && src.error() != QFileDevice::NoError)
-      throw atools::Exception(tr("Cannot read from \"%1\". Error: %2").
-                              arg(filepathParam).arg(src.errorString()));
+      throw atools::Exception(tr("Cannot read from \"%1\". Error: %2").arg(filepathParam).arg(src.errorString()));
 
     if(bytes.isEmpty())
       qWarning() << Q_FUNC_INFO << "Empty file" << src.fileName();
@@ -52,15 +52,19 @@ TempFile::TempFile(const QString& filepathParam, const QString& suffix)
     throw atools::Exception(tr("Cannot open \"%1\" for reading. Error: %2").arg(filepathParam).arg(src.errorString()));
 }
 
-TempFile::TempFile(const QByteArray& bytes, const QString& suffix)
+TempFile::TempFile(const QByteArray& bytes, const QString& suffix, bool deleteOnExitParam)
+  : deleteOnExit(deleteOnExitParam)
 {
   init(bytes, suffix);
 }
 
 TempFile::~TempFile()
 {
-  if(!filepath.isEmpty() && !QFile::remove(filepath))
-    qWarning() << Q_FUNC_INFO << "Cannot remove temporary file" << filepath;
+  if(deleteOnExit)
+  {
+    if(!filepath.isEmpty() && !QFile::remove(filepath))
+      qWarning() << Q_FUNC_INFO << "Cannot remove temporary file" << filepath;
+  }
 }
 
 const QString& TempFile::getFilePath() const
