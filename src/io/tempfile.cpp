@@ -67,6 +67,16 @@ TempFile::~TempFile()
   }
 }
 
+QString TempFile::getTempFilename(const QString& suffix)
+{
+  // little_navmap_ef85eb54-a5b8-4a6a-890f-ee61a58f1ef9"suffix"
+  return QDir::tempPath() + QString("/%1-%2-%3%4").
+         arg(QCoreApplication::organizationName().replace(' ', '_').toLower()).
+         arg(QCoreApplication::applicationName().replace(' ', '_').toLower()).
+         arg(QUuid::createUuid().toString(QUuid::Id128)).
+         arg(suffix.isEmpty() ? ".temp" : suffix);
+}
+
 const QString& TempFile::getFilePath() const
 {
   return filepath;
@@ -84,24 +94,16 @@ const char *TempFile::getFilePathConstData() const
 
 void TempFile::init(const QByteArray& bytes, const QString& suffix)
 {
-  QFile temp(buildFilename(suffix));
-  if(temp.open(QIODevice::WriteOnly))
+  QFile tempFile(getTempFilename(suffix));
+  if(tempFile.open(QIODevice::WriteOnly))
   {
-    temp.write(bytes);
-    filepath = temp.fileName();
+    tempFile.write(bytes);
+    filepath = tempFile.fileName();
     filepathData = filepath.toUtf8();
-    temp.close();
+    tempFile.close();
   }
   else
-    throw atools::Exception(tr("Cannot open \"%1\" for writing. Error: %2").arg(temp.fileName()).arg(temp.errorString()));
-}
-
-QString TempFile::buildFilename(const QString& suffix)
-{
-  return QDir::tempPath() + QString("/%1_%2%3").
-         arg(QCoreApplication::applicationName().replace(" ", "_").toLower()).
-         arg(QUuid::createUuid().toString().replace("{", "").replace("}", "")).
-         arg(suffix.isEmpty() ? ".temp" : suffix);
+    throw atools::Exception(tr("Cannot open \"%1\" for writing. Error: %2").arg(tempFile.fileName()).arg(tempFile.errorString()));
 }
 
 } // namespace io

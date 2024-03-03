@@ -41,6 +41,10 @@ public:
   TempFile(const QByteArray& bytes, const QString& suffix = QString(), bool deleteOnExitParam = true);
   ~TempFile();
 
+  /* Get filename and path like /tmp/abarthel-little_navmap-ef85eb54a5b84a6a890fee61a58f1ef9"suffix" or
+   * /tmp/abarthel-little_navmap-ef85eb54a5b84a6a890fee61a58f1ef9.temp if not suffix given. */
+  static QString getTempFilename(const QString& suffix = QString());
+
   /* Get full path and filename */
   const QString& getFilePath() const;
 
@@ -50,7 +54,6 @@ public:
 
 private:
   void init(const QByteArray& bytes, const QString& suffix);
-  QString buildFilename(const QString& suffix);
 
   QString filepath;
 
