@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -208,10 +208,17 @@ enum Marking
 {
   NO_MARKING = 0, // No runway markings Disused runways appear like taxiways
   VISUAL = 1, // Visual markings
+
   NON_PAP = 2, // Non - precision approach markings
   PAP = 3, // Precision approach markings
-  UK_NON_PAP = 4, // UK - style non - precision approach markings UK uses distinctive touch - down zone markings
-  UK_PAP = 5 // UK - style precision approach markings UK uses distinctive touch - down zone markings
+
+  // UK style - uses distinctive touch-down zone markings
+  UK_NON_PAP = 4, // Non - precision approach markings UK uses distinctive touch - down zone markings
+  UK_PAP = 5, // Precision approach markings UK uses distinctive touch - down zone markings
+
+  // EASA differs from FAA for location and number of distance marks on runway before/after touchdown zone bars
+  EASA_NON_PAP = 6, // EASA style non-precision approach markings
+  EASA_PAP = 7, // EASA style precision approach markings
 };
 
 int markingToDb(atools::fs::xp::Marking value, const XpWriterContext *context);

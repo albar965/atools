@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -150,11 +150,17 @@ int markingToDb(Marking value, const XpWriterContext *context)
       return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_TOUCHDOWN | DASHES | IDENT;
 
     case UK_PAP:
-      return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_FIXEDDISTANCE | ALTERNATE_TOUCHDOWN | DASHES | IDENT |
-             ALTERNATE_PRECISION;
+      return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_FIXEDDISTANCE | ALTERNATE_TOUCHDOWN | DASHES | IDENT | ALTERNATE_PRECISION;
 
+    case EASA_NON_PAP:
+      return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_TOUCHDOWN | DASHES | IDENT;
+
+    case EASA_PAP:
+      return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_FIXEDDISTANCE | ALTERNATE_TOUCHDOWN | DASHES | IDENT | ALTERNATE_PRECISION;
   }
+
   qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown markings value" << value;
+
   return NO_MARKING;
 }
 
