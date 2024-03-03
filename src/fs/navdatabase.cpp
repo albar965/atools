@@ -975,7 +975,7 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   if(options->isDeduplicate())
   {
     // Delete duplicates before any foreign keys ids are assigned
-    if((aborted = runScript(progress, "fs/db/delete_duplicates.sql", tr("Clean up"))))
+    if((aborted = runScripts(progress, {"fs/db/delete_duplicate_navaids.sql", "fs/db/delete_duplicate_ils.sql"}, tr("Clean up"))))
       return true;
   }
 
@@ -1118,7 +1118,7 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
   if(options->isDeduplicate())
   {
     // Delete duplicates before any foreign keys ids are assigned
-    if((aborted = runScript(progress, "fs/db/delete_duplicates.sql", tr("Clean up"))))
+    if((aborted = runScript(progress, "fs/db/delete_duplicate_navaids.sql", tr("Clean up"))))
       return true;
   }
 
@@ -1260,7 +1260,7 @@ bool NavDatabase::loadFsxP3dMsfsPost(ProgressHandler *progress)
   if(options->isDeduplicate())
   {
     // Delete duplicates before any foreign keys ids are assigned
-    if((aborted = runScript(progress, "fs/db/delete_duplicates.sql", tr("Clean up"))))
+    if((aborted = runScripts(progress, {"fs/db/delete_duplicate_navaids.sql", "fs/db/delete_duplicate_ils_fsx.sql"}, tr("Clean up"))))
       return true;
   }
   return false;
@@ -1445,13 +1445,34 @@ bool NavDatabase::createDatabaseReport(ProgressHandler *progress)
   return false;
 }
 
+bool NavDatabase::runScripts(ProgressHandler *progress, const QStringList& scriptFiles, const QString& message)
+{
+  SqlScript script(db, true /*options->isVerbose()*/);
+
+  if(progress != nullptr)
+  {
+    if((aborted = progress->reportOtherInc(message, PROGRESS_NUM_SCRIPT_STEPS)))
+      return true;
+  }
+
+  for(const QString& scriptFile : scriptFiles)
+  {
+    script.executeScript(":/atools/resources/sql/" % scriptFile);
+    db->commit();
+  }
+
+  return false;
+}
+
 bool NavDatabase::runScript(ProgressHandler *progress, const QString& scriptFile, const QString& message)
 {
   SqlScript script(db, true /*options->isVerbose()*/);
 
   if(progress != nullptr)
+  {
     if((aborted = progress->reportOtherInc(message, PROGRESS_NUM_SCRIPT_STEPS)))
       return true;
+  }
 
   script.executeScript(":/atools/resources/sql/" % scriptFile);
   db->commit();

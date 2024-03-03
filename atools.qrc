@@ -7,7 +7,7 @@
         <file>resources/sql/fs/db/create_nav_schema.sql</file>
         <file>resources/sql/fs/db/create_route_schema.sql</file>
         <file>resources/sql/fs/db/create_views.sql</file>
-        <file>resources/sql/fs/db/delete_duplicates.sql</file>
+        <file>resources/sql/fs/db/delete_duplicate_navaids.sql</file>
         <file>resources/sql/fs/db/drop_airport_facilities.sql</file>
         <file>resources/sql/fs/db/drop_airport.sql</file>
         <file>resources/sql/fs/db/drop_approach.sql</file>
@@ -54,5 +54,7 @@
         <file>resources/sql/fs/logbook/create_logbook_schema_undo.sql</file>
         <file>resources/sql/fs/db/finish_schema_airport.sql</file>
         <file>resources/json/stopwords-iso.json.gz</file>
+        <file>resources/sql/fs/db/delete_duplicate_ils.sql</file>
+        <file>resources/sql/fs/db/delete_duplicate_ils_fsx.sql</file>
     </qresource>
 </RCC>

@@ -171,6 +171,7 @@ private:
 
   /* Run and report SQL script */
   bool runScript(atools::fs::ProgressHandler *progress, const QString& scriptFile, const QString& message);
+  bool runScripts(ProgressHandler *progress, const QStringList& scriptFiles, const QString& message);
 
   void createPreparationScript();
   void dropAllIndexes();
