@@ -1475,7 +1475,7 @@ Fichier: &quot;%2&quot;
         <translation>Création d&apos;un rapport sur les doublons de coordonnées</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1528"/>
+        <location filename="src/fs/navdatabase.cpp" line="1549"/>
         <source>Base</source>
         <translation type="unfinished">Base</translation>
     </message>
@@ -1484,34 +1484,34 @@ Fichier: &quot;%2&quot;
         <translation type="obsolete">Aéroports de base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1540"/>
+        <location filename="src/fs/navdatabase.cpp" line="1561"/>
         <source>Generic Airports</source>
         <translation type="unfinished">Aéroports génériques</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1555"/>
+        <location filename="src/fs/navdatabase.cpp" line="1576"/>
         <source>Base Navigation</source>
         <translation type="unfinished">Navigation de base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1604"/>
-        <location filename="src/fs/navdatabase.cpp" line="1651"/>
+        <location filename="src/fs/navdatabase.cpp" line="1625"/>
+        <location filename="src/fs/navdatabase.cpp" line="1672"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation type="unfinished">L&apos;add-on crypté &quot;%1&quot; a été trouvé. Le module complémentaire peut ne pas s&apos;afficher correctement.</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1647"/>
+        <location filename="src/fs/navdatabase.cpp" line="1668"/>
         <source>Community</source>
         <translation type="unfinished">Communauté</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1771"/>
-        <location filename="src/fs/navdatabase.cpp" line="1782"/>
+        <location filename="src/fs/navdatabase.cpp" line="1792"/>
+        <location filename="src/fs/navdatabase.cpp" line="1803"/>
         <source>Custom scenery path %1</source>
         <translation type="unfinished">Chemin d&apos;accès personnalisé à la scène %1</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="2067"/>
+        <location filename="src/fs/navdatabase.cpp" line="2088"/>
         <source>Counting files for %1 ...</source>
         <translation type="unfinished">Comptage des fichiers pour %1 ...</translation>
     </message>
@@ -2228,7 +2228,7 @@ Fichier: &quot;%2&quot;
         <translation type="unfinished">Impossible d&apos;ouvrir &quot;%1&quot; pour la lecture. Erreur: %2</translation>
     </message>
     <message>
-        <location filename="src/io/tempfile.cpp" line="96"/>
+        <location filename="src/io/tempfile.cpp" line="106"/>
         <source>Cannot open &quot;%1&quot; for writing. Error: %2</source>
         <translation type="unfinished">Impossible d&apos;ouvrir &quot;%1&quot; pour l&apos;écriture. Erreur: %2</translation>
     </message>
