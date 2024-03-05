@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,10 @@ const static float MAX_SECONDS = 59.98f;
 const static QString SHORT_FORMAT("%1,%2");
 const static QString SHORT_FORMAT_ALT("%1,%2,%3");
 const static QString HUMAN_FORMAT("%6° %7' %8\"%5, %2° %3' %4\"%1");
+
+/* FSX and MSFS formats */
 const static QString LONG_FORMAT("%1%2° %3' %4\",%5%6° %7' %8\",%9%10");
+const static QString LONG_FORMAT_STAR("%1%2* %3' %4\",%5%6* %7' %8\",%9%10");
 
 // This is the format that is used in FSX flight plans
 // N49° 26' 41.57",E9° 12' 5.49",+005500.00
@@ -544,12 +547,12 @@ Pos Pos::interpolate(const atools::geo::Pos& otherPos, float distanceMeter, floa
   return atools::geo::Pos(lon, lat).toDeg().normalize();
 }
 
-QString Pos::toLongString() const
+QString Pos::toLongString(bool starDeg) const
 {
   if(!isValid())
     throw Exception("Invalid position. Cannot convert to string");
 
-  return LONG_FORMAT.arg(latY > 0.f ? "N" : "S").
+  return (starDeg ? LONG_FORMAT_STAR : LONG_FORMAT).arg(latY > 0.f ? "N" : "S").
          arg(absInt(getLatYDeg())).arg(absInt(getLatYMin())).arg(std::abs(getLatYSec()), 0, 'f', 2).
          arg(lonX > 0.f ? "E" : "W").
          arg(absInt(getLonXDeg())).arg(absInt(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2).

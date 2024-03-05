@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -244,8 +244,9 @@ public:
   /* Angleto other point using a rhumb line */
   float angleDegToRhumb(const atools::geo::Pos& otherPos) const;
 
-  /* @return Flight Simulator format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
-  QString toLongString() const;
+  /* @return Flight Simulator format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" or
+   * "N49* 26' 41.57",E9* 12' 5.49",+005500.00" */
+  QString toLongString(bool starDeg) const;
 
   /* @return format like "49.314,8.543,220" (lonX,latY,alt) */
   QString toString(int precision = 6, bool alt = true) const;

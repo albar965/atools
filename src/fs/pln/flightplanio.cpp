@@ -1998,10 +1998,11 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   // Use parking position
   writer.writeTextElement("DepartureLLA",
                           plan.getDepartureParkingPosition().isValid() ?
-                          plan.getDepartureParkingPosition().toLongString() : QString());
+                          plan.getDepartureParkingPosition().toLongString(msfs /* starDeg */) : QString());
 
   writer.writeTextElement("DestinationID", plan.destinationIdent);
-  writer.writeTextElement("DestinationLLA", plan.destinationPos.isValid() ? plan.destinationPos.toLongString() : QString());
+  writer.writeTextElement("DestinationLLA",
+                          plan.destinationPos.isValid() ? plan.destinationPos.toLongString(msfs /* starDeg */) : QString());
   writer.writeTextElement("Descr", plan.getDescr());
 
   QString parking;
@@ -2064,7 +2065,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     if(!entry.getPosition().isValid())
       throw atools::Exception("Invalid position in flightplan for id " + entry.getIdent());
 
-    writer.writeTextElement("WorldPosition", entry.getPosition().toLongString());
+    writer.writeTextElement("WorldPosition", entry.getPosition().toLongString(msfs /* starDeg */));
 
     writeTextElementIf(writer, "ATCAirway", entry.getAirway());
 
