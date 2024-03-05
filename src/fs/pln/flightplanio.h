@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -101,6 +101,9 @@ public:
   /* MSFS PLN for Integrated Simavionics / ISG */
   void savePlnIsg(const atools::fs::pln::Flightplan& plan, const QString& file);
 
+  /* PMS50 GTN750 */
+  void savePlnPms50(const atools::fs::pln::Flightplan& plan, const QString& file);
+
   /* FSX/P3D XML format with annotations as used by previous LNM versions (<= 2.4.5).*/
   void savePlnAnnotated(const atools::fs::pln::Flightplan& plan, const QString& file);
 
@@ -178,7 +181,8 @@ public:
   static const int LNMPLN_VERSION_MINOR = 2;
 
 private:
-  void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, bool simavionics, int userWpLength);
+  void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, bool simavionics, bool pms50,
+                       int userWpLength);
   void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format, bool iniBuildsFormat);
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
   void saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj, bool msfs);
