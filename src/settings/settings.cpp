@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,8 @@
 *****************************************************************************/
 
 #include "settings/settings.h"
-#include "exception.h"
+#include "atools.h"
 
-#include <QDebug>
 #include <QSettings>
 #include <QCoreApplication>
 #include <QFileInfo>
@@ -30,10 +29,49 @@ namespace atools {
 namespace settings {
 
 Settings *Settings::settingsInstance = nullptr;
-QString Settings::overrideOrganisation;
 QString Settings::overridePath;
+QString Settings::organizationName;
+QString Settings::applicationName;
+QStringList Settings::infoMessages;
+QStringList Settings::errorMessages;
 
 Settings::Settings()
+{
+  // Create dirs relative to app dir or based on absolute path if set
+  createOverridePath();
+
+  if(!overridePath.isEmpty())
+    // qSettings object is used to determine paths
+    qSettings = new QSettings(overridePath + QDir::separator() + appNameForFiles() + ".ini", QSettings::IniFormat);
+  else
+    // Default settings path in roaming or other well known paths
+    qSettings = new QSettings(QSettings::IniFormat, QSettings::UserScope, orgNameForDirs(), appNameForFiles());
+
+  QString path = QFileInfo(qSettings->fileName()).path();
+  if(!QFileInfo::exists(path))
+  {
+    // Create directory so getConfigFilename() does not fail
+    if(QDir().mkpath(path))
+      infoMessages.append(QString("Created settings path \"%1\"").arg(path));
+    else
+      errorMessages.append(QString("Cannot create settings path \"%1\"").arg(path));
+  }
+
+  if(qSettings->status() != QSettings::NoError)
+    errorMessages.append(QString("Error creating settings file \"%1\" reason %2").arg(qSettings->fileName()).arg(qSettings->status()));
+
+  if(!qSettings->isWritable())
+    errorMessages.append(QString("Settings file \"%1\" not writeable").arg(qSettings->fileName()));
+
+  infoMessages.append(QString("Using settings file \"%1\"").arg(qSettings->fileName()));
+}
+
+Settings::~Settings()
+{
+  delete qSettings;
+}
+
+void Settings::createOverridePath()
 {
   if(!overridePath.isEmpty())
   {
@@ -42,8 +80,13 @@ Settings::Settings()
     if(dir.isAbsolute())
     {
       // Create all paths for absolute
-      if(!dir.mkpath("."))
-        throw Exception(QString("Cannot create settings path \"%1\"").arg(overridePath));
+      if(!QFile::exists(overridePath))
+      {
+        if(QDir().mkpath(overridePath))
+          infoMessages.append(QString("Created absolute settings path \"%1\"").arg(overridePath));
+        else
+          errorMessages.append(QString("Cannot create settings path \"%1\"").arg(overridePath));
+      }
     }
     else
     {
@@ -51,40 +94,41 @@ Settings::Settings()
       QDir appDir(QCoreApplication::applicationDirPath());
       if(!appDir.exists(overridePath))
       {
-        if(!appDir.mkpath(overridePath))
-          throw Exception(QString("Cannot create settings path \"%1\"").arg(overridePath));
+        if(appDir.mkpath(overridePath))
+          infoMessages.append(QString("Created relative settings path \"%1\"").arg(overridePath));
+        else
+          errorMessages.append(QString("Cannot create settings path \"%1\"").arg(overridePath));
       }
     }
-
-    // qSettings object is used to determine paths
-    qSettings = new QSettings(overridePath + QDir::separator() + appNameForFiles() + ".ini", QSettings::IniFormat);
   }
-  else
-    // Default settings path in roaming or other well known paths
-    qSettings = new QSettings(QSettings::IniFormat, QSettings::UserScope, orgNameForDirs(), appNameForFiles());
-
-  QString path = QFileInfo(qSettings->fileName()).path();
-  if(!QFileInfo::exists(path))
-    // Create directory so getConfigFilename() does not fail
-    if(!QDir().mkpath(path))
-      throw Exception(QString("Cannot create settings path \"%1\"").arg(path));
-
-  if(qSettings->status() != QSettings::NoError)
-    throw Exception(QString("Error creating settings file \"%1\" reason %2").
-                    arg(qSettings->fileName()).arg(qSettings->status()));
-}
-
-Settings::~Settings()
-{
-  delete qSettings;
 }
 
 Settings& Settings::instance()
 {
   if(settingsInstance == nullptr)
+  {
+    if(applicationName.isEmpty())
+      applicationName = QCoreApplication::applicationName();
+
+    if(organizationName.isEmpty())
+      organizationName = QCoreApplication::organizationName();
+
     settingsInstance = new Settings();
+  }
 
   return *settingsInstance;
+}
+
+void Settings::logMessages()
+{
+  for(const QString& message : qAsConst(infoMessages))
+    qInfo().noquote() << Q_FUNC_INFO << message;
+
+  for(const QString& message : qAsConst(errorMessages))
+    qCritical().noquote() << Q_FUNC_INFO << message;
+
+  infoMessages.clear();
+  errorMessages.clear();
 }
 
 void Settings::clearAndShutdown()
@@ -121,11 +165,6 @@ void Settings::shutdown()
     qWarning() << "Settings::shutdown called more than once";
 }
 
-void Settings::logSettingsInformation()
-{
-  qInfo() << "Settings path" << getPath() << "filename" << getFilename();
-}
-
 QString Settings::getFilename()
 {
   return getQSettings()->fileName();
@@ -156,7 +195,7 @@ QString Settings::getOverloadedLocalPath(const QString& filename, bool ignoreMis
     // No overloading and file exists return the original path
     return filename;
   else if(!ignoreMissing)
-    throw Exception(QString("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
+    errorMessages.append(QString("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
 
   return QString();
 }
@@ -173,7 +212,7 @@ QString Settings::getOverloadedPath(const QString& filename, bool ignoreMissing)
     // No overloading and file exists return the original path
     return filename;
   else if(!ignoreMissing)
-    throw Exception(QString("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
+    errorMessages.append(QString("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
 
   return QString();
 }
@@ -197,8 +236,7 @@ void Settings::syncSettings()
   qs->sync();
 
   if(qs->status() != QSettings::NoError)
-    throw Exception(QString("Error writing to settings file \"%1\" reason %2").
-                    arg(qs->fileName()).arg(qs->status()));
+    errorMessages.append(QString("Error writing to settings file \"%1\" reason %2").arg(qs->fileName()).arg(qs->status()));
 }
 
 void Settings::clearSettings()
@@ -207,8 +245,7 @@ void Settings::clearSettings()
   qs->clear();
 
   if(qs->status() != QSettings::NoError)
-    throw Exception(QString("Error clearing settings file \"%1\" reason %2").
-                    arg(qs->fileName()).arg(qs->status()));
+    errorMessages.append(QString("Error clearing settings file \"%1\" reason %2").arg(qs->fileName()).arg(qs->status()));
   syncSettings();
 }
 
@@ -320,15 +357,12 @@ QString Settings::getDirName()
 
 QString Settings::orgNameForDirs()
 {
-  if(overrideOrganisation.isEmpty())
-    return QCoreApplication::organizationName().replace(' ', '_');
-  else
-    return overrideOrganisation.replace(' ', '_');
+  return organizationName.replace(' ', '_');
 }
 
 QString Settings::appNameForFiles()
 {
-  return QCoreApplication::applicationName().replace(' ', '_').toLower();
+  return applicationName.replace(' ', '_').toLower();
 }
 
 } // namespace atools

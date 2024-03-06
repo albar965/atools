@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ namespace settings {
  * spaces replaced by underscrores. Filename will be
  * QCoreApplication::applicationName() in lowercase with
  * spaces replaced by underscrores.
- * If an error occurs Exception is thrown.
+ * If an error occurs sets error messsages.
  */
 class Settings
 {
@@ -42,8 +42,17 @@ public:
   Settings& operator=(const Settings& other) = delete;
 
   /* Get the singleton instance. The operator-> allows direct access to the
-   * QSettings object. */
+   * QSettings object. Uses organization and application name from QCoreApplication if not set before. */
   static Settings& instance();
+
+  /* Log all collected messages from instance() delayed and clear lists. Call this after initalizing the logging system. */
+  static void logMessages();
+
+  /* true if settings is not useable */
+  static bool hasErrors()
+  {
+    return !errorMessages.isEmpty();
+  }
 
   /* Flush settings and release all resources */
   static void shutdown();
@@ -51,20 +60,22 @@ public:
   /* Clear all values and shutdown */
   static void clearAndShutdown();
 
-  /* Log relevant settings information into the qInfo channel.
-   * That is currently the filename and the settings directory. */
-  static void logSettingsInformation();
-
-  /* Overrides the organization path if not empty */
-  static void setOverrideOrganisation(const QString& value)
-  {
-    overrideOrganisation = value;
-  }
-
   /* Overrides the whole path if not empty */
   static void setOverridePath(const QString& value)
   {
     overridePath = value;
+  }
+
+  /* Set this if instance() has to be used before creating an application object */
+  static void setOrganizationName(const QString& value)
+  {
+    organizationName = value;
+  }
+
+  /* Set this if instance() has to be used before creating an application object */
+  static void setApplicationName(const QString& value)
+  {
+    applicationName = value;
   }
 
   /*
@@ -151,10 +162,14 @@ private:
 
   QSettings *qSettings;
 
-  static QString overrideOrganisation, overridePath;
+  /* Create dirs relative to app dir or based on absolute path */
+  static void createOverridePath();
+
+  static QString overridePath, organizationName, applicationName;
+  static QStringList infoMessages, errorMessages;
+  static QString appNameForFiles();
 
   static Settings *settingsInstance;
-  static QString appNameForFiles();
   static QString orgNameForDirs();
 
 };
