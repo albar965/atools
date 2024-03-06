@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
     const QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
     for(const QHostAddress& hostAddr : addresses)
     {
-      if(hostAddr.isNull())
+      if(hostAddr.isNull() || hostAddr.isBroadcast() || hostAddr.isMulticast())
         continue;
 
       if(hostAddr.isLoopback())
@@ -105,7 +105,8 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
       }
 
       // No loopback and only IPv4 and IPv6
-      if(hostAddr.protocol() == QAbstractSocket::IPv4Protocol || hostAddr.protocol() == QAbstractSocket::IPv6Protocol)
+      if(hostAddr.protocol() == QAbstractSocket::IPv4Protocol ||
+         (hostAddr.protocol() == QAbstractSocket::IPv6Protocol && !hostAddr.isLinkLocal()))
       {
         QString name = QHostInfo::fromName(hostAddr.toString()).hostName();
         hosts.append(Host(name, hostAddr.toString(), hostAddr.protocol() == QAbstractSocket::IPv6Protocol));

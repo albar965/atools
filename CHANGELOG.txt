@@ -14,6 +14,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 * Fixed aircraft index which loads aircraft ICAO codes from MSFS aircraft files for the user aircraft.
 * Updated database version to 28.
 * Replaced `°` in MSFS flight plan export with `*` to avoid issues on computers with Asian locale.
+* Now omitting IPv6 link local addresses in navserver.
 
 ===============================================================================
 
