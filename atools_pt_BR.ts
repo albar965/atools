@@ -406,7 +406,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1120"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1503"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4050"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4062"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -416,7 +416,7 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3639"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3651"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
@@ -506,7 +506,7 @@ Ocorreu um erro no Sql
         <translation>Não é possível abrir o arquivo FlightGear &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3494"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3506"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -2579,62 +2579,62 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <translation type="vanished">O servidor está escutando em nomes de host %1 </translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="136"/>
+        <location filename="src/fs/ns/navserver.cpp" line="137"/>
         <source>Server is listening.</source>
         <translation>Servidor está conectado.</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="143"/>
+        <location filename="src/fs/ns/navserver.cpp" line="144"/>
         <source>Server is listening on hostnames (IP-addresses) on port </source>
         <translation>O servidor está &quot;ouvindo&quot; em hostname (endereços IP) na porta </translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="145"/>
+        <location filename="src/fs/ns/navserver.cpp" line="146"/>
         <source>Server is listening on hostname (IP-address) on port </source>
         <translation>O servidor está &quot;ouvindo&quot; no hostname (endereço IP) na porta </translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="146"/>
+        <location filename="src/fs/ns/navserver.cpp" line="147"/>
         <source>:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="156"/>
+        <location filename="src/fs/ns/navserver.cpp" line="157"/>
         <source>%1. IPv6 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="158"/>
+        <location filename="src/fs/ns/navserver.cpp" line="159"/>
         <source>%1. IPv4 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="161"/>
+        <location filename="src/fs/ns/navserver.cpp" line="162"/>
         <source>%1 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="164"/>
+        <location filename="src/fs/ns/navserver.cpp" line="165"/>
         <source> (%1)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="167"/>
+        <location filename="src/fs/ns/navserver.cpp" line="168"/>
         <source>Use the mouse to select a hostname or IP-address.</source>
         <translation>Use o mouse para selecionar um hostname ou endereço IP.</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="168"/>
+        <location filename="src/fs/ns/navserver.cpp" line="169"/>
         <source>Then copy the selected text to the clipboard using the context menu.</source>
         <translation>Em seguida, copie o texto selecionado para a área de transferência usando o menu de contexto.</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="172"/>
+        <location filename="src/fs/ns/navserver.cpp" line="173"/>
         <source>Error: No network found.</source>
         <translation>Erro: Nenhuma rede encontrada.</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="175"/>
+        <location filename="src/fs/ns/navserver.cpp" line="176"/>
         <source>Unable to start the server: %1.</source>
         <translation>Impossível de iniciar o servidor: %1.</translation>
     </message>
