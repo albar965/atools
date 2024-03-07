@@ -49,6 +49,9 @@ public:
                       const QString& checkBoxMessage = QString(), bool openLinkAuto = true);
   virtual ~MessageBox() override;
 
+  MessageBox(const MessageBox& other) = delete;
+  MessageBox& operator=(const MessageBox& other) = delete;
+
   /* Adjusts contents before exec().
    * Returns one of QDialogButtonBox::StandardButton or QMessageBox::StandardButton. */
   virtual int exec() override;
