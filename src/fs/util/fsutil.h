@@ -68,12 +68,10 @@ QString runwayNamePrefixZero(const QString& name);
  * ARINC name like N32 or I19-Y */
 QStringList arincNameNameVariants(const QString& name);
 
-/* Compare runway numbers fuzzy by ignoring a deviation of one */
-bool runwayAlmostEqual(const QString& name1, const QString& name2);
-
-/* Compare runway numbers by ignoring leading zero and prefix "RW" */
-bool runwayEqual(QString name1, QString name2);
-bool runwayContains(const QStringList& runways, QString name);
+/* Compare runway numbers by ignoring leading zero and prefix "RW".
+ * If fuzzy = true: Compare runway numbers fuzzy by ignoring a deviation of one */
+bool runwayEqual(QString name1, QString name2, bool fuzzy);
+bool runwayContains(const QStringList& runways, QString name, bool fuzzy);
 
 /* True if e.g. "RW10B" for a SID or STAR which means that 10L, 10C and 10R can be used. */
 bool hasSidStarParallelRunways(QString approachArincName);

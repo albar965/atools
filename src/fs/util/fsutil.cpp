@@ -685,33 +685,43 @@ qint16 decodeTransponderCode(int code)
     return -1;
 }
 
-bool runwayAlmostEqual(const QString& name1, const QString& name2)
+bool runwayEqual(QString name1, QString name2, bool fuzzy)
 {
-  QString rwdesignator1, rwdesignator2;
-  int rwnum1, rwnum2;
-  runwayNameSplit(name1, &rwnum1, &rwdesignator1);
-  runwayNameSplit(name2, &rwnum2, &rwdesignator2);
+  if(fuzzy)
+  {
+    QString rwdesignator1, rwdesignator2;
+    int rwnum1, rwnum2;
+    runwayNameSplit(name1, &rwnum1, &rwdesignator1);
+    runwayNameSplit(name2, &rwnum2, &rwdesignator2);
 
-  return (rwnum2 == rwnum1 || rwnum2 == (rwnum1 < 36 ? rwnum1 + 1 : 1) || rwnum2 == (rwnum1 > 1 ? rwnum1 - 1 : 36)) &&
-         rwdesignator1 == rwdesignator2;
+    return (rwnum2 == rwnum1 || rwnum2 == (rwnum1 < 36 ? rwnum1 + 1 : 1) || rwnum2 == (rwnum1 > 1 ? rwnum1 - 1 : 36)) &&
+           rwdesignator1 == rwdesignator2;
+  }
+  else
+    return normalizeRunway(name1) == normalizeRunway(name2);
 }
 
-bool runwayEqual(QString name1, QString name2)
+bool runwayContains(const QStringList& runways, QString name, bool fuzzy)
 {
-  return normalizeRunway(name1) == normalizeRunway(name2);
-}
+  if(fuzzy)
+  {
+    // Try exact match first
+    for(const QString& rw : runways)
+    {
+      if(runwayEqual(rw, name, false /* fuzzy */))
+        return true;
+    }
+  }
 
-bool runwayContains(const QStringList& runways, QString name)
-{
   for(const QString& rw : runways)
   {
-    if(runwayEqual(rw, name))
+    if(runwayEqual(rw, name, fuzzy))
       return true;
   }
   return false;
 }
 
-QString runwayNameJoin(int number, const QString& designator)
+inline QString runwayNameJoin(int number, const QString& designator)
 {
   return QString("%1%2").arg(number, 2, 10, QChar('0')).arg(designator);
 }
@@ -974,7 +984,7 @@ void sidStarMultiRunways(const QStringList& runwayNames, const QString& arincNam
   {
     // Check which runways are assigned from values like "RW12B"
     QString runwayName = arincName.mid(2, 2);
-    if(runwayContains(runwayNames, runwayName % "L"))
+    if(runwayContains(runwayNames, runwayName % "L", false /* fuzzy */))
     {
       if(sidStarDispNames != nullptr)
         sidStarDispNames->append(runwayName % "L");
@@ -983,7 +993,7 @@ void sidStarMultiRunways(const QStringList& runwayNames, const QString& arincNam
         sidStarRunways->append(runwayName % "L");
     }
 
-    if(runwayContains(runwayNames, runwayName % "R"))
+    if(runwayContains(runwayNames, runwayName % "R", false /* fuzzy */))
     {
       if(sidStarDispNames != nullptr)
         sidStarDispNames->append(runwayName % "R");
@@ -992,7 +1002,7 @@ void sidStarMultiRunways(const QStringList& runwayNames, const QString& arincNam
         sidStarRunways->append(runwayName % "R");
     }
 
-    if(runwayContains(runwayNames, runwayName % "C"))
+    if(runwayContains(runwayNames, runwayName % "C", false /* fuzzy */))
     {
       if(sidStarDispNames != nullptr)
         sidStarDispNames->append(runwayName % "C");
