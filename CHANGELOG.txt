@@ -1,6 +1,6 @@
 ﻿Numbers (#) refer to GitHub issues in project `littlenavmap`.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
-This text is partially Markdown, hence sometimes strange formatting.
+This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
