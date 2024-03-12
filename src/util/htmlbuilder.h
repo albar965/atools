@@ -52,10 +52,11 @@ enum Flag
   NO_ENTITIES = 1 << 12, /* Do not convert entities */
   ALIGN_RIGHT = 1 << 13, /* Only for table data */
   ALIGN_LEFT = 1 << 14, /* Only for table header data */
-  AUTOLINK = 1 << 15, /* Automatically create links from http:// and https:// in text */
-  REPLACE_CRLF = 1 << 16, /* Replace carriage return and linefeed with <br/> */
+  ALIGN_CENTER = 1 << 15, /* Only for table header data */
+  AUTOLINK = 1 << 16, /* Automatically create links from http:// and https:// in text */
+  REPLACE_CRLF = 1 << 17, /* Replace carriage return and linefeed with <br/> */
 
-  NOBR_WHITESPACE = 1 << 17 /* HTML no break at whitespace for tooltips
+  NOBR_WHITESPACE = 1 << 18 /* HTML no break at whitespace for tooltips
                              * like: <p style='white-space:pre'>. Only for paragraphs. */
 };
 

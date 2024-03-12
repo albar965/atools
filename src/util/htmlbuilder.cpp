@@ -456,7 +456,11 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, int value, html::Flags flags
 
 HtmlBuilder& HtmlBuilder::td(const QString& str, html::Flags flags, QColor color)
 {
-  htmlText.append(QLatin1String("<td") % (flags & html::ALIGN_RIGHT ? " style=\"text-align: right;\"" : "") % ">");
+  htmlText.append(QLatin1String("<td") %
+                  (flags & html::ALIGN_RIGHT ? " align=\"right\"" : "") %
+                  (flags & html::ALIGN_LEFT ? " align=\"left\"" : "") %
+                  (flags & html::ALIGN_CENTER ? " align=\"center\"" : "") %
+                  ">");
   text(str, flags, color);
   htmlText.append("</td>\n");
   return *this;
@@ -464,7 +468,11 @@ HtmlBuilder& HtmlBuilder::td(const QString& str, html::Flags flags, QColor color
 
 HtmlBuilder& HtmlBuilder::tdF(html::Flags flags)
 {
-  htmlText.append(QLatin1String("<td") % (flags & html::ALIGN_RIGHT ? " style=\"text-align: right;\"" : "") % ">");
+  htmlText.append(QLatin1String("<td") %
+                  (flags & html::ALIGN_RIGHT ? " align=\"right\"" : "") %
+                  (flags & html::ALIGN_LEFT ? " align=\"left\"" : "") %
+                  (flags & html::ALIGN_CENTER ? " align=\"center\"" : "") %
+                  ">");
   return *this;
 }
 
@@ -501,6 +509,7 @@ HtmlBuilder& HtmlBuilder::th(const QString& str, html::Flags flags, QColor color
   htmlText.append(QLatin1String("<th") %
                   (flags & html::ALIGN_RIGHT ? " align=\"right\"" : "") %
                   (flags & html::ALIGN_LEFT ? " align=\"left\"" : "") %
+                  (flags & html::ALIGN_CENTER ? " align=\"center\"" : "") %
                   (colspan != -1 ? " colspan=\"" % QString::number(colspan) % "\"" : QString()) %
                   ">");
   text(str, flags, color);
