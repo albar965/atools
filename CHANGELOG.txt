@@ -4,6 +4,14 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 4.0.5
+
+* Hotfix to avoid error message `Caught exception: Invalid lat/long format`
+  when loading the new MSFS PLN files with `*` as degree sign as it is used
+  since 3.0.4.
+
+===============================================================================
+
 # Version 4.0.4
 
 * Fixed wong usage of QSettings in httpserver and replaced it with a hash map to avoid
