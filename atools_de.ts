@@ -1831,6 +1831,10 @@ Datei: &quot;%2&quot;
         <source>&lt;b&gt;A fatal error has occurred.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Ein fataler Fehler ist aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;OK klicken, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
     </message>
+    <message>
+        <source>Version %5 (revision %6)</source>
+        <translation>Version %5 (Revision %6)</translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
@@ -2606,6 +2610,14 @@ Zeile %2.</translation>
     <message>
         <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %1 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %1 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%1 wurde das letzte Mal nicht sauber beendet.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Dies wurde wahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p&gt;Ein Fehlerbericht wurde mit allen relevanten Dateien in ein Zip-Archiv gespeichert.&lt;/p&gt;&lt;p&gt;%2 (zum Anzeigen klicken)&lt;/p&gt;&lt;p&gt;Sie können diese Datei an den Autor von %1 senden, damit er den Absturz zu untersuchen kann.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Bitte achten Sie darauf, die neueste Version von %1 zu verwenden, bevor Sie einen Crash melden. Bitte alle Schritte beschreiben, die nötig sind um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Klicken Sie hier für Kontaktinformationen&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im sicheren Modus starten, was bedeutet, das Laden aller Standarddateien wie Flugpläne, Fensteranordnung und andere Einstellungen zu überspringen, die den vorherigen Abstrurz verursacht haben können?&lt;/b&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source> 64-bit</source>
+        <translation> 64-Bit</translation>
+    </message>
+    <message>
+        <source> 32-bit</source>
+        <translation> 32-Bit</translation>
     </message>
 </context>
 <context>
