@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
                                const QString& settingsPrefix, const QString& defaultFileSuffix,
                                const QString& path, const QString& filename, bool autoNumberFilename, int *filterIndex)
 {
+  Application::closeSplashScreen();
+
   if(filterIndex != nullptr)
     *filterIndex = -1;
 
@@ -181,6 +183,8 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message, 
   // show only if the key is true
   if(settingsKey.isEmpty() || settings.valueBool(settingsKey, true))
   {
+    Application::closeSplashScreen();
+
     QMessageBox msg(QMessageBox::Information, QCoreApplication::applicationName(), message, QMessageBox::Ok, parent);
     if(!settingsKey.isEmpty() && !checkBoxMessage.isEmpty())
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
@@ -207,6 +211,8 @@ void Dialog::showWarnMsgBox(const QString& settingsKey, const QString& message, 
   // show only if the key is true
   if(settingsKey.isEmpty() || settings.valueBool(settingsKey, true))
   {
+    Application::closeSplashScreen();
+
     QMessageBox msg(QMessageBox::Warning, QCoreApplication::applicationName(), message, QMessageBox::Ok, parent);
     if(!settingsKey.isEmpty() && !checkBoxMessage.isEmpty())
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
@@ -235,6 +241,8 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
   // show only if the key is true or empty
   if(settingsKey.isEmpty() || settings.valueBool(settingsKey, true))
   {
+    Application::closeSplashScreen();
+
     // Build button field
     QMessageBox::StandardButtons buttons = QMessageBox::NoButton;
     for(const DialogButton& db : buttonList)
@@ -277,6 +285,8 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
   // show only if the key is true or empty
   if(settingsKey.isEmpty() || s.valueBool(settingsKey, true))
   {
+    Application::closeSplashScreen();
+
     QMessageBox msg(QMessageBox::Question, QCoreApplication::applicationName(), message, buttons, parent);
     if(!settingsKey.isEmpty() && !checkBoxMessage.isEmpty())
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
@@ -302,6 +312,8 @@ QMessageBox *Dialog::showSimpleProgressDialog(const QString& message)
 
 QMessageBox *Dialog::showSimpleProgressDialog(QWidget *parentWidget, const QString& message)
 {
+  Application::closeSplashScreen();
+
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
   QMessageBox *progressBox = new QMessageBox(QMessageBox::NoIcon, QCoreApplication::applicationName(), message,
@@ -330,6 +342,8 @@ QMessageBox::StandardButton Dialog::information(QWidget *parent, const QString& 
 {
   qInfo().noquote().nospace() << Q_FUNC_INFO << text;
 
+  Application::closeSplashScreen();
+
   QMessageBox box(QMessageBox::Information, QCoreApplication::applicationName(), text, buttons, parent);
   box.setDefaultButton(defaultButton);
   box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
@@ -342,6 +356,8 @@ QMessageBox::StandardButton Dialog::question(QWidget *parent, const QString& tex
                                              QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
 {
   qInfo().noquote().nospace() << Q_FUNC_INFO << text;
+
+  Application::closeSplashScreen();
 
   QMessageBox box(QMessageBox::Question, QCoreApplication::applicationName(), text, buttons, parent);
   box.setDefaultButton(defaultButton);
@@ -356,6 +372,8 @@ QMessageBox::StandardButton Dialog::warning(QWidget *parent, const QString& text
 {
   qWarning().noquote().nospace() << Q_FUNC_INFO << text;
 
+  Application::closeSplashScreen();
+
   QMessageBox box(QMessageBox::Warning, QCoreApplication::applicationName(), text, buttons, parent);
   box.setDefaultButton(defaultButton);
   box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
@@ -368,6 +386,8 @@ QMessageBox::StandardButton Dialog::critical(QWidget *parent, const QString& tex
                                              QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
 {
   qCritical() << Q_FUNC_INFO << text;
+
+  Application::closeSplashScreen();
 
   QMessageBox box(QMessageBox::Critical, QCoreApplication::applicationName(), text, buttons, parent);
   box.setDefaultButton(defaultButton);

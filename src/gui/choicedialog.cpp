@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ void ChoiceDialog::addSpacer()
   ui->verticalLayoutScrollArea->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding)); // Move button up with spacer
 }
 
-QVector<std::pair<int, bool> > ChoiceDialog::getCheckState() const
+const QVector<std::pair<int, bool> > ChoiceDialog::getCheckState() const
 {
   QVector<std::pair<int, bool> > ids;
   for(QCheckBox *checkbox : index)
@@ -182,7 +182,7 @@ void ChoiceDialog::saveState()
 
   // Save checkboxes in a list of id 1, checked 1, id 2, checked 2, ...
   QStringList ids;
-  for(const std::pair<int, bool>& state :getCheckState())
+  for(const std::pair<int, bool>& state : getCheckState())
     ids << QString::number(state.first) << QString::number(state.second);
 
   atools::settings::Settings::instance().setValue(settingsPrefix + "CheckBoxStates", ids);

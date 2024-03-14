@@ -20,6 +20,7 @@
 #include "gui/desktopservices.h"
 #include "gui/helphandler.h"
 #include "settings/settings.h"
+#include "application.h"
 #include "ui_messagebox.h"
 
 #include <QAbstractButton>
@@ -168,6 +169,8 @@ int MessageBox::exec()
   // show only if the key is true or not given
   if(settingsKey.isEmpty() || settings.valueBool(settingsKey, true))
   {
+    Application::closeSplashScreen();
+
     // Layout contents before
     QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
     adjustSize();

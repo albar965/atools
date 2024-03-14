@@ -33,6 +33,8 @@
 #include <QProcess>
 #include <QFileInfo>
 #include <QDir>
+#include <QSplashScreen>
+#include <QMainWindow>
 
 namespace atools {
 namespace gui {
@@ -48,6 +50,7 @@ bool Application::safeMode = false;
 bool Application::showExceptionDialog = true;
 bool Application::restartProcess = false;
 bool Application::tooltipsDisabled = false;
+QSplashScreen *Application::splashScreen = nullptr;
 
 Application::Application(int& argc, char **argv, int)
   : QApplication(argc, argv)
@@ -58,6 +61,8 @@ Application::Application(int& argc, char **argv, int)
 
 Application::~Application()
 {
+  ATOOLS_DELETE(splashScreen);
+
   if(restartProcess)
   {
     qDebug() << Q_FUNC_INFO << "Starting" << QCoreApplication::applicationFilePath();
@@ -346,6 +351,49 @@ QString Application::getReportPathHtml()
   }
 
   return fileStr;
+}
+
+void Application::initSplashScreen(const QString& imageFile, const QString& revision)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QPixmap pixmap(imageFile);
+  splashScreen = new QSplashScreen(pixmap);
+  splashScreen->show();
+
+  processEvents();
+
+#if defined(WINARCH64)
+  QString applicationVersion = QApplication::applicationVersion() + tr(" 64-bit");
+#elif defined(WINARCH32)
+  QString applicationVersion = QApplication::applicationVersion() + tr(" 32-bit");
+#else
+  QString applicationVersion = QApplication::applicationVersion();
+#endif
+
+  splashScreen->showMessage(QObject::tr("Version %5 (revision %6)").
+                            arg(applicationVersion).arg(revision),
+                            Qt::AlignRight | Qt::AlignBottom, Qt::black);
+
+  processEvents(QEventLoop::ExcludeUserInputEvents);
+}
+
+void Application::finishSplashScreen(QMainWindow *mainWindow)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(splashScreen != nullptr)
+    splashScreen->finish(mainWindow);
+}
+
+void Application::closeSplashScreen()
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+
+  if(splashScreen != nullptr)
+    splashScreen->close();
 }
 
 } // namespace gui

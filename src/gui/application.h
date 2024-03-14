@@ -26,6 +26,9 @@
 /* Use this macro to report an fatal error after an unknownexception including location information */
 #define ATOOLS_HANDLE_UNKNOWN_EXCEPTION (atools::gui::Application::handleException(__FILE__, __LINE__))
 
+class QSplashScreen;
+class QMainWindow;
+
 namespace atools {
 namespace gui {
 
@@ -62,6 +65,15 @@ public:
   /* Record files and pack them into a zip for a crash report */
   static void createReport(QWidget *parent, const QString& crashReportFile, const QStringList& filenames, const QString& helpOnlineUrl,
                            const QString& helpDocument, const QString& helpLanguageOnline);
+
+  /* Init and open with given resource */
+  static void initSplashScreen(const QString& imageFile, const QString& revision);
+
+  /* Called by main application once startup is done */
+  static void finishSplashScreen(QMainWindow *mainWindow);
+
+  /* Remove splash when showing error messages, etc. to avoid overlay */
+  static void closeSplashScreen();
 
   /* User decided to skip loading of files due to earlier crash */
   static bool isSafeMode()
@@ -162,6 +174,8 @@ private:
 
   static QStringList emailAddresses;
   static QString contactUrl;
+
+  static QSplashScreen *splashScreen;
 
   static QString lockFile;
   static bool safeMode;
