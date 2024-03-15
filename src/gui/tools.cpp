@@ -24,6 +24,8 @@
 #include <QItemSelection>
 #include <QLabel>
 #include <QLayout>
+#include <QDebug>
+#include <QTextDocumentFragment>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -208,6 +210,29 @@ void setWidgetFontSize(QWidget *widget, int percent)
   {
     font.setPointSizeF(size);
     widget->setFont(font);
+  }
+}
+
+void logMessageBox(QWidget *parent, QMessageBox::Icon icon, const QString& text)
+{
+  QString parentName = parent != nullptr ? parent->objectName() : "no name";
+  QString plainText = QTextDocumentFragment::fromHtml(text).toPlainText();
+
+  switch(icon)
+  {
+    case QMessageBox::NoIcon:
+    case QMessageBox::Information:
+    case QMessageBox::Question:
+      qInfo().noquote().nospace() << Q_FUNC_INFO << " parent " << parentName << plainText;
+      break;
+
+    case QMessageBox::Warning:
+      qWarning().noquote().nospace() << Q_FUNC_INFO << " parent " << parentName << plainText;
+      break;
+
+    case QMessageBox::Critical:
+      qCritical().noquote().nospace() << Q_FUNC_INFO << " parent " << parentName << plainText;
+      break;
   }
 }
 

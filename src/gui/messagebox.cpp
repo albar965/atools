@@ -19,6 +19,7 @@
 
 #include "gui/desktopservices.h"
 #include "gui/helphandler.h"
+#include "gui/tools.h"
 #include "settings/settings.h"
 #include "application.h"
 #include "ui_messagebox.h"
@@ -142,7 +143,7 @@ void MessageBox::setIcon(QMessageBox::Icon dialogIconParam)
 
 int MessageBox::exec()
 {
-  qInfo().noquote().nospace() << Q_FUNC_INFO << ui->labelText->text();
+  atools::gui::logMessageBox(this, dialogIcon, ui->labelText->text());
 
   if(acceptButtons.isEmpty())
   {

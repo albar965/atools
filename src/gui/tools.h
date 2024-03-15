@@ -19,6 +19,7 @@
 #define ATOOLS_GUI_TOOLS_H
 
 #include <QList>
+#include <QMessageBox>
 
 class QString;
 class QWidget;
@@ -31,6 +32,8 @@ class QObject;
 
 namespace atools {
 namespace gui {
+
+void logMessageBox(QWidget *parent, QMessageBox::Icon icon, const QString& text);
 
 /* Get best fixed system font avoiding the unreadable courier on Windows */
 QFont getBestFixedFont();

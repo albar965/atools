@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -168,7 +168,11 @@ public:
   /* Show a simple message box for showing action instead of progress.
   * The box has no close button and does not close on Esc.
   * Also sets wait cursor. Delete with deleteSimpleProgressDialog() */
-  QMessageBox *showSimpleProgressDialog(const QString& message);
+  QMessageBox *showSimpleProgressDialog(const QString& message)
+  {
+    return showSimpleProgressDialog(parent, message);
+  }
+
   static QMessageBox *showSimpleProgressDialog(QWidget *parentWidget, const QString& message);
   static void deleteSimpleProgressDialog(QMessageBox *messageBox);
 
@@ -177,20 +181,32 @@ public:
    * plus a logging the message. */
   static QMessageBox::StandardButton information(QWidget *parent, const QString& text,
                                                  QMessageBox::StandardButtons buttons = QMessageBox::Ok,
-                                                 QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
+                                                 QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+  {
+    return messageBox(parent, QMessageBox::Information, text, buttons, defaultButton);
+  }
 
   static QMessageBox::StandardButton question(QWidget *parent, const QString& text,
                                               QMessageBox::StandardButtons buttons =
                                               QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No),
-                                              QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
+                                              QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+  {
+    return messageBox(parent, QMessageBox::Question, text, buttons, defaultButton);
+  }
 
   static QMessageBox::StandardButton warning(QWidget *parent, const QString& text,
                                              QMessageBox::StandardButtons buttons = QMessageBox::Ok,
-                                             QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
+                                             QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+  {
+    return messageBox(parent, QMessageBox::Warning, text, buttons, defaultButton);
+  }
 
   static QMessageBox::StandardButton critical(QWidget *parent, const QString& text,
                                               QMessageBox::StandardButtons buttons = QMessageBox::Ok,
-                                              QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
+                                              QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)
+  {
+    return messageBox(parent, QMessageBox::Critical, text, buttons, defaultButton);
+  }
 
   /* =======================================================================================================
    * Instance methods replacing the QMessageBox methods but adding text selection and more flags
@@ -231,6 +247,10 @@ private:
                          int *filterIndex = nullptr);
 
   QWidget *parent = nullptr;
+  static QMessageBox::StandardButton messageBox(QWidget *parent, QMessageBox::Icon icon, const QString& text,
+                                                QMessageBox::StandardButtons buttons,
+                                                QMessageBox::StandardButton defaultButton);
+
 };
 
 } // namespace gui

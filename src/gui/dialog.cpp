@@ -17,6 +17,7 @@
 
 #include "application.h"
 #include "gui/dialog.h"
+#include "gui/tools.h"
 #include "settings/settings.h"
 
 #include <QFileDialog>
@@ -157,14 +158,9 @@ QStringList Dialog::openFileDialogMulti(const QString& title, const QString& fil
   return fileDialog(dlg, title, filter, settingsPrefix, QString(), path, QString(), false /* autonumber */);
 }
 
-QString Dialog::saveFileDialog(const QString& title,
-                               const QString& filter,
-                               const QString& defaultFileSuffix,
-                               const QString& settingsPrefix,
-                               const QString& path,
-                               const QString& filename,
-                               bool dontComfirmOverwrite,
-                               bool autoNumberFilename, int *filterIndex)
+QString Dialog::saveFileDialog(const QString& title, const QString& filter, const QString& defaultFileSuffix, const QString& settingsPrefix,
+                               const QString& path, const QString& filename, bool dontComfirmOverwrite, bool autoNumberFilename,
+                               int *filterIndex)
 {
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::AnyFile);
@@ -176,8 +172,7 @@ QString Dialog::saveFileDialog(const QString& title,
 
 void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage)
 {
-  qInfo().noquote().nospace() << Q_FUNC_INFO << message;
-
+  atools::gui::logMessageBox(parent, QMessageBox::Information, message);
   Settings& settings = Settings::instance();
 
   // show only if the key is true
@@ -204,8 +199,7 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message, 
 
 void Dialog::showWarnMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage)
 {
-  qWarning().noquote().nospace() << Q_FUNC_INFO << message;
-
+  atools::gui::logMessageBox(parent, QMessageBox::Warning, message);
   Settings& settings = Settings::instance();
 
   // show only if the key is true
@@ -233,7 +227,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
                                DialogButtonList buttonList, QMessageBox::StandardButton dialogDefaultButton,
                                QMessageBox::StandardButton defaultButton)
 {
-  qInfo().noquote().nospace() << Q_FUNC_INFO << message;
+  atools::gui::logMessageBox(parent, QMessageBox::Question, message);
 
   int retval = defaultButton;
   Settings& settings = Settings::instance();
@@ -277,7 +271,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
                                QMessageBox::StandardButton dialogDefaultButton,
                                QMessageBox::StandardButton defaultButton)
 {
-  qInfo().noquote().nospace() << Q_FUNC_INFO << message;
+  atools::gui::logMessageBox(parent, QMessageBox::Question, message);
 
   int retval = defaultButton;
   Settings& s = Settings::instance();
@@ -303,11 +297,6 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     }
   }
   return retval;
-}
-
-QMessageBox *Dialog::showSimpleProgressDialog(const QString& message)
-{
-  return showSimpleProgressDialog(parent, message);
 }
 
 QMessageBox *Dialog::showSimpleProgressDialog(QWidget *parentWidget, const QString& message)
@@ -337,64 +326,18 @@ void Dialog::deleteSimpleProgressDialog(QMessageBox *messageBox)
   QGuiApplication::restoreOverrideCursor();
 }
 
-QMessageBox::StandardButton Dialog::information(QWidget *parent, const QString& text,
-                                                QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
+QMessageBox::StandardButton Dialog::messageBox(QWidget *parent, QMessageBox::Icon icon, const QString& text,
+                                               QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
 {
-  qInfo().noquote().nospace() << Q_FUNC_INFO << text;
+  atools::gui::logMessageBox(parent, icon, text);
 
   Application::closeSplashScreen();
 
-  QMessageBox box(QMessageBox::Information, QCoreApplication::applicationName(), text, buttons, parent);
+  QMessageBox box(icon, QCoreApplication::applicationName(), text, buttons, parent);
   box.setDefaultButton(defaultButton);
   box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   box.setWindowModality(Qt::ApplicationModal);
   box.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-  return static_cast<QMessageBox::StandardButton>(box.exec());
-}
-
-QMessageBox::StandardButton Dialog::question(QWidget *parent, const QString& text,
-                                             QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
-{
-  qInfo().noquote().nospace() << Q_FUNC_INFO << text;
-
-  Application::closeSplashScreen();
-
-  QMessageBox box(QMessageBox::Question, QCoreApplication::applicationName(), text, buttons, parent);
-  box.setDefaultButton(defaultButton);
-  box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-  box.setWindowModality(Qt::ApplicationModal);
-  box.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-  return static_cast<QMessageBox::StandardButton>(box.exec());
-}
-
-QMessageBox::StandardButton Dialog::warning(QWidget *parent, const QString& text,
-                                            QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
-{
-  qWarning().noquote().nospace() << Q_FUNC_INFO << text;
-
-  Application::closeSplashScreen();
-
-  QMessageBox box(QMessageBox::Warning, QCoreApplication::applicationName(), text, buttons, parent);
-  box.setDefaultButton(defaultButton);
-  box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-  box.setWindowModality(Qt::ApplicationModal);
-  box.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-  return static_cast<QMessageBox::StandardButton>(box.exec());
-}
-
-QMessageBox::StandardButton Dialog::critical(QWidget *parent, const QString& text,
-                                             QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
-{
-  qCritical() << Q_FUNC_INFO << text;
-
-  Application::closeSplashScreen();
-
-  QMessageBox box(QMessageBox::Critical, QCoreApplication::applicationName(), text, buttons, parent);
-  box.setDefaultButton(defaultButton);
-  box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-  box.setWindowModality(Qt::ApplicationModal);
-  box.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-
   return static_cast<QMessageBox::StandardButton>(box.exec());
 }
 
