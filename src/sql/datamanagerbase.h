@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ public:
   void deleteOneRow(int id);
 
   /* Removes entries. Does not commit. Supports undo. */
-  void deleteRows(QSet<int> ids);
+  void deleteRows(const QSet<int>& ids);
 
   /* Removes all data */
   void deleteAllRows(const QString& table); /* No undo support */
@@ -143,7 +143,7 @@ public:
   /* Get records with content for ids */
   bool hasRecord(int id) const;
   atools::sql::SqlRecord getRecord(int id) const;
-  void getRecords(QVector<atools::sql::SqlRecord>& records, const QSet<int> ids) const;
+  void getRecords(QVector<atools::sql::SqlRecord>& records, const QSet<int>& ids) const;
 
   /* Get values with content for ids and one column */
   QVariant getValue(int id, const QString& colName) const;

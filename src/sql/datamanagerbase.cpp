@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -307,7 +307,7 @@ void DataManagerBase::deleteOneRow(int id)
   postUndo();
 }
 
-void DataManagerBase::deleteRows(QSet<int> ids)
+void DataManagerBase::deleteRows(const QSet<int>& ids)
 {
   if(!ids.isEmpty())
   {
@@ -390,7 +390,7 @@ QVariant DataManagerBase::getValue(int id, const QString& colName) const
   return values.isEmpty() ? QVariant() : values.constFirst();
 }
 
-void DataManagerBase::getRecords(QVector<SqlRecord>& records, const QSet<int> ids) const
+void DataManagerBase::getRecords(QVector<SqlRecord>& records, const QSet<int>& ids) const
 {
   for(int id : ids)
   {
