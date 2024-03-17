@@ -592,42 +592,48 @@ HtmlBuilder& HtmlBuilder::tableEndIf()
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::h(int level, const QString& str, html::Flags flags, QColor color,
-                            const QString& id)
+HtmlBuilder& HtmlBuilder::h(int level, const QString& str, html::Flags flags, QColor color, const QString& id)
 {
   QString num = QString::number(level);
-  htmlText.append("<h" % num % (id.isEmpty() ? QString() : " id=\"" % id % "\"") % ">" % asText(str, flags, color) % "</h" % num % ">\n");
+  htmlText.append("<h" % num % (id.isEmpty() ? QString() : " id=\"" % id % "\"") % ">" % asText(str, flags, color));
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::hEnd(int level)
+{
+  QString num = QString::number(level);
+  htmlText.append("</h" % num % ">\n");
   numLines++;
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::h1(const QString& str, html::Flags flags, QColor color, const QString& id)
 {
-  h(1, str, flags, color, id);
+  h(1, str, flags, color, id).hEnd(1);
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::h2(const QString& str, html::Flags flags, QColor color, const QString& id)
 {
-  h(2, str, flags, color, id);
+  h(2, str, flags, color, id).hEnd(2);
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::h3(const QString& str, html::Flags flags, QColor color, const QString& id)
 {
-  h(3, str, flags, color, id);
+  h(3, str, flags, color, id).hEnd(3);
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::h4(const QString& str, html::Flags flags, QColor color, const QString& id)
 {
-  h(4, str, flags, color, id);
+  h(4, str, flags, color, id).hEnd(4);
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::h5(const QString& str, html::Flags flags, QColor color, const QString& id)
 {
-  h(4, str, flags, color, id);
+  h(5, str, flags, color, id).hEnd(5);
   return *this;
 }
 

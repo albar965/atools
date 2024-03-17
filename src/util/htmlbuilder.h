@@ -268,19 +268,16 @@ public:
   /* Add non breaking space */
   HtmlBuilder& nbsp();
 
-  /* Add HTML header */
-  HtmlBuilder& h(int level, const QString& str, html::Flags flags = html::NONE,
-                 QColor color = QColor(), const QString& id = QString());
-  HtmlBuilder& h1(const QString& str, html::Flags flags = html::NONE,
-                  QColor color = QColor(), const QString& id = QString());
-  HtmlBuilder& h2(const QString& str, html::Flags flags = html::NONE,
-                  QColor color = QColor(), const QString& id = QString());
-  HtmlBuilder& h3(const QString& str, html::Flags flags = html::NONE,
-                  QColor color = QColor(), const QString& id = QString());
-  HtmlBuilder& h4(const QString& str, html::Flags flags = html::NONE,
-                  QColor color = QColor(), const QString& id = QString());
-  HtmlBuilder& h5(const QString& str, html::Flags flags = html::NONE,
-                  QColor color = QColor(), const QString& id = QString());
+  /* Add HTML header. Does NOT add closing tag. */
+  HtmlBuilder& h(int level, const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString());
+  HtmlBuilder& hEnd(int level);
+
+  /* Add HTML header. Adds closing tag. */
+  HtmlBuilder& h1(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString());
+  HtmlBuilder& h2(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString());
+  HtmlBuilder& h3(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString());
+  HtmlBuilder& h4(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString());
+  HtmlBuilder& h5(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString());
 
   /* Add table and table body */
   HtmlBuilder& table(int border = 0, int padding = 2, int spacing = 0, int widthPercent = 0, QColor bgcolor = QColor(),
