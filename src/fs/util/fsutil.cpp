@@ -372,6 +372,9 @@ static const QHash<QString, QString> NAME_CODE_MAP(
 // Get runway name attributes
 QString runwayFlags(QString runway, bool& prefixRw, bool& noPrefixNull, bool& suffixTrue)
 {
+  if(runway.isEmpty())
+    return QString();
+
   prefixRw = runway.startsWith("RW");
   if(prefixRw)
     runway = runway.mid(2);
