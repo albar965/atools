@@ -187,7 +187,7 @@ private:
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
   void saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj, bool msfs);
   void loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream);
-  void loadGarminFplInternal(Flightplan& plan, util::XmlStream& xmlStream);
+  void loadGarminFplInternal(Flightplan& plan, atools::util::XmlStream& xmlStream);
   atools::fs::pln::entry::WaypointType garminToWaypointType(const QString& typeStr) const;
 
   /* Load specific formats after content detection */
@@ -208,7 +208,7 @@ private:
 
   QString gnsType(const atools::fs::pln::FlightplanEntry& entry);
 
-  void readWaypointPln(Flightplan& plan, util::XmlStream& xmlStream);
+  void readWaypointPln(Flightplan& plan, atools::util::XmlStream& xmlStream);
   void readAppVersionPln(int& appVersionMajor, int& appVersionBuild, atools::util::XmlStream& xmlStream);
   void posToRte(QTextStream& stream, const atools::geo::Pos& pos, bool alt);
 
@@ -228,7 +228,7 @@ private:
   void insertPropertyIf(Flightplan& plan, const QString& key, const QString& value);
 
   /* Read "Pos" element and attributes from stream in LNM XML format */
-  atools::geo::Pos readPosLnm(util::XmlStream& xmlStream);
+  atools::geo::Pos readPosLnm(atools::util::XmlStream& xmlStream);
 
   /* Read waypoint elements and attributes from stream */
   void readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries,
