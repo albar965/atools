@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ void LoggingUtil::logSystemInformation()
   qInfo() << "Library paths" << QCoreApplication::libraryPaths();
 
   int i = 1;
-  for(const QString& file : LoggingHandler::getLogFiles())
+  for(const QString& file : LoggingHandler::getLogFiles(true /* includeBackups */))
     qInfo() << "Log file" << i++ << file;
 
   qInfo() << "Default text codec" << QTextCodec::codecForLocale()->name();

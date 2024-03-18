@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include <QSettings>
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QStringBuilder>
 
 namespace atools {
 namespace logging {
@@ -119,7 +120,7 @@ void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelVector&
   }
 }
 
-QStringList LoggingConfig::getLogFiles() const
+QStringList LoggingConfig::getLogFiles(bool includeBackups) const
 {
   QSet<QString> filenames;
   collectFileNames(filenames, debugStreams);
@@ -136,8 +137,26 @@ QStringList LoggingConfig::getLogFiles() const
   collectFileNames(filenames, fatalStreamsCat);
   collectFileNames(filenames, emptyStreamsCat);
 
+  QStringList filenameList;
+  for(const QString& filename : qAsConst(filenames))
+  {
+    if(QFile::exists(filename))
+      filenameList.append(filename);
+
+    if(includeBackups)
+    {
+      for(int i = 1; i <= maximumBackupFiles; i++)
+      {
+        if(QFile::exists(filename % ".1"))
+          filenameList.append(filename % ".1");
+      }
+    }
+  }
+
+  std::sort(filenameList.begin(), filenameList.end());
+
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-  return QStringList(filenames.begin(), filenames.end());
+  return filenameList;
 
 #else
   return filenames.toList();

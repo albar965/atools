@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ public:
   /*
    * @return A list of log files using absolute path
    */
-  static const QStringList getLogFiles();
+  static const QStringList getLogFiles(bool includeBackups);
 
   typedef std::function<void (QtMsgType type, const QMessageLogContext& context, const QString& msg)> LogFunctionType;
   /* Function will be called on the calling thread context */

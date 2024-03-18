@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ private:
   friend class atools::logging::LoggingHandler;
 
   /* get a list of log files (excluding stdout and stderr) */
-  QStringList getLogFiles() const;
+  QStringList getLogFiles(bool includeBackups) const;
 
   /* Get the message level that should cause the application to abort */
   QtMsgType getAbortType() const
