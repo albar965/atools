@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -71,16 +71,17 @@ public:
   WidgetState(const QString& settingsKeyPrefix = QString(), bool saveVisibility = true, bool blockSignals = false);
 
   void save(const QList<QObject *>& widgets) const;
+  void save(const QList<const QObject *>& widgets) const;
   void restore(const QList<QObject *>& widgets) const;
 
   void save(const QObject *widget) const;
   void restore(QObject *widget) const;
 
   /* true if settings file contains the widget */
-  bool contains(QObject *widget) const;
+  bool contains(const QObject *widget) const;
 
   /* Get prefix and widget name as stored in the file */
-  QString getSettingsKey(QObject *widget) const;
+  QString getSettingsKey(const QObject *widget) const;
 
   /* Write settings to disk */
   void syncSettings();
@@ -123,14 +124,14 @@ public:
   }
 
 private:
-  void saveWidget(atools::settings::Settings& settings, const QObject *w, const QVariant& value,
+  void saveWidget(atools::settings::Settings& settings, const QObject *object, const QVariant& value,
                   const QString& objName = QString()) const;
-  QVariant loadWidget(atools::settings::Settings& settings, QObject *w,
+  QVariant loadWidget(atools::settings::Settings& settings, QObject *object,
                       const QString& objName = QString()) const;
-  bool containsWidget(atools::settings::Settings& settings, QObject *w, const QString& objName = QString()) const;
+  bool containsWidget(atools::settings::Settings& settings, const QObject *widget, const QString& objName = QString()) const;
 
-  void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *w) const;
-  void loadWidgetVisible(atools::settings::Settings& settings, QWidget *w) const;
+  void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *widget) const;
+  void loadWidgetVisible(atools::settings::Settings& settings, QWidget *widget) const;
 
   QString keyPrefix;
   bool visibility = true, block = false;

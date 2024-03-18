@@ -175,7 +175,7 @@ void ChoiceDialog::restoreState()
   updateButtonBoxState();
 }
 
-void ChoiceDialog::saveState()
+void ChoiceDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(settingsPrefix, false);
   widgetState.save(this);

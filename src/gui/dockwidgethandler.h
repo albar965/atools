@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ public:
   void connectDockWindows();
 
   /* Saves fullscreen and normal main window state to bytes. */
-  QByteArray saveState();
+  QByteArray saveState() const;
 
   /* Restores fullscreen and normal state as well as saved window layouts but does not change main window. */
   void restoreState(QByteArray data);

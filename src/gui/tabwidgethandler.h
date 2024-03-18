@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ public:
   void init(const QVector<int>& tabIdsParam, const QString& settingsPrefixParam);
 
   /* Save or restore open/close and order of tabs. Call init before. */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Id of currently open tab or -1 if none */

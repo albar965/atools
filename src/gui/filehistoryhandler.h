@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ public:
                      QAction *clearMenuAction);
 
   /* Save state and all entries to settings */
-  void saveState();
+  void saveState() const;
 
   /* Restore state and all entries from settings */
   void restoreState();

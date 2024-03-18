@@ -707,7 +707,7 @@ void DockWidgetHandler::setFullScreenOff()
     qWarning() << Q_FUNC_INFO << "Already no fullscreen";
 }
 
-QByteArray DockWidgetHandler::saveState()
+QByteArray DockWidgetHandler::saveState() const
 {
   // Save current state - other state was saved when switching fs/normal
   if(fullscreen)

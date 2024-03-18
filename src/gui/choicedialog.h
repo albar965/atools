@@ -122,7 +122,7 @@ private:
   const QVector<std::pair<int, bool> > getCheckState() const;
   void buttonBoxClicked(QAbstractButton *button);
   void checkBoxToggledInternal(bool checked);
-  void saveState();
+  void saveState() const;
   void updateButtonBoxState();
 
   void addCheckBoxInt(int id, const QString& text, const QString& tooltip = QString(), bool checked = false,

@@ -283,7 +283,7 @@ void TreeDialog::restoreState(bool restoreCheckState, bool restoreExpandState)
 void TreeDialog::saveStateDialog(bool saveExpandState)
 {
   atools::gui::WidgetState widgetState(settingsPrefix, false);
-  widgetState.save({this, ui->treeWidget});
+  widgetState.save(QList<const QObject *>({this, ui->treeWidget}));
 
   if(saveExpandState)
   {

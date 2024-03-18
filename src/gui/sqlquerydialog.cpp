@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,7 @@ void SqlQueryDialog::restoreState()
   atools::gui::WidgetState(settingsPrefix, false).restore(this);
 }
 
-void SqlQueryDialog::saveState()
+void SqlQueryDialog::saveState() const
 {
   atools::gui::WidgetState(settingsPrefix, false).save(this);
 }

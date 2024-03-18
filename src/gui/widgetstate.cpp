@@ -17,6 +17,7 @@
 
 #include "gui/widgetstate.h"
 
+#include "atools.h"
 #include "settings/settings.h"
 
 #include <QDebug>
@@ -54,6 +55,13 @@ WidgetState::WidgetState(const QString& settingsKeyPrefix, bool saveVisibility, 
   : keyPrefix(settingsKeyPrefix), visibility(saveVisibility), block(blockSignals)
 {
 
+}
+
+void WidgetState::save(const QList<QObject *>& widgets) const
+{
+  QList<const QObject *> constWidgets;
+  atools::convertList(constWidgets, widgets);
+  save(constWidgets);
 }
 
 void WidgetState::save(const QObject *widget) const
@@ -469,12 +477,12 @@ void WidgetState::restore(QObject *widget) const
   }
 }
 
-bool WidgetState::contains(QObject *widget) const
+bool WidgetState::contains(const QObject *widget) const
 {
   return containsWidget(Settings::instance(), widget);
 }
 
-QString WidgetState::getSettingsKey(QObject *widget) const
+QString WidgetState::getSettingsKey(const QObject *widget) const
 {
   return keyPrefix % "_" % widget->objectName();
 }
@@ -491,7 +499,7 @@ void WidgetState::setMainWindowsRestoreOptions(bool position, bool size, bool st
   stateRestoreMainWindow = state;
 }
 
-void WidgetState::save(const QList<QObject *>& widgets) const
+void WidgetState::save(const QList<const QObject *>& widgets) const
 {
   for(const QObject *w : widgets)
     save(w);
@@ -503,35 +511,35 @@ void WidgetState::restore(const QList<QObject *>& widgets) const
     restore(w);
 }
 
-void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *w) const
+void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *widget) const
 {
   if(visibility)
   {
-    if(!w->objectName().isEmpty())
+    if(!widget->objectName().isEmpty())
     {
-      if(!w->isVisible())
-        settings.setValue(keyPrefix % "_visible_" % w->objectName(), w->isVisible());
+      if(!widget->isVisible())
+        settings.setValue(keyPrefix % "_visible_" % widget->objectName(), widget->isVisible());
     }
     else
       qWarning() << Q_FUNC_INFO << "Found widget with empty name";
   }
 }
 
-void WidgetState::saveWidget(Settings& settings, const QObject *w, const QVariant& value, const QString& objName) const
+void WidgetState::saveWidget(Settings& settings, const QObject *object, const QVariant& value, const QString& objName) const
 {
-  QString name = objName.isEmpty() ? w->objectName() : objName;
+  QString name = objName.isEmpty() ? object->objectName() : objName;
   if(!name.isEmpty())
     settings.setValueVar(keyPrefix % "_" % name, value);
   else
     qWarning() << Q_FUNC_INFO << "Found widget with empty name";
 }
 
-bool WidgetState::containsWidget(Settings& settings, QObject *w, const QString& objName) const
+bool WidgetState::containsWidget(Settings& settings, const QObject *object, const QString& objName) const
 {
-  QString name = objName.isEmpty() ? w->objectName() : objName;
+  QString name = objName.isEmpty() ? object->objectName() : objName;
   if(!name.isEmpty())
   {
-    if(dynamic_cast<QDialog *>(w) != nullptr)
+    if(dynamic_cast<const QDialog *>(object) != nullptr)
       // Need to check for size since dialogs are stored using only this key
       return settings.contains(keyPrefix % "_" % name % "_size");
     else
@@ -542,9 +550,9 @@ bool WidgetState::containsWidget(Settings& settings, QObject *w, const QString& 
   return false;
 }
 
-QVariant WidgetState::loadWidget(Settings& settings, QObject *w, const QString& objName) const
+QVariant WidgetState::loadWidget(Settings& settings, QObject *object, const QString& objName) const
 {
-  QString oname = objName.isEmpty() ? w->objectName() : objName;
+  QString oname = objName.isEmpty() ? object->objectName() : objName;
   if(!oname.isEmpty())
   {
     QString name = keyPrefix % "_" % oname;
@@ -556,18 +564,18 @@ QVariant WidgetState::loadWidget(Settings& settings, QObject *w, const QString& 
   return QVariant();
 }
 
-void WidgetState::loadWidgetVisible(Settings& settings, QWidget *w) const
+void WidgetState::loadWidgetVisible(Settings& settings, QWidget *widget) const
 {
   if(visibility)
   {
-    if(!w->objectName().isEmpty())
+    if(!widget->objectName().isEmpty())
     {
-      QString name = keyPrefix % "_" % "_visible_" % w->objectName();
+      QString name = keyPrefix % "_" % "_visible_" % widget->objectName();
       if(settings.contains(name))
       {
         bool visible = settings.valueBool(name);
         if(!visible)
-          w->setVisible(visible);
+          widget->setVisible(visible);
       }
     }
     else
