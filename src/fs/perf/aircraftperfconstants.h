@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,14 +30,15 @@ namespace perf {
  *  Numeric order is important for comparing. */
 enum FlightSegment
 {
-  NONE,
-  DEPARTURE_PARKING,
-  DEPARTURE_TAXI,
+  NONE, /* No state, before flight */
+  DEPARTURE_PARKING, /* At gate not moving yet */
+  DEPARTURE_TAXI, /* Moving at departure airport */
   CLIMB,
   CRUISE,
   DESCENT,
   DESTINATION_TAXI,
   DESTINATION_PARKING,
+  LOADED, /* Inactive and loaded from last session */
   INVALID
 };
 

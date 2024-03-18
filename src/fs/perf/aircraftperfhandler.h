@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -65,6 +65,12 @@ public:
 
   /* Stops collection process */
   void stop();
+
+  /* Save and restore to/from XML file. Restore sets currentFlightSegment to LOADED */
+  void restoreCollected(const QString& filename);
+
+  /* Save current collected performance to XML file. */
+  void saveCollected(const QString& filename) const;
 
   /* Flight plan cruise altitude. Value in ft */
   void setCruiseAltitude(float value)

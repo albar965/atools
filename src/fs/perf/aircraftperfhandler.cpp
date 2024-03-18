@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include "geo/calculations.h"
 #include "fs/sc/simconnectuseraircraft.h"
 
+#include <QFile>
+
 namespace atools {
 namespace fs {
 namespace perf {
@@ -45,8 +47,8 @@ AircraftPerfHandler::AircraftPerfHandler(QObject *parent)
 
 AircraftPerfHandler::~AircraftPerfHandler()
 {
-  delete perf;
-  delete curSimAircraft;
+  ATOOLS_DELETE_LOG(perf);
+  ATOOLS_DELETE_LOG(curSimAircraft);
 }
 
 void AircraftPerfHandler::start()
@@ -73,6 +75,18 @@ void AircraftPerfHandler::reset()
 void AircraftPerfHandler::stop()
 {
   active = false;
+}
+
+void AircraftPerfHandler::restoreCollected(const QString& filename)
+{
+  perf->setNull();
+  perf->loadXml(filename);
+  currentFlightSegment = LOADED;
+}
+
+void AircraftPerfHandler::saveCollected(const QString& filename) const
+{
+  perf->saveXml(filename);
 }
 
 void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData, const QString& simulator)
@@ -186,6 +200,8 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
           flightSegment = DESTINATION_PARKING;
         break;
 
+      case LOADED:
+      // Loaded from last session - no inactive
       case DESTINATION_PARKING:
         // Finish on engine shutdown - stop collecting
         active = false;
@@ -226,7 +242,7 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
 
 bool AircraftPerfHandler::isFinished() const
 {
-  return currentFlightSegment == DESTINATION_TAXI || currentFlightSegment == DESTINATION_PARKING;
+  return currentFlightSegment == DESTINATION_TAXI || currentFlightSegment == DESTINATION_PARKING || currentFlightSegment == LOADED;
 }
 
 QStringList AircraftPerfHandler::getAircraftStatusTexts()
@@ -267,6 +283,7 @@ QStringList AircraftPerfHandler::getAircraftStatusTexts()
       first.prepend(firstChar.toUpper());
     }
   }
+
   return retval;
 }
 
@@ -296,6 +313,7 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, qint64 now, q
     case DESTINATION_PARKING:
     case DESTINATION_TAXI:
     case DEPARTURE_TAXI:
+    case LOADED:
       break;
 
     case atools::fs::perf::CLIMB:
@@ -403,6 +421,9 @@ QString AircraftPerfHandler::getFlightSegmentString(atools::fs::perf::FlightSegm
 
     case DESTINATION_PARKING:
       return tr("Destination Parking");
+
+    case LOADED:
+      return tr("Loaded from last session");
 
   }
   return tr("Unknown");
