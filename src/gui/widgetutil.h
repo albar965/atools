@@ -44,7 +44,7 @@ void changeWidgetColor(QWidget *widget, QColor backgroundColor);
 bool canTextEditUpdate(const QTextEdit *textEdit);
 
 /* Update text edit and keep selection and scrollbar position */
-void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, bool keepSelection);
+void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, bool keepSelection, bool clearSelection = false);
 
 /*
  * Shows or hides all widgets in a list of layouts.

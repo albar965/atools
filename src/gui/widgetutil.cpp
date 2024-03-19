@@ -42,7 +42,7 @@ bool canTextEditUpdate(const QTextEdit *textEdit)
          !textEdit->horizontalScrollBar()->isSliderDown();
 }
 
-void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, bool keepSelection)
+void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, bool keepSelection, bool clearSelection)
 {
   // Remember cursor position
   QTextCursor cursor = textEdit->textCursor();
@@ -54,7 +54,14 @@ void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, 
   int hScrollPos = textEdit->horizontalScrollBar()->value();
   textEdit->setText(text);
 
-  if(anchor != pos && keepSelection)
+  if(clearSelection)
+  {
+    // Remove the selection which appears after clicking the linkg
+    QTextCursor textCursor = textEdit->textCursor();
+    textCursor.clearSelection();
+    textEdit->setTextCursor(textCursor);
+  }
+  else if(anchor != pos && keepSelection)
   {
     // There is a selection - Reset cursor
     int maxPos = textEdit->document()->characterCount() - 1;
