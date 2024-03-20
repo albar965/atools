@@ -43,6 +43,7 @@ QHash<QString, QStringList> Application::reportFiles;
 QStringList Application::emailAddresses;
 QString Application::contactUrl;
 QSet<QObject *> Application::tooltipExceptions;
+bool Application::showSplash = true;
 
 QString Application::lockFile;
 bool Application::safeMode = false;
@@ -120,6 +121,9 @@ void Application::recordStartAndDetectCrash(QWidget *parent, const QString& lock
   {
     qWarning() << Q_FUNC_INFO << "Found previous crash";
 
+    // Do not open splash to avoid dialog re-appearing
+    showSplash = false;
+
     // Build a report with all relevant files in a Zip archive
     qWarning() << Q_FUNC_INFO << "Creating crash report" << crashReportFile << filenames;
     buildCrashReport(crashReportFile, filenames);
@@ -150,7 +154,7 @@ void Application::recordStartAndDetectCrash(QWidget *parent, const QString& lock
     result = box.exec();
   }
 
-  // Remember lock file and write PID into it (not used yet)
+  // Remember lock file and write PID into it (PID not used yet)
   lockFile = lockFileParam;
   atools::strToFile(lockFile, QString::number(applicationPid()));
 
@@ -357,25 +361,28 @@ void Application::initSplashScreen(const QString& imageFile, const QString& revi
 {
   qDebug() << Q_FUNC_INFO;
 
-  QPixmap pixmap(imageFile);
-  splashScreen = new QSplashScreen(pixmap);
-  splashScreen->show();
+  if(showSplash)
+  {
+    QPixmap pixmap(imageFile);
+    splashScreen = new QSplashScreen(pixmap);
+    splashScreen->show();
 
-  processEvents();
+    processEvents();
 
 #if defined(WINARCH64)
-  QString applicationVersion = QApplication::applicationVersion() + tr(" 64-bit");
+    QString applicationVersion = QApplication::applicationVersion() + tr(" 64-bit");
 #elif defined(WINARCH32)
-  QString applicationVersion = QApplication::applicationVersion() + tr(" 32-bit");
+    QString applicationVersion = QApplication::applicationVersion() + tr(" 32-bit");
 #else
-  QString applicationVersion = QApplication::applicationVersion();
+    QString applicationVersion = QApplication::applicationVersion();
 #endif
 
-  splashScreen->showMessage(QObject::tr("Version %5 (revision %6)").
-                            arg(applicationVersion).arg(revision),
-                            Qt::AlignRight | Qt::AlignBottom, Qt::black);
+    splashScreen->showMessage(QObject::tr("Version %5 (revision %6)").
+                              arg(applicationVersion).arg(revision),
+                              Qt::AlignRight | Qt::AlignBottom, Qt::black);
 
-  processEvents(QEventLoop::ExcludeUserInputEvents);
+    processEvents(QEventLoop::ExcludeUserInputEvents);
+  }
 }
 
 void Application::finishSplashScreen(QMainWindow *mainWindow)

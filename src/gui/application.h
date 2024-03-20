@@ -176,6 +176,7 @@ private:
   static QString contactUrl;
 
   static QSplashScreen *splashScreen;
+  static bool showSplash;
 
   static QString lockFile;
   static bool safeMode;
