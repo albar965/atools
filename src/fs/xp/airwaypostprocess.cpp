@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -137,8 +137,8 @@ bool AirwayPostProcess::postProcessEarthAirway()
   // Read duplets from temp table
   while(query.next())
   {
-    QString airway = query.value("name").toString();
-    AirwayType airwayType = static_cast<AirwayType>(query.value("type").toInt());
+    QString airway = query.valueStr("name");
+    AirwayType airwayType = static_cast<AirwayType>(query.valueInt("type"));
 
     if(currentAirway.isEmpty())
     {
@@ -147,7 +147,9 @@ bool AirwayPostProcess::postProcessEarthAirway()
       currentAirwayType = airwayType;
     }
 
-    if(currentAirway != airway && !segments.isEmpty())
+    // Need to use type as selection criteria too
+    // EVMON SB 11 PAPAL SB 11 F 1 160 245 Z8
+    if((currentAirway != airway || airwayType != currentAirwayType) && !segments.isEmpty())
     {
       // Airway has changed - order and write all its segments
       writeSegments(segments, insert, currentAirway, currentAirwayType);
@@ -159,15 +161,15 @@ bool AirwayPostProcess::postProcessEarthAirway()
 
     // Add a segment from the database
     AirwaySegment segment;
-    segment.minAlt = query.value("minimum_altitude").toInt();
-    segment.maxAlt = query.value("maximum_altitude").toInt();
-    segment.next.ident = query.value("next_ident").toString();
-    segment.next.region = query.value("next_region").toString();
-    segment.next.type = static_cast<AirwayPointType>(query.value("next_type").toInt());
-    segment.prev.ident = query.value("previous_ident").toString();
-    segment.prev.region = query.value("previous_region").toString();
-    segment.prev.type = static_cast<AirwayPointType>(query.value("previous_type").toInt());
-    segment.dir = atools::strToChar(query.value("direction").toString());
+    segment.minAlt = query.valueInt("minimum_altitude");
+    segment.maxAlt = query.valueInt("maximum_altitude");
+    segment.next.ident = query.valueStr("next_ident");
+    segment.next.region = query.valueStr("next_region");
+    segment.next.type = static_cast<AirwayPointType>(query.valueInt("next_type"));
+    segment.prev.ident = query.valueStr("previous_ident");
+    segment.prev.region = query.valueStr("previous_region");
+    segment.prev.type = static_cast<AirwayPointType>(query.valueInt("previous_type"));
+    segment.dir = atools::strToChar(query.valueStr("direction"));
 
     segments.insert(segments.size(), segment);
   }

@@ -300,6 +300,7 @@ void AirportWriter::writeObject(const Airport *type)
     bind(":right_lonx", type->getBoundingRect().getBottomRight().getLonX());
     bind(":bottom_laty", type->getBoundingRect().getBottomRight().getLatY());
 
+    // Use magvar from BGL and fallback to airport included magvar (usually inaccurate)
     bind(":mag_var", getDataWriter().getMagVar(type->getPos(), type->getMagVar()));
 
     if(!type->getTowerPosition().getPos().isNull() && type->getTowerPosition().getPos().isValidRange() &&
