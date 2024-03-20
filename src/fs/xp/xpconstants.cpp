@@ -234,10 +234,12 @@ QString approachIndicatorToDb(ApproachIndicator value, const XpWriterContext *co
       return "VASI22";
 
     case PAPI_4L:
-      return "PAPI4";
-
     case PAPI_4R:
       return "PAPI4";
+
+    case APAPI_L:
+    case APAPI_R:
+      return "APAPI";
 
     case SPACE_SHUTTLE_PAPI:
       return "PAPI4";

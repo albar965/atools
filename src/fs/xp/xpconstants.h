@@ -250,7 +250,9 @@ enum ApproachIndicator
   PAPI_4R = 3, // 4R (four light)on right of runway Right - handed: red indication appears first on left 2 lights
   SPACE_SHUTTLE_PAPI = 4, // 20 degree glidepath Deprecated.Use normal PAPI with an appropriate angle.
   TRI_COLOR_VASI = 5,
-  RUNWAY_GUARD = 6 // (“wig - wag”) lights Pulsating double amber lights alongside runway entrances
+  RUNWAY_GUARD = 6, // (“wig - wag”) lights Pulsating double amber lights alongside runway entrances
+  APAPI_L = 7, // (two-light) on left of runway - new in XP 12
+  APAPI_R = 8, // (two-light) on left of runway - new in XP 12
 };
 
 QString approachIndicatorToDb(atools::fs::xp::ApproachIndicator value, const XpWriterContext *context);
