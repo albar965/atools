@@ -180,7 +180,7 @@
 <context>
     <name>ErrorHandler</name>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="37"/>
+        <location filename="src/gui/errorhandler.cpp" line="34"/>
         <source>%1
 Caught exception
 
@@ -193,14 +193,14 @@ Uitzondering vastgesteld
 &quot;%2&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="46"/>
+        <location filename="src/gui/errorhandler.cpp" line="42"/>
         <source>%1
 Caught unknown exception</source>
         <translation>%1
 Onbekende uitzondering vastgesteld</translation>
     </message>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="56"/>
+        <location filename="src/gui/errorhandler.cpp" line="51"/>
         <source>%1
 Sql error occured
 &quot;%2&quot;</source>
@@ -209,7 +209,7 @@ Sql fout
 &quot;%2&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="66"/>
+        <location filename="src/gui/errorhandler.cpp" line="60"/>
         <source>%1
 IO error occured
 File: &quot;%2&quot;
@@ -2068,97 +2068,97 @@ Bestand:&quot;%2&quot;
         <translation type="vanished">Bestand of folder &quot;%1&quot; bestaat niet.</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="47"/>
+        <location filename="src/gui/tools.cpp" line="49"/>
         <source>%1 pt</source>
         <translation>%1 pt</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="49"/>
+        <location filename="src/gui/tools.cpp" line="51"/>
         <source>%1 px</source>
         <translation>%1 px</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="53"/>
+        <location filename="src/gui/tools.cpp" line="55"/>
         <source>thin</source>
         <translation>dun</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="55"/>
+        <location filename="src/gui/tools.cpp" line="57"/>
         <source>extra light</source>
         <translation>extra licht</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="57"/>
+        <location filename="src/gui/tools.cpp" line="59"/>
         <source>light</source>
         <translation>licht</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="59"/>
+        <location filename="src/gui/tools.cpp" line="61"/>
         <source>normal</source>
         <translation>normaal</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="61"/>
+        <location filename="src/gui/tools.cpp" line="63"/>
         <source>medium</source>
         <translation>medium</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="63"/>
+        <location filename="src/gui/tools.cpp" line="65"/>
         <source>demi bold</source>
         <translation>demi bold</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="65"/>
+        <location filename="src/gui/tools.cpp" line="67"/>
         <source>bold</source>
         <translation>bold</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="67"/>
+        <location filename="src/gui/tools.cpp" line="69"/>
         <source>extra bold</source>
         <translation>extra bold</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="69"/>
+        <location filename="src/gui/tools.cpp" line="71"/>
         <source>black</source>
         <translation>zwart</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="72"/>
+        <location filename="src/gui/tools.cpp" line="74"/>
         <source>italic</source>
         <translation>schuin</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="74"/>
+        <location filename="src/gui/tools.cpp" line="76"/>
         <source>overline</source>
         <translation>overline</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="76"/>
+        <location filename="src/gui/tools.cpp" line="78"/>
         <source>underline</source>
         <translation>underline</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="78"/>
+        <location filename="src/gui/tools.cpp" line="80"/>
         <source>strike out</source>
         <translation>strike out</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="81"/>
+        <location filename="src/gui/tools.cpp" line="83"/>
         <source>fixed pitch</source>
         <translation>vaste pitch</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="85"/>
+        <location filename="src/gui/tools.cpp" line="87"/>
         <source>System font: %1</source>
         <translation>Systeem lettertype: %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="87"/>
+        <location filename="src/gui/tools.cpp" line="89"/>
         <source>User selected font: %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="89"/>
+        <location filename="src/gui/tools.cpp" line="91"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -2188,19 +2188,19 @@ Bestand:&quot;%2&quot;
         <translation>AUSOTS</translation>
     </message>
     <message>
-        <location filename="src/gui/widgetutil.cpp" line="162"/>
+        <location filename="src/gui/widgetutil.cpp" line="169"/>
         <source> (changed)</source>
         <comment>Indication for search menu button items</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/widgetutil.cpp" line="163"/>
+        <location filename="src/gui/widgetutil.cpp" line="170"/>
         <source> (changed, not used)</source>
         <comment>Indication for search menu button items</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="374"/>
+        <location filename="src/gui/application.cpp" line="380"/>
         <source>Version %5 (revision %6)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2694,87 +2694,92 @@ Maak dat earth_fix.dat, earth_awy.dat en earth_nav.dat gevonden kunnen worden op
 <context>
     <name>atools::fs::perf::AircraftPerfHandler</name>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="237"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="253"/>
         <source>on ground</source>
         <translation>op de grond</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="239"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="255"/>
         <source>fuel flow</source>
         <translation>brandstofverbruik</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="246"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="262"/>
         <source>climbing</source>
         <translation>klimmend</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="248"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="264"/>
         <source>descending</source>
         <translation>dalend</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="252"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="268"/>
         <source>at cruise altitude</source>
         <translation>op cruisehoogte</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="254"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="270"/>
         <source>below cruise altitude</source>
         <translation>lager dan de cruisehoogte</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="256"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="272"/>
         <source>above cruise altitude</source>
         <translation>hoger dan de cruisehoogte</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="381"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="399"/>
         <source>Invalid</source>
         <translation>Ongeldig</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="384"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="402"/>
         <source>None</source>
         <translation>Geen</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="387"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="405"/>
         <source>Departure Parking</source>
         <translation>Parking Vertrek</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="390"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="408"/>
         <source>Departure Taxi and Takeoff</source>
         <translation>Taxi en Takeoff Vertrek</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="393"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="411"/>
         <source>Climb</source>
         <translation>Klimfase</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="396"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="414"/>
         <source>Cruise</source>
         <translation>Cruise</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="399"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="417"/>
         <source>Descent</source>
         <translation>Daling</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="402"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="420"/>
         <source>Destination Taxi</source>
         <translation>Taxi Aankomst</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="405"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="423"/>
         <source>Destination Parking</source>
         <translation>Parking Aankomst</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="408"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="426"/>
+        <source>Loaded from last session</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="429"/>
         <source>Unknown</source>
         <translation>Onbekend</translation>
     </message>
@@ -3003,7 +3008,7 @@ Line %2.</source>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="241"/>
+        <location filename="src/gui/application.cpp" line="245"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation type="unfinished">&lt;b&gt;Als het probleem voortduurt tijdens het opstarten, alle instellingen en database bestanden wissen uit &lt;i&gt;%1&lt;/i&gt; en opnieuw proberen.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Als je het probleem wil rapporteren, het logbestand en de configuratiebestanden bij het rapport voegen. Alle mogelijke info bijvoegen en sturen naar één van de onderstaande contactadressen.&lt;/b&gt;&lt;br/&gt;</translation>
@@ -3013,57 +3018,57 @@ Line %2.</source>
         <translation type="vanished">&lt;b&gt;Uitzondering in bestand %1 lijn %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Toets OK om applicatie te verlaten.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="92"/>
+        <location filename="src/gui/application.cpp" line="93"/>
         <source>&lt;p&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You can send this file to the author of %2 to investigate a problem. This is a Zip-file and you can look into the contents if needed.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure you are using the latest version of %2 before reporting a problem,&lt;br/&gt;and if possible, describe all the steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="127"/>
+        <location filename="src/gui/application.cpp" line="131"/>
         <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %1 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %1 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="270"/>
+        <location filename="src/gui/application.cpp" line="274"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Uitzondering in bestand %1 lijn %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Toets OK om applicatie te verlaten.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="291"/>
+        <location filename="src/gui/application.cpp" line="295"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Onbekende uitzondering in bestand %1 lijn %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Toets OK om applicatie te verlaten.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="312"/>
+        <location filename="src/gui/application.cpp" line="316"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="318"/>
+        <location filename="src/gui/application.cpp" line="322"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="343"/>
+        <location filename="src/gui/application.cpp" line="347"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="347"/>
+        <location filename="src/gui/application.cpp" line="351"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="350"/>
+        <location filename="src/gui/application.cpp" line="354"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="367"/>
+        <location filename="src/gui/application.cpp" line="373"/>
         <source> 64-bit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="369"/>
+        <location filename="src/gui/application.cpp" line="375"/>
         <source> 32-bit</source>
         <translation type="unfinished"></translation>
     </message>

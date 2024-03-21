@@ -2329,6 +2329,10 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
         <source>above cruise altitude</source>
         <translation>über Reiseflughöhe</translation>
     </message>
+    <message>
+        <source>Loaded from last session</source>
+        <translation>Von letzter Sitzung geladen</translation>
+    </message>
 </context>
 <context>
     <name>atools::fs::sc::DataReaderThread</name>

@@ -2224,6 +2224,10 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <source>above cruise altitude</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Loaded from last session</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>atools::fs::sc::DataReaderThread</name>
