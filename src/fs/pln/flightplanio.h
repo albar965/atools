@@ -95,17 +95,17 @@ public:
   /* FSX/P3D XML format */
   void savePln(const atools::fs::pln::Flightplan& plan, const QString& file);
 
-  /* Microsoft Flight Simulator 2020 */
+  /* Microsoft Flight Simulator 2020 with star as degree separator */
   void savePlnMsfs(const atools::fs::pln::Flightplan& plan, const QString& file);
+
+  /* Microsoft Flight Simulator 2020 with ° as degree separator for add-ons */
+  void savePlnMsfsCompat(const Flightplan& plan, const QString& file);
 
   /* MSFS PLN for Integrated Simavionics / ISG */
   void savePlnIsg(const atools::fs::pln::Flightplan& plan, const QString& file);
 
   /* PMS50 GTN750 */
   void savePlnPms50(const atools::fs::pln::Flightplan& plan, const QString& file);
-
-  /* FSX/P3D XML format with annotations as used by previous LNM versions (<= 2.4.5).*/
-  void savePlnAnnotated(const atools::fs::pln::Flightplan& plan, const QString& file);
 
   /* FlightGear route manager XML format */
   void saveFlightGear(const Flightplan& plan, const QString& filename);
@@ -181,7 +181,7 @@ public:
   static const int LNMPLN_VERSION_MINOR = 2;
 
 private:
-  void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, bool simavionics, bool pms50,
+  void savePlnInternal(const Flightplan& plan, const QString& filename, bool msfs, bool simavionics, bool pms50, bool starDeg,
                        int userWpLength);
   void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format, bool iniBuildsFormat);
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);

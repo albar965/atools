@@ -1926,31 +1926,31 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
 
 void FlightplanIO::savePln(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, false /* simavionics */, false /* pms50 */, 10 /* userWpLength */);
+  savePlnInternal(plan, file, false /* msfs */, false /* simavionics */, false /* pms50 */, false /* starDeg */, 10 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnMsfs(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, true /* msfs */, false /* simavionics */, false /* pms50 */, 80 /* userWpLength */);
+  savePlnInternal(plan, file, true /* msfs */, false /* simavionics */, false /* pms50 */, false /* starDeg */, 80 /* userWpLength */);
+}
+
+void FlightplanIO::savePlnMsfsCompat(const Flightplan& plan, const QString& file)
+{
+  savePlnInternal(plan, file, true /* msfs */, false /* simavionics */, false /* pms50 */, true /* starDeg */, 80 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnPms50(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, false /* simavionics */, true /* pms50 */, 80 /* userWpLength */);
+  savePlnInternal(plan, file, false /* msfs */, false /* simavionics */, true /* pms50 */, false /* starDeg */, 80 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnIsg(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, true /* simavionics */, false /* pms50 */, 12 /* userWpLength */);
+  savePlnInternal(plan, file, false /* msfs */, true /* simavionics */, false /* pms50 */, false /* starDeg */, 12 /* userWpLength */);
 }
 
-void FlightplanIO::savePlnAnnotated(const Flightplan& plan, const QString& file)
-{
-  savePlnInternal(plan, file, true /* annotated */, false /* msfs */, false /* simavionics */, false /* pms50 */, 10 /* userWpLength */);
-}
-
-void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, bool simavionics, bool pms50,
-                                   int userWpLength)
+void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filename, bool msfs, bool simavionics, bool pms50,
+                                   bool starDeg, int userWpLength)
 {
   // Write XML to string first ===================
   QString xmlString;
@@ -1965,26 +1965,6 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   writer.writeAttribute("version", "1,0");
   writer.writeTextElement("Descr", "AceXML Document");
 
-  if(annotated)
-  {
-    QStringList comment;
-    for(auto it = plan.properties.constBegin(); it != plan.properties.constEnd(); ++it)
-    {
-      const QString& key = it.key();
-      if(key == "_lnm")
-        continue;
-
-      if(!key.isEmpty())
-        comment.append("\n         " + key + "=" + it.value());
-    }
-
-    std::sort(comment.begin(), comment.end());
-
-    comment.prepend("\n         _lnm=" + atools::programFileInfo());
-
-    writer.writeComment(" LNMDATA" + comment.join("|") + "\n");
-  }
-
   writer.writeStartElement("FlightPlan.FlightPlan");
 
   writer.writeTextElement("Title", plan.getTitle());
@@ -1998,11 +1978,11 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   // Use parking position
   writer.writeTextElement("DepartureLLA",
                           plan.getDepartureParkingPosition().isValid() ?
-                          plan.getDepartureParkingPosition().toLongString(msfs /* starDeg */) : QString());
+                          plan.getDepartureParkingPosition().toLongString(starDeg) : QString());
 
   writer.writeTextElement("DestinationID", plan.destinationIdent);
   writer.writeTextElement("DestinationLLA",
-                          plan.destinationPos.isValid() ? plan.destinationPos.toLongString(msfs /* starDeg */) : QString());
+                          plan.destinationPos.isValid() ? plan.destinationPos.toLongString(starDeg) : QString());
   writer.writeTextElement("Descr", plan.getDescr());
 
   QString parking;
@@ -2065,7 +2045,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     if(!entry.getPosition().isValid())
       throw atools::Exception("Invalid position in flightplan for id " + entry.getIdent());
 
-    writer.writeTextElement("WorldPosition", entry.getPosition().toLongString(msfs /* starDeg */));
+    writer.writeTextElement("WorldPosition", entry.getPosition().toLongString(starDeg));
 
     writeTextElementIf(writer, "ATCAirway", entry.getAirway());
 
