@@ -6,23 +6,22 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 # Version 4.0.6.rc1
 
-* Now skipping splash screen in all dialog boxes in case of error report.
-* Added new X-Plane 12 VASI types. APAPI_L and APAPI_R.
-* Fixed issue where X-Plane airways had wrong type.
-  Example: EVMON to PAPAL airway Z8 wrongly declared Jet. #1111
-* Added clearSelection to updateTextEdit
+* Removed annotated PLN export and added option for star or degree sign.
+* Added new X-Plane 12 VASI types APAPI_L and APAPI_R.
+* Fixed issue where X-Plane airways had wrong type. Example:
+  EVMON to PAPAL airway Z8 wrongly declared Jet. albar965/littlenavmap#1111
+* Added clearSelection to updateTextEdit.
 * Added methods to save and restore collected aircraft performance.
 * Closing splash screen in error handler now.
-* saveState converted to const
+* saveState to const converted.
 * Added option for backup files when getting log files from LoggingUtil.
   Now only adding existing files
 * Changed header methods in HtmlBuilder.
-* Fixed runwayFlags to consider empty input.
-* Optimizations in DataManagerBase.
-* Normalized logging for message boxes. Removing HTML now.
+* Fixed runwayFlags method to consider empty input.
+* Optimizations in DataManagerBase. Converted parameters to const references.
+* Normalized logging for message boxes
 * Removed redundant closeSplashScreen calls.
-* Updated translations
-* Moved splash screen handling to Application
+* Moved splash screen handling to Application.
   Now also closing splash in all dialog windows.
 
 ===============================================================================
