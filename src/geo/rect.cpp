@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -211,8 +211,7 @@ bool Rect::overlaps(const Rect& other) const
 
 atools::geo::Rect& Rect::inflateMeter(float width, float height)
 {
-  return inflate(meterToNm(getWidthMeter() / 60.f) / getWidthDegree() * meterToNm(width) / 60.f,
-                 meterToNm(height) / 60.f);
+  return inflate(meterToNm(getWidthMeter() / 60.f) / getWidthDegree() * meterToNm(width) / 60.f, meterToNm(height) / 60.f);
 }
 
 Rect& Rect::inflate(float degreesLon, float degreesLat)
@@ -247,38 +246,6 @@ bool Rect::overlapsInternal(const Rect& other) const
   // "not (right_lonx < :leftx or left_lonx > :rightx or bottom_laty > :topy or top_laty < :bottomy) ");
   return !(getEast() < other.getWest() || getWest() > other.getEast() ||
            getSouth() > other.getNorth() || getNorth() < other.getSouth());
-}
-
-Pos Rect::getTopRight() const
-{
-  return Pos(bottomRight.getLonX(), topLeft.getLatY());
-}
-
-Pos Rect::getBottomLeft() const
-{
-  return Pos(topLeft.getLonX(), bottomRight.getLatY());
-}
-
-Pos Rect::getBottomCenter() const
-{
-  Pos center = getCenter();
-  return Pos(center.getLonX(), bottomRight.getLatY());
-}
-
-Pos Rect::getTopCenter() const
-{
-  Pos center = getCenter();
-  return Pos(center.getLonX(), topLeft.getLatY());
-}
-
-Pos Rect::getLeftCenter() const
-{
-  return Pos(topLeft.getLonX(), (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
-}
-
-Pos Rect::getRightCenter() const
-{
-  return Pos(bottomRight.getLonX(), (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
 }
 
 bool Rect::isPoint(float epsilonDegree) const

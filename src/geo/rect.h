@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -81,8 +81,18 @@ public:
   /* add margins to this rectangle */
   atools::geo::Rect& inflate(float degreesLonX, float degreesLatY);
 
+  const atools::geo::Rect inflated(float degreesLonX, float degreesLatY) const
+  {
+    return Rect(*this).inflate(degreesLonX, degreesLatY);
+  }
+
   /* Add approximate margins to this rectangle given in meter. The expansion is done at the center lines. */
   atools::geo::Rect& inflateMeter(float width, float height);
+
+  const atools::geo::Rect inflatedMeter(float width, float height) const
+  {
+    return Rect(*this).inflateMeter(width, height);
+  }
 
   /* Scales the rectangle keeping the center */
   atools::geo::Rect& scale(float horizontalFactor, float verticalFactor);
@@ -97,8 +107,15 @@ public:
     return bottomRight;
   }
 
-  atools::geo::Pos getTopRight() const;
-  atools::geo::Pos getBottomLeft() const;
+  atools::geo::Pos getTopRight() const
+  {
+    return Pos(bottomRight.getLonX(), topLeft.getLatY());
+  }
+
+  atools::geo::Pos getBottomLeft() const
+  {
+    return Pos(topLeft.getLonX(), bottomRight.getLatY());
+  }
 
   float getWidthDegree() const;
   float getHeightDegree() const;
@@ -187,10 +204,27 @@ public:
   /* Convert this position from degree to rad and return reference */
   atools::geo::Rect& toRad();
 
-  atools::geo::Pos getBottomCenter() const;
-  atools::geo::Pos getTopCenter() const;
-  atools::geo::Pos getLeftCenter() const;
-  atools::geo::Pos getRightCenter() const;
+  atools::geo::Pos getBottomCenter() const
+  {
+    Pos center = getCenter();
+    return Pos(center.getLonX(), bottomRight.getLatY());
+  }
+
+  atools::geo::Pos getTopCenter() const
+  {
+    Pos center = getCenter();
+    return Pos(center.getLonX(), topLeft.getLatY());
+  }
+
+  atools::geo::Pos getLeftCenter() const
+  {
+    return Pos(topLeft.getLonX(), (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
+  }
+
+  atools::geo::Pos getRightCenter() const
+  {
+    return Pos(bottomRight.getLonX(), (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
+  }
 
   void swap(Rect& other);
 
