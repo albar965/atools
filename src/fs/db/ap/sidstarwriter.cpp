@@ -101,7 +101,7 @@ void SidStarWriter::writeObject(const SidStar *type)
   else
   {
     bindNullString(":runway_name");
-    bindNullString(":arinc_name");
+    bind(":arinc_name", "ALL");
 
     if('A' == type->getSuffix())
       writeArrival(type, nullptr);

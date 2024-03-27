@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -416,7 +416,10 @@ create index if not exists idx_runway_end_name on runway_end(name);
 
 drop table if exists approach;
 
--- Approach procedure for an airport. Not neccessarily assigned to a runway end.
+-- Procedure for an airport. Can be a SID, STAR or an approach. Not neccessarily assigned to a runway end.
+-- SID and STAR are saved similar to FSX conventions:
+-- STAR: suffix = 'A' and has_gps_overlay = 1
+-- SID: suffix = 'D' and has_gps_overlay = 1
 create table approach
 (
   approach_id integer primary key,
@@ -424,7 +427,7 @@ create table approach
   runway_end_id integer,            -- Runway end id - can be null if the approach allows circling
   arinc_name varchar(6),            -- ARINC 424.18+, section 5.10 (APPRAOCH IDENT).
                                     -- Examples: I26L, B08R, R29 for approaches or
-                                    -- runway identifier 5.11 (TRANS IDENT) for SID and STAR
+                                    -- runway identifier 5.11 (TRANS IDENT) for SID and STAR or "ALL"
   airport_ident varchar(4),
   runway_name varchar(10),          -- Runway name if procedure can be assigned to one single runway
   type varchar(25) not null,        -- see enum atools::fs::bgl::ap::ApproachType
@@ -436,7 +439,7 @@ create table approach
   has_rnp integer,                  -- Boolean - 1 if the approach has a RNP value on any leg, 0 or null otherwise
 
   fix_type varchar(25),             -- see enum atools::fs::bgl::ap::ApproachFixType and corresponding string conversion
-  fix_ident varchar(5),             -- ICAO ident of the fix
+  fix_ident varchar(5),             -- ICAO ident of the approach fix or name of SID/STAR
   fix_region varchar(2),            -- ICAO two letter region code for fix
   fix_airport_ident varchar(4),     -- Airport ICAO ident if available
 

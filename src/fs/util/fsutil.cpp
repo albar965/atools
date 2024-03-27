@@ -955,7 +955,7 @@ int compareRunwayNumber(const QString& rw1, const QString& rw2)
 
 bool hasSidStarAllRunways(const QString& approachArincName)
 {
-  return approachArincName == "ALL";
+  return approachArincName == "ALL" || approachArincName.isEmpty();
 }
 
 bool hasSidStarParallelRunways(QString approachArincName)
