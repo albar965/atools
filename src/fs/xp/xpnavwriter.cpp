@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -72,20 +72,25 @@ atools::fs::xp::XpNavWriter::~XpNavWriter()
 
 void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
 {
-  // X-Plane definition
-  // 25, 40 and 130 correspond to VORs classified as terminal, low and high.
-  // 125 range is where the VOR has no published term/low/high classification.
-  // These VORs might have the power output of a high VOR, but are not tested/certified to fulfill the
-  // high altitude SVV.
+  // X-Plane 12 definition
+  // 25 = terminal, 40 = low altitude, 130 = high altitude, 125 =
+  // unspecified but likely high power VOR. Uses the higher of 5.35
+  // class and 5.149 figure of merit.
 
   int range = at(line, RANGE).toInt();
   QString type;
   QString rangeType;
-  if(range == 125 || range == 0) // Not published or empty string
+
+  if(range == 0)
   {
     rangeType = "H";
-    // Set to null
-    insertVorQuery->bindValue(":range", QVariant(QVariant::Int));
+    insertVorQuery->bindNullInt(":range");
+  }
+  else if(range == 125)
+  {
+    rangeType = "H";
+    // likely high power VOR
+    insertVorQuery->bindValue(":range", 130);
   }
   else
   {
