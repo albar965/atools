@@ -2201,7 +2201,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/gui/application.cpp" line="380"/>
         <source>Version %5 (revision %6)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Version %5 (révision %6)</translation>
     </message>
 </context>
 <context>
@@ -2775,7 +2775,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="426"/>
         <source>Loaded from last session</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargé lors de la dernière session</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="429"/>

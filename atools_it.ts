@@ -2272,7 +2272,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/gui/application.cpp" line="380"/>
         <source>Version %5 (revision %6)</source>
-        <translation type="unfinished"></translation>
+        <translation>Versione %5 (revisione %6)</translation>
     </message>
 </context>
 <context>
@@ -2846,7 +2846,7 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="426"/>
         <source>Loaded from last session</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricato dall&apos;ultima sessione</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="429"/>
@@ -3137,12 +3137,12 @@ Linea %2.</translation>
     <message>
         <location filename="src/gui/application.cpp" line="373"/>
         <source> 64-bit</source>
-        <translation type="unfinished"> 64-bit</translation>
+        <translation> 64-bit</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="375"/>
         <source> 32-bit</source>
-        <translation type="unfinished"> 32-bit</translation>
+        <translation> 32-bit</translation>
     </message>
     <message>
         <source>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
