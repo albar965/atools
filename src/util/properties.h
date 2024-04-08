@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define ATOOLS_PROPERTIES_H
 
 #include <QHash>
+#include <QVariant>
 
 class QTextStream;
 
@@ -117,9 +118,14 @@ public:
     insert(name, QString::number(value, 'f'));
   }
 
+  static void registerMetaTypes();
+
 };
 
 } // namespace util
 } // namespace atools
+
+Q_DECLARE_METATYPE(atools::util::Properties);
+Q_DECLARE_TYPEINFO(atools::util::Properties, Q_COMPLEX_TYPE);
 
 #endif // ATOOLS_PROPERTIES_H

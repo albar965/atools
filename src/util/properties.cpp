@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -92,6 +92,13 @@ void Properties::readString(QString string)
 {
   QTextStream stream(&string, QIODevice::ReadOnly);
   read(stream);
+}
+
+void Properties::registerMetaTypes()
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+  qRegisterMetaTypeStreamOperators<atools::util::Properties>();
+#endif
 }
 
 } // namespace util
