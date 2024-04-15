@@ -30,7 +30,7 @@ namespace fs {
 namespace util {
 
 // Closed airport by name
-static const QRegularExpression REGEXP_CLOSED(QLatin1String("(\\[X\\]|\\bCLSD\\b|\\bCLOSED\\b)"));
+const static QRegularExpression REGEXP_CLOSED(QLatin1String("(\\[X\\]|\\bCLSD\\b|\\bCLOSED\\b)"));
 const static QRegularExpression REGEXP_DIGIT("\\d");
 const static QRegularExpression REGEXP_WHITESPACE("\\s");
 
@@ -471,7 +471,7 @@ QString capNavString(const QString& str)
           "VOR", "VORDME", "TACAN", "VOT", "VORTAC", "DME", "NDB", "GA", "RNAV", "GPS",
           "ILS", "NDBDME",
           // Frequencies
-          "ATIS", "AWOS", "ASOS", "AWIS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III",
+          "ATIS", "AWOS", "ASOS", "AWIS", "CTAF", "FSS", "CAT", "LOC",
           // Navaid and precision approach types
           "H", "HH", "MH", "VASI", "PAPI",
           // Airspace abbreviations
@@ -481,7 +481,8 @@ QString capNavString(const QString& str)
           "NOTAM", "CERAP", "ARTCC",
           "TCA", "MCTR", "VFR", "IFR", "DFS", "TNA", "CAE", "LANTA",
           "TSRA" "AFB", "OCA", "ARB", "MCAS", "NAS", "NOLF", "NS", "NAWS", "USAF", "TMAD", "CON", "ATS", "MTMA",
-          "TRSA", "SFB", "AAF", "DC", "CGAS"
+          "TRSA", "SFB", "AAF", "DC", "CGAS",
+          "I", "II", "III", "IV", "V", "VI"
         });
 
   return atools::capString(str, FORCE_UPPER);
@@ -494,7 +495,8 @@ QString capAirportName(const QString& str)
           "AAC", "AAF", "AB", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CFB", "CGS", "DGAC",
           "FAA", "FBO", "GTS", "HSC", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK",
           "NOLF", "NRC", "NRC", "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RLA", "RNAS",
-          "USFS", "CGAS", "TV", "NVC", "USAF"});
+          "USFS", "CGAS", "TV", "NVC", "USAF",
+          "I", "II", "III", "IV", "V", "VI"});
 
   return atools::capString(str, FORCE_UPPER).replace("-O-", "-o-").replace("-N-", "-n-").replace("-A-", "-a-");
 }
