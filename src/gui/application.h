@@ -126,7 +126,7 @@ public:
   }
 
   /* Process twice and wait 10 ms inbetween */
-  static void processEventsExtended();
+  static void processEventsExtended(unsigned long milliseconds = 10L);
 
   static QString generalErrorMessage();
 

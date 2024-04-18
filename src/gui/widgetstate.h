@@ -111,7 +111,22 @@ public:
    * @param size if true save size of QMainWindow widgets
    * @param state if true save maximized state of QMainWindow widgets
    */
-  void setMainWindowsRestoreOptions(bool position, bool size, bool state);
+  void setMainWindowOptions(bool position, bool size, bool state)
+  {
+    restoreMainWindowPos = position;
+    restoreMainWindowSize = size;
+    restoreMainWindowState = state;
+  }
+
+  /*
+   * @param position if true save position of QMainWindow widgets
+   * @param size if true save size of QMainWindow widgets
+   */
+  void setDialogOptions(bool position, bool size)
+  {
+    restoreDialogPos = position;
+    restoreDialogSize = size;
+  }
 
   const QString& getKeyPrefix() const
   {
@@ -135,7 +150,8 @@ private:
 
   QString keyPrefix;
   bool visibility = true, block = false;
-  bool positionRestoreMainWindow = true, sizeRestoreMainWindow = true, stateRestoreMainWindow = true;
+  bool restoreMainWindowPos = true, restoreMainWindowSize = true, restoreMainWindowState = true;
+  bool restoreDialogPos = false, restoreDialogSize = true;
 };
 
 } // namespace gui

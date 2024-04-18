@@ -171,7 +171,10 @@ void WidgetState::save(const QObject *widget) const
       saveWidget(settings, mainWindow, mainWindow->saveState());
     }
     else if(const QDialog *dialog = dynamic_cast<const QDialog *>(widget))
-      settings.setValueVar(keyPrefix % "_" % dialog->objectName() % "_size", dialog->size());
+    {
+      settings.setValueVar(keyPrefix % "_" % dialog->objectName() % "_size", dialog->geometry().size());
+      settings.setValueVar(keyPrefix % "_" % dialog->objectName() % "_pos", dialog->geometry().topLeft());
+    }
     else if(const QSplitter *splitter = dynamic_cast<const QSplitter *>(widget))
       saveWidget(settings, splitter, splitter->saveState());
     else if(const QStatusBar *statusBar = dynamic_cast<const QStatusBar *>(widget))
@@ -389,37 +392,43 @@ void WidgetState::restore(QObject *widget) const
     }
     else if(QMainWindow *mainWindow = dynamic_cast<QMainWindow *>(widget))
     {
-      QVariant v = loadWidget(settings, widget);
+      QVariant v = loadWidget(settings, mainWindow);
 
       if(v.isValid())
       {
         mainWindow->restoreState(v.toByteArray());
 
-        if(positionRestoreMainWindow)
+        if(restoreMainWindowPos)
         {
           QString key = keyPrefix % "_" % mainWindow->objectName() % "_pos";
           if(settings.contains(key))
             mainWindow->move(settings.valueVar(key, mainWindow->pos()).toPoint());
         }
 
-        if(sizeRestoreMainWindow)
+        if(restoreMainWindowSize)
         {
           QString key = keyPrefix % "_" % mainWindow->objectName() % "_size";
           if(settings.contains(key))
             mainWindow->resize(settings.valueVar(key, mainWindow->sizeHint()).toSize());
         }
 
-        if(stateRestoreMainWindow)
+        if(restoreMainWindowState)
           if(settings.valueVar(keyPrefix % "_" % mainWindow->objectName() % "_maximized", false).toBool())
             mainWindow->setWindowState(mainWindow->windowState() | Qt::WindowMaximized);
       }
     }
     else if(QDialog *dialog = dynamic_cast<QDialog *>(widget))
     {
-      // dlg->move(s.valueVar(keyPrefix % "_" % dlg->objectName() % "_pos", dlg->pos()).toPoint());
-      QString key = keyPrefix % "_" % dialog->objectName() % "_size";
-      if(settings.contains(key))
-        dialog->resize(settings.valueVar(key, dialog->sizeHint()).toSize());
+      if(restoreDialogSize || restoreDialogPos)
+      {
+        QString keyPos = keyPrefix % "_" % dialog->objectName() % "_pos";
+        QString keySize = keyPrefix % "_" % dialog->objectName() % "_size";
+
+        QPoint pos = restoreDialogPos ? settings.valueVar(keyPos, dialog->geometry().topLeft()).toPoint() : dialog->geometry().topLeft();
+        QSize size = restoreDialogSize ? settings.valueVar(keySize, dialog->geometry().size()).toSize() : dialog->geometry().size();
+
+        dialog->setGeometry(QRect(pos, size));
+      }
     }
     else if(QSplitter *splitter = dynamic_cast<QSplitter *>(widget))
     {
@@ -492,13 +501,6 @@ void WidgetState::syncSettings()
   Settings::syncSettings();
 }
 
-void WidgetState::setMainWindowsRestoreOptions(bool position, bool size, bool state)
-{
-  positionRestoreMainWindow = position;
-  sizeRestoreMainWindow = size;
-  stateRestoreMainWindow = state;
-}
-
 void WidgetState::save(const QList<const QObject *>& widgets) const
 {
   for(const QObject *w : widgets)
@@ -541,7 +543,7 @@ bool WidgetState::containsWidget(Settings& settings, const QObject *object, cons
   {
     if(dynamic_cast<const QDialog *>(object) != nullptr)
       // Need to check for size since dialogs are stored using only this key
-      return settings.contains(keyPrefix % "_" % name % "_size");
+      return settings.contains(keyPrefix % "_" % name % "_size") || settings.contains(keyPrefix % "_" % name % "_pos");
     else
       return settings.contains(keyPrefix % "_" % name);
   }

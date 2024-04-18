@@ -328,10 +328,10 @@ QString Application::getEmailHtml()
   return mailStr;
 }
 
-void Application::processEventsExtended()
+void Application::processEventsExtended(unsigned long milliseconds)
 {
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-  QThread::msleep(10);
+  QThread::msleep(milliseconds);
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
