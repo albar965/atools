@@ -427,7 +427,12 @@ void WidgetState::restore(QObject *widget) const
         QPoint pos = restoreDialogPos ? settings.valueVar(keyPos, dialog->geometry().topLeft()).toPoint() : dialog->geometry().topLeft();
         QSize size = restoreDialogSize ? settings.valueVar(keySize, dialog->geometry().size()).toSize() : dialog->geometry().size();
 
-        dialog->setGeometry(QRect(pos, size));
+        if(!pos.isNull() && !size.isNull())
+          dialog->setGeometry(QRect(pos, size));
+        else if(!pos.isNull())
+          dialog->move(pos);
+        else if(!size.isNull())
+          dialog->resize(size);
       }
     }
     else if(QSplitter *splitter = dynamic_cast<QSplitter *>(widget))
