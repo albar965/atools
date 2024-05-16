@@ -118,7 +118,7 @@ bool SimConnectData::read(QIODevice *ioDevice)
     quint32 minSinceEpoch;
     in >> lonx >> laty >> altitude >> minSinceEpoch;
 
-    Metar metar(ident, atools::geo::Pos(lonx, laty, altitude), QDateTime::fromMSecsSinceEpoch(minSinceEpoch * 1000), QString());
+    Metar metar(ident, atools::geo::Pos(lonx, laty, altitude), QDateTime::fromMSecsSinceEpoch(minSinceEpoch * 1000, Qt::UTC), QString());
     // Do not parse here - only METAR strings are transferred
 
     readLongString(in, ident);

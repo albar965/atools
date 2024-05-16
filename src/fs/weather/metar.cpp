@@ -28,7 +28,7 @@ namespace weather {
 const Metar Metar::EMPTY;
 
 Metar::Metar(const QString& requestIdentParam, const geo::Pos& posParam, const MetarPtrVector& metars)
-  :  requestIdent(requestIdentParam), requestPos(posParam), timestamp(QDateTime::currentDateTimeUtc())
+  : requestIdent(requestIdentParam), requestPos(posParam), timestamp(QDateTime::currentDateTimeUtc())
 {
   if(!metars.isEmpty())
   {
@@ -90,12 +90,9 @@ void Metar::clearAll()
 
 void Metar::cleanFsxP3dAll()
 {
-  if(station.isFsxP3dFormat())
-    station.setMetar(cleanMetar(station.getMetarString()));
-  if(interpolated.isFsxP3dFormat())
-    interpolated.setMetar(cleanMetar(interpolated.getMetarString()));
-  if(nearest.isFsxP3dFormat())
-    nearest.setMetar(cleanMetar(nearest.getMetarString()));
+  station.setMetar(cleanMetar(station.getMetarString()));
+  interpolated.setMetar(cleanMetar(interpolated.getMetarString()));
+  nearest.setMetar(cleanMetar(nearest.getMetarString()));
 }
 
 const MetarParser& Metar::getMetarParser(MetarType type) const

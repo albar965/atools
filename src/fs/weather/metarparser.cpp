@@ -55,6 +55,7 @@
 
 #include <QDateTime>
 #include <QStringBuilder>
+#include <QTimeZone>
 
 // #define QT_NO_CAST_FROM_BYTEARRAY
 // #define QT_NO_CAST_TO_ASCII
@@ -708,13 +709,6 @@ void MetarParser::parse()
   _m = nullptr;
 
   parsed = true;
-}
-
-QDateTime MetarParser::extractDateTime(const QString& metarString)
-{
-  MetarParser parser(metarString);
-  parser.parse();
-  return parser.getTimestamp();
 }
 
 void MetarParser::postProcessCloudCoverage()
@@ -2135,7 +2129,7 @@ void MetarVisibility::adjustDistance()
 
 QDateTime atools::fs::weather::MetarParser::getTimestamp() const
 {
-  return QDateTime(QDate(getYear(), getMonth(), getDay()), QTime(getHour(), getMinute()));
+  return QDateTime(QDate(getYear(), getMonth(), getDay()), QTime(getHour(), getMinute()), QTimeZone::utc());
 }
 
 } // namespace weather

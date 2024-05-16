@@ -359,8 +359,6 @@ public:
   static atools::fs::weather::MetarParser merge(const atools::fs::weather::MetarParserVector& metars,
                                                 const QVector<float>& distancesMeter);
 
-  static QDateTime extractDateTime(const QString& metarString);
-
   enum FlightRules
   {
     UNKNOWN = -1,

@@ -48,13 +48,13 @@ public:
 
   /* METAR using given time */
   Metar(const QString& requestIdentParam, const atools::geo::Pos& posParam, const QDateTime& timestampParam, const QString& metarString)
-    :  requestIdent(requestIdentParam), requestPos(posParam), timestamp(timestampParam), station(metarString)
+    : requestIdent(requestIdentParam), requestPos(posParam), timestamp(timestampParam), station(metarString)
   {
   }
 
   /* METAR using current time */
   Metar(const QString& requestIdentParam, const atools::geo::Pos& posParam, const QString& metarString = QString())
-    :  requestIdent(requestIdentParam), requestPos(posParam), timestamp(QDateTime::currentDateTimeUtc()), station(metarString)
+    : requestIdent(requestIdentParam), requestPos(posParam), timestamp(QDateTime::currentDateTimeUtc()), station(metarString)
   {
 
   }
