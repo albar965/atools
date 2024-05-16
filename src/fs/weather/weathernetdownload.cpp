@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
   metarIndex->read(stream, downloader->getUrl(), false /* merge */);
 
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << metarIndex->size()
+    qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << metarIndex->numStationMetars()
              << "metars from" << downloader->getUrl();
 
   if(metarIndex->isEmpty())

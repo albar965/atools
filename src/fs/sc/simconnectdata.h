@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
 #ifndef ATOOLS_FS_SIMCONNECTDATA_H
 #define ATOOLS_FS_SIMCONNECTDATA_H
 
-#include "geo/pos.h"
-#include "fs/weather/weathertypes.h"
 #include "fs/sc/simconnectuseraircraft.h"
+#include "fs/weather/metar.h"
 
 #include <QString>
 #include <QDateTime>
@@ -125,14 +124,9 @@ public:
   atools::fs::sc::SimConnectAircraft *getAiAircraftById(int id);
   const atools::fs::sc::SimConnectAircraft *getAiAircraftConstById(int id) const;
 
-  const QVector<atools::fs::weather::MetarResult>& getMetars() const
+  const atools::fs::weather::MetarVector& getMetars() const
   {
-    return metarResults;
-  }
-
-  void setMetars(const QVector<atools::fs::weather::MetarResult>& value)
-  {
-    metarResults = value;
+    return metars;
   }
 
   /* Empty weather replies or metar replys. Aircraft is not valid. */
@@ -170,7 +164,7 @@ private:
   // Maps objectId to index in vector aiAircraft - not transferred
   QHash<int, int> aiAircraftIndex;
 
-  QVector<atools::fs::weather::MetarResult> metarResults;
+  atools::fs::weather::MetarVector metars;
 };
 
 const static atools::fs::sc::SimConnectData EMPTY_SIMCONNECT_DATA;

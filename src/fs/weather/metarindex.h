@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,17 +22,20 @@
 
 class QTextStream;
 
-namespace atools {
+class QDateTime;
 
+namespace atools {
 namespace geo {
+class Pos;
 template<typename TYPE>
 class SpatialIndex;
 }
+
 namespace fs {
 namespace weather {
 
-struct MetarResult;
-struct MetarData;
+class PosIndex;
+class Metar;
 
 /*
  * Reads, caches and indexes (by position) METAR reports in NOAA style as also used by X-Plane.
@@ -67,29 +70,58 @@ public:
    * Older of duplicates are ignored/removed.
    * Returns number of METARs read. */
   int read(QTextStream& stream, const QString& fileName, bool merge);
+  int read(const QString& filename, bool merge);
 
   /* Clears all lists */
   void clear();
+  void clearCache();
 
   /* true if nothing was read */
   bool isEmpty() const;
 
   /* Number of unique airport idents in index */
-  int size() const;
+  int numStationMetars() const;
 
-  /* Get METAR information for station or nearest.
-   * Also keeps position and ident of original request.*/
-  atools::fs::weather::MetarResult getMetar(const QString& station, const atools::geo::Pos& pos);
+  /* Get METAR information for station, nearest or interpolated.
+   * - Station will be saved as request ident if given. Only interpolated and/or nearest are returned if station is not given.
+   * - Nearest is returned if no station can be found.
+   * - Interpolated is returned if no station found and nearest is not close to pos.
+   * Position and ident of original request are kept.*/
+  const Metar& getMetar(const QString& station, atools::geo::Pos pos);
 
-  /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
+  /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest if no position is given. */
   void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
   {
     fetchAirportCoords = value;
   }
 
+  /* Maximum number of nearest airports fetched for interpolation */
+  void setNumInterpolation(int value)
+  {
+    numInterpolation = value;
+  }
+
+  /* Maximum distance for nearest airports fetched for interpolation */
+  void setMaxDistanceInterpolationNm(float value)
+  {
+    maxDistanceInterpolationNm = value;
+  }
+
+  /* Maximum number of interpolated METARs in cache */
+  void setMaxInterpolatedCacheSize(int value)
+  {
+    maxInterpolatedCacheSize = value;
+  }
+
+  /* Maximum distance to interpolated cache to use it */
+  void setMaxDistanceToleranceMeter(float value)
+  {
+    maxDistanceToleranceMeter = value;
+  }
+
 private:
   /* Get a METAR string. Empty if not available */
-  MetarData metarData(const QString& ident);
+  const atools::fs::weather::Metar& fetchMetar(const QString& ident) const;
 
   /* Read NOAA or XPLANE format */
   int readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bool merge);
@@ -106,17 +138,23 @@ private:
   void updateIndex();
 
   /* Update or insert a METAR entry */
-  void updateOrInsert(const QString& metar, const QString& ident, const QDateTime& lastTimestamp);
+  void updateOrInsert(const QString& metarString, const QString& ident, const QDateTime& lastTimestamp);
 
   /* Callback to get airport coodinates by ICAO ident */
   std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
 
-  /* Map containing all found METARs airport idents mapped to the position in the spatial index */
+  /* Map containing all loaded METARs airport idents mapped to the position in metarVector */
   QHash<QString, int> identIndexMap;
 
-  /* Index containing all stations. Stations without valid position will be located at x/y/z = 0/0/0 and therfore
-   * not considered in the index. */
-  atools::geo::SpatialIndex<MetarData> *spatialIndex = nullptr;
+  /* Index containing all stations which could be resolved to a coordinate. */
+  atools::geo::SpatialIndex<PosIndex> *spatialIndex = nullptr, *spatialIndexInterpolated = nullptr;
+  QVector<atools::fs::weather::Metar> metarVector, metarInterpolatedVector;
+
+  int maxInterpolatedCacheSize = 40000;
+  float maxDistanceToleranceMeter = 100.f;
+
+  int numInterpolation = 8;
+  float maxDistanceInterpolationNm = 200.f;
 
   bool verbose = false;
   atools::fs::weather::MetarFormat format = atools::fs::weather::UNKNOWN;

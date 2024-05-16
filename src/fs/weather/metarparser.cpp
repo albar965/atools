@@ -38,15 +38,23 @@
 #  include <simgear_config.h>
 #endif
 
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic ignored "-Wunsafe-buffer-usage"
+#pragma GCC diagnostic ignored "-Wcomma"
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wimplicit-float-conversion"
+#pragma GCC diagnostic ignored "-Wimplicit-int-conversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#pragma GCC diagnostic ignored "-Wshorten-64-to-32"
+
 #include "geo/calculations.h"
 
 #include <string>
 #include <time.h>
 #include <cstring>
-#include <exception>
-#include <iostream>
+
 #include <QDateTime>
-#include <QDebug>
+#include <QStringBuilder>
 
 // #define QT_NO_CAST_FROM_BYTEARRAY
 // #define QT_NO_CAST_TO_ASCII
@@ -119,6 +127,9 @@ namespace atools {
 namespace fs {
 namespace weather {
 
+const MetarParser MetarParser::EMPTY;
+const QLatin1String MetarParser::NO_IDENT("XXXX");
+
 static QVector<Token> description;
 static QVector<Token> phenomenon;
 static QVector<Token> special;
@@ -131,219 +142,87 @@ static QStringList runway_friction;
 
 void initTranslateableTexts()
 {
-  description =
-  {
-    {
-      "SH", MetarParser::tr("Showers of")
-    },
-    {
-      "TS", MetarParser::tr("Thunderstorm with")
-    },
-    {
-      "BC", MetarParser::tr("Patches of")
-    },
-    {
-      "BL", MetarParser::tr("Blowing")
-    },
-    {
-      "DR", MetarParser::tr("Low drifting")
-    },
-    {
-      "FZ", MetarParser::tr("Freezing")
-    },
-    {
-      "MI", MetarParser::tr("Shallow")
-    },
-    {
-      "PR", MetarParser::tr("Partial")
-    },
-    {
-      QString(), QString()
-    }
+  description = {
+    {"SH", MetarParser::tr("Showers of")},
+    {"TS", MetarParser::tr("Thunderstorm with")},
+    {"BC", MetarParser::tr("Patches of")},
+    {"BL", MetarParser::tr("Blowing")},
+    {"DR", MetarParser::tr("Low drifting")},
+    {"FZ", MetarParser::tr("Freezing")},
+    {"MI", MetarParser::tr("Shallow")},
+    {"PR", MetarParser::tr("Partial")},
+    {QString(), QString()}
   };
 
-  phenomenon =
-  {
-    {
-      "DZ", MetarParser::tr("Drizzle")
-    },
-    {
-      "GR", MetarParser::tr("Hail")
-    },
-    {
-      "GS", MetarParser::tr("Small hail and/or snow pellets")
-    },
-    {
-      "IC", MetarParser::tr("Ice crystals")
-    },
-    {
-      "PE", MetarParser::tr("Ice pellets")
-    },
-    {
-      "RA", MetarParser::tr("Rain")
-    },
-    {
-      "SG", MetarParser::tr("Snow grains")
-    },
-    {
-      "SN", MetarParser::tr("Snow")
-    },
-    {
-      "UP", MetarParser::tr("Unknown precipitation")
-    },
-    {
-      "BR", MetarParser::tr("Mist")
-    },
-    {
-      "DU", MetarParser::tr("Widespread dust")
-    },
-    {
-      "FG", MetarParser::tr("Fog")
-    },
-    {
-      "FGBR", MetarParser::tr("Fog bank")
-    },
-    {
-      "FU", MetarParser::tr("Smoke")
-    },
-    {
-      "HZ", MetarParser::tr("Haze")
-    },
-    {
-      "PY", MetarParser::tr("Spray")
-    },
-    {
-      "SA", MetarParser::tr("Sand")
-    },
-    {
-      "VA", MetarParser::tr("Volcanic ash")
-    },
-    {
-      "DS", MetarParser::tr("Duststorm")
-    },
-    {
-      "FC", MetarParser::tr("Funnel cloud/tornado waterspout")
-    },
-    {
-      "PO", MetarParser::tr("Well-developed dust/sand whirls")
-    },
-    {
-      "SQ", MetarParser::tr("Squalls")
-    },
-    {
-      "SS", MetarParser::tr("Sandstorm")
-    },
-    {
-      "UP", MetarParser::tr("Unknown")
-    }, // ... due to failed automatic acquisition
-    {
-      QString(), QString()
-    }
+  phenomenon = {
+    {"DZ", MetarParser::tr("Drizzle")},
+    {"GR", MetarParser::tr("Hail")},
+    {"GS", MetarParser::tr("Small hail and/or snow pellets")},
+    {"IC", MetarParser::tr("Ice crystals")},
+    {"PE", MetarParser::tr("Ice pellets")},
+    {"RA", MetarParser::tr("Rain")},
+    {"SG", MetarParser::tr("Snow grains")},
+    {"SN", MetarParser::tr("Snow")},
+    {"UP", MetarParser::tr("Unknown precipitation")},
+    {"BR", MetarParser::tr("Mist")},
+    {"DU", MetarParser::tr("Widespread dust")},
+    {"FG", MetarParser::tr("Fog")},
+    {"FGBR", MetarParser::tr("Fog bank")},
+    {"FU", MetarParser::tr("Smoke")},
+    {"HZ", MetarParser::tr("Haze")},
+    {"PY", MetarParser::tr("Spray")},
+    {"SA", MetarParser::tr("Sand")},
+    {"VA", MetarParser::tr("Volcanic ash")},
+    {"DS", MetarParser::tr("Duststorm")},
+    {"FC", MetarParser::tr("Funnel cloud/tornado waterspout")},
+    {"PO", MetarParser::tr("Well-developed dust/sand whirls")},
+    {"SQ", MetarParser::tr("Squalls")},
+    {"SS", MetarParser::tr("Sandstorm")},
+    {"UP", MetarParser::tr("Unknown")}, // ... due to failed automatic acquisition
+    {QString(), QString()}
   };
 
-  special =
-  {
-    {
-      "NSW", MetarParser::tr("No significant weather")
-    },
-    {
-      QString(), QString()
-    }
+  special = {
+    {"NSW", MetarParser::tr("No significant weather")},
+    {QString(), QString()}
     /*	{ "VCSH", "showers in the vicinity" },
      *  { "VCTS", "thunderstorm in the vicinity" }, */
   };
 
-  colors =
-  {
-    {
-      "BLU", MetarParser::tr("Blue")
-    }, // 2500 ft,  8.0 km
-    {
-      "WHT", MetarParser::tr("White")
-    }, // 1500 ft,  5.0 km
-    {
-      "GRN", MetarParser::tr("Green")
-    }, // 700 ft,  3.7 km
-    {
-      "YLO", MetarParser::tr("Yellow")
-    }, // 300 ft,  1.6 km
-    {
-      "AMB", MetarParser::tr("Amber")
-    }, // 200 ft,  0.8 km
-    {
-      "RED", MetarParser::tr("Red")
-    },
-    {
-      QString(), QString()
-    }
+  colors = {
+    {"BLU", MetarParser::tr("Blue")}, // 2500 ft,  8.0 km
+    {"WHT", MetarParser::tr("White")}, // 1500 ft,  5.0 km
+    {"GRN", MetarParser::tr("Green")}, // 700 ft,  3.7 km
+    {"YLO", MetarParser::tr("Yellow")}, // 300 ft,  1.6 km
+    {"AMB", MetarParser::tr("Amber")}, // 200 ft,  0.8 km
+    {"RED", MetarParser::tr("Red")},
+    {QString(), QString()}
   };
 
-  cloud_types =
-  {
-    {
-      "AC", MetarParser::tr("altocumulus")
-    },
-    {
-      "ACC", MetarParser::tr("altocumulus castellanus")
-    },
-    {
-      "ACSL", MetarParser::tr("altocumulus standing lenticular")
-    },
-    {
-      "AS", MetarParser::tr("altostratus")
-    },
-    {
-      "CB", MetarParser::tr("cumulonimbus")
-    },
-    {
-      "CBMAM", MetarParser::tr("cumulonimbus mammatus")
-    },
-    {
-      "CC", MetarParser::tr("cirrocumulus")
-    },
-    {
-      "CCSL", MetarParser::tr("cirrocumulus standing lenticular")
-    },
-    {
-      "CI", MetarParser::tr("cirrus")
-    },
-    {
-      "CS", MetarParser::tr("cirrostratus")
-    },
-    {
-      "CU", MetarParser::tr("cumulus")
-    },
-    {
-      "CUFRA", MetarParser::tr("cumulus fractus")
-    },
-    {
-      "NS", MetarParser::tr("nimbostratus")
-    },
-    {
-      "SAC", MetarParser::tr("stratoaltocumulus")
-    }, // guessed
-    {
-      "SC", MetarParser::tr("stratocumulus")
-    },
-    {
-      "SCSL", MetarParser::tr("stratocumulus standing lenticular")
-    },
-    {
-      "ST", MetarParser::tr("stratus")
-    },
-    {
-      "STFRA", MetarParser::tr("stratus fractus")
-    },
-    {
-      "TCU", MetarParser::tr("towering cumulus")
-    },
-    {
-      QString(), QString()
-    }
+  cloud_types = {
+    {"AC", MetarParser::tr("altocumulus")},
+    {"ACC", MetarParser::tr("altocumulus castellanus")},
+    {"ACSL", MetarParser::tr("altocumulus standing lenticular")},
+    {"AS", MetarParser::tr("altostratus")},
+    {"CB", MetarParser::tr("cumulonimbus")},
+    {"CBMAM", MetarParser::tr("cumulonimbus mammatus")},
+    {"CC", MetarParser::tr("cirrocumulus")},
+    {"CCSL", MetarParser::tr("cirrocumulus standing lenticular")},
+    {"CI", MetarParser::tr("cirrus")},
+    {"CS", MetarParser::tr("cirrostratus")},
+    {"CU", MetarParser::tr("cumulus")},
+    {"CUFRA", MetarParser::tr("cumulus fractus")},
+    {"NS", MetarParser::tr("nimbostratus")},
+    {"SAC", MetarParser::tr("stratoaltocumulus")}, // guessed
+    {"SC", MetarParser::tr("stratocumulus")},
+    {"SCSL", MetarParser::tr("stratocumulus standing lenticular")},
+    {"ST", MetarParser::tr("stratus")},
+    {"STFRA", MetarParser::tr("stratus fractus")},
+    {"TCU", MetarParser::tr("towering cumulus")},
+    {QString(), QString()}
   };
 
-  runway_deposit = QStringList(
-        {
+  runway_deposit = QStringList({
           MetarParser::tr("clear and dry"),
           MetarParser::tr("damp"),
           MetarParser::tr("wet or puddles"),
@@ -357,8 +236,7 @@ void initTranslateableTexts()
           QString()
         });
 
-  runway_deposit_extent = QStringList(
-        {
+  runway_deposit_extent = QStringList({
           QString(),
           MetarParser::tr("1-10%"),
           MetarParser::tr("11-25%"),
@@ -372,8 +250,7 @@ void initTranslateableTexts()
           QString()
         });
 
-  runway_friction = QStringList(
-        {
+  runway_friction = QStringList({
           QString(),
           MetarParser::tr("poor braking action"),
           MetarParser::tr("poor/medium braking action"),
@@ -388,9 +265,337 @@ void initTranslateableTexts()
         });
 }
 
+void MetarParser::resetParsed()
+{
+  errors.clear();
+  groupCount = 0;
+  _year = _month = _day = _hour = _minute = _report_type = -1;
+
+  _wind_dir = _wind_range_from = -1;
+  _wind_speed = _gust_speed = INVALID_METAR_VALUE;
+
+  _wind_range_to = -1;
+  _temp = _dewp = _pressure = INVALID_METAR_VALUE;
+
+  parsed = _cavok = false;
+  _rain = _hail = _snow = 0;
+
+  _icao[0] = '\0';
+  _weather2.clear();
+  flightRules = UNKNOWN;
+  prevailingWindDir = -1;
+  prevailingWindSpeed = INVALID_METAR_VALUE;
+
+  _min_visibility = _max_visibility = _vert_visibility = MetarVisibility();
+  for(int i = 0; i < 8; i++)
+    _dir_visibility[i] = MetarVisibility();
+
+  _clouds.clear();
+  _runways.clear();
+  _weather.clear();
+  _remark.clear();
+  unusedData.clear();
+
+  maxCoverageCloud = MetarCloud();
+  lowestCoverageCloud = MetarCloud();
+
+  delete[] _data;
+  _data = nullptr;
+}
+
+const QString MetarParser::getMetarDisplayString() const
+{
+  if(incompleteInterpolation && metar.startsWith(NO_IDENT % ' '))
+    return metar.mid(5);
+  else
+    return metar;
+}
+
+// ===========================
+inline bool valid(float value)
+{
+  return value < INVALID_METAR_VALUE;
+}
+
+inline bool valid(double value)
+{
+  return value < INVALID_METAR_VALUE;
+}
+
+inline bool valid(int value)
+{
+  return value != -1;
+}
+
+inline double lambda(double distance)
+{
+  return distance > 0.000001f ? 1. / distance : 10000000.;
+}
+
+/* Merge values using Inverse distance weighting
+ * https://de.wikipedia.org/wiki/Inverse_Distanzwichtung (German) */
+template<typename TYPE>
+TYPE mergeField(const MetarParserVector& metars, const QVector<float>& distancesMeter, TYPE (*fieldAccessor)(const MetarParser& parser))
+{
+  // Calculate normalization factor by summarizing lambda for valid values
+  double normFactor = 0.;
+  for(int i = 0; i < metars.size(); i++)
+  {
+    if(valid(fieldAccessor(metars.at(i))))
+      normFactor += lambda(atools::geo::meterToNm(distancesMeter.at(i)));
+  }
+
+  // Inverse factor - avoid division by zero
+  normFactor = normFactor > 0.000001f ? 1. / normFactor : 10000000.;
+
+  // Summarize all values ======================
+  TYPE sum = 0;
+  for(int i = 0; i < metars.size(); i++)
+  {
+    // Lambda for value
+    double lamb = lambda(atools::geo::meterToNm(distancesMeter.at(i)));
+
+    // Get value from metar list by callback
+    TYPE type = fieldAccessor(metars.at(i));
+    if(valid(type))
+      sum += TYPE(type * lamb);
+  }
+  return TYPE(sum * normFactor);
+}
+
+atools::fs::weather::MetarParser MetarParser::merge(const atools::fs::weather::MetarParserVector& metars,
+                                                    const QVector<float>& distancesMeter)
+{
+  MetarParser retval;
+  retval.resetParsed();
+
+  if(!metars.isEmpty())
+  {
+    // Copy all values over from nearest
+    retval = metars.constFirst();
+    strcpy(retval._icao, NO_IDENT.latin1());
+
+    // Reset values where needed
+    retval._temp = retval._dewp = retval._pressure = retval._gust_speed = INVALID_METAR_VALUE;
+    retval._rain = retval._snow = -1;
+    retval._wind_dir = retval._wind_range_from = -1;
+    retval._wind_speed = retval._gust_speed = INVALID_METAR_VALUE;
+    retval._min_visibility = retval._max_visibility = retval._vert_visibility = MetarVisibility();
+    for(int i = 0; i < 8; i++)
+      retval._dir_visibility[i] = MetarVisibility();
+
+    // Collect ids and assigne latest timestamp to interpolated =================
+    QStringList ids;
+    for(int i = 0; i < metars.size(); i++)
+    {
+      const MetarParser& metar = metars.at(i);
+
+      // Date latest
+      if(!retval.getTimestamp().isValid() || retval.getTimestamp() < metar.getTimestamp())
+      {
+        retval._year = metar._year;
+        retval._month = metar._month;
+        retval._day = metar._day;
+        retval._hour = metar._hour;
+        retval._minute = metar._minute;
+      }
+
+      ids.append(metar.getId());
+    }
+
+    // Ignored values
+    // MetarVisibility _max_visibility
+    // int _wind_range_from;
+    // int _wind_range_to;
+    // MetarVisibility _vert_visibility;
+    // MetarVisibility _dir_visibility[8];
+
+    // Interpolate wind U/V components and convert them back to speed/degree =====================
+    double windU = mergeField<double>(metars, distancesMeter, [](const MetarParser& m)->double {
+            return atools::geo::windUComponent(m._wind_speed, m._wind_dir);
+          });
+    double windV = mergeField<double>(metars, distancesMeter, [](const MetarParser& m)->double {
+            return atools::geo::windVComponent(m._wind_speed, m._wind_dir);
+          });
+    retval._wind_speed = atools::geo::windSpeedFromUV(windU, windV);
+    retval._wind_dir = atools::roundToInt(atools::geo::windDirectionFromUV(windU, windV));
+    retval._wind_dir = atools::geo::normalizeRange(retval._wind_dir, 0, 360);
+
+    // Interpolate gusts as scalar and not vector =============
+    retval._gust_speed = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+            return m._gust_speed;
+          });
+
+    // Temperature and dewpoint ==============================================================
+    retval._temp = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+            return m._temp;
+          });
+
+    retval._dewp = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+            return m._dewp;
+          });
+
+    // Pressure =============================================================================
+    retval._pressure = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+            return m._pressure;
+          });
+
+    // Precipitation ============================================================================
+    retval._rain = atools::roundToInt(mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+            return static_cast<float>(m._rain);
+          }));
+
+    retval._snow = atools::roundToInt(mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+            return static_cast<float>(m._snow);
+          }));
+
+    // Visibility - only min and equals used ==================================================================
+    retval._min_visibility.visibilityMeter = atools::roundToInt(mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+            return m._min_visibility.visibilityMeter;
+          }));
+    retval._min_visibility.direction = -1;
+    retval._min_visibility.modifier = MetarVisibility::EQUALS;
+    retval._min_visibility.tendency = MetarVisibility::NONE;
+
+    retval._max_visibility.visibilityMeter = INVALID_METAR_VALUE;
+    retval._max_visibility.direction = -1;
+    retval._max_visibility.modifier = MetarVisibility::EQUALS;
+    retval._max_visibility.tendency = MetarVisibility::NONE;
+
+    // Interpolate lowest cloud and maximum cover altitude ===================================
+    retval.lowestCoverageCloud.altitudeMeter = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+            return m.lowestCoverageCloud.altitudeMeter;
+          });
+
+    retval.maxCoverageCloud.altitudeMeter = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+            return m.maxCoverageCloud.altitudeMeter;
+          });
+
+    // Interpolate lowest cloud and maximum coverage ===================================
+    retval.lowestCoverageCloud.coverage =
+      static_cast<MetarCloud::Coverage>(mergeField<int>(metars, distancesMeter, [](const MetarParser& m)->int {
+            return static_cast<int>(m.lowestCoverageCloud.coverage);
+          }));
+
+    retval.maxCoverageCloud.coverage =
+      static_cast<MetarCloud::Coverage>(mergeField<int>(metars, distancesMeter, [](const MetarParser& m)->int {
+            return static_cast<int>(m.maxCoverageCloud.coverage);
+          }));
+
+    // Calculate flight rules from cloud coverage above =====================================
+    retval.postProcessFlightRules();
+
+    // Calculate prevailing wind from wind set above ===========================
+    retval.postProcessPrevailingWind();
+
+    // Adjust visibility distance steps ======================================
+    retval._min_visibility.adjustDistance();
+
+    if(retval._wind_speed < 1.f)
+    {
+      retval._wind_speed = 0.f;
+      retval._wind_dir = -1;
+    }
+
+    // Do not interpolate clouds and add only coverage =========================
+    retval._clouds.clear();
+    if(retval.maxCoverageCloud.coverage != MetarCloud::COVERAGE_NIL)
+      retval._clouds.push_back(retval.maxCoverageCloud);
+
+    if(retval.lowestCoverageCloud.coverage != MetarCloud::COVERAGE_NIL)
+      retval._clouds.push_back(retval.lowestCoverageCloud);
+
+    // Sort by altitude
+    std::sort(retval._clouds.begin(), retval._clouds.end(), [](const MetarCloud& cloud1, const MetarCloud& cloud2) {
+            return cloud1.altitudeMeter < cloud2.altitudeMeter;
+          });
+
+    // Remove duplicates
+    retval._clouds.erase(std::unique(retval._clouds.begin(), retval._clouds.end(), [](const MetarCloud& cloud1, const MetarCloud& cloud2) {
+            return atools::almostEqual(cloud1.altitudeMeter, cloud2.altitudeMeter, 100.f);
+          }), retval._clouds.end());
+
+    // Build METAR string from content and assign it ===========================================================
+    // Caller has to use parse() to get valid values again
+    retval.setMetar(retval.buildMetarString(QStringList()));
+  }
+
+  // Indicate no cloud interpolation to caller
+  retval.incompleteInterpolation = true;
+  return retval;
+}
+
+QString MetarParser::buildMetarString(const QStringList& remarks) const
+{
+  QStringList metarStr;
+  // KSFO 061656Z 19004KT 9SM SCT100 OVC200 08/03 A3013
+
+  // Airport ====================================
+  metarStr.append(getId());
+
+  // Time ====================================
+  metarStr.append(QString("%1%2%3Z").arg(_day, 2, 10, QChar('0')).arg(_hour, 2, 10, QChar('0')).arg(_minute, 2, 10, QChar('0')));
+
+  // Wind ====================================
+  if(_wind_dir != -1 && _wind_speed > 0.f && _wind_speed < INVALID_METAR_VALUE)
+    metarStr.append(QString("%1%2KT").arg(_wind_dir, 3, 10, QChar('0')).
+                    arg(atools::geo::meterPerSecToKnots(_wind_speed), 2, 'f', 0, QChar('0')));
+
+  // Visibility ====================================
+  if(_min_visibility.isDistanceValid())
+    metarStr.append(QString("%1").arg(_min_visibility.visibilityMeter, 4, 'f', 0, QChar('0')));
+
+  // Precipitation ====================================
+  metarStr.append(getIntensityStringShort(_rain, "RA"));
+  metarStr.append(getIntensityStringShort(_snow, "SN"));
+
+  // Clouds ==========================================
+  for(const MetarCloud& cloud : _clouds)
+  {
+    QString coverageStr = cloud.getCoverageStringShort();
+
+    if(!coverageStr.isEmpty())
+      metarStr.append(coverageStr + QString("%1").arg(atools::geo::meterToFeet(cloud.altitudeMeter) / 100.f, 3, 'f', 0, QChar('0')));
+  }
+
+  // Temperature ====================================
+  if(_temp < INVALID_METAR_VALUE && _dewp < INVALID_METAR_VALUE)
+    metarStr.append(QString("%1%2/%3%4").
+                    arg(_temp <= -0.5f ? "M" : QString()).arg(std::abs(_temp), 2, 'f', 0, QChar('0')).
+                    arg(_dewp <= -0.5f ? "M" : QString()).arg(std::abs(_dewp), 2, 'f', 0, QChar('0')));
+
+  // Pressure =============================================
+  if(_pressure > 0.f && _pressure < INVALID_METAR_VALUE)
+    metarStr.append(QString("Q%1").arg(getPressureMbar(), 4, 'f', 0, QChar('0')));
+
+  metarStr.append(remarks);
+
+  metarStr.removeAll(QString());
+  return metarStr.join(' ');
+}
+
+QString MetarParser::getIntensityStringShort(int intensityValue, const QString& weatherPhenomenon) const
+{
+  switch(static_cast<Intensity>(intensityValue))
+  {
+    case NIL:
+      break;
+
+    case LIGHT:
+      return "-" + weatherPhenomenon;
+
+    case MODERATE:
+      return weatherPhenomenon;
+
+    case HEAVY:
+      return "+" + weatherPhenomenon;
+  }
+  return QString();
+}
+
 /**
- * The constructor takes a Metar string
- * The constructor throws sg_io_exceptions on failure. The "METAR"
+ * Takes a Metar string
+ * The "METAR"
  * keyword has no effect (apart from incrementing the group counter
  * @a grpcount) and can be left away. A keyword "SPECI" is
  * likewise accepted.
@@ -405,19 +610,16 @@ void initTranslateableTexts()
  *
  * @endcode
  */
-MetarParser::MetarParser(const QString& metar) :
-  _grpcount(0), _x_proxy(false), _year(-1), _month(-1), _day(-1), _hour(-1), _minute(-1), _report_type(-1),
-  _wind_dir(-1), _wind_speed(INVALID_METAR_VALUE), _gust_speed(INVALID_METAR_VALUE), _wind_range_from(-1),
-  _wind_range_to(-1), _temp(INVALID_METAR_VALUE), _dewp(INVALID_METAR_VALUE), _pressure(INVALID_METAR_VALUE),
-  _rain(false), _hail(false), _snow(false), _cavok(false)
+void MetarParser::parse()
 {
+  resetParsed();
+
   if(metar.isEmpty())
     return;
 
   QByteArray utf8 = metar.toUtf8();
   _data = new char[utf8.size() + 2]; // make room for " \0"
   strcpy(_data, utf8.constData());
-  _url = _data;
 
   normalizeData();
 
@@ -439,7 +641,8 @@ MetarParser::MetarParser(const QString& metar) :
   {
     delete[] _data;
     _data = nullptr;
-    throw std::runtime_error(tr("metar data bogus").toStdString());
+    errors.append(tr("METAR \"%1\" has errors.").arg(metar));
+    return;
   }
   scanModifier();
 
@@ -479,14 +682,13 @@ MetarParser::MetarParser(const QString& metar) :
   scanRemainder();
   scanRemark();
 
-  if(_grpcount < 4)
+  if(groupCount < 4)
   {
     delete[] _data;
     _data = nullptr;
-    throw std::runtime_error(tr("metar data incomplete ").toStdString());
+    errors.append(tr("METAR \"%1\" is incomplete.").arg(metar));
+    return;
   }
-
-  _url = "";
 
   if(correctDate)
   {
@@ -505,64 +707,44 @@ MetarParser::MetarParser(const QString& metar) :
   unusedData = _m;
   _m = nullptr;
 
-  valid = true;
+  parsed = true;
 }
 
-/**
- * Clears lists and maps to discourage access after destruction.
- */
-MetarParser::~MetarParser()
+QDateTime MetarParser::extractDateTime(const QString& metarString)
 {
-  _clouds.clear();
-  _runways.clear();
-  _weather.clear();
-  delete[] _data;
+  MetarParser parser(metarString);
+  parser.parse();
+  return parser.getTimestamp();
 }
 
-QDateTime MetarParser::extractDateTime(const QString& metar)
+void MetarParser::postProcessCloudCoverage()
 {
-  try
-  {
-    return MetarParser(metar).getDateTime();
-  }
-  catch(const std::exception& e)
-  {
-    qWarning() << "Caught exception parsing metar " << metar << ":" << e.what();
-  }
-  return QDateTime();
-}
-
-void MetarParser::postProcess()
-{
-  QList<MetarCloud> clouds = getClouds();
+  const QList<MetarCloud> clouds = getClouds();
 
   // The lowest "BKN" or "OVC" layer specifies the cloud ceiling.
-  float minAltitudeMeter = INVALID_METAR_VALUE;
   float lowestAltitudeMeter = INVALID_METAR_VALUE;
 
   // Calculate lowest and maximum coverage
-  maxCoverage = MetarCloud::COVERAGE_CLEAR;
-  lowestCoverage = MetarCloud::COVERAGE_CLEAR;
+  maxCoverageCloud = lowestCoverageCloud = MetarCloud(MetarCloud::COVERAGE_CLEAR, 0.f);
   for(const MetarCloud& cloud : clouds)
   {
     MetarCloud::Coverage coverage = cloud.getCoverage();
-    if((coverage == MetarCloud::COVERAGE_BROKEN || coverage == MetarCloud::COVERAGE_OVERCAST) &&
-       cloud.getAltitudeMeter() < minAltitudeMeter)
-      // Only broken and overcast counts for flight rule calculation
-      minAltitudeMeter = cloud.getAltitudeMeter();
 
-    if(coverage > maxCoverage)
-      maxCoverage = coverage;
+    if(coverage > maxCoverageCloud.coverage)
+      maxCoverageCloud = cloud;
 
     if(cloud.getAltitudeMeter() < lowestAltitudeMeter)
     {
       lowestAltitudeMeter = cloud.getAltitudeMeter();
-      lowestCoverage = cloud.coverage;
+      lowestCoverageCloud = cloud;
     }
   }
+}
 
+void MetarParser::postProcessFlightRules()
+{
   // Calculate the flight rules depending on ceiling and visiblity
-  float ceilingFt = atools::geo::meterToFeet(minAltitudeMeter);
+  float ceilingFt = atools::geo::meterToFeet(lowestCloudBase());
   float visibilityMi = atools::geo::meterToMi(getMinVisibility().getVisibilityMeter());
 
   if(visibilityMi < 1.f || ceilingFt < 500.f)
@@ -573,7 +755,10 @@ void MetarParser::postProcess()
     flightRules = MVFR;
   else
     flightRules = VFR;
+}
 
+void MetarParser::postProcessPrevailingWind()
+{
   if(getWindDir() >= 0)
     prevailingWindDir = getWindDir();
   else if(getWindRangeFrom() != -1 && getWindRangeTo() != -1)
@@ -584,10 +769,33 @@ void MetarParser::postProcess()
       to = getWindRangeTo();
     else
       to = getWindRangeTo() + 360;
-    prevailingWindDir = atools::geo::normalizeCourse(from + (to - from) / 2);
+    prevailingWindDir = atools::roundToInt(atools::geo::normalizeCourse(from + (to - from) / 2.));
   }
 
   prevailingWindSpeed = getWindSpeedMeterPerSec();
+}
+
+void MetarParser::postProcess()
+{
+  postProcessCloudCoverage();
+  postProcessFlightRules();
+  postProcessPrevailingWind();
+}
+
+float MetarParser::lowestCloudBase() const
+{
+  float minAltitudeMeter = INVALID_METAR_VALUE;
+
+  // Calculate lowest and maximum coverage
+  for(const MetarCloud& cloud : getClouds())
+  {
+    // The lowest "BKN" or "OVC" layer specifies the cloud ceiling.
+    MetarCloud::Coverage coverage = cloud.getCoverage();
+    if((coverage == MetarCloud::COVERAGE_BROKEN || coverage == MetarCloud::COVERAGE_OVERCAST) &&
+       cloud.getAltitudeMeter() < minAltitudeMeter)
+      minAltitudeMeter = cloud.getAltitudeMeter();
+  }
+  return minAltitudeMeter;
 }
 
 QString MetarParser::getReportTypeString() const
@@ -651,7 +859,7 @@ void MetarParser::useCurrentDate()
 {
   struct tm now;
 
-  time_t now_sec = time(0);
+  time_t now_sec = time(nullptr);
 #ifdef _WIN32
   now = *gmtime(&now_sec);
 #else
@@ -737,7 +945,7 @@ bool MetarParser::scanType()
     return false;
 
   _m += 6;
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -759,7 +967,7 @@ bool MetarParser::scanId()
   strncpy(_icao, _m, 4);
   _icao[4] = '\0';
   _m = m;
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -787,7 +995,7 @@ bool MetarParser::scanDate()
   _hour = hour;
   _minute = minute;
   _m = m;
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -817,7 +1025,7 @@ bool MetarParser::scanModifier()
 
   _report_type = type;
   _m = m;
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -871,7 +1079,7 @@ bool MetarParser::scanWind()
     _wind_speed = static_cast<float>(speed * factor);
   if(gust < INVALID_METAR_VALUE)
     _gust_speed = static_cast<float>(gust * factor);
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -881,7 +1089,7 @@ bool MetarParser::scanVariability()
   if(!strncmp(_m, "///V/// ", 8)) // spec compliant?
   {
     _m += 8;
-    _grpcount++;
+    groupCount++;
     return true;
   }
 
@@ -902,7 +1110,7 @@ bool MetarParser::scanVariability()
   _m = m;
   _wind_range_from = from;
   _wind_range_to = to;
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -912,14 +1120,14 @@ bool MetarParser::scanVisibility()
   if(!strncmp(_m, "//// ", 5)) // spec compliant?
   {
     _m += 5;
-    _grpcount++;
+    groupCount++;
     return true;
   }
 
   if(!strncmp(_m, "////SM ", 7)) // spec compliant?
   {
     _m += 7;
-    _grpcount++;
+    groupCount++;
     return true;
   }
 
@@ -1016,16 +1224,16 @@ bool MetarParser::scanVisibility()
   MetarVisibility *v;
   if(dir != -1)
     v = &_dir_visibility[dir / 45];
-  else if(!(_min_visibility.distance < INVALID_METAR_VALUE))
+  else if(!(_min_visibility.visibilityMeter < INVALID_METAR_VALUE))
     v = &_min_visibility;
   else
     v = &_max_visibility;
 
-  v->distance = static_cast<float>(distance);
-  v->modifier = modifier;
+  v->visibilityMeter = static_cast<float>(distance);
+  v->modifier = static_cast<MetarVisibility::Modifier>(modifier);
   v->direction = dir;
   _m = m;
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -1079,8 +1287,8 @@ bool MetarParser::scanRwyVisRange()
     to = int(to * SG_FEET_TO_METER);
     m += 2;
   }
-  r.minVisibility.distance = from;
-  r.maxVisibility.distance = to;
+  r.minVisibility.visibilityMeter = from;
+  r.maxVisibility.visibilityMeter = to;
 
   if(*m == '/') // this is not in the spec!
     m++;
@@ -1098,7 +1306,7 @@ bool MetarParser::scanRwyVisRange()
 
   _runways[id].minVisibility = r.minVisibility;
   _runways[id].maxVisibility = r.maxVisibility;
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -1112,7 +1320,7 @@ bool MetarParser::scanWeather()
   if(!strncmp(m, "NOSIG ", 6))
   {
     _m += 6;
-    _grpcount++;
+    groupCount++;
     return false;
   }
 
@@ -1121,7 +1329,7 @@ bool MetarParser::scanWeather()
   if(!strncmp(m, "// ", 3))
   {
     _m += 3;
-    _grpcount++;
+    groupCount++;
     return false;
   }
 
@@ -1184,7 +1392,7 @@ bool MetarParser::scanWeather()
   {
     _weather2.push_back(w);
   }
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -1259,7 +1467,7 @@ bool MetarParser::scanSkyCondition()
      || !strncmp(m, "SKC", i = 3) // sky clear
      || !strncmp(m, "NCD", i = 3) // nil cloud detected
      || !strncmp(m, "NSC", i = 3) // no significant clouds
-     || !strncmp(m, "NOSIG", i = 3) // no significant clouds
+     || !strncmp(m, "NOSIG", i = 5) // no significant clouds
      || !strncmp(m, "CAVOK 9999", i = 10) // ceiling and visibility OK 9999 sometimes given too
      || !strncmp(m, "CAVOK", i = 5)) // ceiling and visibility OK (implies 9999)
   {
@@ -1319,13 +1527,13 @@ bool MetarParser::scanSkyCondition()
     if(i == -1) // 'VV///'
       _vert_visibility.modifier = MetarVisibility::NOGO;
     else
-      _vert_visibility.distance = i * 100 * SG_FEET_TO_METER;
+      _vert_visibility.visibilityMeter = i * 100 * SG_FEET_TO_METER;
     _m = m;
     return true;
   }
 
   if(i != -1)
-    cl.altitude = i * 100 * SG_FEET_TO_METER;
+    cl.altitudeMeter = i * 100 * SG_FEET_TO_METER;
 
   const struct Token *a;
 
@@ -1345,7 +1553,7 @@ bool MetarParser::scanSkyCondition()
   _clouds.push_back(cl);
 
   _m = m;
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -1399,7 +1607,7 @@ bool MetarParser::scanTemperature()
   }
   _temp = temp;
   _m = m;
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -1492,15 +1700,22 @@ bool MetarParser::scanPressure()
   double factor;
   int press, i;
 
+  bool slp = false;
   if(*m == 'A')
     factor = SG_INHG_TO_PA / 100;
   else if(*m == 'Q')
     factor = 100;
+  // else if(strncmp(m, "SLP", 3))
+  // {
+  // factor = SG_INHG_TO_PA / 100;
+  // slp = true;
+  // }
   else
     return false;
 
-  m++;
-  if(!scanNumber(&m, &press, 2))
+  m += slp ? 3 : 1;
+
+  if(!scanNumber(&m, &press, slp ? 3 : 2))
     return false;
 
   press *= 100;
@@ -1517,7 +1732,7 @@ bool MetarParser::scanPressure()
     return false;
 
   _m = m;
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -1615,7 +1830,7 @@ bool MetarParser::scanRunwayReport()
   _runways[id].frictionString = r.frictionString;
   _runways[id].comment = r.comment;
   _m = m;
-  _grpcount++;
+  groupCount++;
   return true;
 }
 
@@ -1808,7 +2023,7 @@ const struct Token *MetarParser::scanToken(char **str, const QVector<Token>& lis
 
 void MetarCloud::set(float alt, Coverage cov)
 {
-  altitude = alt;
+  altitudeMeter = alt;
   if(cov != -1)
     coverage = cov;
 }
@@ -1839,9 +2054,28 @@ QString MetarCloud::getCoverageString(MetarCloud::Coverage cloudCoverage)
 
 }
 
-QString MetarCloud::getCoverageString() const
+QString MetarCloud::getCoverageStringShort(MetarCloud::Coverage cloudCoverage)
 {
-  return getCoverageString(coverage);
+  switch(cloudCoverage)
+  {
+    case atools::fs::weather::MetarCloud::COVERAGE_NIL:
+    case atools::fs::weather::MetarCloud::COVERAGE_CLEAR:
+      return QString();
+
+    case atools::fs::weather::MetarCloud::COVERAGE_FEW:
+      return tr("FEW");
+
+    case atools::fs::weather::MetarCloud::COVERAGE_SCATTERED:
+      return tr("SCT");
+
+    case atools::fs::weather::MetarCloud::COVERAGE_BROKEN:
+      return tr("BKN");
+
+    case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
+      return tr("OVC");
+  }
+  return QString();
+
 }
 
 MetarCloud::Coverage MetarCloud::getCoverage(const QString& coverage)
@@ -1864,17 +2098,6 @@ MetarCloud::Coverage MetarCloud::getCoverage(const QString& coverage)
   return COVERAGE_NIL;
 }
 
-void MetarVisibility::set(float dist, int dir, int mod, int tend)
-{
-  distance = dist;
-  if(dir != -1)
-    direction = dir;
-  if(mod != -1)
-    modifier = mod;
-  if(tend != 1)
-    tendency = tend;
-}
-
 QString MetarVisibility::getModifierString() const
 {
   Modifier mod = static_cast<Modifier>(modifier);
@@ -1895,7 +2118,22 @@ QString MetarVisibility::getModifierString() const
   return QString();
 }
 
-QDateTime atools::fs::weather::MetarParser::getDateTime() const
+void MetarVisibility::adjustDistance()
+{
+  if(visibilityMeter < INVALID_METAR_VALUE && visibilityMeter > 0.f)
+  {
+    if(visibilityMeter < 800.f)
+      visibilityMeter = atools::floorToNearest(visibilityMeter, 50.f);
+    else if(visibilityMeter < 5000.f)
+      visibilityMeter = atools::floorToNearest(visibilityMeter, 100.f);
+    else if(visibilityMeter < 10000.f)
+      visibilityMeter = atools::floorToNearest(visibilityMeter, 1000.f);
+    else
+      visibilityMeter = 9999.f;
+  }
+}
+
+QDateTime atools::fs::weather::MetarParser::getTimestamp() const
 {
   return QDateTime(QDate(getYear(), getMonth(), getDay()), QTime(getHour(), getMinute()));
 }

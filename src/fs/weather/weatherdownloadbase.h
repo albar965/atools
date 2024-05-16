@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,17 @@
 #include <QTimer>
 
 namespace atools {
+
+namespace geo {
+class Pos;
+}
 namespace util {
 class HttpDownloader;
 }
 namespace fs {
 namespace weather {
 
-struct MetarResult;
+class Metar;
 class MetarIndex;
 
 /*
@@ -53,7 +57,7 @@ public:
    *
    * Download and timer is triggered on first call.
    */
-  virtual atools::fs::weather::MetarResult getMetar(const QString& airportIcao, const atools::geo::Pos& pos);
+  virtual const atools::fs::weather::Metar& getMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /* Set download request URL */
   virtual void setRequestUrl(const QString& url);

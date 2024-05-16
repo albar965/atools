@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -116,11 +116,9 @@ public:
   /* Get all nearest objects or indexes from the vector fulfilling criteria.
    *  radiusMeter: Maximum distance from position. Measured using squared distance and therefore not accurate.
    */
-  void getRadius(QVector<T>& objects, const atools::geo::Pos& pos, float radiusMeter,
-                 const RadiusCallbackType& callback) const;
+  void getRadius(QVector<T>& objects, const atools::geo::Pos& pos, float radiusMeter, const RadiusCallbackType& callback) const;
 
-  void getRadiusIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, float radiusMaxMeter,
-                        const RadiusCallbackType& callback) const
+  void getRadiusIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, float radiusMaxMeter, const RadiusCallbackType& callback) const
   {
     p->pointsInRadius(indexes, pos, radiusMaxMeter, callback);
   }
@@ -185,8 +183,7 @@ void SpatialIndex<T>::getNearest(QVector<T>& objects, const Pos& pos, int number
 }
 
 template<typename T>
-void SpatialIndex<T>::getRadius(QVector<T>& objects, const Pos& pos, float radiusMaxMeter,
-                                const RadiusCallbackType& callback) const
+void SpatialIndex<T>::getRadius(QVector<T>& objects, const Pos& pos, float radiusMaxMeter, const RadiusCallbackType& callback) const
 {
   QVector<int> indexes;
   p->pointsInRadius(indexes, pos, radiusMaxMeter, callback);

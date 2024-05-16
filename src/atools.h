@@ -474,6 +474,13 @@ constexpr int ceilToInt(TYPE value)
   return static_cast<int>(std::ceil(value));
 }
 
+/* Round down to integer value */
+template<typename TYPE>
+constexpr int floorToInt(TYPE value)
+{
+  return static_cast<int>(std::floor(value));
+}
+
 /* Extract the first latin1 character from string. Return null if string is empty */
 inline char strToChar(const QString& str)
 {
@@ -524,11 +531,18 @@ inline TYPE roundToNearest(TYPE value, TYPE round)
   return round > 0. ? std::round(value / round) * round : value;
 }
 
-/* Round value to nearest multiple of round */
+/* Round value to nearest multiple of ceil up */
 template<typename TYPE>
 inline TYPE ceilToNearest(TYPE value, TYPE ceil)
 {
   return ceil > 0. ? std::ceil(value / ceil) * ceil : value;
+}
+
+/* Round value to nearest multiple of floor down */
+template<typename TYPE>
+inline TYPE floorToNearest(TYPE value, TYPE floor)
+{
+  return floor > 0. ? std::floor(value / floor) * floor : value;
 }
 
 /* To string with changing precision */

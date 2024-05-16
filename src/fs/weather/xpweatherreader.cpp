@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #include "fs/weather/xpweatherreader.h"
 
+#include "fs/weather/metar.h"
 #include "util/filesystemwatcher.h"
 #include "fs/weather/metarindex.h"
 #include "fs/util/fsutil.h"
@@ -24,6 +25,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QMap>
+#include <QDebug>
 
 namespace atools {
 namespace fs {
@@ -69,7 +71,7 @@ void XpWeatherReader::load()
   }
 }
 
-atools::fs::weather::MetarResult XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
+const atools::fs::weather::Metar& XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
   if(needsLoading())
     load();
@@ -217,7 +219,7 @@ void XpWeatherReader::createFsWatcher()
 void XpWeatherReader::debugDumpContainerSizes() const
 {
   qDebug() << Q_FUNC_INFO << "currentMetarFiles.size()" << currentMetarFiles.size();
-  qDebug() << Q_FUNC_INFO << "metarIndex.size()" << metarIndex->size();
+  qDebug() << Q_FUNC_INFO << "metarIndex.size()" << metarIndex->numStationMetars();
 }
 
 } // namespace weather

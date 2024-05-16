@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
 
 #include "fs/sc/simconnectdata.h"
 
+#include "fs/weather/metar.h"
 #include "geo/calculations.h"
 
 #include <QDebug>
 #include <QDataStream>
 #include <QIODevice>
 
-using atools::fs::weather::MetarResult;
+using atools::fs::weather::Metar;
 
 namespace atools {
 namespace fs {
@@ -105,27 +106,33 @@ bool SimConnectData::read(QIODevice *ioDevice)
     aiAircraft.append(ap);
   }
 
+  // Read METARs ==============================================
   quint16 numMetar = 0;
   in >> numMetar;
   for(quint16 i = 0; i < numMetar; i++)
   {
-
-    MetarResult result;
-    readString(in, result.requestIdent);
+    QString ident;
+    readString(in, ident);
 
     float lonx, laty, altitude;
     quint32 minSinceEpoch;
     in >> lonx >> laty >> altitude >> minSinceEpoch;
-    result.requestPos.setAltitude(altitude);
-    result.requestPos.setLonX(lonx);
-    result.requestPos.setLatY(laty);
-    result.timestamp = QDateTime::fromMSecsSinceEpoch(minSinceEpoch * 1000);
 
-    readLongString(in, result.metarForStation);
-    readLongString(in, result.metarForNearest);
-    readLongString(in, result.metarForInterpolated);
+    Metar metar(ident, atools::geo::Pos(lonx, laty, altitude), QDateTime::fromMSecsSinceEpoch(minSinceEpoch * 1000), QString());
+    // Do not parse here - only METAR strings are transferred
 
-    metarResults.append(result);
+    readLongString(in, ident);
+    metar.setMetarForStation(ident);
+
+    readLongString(in, ident);
+    metar.setMetarForNearest(ident);
+
+    readLongString(in, ident);
+    metar.setMetarForInterpolated(ident);
+
+    metar.setFsxP3dFormat();
+
+    metars.append(metar);
   }
 
   return true;
@@ -153,18 +160,19 @@ int SimConnectData::write(QIODevice *ioDevice)
   for(int i = 0; i < numAi; i++)
     aiAircraft.at(i).write(out);
 
-  qsizetype numMetar = std::min(static_cast<qsizetype>(65535), static_cast<qsizetype>(metarResults.size()));
+  // Write METARs ==============================================
+  qsizetype numMetar = std::min(static_cast<qsizetype>(65535), static_cast<qsizetype>(metars.size()));
   out << static_cast<quint16>(numMetar);
 
   for(int i = 0; i < numMetar; i++)
   {
-    const MetarResult& result = metarResults.at(i);
-    writeString(out, result.requestIdent);
-    out << result.requestPos.getLonX() << result.requestPos.getLatY() << result.requestPos.getAltitude()
-        << static_cast<quint32>(result.timestamp.toSecsSinceEpoch());
-    writeLongString(out, result.metarForStation);
-    writeLongString(out, result.metarForNearest);
-    writeLongString(out, result.metarForInterpolated);
+    const Metar& metar = metars.at(i);
+    writeString(out, metar.getRequestIdent());
+    out << metar.getRequestPos().getLonX() << metar.getRequestPos().getLatY() << metar.getRequestPos().getAltitude()
+        << static_cast<quint32>(metar.getTimestamp().toSecsSinceEpoch());
+    writeLongString(out, metar.getStationMetar());
+    writeLongString(out, metar.getNearestMetar());
+    writeLongString(out, metar.getInterpolatedMetar());
   }
 
   // Go back and update size

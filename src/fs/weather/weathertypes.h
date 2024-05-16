@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,21 @@
 #ifndef ATOOLS_FS_WEATHERTYPES_H
 #define ATOOLS_FS_WEATHERTYPES_H
 
-#include "geo/pos.h"
-
-#include <QDateTime>
+#include <QHash>
 
 namespace atools {
 namespace fs {
 namespace weather {
+
+/* type of METAR in class Metar */
+enum MetarType
+{
+  NONE, /* Not set */
+  BEST, /* Station, interpolated or nearest depending on availability */
+  STATION,
+  NEAREST,
+  INTERPOLATED
+};
 
 /* X-Plane types to read weather files */
 enum XpWeatherType
@@ -42,72 +50,6 @@ enum MetarFormat
   FLAT, /* Simple text of "ICAO METAR" strings */
   JSON /* IVAO JSON */
 };
-
-/*
- * Collects METAR information for station, nearest and interpolated values.
- * Also keeps position and ident of original request.
- */
-struct MetarResult
-{
-  QString requestIdent, metarForStation, metarForNearest, metarForInterpolated;
-  atools::geo::Pos requestPos;
-  QDateTime timestamp;
-
-  /* True if the origin is a simulator request. Currently only FSX/P3D. */
-  bool simulator = false;
-
-  QString getMetar(bool stationOnly)
-  {
-    if(stationOnly)
-      return metarForStation;
-    else
-    {
-      if(!metarForStation.isEmpty())
-        return metarForStation;
-      else if(!metarForInterpolated.isEmpty())
-        return metarForInterpolated;
-      else if(!metarForNearest.isEmpty())
-        return metarForNearest;
-    }
-
-    return QString();
-  }
-
-  void init(const QString& station, const atools::geo::Pos& pos)
-  {
-    requestIdent = station;
-    requestPos = pos;
-    timestamp = QDateTime::currentDateTimeUtc();
-  }
-
-  bool isValid() const
-  {
-    return !requestIdent.isEmpty();
-  }
-
-  bool isEmpty() const
-  {
-    return !isValid() ||
-           (metarForStation.isEmpty() && metarForNearest.isEmpty() && metarForInterpolated.isEmpty());
-  }
-
-  bool operator==(const atools::fs::weather::MetarResult& other)
-  {
-    return requestIdent == other.requestIdent &&
-           metarForStation == other.metarForStation &&
-           metarForNearest == other.metarForNearest &&
-           metarForInterpolated == other.metarForInterpolated &&
-           requestPos == other.requestPos;
-  }
-
-  bool operator!=(const atools::fs::weather::MetarResult& other)
-  {
-    return !operator==(other);
-  }
-
-};
-
-QDebug operator<<(QDebug out, const atools::fs::weather::MetarResult& record);
 
 /*
  * Test the weather server URL or file synchronously.

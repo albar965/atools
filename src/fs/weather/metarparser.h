@@ -55,7 +55,7 @@ class MetarVisibility
 
 public:
   MetarVisibility() :
-    distance(INVALID_METAR_VALUE), direction(-1), modifier(EQUALS), tendency(NONE)
+    visibilityMeter(INVALID_METAR_VALUE), direction(-1), modifier(EQUALS), tendency(NONE)
   {
   }
 
@@ -75,35 +75,41 @@ public:
     DECREASING
   };
 
-  void set(float dist, int dir = -1, int mod = -1, int tend = -1);
-
-  inline float getVisibilityMeter() const
+  float getVisibilityMeter() const
   {
-    return distance;
+    return visibilityMeter;
   }
 
-  inline int getDirection() const
+  int getDirection() const
   {
     return direction;
   }
 
-  inline int getModifier() const
+  Modifier getModifier() const
   {
     return modifier;
   }
 
   QString getModifierString() const;
 
-  inline int getTendency() const
+  Tendency getTendency() const
   {
     return tendency;
   }
 
+  bool isDistanceValid() const
+  {
+    return visibilityMeter < INVALID_METAR_VALUE;
+  }
+
+  /* Adjust distance according to METAR specs */
+  void adjustDistance();
+
 private:
-  float distance;
+  float visibilityMeter;
   int direction;
-  int modifier;
-  int tendency;
+  Modifier modifier;
+  Tendency tendency;
 };
 
 // ============================================================================
@@ -121,57 +127,57 @@ public:
   {
   }
 
-  inline int getDeposit() const
+  int getDeposit() const
   {
     return deposit;
   }
 
-  inline QString getDepositString() const
+  const QString& getDepositString() const
   {
     return depositString;
   }
 
-  inline float getExtent() const
+  float getExtent() const
   {
     return extent;
   }
 
-  inline QString getExtentString() const
+  const QString& getExtentString() const
   {
     return extentString;
   }
 
-  inline float getDepth() const
+  float getDepth() const
   {
     return depth;
   }
 
-  inline float getFriction() const
+  float getFriction() const
   {
     return friction;
   }
 
-  inline QString getFrictionString() const
+  const QString& getFrictionString() const
   {
     return frictionString;
   }
 
-  inline QString getComment() const
+  const QString& getComment() const
   {
     return comment;
   }
 
-  inline bool getWindShear() const
+  bool getWindShear() const
   {
     return windShear;
   }
 
-  inline const MetarVisibility& getMinVisibility() const
+  const MetarVisibility& getMinVisibility() const
   {
     return minVisibility;
   }
 
-  inline const MetarVisibility& getMaxVisibility() const
+  const MetarVisibility& getMaxVisibility() const
   {
     return maxVisibility;
   }
@@ -209,56 +215,151 @@ public:
     COVERAGE_OVERCAST = 4
   };
 
-  MetarCloud() :
-    coverage(COVERAGE_NIL), altitude(INVALID_METAR_VALUE)
+  MetarCloud()
+    : coverage(COVERAGE_NIL), altitudeMeter(INVALID_METAR_VALUE)
+  {
+  }
+
+  MetarCloud(atools::fs::weather::MetarCloud::Coverage coverageParam, float altitudeParam)
+    : coverage(coverageParam), altitudeMeter(altitudeParam)
   {
   }
 
   void set(float alt, Coverage cov = COVERAGE_NIL);
 
-  inline Coverage getCoverage() const
+  Coverage getCoverage() const
   {
     return coverage;
   }
 
   static QString getCoverageString(Coverage cloudCoverage);
-  QString getCoverageString() const;
+
+  QString getCoverageString() const
+  {
+    return getCoverageString(coverage);
+  }
+
+  static QString getCoverageStringShort(Coverage cloudCoverage);
+
+  QString getCoverageStringShort() const
+  {
+    return getCoverageStringShort(coverage);
+  }
 
   static Coverage getCoverage(const QString& coverage);
 
-  inline float getAltitudeMeter() const
+  float getAltitudeMeter() const
   {
-    return altitude;
+    return altitudeMeter;
   }
 
-  inline QString getTypeString() const
+  const QString& getTypeString() const
   {
     return type;
   }
 
-  inline QString getTypeLongString() const
+  const QString& getTypeLongString() const
   {
     return typeLong;
   }
 
 private:
   Coverage coverage; // quarters: 0 -> clear ... 4 -> overcast
-  float altitude; // 1000 m
+  float altitudeMeter; // 1000 m
   QString type; // CU
   QString typeLong; // cumulus
 };
 
 // ============================================================================
 // ============================================================================
+class MetarParser;
+typedef QVector<MetarParser> MetarParserVector;
+
 class MetarParser
 {
   Q_DECLARE_TR_FUNCTIONS(MetarParser)
 
 public:
-  explicit MetarParser(const QString& metar);
-  ~MetarParser();
+  MetarParser()
+  {
+  }
 
-  static QDateTime extractDateTime(const QString& metar);
+  /* Sets only metar but does not parse */
+  explicit MetarParser(const QString& metarParam)
+    : metar(metarParam)
+  {
+  }
+
+  /* Sets only metar but does not parse */
+  void setMetar(const QString& value)
+  {
+    if(metar != value)
+    {
+      resetParsed();
+      metar = value;
+    }
+  }
+
+  /* true if METAR was read successfully */
+  bool isParsed() const
+  {
+    return parsed;
+  }
+
+  bool hasMetarString() const
+  {
+    return !metar.isEmpty();
+  }
+
+  /* Read METAR string and fill all values in object. isParsed() returns true if successfully parsed. */
+  void parse();
+
+  /* Reset all but METAR string */
+  void resetParsed();
+
+  /* FSX/P3D format needs preparating before parsing can be done */
+  bool isFsxP3dFormat() const
+  {
+    return fsxP3dFormat;
+  }
+
+  void setFsxP3dFormat(bool value = true)
+  {
+    fsxP3dFormat = value;
+  }
+
+  /* METAR is a result of interpolation and contains no cloud information and others */
+  bool isIncompleteInterpolation() const
+  {
+    return incompleteInterpolation;
+  }
+
+  const QString& getMetarString() const
+  {
+    return metar;
+  }
+
+  /* Removes XXXX from interpolated */
+  const QString getMetarDisplayString() const;
+
+  /* List is empty in case of success parsing */
+  const QStringList& getErrors() const
+  {
+    return errors;
+  }
+
+  bool hasErrors() const
+  {
+    return !errors.isEmpty();
+  }
+
+  /* Interpolates weather between list "metars" and returns result.
+   * Interpolates, wind, flight rules, visibility and pressure but not clouds.
+   * metars has to be ordered by distance to origin. */
+  static atools::fs::weather::MetarParser merge(const atools::fs::weather::MetarParserVector& metars,
+                                                const QVector<float>& distancesMeter);
+
+  static QDateTime extractDateTime(const QString& metarString);
 
   enum FlightRules
   {
@@ -315,160 +416,150 @@ public:
     QStringList phenomena;
   };
 
-  inline QString getUnusedData() const
+  QString getUnusedData() const
   {
     return QString::fromStdString(unusedData);
   }
 
-  inline bool getProxy() const
-  {
-    return _x_proxy;
-  }
-
-  inline QString getId() const
+  QString getId() const
   {
     return _icao;
   }
 
-  inline int getYear() const
+  int getYear() const
   {
     return _year;
   }
 
-  inline int getMonth() const
+  int getMonth() const
   {
     return _month;
   }
 
-  inline int getDay() const
+  int getDay() const
   {
     return _day;
   }
 
-  inline int getHour() const
+  int getHour() const
   {
     return _hour;
   }
 
-  inline int getMinute() const
+  int getMinute() const
   {
     return _minute;
   }
 
-  QDateTime getDateTime() const;
+  QDateTime getTimestamp() const;
 
-  inline int getReportType() const
+  int getReportType() const
   {
     return _report_type;
   }
 
   QString getReportTypeString() const;
 
-  inline int getWindDir() const
+  int getWindDir() const
   {
     return _wind_dir;
   }
 
-  inline float getWindSpeedMeterPerSec() const
+  float getWindSpeedMeterPerSec() const
   {
     return _wind_speed;
   }
 
   float getWindSpeedKts() const;
 
-  inline float getGustSpeedMeterPerSec() const
+  float getGustSpeedMeterPerSec() const
   {
     return _gust_speed;
   }
 
   float getGustSpeedKts() const;
 
-  inline int getWindRangeFrom() const
+  int getWindRangeFrom() const
   {
     return _wind_range_from;
   }
 
-  inline int getWindRangeTo() const
+  int getWindRangeTo() const
   {
     return _wind_range_to;
   }
 
-  inline const MetarVisibility& getMinVisibility() const
+  const MetarVisibility& getMinVisibility() const
   {
     return _min_visibility;
   }
 
-  inline const MetarVisibility& getMaxVisibility() const
+  const MetarVisibility& getMaxVisibility() const
   {
     return _max_visibility;
   }
 
-  inline const MetarVisibility& getVertVisibility() const
+  const MetarVisibility& getVertVisibility() const
   {
     return _vert_visibility;
   }
 
-  inline const MetarVisibility *getDirVisibility() const
+  const MetarVisibility *getDirVisibility() const
   {
     return _dir_visibility;
   }
 
-  inline float getTemperatureC() const
+  float getTemperatureC() const
   {
     return _temp;
   }
 
-  inline float getDewpointDegC() const
+  float getDewpointDegC() const
   {
     return _dewp;
   }
 
-  inline float getPressureMbar() const
+  float getPressureMbar() const
   {
     return _pressure < INVALID_METAR_VALUE ? _pressure / 100 : INVALID_METAR_VALUE;
   }
 
-  inline int getRain() const
+  int getRain() const
   {
     return _rain;
   }
 
-  inline int getHail() const
+  int getHail() const
   {
     return _hail;
   }
 
-  inline int getSnow() const
+  int getSnow() const
   {
     return _snow;
   }
 
   QString getIntensityString(int intensity) const;
 
-  inline bool getCavok() const
+  bool getCavok() const
   {
     return _cavok;
   }
 
   double getRelHumidity() const;
 
-  inline const QList<MetarCloud> getClouds() const
+  const QList<MetarCloud> getClouds() const
   {
     return QList<MetarCloud>(_clouds.begin(), _clouds.end());
   }
 
-  inline const QHash<QString, MetarRunway> getRunways() const;
+  const QHash<QString, MetarRunway> getRunways() const;
 
   const QStringList getWeather() const;
 
-  inline const QList<Weather> getWeather2() const
+  const QList<Weather> getWeather2() const
   {
     return QList<Weather>(_weather2.begin(), _weather2.end());
-  }
-
-  bool isValid() const
-  {
-    return valid;
   }
 
   QString getRemark() const
@@ -500,24 +591,30 @@ public:
   /* Thickest cloud coverage */
   MetarCloud::Coverage getMaxCoverage() const
   {
-    return maxCoverage;
+    return maxCoverageCloud.coverage;
   }
 
   QString getMaxCoverageString() const
   {
-    return MetarCloud::getCoverageString(maxCoverage);
+    return MetarCloud::getCoverageString(maxCoverageCloud.coverage);
   }
 
   /* Coverage of lowest cloud layer */
   MetarCloud::Coverage getLowestCoverage() const
   {
-    return lowestCoverage;
+    return lowestCoverageCloud.coverage;
   }
 
   QString getLowestCoverageString() const
   {
-    return MetarCloud::getCoverageString(lowestCoverage);
+    return MetarCloud::getCoverageString(lowestCoverageCloud.coverage);
   }
+
+  /* Empty instance which can be returned in const references */
+  const static atools::fs::weather::MetarParser EMPTY;
+
+  /* This ident is used in interpolated METAR strings */
+  const static QLatin1String NO_IDENT;
 
 private:
   bool scanPreambleDate();
@@ -550,11 +647,21 @@ private:
 
   /* Calculate flight rules (IFR, VFR, etc.), max and lowest ceiling*/
   void postProcess();
+  void postProcessPrevailingWind();
+  void postProcessFlightRules();
+  void postProcessCloudCoverage();
+  float lowestCloudBase() const;
 
-  bool valid = false;
-  std::string _url;
-  int _grpcount;
-  bool _x_proxy;
+  /* Build string from content */
+  QString buildMetarString(const QStringList& remarks) const;
+
+  QString getIntensityStringShort(int intensityValue, const QString& weatherPhenomenon) const;
+
+  QString metar;
+  QStringList errors;
+
+  bool parsed = false;
+  int groupCount;
   char *_data = nullptr;
   char *_m = nullptr;
   char _icao[5];
@@ -579,8 +686,7 @@ private:
   std::vector<struct Weather> _weather2;
 
   FlightRules flightRules = UNKNOWN;
-  MetarCloud::Coverage maxCoverage = MetarCloud::COVERAGE_CLEAR;
-  MetarCloud::Coverage lowestCoverage = MetarCloud::COVERAGE_CLEAR;
+  MetarCloud maxCoverageCloud, lowestCoverageCloud;
   int prevailingWindDir = -1;
   float prevailingWindSpeed = INVALID_METAR_VALUE;
 
@@ -593,6 +699,7 @@ private:
   std::vector<std::string> _weather;
   std::string _remark, unusedData;
 
+  bool fsxP3dFormat = false, incompleteInterpolation = false;
 };
 
 } // namespace weather

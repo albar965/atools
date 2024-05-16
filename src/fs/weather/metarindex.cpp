@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,47 +17,54 @@
 
 #include "fs/weather/metarindex.h"
 
-#include "geo/spatialindex.h"
-#include "fs/weather/weathertypes.h"
 #include "atools.h"
+#include "fs/weather/metar.h"
+#include "fs/weather/weathertypes.h"
+#include "geo/calculations.h"
+#include "geo/pos.h"
+#include "geo/spatialindex.h"
 
 #include <QTimeZone>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QFile>
 
 namespace atools {
 namespace fs {
 namespace weather {
 
-/* Internal struct for METAR data. Stored in the spatial index */
-struct MetarData
+/* Combines position and index in METAR arrays for spatial indexes */
+class PosIndex
 {
-  MetarData(const QString& identParam, const QString& metarParam, QDateTime timestampParam, const atools::geo::Pos& posParam)
-    : ident(identParam), metar(metarParam), timestamp(timestampParam), pos(posParam)
+public:
+  PosIndex()
   {
   }
 
-  MetarData()
+  PosIndex(atools::geo::Pos posParam, int indexParam)
+    : pos(posParam), index(indexParam)
   {
   }
-
-  QString ident, metar;
-  QDateTime timestamp;
-
-  bool isValid() const
-  {
-    return !ident.isEmpty();
-  }
-
-  atools::geo::Pos pos;
 
   const atools::geo::Pos& getPosition() const
   {
     return pos;
   }
 
+  atools::geo::Pos pos;
+  int index; /* Index to "metarVector" or "metarInterpolatedVector" */
 };
+
+} // namespace weather
+} // namespace fs
+} // namespace atools
+
+Q_DECLARE_TYPEINFO(atools::fs::weather::PosIndex, Q_PRIMITIVE_TYPE);
+
+namespace atools {
+namespace fs {
+namespace weather {
 
 inline bool isDigit(QChar c)
 {
@@ -73,12 +80,30 @@ inline bool isLetterOrDigit(QChar c)
 MetarIndex::MetarIndex(MetarFormat formatParam, bool verboseLogging)
   : verbose(verboseLogging), format(formatParam)
 {
-  spatialIndex = new atools::geo::SpatialIndex<MetarData>;
+  spatialIndex = new atools::geo::SpatialIndex<PosIndex>;
+  spatialIndexInterpolated = new atools::geo::SpatialIndex<PosIndex>;
 }
 
 MetarIndex::~MetarIndex()
 {
-  delete spatialIndex;
+  ATOOLS_DELETE_LOG(spatialIndex);
+  ATOOLS_DELETE_LOG(spatialIndexInterpolated);
+}
+
+int MetarIndex::read(const QString& filename, bool merge)
+{
+  int metarsRead = 0;
+  QFile file(filename);
+  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    QTextStream stream(&file);
+    metarsRead = read(stream, filename, merge);
+    file.close();
+  }
+  else
+    qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
+
+  return metarsRead;
 }
 
 int MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
@@ -115,10 +140,9 @@ int MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
 int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bool merge)
 {
   if(!merge)
-  {
-    spatialIndex->clear();
-    identIndexMap.clear();
-  }
+    clear();
+  else
+    clearCache();
 
   QDateTime latest, oldest;
   QString latestIdent, oldestIdent;
@@ -214,8 +238,11 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
 
   if(verbose)
   {
-    qDebug() << "index->size()" << spatialIndex->size();
-    qDebug() << "metarMap.size()" << identIndexMap.size();
+    qDebug() << "spatialIndex->size()" << spatialIndex->size();
+    qDebug() << "spatialIndexInterpolated->size()" << spatialIndexInterpolated->size();
+    qDebug() << "identIndexMap.size()" << identIndexMap.size();
+    qDebug() << "metars.size()" << metarVector.size();
+    qDebug() << "metarsInterpolated.size()" << metarInterpolatedVector.size();
     qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
@@ -235,10 +262,9 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
 int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool merge)
 {
   if(!merge)
-  {
-    spatialIndex->clear();
-    identIndexMap.clear();
-  }
+    clear();
+  else
+    clearCache();
 
   QDateTime latest, oldest;
   QString latestIdent, oldestIdent;
@@ -328,8 +354,11 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
 
   if(verbose)
   {
-    qDebug() << "index->size()" << spatialIndex->size();
-    qDebug() << "metarMap.size()" << identIndexMap.size();
+    qDebug() << "spatialIndex->size()" << spatialIndex->size();
+    qDebug() << "spatialIndexInterpolated->size()" << spatialIndexInterpolated->size();
+    qDebug() << "identIndexMap.size()" << identIndexMap.size();
+    qDebug() << "metars.size()" << metarVector.size();
+    qDebug() << "metarsInterpolated.size()" << metarInterpolatedVector.size();
     qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
@@ -358,10 +387,9 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
 int MetarIndex::readJson(QTextStream& stream, const QString& fileOrUrl, bool merge)
 {
   if(!merge)
-  {
-    spatialIndex->clear();
-    identIndexMap.clear();
-  }
+    clear();
+  else
+    clearCache();
 
   QDateTime latest, oldest;
   QString latestIdent, oldestIdent;
@@ -370,7 +398,8 @@ int MetarIndex::readJson(QTextStream& stream, const QString& fileOrUrl, bool mer
   int futureDates = 0, invalidDates = 0, found = 0;
 
   QJsonDocument doc = QJsonDocument::fromJson(stream.readAll().toUtf8());
-  for(QJsonValue airportValue : doc.array())
+  const QJsonArray arr = doc.array();
+  for(const QJsonValue& airportValue : arr)
   {
     QJsonObject airportObj = airportValue.toObject();
     QString ident = airportObj.value("airportIcao").toString();
@@ -414,8 +443,11 @@ int MetarIndex::readJson(QTextStream& stream, const QString& fileOrUrl, bool mer
 
   if(verbose)
   {
-    qDebug() << "index->size()" << spatialIndex->size();
-    qDebug() << "metarMap.size()" << identIndexMap.size();
+    qDebug() << "spatialIndex->size()" << spatialIndex->size();
+    qDebug() << "spatialIndexInterpolated->size()" << spatialIndexInterpolated->size();
+    qDebug() << "identIndexMap.size()" << identIndexMap.size();
+    qDebug() << "metars.size()" << metarVector.size();
+    qDebug() << "metarsInterpolated.size()" << metarInterpolatedVector.size();
     qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
@@ -425,26 +457,38 @@ int MetarIndex::readJson(QTextStream& stream, const QString& fileOrUrl, bool mer
   return found;
 }
 
-void MetarIndex::updateOrInsert(const QString& metar, const QString& ident, const QDateTime& lastTimestamp)
+void MetarIndex::updateOrInsert(const QString& metarString, const QString& ident, const QDateTime& lastTimestamp)
 {
-  int idx = identIndexMap.value(ident, -1);
-  if(idx != -1)
+  if(identIndexMap.contains(ident))
   {
-    // Already in list - get writeable reference to entry
-    MetarData& md = (*spatialIndex)[idx];
-    if(!md.timestamp.isValid() || md.timestamp < lastTimestamp)
+    int idx = identIndexMap.value(ident, -1);
+    if(idx != -1)
     {
-      // This one is newer - update
-      md.metar = metar;
-      md.timestamp = lastTimestamp;
+      // Already in list - get writeable reference to entry
+      Metar& metar = metarVector[idx];
+      if(!metar.getTimestamp().isValid() || metar.getTimestamp() < lastTimestamp || metar.getStationMetar() != metarString)
+      {
+        // This one is newer - update
+        metar.setMetarForStation(metarString);
+        metar.setTimestamp(lastTimestamp);
+        metar.parseAll(false /* useTimestamp */);
+      }
     }
-    // else leave as is
   }
   else
   {
     // Insert new record
-    spatialIndex->append(MetarData(ident, metar, lastTimestamp, fetchAirportCoords(ident)));
-    identIndexMap.insert(ident, spatialIndex->size() - 1);
+    atools::geo::Pos pos = fetchAirportCoords(ident);
+
+    Metar metar(ident, pos, lastTimestamp, metarString);
+    metar.parseAll(false /* useTimestamp */);
+
+    metarVector.append(metar);
+    identIndexMap.insert(ident, metarVector.size() - 1);
+
+    // Add only valid positions to spatial index
+    if(pos.isValid())
+      spatialIndex->append(PosIndex(pos, metarVector.size() - 1));
   }
 }
 
@@ -452,69 +496,105 @@ void MetarIndex::clear()
 {
   spatialIndex->clear();
   identIndexMap.clear();
+  metarVector.clear();
+  clearCache();
+}
+
+void MetarIndex::clearCache()
+{
+  spatialIndexInterpolated->clear();
+  metarInterpolatedVector.clear();
 }
 
 bool MetarIndex::isEmpty() const
 {
-  return spatialIndex->isEmpty();
+  return metarVector.isEmpty();
 }
 
-int MetarIndex::size() const
+int MetarIndex::numStationMetars() const
 {
-  return spatialIndex->size();
+  return metarVector.size();
 }
 
-atools::fs::weather::MetarResult MetarIndex::getMetar(const QString& station, const atools::geo::Pos& pos)
+const atools::fs::weather::Metar& MetarIndex::getMetar(const QString& station, atools::geo::Pos pos)
 {
-  atools::fs::weather::MetarResult result;
-  result.init(station, pos);
+  const Metar& metar = fetchMetar(station);
 
-  if(!station.isEmpty())
-    result.metarForStation = metarData(station).metar;
-
-  if(result.metarForStation.isEmpty() && pos.isValid())
+  if(metar.hasAnyMetar())
+    return metar;
+  else
   {
-    MetarData data = spatialIndex->getNearest(pos);
+    if(!pos.isValid() && !station.isEmpty())
+      pos = fetchAirportCoords(station);
 
-    if(data.isValid())
+    if(pos.isValid())
     {
-      // Found a METAR
-      if(data.ident == station)
-      {
-        // Found exact match
-        result.metarForStation = data.metar;
+      int index = spatialIndexInterpolated->getNearestIndex(pos);
 
-        if(station.isEmpty())
-          result.requestIdent = data.ident;
-      }
-      else
+      if(index != -1)
       {
-        // Found a station nearby
-        result.metarForNearest = data.metar;
-
-        if(station.isEmpty())
-          result.requestIdent = data.ident;
+        // Found one interpolated near position - return if close enough ======================
+        const Metar& metarInterpolated = metarInterpolatedVector.at(index);
+        if(metarInterpolated.hasAnyMetar() && metarInterpolated.getRequestPos().distanceMeterTo(pos) < maxDistanceToleranceMeter)
+          return metarInterpolated;
       }
+
+      // Interpolate all nearest ======================
+      QVector<PosIndex> posIndexes;
+      spatialIndex->getNearest(posIndexes, pos, numInterpolation);
+
+      // Collect positions ====================
+      atools::fs::weather::MetarPtrVector metars;
+      for(const PosIndex& posIndex : qAsConst(posIndexes))
+        metars.append(&metarVector.at(posIndex.index));
+
+      // Sort by distance to request point ====================
+      std::sort(metars.begin(), metars.end(), [&pos](const Metar *t1, const Metar *t2) -> bool {
+              return t1->getPosition().distanceMeterTo(pos) < t2->getPosition().distanceMeterTo(pos);
+            });
+
+      // Truncate above maximum distance, not parsed and having errors ===================
+      float maxDistanceMeter = atools::geo::nmToMeter(maxDistanceInterpolationNm);
+      metars.erase(std::remove_if(metars.begin(), metars.end(), [maxDistanceMeter, &pos](const Metar *m) -> bool {
+              return m->getPosition().distanceMeterTo(pos) > maxDistanceMeter || !m->hasStationMetar() || m->getStation().hasErrors();
+            }), metars.end());
+
+      // Interpolate nearest metars =================================
+      Metar metarInterpolatedNew = Metar(station, pos, metars);
+      metarInterpolatedNew.parseAll(false /* useTimestamp */);
+
+      // Clear full cache if too large
+      if(metarInterpolatedVector.size() > maxInterpolatedCacheSize)
+        clearCache();
+
+      // Add to cache and return reference =======================
+      metarInterpolatedVector.append(metarInterpolatedNew);
+      spatialIndexInterpolated->append(PosIndex(pos, metarInterpolatedVector.size() - 1));
+      return metarInterpolatedVector.constLast();
     }
+    else
+      qWarning() << Q_FUNC_INFO << "Cannot find METAR" << pos << station;
   }
 
-  return result;
+  return Metar::EMPTY;
 }
 
 void MetarIndex::updateIndex()
 {
-  Q_ASSERT(spatialIndex->size() == identIndexMap.size());
   spatialIndex->updateIndex();
 }
 
-MetarData MetarIndex::metarData(const QString& ident)
+const Metar& MetarIndex::fetchMetar(const QString& ident) const
 {
-  int idx = identIndexMap.value(ident, -1);
+  if(!ident.isEmpty())
+  {
+    int idx = identIndexMap.value(ident, -1);
 
-  if(idx != -1)
-    return spatialIndex->at(idx);
+    if(idx != -1)
+      return metarVector.at(idx);
+  }
 
-  return MetarData();
+  return Metar::EMPTY;
 }
 
 } // namespace weather

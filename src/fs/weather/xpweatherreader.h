@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class FileSystemWatcher;
 namespace fs {
 namespace weather {
 
-struct MetarResult;
+class Metar;
 class MetarIndex;
 
 /*
@@ -54,7 +54,7 @@ public:
 
   /* Get METAR for airport ICAO or empty string if file or airport is not available.
    * Get station and/or nearest METAR */
-  atools::fs::weather::MetarResult getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
+  const atools::fs::weather::Metar& getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
 
   /* File is loaded on demand on first call here. X-Plane 11 uses a file and X-Plane 12 a folder. */
   void setWeatherPath(const QString& path, atools::fs::weather::XpWeatherType type);
