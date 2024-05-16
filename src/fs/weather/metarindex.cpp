@@ -154,7 +154,10 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
 
   while(!stream.atEnd())
   {
-    line = stream.readLine().trimmed();
+    line = stream.readLine().trimmed().toLatin1();
+
+    if(line.startsWith("MUGM"))
+      qDebug() << Q_FUNC_INFO;
 
     if(line.isEmpty() || line.size() > 256)
     {
@@ -276,7 +279,7 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
 
   while(!stream.atEnd())
   {
-    line = stream.readLine().simplified().toUpper();
+    line = stream.readLine().simplified().toUpper().toLatin1();
 
     if(line.isEmpty() || line.size() > 256)
     {
@@ -402,8 +405,8 @@ int MetarIndex::readJson(QTextStream& stream, const QString& fileOrUrl, bool mer
   for(const QJsonValue& airportValue : arr)
   {
     QJsonObject airportObj = airportValue.toObject();
-    QString ident = airportObj.value("airportIcao").toString();
-    QString metar = airportObj.value("metar").toString();
+    QString ident = airportObj.value("airportIcao").toString().toLatin1();
+    QString metar = airportObj.value("metar").toString().toLatin1();
     QDateTime metarDateTime = QDateTime::fromString(airportObj.value("updatedAt").toString(), Qt::ISODateWithMs);
 
     if(!metarDateTime.isValid())
