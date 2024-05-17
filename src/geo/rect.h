@@ -174,7 +174,6 @@ public:
   atools::geo::Rect& extend(const atools::geo::Pos& pos);
   atools::geo::Rect& extend(const atools::geo::Rect& rect);
   atools::geo::Rect& extend(const atools::geo::LineString& linestring);
-  static atools::geo::Rect extended(const atools::geo::LineString& linestring);
 
   atools::geo::Pos getCenter() const;
 
@@ -242,8 +241,6 @@ private:
   friend QDataStream& operator>>(QDataStream& in, Rect& obj);
 
   friend QDebug operator<<(QDebug out, const atools::geo::Rect& record);
-
-  bool overlapsInternal(const Rect& other) const;
 
   atools::geo::Pos topLeft, bottomRight;
 

@@ -15,19 +15,20 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "atools.h"
 #include "fs/bgl/ap/airport.h"
+#include "fs/bgl/ap/jetway.h"
+#include "fs/bgl/ap/taxipoint.h"
+#include "fs/bgl/converter.h"
+#include "fs/bgl/converter.h"
 #include "fs/bgl/recordtypes.h"
+#include "fs/bgl/util.h"
+#include "fs/navdatabaseoptions.h"
+#include "fs/util/fsutil.h"
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
+#include "geo/linestring.h"
 #include "io/binarystream.h"
-#include "fs/bgl/converter.h"
-#include "fs/navdatabaseoptions.h"
-#include "fs/bgl/ap/jetway.h"
-#include "fs/bgl/converter.h"
-#include "fs/bgl/ap/taxipoint.h"
-#include "fs/bgl/util.h"
-#include "fs/util/fsutil.h"
-#include "atools.h"
 
 #include <QDebug>
 #include <QHash>
@@ -573,12 +574,11 @@ void Airport::reportFarCoordinate(const atools::geo::Pos& pos, const QString& te
 
 void Airport::updateSummaryFields()
 {
-  boundingRect = atools::geo::Rect(position.getPos());
-
+  atools::geo::LineString points;
   if(!towerPosition.getPos().isNull() && towerPosition.getPos().isValidRange() && !towerPosition.getPos().isPole())
   {
     reportFarCoordinate(towerPosition.getPos(), "tower");
-    boundingRect.extend(towerPosition.getPos());
+    points.append(towerPosition.getPos());
   }
 
   for(const Runway& rw : qAsConst(runways))
@@ -589,13 +589,13 @@ void Airport::updateSummaryFields()
 
     // Extend bounding rectangle for runway dimensions
     reportFarCoordinate(rw.getPosition().getPos(), "runway");
-    boundingRect.extend(rw.getPosition().getPos());
+    points.append(rw.getPosition().getPos());
 
     reportFarCoordinate(rw.getSecondaryPosition(), "runway secondary");
-    boundingRect.extend(rw.getSecondaryPosition());
+    points.append(rw.getSecondaryPosition());
 
     reportFarCoordinate(rw.getSecondaryPosition(), "runway primary");
-    boundingRect.extend(rw.getPrimaryPosition());
+    points.append(rw.getPrimaryPosition());
 
     // Remember the longest runway attributes
     if(rw.getLength() > longestRunwayLength)
@@ -655,7 +655,7 @@ void Airport::updateSummaryFields()
   for(const Parking& p : qAsConst(parkings))
   {
     reportFarCoordinate(p.getPosition().getPos(), "parking");
-    boundingRect.extend(p.getPosition().getPos());
+    points.append(p.getPosition().getPos());
 
     // Assign fuel from parking if not set in flags
     // https://devsupport.flightsimulator.com/questions/10232/su10-u3-removed-fuel-flags-from-bgl-files.html
@@ -696,7 +696,7 @@ void Airport::updateSummaryFields()
     for(const BglPosition& p : a.getVertices())
     {
       reportFarCoordinate(p.getPos(), "apron");
-      boundingRect.extend(p.getPos());
+      points.append(p.getPos());
     }
   }
 
@@ -706,32 +706,34 @@ void Airport::updateSummaryFields()
     for(const BglPosition& p : a.getVertices())
     {
       reportFarCoordinate(p.getPos(), "apron2");
-      boundingRect.extend(p.getPos());
+      points.append(p.getPos());
     }
   }
 
   for(const Start& s : qAsConst(starts))
   {
     reportFarCoordinate(s.getPosition().getPos(), "start");
-    boundingRect.extend(s.getPosition().getPos());
+    points.append(s.getPosition().getPos());
   }
 
   for(const Helipad& h : qAsConst(helipads))
   {
     reportFarCoordinate(h.getPosition().getPos(), "helipad");
-    boundingRect.extend(h.getPosition().getPos());
+    points.append(h.getPosition().getPos());
   }
 
   for(const TaxiPath& p : qAsConst(taxipaths))
   {
     reportFarCoordinate(p.getStartPoint().getPosition().getPos(), "taxipath start");
-    boundingRect.extend(p.getStartPoint().getPosition().getPos());
+    points.append(p.getStartPoint().getPosition().getPos());
 
     reportFarCoordinate(p.getEndPoint().getPosition().getPos(), "taxipath end");
-    boundingRect.extend(p.getEndPoint().getPosition().getPos());
+    points.append(p.getEndPoint().getPosition().getPos());
   }
 
   updateHelipads();
+
+  boundingRect = atools::geo::bounding(points);
 }
 
 void Airport::updateParking(const QList<atools::fs::bgl::Jetway>& jetways,

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -82,8 +82,9 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
 
 /* Calculate a bounding rectangle for a list of positions. Also around the anti meridian which can
  * mean that left > right */
-void boundingRect(atools::geo::Rect& rect, QList<Pos> positions);
-atools::geo::Rect boundingRect(const QList<Pos>& positions);
+void bounding(atools::geo::Rect& rect, atools::geo::LineString positions);
+atools::geo::Rect bounding(const atools::geo::LineString& positions);
+atools::geo::Rect bounding(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2);
 
 /* true if longitude values cross the anti-meridian independent of direction but unreliable for large rectangles. */
 bool crossesAntiMeridian(float lonx1, float lonx2);

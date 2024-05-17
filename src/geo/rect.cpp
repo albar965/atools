@@ -137,45 +137,38 @@ bool Rect::contains(const Pos& pos) const
 
 bool Rect::overlaps(const Rect& other) const
 {
+
   if(!isValid() || !other.isValid())
     return false;
 
   if(isPoint() && other.isPoint())
     return *this == other;
 
-  float n = getNorth(), s = getSouth(), e = getEast(), w = getWest();
-  float n2 = other.getNorth(), s2 = other.getSouth(), e2 = other.getEast(), w2 = other.getWest();
-  // check the intersection criterion for the latitude first:
+  float north = getNorth(), south = getSouth(), east = getEast(), west = getWest();
+  float north2 = other.getNorth(), south2 = other.getSouth(), east2 = other.getEast(), west2 = other.getWest();
 
-  // Case 1: northern boundary of other box intersects:
-  if((n >= n2 && s <= n2)
-     // Case 2: northern boundary of this box intersects:
-     || (n2 >= n && s2 <= n)
-     // Case 3: southern boundary of other box intersects:
-     || (n >= s2 && s <= s2)
-     // Case 4: southern boundary of this box intersects:
-     || (n2 >= s && s2 <= s))
+  // check the intersection criterion for the latitude first
+  if((north >= north2 && south <= north2) || // Case 1: northern boundary of other box intersects
+     (north2 >= north && south2 <= north) || // Case 2: northern boundary of this box intersects
+     (north >= south2 && south <= south2) || // Case 3: southern boundary of other box intersects
+     (north2 >= south && south2 <= south)) // Case 4: southern boundary of this box intersects
   {
     if(!crossesAntiMeridian())
     {
       if(!other.crossesAntiMeridian())
       {
         // "Normal" case: both bounding boxes don't cross the date line
-        // Case 1: eastern boundary of other box intersects:
-        if((e >= e2 && w <= e2)
-           // Case 2: eastern boundary of this box intersects:
-           || (e2 >= e && w2 <= e)
-           // Case 3: western boundary of other box intersects:
-           || (e >= w2 && w <= w2)
-           // Case 4: western boundary of this box intersects:
-           || (e2 >= w && w2 <= w))
+        if((east >= east2 && west <= east2) || // Case 1: eastern boundary of other box intersects
+           (east2 >= east && west2 <= east) || // Case 2: eastern boundary of this box intersects
+           (east >= west2 && west <= west2) || // Case 3: western boundary of other box intersects
+           (east2 >= west && west2 <= west)) // Case 4: western boundary of this box intersects
           return true;
       }
       else
       {
         // The other bounding box crosses the date line, "this" one does not:
         // So the date line splits the other bounding box in two parts.
-        if(w <= e2 || e >= w2)
+        if(west <= east2 || east >= west2)
           return true;
       }
     }
@@ -191,22 +184,13 @@ bool Rect::overlaps(const Rect& other) const
         //
         // This also covers the case where this bounding box covers the whole
         // longitude range ( -180 <= lon <= + 180 ).
-        if(w2 <= e || e2 >= w)
+        if(west2 <= east || east2 >= west)
           return true;
       }
     }
   }
 
   return false;
-
-  // if(isValid() || other.isValid())
-  // {
-  // for(const Rect& r1 : splitAtAntiMeridian())
-  // for(const Rect &r2 : other.splitAtAntiMeridian())
-  // if(r1.overlapsInternal(r2))
-  // return true;
-  // }
-  // return false;
 }
 
 atools::geo::Rect& Rect::inflateMeter(float width, float height)
@@ -239,13 +223,6 @@ Rect& Rect::inflate(float degreesLon, float degreesLat)
   else
     bottomRight.setLatY(-90.f);
   return *this;
-}
-
-bool Rect::overlapsInternal(const Rect& other) const
-{
-  // "not (right_lonx < :leftx or left_lonx > :rightx or bottom_laty > :topy or top_laty < :bottomy) ");
-  return !(getEast() < other.getWest() || getWest() > other.getEast() ||
-           getSouth() > other.getNorth() || getNorth() < other.getSouth());
 }
 
 bool Rect::isPoint(float epsilonDegree) const
@@ -305,9 +282,7 @@ Rect& Rect::extend(const Pos& pos)
     return *this;
 
   if(isValid())
-    atools::geo::boundingRect(*this, {pos,
-                                      getTopLeft(), getTopRight(),
-                                      getBottomRight(), getBottomLeft()});
+    bounding(*this, LineString({pos, getTopLeft(), getTopRight(), getBottomRight(), getBottomLeft()}));
   else
     // Create single point rect if this is not valid
     *this = Rect(pos);
@@ -320,10 +295,8 @@ Rect& Rect::extend(const Rect& rect)
     return *this;
 
   if(isValid())
-    atools::geo::boundingRect(*this, {rect.getTopLeft(), rect.getTopRight(),
-                                      rect.getBottomRight(), rect.getBottomLeft(),
-                                      getTopLeft(), getTopRight(),
-                                      getBottomRight(), getBottomLeft()});
+    bounding(*this, LineString({rect.getTopLeft(), rect.getTopRight(), rect.getBottomRight(), rect.getBottomLeft(),
+                                getTopLeft(), getTopRight(), getBottomRight(), getBottomLeft()}));
   else
     // Use other if this is not valid
     *this = rect;
@@ -332,16 +305,8 @@ Rect& Rect::extend(const Rect& rect)
 
 Rect& Rect::extend(const atools::geo::LineString& linestring)
 {
-  for(const Pos& ext : linestring)
-    extend(ext);
+  extend(linestring.boundingRect());
   return *this;
-}
-
-Rect Rect::extended(const LineString& linestring)
-{
-  Rect retval;
-  retval.extend(linestring);
-  return retval;
 }
 
 Rect& Rect::scale(float horizontalFactor, float verticalFactor)

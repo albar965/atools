@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -168,22 +168,24 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
   }
 }
 
-Rect boundingRect(const QList<Pos>& positions)
+Rect bounding(const Pos& pos1, const Pos& pos2)
+{
+  return bounding(atools::geo::LineString({pos1, pos2}));
+}
+
+Rect bounding(const atools::geo::LineString& positions)
 {
   Rect rect;
-  boundingRect(rect, positions);
+  bounding(rect, positions);
   return rect;
 }
 
-void boundingRect(Rect& rect, QList<atools::geo::Pos> positions)
+void bounding(Rect& rect, atools::geo::LineString positions)
 {
   // Remove all invalid positions
-  auto iter = std::remove_if(positions.begin(), positions.end(), [](const atools::geo::Pos& p) -> bool {
+  positions.erase(std::remove_if(positions.begin(), positions.end(), [](const atools::geo::Pos& p) -> bool {
         return !p.isValid();
-      });
-
-  if(iter != positions.end())
-    positions.erase(iter, positions.end());
+      }), positions.end());
 
   // If the line string is empty return an empty boundingbox
   if(positions.size() == 0)
@@ -206,21 +208,19 @@ void boundingRect(Rect& rect, QList<atools::geo::Pos> positions)
     return;
   }
 
-  // Specifies whether the polygon crosses the IDL
-  bool idlCrossed = false;
+  // Specifies whether the polygon crosses the anti-meridian
+  bool amCrossed = false;
 
-  // "idlCrossState" specifies the state concerning IDL crossage.
-  // This is needed in order to create optimal bounding boxes in case of covering the IDL
-  // Every time the IDL gets crossed from east to west the idlCrossState value gets
-  // increased by one.
-  // Every time the IDL gets crossed from west to east the idlCrossState value gets
-  // decreased by one.
+  // "amCrossState" specifies the state concerning anti-meridian crossage.
+  // This is needed in order to create optimal bounding boxes in case of covering the anti-meridian
+  // Every time the anti-meridian gets crossed from east to west the amCrossState value gets increased by one.
+  // Every time the anti-meridian gets crossed from west to east the amCrossState value gets decreased by one.
 
-  int idlCrossState = 0;
-  int idlMaxCrossState = 0;
-  int idlMinCrossState = 0;
+  int amCrossState = 0;
+  int amMaxCrossState = 0;
+  int amMinCrossState = 0;
 
-  // Holds values for east and west while idlCrossState != 0
+  // Holds values for east and west while amCrossState != 0
   float otherWest = lonX;
   float otherEast = lonX;
 
@@ -248,42 +248,40 @@ void boundingRect(Rect& rect, QList<atools::geo::Pos> positions)
 
     currentSign = (lonX < 0.f) ? -1 : +1;
 
-    // Once the polyline crosses the dateline the covered bounding box
-    // would cover the whole [-M_PI; M_PI] range.
-    // When looking separately at the longitude range that gets covered
-    // east and west from the IDL we get two bounding boxes (we prefix
-    // the resulting longitude range on the "other side" with "other").
-    // By picking the "inner" range values we get a more appropriate
+    // Once the polyline crosses the dateline the covered bounding box would cover the whole [-M_PI; M_PI] range.
+    // When looking separately at the longitude range that gets covered east and west from the anti-meridian we
+    // get two bounding boxes (we prefix
+    // the resulting longitude range on the "other side" with "other"). By picking the "inner" range values we get a more appropriate
     // optimized single bounding box.
 
-    // IDL check
+    // anti-meridian check
     if(previousSign != currentSign && fabs(previousLon) + fabs(lonX) > 180.f)
     {
 
       // Initialize values for otherWest and otherEast
-      if(idlCrossed == false)
+      if(amCrossed == false)
       {
         otherWest = lonX;
         otherEast = lonX;
-        idlCrossed = true;
+        amCrossed = true;
       }
 
-      // Determine the new IDL Cross State
+      // Determine the new anti-meridian Cross State
       if(previousLon < 0.f)
       {
-        idlCrossState++;
-        if(idlCrossState > idlMaxCrossState)
-          idlMaxCrossState = idlCrossState;
+        amCrossState++;
+        if(amCrossState > amMaxCrossState)
+          amMaxCrossState = amCrossState;
       }
       else
       {
-        idlCrossState--;
-        if(idlCrossState < idlMinCrossState)
-          idlMinCrossState = idlCrossState;
+        amCrossState--;
+        if(amCrossState < amMinCrossState)
+          amMinCrossState = amCrossState;
       }
     }
 
-    if(idlCrossState == 0)
+    if(amCrossState == 0)
     {
       if(lonX > east)
         east = lonX;
@@ -313,16 +311,15 @@ void boundingRect(Rect& rect, QList<atools::geo::Pos> positions)
     }
   }
 
-  if(idlCrossed)
+  if(amCrossed)
   {
-    if(idlMinCrossState < 0)
+    if(amMinCrossState < 0)
       east = otherEast;
-    if(idlMaxCrossState > 0)
+
+    if(amMaxCrossState > 0)
       west = otherWest;
 
-    if((idlMinCrossState < 0 && idlMaxCrossState > 0) ||
-       idlMinCrossState < -1 || idlMaxCrossState > 1 ||
-       west <= east)
+    if((amMinCrossState < 0 && amMaxCrossState > 0) || amMinCrossState < -1 || amMaxCrossState > 1 || west <= east)
     {
       east = +180.f;
       west = -180.f;
@@ -334,8 +331,6 @@ void boundingRect(Rect& rect, QList<atools::geo::Pos> positions)
     }
   }
 
-  // explicit Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY);
-  // return Rect(north, south, east, west);
   rect = Rect(west, north, east, south);
 }
 
