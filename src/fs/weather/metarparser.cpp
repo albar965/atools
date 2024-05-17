@@ -38,6 +38,23 @@
 #  include <simgear_config.h>
 #endif
 
+#include "geo/calculations.h"
+#include "fs/weather/metarparser.h"
+
+#include <string>
+#include <time.h>
+#include <cstring>
+#include <iostream>
+
+#include <QDateTime>
+#include <QStringBuilder>
+#include <QTimeZone>
+#include <QDebug>
+
+// #define QT_NO_CAST_FROM_BYTEARRAY
+// #define QT_NO_CAST_TO_ASCII
+// #define QT_NO_CAST_FROM_ASCII
+
 #pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wunsafe-buffer-usage"
 #pragma GCC diagnostic ignored "-Wcomma"
@@ -47,21 +64,13 @@
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #pragma GCC diagnostic ignored "-Wshorten-64-to-32"
 
-#include "geo/calculations.h"
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
 
-#include <string>
-#include <time.h>
-#include <cstring>
-
-#include <QDateTime>
-#include <QStringBuilder>
-#include <QTimeZone>
-
-// #define QT_NO_CAST_FROM_BYTEARRAY
-// #define QT_NO_CAST_TO_ASCII
-// #define QT_NO_CAST_FROM_ASCII
-
-#include "fs/weather/metarparser.h"
+using std::string;
+using std::map;
+using std::vector;
 
 /** Feet to Meters */
 #define SG_FEET_TO_METER 0.3048
@@ -119,10 +128,6 @@
 
 /** slug/ft3 to kg/m3 */
 #define SG_SLUGFT3_TO_KGPM3 515.379
-
-using std::string;
-using std::map;
-using std::vector;
 
 namespace atools {
 namespace fs {

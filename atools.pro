@@ -378,7 +378,7 @@ SOURCES += \
 } # ATOOLS_NO_USERDATA
 
 # =====================================================================
-# Weather
+# SQL
 
 !isEqual(ATOOLS_NO_SQL, "true") {
 HEADERS += \
@@ -406,27 +406,36 @@ SOURCES += \
 } # ATOOLS_NO_SQL
 
 # =====================================================================
-# Weather
+# Weather Base
 
-!isEqual(ATOOLS_NO_WEATHER, "true") {
+!isEqual(ATOOLS_NO_WEATHER_BASE, "true") {
 HEADERS += \
   src/fs/weather/metar.h \
   src/fs/weather/metarindex.h \
   src/fs/weather/metarparser.h \
-  src/fs/weather/noaaweatherdownloader.h \
-  src/fs/weather/weatherdownloadbase.h \
-  src/fs/weather/weathernetdownload.h \
   src/fs/weather/weathertypes.h \
-  src/fs/weather/xpweatherreader.h
 
 SOURCES += \
   src/fs/weather/metar.cpp \
   src/fs/weather/metarindex.cpp \
   src/fs/weather/metarparser.cpp \
+  src/fs/weather/weathertypes.cpp \
+} # ATOOLS_NO_WEATHER
+
+# =====================================================================
+# Weather
+
+!isEqual(ATOOLS_NO_WEATHER, "true") {
+HEADERS += \
+  src/fs/weather/noaaweatherdownloader.h \
+  src/fs/weather/weatherdownloadbase.h \
+  src/fs/weather/weathernetdownload.h \
+  src/fs/weather/xpweatherreader.h
+
+SOURCES += \
   src/fs/weather/noaaweatherdownloader.cpp \
   src/fs/weather/weatherdownloadbase.cpp \
   src/fs/weather/weathernetdownload.cpp \
-  src/fs/weather/weathertypes.cpp \
   src/fs/weather/xpweatherreader.cpp
 } # ATOOLS_NO_WEATHER
 

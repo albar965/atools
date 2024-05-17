@@ -22,6 +22,8 @@
 #include "fs/weather/metarindex.h"
 #include "fs/util/fsutil.h"
 
+#include <algorithm>
+
 #include <QDir>
 #include <QFileInfo>
 #include <QMap>
@@ -150,7 +152,7 @@ QStringList XpWeatherReader::collectWeatherFiles()
 
   if(weatherType == atools::fs::weather::WEATHER_XP11)
     // METAR.rwx
-    metarFiles.append(weatherPath);
+    metarFiles.append(QFileInfo(weatherPath));
   else if(weatherType == atools::fs::weather::WEATHER_XP12)
   {
     // METAR-2022-9-6-19.00-ZULU.txt, METAR-2022-9-6-20.00-ZULU.txt
@@ -172,7 +174,7 @@ QStringList XpWeatherReader::collectWeatherFiles()
 
   // Return only latest three files
   QStringList files;
-  for(int i = 0; i < std::min(3, metarFiles.size()); i++)
+  for(int i = 0; i < std::min(3, static_cast<int>(metarFiles.size())); i++)
     files.append(metarFiles.at(i).absoluteFilePath());
 
   if(verbose)

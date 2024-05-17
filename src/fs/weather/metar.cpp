@@ -15,11 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "metar.h"
+#include "fs/weather/metar.h"
+
 #include "fs/weather/metarparser.h"
 #include "geo/calculations.h"
 
 #include <QRegularExpression>
+#include <QDebug>
 
 namespace atools {
 namespace fs {
@@ -295,13 +297,12 @@ QDebug operator<<(QDebug out, const Metar& metar)
   out.nospace().noquote() << "Metar[requestIdent " << metar.requestIdent
                           << ", requestPos " << metar.requestPos
                           << ", timestamp " << metar.timestamp
-                          << endl
                           << "station \"" << metar.station.getMetarString() << "\" parsed " << metar.station.isParsed()
-                          << " " << metar.getStation().getFlightRulesString() << endl
+                          << " " << metar.getStation().getFlightRulesString()
                           << "nearest \"" << metar.nearest.getMetarString() << "\" parsed " << metar.nearest.isParsed()
-                          << " " << metar.getNearest().getFlightRulesString() << endl
+                          << " " << metar.getNearest().getFlightRulesString()
                           << "interpolated \"" << metar.interpolated.getMetarString() << "\" parsed " << metar.interpolated.isParsed()
-                          << " " << metar.getNearest().getFlightRulesString() << endl
+                          << " " << metar.getNearest().getFlightRulesString()
                           << "]";
   return out;
 }
