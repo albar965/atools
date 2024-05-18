@@ -20,6 +20,10 @@
 
 #include "fs/weather/weathertypes.h"
 
+#include <functional>
+
+#include <QVector>
+
 class QTextStream;
 
 class QDateTime;

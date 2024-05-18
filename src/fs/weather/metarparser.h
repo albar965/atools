@@ -548,7 +548,11 @@ public:
 
   const QList<MetarCloud> getClouds() const
   {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     return QList<MetarCloud>(_clouds.begin(), _clouds.end());
+#else
+    return QVector<MetarCloud>::fromStdVector(_clouds).toList();
+#endif
   }
 
   const QHash<QString, MetarRunway> getRunways() const;
@@ -557,7 +561,11 @@ public:
 
   const QList<Weather> getWeather2() const
   {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     return QList<Weather>(_weather2.begin(), _weather2.end());
+#else
+    return QVector<Weather>::fromStdVector(_weather2).toList();
+#endif
   }
 
   QString getRemark() const
