@@ -42,10 +42,10 @@ const static QString LONG_FORMAT_STAR("%1%2* %3' %4\",%5%6* %7' %8\",%9%10");
 
 // This is the format that is used in FSX flight plans
 // N49° 26' 41.57",E9° 12' 5.49",+005500.00
-// N49* 26' 41.57",E9* 12' 5.49",+005500.00
+// N49* 26' 41.57",E9* 12' 5.49"
 const static QRegularExpression LONG_FORMAT_REGEXP(
   "([ns])\\s*([0-9]+)\\s*[°\\*]\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
-  "([ew])\\s*([0-9]+)\\s*[°\\*]\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
+  "([ew])\\s*([0-9]+)\\s*[°\\*]\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,?\\s*"
   "([+-]?)\\s*([0-9\\.]+)?");
 
 // Skyvector to FSX export tool
