@@ -247,31 +247,35 @@ const TYPE *BglFile::createRecord(atools::io::BinaryStream *bs, QList<const TYPE
 {
   TYPE *rec = new TYPE(options, bs, flags);
 
-  if(rec->isExcluded())
+  if(rec != nullptr)
   {
-    delete rec;
-    return nullptr;
+    if(rec->isExcluded())
+    {
+      delete rec;
+      return nullptr;
+    }
+
+    if(!rec->isValid())
+    {
+      // Print warning only for navaids that are not disabled
+      if(!rec->isDisabled())
+        qWarning() << "Found invalid record: " << rec->getObjectName();
+      rec->seekToStart();
+      delete rec;
+      return nullptr;
+    }
+
+    if(options->isVerbose())
+    {
+      qDebug() << "----";
+      qDebug() << *rec;
+    }
+
+    if(list != nullptr)
+      list->append(rec);
+    allRecords.append(rec);
   }
 
-  if(!rec->isValid())
-  {
-    // Print warning only for navaids that are not disabled
-    if(!rec->isDisabled())
-      qWarning() << "Found invalid record: " << rec->getObjectName();
-    rec->seekToStart();
-    delete rec;
-    return nullptr;
-  }
-
-  if(options->isVerbose())
-  {
-    qDebug() << "----";
-    qDebug() << *rec;
-  }
-
-  if(list != nullptr)
-    list->append(rec);
-  allRecords.append(rec);
   return rec;
 }
 
