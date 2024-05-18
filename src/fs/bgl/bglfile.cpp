@@ -263,6 +263,9 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
   createFlags.setFlag(bgl::flags::AIRPORT_MSFS_NAVIGRAPH_NAVDATA, msfsNavigraphNavdata);
   createFlags.setFlag(bgl::flags::AIRPORT_MSFS_DUMMY, area.isNavdata());
 
+  // There should be no duplicate airport idents in the file. Otherwise bail out of reading this file.
+  QSet<QString> airportIdents;
+
   for(Subsection& subsection : subsections)
   {
     section::SectionType type = subsection.getParent().getType();
@@ -290,9 +293,29 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
       {
         case section::AIRPORT:
           if(options->isIncludedNavDbObject(type::AIRPORT))
+          {
             // Will return null if ICAO is excluded in configuration
             // Read airport and all subrecords, like runways, com, approaches, waypoints and so on
-            rec = createRecord<Airport>(bs, &airports, createFlags);
+            const Airport *ap = createRecord<Airport>(bs, &airports, createFlags);
+
+            if(ap == nullptr)
+              qWarning().nospace().noquote() << "Read airport is null at offset " << bs->tellg();
+            else
+            {
+              if(airportIdents.contains(ap->getIdent()))
+              {
+                qWarning().nospace().noquote() << "Duplicate airport ident " << ap->getIdent() << " at offset " << bs->tellg();
+
+                // Duplicates found. Bail out =================================================================
+                // Example of malformed file UWLS.bgl
+                return;
+              }
+              else
+                airportIdents.insert(ap->getIdent());
+            }
+
+            rec = ap;
+          }
           break;
 
         case section::AIRPORT_ALT:
