@@ -248,7 +248,7 @@ public:
     CryptoFlagHash = 0x04
   };
 
-  Q_DECLARE_FLAGS(CryptoFlags, CryptoFlag);
+  Q_DECLARE_FLAGS(CryptoFlags, CryptoFlag)
 
 private:
   void splitKey();

@@ -107,6 +107,7 @@ isEmpty(DEPLOY_BASE) : DEPLOY_BASE=$$PWD/../deploy
 # Set compiler flags and paths
 
 INCLUDEPATH += $$PWD/src
+QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wno-unknown-warning-option -Wdangling-pointer=2
 
 unix {
   isEmpty(GIT_PATH) : GIT_PATH=git

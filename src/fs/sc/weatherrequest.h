@@ -30,7 +30,6 @@ class WeatherRequest
 {
 public:
   WeatherRequest();
-  WeatherRequest(const WeatherRequest& other);
 
   void read(QDataStream & in);
   void write(QDataStream& out);

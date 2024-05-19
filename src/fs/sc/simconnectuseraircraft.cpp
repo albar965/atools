@@ -31,12 +31,6 @@ SimConnectUserAircraft::SimConnectUserAircraft()
 
 }
 
-SimConnectUserAircraft::SimConnectUserAircraft(const SimConnectUserAircraft& other)
-  : SimConnectAircraft(other)
-{
-  *this = other;
-}
-
 void SimConnectUserAircraft::read(QDataStream& in)
 {
   SimConnectAircraft::read(in);

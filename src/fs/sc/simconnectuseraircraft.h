@@ -43,7 +43,6 @@ class SimConnectUserAircraft :
 {
 public:
   SimConnectUserAircraft();
-  SimConnectUserAircraft(const SimConnectUserAircraft& other);
 
   virtual void read(QDataStream & in) override;
   virtual void write(QDataStream& out) const override;

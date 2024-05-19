@@ -55,7 +55,6 @@
 // #define QT_NO_CAST_TO_ASCII
 // #define QT_NO_CAST_FROM_ASCII
 
-#pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wunsafe-buffer-usage"
 #pragma GCC diagnostic ignored "-Wcomma"
 #pragma GCC diagnostic ignored "-Wold-style-cast"

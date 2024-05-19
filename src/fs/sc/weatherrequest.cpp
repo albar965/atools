@@ -30,11 +30,6 @@ WeatherRequest::WeatherRequest()
 
 }
 
-WeatherRequest::WeatherRequest(const WeatherRequest& other)
-{
-  *this = other;
-}
-
 bool WeatherRequest::isValid() const
 {
   return !station.isEmpty() || position.isValid();

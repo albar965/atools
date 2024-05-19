@@ -29,11 +29,6 @@ SimConnectAircraft::SimConnectAircraft()
 
 }
 
-SimConnectAircraft::SimConnectAircraft(const SimConnectAircraft& other)
-{
-  *this = other;
-}
-
 void SimConnectAircraft::read(QDataStream& in)
 {
   in >> objectId;
