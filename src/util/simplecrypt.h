@@ -260,7 +260,7 @@ private:
   Error m_lastError;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(SimpleCrypt::CryptoFlags);
+Q_DECLARE_OPERATORS_FOR_FLAGS(SimpleCrypt::CryptoFlags)
 
 } // namespace util
 } // namespace atools

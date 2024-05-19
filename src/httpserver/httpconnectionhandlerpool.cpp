@@ -15,7 +15,7 @@ HttpConnectionHandlerPool::HttpConnectionHandlerPool(const QHash<QString, QVaria
 {
   this->settings = settings;
   this->requestHandler = requestHandler;
-  this->sslConfiguration = NULL;
+  this->sslConfiguration = nullptr;
   loadSslConfig();
   cleanupTimer.start(settings.value("cleanupInterval", 1000).toInt());
   connect(&cleanupTimer, SIGNAL(timeout()), SLOT(cleanup()));
@@ -29,12 +29,12 @@ HttpConnectionHandlerPool::~HttpConnectionHandlerPool()
     delete handler;
   }
   delete sslConfiguration;
-  qDebug("HttpConnectionHandlerPool (%p): destroyed", this);
+  qDebug("HttpConnectionHandlerPool (%p): destroyed", static_cast<void*>(this));
 }
 
 HttpConnectionHandler *HttpConnectionHandlerPool::getConnectionHandler()
 {
-  HttpConnectionHandler *freeHandler = 0;
+  HttpConnectionHandler *freeHandler = nullptr;
   mutex.lock();
   // find a free handler in pool
   foreach(HttpConnectionHandler * handler, pool)
