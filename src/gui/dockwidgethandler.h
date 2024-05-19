@@ -41,8 +41,8 @@ enum DockFlag
   MAXIMIZE = 1 << 4 /* Maximize window when going into fullscreen instead of using full screen mode */
 };
 
-Q_DECLARE_FLAGS(DockFlags, DockFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::gui::DockFlags);
+Q_DECLARE_FLAGS(DockFlags, DockFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::gui::DockFlags)
 
 /*
  * Improves dock widget handling expecially if dock windows are stacked.

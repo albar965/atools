@@ -46,8 +46,8 @@ enum Option
   FETCH_AI_BOAT = 1 << 1
 };
 
-Q_DECLARE_FLAGS(Options, Option);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Options);
+Q_DECLARE_FLAGS(Options, Option)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Options)
 
 enum AircraftFlag : quint16
 {
@@ -81,8 +81,8 @@ enum AircraftFlag : quint16
                       // Next is 0x2000
 };
 
-Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::AircraftFlags);
+Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::AircraftFlags)
 
 void registerMetaTypes();
 
@@ -90,6 +90,6 @@ void registerMetaTypes();
 } // namespace fs
 } // namespace atools
 
-Q_DECLARE_METATYPE(atools::fs::sc::SimConnectStatus);
+Q_DECLARE_METATYPE(atools::fs::sc::SimConnectStatus)
 
 #endif // ATOOLS_SC_TYPES_H

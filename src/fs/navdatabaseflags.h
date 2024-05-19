@@ -33,8 +33,8 @@ enum ResultFlag
   COMPILE_FAILED = 1 << 3, /* Caught exception */
 };
 
-Q_DECLARE_FLAGS(ResultFlags, ResultFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ResultFlags);
+Q_DECLARE_FLAGS(ResultFlags, ResultFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ResultFlags)
 
 } // namespace fs
 } // namespace atools

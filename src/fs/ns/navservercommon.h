@@ -31,8 +31,8 @@ enum NavServerOption
   HIDE_HOST = 0x02
 };
 
-Q_DECLARE_FLAGS(NavServerOptions, NavServerOption);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ns::NavServerOptions);
+Q_DECLARE_FLAGS(NavServerOptions, NavServerOption)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ns::NavServerOptions)
 
 /* Declare a own logging category to append in the text edit */
 Q_DECLARE_LOGGING_CATEGORY(gui);

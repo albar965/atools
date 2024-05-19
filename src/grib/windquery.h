@@ -238,8 +238,8 @@ QDebug operator<<(QDebug out, const atools::grib::WindPos& windPos);
 } // namespace grib
 } // namespace atools
 
-Q_DECLARE_METATYPE(atools::grib::Wind);
-Q_DECLARE_METATYPE(atools::grib::WindPos);
+Q_DECLARE_METATYPE(atools::grib::Wind)
+Q_DECLARE_METATYPE(atools::grib::WindPos)
 
 Q_DECLARE_TYPEINFO(atools::grib::Wind, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(atools::grib::WindPos, Q_PRIMITIVE_TYPE);

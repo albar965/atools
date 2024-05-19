@@ -66,6 +66,6 @@ private:
 } // namespace fs
 } // namespace atools
 
-Q_DECLARE_METATYPE(atools::fs::sc::WeatherRequest);
+Q_DECLARE_METATYPE(atools::fs::sc::WeatherRequest)
 
 #endif // ATOOLS_FS_SC_WEATHERREQUEST_H

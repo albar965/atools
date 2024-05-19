@@ -76,8 +76,8 @@ enum DeleteAllFlag
   TAXIWAYS = 1 << 7
 };
 
-Q_DECLARE_FLAGS(DeleteAllFlags, DeleteAllFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::del::DeleteAllFlags);
+Q_DECLARE_FLAGS(DeleteAllFlags, DeleteAllFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::del::DeleteAllFlags)
 
 } // namespace del
 

@@ -60,8 +60,8 @@ enum Flag
                              * like: <p style='white-space:pre'>. Only for paragraphs. */
 };
 
-Q_DECLARE_FLAGS(Flags, Flag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(html::Flags);
+Q_DECLARE_FLAGS(Flags, Flag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(html::Flags)
 }
 
 /*

@@ -963,4 +963,4 @@ void DockWidgetHandler::registerMetaTypes()
 } // namespace atools
 
 // Enable use in QVariant
-Q_DECLARE_METATYPE(atools::gui::MainWindowState);
+Q_DECLARE_METATYPE(atools::gui::MainWindowState)

@@ -63,8 +63,8 @@ enum RunwayMarkings
   NO_THRESHOLD_END_ARROWS = 1 << 23
 };
 
-Q_DECLARE_FLAGS(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings);
-Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags);
+Q_DECLARE_FLAGS(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings)
+Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags)
 
 /* Light intensity */
 enum Light

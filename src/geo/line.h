@@ -278,6 +278,6 @@ uint qHash(const atools::geo::Line& line);
 } // namespace atools
 
 Q_DECLARE_TYPEINFO(atools::geo::Line, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(atools::geo::Line);
+Q_DECLARE_METATYPE(atools::geo::Line)
 
 #endif // ATOOLS_GEO_LINE_H

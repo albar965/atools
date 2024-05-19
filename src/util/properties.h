@@ -125,7 +125,7 @@ public:
 } // namespace util
 } // namespace atools
 
-Q_DECLARE_METATYPE(atools::util::Properties);
+Q_DECLARE_METATYPE(atools::util::Properties)
 Q_DECLARE_TYPEINFO(atools::util::Properties, Q_COMPLEX_TYPE);
 
 #endif // ATOOLS_PROPERTIES_H

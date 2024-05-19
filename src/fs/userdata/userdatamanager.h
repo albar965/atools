@@ -44,8 +44,8 @@ enum Flag
   APPEND = 1 << 1
 };
 
-Q_DECLARE_FLAGS(Flags, Flag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::userdata::Flags);
+Q_DECLARE_FLAGS(Flags, Flag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::userdata::Flags)
 
 /*
  * Contains functionality around the userdata database which keeps user defined waypoints, bookmarks and others.

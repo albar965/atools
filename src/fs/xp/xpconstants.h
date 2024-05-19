@@ -48,8 +48,8 @@ enum ContextFlag
   UPDATE_CYCLE = 0x4000 // Fetch airac cycle from header
 };
 
-Q_DECLARE_FLAGS(ContextFlags, ContextFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::xp::ContextFlags);
+Q_DECLARE_FLAGS(ContextFlags, ContextFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::xp::ContextFlags)
 
 /* Context passed to each line reading call */
 struct XpWriterContext

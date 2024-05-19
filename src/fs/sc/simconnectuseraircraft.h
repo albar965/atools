@@ -258,6 +258,6 @@ private:
 } // namespace fs
 } // namespace atools
 
-Q_DECLARE_METATYPE(atools::fs::sc::SimConnectUserAircraft);
+Q_DECLARE_METATYPE(atools::fs::sc::SimConnectUserAircraft)
 
 #endif // ATOOLS_FS_SC_SIMCONNECTUSERAIRPLANE_H

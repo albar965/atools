@@ -61,8 +61,8 @@ enum Mode : unsigned char
   MODE_ALL = MODE_AIRWAY | MODE_NAVAID,
 };
 
-Q_DECLARE_FLAGS(Modes, Mode);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::routing::Modes);
+Q_DECLARE_FLAGS(Modes, Mode)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::routing::Modes)
 
 /* Type and subtype of a node */
 enum NodeType : unsigned char
@@ -92,8 +92,8 @@ enum NodeConnection : unsigned char
   CONNECTION_AIRWAY_TRACK = CONNECTION_AIRWAY_BOTH | CONNECTION_TRACK
 };
 
-Q_DECLARE_FLAGS(NodeConnections, NodeConnection);
-Q_DECLARE_OPERATORS_FOR_FLAGS(NodeConnections);
+Q_DECLARE_FLAGS(NodeConnections, NodeConnection)
+Q_DECLARE_OPERATORS_FOR_FLAGS(NodeConnections)
 
 QString nodeConnectionsToStr(NodeConnection con);
 

@@ -66,6 +66,6 @@ protected:
 } // namespace fs
 } // namespace atools
 
-Q_DECLARE_METATYPE(atools::fs::sc::SimConnectDataBase);
+Q_DECLARE_METATYPE(atools::fs::sc::SimConnectDataBase)
 
 #endif // ATOOLS_FS_SC_SIMCONNECTDATABASE_H

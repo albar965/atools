@@ -252,6 +252,6 @@ const atools::geo::Rect EMPTY_RECT;
 } // namespace atools
 
 Q_DECLARE_TYPEINFO(atools::geo::Rect, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(atools::geo::Rect);
+Q_DECLARE_METATYPE(atools::geo::Rect)
 
 #endif // ATOOLS_GEO_RECT_H

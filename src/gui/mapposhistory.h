@@ -148,7 +148,7 @@ private:
 } // namespace gui
 } // namespace atools
 
-Q_DECLARE_METATYPE(atools::gui::MapPosHistoryEntry);
+Q_DECLARE_METATYPE(atools::gui::MapPosHistoryEntry)
 Q_DECLARE_TYPEINFO(atools::gui::MapPosHistoryEntry, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_GUI_MAPPOSHISTORY_H

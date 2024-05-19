@@ -144,8 +144,8 @@ enum OptionFlag
   CREATE_AIRPORT_TABLES = 1 << 16
 };
 
-Q_DECLARE_FLAGS(OptionFlags, OptionFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::type::OptionFlags);
+Q_DECLARE_FLAGS(OptionFlags, OptionFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::type::OptionFlags)
 
 }
 

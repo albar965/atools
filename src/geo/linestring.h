@@ -229,6 +229,6 @@ const atools::geo::LineString EMPTY_LINESTRING;
 } // namespace atools
 
 Q_DECLARE_TYPEINFO(atools::geo::LineString, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(atools::geo::LineString);
+Q_DECLARE_METATYPE(atools::geo::LineString)
 
 #endif // ATOOLS_GEO_LINESTRING_H

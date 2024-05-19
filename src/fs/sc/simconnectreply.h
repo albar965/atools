@@ -38,7 +38,7 @@ enum CommandEnum
   CMD_WEATHER_REQUEST
 };
 
-Q_DECLARE_FLAGS(Command, CommandEnum);
+Q_DECLARE_FLAGS(Command, CommandEnum)
 
 /*
  * Class that contains replay data from a client for SimConnectData.
@@ -139,6 +139,6 @@ private:
 } // namespace fs
 } // namespace atools
 
-Q_DECLARE_METATYPE(atools::fs::sc::SimConnectReply);
+Q_DECLARE_METATYPE(atools::fs::sc::SimConnectReply)
 
 #endif // ATOOLS_FS_SIMCONNECTREPLY_H

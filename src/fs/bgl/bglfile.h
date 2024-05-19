@@ -61,8 +61,8 @@ enum CreateFlag
   AIRPORT_MSFS_NAVIGRAPH_NAVDATA = 1 << 3,
 };
 
-Q_DECLARE_FLAGS(CreateFlags, CreateFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::flags::CreateFlags);
+Q_DECLARE_FLAGS(CreateFlags, CreateFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::flags::CreateFlags)
 
 }
 /*

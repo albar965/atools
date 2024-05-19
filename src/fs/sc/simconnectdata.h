@@ -174,6 +174,6 @@ const static atools::fs::sc::SimConnectAircraft EMPTY_SIMCONNECT_AIRCRAFT;
 } // namespace fs
 } // namespace atools
 
-Q_DECLARE_METATYPE(atools::fs::sc::SimConnectData);
+Q_DECLARE_METATYPE(atools::fs::sc::SimConnectData)
 
 #endif // ATOOLS_FS_SIMCONNECTDATA_H

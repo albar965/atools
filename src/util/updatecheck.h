@@ -33,8 +33,8 @@ enum UpdateChannel
   DEVELOP = 1 << 2
 };
 
-Q_DECLARE_FLAGS(UpdateChannels, UpdateChannel);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::util::UpdateChannels);
+Q_DECLARE_FLAGS(UpdateChannels, UpdateChannel)
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::util::UpdateChannels)
 
 struct Update
 {
