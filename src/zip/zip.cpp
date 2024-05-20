@@ -538,8 +538,7 @@ void ZipPrivate::fillFileInfo(int index, ZipReader::FileInfo& fileInfo) const
 
   // fix the file path, if broken (convert separators, eat leading and trailing ones)
   fileInfo.filePath = QDir::fromNativeSeparators(fileInfo.filePath);
-  while(!fileInfo.filePath.isEmpty() &&
-        (fileInfo.filePath.at(0) == QLatin1Char('.') || fileInfo.filePath.at(0) == QLatin1Char('/')))
+  while(!fileInfo.filePath.isEmpty() && (fileInfo.filePath.at(0) == QLatin1Char('.') || fileInfo.filePath.at(0) == QLatin1Char('/')))
     fileInfo.filePath = fileInfo.filePath.mid(1);
   while(!fileInfo.filePath.isEmpty() && fileInfo.filePath.at(fileInfo.filePath.size() - 1) == QLatin1Char('/'))
     fileInfo.filePath.chop(1);

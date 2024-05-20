@@ -206,8 +206,7 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
       {
         // Remove duplicates with same name and almost same position
         const FlightplanEntry& prev = gpxData.flightplan.at(i - 1);
-        if(entry.getIdent() == prev.getIdent() &&
-           entry.getRegion() == prev.getRegion() &&
+        if(entry.getIdent() == prev.getIdent() && entry.getRegion() == prev.getRegion() &&
            entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
           continue;
       }

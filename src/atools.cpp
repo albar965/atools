@@ -145,7 +145,7 @@ void capWord(QString& lastWord, QChar last, const QSet<QString>& toUpper,
     // Convert all letters after an apostrophe to lower case (St. Mary's)
     if(last == '\'' && lastWord.size() == 1)
       lastWord[0] = lastWord.at(0).toLower();
-    else
+    else if(!lastWord.isEmpty())
     {
       lastWord = lastWord.toLower();
       lastWord[0] = lastWord.at(0).toUpper();
@@ -179,6 +179,7 @@ QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<Q
 
     last = c;
   }
+
   if(!lastWord.isEmpty())
   {
     QChar lastC = str.at(str.size() >= 2 ? str.size() - 2 : 0);
@@ -581,27 +582,27 @@ void strToFile(const QString& filename, const QString& text)
 
 QString homeDir()
 {
-  return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
+  return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).value(0);
 }
 
 QString desktopDir()
 {
-  return QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
+  return QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).value(0);
 }
 
 QString documentsDir()
 {
-  return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
+  return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0);
 }
 
 QString downloadDir()
 {
-  return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0);
+  return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).value(0);
 }
 
 QString tempDir()
 {
-  return QStandardPaths::standardLocations(QStandardPaths::TempLocation).at(0);
+  return QStandardPaths::standardLocations(QStandardPaths::TempLocation).value(0);
 }
 
 QStringList floatVectorToStrList(const QVector<float>& vector)

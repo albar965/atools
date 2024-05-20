@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -275,7 +275,7 @@ int RouteNetwork::searchNearest(Result& result, const Node& origin,
   // Copy node indexes and edges to result ======================
   int numFound = 0;
   Point3D originPoint = nodeToCartesian(origin);
-  for(int idx : indexes)
+  for(int idx : qAsConst(indexes))
   {
     if(matchNode(nodeIndex.at(idx)))
     {

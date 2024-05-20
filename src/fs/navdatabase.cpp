@@ -1855,7 +1855,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       QString addonsCfgFileLocal = QProcessEnvironment::systemEnvironment().value("LOCALAPPDATA");
 #else
       // Use $HOME/.config for testing
-      QString addonsCfgFileLocal = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
+      QString addonsCfgFileLocal = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).value(0);
 #endif
       addonsCfgFileLocal += SEP % QString("Lockheed Martin") % SEP % QString("Prepar3D v%1").arg(simNum) %
 #if !defined(Q_OS_WIN32)
@@ -1873,7 +1873,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       QString addonsCfgFile = QProcessEnvironment::systemEnvironment().value("APPDATA");
 #else
       // Use $HOME/.config for testing
-      QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
+      QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).value(0);
 #endif
       addonsCfgFile += SEP % QString("Lockheed Martin") % SEP % QString("Prepar3D v%1").arg(simNum) % SEP % "add-ons.cfg";
       addonsCfgFiles.append(addonsCfgFile);
@@ -1887,7 +1887,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       QString addonsAllUsersCfgFile = QProcessEnvironment::systemEnvironment().value("PROGRAMDATA");
 #else
       // Use /tmp for testing
-      QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
+      QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).value(0);
 #endif
       addonsAllUsersCfgFile += SEP % QString("Lockheed Martin") % SEP % QString("Prepar3D v%1").arg(simNum) %
 #if !defined(Q_OS_WIN32)

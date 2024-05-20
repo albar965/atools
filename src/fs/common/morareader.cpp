@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -178,6 +178,9 @@ void MoraReader::fillDbFromFile(const QVector<QStringList>& lines, int fileId)
   // lower left corner for the first block of each record.
   for(const QStringList& line :lines)
   {
+    if(line.size() != 32)
+      throw atools::Exception(QString("Line too short in MORA grid \"%1\"").arg(line.join(" ")));
+
     bool ok;
     int startLatY = line.at(0).toInt(&ok); // 89 to -90
     if(!ok)

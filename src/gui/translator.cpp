@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -192,7 +192,7 @@ bool Translator::loadAndInstall(const QString& name, const QString& dir, const Q
   QLocale locale;
   if(language.isEmpty())
     // Use only one language here since the translation API will try to load second and third languages
-    locale = QLocale(QLocale().uiLanguages().isEmpty() ? "en" : QLocale().uiLanguages().at(0));
+    locale = QLocale(QLocale().uiLanguages().isEmpty() ? "en" : QLocale().uiLanguages().value(0));
   else
     // Override system language for translations only
     locale = QLocale(language);

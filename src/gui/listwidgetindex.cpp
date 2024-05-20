@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -204,7 +204,7 @@ void ListWidgetIndex::buildIndex()
     loadStopwords();
 
     // Select stopword list based on UI language
-    QString lang = QLocale().uiLanguages().constFirst().section('-', 0, 0);
+    QString lang = QLocale().uiLanguages().value(0).section('-', 0, 0);
 
     if(!stopwords.contains(lang))
       // Fall back to English

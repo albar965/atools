@@ -67,7 +67,7 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
 
   if(path.isEmpty())
     // Use documents as default if path not given
-    defaultDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
+    defaultDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0);
   else
     defaultDir = path;
 

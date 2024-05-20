@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -98,24 +98,29 @@ bool GlobeReader::openFiles()
 
 void GlobeReader::openFile(int i)
 {
-  const QString& name = dataFilenames.at(i);
-  if(!name.isEmpty() && dataFiles[i] == nullptr)
+  if(atools::inRange(dataFilenames, i))
   {
-    qDebug() << Q_FUNC_INFO << name;
-    dataFiles[i] = new QFile(name);
-    if(dataFiles[i]->open(QIODevice::ReadOnly))
+    const QString& name = dataFilenames.at(i);
+    if(!name.isEmpty() && dataFiles[i] == nullptr)
     {
-      dataStreams[i] = new QDataStream(dataFiles[i]);
-      dataStreams[i]->setByteOrder(QDataStream::LittleEndian);
-    }
-    else
-    {
-      closeFile(i);
-      // Clear filename to avoid reopening
-      dataFilenames[i].clear();
-      qWarning() << "Cannot open file" << name;
+      qDebug() << Q_FUNC_INFO << name;
+      dataFiles[i] = new QFile(name);
+      if(dataFiles[i]->open(QIODevice::ReadOnly))
+      {
+        dataStreams[i] = new QDataStream(dataFiles[i]);
+        dataStreams[i]->setByteOrder(QDataStream::LittleEndian);
+      }
+      else
+      {
+        closeFile(i);
+        // Clear filename to avoid reopening
+        dataFilenames[i].clear();
+        qWarning() << "Cannot open file" << name;
+      }
     }
   }
+  else
+    qWarning() << Q_FUNC_INFO << "Filename index" << i << "out of range";
 }
 
 void GlobeReader::closeFile(int i)

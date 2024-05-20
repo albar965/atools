@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -742,8 +742,7 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
   QString waypointDescr = line.descCode;
 
   // Overfly but not for runways
-  bool overfly = waypointDescr.size() > 1 && (waypointDescr.at(1) == 'Y' || waypointDescr.at(1) == 'B') &&
-                 waypointDescr.at(0) != 'G';
+  bool overfly = waypointDescr.size() > 1 && (waypointDescr.at(1) == 'Y' || waypointDescr.at(1) == 'B') && waypointDescr.at(0) != 'G';
 
   rec.setValue(":type", line.pathTerm);
 
