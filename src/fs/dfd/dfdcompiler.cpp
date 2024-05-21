@@ -231,9 +231,6 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
   // llz_identifier
   // llz_mls_gls_category
 
-  if(apt == "EDDF")
-    qDebug() << Q_FUNC_INFO;
-
   // Find matching opposing ends in the list
   pairRunways(runwaypairs, runways);
 

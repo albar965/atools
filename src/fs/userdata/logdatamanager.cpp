@@ -417,9 +417,6 @@ int LogdataManager::importXplane(const QString& filepath,
         QString departure = at(line, DEPARTURE), departureName;
         atools::geo::Pos departurePos;
 
-        if(departure == "BIDV")
-          qDebug() << Q_FUNC_INFO;
-
         // Get name and coordinates from database
         fetchAirport(departurePos, departureName, departure);
 
