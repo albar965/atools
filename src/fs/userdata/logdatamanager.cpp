@@ -685,7 +685,9 @@ QString LogdataManager::cleanupWhere(bool departureAndDestEqual, bool departureO
     queryWhere.append("(departure_ident <> '' and destination_ident <> '' and departure_ident = destination_ident)");
 
   if(departureOrDestEmpty)
-    queryWhere.append("(departure_ident = '' or destination_ident = '')");
+    queryWhere.append("(departure_ident = '' or destination_ident = '' or " // Empty
+                      "departure_ident glob '[0-9][0-9][0-9][0-9][NS][0-9]*[0-9][EW]' or " // Off-airport
+                      "destination_ident glob '[0-9][0-9][0-9][0-9][NS][0-9]*[0-9][EW]')");
 
   if(minFlownDistance >= 0.f)
     queryWhere.append(QString("(distance_flown <= %1)").arg(minFlownDistance));
