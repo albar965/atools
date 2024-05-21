@@ -156,9 +156,6 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
   {
     line = stream.readLine().trimmed().toLatin1();
 
-    if(line.startsWith("MUGM"))
-      qDebug() << Q_FUNC_INFO;
-
     if(line.isEmpty() || line.size() > 256)
     {
       lineNum++;
@@ -231,8 +228,7 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
         updateOrInsert(line, ident, lastTimestamp);
       }
       else
-        qWarning() << "Ident in METAR does not match in file/URL"
-                   << fileOrUrl << "line num" << lineNum << "line" << line;
+        qWarning() << "Ident in METAR does not match in file/URL" << fileOrUrl << "line num" << lineNum << "line" << line;
     }
     lineNum++;
   }
@@ -249,9 +245,9 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
     qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
+    qDebug() << Q_FUNC_INFO << fileOrUrl << spatialIndex->size();
   }
 
-  qDebug() << Q_FUNC_INFO << fileOrUrl << spatialIndex->size();
   return found;
 }
 
@@ -365,9 +361,9 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
     qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
+    qDebug() << Q_FUNC_INFO << fileOrUrl << spatialIndex->size();
   }
 
-  qDebug() << Q_FUNC_INFO << fileOrUrl << spatialIndex->size();
   return found;
 }
 
@@ -454,9 +450,9 @@ int MetarIndex::readJson(QTextStream& stream, const QString& fileOrUrl, bool mer
     qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
+    qDebug() << Q_FUNC_INFO << fileOrUrl << spatialIndex->size();
   }
 
-  qDebug() << Q_FUNC_INFO << fileOrUrl << spatialIndex->size();
   return found;
 }
 
