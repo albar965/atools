@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,6 @@ private:
 
   QChar ilsType(const QString& name, bool glideslope);
 
-  const int FEATHER_LEN_NM = 9;
   const float ILS_FEATHER_WIDTH_DEG = 4.f;
   const float RNV_FEATHER_WIDTH_DEG = 8.f;
 

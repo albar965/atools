@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ Q_DECLARE_FLAGS(NavServerOptions, NavServerOption)
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ns::NavServerOptions)
 
 /* Declare a own logging category to append in the text edit */
-Q_DECLARE_LOGGING_CATEGORY(gui);
+Q_DECLARE_LOGGING_CATEGORY(gui)
 
 } // namespace ns
 } // namespace fs

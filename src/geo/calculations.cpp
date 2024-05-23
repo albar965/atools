@@ -537,7 +537,6 @@ const static float METERPERSEC2KT = 3600.f / NM2METER;
 const static float p0 = 101325.f; // Pascal at MSL
 const static float p1 = 22632.05545875171f; // Pascal at 11000 m
 const static float p2 = 5474.884659730908f; // Pascal at 20000 m
-const static float p3 = 868.0176477556424f; // Pascal at 32000 m
 
 // Temperature
 const static float T0 = 288.15f; // Kelvin at MSL
