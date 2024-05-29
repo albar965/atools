@@ -24,6 +24,7 @@ class QObject;
 class QWidget;
 class QVariant;
 
+class QDialog;
 namespace atools {
 namespace settings {
 class Settings;
@@ -72,10 +73,15 @@ public:
 
   void save(const QList<QObject *>& widgets) const;
   void save(const QList<const QObject *>& widgets) const;
-  void restore(const QList<QObject *>& widgets) const;
-
   void save(const QObject *widget) const;
+
+  void restore(const QList<QObject *>& widgets) const;
   void restore(QObject *widget) const;
+
+  /* Remove all settings */
+  void clear(const QList<QObject *>& widgets) const;
+  void clear(QObject *widget) const;
+  static void clearDialog(const QString& keyPrefix, const QString& dialogName);
 
   /* true if settings file contains the widget */
   bool contains(const QObject *widget) const;
@@ -141,11 +147,14 @@ public:
 private:
   void saveWidget(atools::settings::Settings& settings, const QObject *object, const QVariant& value,
                   const QString& objName = QString()) const;
+  void clearWidget(atools::settings::Settings& settings, const QObject *object,
+                   const QString& objName = QString()) const;
   QVariant loadWidget(atools::settings::Settings& settings, QObject *object,
                       const QString& objName = QString()) const;
   bool containsWidget(atools::settings::Settings& settings, const QObject *widget, const QString& objName = QString()) const;
 
   void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *widget) const;
+  void clearWidgetVisible(atools::settings::Settings& settings, const QWidget *widget) const;
   void loadWidgetVisible(atools::settings::Settings& settings, QWidget *widget) const;
 
   QString keyPrefix;

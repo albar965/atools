@@ -204,6 +204,122 @@ void WidgetState::save(const QObject *widget) const
   }
 }
 
+void WidgetState::clear(QObject *widget) const
+{
+  if(widget != nullptr)
+  {
+    Settings& settings = Settings::instance();
+
+    if(const QLayout *layout = dynamic_cast<const QLayout *>(widget))
+    {
+      for(int i = 0; i < layout->count(); i++)
+      {
+        clear(layout->itemAt(i)->widget());
+        clear(layout->itemAt(i)->layout());
+      }
+    }
+    else if(const QLineEdit *lineEdit = dynamic_cast<const QLineEdit *>(widget))
+    {
+      clearWidget(settings, lineEdit, lineEdit->text());
+      clearWidgetVisible(settings, lineEdit);
+    }
+    else if(const QTextEdit *textEdit = dynamic_cast<const QTextEdit *>(widget))
+    {
+      clearWidget(settings, textEdit, textEdit->toHtml());
+      clearWidgetVisible(settings, textEdit);
+    }
+    else if(const QSpinBox *spinBox = dynamic_cast<const QSpinBox *>(widget))
+    {
+      clearWidget(settings, spinBox);
+      clearWidgetVisible(settings, spinBox);
+    }
+    else if(const QDoubleSpinBox *doubleSpingBox = dynamic_cast<const QDoubleSpinBox *>(widget))
+    {
+      clearWidget(settings, doubleSpingBox);
+      clearWidgetVisible(settings, doubleSpingBox);
+    }
+    else if(const QComboBox *comboBox = dynamic_cast<const QComboBox *>(widget))
+    {
+      clearWidget(settings, comboBox);
+      clearWidget(settings, comboBox->lineEdit(), comboBox->objectName() % "_Edit");
+      clearWidgetVisible(settings, comboBox);
+    }
+    else if(const QAbstractSlider *slider = dynamic_cast<const QAbstractSlider *>(widget))
+    {
+      clearWidget(settings, slider);
+      clearWidget(settings, slider, slider->objectName() % "_Min");
+      clearWidget(settings, slider, slider->objectName() % "_Max");
+      clearWidgetVisible(settings, slider);
+    }
+    else if(const QTabWidget *tabWidget = dynamic_cast<const QTabWidget *>(widget))
+      clearWidget(settings, tabWidget);
+    else if(const QTabBar *tabBar = dynamic_cast<const QTabBar *>(widget))
+      clearWidget(settings, tabBar);
+    else if(const QAction *action = dynamic_cast<const QAction *>(widget))
+      clearWidget(settings, action);
+    else if(const QActionGroup *actionGroup = dynamic_cast<const QActionGroup *>(widget))
+      clearWidget(settings, actionGroup);
+    else if(const QHeaderView *headerView = dynamic_cast<const QHeaderView *>(widget))
+      clearWidget(settings, headerView, headerView->saveState());
+    else if(const QTableView *tableView = dynamic_cast<const QTableView *>(widget))
+      clearWidget(settings, tableView, tableView->horizontalHeader()->saveState());
+    else if(const QTableWidget *tableWidget = dynamic_cast<const QTableWidget *>(widget))
+      clearWidget(settings, tableWidget, tableWidget->horizontalHeader()->saveState());
+    else if(const QListView *listView = dynamic_cast<const QListView *>(widget))
+      clearWidget(settings, listView);
+    else if(const QTreeView *treeView = dynamic_cast<const QTreeView *>(widget))
+      clearWidget(settings, treeView, treeView->header()->saveState());
+    else if(const QTreeWidget *treeWidget = dynamic_cast<const QTreeWidget *>(widget))
+      clearWidget(settings, treeWidget, treeWidget->header()->saveState());
+    else if(const QFileDialog *fileDialog = dynamic_cast<const QFileDialog *>(widget))
+      clearWidget(settings, fileDialog, fileDialog->saveState());
+    else if(const QMainWindow *mainWindow = dynamic_cast<const QMainWindow *>(widget))
+    {
+      settings.remove(keyPrefix % "_" % mainWindow->objectName() % "_pos");
+      settings.remove(keyPrefix % "_" % mainWindow->objectName() % "_size");
+      settings.remove(keyPrefix % "_" % mainWindow->objectName() % "_maximized");
+      clearWidget(settings, mainWindow, mainWindow->saveState());
+    }
+    else if(const QDialog *dialog = dynamic_cast<const QDialog *>(widget))
+    {
+      settings.remove(keyPrefix % "_" % dialog->objectName() % "_size");
+      settings.remove(keyPrefix % "_" % dialog->objectName() % "_pos");
+    }
+    else if(const QSplitter *splitter = dynamic_cast<const QSplitter *>(widget))
+      clearWidget(settings, splitter);
+    else if(const QStatusBar *statusBar = dynamic_cast<const QStatusBar *>(widget))
+      clearWidget(settings, statusBar);
+    else if(const QCheckBox *checkBox = dynamic_cast<const QCheckBox *>(widget))
+    {
+      clearWidget(settings, checkBox);
+      clearWidgetVisible(settings, checkBox);
+    }
+    else if(const QAbstractButton *button = dynamic_cast<const QAbstractButton *>(widget))
+    {
+      clearWidget(settings, button);
+      clearWidgetVisible(settings, button);
+    }
+    else if(const QFrame *frame = dynamic_cast<const QFrame *>(widget))
+      clearWidgetVisible(settings, frame);
+    else if(const QButtonGroup *buttonGroup = dynamic_cast<const QButtonGroup *>(widget))
+    {
+      if(buttonGroup->checkedButton() != nullptr)
+        settings.remove(keyPrefix % "_" % buttonGroup->objectName() % "_selected");
+      else
+        settings.remove(keyPrefix % "_" % buttonGroup->objectName() % "_selected");
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Found unsupported widget type in save" << widget->metaObject()->className();
+  }
+}
+
+void WidgetState::clearDialog(const QString& keyPrefix, const QString& dialogName)
+{
+  Settings& settings = Settings::instance();
+  settings.remove(keyPrefix % "_" % dialogName % "_size");
+  settings.remove(keyPrefix % "_" % dialogName % "_pos");
+}
+
 void WidgetState::restore(QObject *widget) const
 {
   if(widget != nullptr)
@@ -518,6 +634,12 @@ void WidgetState::restore(const QList<QObject *>& widgets) const
     restore(w);
 }
 
+void WidgetState::clear(const QList<QObject *>& widgets) const
+{
+  for(QObject *w : widgets)
+    clear(w);
+}
+
 void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *widget) const
 {
   if(visibility)
@@ -532,11 +654,28 @@ void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *widget) c
   }
 }
 
+void WidgetState::clearWidgetVisible(settings::Settings& settings, const QWidget *widget) const
+{
+  if(!widget->objectName().isEmpty())
+    settings.remove(keyPrefix % "_visible_" % widget->objectName());
+  else
+    qWarning() << Q_FUNC_INFO << "Found widget with empty name";
+}
+
 void WidgetState::saveWidget(Settings& settings, const QObject *object, const QVariant& value, const QString& objName) const
 {
   QString name = objName.isEmpty() ? object->objectName() : objName;
   if(!name.isEmpty())
     settings.setValueVar(keyPrefix % "_" % name, value);
+  else
+    qWarning() << Q_FUNC_INFO << "Found widget with empty name";
+}
+
+void WidgetState::clearWidget(Settings& settings, const QObject *object, const QString& objName) const
+{
+  QString name = objName.isEmpty() ? object->objectName() : objName;
+  if(!name.isEmpty())
+    settings.remove(keyPrefix % "_" % name);
   else
     qWarning() << Q_FUNC_INFO << "Found widget with empty name";
 }
