@@ -30,6 +30,8 @@
 #include <QMenu>
 #include <QItemSelectionModel>
 #include <QLabel>
+#include <QGuiApplication>
+#include <QScreen>
 
 namespace atools {
 namespace gui {
@@ -191,6 +193,7 @@ void changeWidgetColor(QWidget *widget, QColor backgroundColor)
     widget->setStyleSheet(QString());
 #else
   Q_UNUSED(backgroundColor)
+  Q_UNUSED(widget)
 #endif
 }
 
@@ -216,6 +219,15 @@ void labelForcedUpdate(QLabel *label)
   QString text = label->text();
   label->clear();
   label->setText(text);
+}
+
+void centerWidgetOnScreen(QWidget *widget)
+{
+  QSize size = widget->size();
+  QRect availableGeometry = QGuiApplication::primaryScreen()->availableGeometry();
+  widget->move(availableGeometry.x() + (availableGeometry.width() - size.width()) / 2,
+               availableGeometry.y() + (availableGeometry.height() - size.height()) / 2);
+
 }
 
 } // namespace util

@@ -19,6 +19,7 @@
 
 #include "exception.h"
 #include "gui/dialog.h"
+#include "gui/widgetutil.h"
 
 #include <QAction>
 #include <QDockWidget>
@@ -778,8 +779,9 @@ void DockWidgetHandler::resetWindowState(const QSize& size, const QString& filen
       mainWindow->setWindowState(Qt::WindowNoState);
 
       // Move to origin and apply size
-      mainWindow->move(QGuiApplication::primaryScreen()->availableGeometry().topLeft());
       mainWindow->resize(size);
+
+      atools::gui::util::centerWidgetOnScreen(mainWindow);
 
       // Reload state now. This has to be done after resizing the window.
       mainWindow->restoreState(bytes);

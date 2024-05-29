@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,9 @@ void showHideLayoutElements(const QList<QLayout *> layouts,
  * @return true if any widget in the list does not have its default state
  */
 bool anyWidgetChanged(const QList<const QObject *>& widgets);
+
+/* Centers the widget on the primary screen (not its parent) */
+void centerWidgetOnScreen(QWidget *widget);
 
 /*
  * @return true if all actions that are checkable are checked
