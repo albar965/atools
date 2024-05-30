@@ -493,7 +493,7 @@ void MetarIndex::updateOrInsert(const QString& metarString, const QString& ident
 
 void MetarIndex::clear()
 {
-  spatialIndex->clear();
+  spatialIndex->clearIndex();
   identIndexMap.clear();
   metarVector.clear();
   clearCache();
@@ -501,7 +501,7 @@ void MetarIndex::clear()
 
 void MetarIndex::clearCache()
 {
-  spatialIndexInterpolated->clear();
+  spatialIndexInterpolated->clearIndex();
   metarInterpolatedVector.clear();
 }
 

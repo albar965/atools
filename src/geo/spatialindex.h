@@ -145,7 +145,16 @@ public:
     return p->points3D()[index];
   }
 
+  /* Clears vector and updates index to clear it */
+  void clearIndex()
+  {
+    QVector<T>::clear();
+    updateIndex();
+  }
+
 private:
+  using QVector<T>::clear;
+
   /* Copy objects from base vector to result set. */
   void copyData(QVector<T>& objects, QVector<int>& indexes) const
   {
@@ -201,7 +210,6 @@ void SpatialIndex<T>::getRadius(QVector<T>& objects, const Pos& pos, float radiu
 template<typename T>
 void SpatialIndex<T>::updateIndex()
 {
-  QVector<T>::squeeze();
   p->reserve(QVector<T>::size());
 
   for(int i = 0; i < QVector<T>::size(); i++)

@@ -477,8 +477,7 @@ bool RouteNetwork::matchEdge(const Edge& edge) const
 void RouteNetwork::clear()
 {
   clearParameters();
-  nodeIndex.clear();
-  nodeIndex.updateIndex();
+  nodeIndex.clearIndex();
   altLevelsEast.clear();
   altLevelsWest.clear();
 }
