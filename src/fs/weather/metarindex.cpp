@@ -23,6 +23,7 @@
 #include "geo/calculations.h"
 #include "geo/pos.h"
 #include "geo/spatialindex.h"
+#include "util/contextsaver.h"
 
 #include <QTimeZone>
 #include <QJsonDocument>
@@ -111,6 +112,9 @@ int MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
   Q_ASSERT(format != UNKNOWN);
   Q_ASSERT(fetchAirportCoords);
 
+  // Set reading flag to forbid fetching METARs while index is invalid
+  atools::util::ContextSaverBool readingContext(reading);
+
   switch(format)
   {
     case atools::fs::weather::UNKNOWN:
@@ -126,6 +130,7 @@ int MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
     case atools::fs::weather::JSON:
       return readJson(stream, fileOrUrl, merge);
   }
+
   return 0;
 }
 
@@ -517,63 +522,66 @@ int MetarIndex::numStationMetars() const
 
 const atools::fs::weather::Metar& MetarIndex::getMetar(const QString& station, atools::geo::Pos pos)
 {
-  const Metar& metar = fetchMetar(station);
-
-  if(metar.hasAnyMetar())
-    return metar;
-  else
+  if(!reading)
   {
-    if(!pos.isValid() && !station.isEmpty())
-      pos = fetchAirportCoords(station);
+    const Metar& metar = fetchMetar(station);
 
-    if(pos.isValid())
-    {
-      int index = spatialIndexInterpolated->getNearestIndex(pos);
-
-      if(index != -1)
-      {
-        // Found one interpolated near position - return if close enough ======================
-        const Metar& metarInterpolated = metarInterpolatedVector.at(index);
-        if(metarInterpolated.hasAnyMetar() && metarInterpolated.getRequestPos().distanceMeterTo(pos) < maxDistanceToleranceMeter)
-          return metarInterpolated;
-      }
-
-      // Interpolate all nearest ======================
-      QVector<PosIndex> posIndexes;
-      spatialIndex->getNearest(posIndexes, pos, numInterpolation);
-
-      // Collect positions ====================
-      atools::fs::weather::MetarPtrVector metars;
-      for(const PosIndex& posIndex : qAsConst(posIndexes))
-        metars.append(&metarVector.at(posIndex.index));
-
-      // Sort by distance to request point ====================
-      std::sort(metars.begin(), metars.end(), [&pos](const Metar *t1, const Metar *t2) -> bool {
-              return t1->getPosition().distanceMeterTo(pos) < t2->getPosition().distanceMeterTo(pos);
-            });
-
-      // Truncate above maximum distance, not parsed and having errors ===================
-      float maxDistanceMeter = atools::geo::nmToMeter(maxDistanceInterpolationNm);
-      metars.erase(std::remove_if(metars.begin(), metars.end(), [maxDistanceMeter, &pos](const Metar *m) -> bool {
-              return m->getPosition().distanceMeterTo(pos) > maxDistanceMeter || !m->hasStationMetar() || m->getStation().hasErrors();
-            }), metars.end());
-
-      // Interpolate nearest metars =================================
-      Metar metarInterpolatedNew = Metar(station, pos, metars);
-      metarInterpolatedNew.parseAll(false /* useTimestamp */);
-
-      // Clear full cache if too large
-      if(metarInterpolatedVector.size() > maxInterpolatedCacheSize)
-        clearCache();
-
-      // Add to cache and return reference =======================
-      metarInterpolatedVector.append(metarInterpolatedNew);
-      spatialIndexInterpolated->append(PosIndex(pos, metarInterpolatedVector.size() - 1));
-      return metarInterpolatedVector.constLast();
-    }
+    if(metar.hasAnyMetar())
+      return metar;
     else
-      qWarning() << Q_FUNC_INFO << "Cannot find METAR" << pos << station;
-  }
+    {
+      if(!pos.isValid() && !station.isEmpty())
+        pos = fetchAirportCoords(station);
+
+      if(pos.isValid())
+      {
+        int index = spatialIndexInterpolated->getNearestIndex(pos);
+
+        if(index != -1)
+        {
+          // Found one interpolated near position - return if close enough ======================
+          const Metar& metarInterpolated = metarInterpolatedVector.at(index);
+          if(metarInterpolated.hasAnyMetar() && metarInterpolated.getRequestPos().distanceMeterTo(pos) < maxDistanceToleranceMeter)
+            return metarInterpolated;
+        }
+
+        // Interpolate all nearest ======================
+        QVector<PosIndex> posIndexes;
+        spatialIndex->getNearest(posIndexes, pos, numInterpolation);
+
+        // Collect positions ====================
+        atools::fs::weather::MetarPtrVector metars;
+        for(const PosIndex& posIndex : qAsConst(posIndexes))
+          metars.append(&metarVector.at(posIndex.index));
+
+        // Sort by distance to request point ====================
+        std::sort(metars.begin(), metars.end(), [&pos](const Metar *t1, const Metar *t2) -> bool {
+                return t1->getPosition().distanceMeterTo(pos) < t2->getPosition().distanceMeterTo(pos);
+              });
+
+        // Truncate above maximum distance, not parsed and having errors ===================
+        float maxDistanceMeter = atools::geo::nmToMeter(maxDistanceInterpolationNm);
+        metars.erase(std::remove_if(metars.begin(), metars.end(), [maxDistanceMeter, &pos](const Metar *m) -> bool {
+                return m->getPosition().distanceMeterTo(pos) > maxDistanceMeter || !m->hasStationMetar() || m->getStation().hasErrors();
+              }), metars.end());
+
+        // Interpolate nearest metars =================================
+        Metar metarInterpolatedNew = Metar(station, pos, metars);
+        metarInterpolatedNew.parseAll(false /* useTimestamp */);
+
+        // Clear full cache if too large
+        if(metarInterpolatedVector.size() > maxInterpolatedCacheSize)
+          clearCache();
+
+        // Add to cache and return reference =======================
+        metarInterpolatedVector.append(metarInterpolatedNew);
+        spatialIndexInterpolated->append(PosIndex(pos, metarInterpolatedVector.size() - 1));
+        return metarInterpolatedVector.constLast();
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "Cannot find METAR" << pos << station;
+    } // if(metar.hasAnyMetar()) return metar; else
+  } // if(!reading)
 
   return Metar::EMPTY;
 }

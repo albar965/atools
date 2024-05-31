@@ -163,6 +163,8 @@ private:
   bool verbose = false;
   atools::fs::weather::MetarFormat format = atools::fs::weather::UNKNOWN;
 
+  // Block fetching METARs while reading files. Can happen if input events are processes while reading.
+  bool reading = false;
 };
 
 } // namespace weather
