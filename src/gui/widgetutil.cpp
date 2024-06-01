@@ -221,12 +221,14 @@ void labelForcedUpdate(QLabel *label)
   label->setText(text);
 }
 
-void centerWidgetOnScreen(QWidget *widget)
+void centerWidgetOnScreen(QWidget *widget, const QSize& size)
 {
-  QSize size = widget->size();
+  QSize widgetSize = size.isValid() ? size : widget->size();
+  widget->resize(widgetSize);
+
   QRect availableGeometry = QGuiApplication::primaryScreen()->availableGeometry();
-  widget->move(availableGeometry.x() + (availableGeometry.width() - size.width()) / 2,
-               availableGeometry.y() + (availableGeometry.height() - size.height()) / 2);
+  widget->move(availableGeometry.x() + (availableGeometry.width() - widgetSize.width()) / 2,
+               availableGeometry.y() + (availableGeometry.height() - widgetSize.height()) / 2);
 
 }
 

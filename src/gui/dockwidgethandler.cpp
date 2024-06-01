@@ -781,7 +781,7 @@ void DockWidgetHandler::resetWindowState(const QSize& size, const QString& filen
       // Move to origin and apply size
       mainWindow->resize(size);
 
-      atools::gui::util::centerWidgetOnScreen(mainWindow);
+      atools::gui::util::centerWidgetOnScreen(mainWindow, QSize());
 
       // Reload state now. This has to be done after resizing the window.
       mainWindow->restoreState(bytes);

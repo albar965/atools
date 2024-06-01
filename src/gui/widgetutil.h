@@ -29,6 +29,7 @@ class QColor;
 class QMenu;
 class QLabel;
 class QItemSelectionModel;
+class QSize;
 
 namespace atools {
 namespace gui {
@@ -65,7 +66,7 @@ void showHideLayoutElements(const QList<QLayout *> layouts,
 bool anyWidgetChanged(const QList<const QObject *>& widgets);
 
 /* Centers the widget on the primary screen (not its parent) */
-void centerWidgetOnScreen(QWidget *widget);
+void centerWidgetOnScreen(QWidget *widget, const QSize& size);
 
 /*
  * @return true if all actions that are checkable are checked
