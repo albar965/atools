@@ -31,6 +31,11 @@ SimConnectUserAircraft::SimConnectUserAircraft()
 
 }
 
+SimConnectUserAircraft::~SimConnectUserAircraft()
+{
+
+}
+
 void SimConnectUserAircraft::read(QDataStream& in)
 {
   SimConnectAircraft::read(in);

@@ -31,12 +31,6 @@ SimConnectReply::SimConnectReply()
 
 }
 
-SimConnectReply::SimConnectReply(const SimConnectReply& other)
-{
-  *this = other;
-
-}
-
 SimConnectReply::~SimConnectReply()
 {
 

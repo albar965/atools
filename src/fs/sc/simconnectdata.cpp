@@ -35,11 +35,6 @@ SimConnectData::SimConnectData()
 
 }
 
-SimConnectData::SimConnectData(const SimConnectData& other)
-{
-  *this = other;
-}
-
 SimConnectData::~SimConnectData()
 {
 

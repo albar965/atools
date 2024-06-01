@@ -49,7 +49,6 @@ class SimConnectReply
 {
 public:
   SimConnectReply();
-  SimConnectReply(const SimConnectReply& other);
   virtual ~SimConnectReply() override;
 
   /*
