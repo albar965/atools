@@ -180,16 +180,17 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
   writer.writeEndElement(); // link
   writer.writeEndElement(); // metadata
 
-  if(!gpxData.flightplan.isEmpty())
+  const Flightplan& flightplan = gpxData.getFlightplan();
+  if(!flightplan.isEmpty())
   {
     writer.writeStartElement("rte");
-    writer.writeTextElement("name", gpxData.flightplan.getTitle() + tr(" - Flight Plan"));
-    writer.writeTextElement("desc", gpxData.flightplan.getDescription());
+    writer.writeTextElement("name", flightplan.getTitle() + tr(" - Flight Plan"));
+    writer.writeTextElement("desc", flightplan.getDescription());
 
     // Write route ========================================================
-    for(int i = 0; i < gpxData.flightplan.size(); i++)
+    for(int i = 0; i < flightplan.size(); i++)
     {
-      const FlightplanEntry& entry = gpxData.flightplan.at(i);
+      const FlightplanEntry& entry = flightplan.at(i);
       // <rtept lat="52.0" lon="13.5">
       // <ele>33.0</ele>
       // <time>2011-12-13T23:59:59Z</time>
@@ -205,7 +206,7 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
       if(i > 0)
       {
         // Remove duplicates with same name and almost same position
-        const FlightplanEntry& prev = gpxData.flightplan.at(i - 1);
+        const FlightplanEntry& prev = flightplan.at(i - 1);
         if(entry.getIdent() == prev.getIdent() && entry.getRegion() == prev.getRegion() &&
            entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
           continue;
@@ -227,14 +228,14 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
   }
 
   // Write track ========================================================
-  if(!gpxData.trails.isEmpty())
+  if(gpxData.hasTrails())
   {
     writer.writeStartElement("trk");
 
-    if(!gpxData.flightplan.isEmpty())
+    if(!flightplan.isEmpty())
       writer.writeTextElement("name", QCoreApplication::applicationName() + tr(" - Track"));
 
-    for(const TrailPoints& track : gpxData.trails)
+    for(const TrailPoints& track : gpxData.getTrails())
     {
       if(track.isEmpty())
         continue;
@@ -319,8 +320,7 @@ void GpxIO::loadGpxInternal(atools::fs::gpx::GpxData& gpxData, atools::util::Xml
             atools::fs::pln::FlightplanEntry entry;
             entry.setIdent(name);
             entry.setPosition(pos.asPos());
-            gpxData.flightplan.append(entry);
-            gpxData.flightplanRect.extend(entry.getPosition());
+            gpxData.appendFlightplanEntry(entry);
           }
         }
         else
@@ -340,19 +340,16 @@ void GpxIO::loadGpxInternal(atools::fs::gpx::GpxData& gpxData, atools::util::Xml
           {
             if(reader.name() == QLatin1String("trkpt"))
             {
-              QDateTime datetetime;
-              readPosGpx(pos, name, xmlStream, &datetetime);
+              QDateTime datetime;
+              readPosGpx(pos, name, xmlStream, &datetime);
               if(pos.isValidRange())
-              {
-                line.append(atools::fs::gpx::TrailPoint(pos, datetetime.toMSecsSinceEpoch()));
-                gpxData.updateBoundaries(pos.asPos());
-              }
+                line.append(atools::fs::gpx::TrailPoint(pos, datetime.toMSecsSinceEpoch()));
             }
             else
               xmlStream.skipCurrentElement(false /* warn */);
           }
 
-          gpxData.trails.append(line);
+          gpxData.appendTrailPoints(line);
         }
         else
           xmlStream.skipCurrentElement(false /* warn */);
@@ -362,7 +359,7 @@ void GpxIO::loadGpxInternal(atools::fs::gpx::GpxData& gpxData, atools::util::Xml
       xmlStream.skipCurrentElement(false /* warn */);
   }
 
-  gpxData.flightplan.adjustDepartureAndDestination(true);
+  gpxData.adjustDepartureAndDestinationFlightplan();
 }
 
 } // namespace gpx
