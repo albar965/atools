@@ -27,11 +27,13 @@
 #include <QDebug>
 #include <QTextDocumentFragment>
 #include <QCheckBox>
+#include <QRadioButton>
+#include <QButtonGroup>
 
 namespace atools {
 namespace gui {
 
-const static char ID_PROPERTY[] = "checkboxid";
+const static char ID_PROPERTY[] = "button_id";
 
 ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString& description, const QString& settingsPrefixParam,
                            const QString& helpBaseUrlParam)
@@ -69,26 +71,52 @@ void ChoiceDialog::addCheckBoxHiddenInt(int id)
   addCheckBoxInt(id, QString(), QString(), false /* checked*/, true /* disabled */, true /* hidden */);
 }
 
-void ChoiceDialog::addCheckBoxDisabledInt(int id, const QString& text, const QString& tooltip, bool checked)
-{
-  addCheckBoxInt(id, text, tooltip, checked, true /* disabled */, false /* hidden */);
-}
-
 void ChoiceDialog::addCheckBoxInt(int id, const QString& text, const QString& tooltip, bool checked, bool disabled,
                                   bool hidden)
 {
-  QCheckBox *checkBox = new QCheckBox(text, this);
-  checkBox->setToolTip(tooltip);
-  checkBox->setStatusTip(tooltip);
-  checkBox->setProperty(ID_PROPERTY, id);
-  checkBox->setChecked(checked);
-  checkBox->setDisabled(disabled);
-  checkBox->setHidden(hidden);
-  index.insert(id, checkBox);
-  connect(checkBox, &QCheckBox::toggled, this, &ChoiceDialog::checkBoxToggledInternal);
+  QCheckBox *button = new QCheckBox(text, this);
+  button->setToolTip(tooltip);
+  button->setStatusTip(tooltip);
+  button->setProperty(ID_PROPERTY, id);
+  button->setChecked(checked);
+  button->setDisabled(disabled);
+  button->setHidden(hidden);
+  index.insert(id, button);
+  connect(button, &QCheckBox::toggled, this, &ChoiceDialog::buttonToggledInternal);
 
   // Add widget before the button box and verticalSpacerChoice
-  ui->verticalLayoutScrollArea->insertWidget(-1, checkBox);
+  ui->verticalLayoutScrollArea->insertWidget(-1, button);
+}
+
+void ChoiceDialog::addRadioButtonHiddenInt(int id, int groupId)
+{
+  addRadioButtonInt(id, groupId, QString(), QString(), false /* checked*/, true /* disabled */, true /* hidden */);
+}
+
+void ChoiceDialog::addRadioButtonInt(int id, int groupId, const QString& text, const QString& tooltip, bool checked, bool disabled,
+                                     bool hidden)
+{
+  QRadioButton *button = new QRadioButton(text, this);
+  button->setToolTip(tooltip);
+  button->setStatusTip(tooltip);
+  button->setProperty(ID_PROPERTY, id);
+  button->setChecked(checked);
+  button->setDisabled(disabled);
+  button->setHidden(hidden);
+  index.insert(id, button);
+  connect(button, &QRadioButton::toggled, this, &ChoiceDialog::buttonToggledInternal);
+
+  QButtonGroup *buttonGroup = buttonGroups.value(groupId);
+  if(buttonGroup == nullptr)
+  {
+    buttonGroup = new QButtonGroup(this);
+    buttonGroups.insert(groupId, buttonGroup);
+  }
+
+  buttonGroup->addButton(button);
+
+  // Add widget before the button box and verticalSpacerChoice
+  ui->verticalLayoutScrollArea->insertWidget(-1, button);
 }
 
 void ChoiceDialog::addLine()
@@ -113,8 +141,8 @@ void ChoiceDialog::addSpacer()
 const QVector<std::pair<int, bool> > ChoiceDialog::getCheckState() const
 {
   QVector<std::pair<int, bool> > ids;
-  for(QCheckBox *checkbox : index)
-    ids.append(std::make_pair(checkbox->property(ID_PROPERTY).toInt(), checkbox->isChecked()));
+  for(QAbstractButton *button : index)
+    ids.append(std::make_pair(button->property(ID_PROPERTY).toInt(), button->isChecked()));
   return ids;
 }
 
@@ -123,7 +151,7 @@ bool ChoiceDialog::isCheckedInt(int id) const
   return index.value(id)->isChecked() && index.value(id)->isEnabled();
 }
 
-QCheckBox *ChoiceDialog::getCheckBoxInt(int id)
+QAbstractButton *ChoiceDialog::getButtonInt(int id) const
 {
   return index.value(id);
 }
@@ -146,12 +174,12 @@ void ChoiceDialog::buttonBoxClicked(QAbstractButton *button)
   }
 }
 
-void ChoiceDialog::checkBoxToggledInternal(bool checked)
+void ChoiceDialog::buttonToggledInternal(bool checked)
 {
   updateButtonBoxState();
-  QCheckBox *checkBox = dynamic_cast<QCheckBox *>(sender());
-  if(checkBox != nullptr)
-    emit checkBoxToggled(checkBox->property(ID_PROPERTY).toInt(), checked);
+  QAbstractButton *button = dynamic_cast<QAbstractButton *>(sender());
+  if(button != nullptr)
+    emit buttonToggled(button->property(ID_PROPERTY).toInt(), checked);
 }
 
 void ChoiceDialog::restoreState()
@@ -159,8 +187,8 @@ void ChoiceDialog::restoreState()
   atools::gui::WidgetState widgetState(settingsPrefix, false);
   widgetState.restore(this);
 
-  // Restore checkboxes
-  QStringList ids = atools::settings::Settings::instance().valueStrList(settingsPrefix + "CheckBoxStates");
+  // Restore buttons
+  QStringList ids = atools::settings::Settings::instance().valueStrList(settingsPrefix + "ButtonStates");
   for(int i = 0; i < ids.size(); i += 2)
   {
     int id = ids.at(i).toInt();
@@ -169,7 +197,7 @@ void ChoiceDialog::restoreState()
     if(index.value(id) != nullptr)
     {
       index.value(id)->setChecked(checked);
-      emit checkBoxToggled(id, checked);
+      emit buttonToggled(id, checked);
     }
   }
   updateButtonBoxState();
@@ -180,12 +208,12 @@ void ChoiceDialog::saveState() const
   atools::gui::WidgetState widgetState(settingsPrefix, false);
   widgetState.save(this);
 
-  // Save checkboxes in a list of id 1, checked 1, id 2, checked 2, ...
+  // Save buttons in a list of id 1, checked 1, id 2, checked 2, ...
   QStringList ids;
   for(const std::pair<int, bool>& state : getCheckState())
     ids << QString::number(state.first) << QString::number(state.second);
 
-  atools::settings::Settings::instance().setValue(settingsPrefix + "CheckBoxStates", ids);
+  atools::settings::Settings::instance().setValue(settingsPrefix + "ButtonStates", ids);
 }
 
 void ChoiceDialog::updateButtonBoxState()
@@ -193,7 +221,7 @@ void ChoiceDialog::updateButtonBoxState()
   if(!required.isEmpty())
   {
     bool found = false;
-    for(int i : required)
+    for(int i : qAsConst(required))
     {
       if(index.contains(i) && index.value(i)->isChecked())
         found = true;
