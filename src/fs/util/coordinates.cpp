@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -484,16 +484,18 @@ atools::geo::Pos degMinDesignatorFromMatch(const QRegularExpressionMatch& match)
   return Pos(lonX, latY);
 }
 
-atools::geo::Pos degMinFromMatch(const QRegularExpressionMatch& match)
+atools::geo::Pos degMinFromMatchGoogle(const QRegularExpressionMatch& match)
 {
-  int latYDeg = safeCaptured(match, "LATY_DEG").toInt();
-  float latYMin = safeCaptured(match, "LATY_DEC_MIN").toFloat();
+  bool latNegative = safeCaptured(match, "LATY_DEG_SIGN") == "-";
+  int latYDeg = std::abs(safeCaptured(match, "LATY_DEG").toInt());
+  float latYMin = std::abs(safeCaptured(match, "LATY_DEC_MIN").toFloat());
 
-  int lonXDeg = safeCaptured(match, "LONX_DEG").toInt();
-  float lonXMin = safeCaptured(match, "LONX_DEC_MIN").toFloat();
+  bool lonNegative = safeCaptured(match, "LONX_DEG_SIGN") == "-";
+  int lonXDeg = std::abs(safeCaptured(match, "LONX_DEG").toInt());
+  float lonXMin = std::abs(safeCaptured(match, "LONX_DEC_MIN").toFloat());
 
-  float latY = (latYDeg >= 0.f ? 1.f : -1.f) * (std::abs(latYDeg) + latYMin / 60.f);
-  float lonX = (lonXDeg >= 0.f ? 1.f : -1.f) * (std::abs(lonXDeg) + lonXMin / 60.f);
+  float latY = (latNegative ? -1.f : 1.f) * (latYDeg + latYMin / 60.f);
+  float lonX = (lonNegative ? -1.f : 1.f) * (lonXDeg + lonXMin / 60.f);
   return Pos(lonX, latY);
 }
 
@@ -585,8 +587,8 @@ geo::Pos fromAnyFormatInternal(const QString& coords, bool replaceDecimals, bool
   const static QLatin1String LATY_DEG("(?<LATY_DEG>[0-9]+)");
 
   // Integer degree with named capture and sign
-  const static QLatin1String LONX_DEG_SIGN("(?<LONX_DEG>[+-]?[0-9]+)");
-  const static QLatin1String LATY_DEG_SIGN("(?<LATY_DEG>[+-]?[0-9]+)");
+  const static QLatin1String LONX_DEG_SIGN("(?<LONX_DEG_SIGN>[+-]?)(?<LONX_DEG>[0-9]+)");
+  const static QLatin1String LATY_DEG_SIGN("(?<LATY_DEG_SIGN>[+-]?)(?<LATY_DEG>[0-9]+)");
 
   // Decimal degree
   const static QLatin1String LONX_DEC_DEG("(?<LONX_DEC_DEG>[0-9\\.]+)");
@@ -706,7 +708,7 @@ geo::Pos fromAnyFormatInternal(const QString& coords, bool replaceDecimals, bool
   match = safeMatch(FORMAT_NUMBER_GOOGLE, coordStr);
   if(match.hasMatch())
   {
-    Pos pos = degMinFromMatch(match);
+    Pos pos = degMinFromMatchGoogle(match);
     if(pos.isValidRange())
       return pos;
   }
