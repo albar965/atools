@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include <QFileInfo>
 #include <QSqlIndex>
 #include <QSqlDriver>
+#include <QSqlError>
 
 namespace atools {
 
@@ -86,11 +87,24 @@ SqlDatabase& SqlDatabase::operator=(const SqlDatabase& other)
   return *this;
 }
 
-void SqlDatabase::open(const QStringList& pragmas)
+void SqlDatabase::open(const QStringList& pragmas, bool readonlyParam)
 {
+  readonly = readonlyParam;
+
   checkError(!isOpen(), "Opening a database that is already open");
+
+  if(readonly)
+    db.setConnectOptions("QSQLITE_OPEN_READONLY");
+  else
+    // Have to reset since this option persist
+    db.setConnectOptions();
+
   checkError(db.open(), "Error opening database");
   checkError(isValid(), "Database not valid after opening");
+
+  if(readonly)
+    // Clear option set above
+    db.setConnectOptions();
 
   for(const QString& pragma : pragmas)
   {
@@ -104,7 +118,7 @@ void SqlDatabase::open(const QStringList& pragmas)
   qInfo() << Q_FUNC_INFO << "Opened database" << databaseName();
 
 #ifdef DEBUG_INFORMATION
-  atools::sql::SqlQuery query(db);
+  atools::sql::SqlQuery query(this);
   for(const QString& pragmaQuery : pragmas)
   {
     QString pragma = pragmaQuery.section("=", 0, 0);
@@ -114,25 +128,6 @@ void SqlDatabase::open(const QStringList& pragmas)
     query.finish();
   }
 #endif
-
-  recordFileMetadata();
-}
-
-void SqlDatabase::open(const QString& user, const QString& password, const QStringList& pragmas)
-{
-  checkError(!isOpen(), "Opening a database that is already open");
-  checkError(db.open(user, password), "Error opening database");
-  checkError(isValid(), "Database not valid after opening");
-
-  qInfo() << Q_FUNC_INFO << "Opened database" << databaseName();
-  for(const QString& pragma : pragmas)
-  {
-    db.exec(pragma);
-    checkError(isValid(), "Database not valid after \"" + pragma + "\"");
-  }
-
-  if(!readonly && automaticTransactions)
-    transactionInternal();
 
   recordFileMetadata();
 }
@@ -206,26 +201,26 @@ void SqlDatabase::executePragmas(const QStringList& pragmas)
   checkError(db.transaction(), "SqlDatabase::pragma() error");
 }
 
-void SqlDatabase::attachDatabase(const QString& file, const QString& name)
+void SqlDatabase::attachDatabase(const QString& file, const QString& dbName)
 {
   checkError(db.rollback(), "SqlDatabase::attachDatabase() error");
 
-  SqlQuery query(db);
+  SqlQuery query(this);
   query.prepare("attach database :db as :name");
   query.bindValue(":db", file);
-  query.bindValue(":name", name);
+  query.bindValue(":name", dbName);
   query.exec();
 
   checkError(db.transaction(), "SqlDatabase::attachDatabase() error");
 }
 
-void SqlDatabase::detachDatabase(const QString& name)
+void SqlDatabase::detachDatabase(const QString& dbName)
 {
   checkError(db.rollback(), "SqlDatabase::detachDatabase() error");
 
-  SqlQuery query(db);
+  SqlQuery query(this);
   query.prepare("detach database :name");
-  query.bindValue(":name", name);
+  query.bindValue(":name", dbName);
   query.exec();
 
   checkError(db.transaction(), "SqlDatabase::detachDatabase() error");
@@ -282,11 +277,11 @@ SqlRecord SqlDatabase::record(const QString& tablename, const QString& prefix) c
   }
 }
 
-SqlQuery SqlDatabase::exec(const QString& query) const
+SqlQuery SqlDatabase::exec(const QString& queryText) const
 {
-  SqlQuery q = SqlQuery(db.exec(query), query);
-  checkError(true, "SqlDatabase::exec() error creating query");
-  return q;
+  SqlQuery query = SqlQuery(this);
+  query.exec(queryText);
+  return query;
 }
 
 QSqlError SqlDatabase::lastError() const
@@ -304,7 +299,7 @@ void SqlDatabase::transactionInternal()
   checkError(isValid(), "SqlDatabase::transaction() on invalid database");
   checkError(isOpen(), "SqlDatabase::transaction() on closed database");
   if(!db.driver()->hasFeature(QSqlDriver::Transactions))
-    throw SqlException("Database has no transaction support");
+    throw SqlException(this, "Database has no transaction support");
   checkError(db.transaction(), "SqlDatabase::transaction() error");
 }
 
@@ -322,7 +317,7 @@ void SqlDatabase::commit()
   checkError(isValid(), "SqlDatabase::commit() on invalid database");
   checkError(isOpen(), "SqlDatabase::commit() on closed database");
   if(!db.driver()->hasFeature(QSqlDriver::Transactions))
-    throw SqlException("Database has no transaction support");
+    throw SqlException(this, "Database has no transaction support");
   checkError(db.commit(), "SqlDatabase::commit() error");
 
   if(automaticTransactions)
@@ -335,77 +330,22 @@ void SqlDatabase::rollback()
   checkError(isValid(), "SqlDatabase::rollback() on invalid database");
   checkError(isOpen(), "SqlDatabase::rollback() on closed database");
   if(!db.driver()->hasFeature(QSqlDriver::Transactions))
-    throw SqlException("Database has no transaction support");
+    throw SqlException(this, "Database has no transaction support");
   checkError(db.rollback(), "SqlDatabase::rollback() error");
 
   if(automaticTransactions)
     transactionInternal();
 }
 
-void SqlDatabase::setDatabaseName(const QString& name)
+void SqlDatabase::setDatabaseName(const QString& dbName)
 {
   checkError(!isOpen(), "SqlDatabase::setDatabaseName() on opened database");
-  db.setDatabaseName(name);
-}
-
-void SqlDatabase::setUserName(const QString& name)
-{
-  checkError(!isOpen(), "SqlDatabase::setUserName() on opened database");
-  db.setUserName(name);
-}
-
-void SqlDatabase::setPassword(const QString& password)
-{
-  checkError(!isOpen(), "SqlDatabase::setPassword() on opened database");
-  db.setPassword(password);
-}
-
-void SqlDatabase::setHostName(const QString& host)
-{
-  checkError(!isOpen(), "SqlDatabase::setHostName() on opened database");
-  db.setHostName(host);
-}
-
-void SqlDatabase::setPort(int p)
-{
-  checkError(!isOpen(), "SqlDatabase::setPort() on opened database");
-  db.setPort(p);
-}
-
-void SqlDatabase::setConnectOptions(const QString& options)
-{
-  checkError(!isOpen(), "SqlDatabase::setConnectOptions() on opened database");
-  db.setConnectOptions(options);
+  db.setDatabaseName(dbName);
 }
 
 QString SqlDatabase::databaseName() const
 {
   return db.databaseName();
-}
-
-QString SqlDatabase::userName() const
-{
-  return db.userName();
-}
-
-QString SqlDatabase::password() const
-{
-  return db.password();
-}
-
-QString SqlDatabase::hostName() const
-{
-  return db.hostName();
-}
-
-QString SqlDatabase::driverName() const
-{
-  return db.driverName();
-}
-
-int SqlDatabase::port() const
-{
-  return db.port();
 }
 
 QString SqlDatabase::connectOptions() const
@@ -489,7 +429,7 @@ bool SqlDatabase::isDriverAvailable(const QString& name)
 void SqlDatabase::checkError(bool retval, const QString& msg) const
 {
   if(!retval || db.lastError().isValid())
-    throw SqlException(db.lastError(), msg + " Name \"" + name + "\"" + " Database Name \"" + databaseName() + "\"");
+    throw SqlException(this, msg);
 }
 
 const QSqlDatabase& SqlDatabase::getQSqlDatabase() const

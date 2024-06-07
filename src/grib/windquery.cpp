@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -698,7 +698,7 @@ void WindQuery::gribFileUpdated(const QStringList& filenames)
     }
     catch(atools::Exception& e)
     {
-      emit windDownloadFailed(e.getMessage(), 0);
+      emit windDownloadFailed(e.what(), 0);
       return;
     }
     catch(...)

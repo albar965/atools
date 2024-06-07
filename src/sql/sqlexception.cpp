@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,23 +17,102 @@
 
 #include "sql/sqlexception.h"
 
+#include "sql/sqldatabase.h"
+#include "sql/sqlquery.h"
+#include "sql/sqlrecord.h"
+
+#include <QSqlError>
+#include <QStringBuilder>
+#include <QDebug>
+
 namespace atools {
 
 namespace sql {
 
-SqlException::SqlException(const QSqlError& sqlError, const QString& message, const QString& message2)
-  : Exception(message)
+SqlException::SqlException(const QString& message)
 {
-  this->sqlErr = sqlError;
-  this->msg2 = message2;
-  createSqlMessage();
+  if(!message.isEmpty())
+    setMessage(message);
 }
 
-SqlException::SqlException(const QString& message, const QString& message2)
-  : Exception(message)
+SqlException::SqlException(const SqlDatabase *db, const QString& message)
 {
-  this->msg2 = message2;
-  createSqlMessage();
+  QStringList msgList;
+  messageDb(msgList, db);
+  msgList.append(message);
+  msgList.removeAll(QString());
+  setMessage(msgList.join('\n'));
+}
+
+SqlException::SqlException(const SqlQuery *query, const QString& message)
+{
+  QStringList msgList;
+  messageDb(msgList, query != nullptr ? query->getDatabase() : nullptr);
+  messageQuery(msgList, query);
+  msgList.append(message);
+  msgList.removeAll(QString());
+  setMessage(msgList.join('\n'));
+}
+
+SqlException::SqlException(const SqlRecord *record, const QString& message)
+{
+  QStringList msgList;
+  messageRecord(msgList, record);
+  msgList.append(message);
+  msgList.removeAll(QString());
+  setMessage(msgList.join('\n'));
+}
+
+void SqlException::messageDb(QStringList& msgList, const SqlDatabase *db)
+{
+  if(db != nullptr)
+  {
+    msgList.append(tr("Database name \"%1\", \"%2\"").arg(db->databaseName()).arg(db->getName()));
+    messageErr(msgList, db->lastError());
+  }
+  else
+    msgList.append(tr("Database is null"));
+}
+
+void SqlException::messageErr(QStringList& msgList, const QSqlError& err)
+{
+  if(!err.databaseText().isEmpty())
+    msgList.append(tr("Database message \"%1\"").arg(err.databaseText()));
+
+  if(!err.driverText().isEmpty())
+    msgList.append(tr("Driver message \"%1\"").arg(err.driverText()));
+}
+
+void SqlException::messageQuery(QStringList& msgList, const SqlQuery *query)
+{
+  if(query != nullptr)
+  {
+    messageErr(msgList, query->lastError());
+
+    if(!query->getQueryString().isEmpty())
+      msgList.append(tr("Query \"%1\"").arg(query->getQueryString()));
+    else
+      msgList.append(tr("Query text is null"));
+
+    qWarning() << Q_FUNC_INFO << ("Bound values [" % query->boundValuesAsString() % "]");
+  }
+  else
+    msgList.append(tr("Query is null"));
+}
+
+void SqlException::messageRecord(QStringList& msgList, const SqlRecord *record)
+{
+  if(record != nullptr)
+  {
+    if(!record->getQueryString().isEmpty())
+      msgList.append(record->getQueryString());
+    else
+      msgList.append(tr("Record query text is null"));
+
+    qWarning() << Q_FUNC_INFO << *record;
+  }
+  else
+    msgList.append(tr("Record is null"));
 }
 
 void SqlException::raise() const
@@ -46,37 +125,5 @@ SqlException *SqlException::clone() const
   return new SqlException(*this);
 }
 
-void SqlException::createSqlMessage()
-{
-  QString msg;
-  if(sqlErr.isValid())
-  {
-    msg = sqlErr.text();
-    if(!sqlErr.text().endsWith("."))
-      msg += ".";
-  }
-
-  if(!message.isEmpty())
-  {
-    if(!msg.isEmpty())
-      msg += " ";
-    msg += message;
-    if(!msg.endsWith("."))
-      msg += ".";
-  }
-
-  if(!msg2.isEmpty())
-  {
-    if(!msg.isEmpty())
-      msg += " ";
-    msg += msg2;
-    if(!msg.endsWith("."))
-      msg += ".";
-  }
-
-  whatMessage = msg.toUtf8();
-}
-
 } // namespace sql
-
 } // namespace atools

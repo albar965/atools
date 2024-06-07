@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -75,13 +75,6 @@ SqlQuery::SqlQuery(const SqlQuery& other)
   db = new SqlDatabase(*other.db);
 }
 
-SqlQuery::SqlQuery(const QSqlQuery& otherQuery, QString queryStr)
-{
-  query = otherQuery;
-  queryString = queryStr;
-  db = new SqlDatabase();
-}
-
 SqlQuery& SqlQuery::operator=(const SqlQuery& other)
 {
   query = other.query;
@@ -117,7 +110,7 @@ bool SqlQuery::isNull(int field) const
   checkError(isActive(), QLatin1String(Q_FUNC_INFO) % " on inactive query");
 
   if(field >= query.record().count())
-    throw SqlException(QLatin1String(Q_FUNC_INFO) % ": Value index " % QString::number(
+    throw SqlException(this, QLatin1String(Q_FUNC_INFO) % ": Value index " % QString::number(
                          field) % " does not exist in query \"" % queryString %
                        "\"");
 
@@ -130,7 +123,7 @@ bool SqlQuery::isNull(const QString& name) const
   checkError(isActive(), QLatin1String(Q_FUNC_INFO) % " on inactive query");
 
   if(!query.record().contains(name))
-    throw SqlException(QLatin1String(Q_FUNC_INFO) % ": Value name \"" % name % "\" does not exist in query \"" % queryString % "\"");
+    throw SqlException(this, QLatin1String(Q_FUNC_INFO) % ": Value name \"" % name % "\" does not exist in query \"" % queryString % "\"");
 
   return query.isNull(name);
 }
@@ -200,8 +193,8 @@ QVariant SqlQuery::value(int i) const
   checkError(isActive(), QLatin1String(Q_FUNC_INFO) % " on inactive query");
   QVariant retval = query.value(i);
   if(!retval.isValid())
-    throw SqlException(QLatin1String(Q_FUNC_INFO) % ": Value index " % QString::number(
-                         i) % " does not exist in query \"" % queryString % "\"");
+    throw SqlException(this, QLatin1String(Q_FUNC_INFO) % ": Value index " %
+                       QString::number(i) % " does not exist in query \"" % queryString % "\"");
   return retval;
 }
 
@@ -211,7 +204,7 @@ QVariant SqlQuery::value(const QString& name) const
   checkError(isActive(), QLatin1String(Q_FUNC_INFO) % " on inactive query");
   QVariant retval = query.value(name);
   if(!retval.isValid())
-    throw SqlException(QLatin1String(Q_FUNC_INFO) % ": Value name \"" % name % "\" does not exist in query \"" % queryString % "\"");
+    throw SqlException(this, QLatin1String(Q_FUNC_INFO) % ": Value name \"" % name % "\" does not exist in query \"" % queryString % "\"");
   return retval;
 }
 
@@ -438,7 +431,8 @@ QVariant SqlQuery::boundValue(const QString& placeholder, bool ignoreInvalid) co
 
   QVariant value = query.boundValue(placeholder);
   if(!ignoreInvalid && !value.isValid())
-    throw SqlException(QLatin1String(Q_FUNC_INFO) % ": Bind name \"" % placeholder % "\" does not exist in query \"" % queryString % "\"");
+    throw SqlException(this, QLatin1String(Q_FUNC_INFO) %
+                       ": Bind name \"" % placeholder % "\" does not exist in query \"" % queryString % "\"");
   return value;
 }
 
@@ -449,8 +443,8 @@ QVariant SqlQuery::boundValue(int pos, bool ignoreInvalid) const
   QVariant value = query.boundValue(pos);
 
   if(!ignoreInvalid && !value.isValid())
-    throw SqlException(QLatin1String(Q_FUNC_INFO) % ": Bind index " % QString::number(
-                         pos) % " does not exist in query \"" % queryString % "\"");
+    throw SqlException(this, QLatin1String(Q_FUNC_INFO) % ": Bind index " %
+                       QString::number(pos) % " does not exist in query \"" % queryString % "\"");
   return value;
 }
 
@@ -595,7 +589,7 @@ void SqlQuery::checkValues(const QString& funcInfo, const QVariantList& values) 
 {
   // Check with unique names
   if(placeholderSet.size() != values.size())
-    throw SqlException(funcInfo % ": placeholderSet.size() != values.size() " %
+    throw SqlException(this, funcInfo % ": placeholderSet.size() != values.size() " %
                        QString::number(placeholderSet.size()) % " != " % QString::number(values.size()) %
                        " for query \"" % queryString % "\"");
 }
@@ -603,41 +597,27 @@ void SqlQuery::checkValues(const QString& funcInfo, const QVariantList& values) 
 void SqlQuery::checkPlaceholder(const QString& funcInfo, const QString& placeholder) const
 {
   if(positionalPlaceholders)
-    throw SqlException(
-            funcInfo % ": Using named placeholder \"" % placeholder % "\" for positional placeholders in query \"" % queryString % "\"");
+    throw SqlException(this, funcInfo % ": Using named placeholder \"" % placeholder %
+                       "\" for positional placeholders in query \"" % queryString % "\"");
 
   if(!placeholderSet.contains(placeholder))
-    throw SqlException(funcInfo % ": Placeholder \"" % placeholder % "\" not found in query \"" % queryString % "\"");
+    throw SqlException(this, funcInfo % ": Placeholder \"" % placeholder % "\" not found in query \"" % queryString % "\"");
 }
 
 void SqlQuery::checkPos(const QString& funcInfo, int pos) const
 {
   if(!positionalPlaceholders)
-    throw SqlException(funcInfo % ": Using position \"" % QString::number(
+    throw SqlException(this, funcInfo % ": Using position \"" % QString::number(
                          pos) % "\" for named placeholders in query \"" % queryString % "\"");
 
   if(!atools::inRange(placeholderList, pos))
-    throw SqlException(funcInfo % ": Position \"" % QString::number(pos) % "\" not found in query \"" % queryString % "\"");
+    throw SqlException(this, funcInfo % ": Position \"" % QString::number(pos) % "\" not found in query \"" % queryString % "\"");
 }
 
 void SqlQuery::checkError(bool retval, const QString& msg) const
 {
-
   if(!retval || query.lastError().isValid())
-  {
-    if(queryString.isEmpty())
-      throw SqlException(query.lastError(), msg);
-    else
-    {
-      QString msg2("Query is \"" % queryString % "\".");
-
-      QString boundValues = boundValuesAsString();
-      if(!boundValues.isEmpty())
-        msg2 += " Bound values are [" % boundValues % "]";
-
-      throw SqlException(query.lastError(), msg, msg2);
-    }
-  }
+    throw SqlException(this, msg);
 }
 
 } // namespace sql

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@ class SqlRecord;
  * is thrown. The driver has to support transactions.
  * This class also add a normal commit/rollback mechanism which always keeps an
  * transaction open.
+ *
+ * Limited to SQLite databases.
  */
 class SqlDatabase
 {
@@ -60,15 +62,21 @@ public:
 
   SqlDatabase& operator=(const SqlDatabase& other);
 
-  void open(const QStringList& pragmas = QStringList());
-  void open(const QString& user, const QString& password, const QStringList& pragmas = QStringList());
+  /* readonly needs an existing file */
+  void open(const QStringList& pragmas, bool readonlyParam = false);
+
+  void open(bool readonlyParam = false)
+  {
+    open({}, readonlyParam);
+  }
+
   void close();
   bool isOpen() const;
   QStringList tables(QSql::TableType type = QSql::Tables) const;
   QSqlIndex primaryIndex(const QString& tablename) const;
 
   SqlRecord record(const QString& tablename, const QString& prefix = QString()) const;
-  SqlQuery exec(const QString& query = QString()) const;
+  SqlQuery exec(const QString& queryText = QString()) const;
   QSqlError lastError() const;
   bool isValid() const;
 
@@ -93,18 +101,10 @@ public:
   /* Use only if automatic transactions are off */
   void transaction();
 
-  void setDatabaseName(const QString& name);
-  void setUserName(const QString& name);
-  void setPassword(const QString& password);
-  void setHostName(const QString& host);
-  void setPort(int p);
-  void setConnectOptions(const QString& options = QString());
+  void setDatabaseName(const QString& dbName);
+
+  /* SQLite file name */
   QString databaseName() const;
-  QString userName() const;
-  QString password() const;
-  QString hostName() const;
-  QString driverName() const;
-  int port() const;
   QString connectOptions() const;
   QString connectionName() const;
   void setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy precisionPolicy);
@@ -147,15 +147,10 @@ public:
     return readonly;
   }
 
-  void setReadonly(bool value = true)
-  {
-    readonly = value;
-  }
-
   /* Sqlite only.
    * Rolls the current transaction back and attaches or detaches a database. Opens transaction again afterwards. */
-  void attachDatabase(const QString& file, const QString& name);
-  void detachDatabase(const QString& name);
+  void attachDatabase(const QString& file, const QString& dbName);
+  void detachDatabase(const QString& dbName);
 
   /* Sqlite only. Compresses the database */
   void vacuum();
@@ -173,10 +168,15 @@ public:
     automaticTransactions = value;
   }
 
+  const QString& getName() const
+  {
+    return name;
+  }
+
 private:
   friend class atools::sql::SqlTransaction;
 
-  SqlDatabase(const QSqlDatabase& other);
+  explicit SqlDatabase(const QSqlDatabase& other);
 
   /* check for return value of a method and throw Exception if false */
   void checkError(bool retval = true, const QString& msg = QString()) const;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -218,9 +218,7 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(S
     {
       to.exec();
       if(to.numRowsAffected() != 1)
-        throw SqlException("Error executing statement in Utility::copyResultValues(). "
-                           "Number of inserted rows not 1. "
-                           "(SQL \"" % to.lastQuery() % "\")");
+        throw SqlException(&to, QLatin1String(Q_FUNC_INFO) % "Number of inserted rows not 1.");
       copied++;
     }
   }
@@ -240,9 +238,7 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to)
     copyRowValuesInternal(from, to, fromRec, bound);
     to.exec();
     if(to.numRowsAffected() != 1)
-      throw SqlException("Error executing statement in Utility::copyResultValues(). "
-                         "Number of inserted rows not 1. "
-                         "(SQL \"" % to.lastQuery() % "\")");
+      throw SqlException(&to, QLatin1String(Q_FUNC_INFO) % "Number of inserted rows not 1.");
     copied++;
   }
   return copied;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,13 +44,13 @@ class SqlQuery
 {
 public:
   explicit SqlQuery(QSqlResult *r);
-  explicit SqlQuery(const QString& queryStr, const SqlDatabase& sqlDb);
-  explicit SqlQuery(const QString& queryStr, const SqlDatabase *sqlDb);
-  explicit SqlQuery(const SqlDatabase& db);
-  explicit SqlQuery(const SqlDatabase *sqlDb);
+  explicit SqlQuery(const QString& queryStr, const atools::sql::SqlDatabase& sqlDb);
+  explicit SqlQuery(const QString& queryStr, const atools::sql::SqlDatabase *sqlDb);
+  explicit SqlQuery(const atools::sql::SqlDatabase& sqlDb);
+  explicit SqlQuery(const atools::sql::SqlDatabase *sqlDb);
 
-  SqlQuery(const SqlQuery& other);
-  SqlQuery& operator=(const SqlQuery& other);
+  SqlQuery(const atools::sql::SqlQuery& other);
+  SqlQuery& operator=(const atools::sql::SqlQuery& other);
 
   ~SqlQuery();
 
@@ -257,16 +257,20 @@ public:
     return placeholderSet;
   }
 
+  atools::sql::SqlDatabase *getDatabase() const
+  {
+    return db;
+  }
+
+  QString boundValuesAsString() const;
+
 private:
   friend class SqlDatabase;
-
-  SqlQuery(const QSqlQuery& otherQuery, QString queryStr);
 
   void checkError(bool retval = true, const QString& msg = QString()) const;
   void checkPlaceholder(const QString& funcInfo, const QString& placeholder) const;
   void checkPos(const QString& funcInfo, int pos) const;
   void checkValues(const QString& funcInfo, const QVariantList& values) const;
-  QString boundValuesAsString() const;
 
   QSqlQuery query;
   QString queryString;
@@ -274,8 +278,7 @@ private:
   QSet<QString> placeholderSet;
   bool positionalPlaceholders = false;
 
-  SqlDatabase *db = nullptr;
-
+  atools::sql::SqlDatabase *db = nullptr;
 };
 
 } // namespace sql

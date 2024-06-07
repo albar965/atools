@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,27 +25,38 @@ namespace atools {
 
 /*
  * Exception that will be thrown by most atools in case of error.
+ *
+ * Qt Concurrent supports throwing and catching exceptions across thread boundaries,
+ * provided that the exception inherit from QException and implement two helper functions.
  */
 class Exception :
   public QException
 {
 public:
-  Exception(const QString& messageStr);
+  explicit Exception()
+  {
+  }
+
+  explicit Exception(const QString& messageStr)
+  {
+    setMessage(messageStr);
+  }
 
   virtual const char *what() const Q_DECL_NOEXCEPT override;
 
-  QString getMessage() const
-  {
-    return message;
-  }
-
+  /* Override from QException to allow passing the exception across threads */
   virtual void raise() const override;
-
   virtual Exception *clone() const override;
 
 protected:
-  QString message;
-  QByteArray whatMessage;
+  void setMessage(const QString& messageStr)
+  {
+    msg = messageStr;
+    whatMsg = msg.toUtf8();
+  }
+
+  QString msg;
+  QByteArray whatMsg;
 };
 
 } // namespace atools

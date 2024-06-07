@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,40 +20,46 @@
 
 #include "exception.h"
 
-#include <QSqlError>
+#include <QCoreApplication>
 
+class QSqlError;
 namespace atools {
 namespace sql {
 
+class SqlRecord;
+class SqlQuery;
+class SqlDatabase;
+
 /*
- * Exception for SQL module which also carries the QSqlError
+ * Exception for SQL module which decodes error codes from SQL classes.
+ *
+ * Qt Concurrent supports throwing and catching exceptions across thread boundaries,
+ * provided that the exception inherit from QException and implement two helper functions.
  */
 class SqlException :
   public atools::Exception
 {
+  Q_DECLARE_TR_FUNCTIONS(atools::Exception)
+
 public:
-  SqlException(const QSqlError& sqlErr, const QString& message = QString(), const QString& message2 = QString());
-  SqlException(const QString& message = QString(), const QString& message2 = QString());
-
-  QString getMessage2() const
+  explicit SqlException()
   {
-    return msg2;
   }
 
-  QSqlError getSqlError() const
-  {
-    return sqlErr;
-  }
+  explicit SqlException(const QString& message);
+  explicit SqlException(const atools::sql::SqlDatabase *db, const QString& message = QString());
+  explicit SqlException(const atools::sql::SqlQuery *query, const QString& message = QString());
+  explicit SqlException(const atools::sql::SqlRecord *record, const QString& message = QString());
 
+  /* Override from QException to allow passing the exception across threads */
   virtual void raise() const override;
-
   virtual SqlException *clone() const override;
 
 private:
-  void createSqlMessage();
-
-  QSqlError sqlErr;
-  QString msg2;
+  void messageDb(QStringList& msgList, const SqlDatabase *db);
+  void messageQuery(QStringList& msgList, const SqlQuery *query);
+  void messageRecord(QStringList& msgList, const SqlRecord *record);
+  void messageErr(QStringList& msgList, const QSqlError& err);
 };
 
 } // namespace sql

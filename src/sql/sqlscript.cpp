@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ void SqlScript::executeScript(const QString& filename)
       qDebug() << "-- Done ----------------------------------------------------";
   }
   else
-    throw SqlException(QString("Cannot open script file \"%1\". Reason: %2.").arg(scriptFile.fileName()).arg(scriptFile.errorString()));
+    throw SqlException(db, QString("Cannot open script file \"%1\". Reason: %2.").arg(scriptFile.fileName()).arg(scriptFile.errorString()));
   scriptFile.close();
 }
 
@@ -140,7 +140,7 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
       // so substitute the line end with a space
       currentStatement += " ";
 
-    for(QChar currentChar : line)
+    for(QChar currentChar : qAsConst(line))
     {
       if(currentChar == '-')
       {
