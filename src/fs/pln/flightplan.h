@@ -47,6 +47,10 @@ class Flightplan :
   Q_DECLARE_TR_FUNCTIONS(Flightplan)
 
 public:
+  /* Prefill flight plan from departure and destination airport data. */
+  void setDepartureDestination(const QString& departIdent, const atools::geo::Pos& departPos,
+                               const QString& destIdent, const atools::geo::Pos& destPos);
+
   /* Total distance for all waypoints */
   float getDistanceNm() const;
 

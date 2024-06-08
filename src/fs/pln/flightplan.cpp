@@ -34,6 +34,26 @@ using atools::geo::Pos;
 
 // =============================================================================================
 
+void Flightplan::setDepartureDestination(const QString& departIdent, const geo::Pos& departPos, const QString& destIdent,
+                                         const geo::Pos& destPos)
+{
+  clearAll();
+
+  FlightplanEntry departure;
+  departure.setIdent(departIdent);
+  departure.setPosition(departPos);
+  departure.setWaypointType(atools::fs::pln::entry::AIRPORT);
+  append(departure);
+
+  FlightplanEntry destination;
+  destination.setIdent(destIdent);
+  destination.setPosition(destPos);
+  destination.setWaypointType(atools::fs::pln::entry::AIRPORT);
+  append(destination);
+
+  adjustDepartureAndDestination(true /* force */);
+}
+
 float Flightplan::getDistanceNm() const
 {
   float distanceMeter = 0.f;
