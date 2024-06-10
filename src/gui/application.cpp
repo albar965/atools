@@ -244,7 +244,8 @@ QString Application::generalErrorMessage()
 {
   return tr("<b>If the problem persists or occurs during startup "
               "delete all settings and database files of %1 and try again.</b><br/><br/>"
-              "<b>If you wish to report this error attach the log and configuration files "
+              "<b>If you wish to report this error attach a text copy or a screenshot of this dialog, "
+                "the log file and the configuration files "
                 "to your report, add all other available information and send it to "
                 "the contact address below.</b><br/>").arg(QCoreApplication::applicationName());
 }
@@ -271,14 +272,15 @@ void Application::handleException(const char *file, int line, const std::excepti
 
   if(showExceptionDialog)
     atools::gui::Dialog::critical(nullptr,
-                                  tr("<b>Caught exception in file \"%1\" line %2.</b><br/><br/>"
-                                     "<i>%3</i><br/><br/>"
-                                     "%4"
-                                     "<hr/>%5"
-                                       "<hr/>%6<br/>"
-                                       "<h3>Press OK to exit application.</h3>").
-                                  arg(file).arg(line).
-                                  arg(e.what()).
+                                  tr("<b>Caught exception in file \"%1\" line %2.</b>"
+                                       "%3"
+                                       "%4"
+                                       "<hr/>%5"
+                                         "<hr/>%6<br/>"
+                                         "<b>Press OK to exit application.</b>").
+                                  arg(file).
+                                  arg(line).
+                                  arg(atools::strJoin("<ul><li>", QString(e.what()).split("\n"), "</li><li>", "</li><li>", "</li></ul>")).
                                   arg(generalErrorMessage()).
                                   arg(getContactHtml()).
                                   arg(getReportPathHtml()));
