@@ -590,11 +590,11 @@ Datei: &quot;%2&quot;
     <name>MetarParser</name>
     <message>
         <source>metar data bogus</source>
-        <translation>METAR-Daten ungültig</translation>
+        <translation type="vanished">METAR-Daten ungültig</translation>
     </message>
     <message>
         <source>metar data incomplete </source>
-        <translation>METAR-DATEN unvollständig </translation>
+        <translation type="vanished">METAR-DATEN unvollständig </translation>
     </message>
     <message>
         <source>Auto</source>
@@ -995,6 +995,14 @@ Datei: &quot;%2&quot;
     <message>
         <source>Red</source>
         <translation>Rot</translation>
+    </message>
+    <message>
+        <source>METAR &quot;%1&quot; has errors.</source>
+        <translation>METAR &quot;%1&quot; ist fehlerhaft.</translation>
+    </message>
+    <message>
+        <source>METAR &quot;%1&quot; is incomplete.</source>
+        <translation>METAR &quot;%1&quot; ist unvollständig.</translation>
     </message>
 </context>
 <context>
@@ -2147,6 +2155,45 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <message>
         <source>File does not exist</source>
         <translation type="vanished">Datei existiert nicht</translation>
+    </message>
+</context>
+<context>
+    <name>atools::Exception</name>
+    <message>
+        <source>Database name &quot;%1&quot;, &quot;%2&quot;</source>
+        <translation>Datenbankname &quot;%1&quot;, &quot;%2&quot;</translation>
+    </message>
+    <message>
+        <source>Database is null</source>
+        <translation>Datenbank ist Null</translation>
+    </message>
+    <message>
+        <source>Database message &quot;%1&quot;</source>
+        <translation>Datenbankmeldung &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <source>Driver message &quot;%1&quot;</source>
+        <translation>Treibermeldung &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <source>Query &quot;%1&quot;</source>
+        <translation>Abfrage &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <source>Query text is null</source>
+        <translation>Abfragetext ist Null</translation>
+    </message>
+    <message>
+        <source>Query is null</source>
+        <translation>Abfrage ist Null</translation>
+    </message>
+    <message>
+        <source>Record query text is null</source>
+        <translation>Datensatztext ist Null</translation>
+    </message>
+    <message>
+        <source>Record is null</source>
+        <translation>Datensatz ist Null</translation>
     </message>
 </context>
 <context>

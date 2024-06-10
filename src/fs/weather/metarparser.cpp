@@ -2061,16 +2061,16 @@ QString MetarCloud::getCoverageStringShort(MetarCloud::Coverage cloudCoverage)
       return QString();
 
     case atools::fs::weather::MetarCloud::COVERAGE_FEW:
-      return tr("FEW");
+      return "FEW";
 
     case atools::fs::weather::MetarCloud::COVERAGE_SCATTERED:
-      return tr("SCT");
+      return "SCT";
 
     case atools::fs::weather::MetarCloud::COVERAGE_BROKEN:
-      return tr("BKN");
+      return "BKN";
 
     case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
-      return tr("OVC");
+      return "OVC";
   }
   return QString();
 

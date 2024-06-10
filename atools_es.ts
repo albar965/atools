@@ -844,7 +844,7 @@ Atrapada excepción
     </message>
     <message>
         <source>metar data bogus</source>
-        <translation>datos falsos de metar</translation>
+        <translation type="vanished">datos falsos de metar</translation>
     </message>
     <message>
         <source>Drizzle</source>
@@ -908,7 +908,7 @@ Atrapada excepción
     </message>
     <message>
         <source>metar data incomplete </source>
-        <translation>datos de metar incompletos </translation>
+        <translation type="vanished">datos de metar incompletos </translation>
     </message>
     <message>
         <source>Low Instrument Flight Rules</source>
@@ -940,6 +940,14 @@ Atrapada excepción
     </message>
     <message>
         <source>VFR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>METAR &quot;%1&quot; has errors.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>METAR &quot;%1&quot; is incomplete.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2042,6 +2050,45 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     <message>
         <source>File does not exist</source>
         <translation type="obsolete">El archivo no existe</translation>
+    </message>
+</context>
+<context>
+    <name>atools::Exception</name>
+    <message>
+        <source>Database name &quot;%1&quot;, &quot;%2&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Database is null</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Database message &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Driver message &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Query &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Query text is null</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Query is null</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Record query text is null</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Record is null</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
