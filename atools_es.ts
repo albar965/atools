@@ -83,6 +83,10 @@
         <source>Write failed</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%1 for file &quot;%2&quot; failed. Reason: %3 (%4).</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChoiceDialog</name>
@@ -2088,6 +2092,13 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
     <message>
         <source>Record is null</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::fs::bgl::BglFile</name>
+    <message>
+        <source>Duplicate airport ident &quot;%1&quot; in file &quot;%2&quot;. File is malformed.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -84,6 +84,10 @@
         <source>Write failed</source>
         <translation>Schreibfehler</translation>
     </message>
+    <message>
+        <source>%1 for file &quot;%2&quot; failed. Reason: %3 (%4).</source>
+        <translation>%1 für Datei &quot;%2&quot; ist fehlgeschlagen. Grund: %3 (%4).</translation>
+    </message>
 </context>
 <context>
     <name>ChoiceDialog</name>
@@ -2194,6 +2198,13 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <message>
         <source>Record is null</source>
         <translation>Datensatz ist Null</translation>
+    </message>
+</context>
+<context>
+    <name>atools::fs::bgl::BglFile</name>
+    <message>
+        <source>Duplicate airport ident &quot;%1&quot; in file &quot;%2&quot;. File is malformed.</source>
+        <translation>Doppelte Flugplatzkennung &quot;%1&quot; in Datei &quot;%2&quot;. Datei ist fehlerhaft.</translation>
     </message>
 </context>
 <context>

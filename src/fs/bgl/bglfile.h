@@ -70,6 +70,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::flags::CreateFlags)
  */
 class BglFile
 {
+  Q_DECLARE_TR_FUNCTIONS(atools::fs::bgl::BglFile)
+
 public:
   /*
    * @param readerOptions Configuration.
@@ -247,34 +249,31 @@ const TYPE *BglFile::createRecord(atools::io::BinaryStream *bs, QList<const TYPE
 {
   TYPE *rec = new TYPE(options, bs, flags);
 
-  if(rec != nullptr)
+  if(rec->isExcluded())
   {
-    if(rec->isExcluded())
-    {
-      delete rec;
-      return nullptr;
-    }
-
-    if(!rec->isValid())
-    {
-      // Print warning only for navaids that are not disabled
-      if(!rec->isDisabled())
-        qWarning() << "Found invalid record: " << rec->getObjectName();
-      rec->seekToStart();
-      delete rec;
-      return nullptr;
-    }
-
-    if(options->isVerbose())
-    {
-      qDebug() << "----";
-      qDebug() << *rec;
-    }
-
-    if(list != nullptr)
-      list->append(rec);
-    allRecords.append(rec);
+    delete rec;
+    return nullptr;
   }
+
+  if(!rec->isValid())
+  {
+    // Print warning only for navaids that are not disabled
+    if(!rec->isDisabled())
+      qWarning() << "Found invalid record: " << rec->getObjectName();
+    rec->seekToStart();
+    delete rec;
+    return nullptr;
+  }
+
+  if(options->isVerbose())
+  {
+    qDebug() << "----";
+    qDebug() << *rec;
+  }
+
+  if(list != nullptr)
+    list->append(rec);
+  allRecords.append(rec);
 
   return rec;
 }

@@ -17,6 +17,7 @@
 
 #include "fs/bgl/bglfile.h"
 
+#include "exception.h"
 #include "io/binarystream.h"
 #include "fs/bgl/section.h"
 #include "fs/bgl/subsection.h"
@@ -308,7 +309,9 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
 
                 // Duplicates found. Bail out =================================================================
                 // Example of malformed file UWLS.bgl
-                return;
+
+                throw atools::Exception(tr("Duplicate airport ident \"%1\" in file \"%2\". File is malformed.").
+                                        arg(ap->getIdent()).arg(getFilepath()));
               }
               else
                 airportIdents.insert(ap->getIdent());

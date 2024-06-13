@@ -100,6 +100,11 @@
         <source>Write failed</source>
         <translation>Falha na gravação</translation>
     </message>
+    <message>
+        <location filename="src/io/binarystream.cpp" line="239"/>
+        <source>%1 for file &quot;%2&quot; failed. Reason: %3 (%4).</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChoiceDialog</name>
@@ -653,27 +658,27 @@ Ocorreu um erro no Sql
 <context>
     <name>MetarCloud</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2046"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="2054"/>
         <source>Broken</source>
         <translation>Quebrada</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2037"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="2045"/>
         <source>Clear</source>
         <translation>Limpo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2040"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="2048"/>
         <source>Few</source>
         <translation>Poucas</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2049"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="2057"/>
         <source>Overcast</source>
         <translation>Nublado</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2043"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="2051"/>
         <source>Scattered</source>
         <translation>Dispersas</translation>
     </message>
@@ -681,387 +686,387 @@ Ocorreu um erro no Sql
 <context>
     <name>MetarParser</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="246"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="245"/>
         <source>1-10%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="247"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="246"/>
         <source>11-25%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="250"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="249"/>
         <source>26-50%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="254"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="253"/>
         <source>51-100%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="202"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="201"/>
         <source>Amber</source>
         <translation>Âmbar</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="808"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="816"/>
         <source>Auto</source>
         <translation>Automático</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="154"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="153"/>
         <source>Blowing</source>
         <translation>Soprando</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="198"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="197"/>
         <source>Blue</source>
         <translation>Azul</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="811"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="819"/>
         <source>Corrected</source>
         <translation>Corrigido</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="163"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="162"/>
         <source>Drizzle</source>
         <translation>Garoa</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="181"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="180"/>
         <source>Duststorm</source>
         <translation>Tempestade de areia</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="174"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="173"/>
         <source>Fog</source>
         <translation>Nevoeiro</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="175"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="174"/>
         <source>Fog bank</source>
         <translation>Banco de nevoeiro</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="156"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="155"/>
         <source>Freezing</source>
         <translation>Congelando</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="182"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="181"/>
         <source>Funnel cloud/tornado waterspout</source>
         <translation>Nuvem de funil/tromba d&apos;água</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="200"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="199"/>
         <source>Green</source>
         <translation>Verde</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="164"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="163"/>
         <source>Hail</source>
         <translation>Granizo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="177"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="176"/>
         <source>Haze</source>
         <translation>Neblina</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="851"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="859"/>
         <source>Heavy</source>
         <translation>Pesado</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1350"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1358"/>
         <source>Heavy </source>
         <translation>Pesado </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="166"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="165"/>
         <source>Ice crystals</source>
         <translation>Cristais de gelo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="167"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="166"/>
         <source>Ice pellets</source>
         <translation>Bolas de gelo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="845"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="853"/>
         <source>Light</source>
         <translation>Luzes</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1348"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1356"/>
         <source>Light </source>
         <translation>Luzes </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="155"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="154"/>
         <source>Low drifting</source>
         <translation>Baixa deriva</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="172"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="171"/>
         <source>Mist</source>
         <translation>Névoa</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="848"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="856"/>
         <source>Moderate</source>
         <translation>Moderado</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1354"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1362"/>
         <source>Moderate </source>
         <translation>Moderada </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="191"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="190"/>
         <source>No significant weather</source>
         <translation>Tempo insiginificante</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="158"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="157"/>
         <source>Partial</source>
         <translation>Parcial</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="153"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="152"/>
         <source>Patches of</source>
         <translation>Manchas de</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="168"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="167"/>
         <source>Rain</source>
         <translation>Chuva</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="203"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="202"/>
         <source>Red</source>
         <translation>Vermelho</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="814"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="822"/>
         <source>Routine delayed observation</source>
         <translation>Observação de atraso de rotina</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="179"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="178"/>
         <source>Sand</source>
         <translation>Areia</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="185"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="184"/>
         <source>Sandstorm</source>
         <translation>Tempestade de areia</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="157"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="156"/>
         <source>Shallow</source>
         <translation>Superficial</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="151"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="150"/>
         <source>Showers of</source>
         <translation>Chuva</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="165"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="164"/>
         <source>Small hail and/or snow pellets</source>
         <translation>Pouco granizo/ ou bola de neve</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="176"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="175"/>
         <source>Smoke</source>
         <translation>Fumaça</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="170"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="169"/>
         <source>Snow</source>
         <translation>Neve</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="169"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="168"/>
         <source>Snow grains</source>
         <translation>Grãos de neve</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="178"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="177"/>
         <source>Spray</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="184"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="183"/>
         <source>Squalls</source>
         <translation>Torres</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="152"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="151"/>
         <source>Thunderstorm with</source>
         <translation>Tempestade com</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="186"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="185"/>
         <source>Unknown</source>
         <translation>Desconhecido</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="171"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="170"/>
         <source>Unknown precipitation</source>
         <translation>Precipitação desconhecida</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="180"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="179"/>
         <source>Volcanic ash</source>
         <translation>Cinzas de vulcão</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="183"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="182"/>
         <source>Well-developed dust/sand whirls</source>
         <translation>Giros de poeira/ areia bem desenvolvida</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="199"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="198"/>
         <source>White</source>
         <translation>Branco</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="173"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="172"/>
         <source>Widespread dust</source>
         <translation>Poeira generalizada</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="201"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="200"/>
         <source>Yellow</source>
         <translation>Amarelo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="208"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="207"/>
         <source>altocumulus</source>
         <translation>altocumulos</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="209"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="208"/>
         <source>altocumulus castellanus</source>
         <translation>autocumulos castellano</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="210"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="209"/>
         <source>altocumulus standing lenticular</source>
         <translation>altocumulos permanente lenticular</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="211"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="210"/>
         <source>altostratus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="214"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="213"/>
         <source>cirrocumulus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="215"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="214"/>
         <source>cirrocumulus standing lenticular</source>
         <translation>cirrocumulus permanente lenticula</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="217"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="216"/>
         <source>cirrostratus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="216"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="215"/>
         <source>cirrus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="231"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="230"/>
         <source>clear and dry</source>
         <translation>limpo e seco</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1763"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1771"/>
         <source>cleared</source>
         <translation>limpo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="239"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="238"/>
         <source>compacted snow</source>
         <translation>neve compactada</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="212"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="211"/>
         <source>cumulonimbus</source>
         <translation>cumulusnimbus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="213"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="212"/>
         <source>cumulonimbus mammatus</source>
         <translation>cumulosnimbus mammatus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="218"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="217"/>
         <source>cumulus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="219"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="218"/>
         <source>cumulus fractus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="232"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="231"/>
         <source>damp</source>
         <translation>úmido</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="235"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="234"/>
         <source>dry snow</source>
         <translation>neve seca</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="268"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="267"/>
         <source>friction: unreliable measurement</source>
         <translation>Fricção:medição não confiável</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="234"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="233"/>
         <source>frost</source>
         <translation>geada</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="240"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="239"/>
         <source>frozen ridges</source>
         <translation>cumes congelados</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="264"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="263"/>
         <source>good braking action</source>
         <translation>ação de freio ótimo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="238"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="237"/>
         <source>ice</source>
         <translation>gelo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1352"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1360"/>
         <source>in the vicinity </source>
         <translation>nas proximidades </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="262"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="261"/>
         <source>medium braking action</source>
         <translation>ação de freio médio</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="263"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="262"/>
         <source>medium/good braking action</source>
         <translation>ação de freio bom</translation>
     </message>
@@ -1074,117 +1079,117 @@ Ocorreu um erro no Sql
         <translation type="vanished">dados do metar incompleto </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="220"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="219"/>
         <source>nimbostratus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="260"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="259"/>
         <source>poor braking action</source>
         <translation>má travagem</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="261"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="260"/>
         <source>poor/medium braking action</source>
         <translation>fraca travagem</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="649"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="657"/>
         <source>METAR &quot;%1&quot; has errors.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="694"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="702"/>
         <source>METAR &quot;%1&quot; is incomplete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1649"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1657"/>
         <source>Low Instrument Flight Rules</source>
         <translation>Regras de voo por instrumentos em baixa altitude</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1652"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1660"/>
         <source>Instrument Flight Rules</source>
         <translation>Regras de Voo por Instrumentos</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1655"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1663"/>
         <source>Marginal Visual Flight Rules</source>
         <translation>Regras de voo visual marginais</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1658"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1666"/>
         <source>Visual Flight Rules</source>
         <translation>Regras de voo visual</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1671"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1679"/>
         <source>LIFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1674"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1682"/>
         <source>IFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1677"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1685"/>
         <source>MVFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1680"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1688"/>
         <source>VFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1799"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1807"/>
         <source>runway not in use</source>
         <translation>Pista não está em uso</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="237"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="236"/>
         <source>slush</source>
         <translation>lama</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="221"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="220"/>
         <source>stratoaltocumulus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="222"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="221"/>
         <source>stratocumulus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="223"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="222"/>
         <source>stratocumulus standing lenticular</source>
         <translation>stratocumulus permanente lenticular</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="224"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="223"/>
         <source>stratus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="225"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="224"/>
         <source>stratus fractus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="226"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="225"/>
         <source>towering cumulus</source>
         <translation>alto cumulus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="233"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="232"/>
         <source>wet or puddles</source>
         <translation>molhado ou poças</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="236"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="235"/>
         <source>wet snow</source>
         <translation>neve molhada</translation>
     </message>
@@ -1192,17 +1197,17 @@ Ocorreu um erro no Sql
 <context>
     <name>MetarVisibility</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2114"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="2122"/>
         <source>Greater than</source>
         <translation>Maior que</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2111"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="2119"/>
         <source>Less than</source>
         <translation>Menor que</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2105"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="2113"/>
         <source>Vertical visibility</source>
         <translation>Visibilidade vertical</translation>
     </message>
@@ -2617,6 +2622,14 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
     <message>
         <location filename="src/sql/sqlexception.cpp" line="115"/>
         <source>Record is null</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::fs::bgl::BglFile</name>
+    <message>
+        <location filename="src/fs/bgl/bglfile.cpp" line="313"/>
+        <source>Duplicate airport ident &quot;%1&quot; in file &quot;%2&quot;. File is malformed.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
