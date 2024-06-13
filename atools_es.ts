@@ -241,7 +241,7 @@ Atrapada excepción
 <context>
     <name>Flightplan</name>
     <message>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

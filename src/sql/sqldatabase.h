@@ -80,7 +80,7 @@ public:
   QSqlError lastError() const;
   bool isValid() const;
 
-  /* true if file was modifed since last call to recordFileMetadata() */
+  /* true if file was modified since last call to recordFileMetadata() */
   bool isFileModified() const;
 
   /* Remember size and modification time to check if file was replaced by user */

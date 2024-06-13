@@ -416,7 +416,7 @@ create index if not exists idx_runway_end_name on runway_end(name);
 
 drop table if exists approach;
 
--- Procedure for an airport. Can be a SID, STAR or an approach. Not neccessarily assigned to a runway end.
+-- Procedure for an airport. Can be a SID, STAR or an approach. Not necessarily assigned to a runway end.
 -- SID and STAR are saved similar to FSX conventions:
 -- STAR: suffix = 'A' and has_gps_overlay = 1
 -- SID: suffix = 'D' and has_gps_overlay = 1

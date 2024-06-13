@@ -117,7 +117,7 @@ const static QHash<int, SqlColumn> COL_MAP =
   {TRIP_FUEL,                  SqlColumn(TRIP_FUEL,                  "trip_fuel",                  "Trip Fuel"                 )},
   {USED_FUEL,                  SqlColumn(USED_FUEL,                  "used_fuel",                  "Used Fuel"                 )},
   {IS_JETFUEL,                 SqlColumn(IS_JETFUEL,                 "is_jetfuel",                 "Is Jetfuel"                )},
-  {GROSSWEIGHT,                SqlColumn(GROSSWEIGHT,                "grossweight",                "Grossweight"               )},
+  {GROSSWEIGHT,                SqlColumn(GROSSWEIGHT,                "grossweight",                "Gross Weight"              )},
   {DISTANCE,                   SqlColumn(DISTANCE,                   "distance",                   "Distance"                  )},
   {DISTANCE_FLOWN,             SqlColumn(DISTANCE_FLOWN,             "distance_flown",             "Distance Flown"            )},
   {DEPARTURE_IDENT,            SqlColumn(DEPARTURE_IDENT,            "departure_ident",            "Departure Ident"           )},

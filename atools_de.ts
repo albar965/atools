@@ -249,7 +249,7 @@ Datei: &quot;%2&quot;
 <context>
     <name>Flightplan</name>
     <message>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation>Leerer Flugplan</translation>
     </message>
     <message>

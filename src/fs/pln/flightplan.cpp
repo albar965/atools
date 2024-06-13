@@ -241,7 +241,7 @@ void Flightplan::setDepartureParkingPosition(const geo::Pos& value, float altitu
 QString Flightplan::getFilenamePattern(const QString& pattern, const QString& suffix, bool metric) const
 {
   if(isEmpty())
-    return tr("Empty Flightplan") + suffix;
+    return tr("Empty Flight Plan") + suffix;
 
   QString type;
   if(getFlightplanType() == atools::fs::pln::IFR)
@@ -300,7 +300,7 @@ void Flightplan::adjustDepartureAndDestination(bool force)
     if(force || !destinationPos.isValid())
       destinationPos = constLast().getPosition();
     // These remain empty
-    // departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
+    // departureParkingName, departureAirportName, destinationAirportName, appVersionMajor, appVersionBuild;
   }
 }
 

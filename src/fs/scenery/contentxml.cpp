@@ -189,7 +189,7 @@ void ContentXml::priorityTitleNavdata(const QString& name, int& priority, QStrin
   }
   else if(name == "fs-base-genericairports")
   {
-    // Since SU9 - aiports
+    // Since SU9 - Airports
     priority = 1;
     title = tr("Generic Airports");
   }

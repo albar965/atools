@@ -30,7 +30,7 @@
         <location filename="src/fs/perf/aircraftperf.cpp" line="131"/>
         <location filename="src/fs/perf/aircraftperf.cpp" line="400"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
-        <translation>Não é possível abrir o arquivo de perfomance da aeronave &quot;%1&quot; para leitura.</translation>
+        <translation>Não é possível abrir o arquivo de performance da aeronave &quot;%1&quot; para leitura.</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="144"/>
@@ -50,7 +50,7 @@
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="414"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
-        <translation>Não é possível abrir o arquivo de perfomance da aeronave &quot;%1&quot; para gravação.</translation>
+        <translation>Não é possível abrir o arquivo de performance da aeronave &quot;%1&quot; para gravação.</translation>
     </message>
 </context>
 <context>
@@ -295,7 +295,7 @@ Ocorreu um erro no Sql
     <name>Flightplan</name>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="244"/>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation>Plano de voo Vazio</translation>
     </message>
     <message>

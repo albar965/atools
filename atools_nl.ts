@@ -297,7 +297,7 @@ Bestand:&quot;%2&quot;
     <name>Flightplan</name>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="244"/>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation>Vluchtplan Leeg</translation>
     </message>
     <message>

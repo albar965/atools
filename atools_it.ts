@@ -361,7 +361,7 @@ File: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="244"/>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation>Piano di volo Vuoto</translation>
     </message>
     <message>

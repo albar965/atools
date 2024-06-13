@@ -193,7 +193,7 @@ enum EnrouteSubSectionCode
   VORDME = 'D'
 };
 
-// Section code P - aiport
+// Section code P - Airport
 enum AirportSubSectionCode
 {
   REFERENCE_POINTS = 'A',
