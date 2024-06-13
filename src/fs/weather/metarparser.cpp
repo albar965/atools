@@ -20,8 +20,7 @@
 //
 // $Id$
 
-/**
- * @file metar.cxx
+/*
  * Interface for encoded Meteorological Aerodrome Reports (METAR).
  *
  * @see WMO-49
@@ -190,8 +189,8 @@ void initTranslateableTexts()
   special = {
     {"NSW", MetarParser::tr("No significant weather")},
     {QString(), QString()}
-    /*	{ "VCSH", "showers in the vicinity" },
-     *  { "VCTS", "thunderstorm in the vicinity" }, */
+    /* { "VCSH", "showers in the vicinity" },
+     * { "VCTS", "thunderstorm in the vicinity" }, */
   };
 
   colors = {
@@ -319,12 +318,12 @@ const QString MetarParser::getMetarDisplayString() const
 // ===========================
 inline bool valid(float value)
 {
-  return value < INVALID_METAR_VALUE;
+  return value < INVALID_METAR_VALUE / 2.f;
 }
 
 inline bool valid(double value)
 {
-  return value < INVALID_METAR_VALUE;
+  return value < INVALID_METAR_VALUE / 2.;
 }
 
 inline bool valid(int value)
@@ -417,33 +416,40 @@ atools::fs::weather::MetarParser MetarParser::merge(const atools::fs::weather::M
 
     // Interpolate wind U/V components and convert them back to speed/degree =====================
     double windU = mergeField<double>(metars, distancesMeter, [](const MetarParser& m)->double {
-            return atools::geo::windUComponent(m._wind_speed, m._wind_dir);
+            if(valid(m._wind_speed) && valid(m._wind_dir))
+              return atools::geo::windUComponent(m._wind_speed, m._wind_dir);
+            else
+              return INVALID_METAR_VALUE;
           });
+
     double windV = mergeField<double>(metars, distancesMeter, [](const MetarParser& m)->double {
-            return atools::geo::windVComponent(m._wind_speed, m._wind_dir);
+            if(valid(m._wind_speed) && valid(m._wind_dir))
+              return atools::geo::windVComponent(m._wind_speed, m._wind_dir);
+            else
+              return INVALID_METAR_VALUE;
           });
+
+    // float windVariable = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+    // if(valid(m._wind_range_from) && valid(m._wind_range_to) && valid(m._wind_speed))
+    // return m._wind_speed;
+    // else
+    // return INVALID_METAR_VALUE;
+    // });
+
     retval._wind_speed = atools::geo::windSpeedFromUV(windU, windV);
     retval._wind_dir = atools::roundToInt(atools::geo::windDirectionFromUV(windU, windV));
     retval._wind_dir = atools::geo::normalizeRange(retval._wind_dir, 0, 360);
 
     // Interpolate gusts as scalar and not vector =============
-    retval._gust_speed = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
-            return m._gust_speed;
-          });
+    retval._gust_speed = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {return m._gust_speed;});
 
     // Temperature and dewpoint ==============================================================
-    retval._temp = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
-            return m._temp;
-          });
+    retval._temp = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {return m._temp;});
 
-    retval._dewp = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
-            return m._dewp;
-          });
+    retval._dewp = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {return m._dewp;});
 
     // Pressure =============================================================================
-    retval._pressure = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
-            return m._pressure;
-          });
+    retval._pressure = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {return m._pressure;});
 
     // Precipitation ============================================================================
     retval._rain = atools::roundToInt(mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
@@ -545,6 +551,8 @@ QString MetarParser::buildMetarString(const QStringList& remarks) const
   if(_wind_dir != -1 && _wind_speed > 0.f && _wind_speed < INVALID_METAR_VALUE)
     metarStr.append(QString("%1%2KT").arg(_wind_dir, 3, 10, QChar('0')).
                     arg(atools::geo::meterPerSecToKnots(_wind_speed), 2, 'f', 0, QChar('0')));
+  else
+    metarStr.append("00000KT");
 
   // Visibility ====================================
   if(_min_visibility.isDistanceValid())
@@ -598,7 +606,7 @@ QString MetarParser::getIntensityStringShort(int intensityValue, const QString& 
   return QString();
 }
 
-/**
+/*
  * Takes a Metar string
  * The "METAR"
  * keyword has no effect (apart from incrementing the group counter
@@ -867,7 +875,7 @@ void MetarParser::useCurrentDate()
   _month = now.tm_mon + 1;
 }
 
-/**
+/*
  * Replace any number of subsequent spaces by just one space, and add
  * a trailing space. This makes scanning for things like "ALL RWY" easier.
  */
