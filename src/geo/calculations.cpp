@@ -555,7 +555,7 @@ const static float deltaTdh2 = 0.0003048f; // Kelvin/ft 11000 - 32000 m
 const static float deltaTdh2SI = 0.001f; // Kelvin/m 11000 - 32000 m
 
 // Other constants
-const static float RGasSI = 287.053f; // J/(kg*Kelvin) Gas constant for for dry air
+const static float RGasSI = 287.053f; // J/(kg*Kelvin) Gas constant for dry air
 const static float gSI = 9.80665f; // acceleration on earth m/s^2
 const static float gRGasSI = gSI / RGasSI;
 const static float gRGas = (gSI * FEET2METER) / RGasSI;

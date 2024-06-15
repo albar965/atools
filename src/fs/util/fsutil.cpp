@@ -481,11 +481,11 @@ QString capNavString(const QString& str)
           "NOTAM", "CERAP", "ARTCC",
           "TCA", "MCTR", "VFR", "IFR", "DFS", "TNA", "CAE", "LANTA",
           "TSRA" "AFB", "OCA", "ARB", "MCAS", "NAS", "NOLF", "NS", "NAWS", "USAF", "TMAD", "CON", "ATS", "MTMA",
-          "TRSA", "SFB", "AAF", "DC", "CGAS",
+          "TRSA", "SFB", "AAF", "DC", "CGAS", "RT", "ASPC", "UAC", "LTA",
           "I", "II", "III", "IV", "V", "VI"
         });
 
-  return atools::capString(str, FORCE_UPPER);
+  return atools::capString(str, FORCE_UPPER).trimmed();
 }
 
 QString capAirportName(const QString& str)
@@ -498,7 +498,7 @@ QString capAirportName(const QString& str)
           "USFS", "CGAS", "TV", "NVC", "USAF",
           "I", "II", "III", "IV", "V", "VI"});
 
-  return atools::capString(str, FORCE_UPPER).replace("-O-", "-o-").replace("-N-", "-n-").replace("-A-", "-a-");
+  return atools::capString(str, FORCE_UPPER).replace("-O-", "-o-").replace("-N-", "-n-").replace("-A-", "-a-").trimmed();
 }
 
 QString adjustFsxUserWpName(QString name, int length)

@@ -132,29 +132,38 @@ QString capWord(QString str)
   return str;
 }
 
-void capWord(QString& lastWord, QChar last, const QSet<QString>& toUpper,
-             const QSet<QString>& toLower, const QSet<QString>& ignore)
+void capWord(QString& word, QChar last, const QSet<QString>& toUpper, const QSet<QString>& toLower, const QSet<QString>& ignore)
 {
-  static QLocale locale;
-  if(toUpper.contains(lastWord.toUpper()))
-    lastWord = locale.toUpper(lastWord);
-  else if(toLower.contains(lastWord))
-    lastWord = locale.toLower(lastWord.toLower());
-  else if(!ignore.contains(lastWord))
+  const static QLocale locale;
+  const static QRegularExpression NUMBER_LETTER_REGEXP("\\d+\\w+");
+
+  if(toUpper.contains(word.toUpper()))
+    // Forced to upper
+    word = locale.toUpper(word);
+  else if(toLower.contains(word))
+    // Forced to lower
+    word = locale.toLower(word.toLower());
+  else if(!ignore.contains(word))
   {
-    // Convert all letters after an apostrophe to lower case (St. Mary's)
-    if(last == '\'' && lastWord.size() == 1)
-      lastWord[0] = lastWord.at(0).toLower();
-    else if(!lastWord.isEmpty())
+    if(last == '\'' && word.size() == 1)
+      // Convert all letters after an apostrophe to lower case (St. Mary's)
+      word[0] = word.at(0).toLower();
+    else if(!word.isEmpty())
     {
-      lastWord = lastWord.toLower();
-      lastWord[0] = lastWord.at(0).toUpper();
+      if(word.size() >= 2 && NUMBER_LETTER_REGEXP.match(word).hasMatch())
+        // Words that start with a number and end in one character remain upper case
+        word = word.toUpper();
+      else
+      {
+        // Capitalize normal word
+        word = word.toLower();
+        word[0] = word.at(0).toUpper();
+      }
     }
   }
 }
 
-QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<QString>& toLower,
-                  const QSet<QString>& ignore)
+QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<QString>& toLower, const QSet<QString>& ignore)
 {
   if(str.isEmpty())
     return str;
