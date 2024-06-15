@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -156,12 +156,12 @@ public:
   /* MSFS only. Indicates special handling for third-party navdata update scenery areas. */
   bool isMsfsNavigraphNavdata() const
   {
-    return navigraphNavdata;
+    return msfsNavigraphNavdata;
   }
 
-  void setNavigraphNavdata(bool value = true)
+  void setMsfsNavigraphNavdata(bool value = true)
   {
-    navigraphNavdata = value;
+    msfsNavigraphNavdata = value;
   }
 
   /* MSFS only. Indicates special handling for "fs-base-nav" navdata update scenery area
@@ -234,7 +234,7 @@ private:
 
   int areaNumber = 0, textureId = 0, layer = 0;
   bool active = false, required = false, highPriority = false, addOn = false, community = false, included = false,
-       navigraphNavdata = false, navdata = false; /* Only MSFS */
+       msfsNavigraphNavdata = false, navdata = false; /* Only MSFS */
   QString title, remotePath, localPath, exclude,
           minGameVersion, packageVersion; // Only MSFS
 };

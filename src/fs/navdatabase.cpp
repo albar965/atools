@@ -1631,7 +1631,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
         addonArea.setAddOn(true);
 
         // Detect Navigraph navdata update packages for special handling
-        addonArea.setNavigraphNavdata(isNavigraphNavdata(manifest));
+        addonArea.setMsfsNavigraphNavdata(isNavigraphNavdata(manifest));
 
         cfg.getAreas().append(addonArea);
       }
@@ -1675,7 +1675,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
       if(!layout.getBglPaths().isEmpty())
       {
         // Detect Navigraph navdata update packages for special handling
-        addonArea.setNavigraphNavdata(isNavigraphNavdata(manifest));
+        addonArea.setMsfsNavigraphNavdata(isNavigraphNavdata(manifest));
 
         cfg.getAreas().append(addonArea);
       }

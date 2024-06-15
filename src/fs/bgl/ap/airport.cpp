@@ -841,7 +841,7 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
                                                 [](const TaxiPath& p) -> bool
         {
           return !p.getStartPoint().getPosition().isValid() ||
-          !p.getEndPoint().getPosition().isValid();
+                 !p.getEndPoint().getPosition().isValid();
         });
 
   if(it != taxipaths.end())

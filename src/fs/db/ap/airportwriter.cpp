@@ -336,13 +336,10 @@ void AirportWriter::writeObject(const Airport *type)
     {
       WaypointWriter *waypointWriter = dw.getWaypointWriter();
       waypointWriter->write(type->getWaypoints());
-    }
 
-    ComWriter *comWriter = dw.getAirportComWriter();
-    comWriter->write(type->getComs());
+      ComWriter *comWriter = dw.getAirportComWriter();
+      comWriter->write(type->getComs());
 
-    if(!currentArea.isMsfsNavigraphNavdata())
-    {
       ApproachWriter *appWriter = dw.getApproachWriter();
       appWriter->write(type->getApproaches());
 

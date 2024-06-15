@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class BinaryStream
   Q_DECLARE_TR_FUNCTIONS(BinaryStream)
 
 public:
-  BinaryStream(QFile* binaryFile, QDataStream::ByteOrder order = QDataStream::LittleEndian);
+  BinaryStream(QFile*binaryFile, QDataStream::ByteOrder order = QDataStream::LittleEndian);
 
   BinaryStream(const BinaryStream& other) = delete;
   BinaryStream& operator=(const BinaryStream& other) = delete;
@@ -83,13 +83,13 @@ public:
   }
 
   /* Returns full file name and path */
-  QString getFilename() const
+  QString getFilepath() const
   {
     return filename;
   }
 
   /* Returns file name without path */
-  QString getFilenameOnly() const;
+  QString getFilename() const;
 
 private:
   void checkStream(const QString& what) const;

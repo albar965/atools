@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -97,9 +97,9 @@ void BinaryStream::seekg(qint64 pos)
   is.device()->seek(pos);
 }
 
-QString BinaryStream::getFilenameOnly() const
+QString BinaryStream::getFilename() const
 {
-  return QFileInfo(getFilename()).fileName();
+  return QFileInfo(getFilepath()).fileName();
 }
 
 float BinaryStream::readFloat()
@@ -236,7 +236,7 @@ void BinaryStream::checkStream(const QString& what) const
         break;
     }
 
-    QString msg = tr("%1 for file \"%2\" failed. Reason: %3 (%4).").arg(what).arg(getFilename()).arg(statusText).arg(is.status());
+    QString msg = tr("%1 for file \"%2\" failed. Reason: %3 (%4).").arg(what).arg(getFilepath()).arg(statusText).arg(is.status());
 
     qWarning() << msg << "Position" << hex << "0x" << is.device()->pos() << dec << is.device()->pos();
     throw Exception(msg);
