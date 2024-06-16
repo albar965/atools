@@ -165,6 +165,10 @@ public:
   /* Enable display of tooltips again */
   static void setTooltipsEnabled();
 
+  /* Main window destructor called - appears later than isCloseCalled() */
+  static bool isShuttingDown();
+  static void setShuttingDown(bool value = true);
+
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
 
@@ -182,6 +186,8 @@ private:
   static bool safeMode;
 
   static bool showExceptionDialog, restartProcess, tooltipsDisabled;
+
+  static bool shuttingDown;
 
 };
 

@@ -44,6 +44,7 @@ QStringList Application::emailAddresses;
 QString Application::contactUrl;
 QSet<QObject *> Application::tooltipExceptions;
 bool Application::showSplash = true;
+bool Application::shuttingDown = false;
 
 QString Application::lockFile;
 bool Application::safeMode = false;
@@ -74,6 +75,17 @@ Application::~Application()
     else
       qWarning() << Q_FUNC_INFO << "FAILED.";
   }
+}
+
+bool Application::isShuttingDown()
+{
+  return shuttingDown;
+}
+
+void Application::setShuttingDown(bool value)
+{
+  qDebug() << Q_FUNC_INFO << value;
+  shuttingDown = value;
 }
 
 Application *Application::applicationInstance()
