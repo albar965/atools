@@ -4,6 +4,39 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
+# Version 4.0.7.rc1
+
+* Completely reworked SQL error reporting. Now optionally opening SQLite database readonly.
+* Fixed issues where coordinates received the wrong sign near Meridian line.
+* Added radio buttons to ChoiceDialog. albar965/littlenavmap#1013
+* Added methods to clear dialog positions in WidgetState.
+* Function to center a widget on the main screen. Now also centering main window in
+  DockWidgetHandler::resetWindowState.
+* Log data manager cleanup method improved. Extended to cleanup off-airport coordinates like
+  2956N10702E 4831N12255W in addition to empty idents.
+* More checks for index out of bounds to avoid crashes.
+* Now bailing out early when reading malformed BGL files. Example broken UWLS.bgl
+* Fix for crash when reading BGL files having invalid airports.
+* Made loading of MSFS PLN flight plan files more tolerant for missing altitude
+* Fixes and optimizations for boundary calculations in geo albar965/littlenavmap#1126
+* Fixed crash in metar index and spatial index.
+* Now blocking METAR access while reading files to avoid crashes due to invalid index.
+* Made reading of METAR strings more robust for invalid characters
+* Fixed weather and METARs for FSX/P3D. Enabled interpolated weather. Fixed wrong time zone for
+  METAR reports.
+* Complete rework of METAR classes and index. Added interpolation for nearest METARs. Changed METAR
+index to calculate and cache interpolated METARs. More optimizations.
+* Removed too many log messages from weather loading.
+* Fixed issue where interpolated wind showed up as invalid in METAR.
+* Changed weather symbols like `SCT` to be untranslateable.
+* Fix in widget state for invalid position if key not valid.
+* Now keeping roman numbers upper case in names for airspaces and airport names.
+* Better capitalization of words for navaid and airport names.
+* Fixed COM duplicates in MSFS scenery library with Navigraph navdata update installed.
+* Updated German translation.
+
+===============================================================================
+
 # Version 4.0.6
 
 * Removed annotated PLN export and added option for star or degree sign.
