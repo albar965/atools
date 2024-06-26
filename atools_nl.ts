@@ -1601,7 +1601,7 @@ Bestand:&quot;%2&quot;
         <location filename="src/atools.cpp" line="360"/>
         <location filename="src/atools.cpp" line="368"/>
         <location filename="src/atools.cpp" line="376"/>
-        <location filename="src/atools.h" line="205"/>
+        <location filename="src/atools.h" line="208"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translatorcomment>Punten gebruikt om teksten in te korten</translatorcomment>
@@ -1634,7 +1634,7 @@ Bestand:&quot;%2&quot;
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.h" line="211"/>
+        <location filename="src/atools.h" line="214"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
         <translation type="unfinished"></translation>

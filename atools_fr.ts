@@ -298,9 +298,8 @@ Fichier: &quot;%2&quot;
 <context>
     <name>Flightplan</name>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="244"/>
-        <source>Empty Flight Plan</source>
-        <translation type="unfinished">Plan de vol vide</translation>
+        <source>Empty Flightplan</source>
+        <translation type="obsolete">Plan de vol vide</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="72"/>
@@ -333,6 +332,11 @@ Fichier: &quot;%2&quot;
         <location filename="src/fs/pln/flightplan.cpp" line="193"/>
         <source>Pattern is empty.</source>
         <translation type="unfinished">Le modèle est vide.</translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplan.cpp" line="244"/>
+        <source>Empty Flight Plan</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1604,7 +1608,7 @@ Fichier: &quot;%2&quot;
         <location filename="src/atools.cpp" line="360"/>
         <location filename="src/atools.cpp" line="368"/>
         <location filename="src/atools.cpp" line="376"/>
-        <location filename="src/atools.h" line="205"/>
+        <location filename="src/atools.h" line="208"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translation type="unfinished">…</translation>
@@ -1633,7 +1637,7 @@ Fichier: &quot;%2&quot;
         <translation type="unfinished">…</translation>
     </message>
     <message>
-        <location filename="src/atools.h" line="211"/>
+        <location filename="src/atools.h" line="214"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
         <translation type="unfinished">.</translation>
@@ -3088,10 +3092,9 @@ Ligne %2.</translation>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="257"/>
-        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach a text copy or a screenshot of this dialog, the log file and the configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
-        <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;Si le problème persiste ou se produit pendant le démarrage, supprimez tous les fichiers de configuration et de base de données de &lt;i&gt;%1&lt;/i&gt; et réessayez.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Si vous souhaitez signaler cette erreur, joignez les fichiers de configuration et de journal à votre rapport, ajoutez toutes les autres informations disponibles et envoyez-les à l&apos;une des adresses de contact ci-dessous.&lt;/b&gt;&lt;br/&gt;</translation>
+        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
+        <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</oldsource>
+        <translation type="obsolete">&lt;b&gt;Si le problème persiste ou se produit pendant le démarrage, supprimez tous les fichiers de configuration et de base de données de &lt;i&gt;%1&lt;/i&gt; et réessayez.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Si vous souhaitez signaler cette erreur, joignez les fichiers de configuration et de journal à votre rapport, ajoutez toutes les autres informations disponibles et envoyez-les à l&apos;une des adresses de contact ci-dessous.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
@@ -3110,6 +3113,11 @@ Ligne %2.</translation>
     <message>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation type="obsolete">&lt;b&gt;Prendre une exception dans la ligne &quot;%1&quot; ligne %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Cliquez OK pour quitter le programme.&lt;/h3&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/gui/application.cpp" line="257"/>
+        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach a text copy or a screenshot of this dialog, the log file and the configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="287"/>

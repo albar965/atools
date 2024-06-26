@@ -103,7 +103,7 @@
     <message>
         <location filename="src/io/binarystream.cpp" line="239"/>
         <source>%1 for file &quot;%2&quot; failed. Reason: %3 (%4).</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 per file &quot;%2&quot; fallito. Motivo: %3 (%4).</translation>
     </message>
 </context>
 <context>
@@ -1171,12 +1171,12 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="657"/>
         <source>METAR &quot;%1&quot; has errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>METAR &quot;%1&quot; contiene errori.</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="702"/>
         <source>METAR &quot;%1&quot; is incomplete.</source>
-        <translation type="unfinished"></translation>
+        <translation>METAR &quot;%1&quot; è incompleto.</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1657"/>
@@ -1672,7 +1672,7 @@ File: &quot;%2&quot;
         <location filename="src/atools.cpp" line="360"/>
         <location filename="src/atools.cpp" line="368"/>
         <location filename="src/atools.cpp" line="376"/>
-        <location filename="src/atools.h" line="205"/>
+        <location filename="src/atools.h" line="208"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translatorcomment>Puntini usati per abbreviare il testo</translatorcomment>
@@ -1704,7 +1704,7 @@ File: &quot;%2&quot;
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.h" line="211"/>
+        <location filename="src/atools.h" line="214"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
         <translation>.</translation>
@@ -2644,47 +2644,47 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     <message>
         <location filename="src/sql/sqlexception.cpp" line="70"/>
         <source>Database name &quot;%1&quot;, &quot;%2&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome database &quot;%1&quot;, &quot;%2&quot;</translation>
     </message>
     <message>
         <location filename="src/sql/sqlexception.cpp" line="74"/>
         <source>Database is null</source>
-        <translation type="unfinished"></translation>
+        <translation>Il database è nullo</translation>
     </message>
     <message>
         <location filename="src/sql/sqlexception.cpp" line="80"/>
         <source>Database message &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Messaggio del database &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="src/sql/sqlexception.cpp" line="83"/>
         <source>Driver message &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Messaggio del driver &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="src/sql/sqlexception.cpp" line="93"/>
         <source>Query &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Interrogazione &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="src/sql/sqlexception.cpp" line="95"/>
         <source>Query text is null</source>
-        <translation type="unfinished"></translation>
+        <translation>Il testo della richiesta è nullo</translation>
     </message>
     <message>
         <location filename="src/sql/sqlexception.cpp" line="100"/>
         <source>Query is null</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;interrogazione è nulla</translation>
     </message>
     <message>
         <location filename="src/sql/sqlexception.cpp" line="110"/>
         <source>Record query text is null</source>
-        <translation type="unfinished"></translation>
+        <translation>Il testo dell&apos;interrogazione del record è nullo</translation>
     </message>
     <message>
         <location filename="src/sql/sqlexception.cpp" line="115"/>
         <source>Record is null</source>
-        <translation type="unfinished"></translation>
+        <translation>Il record è nullo</translation>
     </message>
 </context>
 <context>
@@ -2692,7 +2692,7 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     <message>
         <location filename="src/fs/bgl/bglfile.cpp" line="313"/>
         <source>Duplicate airport ident &quot;%1&quot; in file &quot;%2&quot;. File is malformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Identità aeroportuale duplicata &quot;%1&quot; nel file &quot;%2&quot;. Il file è malformato.</translation>
     </message>
 </context>
 <context>
@@ -3159,7 +3159,7 @@ Linea %2.</translation>
         <location filename="src/gui/application.cpp" line="257"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach a text copy or a screenshot of this dialog, the log file and the configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di %1 e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione al tuo report, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation>&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di %1 e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione al tuo report, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
@@ -3190,7 +3190,7 @@ Linea %2.</translation>
     <message>
         <location filename="src/gui/application.cpp" line="287"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;Press OK to exit application.&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Eccezione rilevata nel file &quot;%1&quot; linea %2.&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;Premere OK per uscire dall&apos;applicazione.&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="309"/>
