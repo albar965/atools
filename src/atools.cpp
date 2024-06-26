@@ -1474,4 +1474,17 @@ QStringList splitStringAtQuotes(const QString& str, QChar quote, QChar spaceSepa
   return textList;
 }
 
+bool inFont(const QFontMetrics& metrics, const QString& str)
+{
+  // Need to use ucs4 since QChar is only ushort
+  const QVector<uint> ucs4Str = str.toUcs4();
+  for(uint ucs4 : ucs4Str)
+  {
+    if(!metrics.inFontUcs4(ucs4))
+      return false;
+  }
+
+  return true;
+}
+
 } // namespace atools

@@ -199,6 +199,9 @@ QString elideTextShortMiddle(const QString& str, int maxLength);
 QString elidedText(const QFontMetricsF& metrics, QString text, Qt::TextElideMode mode, float width);
 QStringList elidedTexts(const QFontMetricsF& metrics, const QStringList& texts, Qt::TextElideMode mode, float width);
 
+/* true if all characters in the string can be shown using the font */
+bool inFont(const QFontMetrics& metrics, const QString& str);
+
 /* "…" depending on translation used in elidedText and elidedTexts */
 inline QString elidedStrDots()
 {
