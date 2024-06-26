@@ -306,25 +306,6 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
   return false;
 }
 
-#if defined(QT_WIDGETS_LIB)
-
-QStringList wrapText(const QStringList& texts, const QFontMetrics& metrics, int maxWidth, const QString& separator)
-{
-  QStringList wrappedTexts;
-
-  for(const QString& text : texts)
-  {
-    if(wrappedTexts.isEmpty() ||
-       metrics.horizontalAdvance(wrappedTexts.constLast()) + metrics.horizontalAdvance(separator % text) >= maxWidth)
-      wrappedTexts.append(text);
-    else
-      wrappedTexts.last() += separator % text;
-  }
-  return wrappedTexts;
-}
-
-#endif
-
 QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& itemSeparator,
                   const QString& lineSeparator)
 {
@@ -410,6 +391,22 @@ QString elideTextLinesShort(QString str, int maxLines, int maxLength, bool compr
 }
 
 #if defined(QT_WIDGETS_LIB)
+
+QStringList wrapText(const QStringList& texts, const QFontMetrics& metrics, int maxWidth, const QString& separator)
+{
+  QStringList wrappedTexts;
+
+  for(const QString& text : texts)
+  {
+    if(wrappedTexts.isEmpty() ||
+       metrics.horizontalAdvance(wrappedTexts.constLast()) + metrics.horizontalAdvance(separator % text) >= maxWidth)
+      wrappedTexts.append(text);
+    else
+      wrappedTexts.last() += separator % text;
+  }
+  return wrappedTexts;
+}
+
 QStringList elidedTexts(const QFontMetricsF& metrics, const QStringList& texts, Qt::TextElideMode mode, float width)
 {
   QStringList retval(texts);
@@ -436,6 +433,19 @@ QString elidedText(const QFontMetricsF& metrics, QString text, Qt::TextElideMode
   }
 
   return text;
+}
+
+bool inFont(const QFontMetrics& metrics, const QString& str)
+{
+  // Need to use ucs4 since QChar is only ushort
+  const QVector<uint> ucs4Str = str.toUcs4();
+  for(uint ucs4 : ucs4Str)
+  {
+    if(!metrics.inFontUcs4(ucs4))
+      return false;
+  }
+
+  return true;
 }
 
 #endif
@@ -1472,19 +1482,6 @@ QStringList splitStringAtQuotes(const QString& str, QChar quote, QChar spaceSepa
   if(!curText.isEmpty())
     textList.append(curText);
   return textList;
-}
-
-bool inFont(const QFontMetrics& metrics, const QString& str)
-{
-  // Need to use ucs4 since QChar is only ushort
-  const QVector<uint> ucs4Str = str.toUcs4();
-  for(uint ucs4 : ucs4Str)
-  {
-    if(!metrics.inFontUcs4(ucs4))
-      return false;
-  }
-
-  return true;
 }
 
 } // namespace atools

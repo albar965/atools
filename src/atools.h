@@ -214,6 +214,9 @@ inline QString elidedStrDot()
   return QObject::tr(".", "Dot used to shorten texts");
 }
 
+/* Fills maxWidth text lines into result using the separator. */
+QStringList wrapText(const QStringList& texts, const QFontMetrics& metrics, int maxWidth, const QString& separator);
+
 #endif
 
 /* Remove any non printable characters from string */
@@ -230,12 +233,6 @@ QString removeNonAlphaNum(const QString& str);
  */
 QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& itemSeparator,
                   const QString& lineSeparator);
-
-#if defined(QT_WIDGETS_LIB)
-/* Fills maxWidth text lines into result using the separator. */
-QStringList wrapText(const QStringList& texts, const QFontMetrics& metrics, int maxWidth, const QString& separator);
-
-#endif
 
 /* Cut linefeed separated text. Return maxLength lines where \n... is included
  * @param compressEmpty Remove empty lines before applying elide
