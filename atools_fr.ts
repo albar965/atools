@@ -1605,17 +1605,17 @@ Fichier: &quot;%2&quot;
         <translation type="unfinished">−</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="360"/>
-        <location filename="src/atools.cpp" line="368"/>
-        <location filename="src/atools.cpp" line="376"/>
+        <location filename="src/atools.cpp" line="341"/>
+        <location filename="src/atools.cpp" line="349"/>
+        <location filename="src/atools.cpp" line="357"/>
         <location filename="src/atools.h" line="208"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translation type="unfinished">…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="404"/>
-        <location filename="src/atools.cpp" line="409"/>
+        <location filename="src/atools.cpp" line="385"/>
+        <location filename="src/atools.cpp" line="390"/>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
@@ -1623,7 +1623,7 @@ Fichier: &quot;%2&quot;
 </translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="406"/>
+        <location filename="src/atools.cpp" line="387"/>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
@@ -1631,7 +1631,7 @@ Fichier: &quot;%2&quot;
 …</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="407"/>
+        <location filename="src/atools.cpp" line="388"/>
         <source>…</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translation type="unfinished">…</translation>
@@ -1643,17 +1643,17 @@ Fichier: &quot;%2&quot;
         <translation type="unfinished">.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="464"/>
+        <location filename="src/atools.cpp" line="474"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Créé par %1 Version %2 (révision %3) sur %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="474"/>
+        <location filename="src/atools.cpp" line="484"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Créé par %1 Version %2 (révision %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="499"/>
+        <location filename="src/atools.cpp" line="509"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="84"/>
@@ -1661,47 +1661,47 @@ Fichier: &quot;%2&quot;
         <translation>Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="876"/>
+        <location filename="src/atools.cpp" line="886"/>
         <source>Directory name is empty.</source>
         <translation type="unfinished">Le nom du répertoire est vide.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="885"/>
+        <location filename="src/atools.cpp" line="895"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation type="unfinished">Le répertoire &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="893"/>
+        <location filename="src/atools.cpp" line="903"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;est pas un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="899"/>
+        <location filename="src/atools.cpp" line="909"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation type="unfinished">Le répertoire &quot;%1&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="917"/>
+        <location filename="src/atools.cpp" line="927"/>
         <source>Filepath is empty.</source>
         <translation type="unfinished">Le chemin d&apos;accès au fichier est vide.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="926"/>
+        <location filename="src/atools.cpp" line="936"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="934"/>
+        <location filename="src/atools.cpp" line="944"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; est un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="939"/>
+        <location filename="src/atools.cpp" line="949"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="945"/>
+        <location filename="src/atools.cpp" line="955"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; est vide.</translation>
     </message>
