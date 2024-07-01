@@ -10,6 +10,7 @@ This text is partially Markdown, so the formatting is sometimes strange.
 * Updated translations for Brazilian Portuguese, French, German and Italian.
 * Removed Dutch, Chinese and Spanish translations since these have not been updated for a long time
   which can cause problems in the user user interface.
+* Fixed issue where helipad only or other airports had no bounding rectangle in MSFS.
 
 ===============================================================================
 

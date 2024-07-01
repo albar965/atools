@@ -575,6 +575,11 @@ void Airport::reportFarCoordinate(const atools::geo::Pos& pos, const QString& te
 void Airport::updateSummaryFields()
 {
   atools::geo::LineString points;
+
+  const geo::Pos& pos = position.getPos();
+  if(!pos.isNull() && pos.isValidRange())
+    points.append(pos);
+
   if(!towerPosition.getPos().isNull() && towerPosition.getPos().isValidRange() && !towerPosition.getPos().isPole())
   {
     reportFarCoordinate(towerPosition.getPos(), "tower");
