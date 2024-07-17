@@ -470,7 +470,7 @@ void MetarIndex::updateOrInsert(const QString& metarString, const QString& ident
     {
       // Already in list - get writeable reference to entry
       Metar& metar = metarVector[idx];
-      if(!metar.getTimestamp().isValid() || metar.getTimestamp() < lastTimestamp || metar.getStationMetar() != metarString)
+      if((!metar.getTimestamp().isValid() || metar.getTimestamp() < lastTimestamp) && metar.getStationMetar() != metarString)
       {
         // This one is newer - update
         metar.setMetarForStation(metarString);
