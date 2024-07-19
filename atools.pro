@@ -90,6 +90,7 @@ ATOOLS_NO_FS=$$(ATOOLS_NO_FS)
 ATOOLS_NO_GRIB=$$(ATOOLS_NO_GRIB)
 ATOOLS_NO_WMM=$$(ATOOLS_NO_WMM)
 ATOOLS_NO_NAVSERVER=$$(ATOOLS_NO_NAVSERVER)
+ATOOLS_NO_CRASHHANDLER=$$(ATOOLS_NO_CRASHHANDLER)
 
 !isEqual(ATOOLS_NO_GUI, "true"): QT += svg widgets
 isEqual(ATOOLS_NO_GUI, "true"): QT -= gui
@@ -106,11 +107,20 @@ isEmpty(DEPLOY_BASE) : DEPLOY_BASE=$$PWD/../deploy
 # =======================================================================
 # Set compiler flags and paths
 
+!macx { !isEqual(ATOOLS_NO_CRASHHANDLER, "true") : CONFIG += force_debug_info }
+
 INCLUDEPATH += $$PWD/src
 QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wno-unknown-warning-option
 
 unix {
   isEmpty(GIT_PATH) : GIT_PATH=git
+}
+
+!macx {
+  !isEqual(ATOOLS_NO_CRASHHANDLER, "true") {
+    INCLUDEPATH += $$PWD/../cpptrace-$$CONF_TYPE/include
+    DEFINES += CPPTRACE_STATIC_DEFINE
+  }
 }
 
 win32 {
@@ -132,7 +142,6 @@ win32 {
 
   DEFINES += _USE_MATH_DEFINES
   DEFINES += NOMINMAX
-
 }
 
 isEmpty(GIT_PATH) {
@@ -184,6 +193,7 @@ message(ATOOLS_NO_FS: $$ATOOLS_NO_FS)
 message(ATOOLS_NO_GRIB: $$ATOOLS_NO_GRIB)
 message(ATOOLS_NO_WMM: $$ATOOLS_NO_WMM)
 message(ATOOLS_NO_NAVSERVER: $$ATOOLS_NO_NAVSERVER)
+message(ATOOLS_NO_CRASHHANDLER: $$ATOOLS_NO_CRASHHANDLER)
 message(SIMCONNECT_PATH_WIN32: $$SIMCONNECT_PATH_WIN32)
 message(SIMCONNECT_PATH_WIN64: $$SIMCONNECT_PATH_WIN64)
 message(DEFINES: $$DEFINES)
@@ -362,6 +372,17 @@ SOURCES += \
   src/zlib/trees.c \
   src/zlib/uncompr.c \
   src/zlib/zutil.c
+
+# =====================================================================
+# Userdata
+
+!isEqual(ATOOLS_NO_CRASHHANDLER, "true") {
+HEADERS += \
+  src/util/crashhandler.h
+
+SOURCES += \
+  src/util/crashhandler.cpp
+} # ATOOLS_NO_CRASHHANDLER
 
 # =====================================================================
 # Userdata
