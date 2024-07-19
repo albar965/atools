@@ -23,6 +23,7 @@
 #define ATOOLS_PRINT_STACK_DEBUG(message) (atools::util::crashhandler::printTraceDebug(Q_FUNC_INFO, __FILE__, __LINE__, message))
 #define ATOOLS_PRINT_STACK_INFO(message) (atools::util::crashhandler::printTraceInfo(Q_FUNC_INFO, __FILE__, __LINE__, message))
 #define ATOOLS_PRINT_STACK_WARNING(message) (atools::util::crashhandler::printTraceWarning(Q_FUNC_INFO, __FILE__, __LINE__, message))
+#define ATOOLS_PRINT_STACK_CRITICAL(message) (atools::util::crashhandler::printTraceCritical(Q_FUNC_INFO, __FILE__, __LINE__, message))
 
 /* Functions for catching signals/exceptions on Linux and Windows.
  * Signal handler print a stack trace to the given file and stderr and exits program with EXIT_FAILURE.
@@ -42,6 +43,7 @@ void deInit();
 void printTraceDebug(const char *funcInfo, const char *file, int line, const QString& message);
 void printTraceInfo(const char *funcInfo, const char *file, int line, const QString& message);
 void printTraceWarning(const char *funcInfo, const char *file, int line, const QString& message);
+void printTraceCritical(const char *funcInfo, const char *file, int line, const QString& message);
 
 /* Set a log file to write the stack traces in case of signal/exception. stderr is used as default if not set.
  * Can be called after init() */

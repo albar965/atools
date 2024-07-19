@@ -103,6 +103,17 @@ void printTraceWarning(const char*funcInfo, const char *file, int line, const QS
 #endif
 }
 
+void printTraceCritical(const char*funcInfo, const char*file, int line, const QString& message)
+{
+#ifndef Q_OS_MACOS
+  qCritical().noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message;
+  std::ostringstream out;
+  cpptrace::generate_trace(0, 500).print(out, false);
+  out << std::ends;
+  qCritical().noquote().nospace() << QString::fromStdString(out.str());
+#endif
+}
+
 #ifndef Q_OS_MACOS
 void setStackTraceLog(const QString& logFilename)
 {

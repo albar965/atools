@@ -22,6 +22,7 @@
 #include "gui/messagebox.h"
 #include "gui/tools.h"
 #include "io/fileroller.h"
+#include "util/crashhandler.h"
 #include "util/htmlbuilder.h"
 #include "zip/zipwriter.h"
 
@@ -188,6 +189,7 @@ void Application::recordExit()
     qWarning() << Q_FUNC_INFO << "Failed removing lock file" << lockFile;
 
   lockFile.clear();
+
 #endif
 }
 
@@ -240,6 +242,7 @@ catch(std::exception& e)
   qCritical() << "receiver" << (receiver == nullptr ? "null" : receiver->objectName());
   qCritical() << "event" << (event == nullptr ? 0 : static_cast<int>(event->type()));
 
+  ATOOLS_PRINT_STACK_CRITICAL("Caught exception in event loop handler");
   ATOOLS_HANDLE_EXCEPTION(e);
 }
 catch(...)
@@ -247,6 +250,7 @@ catch(...)
   qCritical() << "receiver" << (receiver == nullptr ? "null" : receiver->objectName());
   qCritical() << "event" << (event == nullptr ? 0 : static_cast<int>(event->type()));
 
+  ATOOLS_PRINT_STACK_CRITICAL("Caught unknown exception in event loop handler");
   ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
 }
 #endif
