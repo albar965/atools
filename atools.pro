@@ -118,7 +118,9 @@ unix {
 
 !macx {
   !isEqual(ATOOLS_NO_CRASHHANDLER, "true") {
-    INCLUDEPATH += $$PWD/../cpptrace-$$CONF_TYPE-$$WINARCH/include
+    win32 { INCLUDEPATH += $$PWD/../cpptrace-$$CONF_TYPE-$$WINARCH/include }
+    unix { INCLUDEPATH += $$PWD/../cpptrace-$$CONF_TYPE/include }
+
     DEFINES += CPPTRACE_STATIC_DEFINE
   }
 }
