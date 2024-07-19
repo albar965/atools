@@ -125,7 +125,14 @@ static int openSignalOutput()
   int fh = STDERR_FILENO;
   if(!filename.isEmpty())
   {
-    fh = open(filename.data(), O_WRONLY | O_TRUNC | O_CREAT | O_FSYNC, 0666);
+#ifdef Q_OS_LINUX
+    int openFlag = O_WRONLY | O_TRUNC | O_CREAT | O_FSYNC;
+#endif
+
+#ifdef Q_OS_WIN32
+    int openFlag = O_WRONLY | O_TRUNC | O_CREAT;
+#endif
+    fh = open(filename.data(), openFlag, 0666);
 
     if(fh == -1)
     {
