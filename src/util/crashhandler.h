@@ -30,6 +30,8 @@
  * Disabled on macOS.
  *
  * This requires https://github.com/jeremy-rifkin/cpptrace .
+ *
+ * Implementation can be disabled with define DISABLE_CRASHHANDLER
  */
 namespace atools {
 namespace util {

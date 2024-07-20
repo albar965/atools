@@ -17,7 +17,7 @@
 
 #include "util/crashhandler.h"
 
-#ifndef Q_OS_MACOS
+#ifndef DISABLE_CRASHHANDLER
 
 #include "atools.h"
 
@@ -42,15 +42,16 @@ extern "C"
 #endif
 
 #include <cpptrace/cpptrace.hpp>
-#include <QDebug>
 #include <sstream>
 #endif
+
+#include <QDebug>
 
 namespace atools {
 namespace util {
 namespace crashhandler {
 
-#ifndef Q_OS_MACOS
+#ifndef DISABLE_CRASHHANDLER
 static void setSignalHandler();
 
 static QByteArray filename;
@@ -59,11 +60,12 @@ static const int SIGNAL_STACK_SIZE = 1024 * 1024;
 
 void init()
 {
-#ifndef Q_OS_MACOS
+#ifndef DISABLE_CRASHHANDLER
   qInfo() << Q_FUNC_INFO;
-
   setSignalHandler();
 #endif
+
+  ATOOLS_PRINT_STACK_INFO("Crash handler initialized and testing stacktrace");
 }
 
 void deInit()
@@ -72,8 +74,9 @@ void deInit()
 
 void printTraceDebug(const char*funcInfo, const char *file, int line, const QString& message)
 {
-#ifndef Q_OS_MACOS
   qDebug().noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message;
+
+#ifndef DISABLE_CRASHHANDLER
   std::ostringstream out;
   cpptrace::generate_trace(0, 500).print(out, false);
   out << std::ends;
@@ -83,8 +86,9 @@ void printTraceDebug(const char*funcInfo, const char *file, int line, const QStr
 
 void printTraceInfo(const char*funcInfo, const char *file, int line, const QString& message)
 {
-#ifndef Q_OS_MACOS
   qInfo().noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message;
+
+#ifndef DISABLE_CRASHHANDLER
   std::ostringstream out;
   cpptrace::generate_trace(0, 500).print(out, false);
   out << std::ends;
@@ -94,8 +98,9 @@ void printTraceInfo(const char*funcInfo, const char *file, int line, const QStri
 
 void printTraceWarning(const char*funcInfo, const char *file, int line, const QString& message)
 {
-#ifndef Q_OS_MACOS
   qWarning().noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message;
+
+#ifndef DISABLE_CRASHHANDLER
   std::ostringstream out;
   cpptrace::generate_trace(0, 500).print(out, false);
   out << std::ends;
@@ -105,8 +110,9 @@ void printTraceWarning(const char*funcInfo, const char *file, int line, const QS
 
 void printTraceCritical(const char*funcInfo, const char*file, int line, const QString& message)
 {
-#ifndef Q_OS_MACOS
   qCritical().noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message;
+
+#ifndef DISABLE_CRASHHANDLER
   std::ostringstream out;
   cpptrace::generate_trace(0, 500).print(out, false);
   out << std::ends;
@@ -114,13 +120,15 @@ void printTraceCritical(const char*funcInfo, const char*file, int line, const QS
 #endif
 }
 
-#ifndef Q_OS_MACOS
 void setStackTraceLog(const QString& logFilename)
 {
+#ifndef DISABLE_CRASHHANDLER
   filename = atools::nativeCleanPath(logFilename).toUtf8();
   qDebug() << Q_FUNC_INFO << filename;
+#endif
 }
 
+#ifndef DISABLE_CRASHHANDLER
 /* Print message using signal safe methods */
 static void printSignalMessage(int fh, const char *message)
 {
@@ -477,7 +485,7 @@ void setSignalHandler()
 #endif // elif defined(Q_OS_LINUX)
 }
 
-#endif // #ifndef Q_OS_MACOS
+#endif // #ifndef DISABLE_CRASHHANDLER
 
 } // namespace crashhandler
 } // namespace util

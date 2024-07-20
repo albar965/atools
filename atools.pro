@@ -55,7 +55,7 @@
 # =============================================================================
 
 # Define program version here VERSION_NUMBER_TODO
-VERSION_NUMBER=4.0.8
+VERSION_NUMBER=4.0.9.rc1
 
 QT += sql xml core network
 
@@ -79,6 +79,7 @@ SIMCONNECT_PATH_WIN64=$$(ATOOLS_SIMCONNECT_PATH_WIN64)
 DEPLOY_BASE=$$(DEPLOY_BASE)
 QUIET=$$(ATOOLS_QUIET)
 
+# Disables files
 ATOOLS_NO_USERDATA=$$(ATOOLS_NO_USERDATA)
 ATOOLS_NO_SQL=$$(ATOOLS_NO_SQL)
 ATOOLS_NO_WEATHER=$$(ATOOLS_NO_WEATHER)
@@ -107,23 +108,12 @@ isEmpty(DEPLOY_BASE) : DEPLOY_BASE=$$PWD/../deploy
 # =======================================================================
 # Set compiler flags and paths
 
-!macx { !isEqual(ATOOLS_NO_CRASHHANDLER, "true") : CONFIG += force_debug_info }
-
 INCLUDEPATH += $$PWD/src
 QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wno-unknown-warning-option
 
-unix {
-  isEmpty(GIT_PATH) : GIT_PATH=git
-}
-
-!macx {
-  !isEqual(ATOOLS_NO_CRASHHANDLER, "true") {
-    win32 { INCLUDEPATH += $$PWD/../cpptrace-$$CONF_TYPE-$$WINARCH/include }
-    unix { INCLUDEPATH += $$PWD/../cpptrace-$$CONF_TYPE/include }
-
-    DEFINES += CPPTRACE_STATIC_DEFINE
-  }
-}
+# No crash handler on Linux and macOS
+unix : ATOOLS_DISABLE_CRASHHANDLER = true
+isEqual(ATOOLS_NO_CRASHHANDLER, "true") : ATOOLS_DISABLE_CRASHHANDLER = true
 
 win32 {
   contains(QT_ARCH, i386) {
@@ -133,6 +123,7 @@ win32 {
       INCLUDEPATH += $$SIMCONNECT_PATH_WIN32"\inc"
       LIBS += $$SIMCONNECT_PATH_WIN32"\lib\SimConnect.lib"
     }
+    ATOOLS_DISABLE_CRASHHANDLER = true
   } else {
   # MSFS
     !isEmpty(SIMCONNECT_PATH_WIN64) {
@@ -144,6 +135,17 @@ win32 {
 
   DEFINES += _USE_MATH_DEFINES
   DEFINES += NOMINMAX
+}
+
+!isEqual(ATOOLS_DISABLE_CRASHHANDLER, "true") {
+  win32 : INCLUDEPATH += $$PWD/../cpptrace-$$CONF_TYPE-$$WINARCH/include
+  unix : INCLUDEPATH += $$PWD/../cpptrace-$$CONF_TYPE/include
+
+  DEFINES += CPPTRACE_STATIC_DEFINE
+  CONFIG += force_debug_info
+}
+else {
+  DEFINES += DISABLE_CRASHHANDLER
 }
 
 isEmpty(GIT_PATH) {
@@ -195,7 +197,7 @@ message(ATOOLS_NO_FS: $$ATOOLS_NO_FS)
 message(ATOOLS_NO_GRIB: $$ATOOLS_NO_GRIB)
 message(ATOOLS_NO_WMM: $$ATOOLS_NO_WMM)
 message(ATOOLS_NO_NAVSERVER: $$ATOOLS_NO_NAVSERVER)
-message(ATOOLS_NO_CRASHHANDLER: $$ATOOLS_NO_CRASHHANDLER)
+message(ATOOLS_DISABLE_CRASHHANDLER: $$ATOOLS_DISABLE_CRASHHANDLER)
 message(SIMCONNECT_PATH_WIN32: $$SIMCONNECT_PATH_WIN32)
 message(SIMCONNECT_PATH_WIN64: $$SIMCONNECT_PATH_WIN64)
 message(DEFINES: $$DEFINES)
@@ -262,6 +264,7 @@ HEADERS += \
   src/settings/settings.h \
   src/util/average.h \
   src/util/contextsaver.h \
+  src/util/crashhandler.h \
   src/util/csvreader.h \
   src/util/filechecker.h \
   src/util/fileoperations.h \
@@ -290,8 +293,6 @@ HEADERS += \
   src/zlib/inflate.h \
   src/zlib/inftrees.h \
   src/zlib/trees.h \
-  src/zlib/zconf.h.cmakein \
-  src/zlib/zconf.h.in \
   src/zlib/zlib.h \
   src/zlib/zutil.h
 
@@ -340,6 +341,7 @@ SOURCES += \
   src/settings/settings.cpp \
   src/util/average.cpp \
   src/util/contextsaver.cpp \
+  src/util/crashhandler.cpp \
   src/util/csvreader.cpp \
   src/util/filechecker.cpp \
   src/util/fileoperations.cpp \
@@ -374,17 +376,6 @@ SOURCES += \
   src/zlib/trees.c \
   src/zlib/uncompr.c \
   src/zlib/zutil.c
-
-# =====================================================================
-# Userdata
-
-!isEqual(ATOOLS_NO_CRASHHANDLER, "true") {
-HEADERS += \
-  src/util/crashhandler.h
-
-SOURCES += \
-  src/util/crashhandler.cpp
-} # ATOOLS_NO_CRASHHANDLER
 
 # =====================================================================
 # Userdata
