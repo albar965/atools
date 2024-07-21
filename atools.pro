@@ -112,8 +112,7 @@ INCLUDEPATH += $$PWD/src
 QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wno-unknown-warning-option
 
 # No crash handler on Linux and macOS
-unix : ATOOLS_DISABLE_CRASHHANDLER = true
-isEqual(ATOOLS_NO_CRASHHANDLER, "true") : ATOOLS_DISABLE_CRASHHANDLER = true
+unix : ATOOLS_NO_CRASHHANDLER = true
 
 win32 {
   contains(QT_ARCH, i386) {
@@ -123,7 +122,6 @@ win32 {
       INCLUDEPATH += $$SIMCONNECT_PATH_WIN32"\inc"
       LIBS += $$SIMCONNECT_PATH_WIN32"\lib\SimConnect.lib"
     }
-    ATOOLS_DISABLE_CRASHHANDLER = true
   } else {
   # MSFS
     !isEmpty(SIMCONNECT_PATH_WIN64) {
@@ -137,7 +135,7 @@ win32 {
   DEFINES += NOMINMAX
 }
 
-!isEqual(ATOOLS_DISABLE_CRASHHANDLER, "true") {
+!isEqual(ATOOLS_NO_CRASHHANDLER, "true") {
   win32 : INCLUDEPATH += $$PWD/../cpptrace-$$CONF_TYPE-$$WINARCH/include
   unix : INCLUDEPATH += $$PWD/../cpptrace-$$CONF_TYPE/include
 
@@ -197,7 +195,7 @@ message(ATOOLS_NO_FS: $$ATOOLS_NO_FS)
 message(ATOOLS_NO_GRIB: $$ATOOLS_NO_GRIB)
 message(ATOOLS_NO_WMM: $$ATOOLS_NO_WMM)
 message(ATOOLS_NO_NAVSERVER: $$ATOOLS_NO_NAVSERVER)
-message(ATOOLS_DISABLE_CRASHHANDLER: $$ATOOLS_DISABLE_CRASHHANDLER)
+message(ATOOLS_NO_CRASHHANDLER: $$ATOOLS_NO_CRASHHANDLER)
 message(SIMCONNECT_PATH_WIN32: $$SIMCONNECT_PATH_WIN32)
 message(SIMCONNECT_PATH_WIN64: $$SIMCONNECT_PATH_WIN64)
 message(DEFINES: $$DEFINES)
