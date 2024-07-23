@@ -60,12 +60,13 @@ static const int SIGNAL_STACK_SIZE = 1024 * 1024;
 
 void init()
 {
-#ifndef DISABLE_CRASHHANDLER
-  qInfo() << Q_FUNC_INFO;
+#ifdef DISABLE_CRASHHANDLER
+  qInfo() << Q_FUNC_INFO << "Crashhandler disabled";
+#else
+  qInfo() << Q_FUNC_INFO << "Crashhandler enabled";
   setSignalHandler();
-#endif
-
   ATOOLS_PRINT_STACK_INFO("Crash handler initialized and testing stacktrace");
+#endif
 }
 
 void deInit()

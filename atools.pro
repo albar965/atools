@@ -111,9 +111,6 @@ isEmpty(DEPLOY_BASE) : DEPLOY_BASE=$$PWD/../deploy
 INCLUDEPATH += $$PWD/src
 QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wno-unknown-warning-option
 
-# No crash handler on Linux and macOS
-unix : ATOOLS_NO_CRASHHANDLER = true
-
 win32 {
   contains(QT_ARCH, i386) {
   # FSX or P3D
