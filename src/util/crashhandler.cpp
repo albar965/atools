@@ -65,7 +65,6 @@ void init()
 #else
   qInfo() << Q_FUNC_INFO << "Crashhandler enabled";
   setSignalHandler();
-  ATOOLS_PRINT_STACK_INFO("Crash handler initialized and testing stacktrace");
 #endif
 }
 
