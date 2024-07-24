@@ -47,6 +47,7 @@ extern "C"
 #endif
 
 #include <QDebug>
+#include <QFile>
 
 namespace atools {
 namespace util {
@@ -488,6 +489,14 @@ void setSignalHandler()
 }
 
 #endif // #ifndef DISABLE_CRASHHANDLER
+
+void clearStackTrace(const QString& filename)
+{
+  if(QFile::remove(filename))
+    qInfo() << Q_FUNC_INFO << "Success removing stacktrace file" << filename;
+  else
+    qInfo() << Q_FUNC_INFO << "Stacktrace file not removed" << filename;
+}
 
 } // namespace crashhandler
 } // namespace util

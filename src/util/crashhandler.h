@@ -47,6 +47,9 @@ void printTraceInfo(const char *funcInfo, const char *file, int line, const QStr
 void printTraceWarning(const char *funcInfo, const char *file, int line, const QString& message);
 void printTraceCritical(const char *funcInfo, const char *file, int line, const QString& message);
 
+/* Removes the stack trace file */
+void clearStackTrace(const QString& filename);
+
 /* Set a log file to write the stack traces in case of signal/exception. stderr is used as default if not set.
  * Can be called after init() */
 void setStackTraceLog(const QString& filename);
