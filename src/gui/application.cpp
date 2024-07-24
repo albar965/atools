@@ -24,6 +24,7 @@
 #include "io/fileroller.h"
 #include "util/crashhandler.h"
 #include "util/htmlbuilder.h"
+#include "util/properties.h"
 #include "zip/zipwriter.h"
 
 #include <cstdlib>
@@ -55,11 +56,16 @@ bool Application::restartProcess = false;
 bool Application::tooltipsDisabled = false;
 QSplashScreen *Application::splashScreen = nullptr;
 
+atools::util::Properties *Application::startupOptions = nullptr;
+
 Application::Application(int& argc, char **argv, int)
   : QApplication(argc, argv)
 {
+  startupOptions = new atools::util::Properties;
+
   // Needed to catch program stopping during Windows shutdown
   connect(this, &QCoreApplication::aboutToQuit, recordExit);
+
 }
 
 Application::~Application()
@@ -76,6 +82,7 @@ Application::~Application()
     else
       qWarning() << Q_FUNC_INFO << "FAILED.";
   }
+  ATOOLS_DELETE(startupOptions);
 }
 
 bool Application::isShuttingDown()
@@ -87,6 +94,53 @@ void Application::setShuttingDown(bool value)
 {
   qDebug() << Q_FUNC_INFO << value;
   shuttingDown = value;
+}
+
+const atools::util::Properties& Application::getStartupOptionsConst()
+{
+  return *startupOptions;
+}
+
+bool Application::hasStartupOption(const QString& key)
+{
+  return startupOptions->contains(key);
+}
+
+QString Application::getStartupOptionStr(const QString& key)
+{
+  return startupOptions->getPropertyStr(key);
+}
+
+QStringList Application::getStartupOptionStrList(const QString& key)
+{
+  return startupOptions->getPropertyStrList(key);
+}
+
+void Application::addStartupOptionStr(const QString& key, const QString& value)
+{
+  startupOptions->setPropertyStr(key, value);
+}
+
+void Application::addStartupOptionStrIf(const QString& key, const QString& value)
+{
+  if(!value.isEmpty())
+    startupOptions->setPropertyStr(key, value);
+}
+
+void Application::addStartupOptionBoolIf(const QString& key, bool value)
+{
+  if(value)
+    startupOptions->setPropertyStr(key, QString());
+}
+
+void Application::addStartupOptionStrList(const QString& key, const QStringList& value)
+{
+  startupOptions->setPropertyStrList(key, value);
+}
+
+void Application::clearStartupOptions()
+{
+  startupOptions->clear();
 }
 
 Application *Application::applicationInstance()
@@ -159,7 +213,10 @@ void Application::recordStartAndDetectCrash(QWidget *parent, const QString& lock
 
     atools::gui::MessageBox box(parent);
     box.setShowInFileManager();
-    box.setHelpUrl(helpOnlineUrl + helpDocument, helpLanguageOnline);
+
+    if(!helpOnlineUrl.isEmpty() && !helpDocument.isEmpty())
+      box.setHelpUrl(helpOnlineUrl + helpDocument, helpLanguageOnline);
+
     box.addRejectButton(QDialogButtonBox::No);
     box.addAcceptButton(QDialogButtonBox::Yes);
     box.setMessage(message);

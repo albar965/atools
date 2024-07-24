@@ -27,6 +27,7 @@ extern "C"
 #include <stdlib.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <time.h>
 }
 
 #if defined(Q_OS_WIN32)
@@ -388,6 +389,7 @@ static void posixSignalHandler(int sig, siginfo_t *siginfo, void *context)
 
   // Have to use signal handler unsafe method since libuwind is not available for all platforms
   std::stringstream out;
+  out << "Timestamp:" << time(nullptr) << "\n";
   cpptrace::generate_trace(0, 500).print(out, false);
   out << std::ends;
   printSignalMessage(fh, out.str().data());

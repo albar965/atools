@@ -30,6 +30,10 @@ class QSplashScreen;
 class QMainWindow;
 
 namespace atools {
+
+namespace util {
+class Properties;
+}
 namespace gui {
 
 /*
@@ -169,6 +173,17 @@ public:
   static bool isShuttingDown();
   static void setShuttingDown(bool value = true);
 
+  /* Command line options. Have to be populated by the application. */
+  static const atools::util::Properties& getStartupOptionsConst();
+  static bool hasStartupOption(const QString& key);
+  static QString getStartupOptionStr(const QString& key);
+  static QStringList getStartupOptionStrList(const QString& key);
+  static void addStartupOptionStr(const QString& key, const QString& value);
+  static void addStartupOptionStrIf(const QString& key, const QString& value); /* Add option only if value is not empty */
+  static void addStartupOptionBoolIf(const QString& key, bool value); /* Add option depending on value */
+  static void addStartupOptionStrList(const QString& key, const QStringList& value);
+  static void clearStartupOptions(); /* Clear for safe mode */
+
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
 
@@ -184,6 +199,8 @@ private:
 
   static QString lockFile;
   static bool safeMode;
+
+  static atools::util::Properties *startupOptions;
 
   static bool showExceptionDialog, restartProcess, tooltipsDisabled;
 

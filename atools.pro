@@ -477,6 +477,7 @@ HEADERS += \
   src/gui/application.h \
   src/gui/choicedialog.h \
   src/gui/clicktooltiphandler.h \
+  src/gui/dataexchange.h \
   src/gui/desktopservices.h \
   src/gui/dialog.h \
   src/gui/dockwidgethandler.h \
@@ -510,6 +511,7 @@ SOURCES += \
   src/gui/application.cpp \
   src/gui/choicedialog.cpp \
   src/gui/clicktooltiphandler.cpp \
+  src/gui/dataexchange.cpp \
   src/gui/desktopservices.cpp \
   src/gui/dialog.cpp \
   src/gui/dockwidgethandler.cpp \
