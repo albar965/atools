@@ -125,25 +125,28 @@ void printTraceCritical(const char*funcInfo, const char*file, int line, const QS
 void setStackTraceLog(const QString& logFilename)
 {
 #ifndef DISABLE_CRASHHANDLER
-  filename = atools::nativeCleanPath(logFilename).toUtf8();
-  qDebug() << Q_FUNC_INFO << filename;
+  QString utf8Filename = atools::nativeCleanPath(logFilename);
+  qDebug() << Q_FUNC_INFO << utf8Filename;
+
+  // Need to use latin1 since open() treats the filename as is
+  filename = utf8Filename.toLocal8Bit();
 #endif
 }
 
 #ifndef DISABLE_CRASHHANDLER
 /* Print message using signal safe methods */
-static void printSignalMessage(int fh, const char *message)
+static void printSignalMessage(int fileHandle, const char *message)
 {
-  write(fh, message, strlen(message));
+  write(fileHandle, message, strlen(message));
 
-  if(fh != STDERR_FILENO)
+  if(fileHandle != STDERR_FILENO)
     write(STDERR_FILENO, message, strlen(message));
 }
 
 /* Open file using signal safe methods. Returns file handle or STDERR_FILENO. */
 static int openSignalOutput()
 {
-  int fh = STDERR_FILENO;
+  int fileHandle = STDERR_FILENO;
   if(!filename.isEmpty())
   {
 #ifdef Q_OS_LINUX
@@ -153,16 +156,16 @@ static int openSignalOutput()
 #ifdef Q_OS_WIN32
     int openFlag = O_WRONLY | O_TRUNC | O_CREAT;
 #endif
-    fh = open(filename.data(), openFlag, 0666);
+    fileHandle = open(filename.constData(), openFlag, 0666);
 
-    if(fh == -1)
+    if(fileHandle == -1)
     {
       printSignalMessage(STDERR_FILENO, "Error opening file \"");
       printSignalMessage(STDERR_FILENO, filename.data());
       printSignalMessage(STDERR_FILENO, "\". Reason: ");
       printSignalMessage(STDERR_FILENO, strerror(errno));
       printSignalMessage(STDERR_FILENO, "\n");
-      fh = STDERR_FILENO;
+      fileHandle = STDERR_FILENO;
     }
     else
     {
@@ -171,14 +174,14 @@ static int openSignalOutput()
       printSignalMessage(STDERR_FILENO, "\".\n");
     }
   }
-  return fh;
+  return fileHandle;
 }
 
 /* Close file using signal safe methods */
-static void closeSignalOutput(int fh)
+static void closeSignalOutput(int fileHandle)
 {
-  if(!filename.isEmpty())
-    close(fh);
+  if(fileHandle != STDERR_FILENO)
+    close(fileHandle);
 }
 
 // ================================================================================
