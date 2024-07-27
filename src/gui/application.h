@@ -19,6 +19,7 @@
 #define ATOOLS_GUI_APPLICATION_H
 
 #include <QApplication>
+#include <QElapsedTimer>
 
 /* Use this macro to report an fatal error after an exception including location information */
 #define ATOOLS_HANDLE_EXCEPTION(e) (atools::gui::Application::handleException(__FILE__, __LINE__, e))
@@ -184,6 +185,10 @@ public:
   static void addStartupOptionStrList(const QString& key, const QStringList& value);
   static void clearStartupOptions(); /* Clear for safe mode */
 
+  /* Note on startup and print time into log */
+  static void startup();
+  static void startupFinished(const char *func);
+
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
 
@@ -205,6 +210,8 @@ private:
   static bool showExceptionDialog, restartProcess, tooltipsDisabled;
 
   static bool shuttingDown;
+
+  static QElapsedTimer timer;
 
 };
 

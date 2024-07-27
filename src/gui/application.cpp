@@ -57,6 +57,7 @@ bool Application::tooltipsDisabled = false;
 QSplashScreen *Application::splashScreen = nullptr;
 
 atools::util::Properties *Application::startupOptions = nullptr;
+QElapsedTimer Application::timer;
 
 Application::Application(int& argc, char **argv, int)
   : QApplication(argc, argv)
@@ -141,6 +142,17 @@ void Application::addStartupOptionStrList(const QString& key, const QStringList&
 void Application::clearStartupOptions()
 {
   startupOptions->clear();
+}
+
+void Application::startup()
+{
+  timer.start();
+}
+
+void Application::startupFinished(const char *func)
+{
+  qInfo() << func << "Startup Finished -------------------------";
+  qInfo() << func << "Startup took" << timer.elapsed() << "milliseconds";
 }
 
 Application *Application::applicationInstance()
