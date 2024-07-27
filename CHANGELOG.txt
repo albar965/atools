@@ -4,6 +4,21 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
+# Version 4.0.9
+
+* Added crash handler to catch signals/exceptions. Requires
+  [cpptrace](https://github.com/jeremy-rifkin/cpptrace) in the build path if enabled. Disable by
+  setting the environment variable ATOOLS_NO_CRASHHANDLER=true. Not available on macOS and
+  Windows 32-bit. Needs debug information in the executable to print meaningful stacktraces.
+* Moved DataExchange from littlenavmap to atools.
+* Removed Dutch, Chinese and Spanish compiled translation files from project. These have not been
+  updated for a long time which can cause problems in the user user interface.
+* Fixed issue where NOAA and X-Plane 12 weather stations were not updated and showed
+  outdated weather.
+* Added timer to measure application startup.
+
+===============================================================================
+
 # Version 4.0.8
 
 * Added inFont to check Unicode character availability.
