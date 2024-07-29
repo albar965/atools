@@ -25,13 +25,22 @@
 #define ATOOLS_PRINT_STACK_WARNING(message) (atools::util::crashhandler::printTraceWarning(Q_FUNC_INFO, __FILE__, __LINE__, message))
 #define ATOOLS_PRINT_STACK_CRITICAL(message) (atools::util::crashhandler::printTraceCritical(Q_FUNC_INFO, __FILE__, __LINE__, message))
 
-/* Functions for catching signals/exceptions on Linux and Windows.
+/*
+ * Functions for catching signals/exceptions on Linux and Windows.
  * Signal handler print a stack trace to the given file and stderr and exits program with EXIT_FAILURE.
  * Disabled on macOS.
  *
- * This requires https://github.com/jeremy-rifkin/cpptrace .
+ * This requires https://github.com/jeremy-rifkin/cpptrace compiled using cmake defauls.
  *
  * Implementation can be disabled with define DISABLE_CRASHHANDLER
+ *
+ * Raw traces in release mode can be resolved using like below:
+ *
+ * addr2line -e littlenavmap.debug -f -C -p 0x6fed54
+ *
+ * resulting in
+ *
+ * MainWindow::debugActionTriggered10() bei /home/alex/Projekte/build-littlenavmap-release/../littlenavmap/src/gui/mainwindow.cpp:698
  */
 namespace atools {
 namespace util {

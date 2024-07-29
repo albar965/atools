@@ -72,10 +72,20 @@ void init()
 
 void deInit()
 {
+  qInfo() << Q_FUNC_INFO;
 }
 
 std::string fetchTrace(const cpptrace::stacktrace& trace)
 {
+#ifdef QT_DEBUG
+  // Do not use raw offsets for debug builds
+  std::ostringstream out;
+  cpptrace::generate_trace(0, 500).print(out, false);
+  out << std::ends;
+  return out.str();
+#else
+  // Print raw offsets which can be resolved using
+  // addr2line -e littlenavmap -f -C -p 0x283c6
   std::ostringstream stream;
   stream << "Timestamp:" << time(nullptr) << "\n";
   for(auto it = trace.begin(); it != trace.end(); ++it)
@@ -85,6 +95,7 @@ std::string fetchTrace(const cpptrace::stacktrace& trace)
   }
   stream << std::ends;
   return stream.str();
+#endif
 }
 
 void printTrace(QDebug out, const char*funcInfo, const char *file, int line, const QString& message)
