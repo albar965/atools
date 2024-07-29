@@ -74,52 +74,56 @@ void deInit()
 {
 }
 
-void printTraceDebug(const char*funcInfo, const char *file, int line, const QString& message)
+std::string fetchTrace(const cpptrace::stacktrace& trace)
 {
-  qDebug().noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message;
+  std::ostringstream stream;
+  stream << "Timestamp:" << time(nullptr) << "\n";
+  for(auto it = trace.begin(); it != trace.end(); ++it)
+  {
+    cpptrace::stacktrace_frame frame = *it;
+    stream << frame.filename << " 0x" << std::hex << frame.object_address << std::endl;
+  }
+  stream << std::ends;
+  return stream.str();
+}
+
+void printTrace(QDebug out, const char*funcInfo, const char *file, int line, const QString& message)
+{
+  QDebugStateSaver saver(out);
+
+  out.noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message << endl;
 
 #ifndef DISABLE_CRASHHANDLER
-  std::ostringstream out;
-  cpptrace::generate_trace(0, 500).print(out, false);
-  out << std::ends;
-  qDebug().noquote().nospace() << QString::fromStdString(out.str());
+  std::ostringstream stream;
+  cpptrace::stacktrace trace = cpptrace::generate_trace(0, 500);
+  for(auto it = trace.begin(); it != trace.end(); ++it)
+  {
+    cpptrace::stacktrace_frame frame = *it;
+    out << QString::fromStdString(frame.filename) << " 0x" << hex << frame.object_address << endl;
+  }
+  stream << std::ends;
+  out << QString::fromStdString(stream.str());
 #endif
+}
+
+void printTraceDebug(const char*funcInfo, const char *file, int line, const QString& message)
+{
+  printTrace(qDebug(), funcInfo, file, line, message);
 }
 
 void printTraceInfo(const char*funcInfo, const char *file, int line, const QString& message)
 {
-  qInfo().noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message;
-
-#ifndef DISABLE_CRASHHANDLER
-  std::ostringstream out;
-  cpptrace::generate_trace(0, 500).print(out, false);
-  out << std::ends;
-  qInfo().noquote().nospace() << QString::fromStdString(out.str());
-#endif
+  printTrace(qInfo(), funcInfo, file, line, message);
 }
 
 void printTraceWarning(const char*funcInfo, const char *file, int line, const QString& message)
 {
-  qWarning().noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message;
-
-#ifndef DISABLE_CRASHHANDLER
-  std::ostringstream out;
-  cpptrace::generate_trace(0, 500).print(out, false);
-  out << std::ends;
-  qWarning().noquote().nospace() << QString::fromStdString(out.str());
-#endif
+  printTrace(qWarning(), funcInfo, file, line, message);
 }
 
 void printTraceCritical(const char*funcInfo, const char*file, int line, const QString& message)
 {
-  qCritical().noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message;
-
-#ifndef DISABLE_CRASHHANDLER
-  std::ostringstream out;
-  cpptrace::generate_trace(0, 500).print(out, false);
-  out << std::ends;
-  qCritical().noquote().nospace() << QString::fromStdString(out.str());
-#endif
+  printTrace(qCritical(), funcInfo, file, line, message);
 }
 
 void setStackTraceLog(const QString& logFilename)
@@ -190,104 +194,101 @@ static void closeSignalOutput(int fileHandle)
 #if defined(Q_OS_WIN32)
 static LONG WINAPI windowsExceptionFilter(EXCEPTION_POINTERS *ExceptionInfo)
 {
-  int fh = openSignalOutput();
+  int filehandle = openSignalOutput();
 
-  printSignalMessage(fh, "windowsExceptionFilter\n");
+  printSignalMessage(filehandle, "windowsExceptionFilter\n");
 
   switch(ExceptionInfo->ExceptionRecord->ExceptionCode)
   {
     case EXCEPTION_ACCESS_VIOLATION:
-      printSignalMessage(fh, "Error: EXCEPTION_ACCESS_VIOLATION\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_ACCESS_VIOLATION\n");
       break;
 
     case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
-      printSignalMessage(fh, "Error: EXCEPTION_ARRAY_BOUNDS_EXCEEDED\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_ARRAY_BOUNDS_EXCEEDED\n");
       break;
 
     case EXCEPTION_BREAKPOINT:
-      printSignalMessage(fh, "Error: EXCEPTION_BREAKPOINT\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_BREAKPOINT\n");
       break;
 
     case EXCEPTION_DATATYPE_MISALIGNMENT:
-      printSignalMessage(fh, "Error: EXCEPTION_DATATYPE_MISALIGNMENT\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_DATATYPE_MISALIGNMENT\n");
       break;
 
     case EXCEPTION_FLT_DENORMAL_OPERAND:
-      printSignalMessage(fh, "Error: EXCEPTION_FLT_DENORMAL_OPERAND\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_FLT_DENORMAL_OPERAND\n");
       break;
 
     case EXCEPTION_FLT_DIVIDE_BY_ZERO:
-      printSignalMessage(fh, "Error: EXCEPTION_FLT_DIVIDE_BY_ZERO\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_FLT_DIVIDE_BY_ZERO\n");
       break;
 
     case EXCEPTION_FLT_INEXACT_RESULT:
-      printSignalMessage(fh, "Error: EXCEPTION_FLT_INEXACT_RESULT\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_FLT_INEXACT_RESULT\n");
       break;
 
     case EXCEPTION_FLT_INVALID_OPERATION:
-      printSignalMessage(fh, "Error: EXCEPTION_FLT_INVALID_OPERATION\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_FLT_INVALID_OPERATION\n");
       break;
 
     case EXCEPTION_FLT_OVERFLOW:
-      printSignalMessage(fh, "Error: EXCEPTION_FLT_OVERFLOW\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_FLT_OVERFLOW\n");
       break;
 
     case EXCEPTION_FLT_STACK_CHECK:
-      printSignalMessage(fh, "Error: EXCEPTION_FLT_STACK_CHECK\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_FLT_STACK_CHECK\n");
       break;
 
     case EXCEPTION_FLT_UNDERFLOW:
-      printSignalMessage(fh, "Error: EXCEPTION_FLT_UNDERFLOW\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_FLT_UNDERFLOW\n");
       break;
 
     case EXCEPTION_ILLEGAL_INSTRUCTION:
-      printSignalMessage(fh, "Error: EXCEPTION_ILLEGAL_INSTRUCTION\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_ILLEGAL_INSTRUCTION\n");
       break;
 
     case EXCEPTION_IN_PAGE_ERROR:
-      printSignalMessage(fh, "Error: EXCEPTION_IN_PAGE_ERROR\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_IN_PAGE_ERROR\n");
       break;
 
     case EXCEPTION_INT_DIVIDE_BY_ZERO:
-      printSignalMessage(fh, "Error: EXCEPTION_INT_DIVIDE_BY_ZERO\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_INT_DIVIDE_BY_ZERO\n");
       break;
 
     case EXCEPTION_INT_OVERFLOW:
-      printSignalMessage(fh, "Error: EXCEPTION_INT_OVERFLOW\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_INT_OVERFLOW\n");
       break;
 
     case EXCEPTION_INVALID_DISPOSITION:
-      printSignalMessage(fh, "Error: EXCEPTION_INVALID_DISPOSITION\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_INVALID_DISPOSITION\n");
       break;
 
     case EXCEPTION_NONCONTINUABLE_EXCEPTION:
-      printSignalMessage(fh, "Error: EXCEPTION_NONCONTINUABLE_EXCEPTION\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_NONCONTINUABLE_EXCEPTION\n");
       break;
 
     case EXCEPTION_PRIV_INSTRUCTION:
-      printSignalMessage(fh, "Error: EXCEPTION_PRIV_INSTRUCTION\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_PRIV_INSTRUCTION\n");
       break;
 
     case EXCEPTION_SINGLE_STEP:
-      printSignalMessage(fh, "Error: EXCEPTION_SINGLE_STEP\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_SINGLE_STEP\n");
       break;
 
     case EXCEPTION_STACK_OVERFLOW:
-      printSignalMessage(fh, "Error: EXCEPTION_STACK_OVERFLOW\n");
+      printSignalMessage(filehandle, "Error: EXCEPTION_STACK_OVERFLOW\n");
       break;
 
     default:
-      printSignalMessage(fh, "Error: Unrecognized Exception\n");
+      printSignalMessage(filehandle, "Error: Unrecognized Exception\n");
       break;
   }
 
   // Have to use signal handler unsafe method since libuwind is not available for all platforms
-  std::stringstream out;
-  cpptrace::generate_trace(0, 500).print(out, false);
-  out << std::ends;
-  printSignalMessage(fh, out.str().data());
-  printSignalMessage(fh, "posixSignalHandler exit\n");
-  closeSignalOutput(fh);
+  printSignalMessage(filehandle, fetchTrace(cpptrace::generate_trace(0, 500)).data());
+  printSignalMessage(filehandle, "windowsExceptionFilter exit\n");
+  closeSignalOutput(filehandle);
 
   return EXCEPTION_EXECUTE_HANDLER;
 }
@@ -299,49 +300,49 @@ static void posixSignalHandler(int sig, siginfo_t *siginfo, void *context)
 {
   Q_UNUSED(context)
 
-  int fh = openSignalOutput();
-  printSignalMessage(fh, Q_FUNC_INFO);
-  printSignalMessage(fh, " entry\n");
+  int filehandle = openSignalOutput();
+  printSignalMessage(filehandle, Q_FUNC_INFO);
+  printSignalMessage(filehandle, " entry\n");
 
   switch(sig)
   {
     case SIGSEGV:
-      printSignalMessage(fh, "Caught SIGSEGV: Segmentation Fault\n");
+      printSignalMessage(filehandle, "Caught SIGSEGV: Segmentation Fault\n");
       break;
 
     case SIGINT:
-      printSignalMessage(fh, "Caught SIGINT: Interactive attention signal, (usually ctrl+c)\n");
+      printSignalMessage(filehandle, "Caught SIGINT: Interactive attention signal, (usually ctrl+c)\n");
       break;
 
     case SIGFPE:
       switch(siginfo->si_code)
       {
         case FPE_INTDIV:
-          printSignalMessage(fh, "Caught SIGFPE: (integer divide by zero)\n");
+          printSignalMessage(filehandle, "Caught SIGFPE: (integer divide by zero)\n");
           break;
         case FPE_INTOVF:
-          printSignalMessage(fh, "Caught SIGFPE: (integer overflow)\n");
+          printSignalMessage(filehandle, "Caught SIGFPE: (integer overflow)\n");
           break;
         case FPE_FLTDIV:
-          printSignalMessage(fh, "Caught SIGFPE: (floating-point divide by zero)\n");
+          printSignalMessage(filehandle, "Caught SIGFPE: (floating-point divide by zero)\n");
           break;
         case FPE_FLTOVF:
-          printSignalMessage(fh, "Caught SIGFPE: (floating-point overflow)\n");
+          printSignalMessage(filehandle, "Caught SIGFPE: (floating-point overflow)\n");
           break;
         case FPE_FLTUND:
-          printSignalMessage(fh, "Caught SIGFPE: (floating-point underflow)\n");
+          printSignalMessage(filehandle, "Caught SIGFPE: (floating-point underflow)\n");
           break;
         case FPE_FLTRES:
-          printSignalMessage(fh, "Caught SIGFPE: (floating-point inexact result)\n");
+          printSignalMessage(filehandle, "Caught SIGFPE: (floating-point inexact result)\n");
           break;
         case FPE_FLTINV:
-          printSignalMessage(fh, "Caught SIGFPE: (floating-point invalid operation)\n");
+          printSignalMessage(filehandle, "Caught SIGFPE: (floating-point invalid operation)\n");
           break;
         case FPE_FLTSUB:
-          printSignalMessage(fh, "Caught SIGFPE: (subscript out of range)\n");
+          printSignalMessage(filehandle, "Caught SIGFPE: (subscript out of range)\n");
           break;
         default:
-          printSignalMessage(fh, "Caught SIGFPE: Arithmetic Exception\n");
+          printSignalMessage(filehandle, "Caught SIGFPE: Arithmetic Exception\n");
           break;
       }
       break;
@@ -350,41 +351,41 @@ static void posixSignalHandler(int sig, siginfo_t *siginfo, void *context)
       switch(siginfo->si_code)
       {
         case ILL_ILLOPC:
-          printSignalMessage(fh, "Caught SIGILL: (illegal opcode)\n");
+          printSignalMessage(filehandle, "Caught SIGILL: (illegal opcode)\n");
           break;
         case ILL_ILLOPN:
-          printSignalMessage(fh, "Caught SIGILL: (illegal operand)\n");
+          printSignalMessage(filehandle, "Caught SIGILL: (illegal operand)\n");
           break;
         case ILL_ILLADR:
-          printSignalMessage(fh, "Caught SIGILL: (illegal addressing mode)\n");
+          printSignalMessage(filehandle, "Caught SIGILL: (illegal addressing mode)\n");
           break;
         case ILL_ILLTRP:
-          printSignalMessage(fh, "Caught SIGILL: (illegal trap)\n");
+          printSignalMessage(filehandle, "Caught SIGILL: (illegal trap)\n");
           break;
         case ILL_PRVOPC:
-          printSignalMessage(fh, "Caught SIGILL: (privileged opcode)\n");
+          printSignalMessage(filehandle, "Caught SIGILL: (privileged opcode)\n");
           break;
         case ILL_PRVREG:
-          printSignalMessage(fh, "Caught SIGILL: (privileged register)\n");
+          printSignalMessage(filehandle, "Caught SIGILL: (privileged register)\n");
           break;
         case ILL_COPROC:
-          printSignalMessage(fh, "Caught SIGILL: (coprocessor error)\n");
+          printSignalMessage(filehandle, "Caught SIGILL: (coprocessor error)\n");
           break;
         case ILL_BADSTK:
-          printSignalMessage(fh, "Caught SIGILL: (internal stack error)\n");
+          printSignalMessage(filehandle, "Caught SIGILL: (internal stack error)\n");
           break;
         default:
-          printSignalMessage(fh, "Caught SIGILL: Illegal Instruction\n");
+          printSignalMessage(filehandle, "Caught SIGILL: Illegal Instruction\n");
           break;
       }
       break;
 
     case SIGTERM:
-      printSignalMessage(fh, "Caught SIGTERM: a termination request was sent to the program\n");
+      printSignalMessage(filehandle, "Caught SIGTERM: a termination request was sent to the program\n");
       break;
 
     case SIGABRT:
-      printSignalMessage(fh, "Caught SIGABRT: usually caused by an abort() or assert()\n");
+      printSignalMessage(filehandle, "Caught SIGABRT: usually caused by an abort() or assert()\n");
       break;
 
     default:
@@ -392,14 +393,10 @@ static void posixSignalHandler(int sig, siginfo_t *siginfo, void *context)
   }
 
   // Have to use signal handler unsafe method since libuwind is not available for all platforms
-  std::stringstream out;
-  out << "Timestamp:" << time(nullptr) << "\n";
-  cpptrace::generate_trace(0, 500).print(out, false);
-  out << std::ends;
-  printSignalMessage(fh, out.str().data());
-  printSignalMessage(fh, Q_FUNC_INFO);
-  printSignalMessage(fh, " exit\n");
-  closeSignalOutput(fh);
+  printSignalMessage(filehandle, fetchTrace(cpptrace::generate_trace(0, 500)).data());
+  printSignalMessage(filehandle, Q_FUNC_INFO);
+  printSignalMessage(filehandle, " exit\n");
+  closeSignalOutput(filehandle);
 
   exit(EXIT_FAILURE);
 }
