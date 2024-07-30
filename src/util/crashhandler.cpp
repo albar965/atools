@@ -77,12 +77,14 @@ void deInit()
 
 std::string fetchTrace(const cpptrace::stacktrace& trace)
 {
+#ifndef DISABLE_CRASHHANDLER
 #ifdef QT_DEBUG
   // Do not use raw offsets for debug builds
-  std::ostringstream out;
-  cpptrace::generate_trace(0, 500).print(out, false);
-  out << std::ends;
-  return out.str();
+  Q_UNUSED(trace)
+  std::ostringstream stream;
+  cpptrace::generate_trace(0, 500).print(stream, false);
+  stream << std::ends;
+  return stream.str();
 #else
   // Print raw offsets which can be resolved using
   // addr2line -e littlenavmap -f -C -p 0x283c6
@@ -95,6 +97,10 @@ std::string fetchTrace(const cpptrace::stacktrace& trace)
   }
   stream << std::ends;
   return stream.str();
+#endif
+#else
+  Q_UNUSED(trace)
+  return std::string();
 #endif
 }
 
