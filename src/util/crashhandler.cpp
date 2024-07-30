@@ -44,6 +44,7 @@ extern "C"
 
 #include <cpptrace/cpptrace.hpp>
 #include <sstream>
+#include <string>
 #endif
 
 #include <QDebug>
@@ -53,10 +54,16 @@ namespace atools {
 namespace util {
 namespace crashhandler {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::hex;
+using Qt::dec;
+using Qt::endl;
+#endif
+
 #ifndef DISABLE_CRASHHANDLER
 static void setSignalHandler();
 
-static QByteArray filename;
+static QByteArray stacktraceFilename;
 static const int SIGNAL_STACK_SIZE = 1024 * 1024;
 #endif
 
@@ -75,33 +82,12 @@ void deInit()
   qInfo() << Q_FUNC_INFO;
 }
 
-std::string fetchTrace(const cpptrace::stacktrace& trace)
+void clearStackTrace(const QString& filename)
 {
-#ifndef DISABLE_CRASHHANDLER
-#ifdef QT_DEBUG
-  // Do not use raw offsets for debug builds
-  Q_UNUSED(trace)
-  std::ostringstream stream;
-  cpptrace::generate_trace(0, 500).print(stream, false);
-  stream << std::ends;
-  return stream.str();
-#else
-  // Print raw offsets which can be resolved using
-  // addr2line -e littlenavmap -f -C -p 0x283c6
-  std::ostringstream stream;
-  stream << "Timestamp:" << time(nullptr) << "\n";
-  for(auto it = trace.begin(); it != trace.end(); ++it)
-  {
-    cpptrace::stacktrace_frame frame = *it;
-    stream << frame.filename << " 0x" << std::hex << frame.object_address << std::endl;
-  }
-  stream << std::ends;
-  return stream.str();
-#endif
-#else
-  Q_UNUSED(trace)
-  return std::string();
-#endif
+  if(QFile::remove(filename))
+    qInfo() << Q_FUNC_INFO << "Success removing stacktrace file" << filename;
+  else
+    qInfo() << Q_FUNC_INFO << "Stacktrace file not removed" << filename;
 }
 
 void printTrace(QDebug out, const char*funcInfo, const char *file, int line, const QString& message)
@@ -150,11 +136,38 @@ void setStackTraceLog(const QString& logFilename)
   qDebug() << Q_FUNC_INFO << utf8Filename;
 
   // Need to use latin1 since open() treats the filename as is
-  filename = utf8Filename.toLocal8Bit();
+  stacktraceFilename = utf8Filename.toLocal8Bit();
+#else
+  Q_UNUSED(logFilename)
 #endif
 }
 
 #ifndef DISABLE_CRASHHANDLER
+std::string fetchTrace(const cpptrace::stacktrace& trace)
+{
+#ifdef QT_DEBUG
+  // Do not use raw offsets for debug builds
+  Q_UNUSED(trace)
+  std::ostringstream stream;
+  stream << "Timestamp:" << time(nullptr) << "\n";
+  cpptrace::generate_trace(0, 500).print(stream, false);
+  stream << std::ends;
+  return stream.str();
+#else
+  // Print raw offsets which can be resolved using
+  // addr2line -e littlenavmap -f -C -p 0x283c6
+  std::ostringstream stream;
+  stream << "Timestamp:" << time(nullptr) << "\n";
+  for(auto it = trace.begin(); it != trace.end(); ++it)
+  {
+    cpptrace::stacktrace_frame frame = *it;
+    stream << frame.filename << " 0x" << std::hex << frame.object_address << std::endl;
+  }
+  stream << std::ends;
+  return stream.str();
+#endif
+}
+
 /* Print message using signal safe methods */
 static void printSignalMessage(int fileHandle, const char *message)
 {
@@ -168,7 +181,7 @@ static void printSignalMessage(int fileHandle, const char *message)
 static int openSignalOutput()
 {
   int fileHandle = STDERR_FILENO;
-  if(!filename.isEmpty())
+  if(!stacktraceFilename.isEmpty())
   {
 #ifdef Q_OS_LINUX
     int openFlag = O_WRONLY | O_TRUNC | O_CREAT | O_FSYNC;
@@ -177,12 +190,12 @@ static int openSignalOutput()
 #ifdef Q_OS_WIN32
     int openFlag = O_WRONLY | O_TRUNC | O_CREAT;
 #endif
-    fileHandle = open(filename.constData(), openFlag, 0666);
+    fileHandle = open(stacktraceFilename.constData(), openFlag, 0666);
 
     if(fileHandle == -1)
     {
       printSignalMessage(STDERR_FILENO, "Error opening file \"");
-      printSignalMessage(STDERR_FILENO, filename.data());
+      printSignalMessage(STDERR_FILENO, stacktraceFilename.data());
       printSignalMessage(STDERR_FILENO, "\". Reason: ");
       printSignalMessage(STDERR_FILENO, strerror(errno));
       printSignalMessage(STDERR_FILENO, "\n");
@@ -191,7 +204,7 @@ static int openSignalOutput()
     else
     {
       printSignalMessage(STDERR_FILENO, "Opened file \"");
-      printSignalMessage(STDERR_FILENO, filename.data());
+      printSignalMessage(STDERR_FILENO, stacktraceFilename.data());
       printSignalMessage(STDERR_FILENO, "\".\n");
     }
   }
@@ -506,14 +519,6 @@ void setSignalHandler()
 }
 
 #endif // #ifndef DISABLE_CRASHHANDLER
-
-void clearStackTrace(const QString& filename)
-{
-  if(QFile::remove(filename))
-    qInfo() << Q_FUNC_INFO << "Success removing stacktrace file" << filename;
-  else
-    qInfo() << Q_FUNC_INFO << "Stacktrace file not removed" << filename;
-}
 
 } // namespace crashhandler
 } // namespace util
