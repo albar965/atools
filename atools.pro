@@ -55,7 +55,7 @@
 # =============================================================================
 
 # Define program version here VERSION_NUMBER_TODO
-VERSION_NUMBER=4.0.9
+VERSION_NUMBER=4.0.10.rc1
 
 QT += sql xml core network
 
@@ -267,6 +267,7 @@ HEADERS += \
   src/util/flags.h \
   src/util/heap.h \
   src/util/httpdownloader.h \
+  src/util/locker.h \
   src/util/properties.h \
   src/util/props.h \
   src/util/signalhandler.h \
@@ -344,6 +345,7 @@ SOURCES += \
   src/util/flags.cpp \
   src/util/heap.cpp \
   src/util/httpdownloader.cpp \
+  src/util/locker.cpp \
   src/util/properties.cpp \
   src/util/props.cpp \
   src/util/signalhandler.cpp \
