@@ -68,6 +68,11 @@ public:
       lockable->unlock();
   }
 
+  TYPE *getLockable() const
+  {
+    return lockable;
+  }
+
 private:
   TYPE *lockable = nullptr;
 };
