@@ -20,6 +20,7 @@
 #include "atools.h"
 #include "fs/scenery/manifestjson.h"
 #include "fs/scenery/layoutjson.h"
+#include "fs/util/fsutil.h"
 
 #include <QDir>
 #include <QTextStream>
@@ -85,21 +86,33 @@ void AircraftIndex::loadIndex(const QStringList& basePaths)
   }
 }
 
-QString AircraftIndex::getIcaoTypeDesignator(const QString& aircraftCfgFilepath)
+const QString& AircraftIndex::getIcaoTypeDesignator(const QString& aircraftCfgFilepath)
+{
+  return fetchProperties(aircraftCfgFilepath).icaoTypeDesignator;
+}
+
+const QString& AircraftIndex::getCategory(const QString& aircraftCfgFilepath)
+{
+  return fetchProperties(aircraftCfgFilepath).category;
+}
+
+const AircraftIndex::AircraftProperties& AircraftIndex::fetchProperties(const QString& aircraftCfgFilepath)
 {
   QString aircraftCfgKey = aircraftCfgFilepath;
   aircraftCfgKey = aircraftCfgKey.replace('\\', '/').toLower(); // Clean path needs an existing path
 
-  if(shortPathToTypeDesignatorMap.contains(aircraftCfgKey))
+  auto it = shortPathToPropertiesMap.constFind(aircraftCfgKey);
+
+  if(it != shortPathToPropertiesMap.constEnd())
     // Already in index - either empty (indicator for nothing found) or not empty (found)
-    return shortPathToTypeDesignatorMap.value(aircraftCfgKey);
+    return it.value();
   else
   {
     if(verbose)
       qDebug() << Q_FUNC_INFO << "aircraftCfgKey" << aircraftCfgKey;
 
     // Nothing in index yet - read aircraft.cfg file
-    QString typeDesignator;
+    AircraftProperties properties;
 
     // Get full filename for key
     QString aircraftCfgFullPath = aircraftShortToFullPathMap.value(aircraftCfgKey);
@@ -114,34 +127,59 @@ QString AircraftIndex::getIcaoTypeDesignator(const QString& aircraftCfgFilepath)
         stream.setCodec("UTF-8");
 #endif
         stream.setAutoDetectUnicode(true);
+        bool generalSection = false;
+        QString icaoTypeDesignator, icaoModel;
 
         while(!stream.atEnd())
         {
           QString line = stream.readLine().trimmed();
 
-          if(line.startsWith("icao_type_designator", Qt::CaseInsensitive)) // icao_type_designator = "A20N"
+          if(line.contains("[General]", Qt::CaseInsensitive))
           {
-            typeDesignator = line.section('=', 1).remove('"').trimmed();
-            break;
+            generalSection = true;
+            continue;
+          }
+
+          if(generalSection)
+          {
+            if(line.startsWith("icao_type_designator", Qt::CaseInsensitive)) // icao_type_designator = "A20N"
+              icaoTypeDesignator = line.section('=', 1).remove('"').trimmed();
+
+            if(line.startsWith("icao_model", Qt::CaseInsensitive)) // icao_model = "TBM-930"
+              icaoModel = line.section('=', 1).remove('"').trimmed();
+
+            if(line.startsWith("Category", Qt::CaseInsensitive)) // Category = "Helicopter"
+              properties.category = line.section('=', 1).remove('"').trimmed();
+
+            // Either all fields populated or next section after [General] - break out
+            if(line.startsWith('[') ||
+               (!icaoTypeDesignator.isEmpty() && !icaoModel.isEmpty() && !properties.category.isEmpty()))
+              break;
           }
         }
 
         file.close();
+
+        if(!atools::fs::util::isAircraftTypeDesignatorValid(icaoTypeDesignator) &&
+           atools::fs::util::isAircraftTypeDesignatorValid(icaoModel))
+          // ICAO type designator not valid but mode. Use model instead.
+          properties.icaoTypeDesignator = icaoModel;
+        else
+          properties.icaoTypeDesignator = icaoTypeDesignator;
       }
     }
 
     // Log only once after loading
-    qDebug() << Q_FUNC_INFO << "Loaded" << aircraftCfgFullPath << "found" << typeDesignator;
+    qDebug() << Q_FUNC_INFO << "Loaded" << aircraftCfgFullPath << "found" << properties.icaoTypeDesignator << properties.category;
 
     // Add designator to index or empty value in case of missing file to avoid re-reading
-    shortPathToTypeDesignatorMap.insert(aircraftCfgKey, typeDesignator);
-    return typeDesignator;
+    return shortPathToPropertiesMap.insert(aircraftCfgKey, properties).value();
   }
 }
 
 void AircraftIndex::clear()
 {
-  shortPathToTypeDesignatorMap.clear();
+  shortPathToPropertiesMap.clear();
   aircraftShortToFullPathMap.clear();
   loadedBasePaths.clear();
 }

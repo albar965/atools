@@ -92,7 +92,7 @@ public:
   SimConnectAircraft();
   virtual ~SimConnectAircraft() override;
 
-  virtual void read(QDataStream & in);
+  virtual void read(QDataStream& in);
   virtual void write(QDataStream& out) const;
 
   // fs data ----------------------------------------------------
@@ -125,9 +125,16 @@ public:
     return airplaneModel;
   }
 
+  /* Update after loading from aircraft.cfg */
   void setAirplaneModel(const QString& value)
   {
     airplaneModel = value;
+  }
+
+  /* Update after loading from aircraft.cfg */
+  void setCategory(Category value)
+  {
+    category = value;
   }
 
   /* N71FS */

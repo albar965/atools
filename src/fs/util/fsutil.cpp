@@ -405,9 +405,9 @@ QStringList normalizeRunways(QStringList names)
   return names;
 }
 
-QString aircraftTypeForCode(const QString& code)
+const QString& aircraftTypeForCode(const QString& code)
 {
-  return NAME_CODE_MAP.value(code);
+  return NAME_CODE_MAP.find(code).value();
 }
 
 int calculateAirportRating(bool isAddon, bool hasTower, bool msfs, int numTaxiPaths, int numParkings, int numAprons)
@@ -1130,6 +1130,13 @@ QDateTime xpMetarFilenameToDate(const QString& filename)
                      QTime(match.captured(4).toInt(), match.captured(5).toInt()), Qt::UTC);
   else
     return QDateTime();
+}
+
+bool isAircraftTypeDesignatorValid(const QString& type)
+{
+  const static QRegularExpression AIRCRAFT_TYPE("^[A-Z0-9]{2,4}$");
+
+  return type.isEmpty() ? false : AIRCRAFT_TYPE.match(type).hasMatch();
 }
 
 } // namespace util

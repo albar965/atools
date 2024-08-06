@@ -420,13 +420,6 @@ public:
     runwayType = value;
   }
 
-  static bool isAircraftTypeValid(const QString& type);
-
-  bool isAircraftTypeValid() const
-  {
-    return isAircraftTypeValid(getAircraftType());
-  }
-
   /* Fuel to volume/weight or original value depending on volume flag.
    * The input value must match the volume flag in this object. */
   float toFuelGal(float fuelGalLbs) const;

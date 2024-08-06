@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "fs/perf/aircraftperf.h"
+
 #include "atools.h"
 #include "exception.h"
 #include "geo/calculations.h"
@@ -582,12 +583,6 @@ float AircraftPerf::getAlternateFuelFlowLbs() const
 float AircraftPerf::getAlternateFuelFlowGal() const
 {
   return volume ? alternateFuelFlow : ageo::fromLbsToGal(jetFuel, alternateFuelFlow);
-}
-
-bool AircraftPerf::isAircraftTypeValid(const QString& type)
-{
-  const static QRegularExpression AIRCRAFT_TYPE("^[A-Z0-9]{2,4}$");
-  return AIRCRAFT_TYPE.match(type).hasMatch();
 }
 
 float AircraftPerf::toFuelLbs(float fuelGalLbs) const

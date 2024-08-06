@@ -96,7 +96,10 @@ QStringList normalizeRunways(QStringList names);
 qint16 decodeTransponderCode(int code);
 
 /* Get the aircraft type name for the ICAO code */
-QString aircraftTypeForCode(const QString& code);
+const QString& aircraftTypeForCode(const QString& code);
+
+/* Basic check by pattern if the ICAO aircraft type designator is valid */
+bool isAircraftTypeDesignatorValid(const QString& type);
 
 /* Integer frequency * 1000 rounded to the next 0.025 MHz value or
  * frequency * 100000 rounded to the next 8.33 kHz value */
