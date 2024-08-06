@@ -895,6 +895,22 @@ QStringList floatStrMapToStrList(const QMap<float, QString>& map);
 
 QMap<float, QString> strListToFloatStrMap(const QStringList& strings, bool *ok = nullptr);
 
+template<typename TYPE, typename KEY>
+inline const TYPE& hashValue(const QHash<KEY, TYPE>& hashMap, const KEY& key)
+{
+  const static TYPE EMPTY_TYPE;
+  auto it = hashMap.find(key);
+  return it != hashMap.end() ? it.value() : EMPTY_TYPE;
+}
+
+template<typename TYPE, typename KEY>
+inline const TYPE& mapValue(const QMap<KEY, TYPE>& map, const KEY& key)
+{
+  const static TYPE EMPTY_TYPE;
+  auto it = map.find(key);
+  return it != map.end() ? it.value() : EMPTY_TYPE;
+}
+
 /* Get well known system folders from QStandardPaths. */
 QString documentsDir();
 QString downloadDir();

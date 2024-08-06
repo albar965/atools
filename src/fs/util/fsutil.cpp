@@ -407,7 +407,7 @@ QStringList normalizeRunways(QStringList names)
 
 const QString& aircraftTypeForCode(const QString& code)
 {
-  return NAME_CODE_MAP.find(code).value();
+  return atools::hashValue(NAME_CODE_MAP, code);
 }
 
 int calculateAirportRating(bool isAddon, bool hasTower, bool msfs, int numTaxiPaths, int numParkings, int numAprons)
