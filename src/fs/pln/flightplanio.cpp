@@ -3481,7 +3481,7 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
       arg(QCoreApplication::applicationName()).
       arg(QCoreApplication::applicationVersion()).
       arg(atools::gitRevision()).
-      arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
+      arg(atools::currentIsoWithOffset(false /* milliseconds */)).
       replace("-", " ") << endl << endl;
 
     stream << numEntriesSave(plan) << endl << endl;
@@ -3870,8 +3870,8 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
     writer.writeStartElement("flight-plan");
     writer.writeAttribute("xmlns", "http://www8.garmin.com/xmlschemas/FlightPlan/v1");
     // 2017-01-15T15:20:54Z
-    writer.writeTextElement("file-description", atools::programFileInfo());
-    writer.writeTextElement("created", QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
+    writer.writeTextElement("file-description", atools::programFileInfoNoDate());
+    writer.writeTextElement("created", atools::currentIsoWithOffset(false /* milliseconds */));
 
     // <xsd:simpleType name="Identifier_t">
     // <xsd:restriction base="xsd:string">

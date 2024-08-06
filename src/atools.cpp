@@ -475,7 +475,7 @@ QString programFileInfo()
          arg(QCoreApplication::applicationName()).
          arg(QCoreApplication::applicationVersion()).
          arg(atools::gitRevision()).
-         arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
+         arg(atools::currentIsoWithOffset(false /* milliseconds */)).
          replace("-", " ");
 }
 
