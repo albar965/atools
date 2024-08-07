@@ -3563,15 +3563,15 @@ void FlightplanIO::saveFpr(const atools::fs::pln::Flightplan& plan, const QStrin
     int legIdx = 0;
     for(int i = 0; i < plan.size(); ++i)
     {
-      const FlightplanEntry& e = plan.at(i);
+      const FlightplanEntry& entry = plan.at(i);
 
-      if(e.isNoSave())
+      if(entry.isNoSave())
         // Omit proceedures
         continue;
 
       fpr::Leg *leg = &fprplan.legs[legIdx];
 
-      switch(e.getWaypointType())
+      switch(entry.getWaypointType())
       {
         // Omit any user and unknown waypoints
         case atools::fs::pln::entry::USER:
@@ -3601,15 +3601,15 @@ void FlightplanIO::saveFpr(const atools::fs::pln::Flightplan& plan, const QStrin
 
       writeBinaryString(leg->legType, "TF", sizeof(leg->legType));
       writeBinaryString(leg->transition, QString(), sizeof(leg->transition));
-      writeBinaryString(leg->waypoint.designator, e.getIdent(), sizeof(leg->waypoint.designator));
-      writeBinaryString(leg->waypoint.fullName, e.getName(), sizeof(leg->waypoint.fullName));
+      writeBinaryString(leg->waypoint.designator, entry.getIdent(), sizeof(leg->waypoint.designator));
+      writeBinaryString(leg->waypoint.fullName, entry.getName(), sizeof(leg->waypoint.fullName));
 
-      leg->waypoint.latYRad = atools::geo::toRadians(e.getPosition().getLatY());
-      leg->waypoint.lonXRad = atools::geo::toRadians(e.getPosition().getLonX());
+      leg->waypoint.latYRad = atools::geo::toRadians(entry.getPosition().getLatY());
+      leg->waypoint.lonXRad = atools::geo::toRadians(entry.getPosition().getLonX());
 
       // Will not show valid coordinates in the FMS but flight plan is usable anyway
       leg->waypoint.databaseId = -1;
-      leg->waypoint.magvarRad = atools::geo::toRadians(e.getMagvar());
+      leg->waypoint.magvarRad = atools::geo::toRadians(entry.getMagvar());
 
       fprplan.numLegs++;
       legIdx++;
@@ -3838,9 +3838,9 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
   if(saveAsUserWaypoints)
   {
     // Convert all waypoints to user defined waypoints keeping the names
-    int i = 0;
-    for(FlightplanEntry& entry : plan)
+    for(int i = 0; i < plan.size(); i++)
     {
+      FlightplanEntry& entry = plan[i];
       if(entry.isNoSave())
         // Do not save procedure points
         continue;
@@ -3852,8 +3852,6 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
         entry.setIdent(entry.getIdent());
         entry.setWaypointType(entry::USER);
       }
-
-      i++;
     }
   }
 
@@ -3892,7 +3890,7 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
     // Remember already added user waypoints
     QSet<QString> addedUserWaypoints;
 
-    for(const FlightplanEntry& entry : plan)
+    for(const FlightplanEntry& entry : qAsConst(plan))
     {
       if(entry.isNoSave())
         // Do not save procedure points
@@ -3987,7 +3985,7 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
     // <waypoint-country-code>LF</waypoint-country-code>
     // </route-point>
     curIdx = 0;
-    for(const FlightplanEntry& entry : plan)
+    for(const FlightplanEntry& entry : qAsConst(plan))
     {
       if(entry.isNoSave())
         // Do not save procedure points
