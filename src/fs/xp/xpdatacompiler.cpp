@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -233,8 +233,8 @@ bool XpDataCompiler::compileCustomApt()
 {
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
-  QStringList aptDatFiles = findCustomAptDatFiles(buildPathNoCase({options.getBasepath(), "Custom Scenery"}),
-                                                  options, errors, progress, true /* verbose */, false /* userInclude */);
+  const QStringList aptDatFiles = findCustomAptDatFiles(buildPathNoCase({options.getBasepath(), "Custom Scenery"}),
+                                                        options, errors, progress, true /* verbose */, false /* userInclude */);
   for(const QString& aptdat : aptDatFiles)
   {
     // Only one progress report per file
@@ -250,7 +250,7 @@ bool XpDataCompiler::compileUserIncludeApt()
   for(const QString& path : options.getDirIncludesGui())
   {
     // Find all apt.dat in the included folder
-    QStringList aptDatFiles = findCustomAptDatFiles(path, options, errors, progress, true /* verbose */, true /* userInclude */);
+    const QStringList aptDatFiles = findCustomAptDatFiles(path, options, errors, progress, true /* verbose */, true /* userInclude */);
     for(const QString& aptdat : aptDatFiles)
     {
       // Only one progress report per file
@@ -315,11 +315,10 @@ bool XpDataCompiler::compileCifp()
   QStringList cifpFiles = findCifpFiles(options);
   cifpFiles.sort();
 
-  int rowsPerStep =
-    static_cast<int>(std::ceil(static_cast<float>(cifpFiles.size()) / static_cast<float>(NUM_REPORT_STEPS_CIFP)));
+  int rowsPerStep = static_cast<int>(std::ceil(static_cast<float>(cifpFiles.size()) / static_cast<float>(NUM_REPORT_STEPS_CIFP)));
   int row = 0, steps = 0;
 
-  for(const QString& file : cifpFiles)
+  for(const QString& file : qAsConst(cifpFiles))
   {
     if(options.isIncludedFilename(file))
     {
@@ -347,7 +346,7 @@ bool XpDataCompiler::compileCifp()
 
 bool XpDataCompiler::compileAirspaces()
 {
-  QStringList airspaceFiles = findAirspaceFiles(options);
+  const QStringList airspaceFiles = findAirspaceFiles(options);
 
   for(const QString& file : airspaceFiles)
   {
@@ -739,7 +738,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
     if(verbose)
     {
       qDebug() << Q_FUNC_INFO << "scenery_packs.ini";
-      for(const SceneryPack& pack : packs)
+      for(const SceneryPack& pack : qAsConst(packs))
         qDebug() << pack;
     }
 
@@ -772,7 +771,8 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
 
     while(!queue.isEmpty())
     {
-      for(QFileInfo fileinfo : QDir(queue.dequeue().absoluteFilePath(), QString(), QDir::Name, filters).entryInfoList())
+      const QFileInfoList entryInfoList = QDir(queue.dequeue().absoluteFilePath(), QString(), QDir::Name, filters).entryInfoList();
+      for(const QFileInfo& fileinfo : entryInfoList)
       {
         if(atools::checkFile(Q_FUNC_INFO, QFileInfo(buildPathNoCase({fileinfo.absoluteFilePath(), "Earth nav data", "apt.dat"})), false))
           // Folder contains airport - add to list and do not descent further
@@ -787,7 +787,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
 #endif
   }
 
-  for(QFileInfo fileinfo : entries)
+  for(QFileInfo fileinfo : qAsConst(entries))
   {
     QString name = fileinfo.fileName();
     fileinfo.setFile(atools::canonicalFilePath(fileinfo));
@@ -834,47 +834,67 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
 
 QStringList XpDataCompiler::findAirspaceFiles(const NavDatabaseOptions& opts)
 {
-  return findFiles(opts, "airspaces", {"*.txt"}, false /* makeUnique */);
+  // Stock: .../X-Plane 12/Resources/default data/airspaces/airspace.txt
+  // Navigraph overrides stock: .../X-Plane 12/Custom Data/airspaces/airspace.txt
+  QStringList airspaceTxt = findFiles(opts, "airspaces", {"airspace.txt"},
+                                      true /* makeUnique */, true /* scanCustom */, true /* scanResources */);
+
+  // .../X-Plane 11/Resources/default data/airspaces/usa.txt
+  QStringList airspaceOtherTxt = findFiles(opts, "airspaces", {"*.txt"},
+                                           false /* makeUnique */, false /* scanCustom */, true /* scanResources */);
+
+  // Remove stock and Navigraph airspace.txt from additional file list since these were read earlier
+  airspaceOtherTxt.erase(std::remove_if(airspaceOtherTxt.begin(), airspaceOtherTxt.end(),
+                                        [](const QString& airspaceFile) -> bool {
+          return QFileInfo(airspaceFile).fileName().compare("airspace.txt", Qt::CaseInsensitive) == 0;
+        }), airspaceOtherTxt.end());
+
+  airspaceTxt.append(airspaceOtherTxt);
+  return airspaceTxt;
 }
 
 QStringList XpDataCompiler::findCifpFiles(const NavDatabaseOptions& opts)
 {
-  return findFiles(opts, "CIFP", {"*.dat"}, true /* makeUnique */);
+  return findFiles(opts, "CIFP", {"*.dat"}, true /* makeUnique */, true /* scanCustom */, true /* scanResources */);
 }
 
-QStringList XpDataCompiler::findFiles(const NavDatabaseOptions& opts, const QString& subdir,
-                                      const QStringList& pattern, bool makeUnique)
+QStringList XpDataCompiler::findFiles(const NavDatabaseOptions& opts, const QString& subdir, const QStringList& pattern, bool makeUnique,
+                                      bool scanCustom, bool scanResources)
 {
   QMap<QString, QFileInfo> entryMap;
 
-  // Resources ==================================
-  // Read all default entries
-  QDir defaultDir(buildPathNoCase({opts.getBasepath(), "Resources", "default data", subdir}));
-  QFileInfoList defaultEntries = defaultDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
-  for(const QFileInfo& fileInfo : defaultEntries)
+  if(scanResources)
   {
-    if(includeFile(opts, fileInfo))
-      entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
+    // Resources ==================================
+    // Read all default entries
+    QDir defaultDir(buildPathNoCase({opts.getBasepath(), "Resources", "default data", subdir}));
+    QFileInfoList defaultEntries = defaultDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
+    for(const QFileInfo& fileInfo : qAsConst(defaultEntries))
+    {
+      if(includeFile(opts, fileInfo))
+        // Use upper case file name as key in hash to make unique
+        entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
+    }
   }
 
-  // Custom Scenery ==================================
-  // Read custom entries and overwrite default
-  // Simply read all found filess in the scenery directories
-  QDir customDir(buildPathNoCase({opts.getBasepath(), "Custom Data", subdir}));
-  QFileInfoList customEntries = customDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
-  for(const QFileInfo& fileInfo : customEntries)
+  if(scanCustom)
   {
-    if(includeFile(opts, fileInfo))
-      entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
+    // Custom Scenery ==================================
+    // Read custom entries and overwrite default
+    // Simply read all found filess in the scenery directories
+    QDir customDir(buildPathNoCase({opts.getBasepath(), "Custom Data", subdir}));
+    QFileInfoList customEntries = customDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
+    for(const QFileInfo& fileInfo : qAsConst(customEntries))
+    {
+      if(includeFile(opts, fileInfo))
+        // Use upper case file name as key in hash to make unique
+        entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
+    }
   }
 
   QStringList retval;
   for(const QFileInfo& fileInfo : entryMap)
     retval.append(fileInfo.filePath());
-
-  // qDebug() << "== Files ==============================================================================";
-  // qDebug() << Q_FUNC_INFO << retval;
-  // qDebug() << "================================================================================";
 
   return retval;
 }
