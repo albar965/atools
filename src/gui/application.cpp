@@ -258,7 +258,8 @@ void Application::recordExit()
     qWarning() << Q_FUNC_INFO << "Failed removing lock file" << lockFile;
 
   lockFile.clear();
-
+#else
+    qInfo() << Q_FUNC_INFO << "Lock file disabled";
 #endif
 }
 
