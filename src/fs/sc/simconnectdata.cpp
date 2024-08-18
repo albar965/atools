@@ -20,6 +20,10 @@
 #include "fs/weather/metar.h"
 #include "geo/calculations.h"
 
+#ifdef DEBUG_MOVING_AIRCRAFT
+#include "util/average.h"
+#endif
+
 #include <QDebug>
 #include <QDataStream>
 #include <QIODevice>
@@ -194,11 +198,13 @@ const SimConnectAircraft *SimConnectData::getAiAircraftConstById(int id) const
     return nullptr;
 }
 
-SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
+#ifdef DEBUG_MOVING_AIRCRAFT
+SimConnectData SimConnectData::buildDebugMovingAircraft(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
                                                      float vertSpeed, float tas, float fuelflow, float totalFuel, float ice,
                                                      float flightplanAlt, float magVar, bool jetFuel, bool helicopter)
 {
   static QVector<float> lastHdgs;
+  static atools::util::MovingAverage averageU(5), averageV(5);
   lastHdgs.fill(0.f, 10);
 
   SimConnectData data;
@@ -208,7 +214,11 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   float headingTrue = 0.f;
   if(lastPos.isValid())
   {
-    headingTrue = !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10M) ? lastPos.angleDegTo(pos) : 0.f;
+    float hdg = lastPos.angleDegTo(pos);
+    averageU.addSample(atools::geo::windUComponent(100.f, hdg));
+    averageV.addSample(atools::geo::windVComponent(100.f, hdg));
+    headingTrue = atools::geo::windDirectionFromUV(averageU.getAverage(), averageV.getAverage());
+
     data.userAircraft.indicatedSpeedKts = tas;
     data.userAircraft.trueAirspeedKts = tas + 10;
     data.userAircraft.groundSpeedKts = tas + 20;
@@ -273,6 +283,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
 
   return data;
 }
+#endif
 
 void SimConnectData::updateIndexesAndKeys()
 {

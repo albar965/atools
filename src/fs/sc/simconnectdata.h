@@ -134,9 +134,13 @@ public:
     return packetId == 0;
   }
 
-  static SimConnectData buildDebugForPosition(const atools::geo::Pos& pos, const atools::geo::Pos& lastPos, bool ground,
-                                              float vertSpeed, float tas, float fuelflow, float totalFuel, float ice, float flightplanAlt,
-                                              float magVar, bool jetFuel, bool helicopter);
+#ifdef DEBUG_MOVING_AIRCRAFT
+  /* Build a moving aircraft that is derived from mouse movements */
+  static SimConnectData buildDebugMovingAircraft(const atools::geo::Pos& pos, const atools::geo::Pos& lastPos, bool ground,
+                                                 float vertSpeed, float tas, float fuelflow, float totalFuel, float ice,
+                                                 float flightplanAlt, float magVar, bool jetFuel, bool helicopter);
+
+#endif
 
   bool isUserAircraftValid() const
   {
