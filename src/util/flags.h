@@ -30,6 +30,9 @@ namespace util {
 template<typename ENUM, typename FLAGTYPE>
 class Flags
 {
+  /* Print error message at compile time if size of enum and template parameter FLAGTYPE differs */
+  static_assert(sizeof(ENUM) == sizeof(FLAGTYPE), "atools::util::Flags: sizeof(ENUM) != sizeof(FLAGTYPE)");
+
 public:
   /* Create types for template parameters. */
   typedef ENUM EnumType;
