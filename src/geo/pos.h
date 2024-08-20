@@ -385,7 +385,10 @@ private:
 /* Invalid position */
 const atools::geo::Pos EMPTY_POS;
 
-uint qHash(const atools::geo::Pos& pos);
+inline uint qHash(const atools::geo::Pos& pos)
+{
+  return static_cast<unsigned int>(pos.getLonX()) ^ static_cast<unsigned int>(pos.getLatY());
+}
 
 /* Primitive class to transport more accurate values */
 class PosD

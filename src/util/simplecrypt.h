@@ -28,9 +28,10 @@
 #ifndef ATOOLS_SIMPLECRYPT_H
 #define ATOOLS_SIMPLECRYPT_H
 
+#include "util/flags.h"
+
 #include <QString>
 #include <QVector>
-#include <QFlags>
 
 namespace atools {
 namespace util {
@@ -240,7 +241,7 @@ public:
 
   // enum to describe options that have been used for the encryption. Currently only one, but
   // that only leaves room for future extensions like adding a cryptographic hash...
-  enum CryptoFlag
+  enum CryptoFlag : quint32
   {
     CryptoFlagNone = 0,
     CryptoFlagCompression = 0x01,
@@ -248,7 +249,7 @@ public:
     CryptoFlagHash = 0x04
   };
 
-  Q_DECLARE_FLAGS(CryptoFlags, CryptoFlag)
+  ATOOLS_DECLARE_FLAGS_32(CryptoFlags, CryptoFlag)
 
 private:
   void splitKey();
@@ -260,7 +261,7 @@ private:
   Error m_lastError;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(SimpleCrypt::CryptoFlags)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(SimpleCrypt::CryptoFlags)
 
 } // namespace util
 } // namespace atools

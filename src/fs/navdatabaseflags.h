@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,15 @@
 #ifndef ATOOLS_FS_NAVDATABASEFLAGS_H
 #define ATOOLS_FS_NAVDATABASEFLAGS_H
 
+#include "util/flags.h"
+
 #include <QCoreApplication>
 
 namespace atools {
 namespace fs {
 
 /* Result flags for navdatabase creation */
-enum ResultFlag
+enum ResultFlag : quint32
 {
   COMPILE_NONE = 0,
   COMPILE_BASIC_VALIDATION_ERROR = 1 << 0, /* Basic validation enabled and found error */
@@ -33,8 +35,8 @@ enum ResultFlag
   COMPILE_FAILED = 1 << 3, /* Caught exception */
 };
 
-Q_DECLARE_FLAGS(ResultFlags, ResultFlag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ResultFlags)
+ATOOLS_DECLARE_FLAGS_32(ResultFlags, ResultFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ResultFlags)
 
 } // namespace fs
 } // namespace atools

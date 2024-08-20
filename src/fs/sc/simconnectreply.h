@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "geo/pos.h"
 #include "fs/sc/simconnectdatabase.h"
 #include "fs/sc/weatherrequest.h"
+#include "util/flags.h"
 
 #include <QString>
 
@@ -32,13 +33,13 @@ namespace fs {
 namespace sc {
 
 // quint16
-enum CommandEnum
+enum CommandEnum : quint32
 {
   CMD_NONE,
   CMD_WEATHER_REQUEST
 };
 
-Q_DECLARE_FLAGS(Command, CommandEnum)
+ATOOLS_DECLARE_FLAGS_32(Command, CommandEnum)
 
 /*
  * Class that contains replay data from a client for SimConnectData.

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,16 +24,16 @@
 namespace atools {
 namespace util {
 
-typedef quint64 FlagType;
-
 /*
- * Flags class wrapping an unsinged 64 bit class enum.
+ * Flags class wrapping an integer class enum. Can be quint8, quint16, quint32 or quint64.
  */
-template<typename ENUM>
+template<typename ENUM, typename FLAGTYPE>
 class Flags
 {
 public:
+  /* Create types for template parameters. */
   typedef ENUM EnumType;
+  typedef FLAGTYPE FlagType;
 
   /* Constructors ======================================= */
   Flags()
@@ -42,11 +42,11 @@ public:
   }
 
   Flags(ENUM enumValue)
-    : value(FlagType(enumValue))
+    : value(FLAGTYPE(enumValue))
   {
   }
 
-  Flags(FlagType flagValue)
+  Flags(FLAGTYPE flagValue)
     : value(flagValue)
   {
   }
@@ -120,9 +120,15 @@ public:
 
 #endif
 
+  Flags& operator&=(Flags other)
+  {
+    value &= other.value;
+    return *this;
+  }
+
   Flags& operator&=(ENUM mask)
   {
-    value &= FlagType(mask);
+    value &= FLAGTYPE(mask);
     return *this;
   }
 
@@ -134,7 +140,7 @@ public:
 
   Flags& operator|=(ENUM other)
   {
-    value |= FlagType(other);
+    value |= FLAGTYPE(other);
     return *this;
   }
 
@@ -146,7 +152,7 @@ public:
 
   Flags& operator^=(ENUM other)
   {
-    value ^= FlagType(other);
+    value ^= FLAGTYPE(other);
     return *this;
   }
 
@@ -158,7 +164,7 @@ public:
 
   Flags operator|(ENUM other) const
   {
-    return Flags(value | FlagType(other));
+    return Flags(value | FLAGTYPE(other));
   }
 
   Flags operator^(Flags other) const
@@ -168,7 +174,7 @@ public:
 
   Flags operator^(ENUM other) const
   {
-    return Flags(value ^ FlagType(other));
+    return Flags(value ^ FLAGTYPE(other));
   }
 
 #ifdef ATOOLS_FLAGS_INT_OPERATOR
@@ -192,7 +198,7 @@ public:
 
   Flags operator&(ENUM other) const
   {
-    return Flags(value & FlagType(other));
+    return Flags(value & FLAGTYPE(other));
   }
 
   /* Negate ======================================= */
@@ -213,12 +219,7 @@ public:
     return static_cast<ENUM>(value);
   }
 
-  int asInt() const
-  {
-    return static_cast<int>(value);
-  }
-
-  FlagType asFlagType() const
+  FLAGTYPE asFlagType() const
   {
     return value;
   }
@@ -266,69 +267,65 @@ public:
   /* Set/get methods ======================================= */
   bool testFlag(ENUM flag) const
   {
-    return (value & FlagType(flag)) == FlagType(flag) && (FlagType(flag) != 0 || value == FlagType(flag));
+    return (value & FLAGTYPE(flag)) == FLAGTYPE(flag) && (FLAGTYPE(flag) != 0 || value == FLAGTYPE(flag));
   }
 
   Flags& setFlag(ENUM flag, bool on = true)
   {
     if(on)
-      value |= FlagType(flag);
+      value |= FLAGTYPE(flag);
     else
-      value &= ~FlagType(flag);
+      value &= ~FLAGTYPE(flag);
     return *this;
   }
 
 private:
-  template<typename E>
-  friend QDataStream& operator>>(QDataStream&, Flags<E>&);
-
-  template<typename E>
-  friend QDataStream& operator<<(QDataStream&, Flags<E>);
-
-  template<typename E>
-  friend inline uint qHash(const Flags<E>& flags);
-
-  FlagType value;
+  FLAGTYPE value;
 };
 
 /* Definition macros ======================================= */
-#define ATOOLS_DECLARE_FLAGS(FlagsParam, EnumParam) \
-  typedef atools::util::Flags<EnumParam> FlagsParam;
 
+/* Declare specific flags type using typedef */
+#define ATOOLS_DECLARE_FLAGS_8(FlagsParam, EnumParam) \
+        typedef atools::util::Flags<EnumParam, quint8> FlagsParam;
+
+#define ATOOLS_DECLARE_FLAGS_16(FlagsParam, EnumParam) \
+        typedef atools::util::Flags<EnumParam, quint16> FlagsParam;
+
+#define ATOOLS_DECLARE_FLAGS_32(FlagsParam, EnumParam) \
+        typedef atools::util::Flags<EnumParam, quint32> FlagsParam;
+
+#define ATOOLS_DECLARE_FLAGS_64(FlagsParam, EnumParam) \
+        typedef atools::util::Flags<EnumParam, quint64> FlagsParam;
+
+/* Declare operator|(), qHash(), operator>> and operator<< */
 #define ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(FlagsParam) \
-  inline atools::util::Flags<FlagsParam::EnumType> \
-  operator|(FlagsParam::EnumType f1, FlagsParam::EnumType f2) \
-  { \
-    return atools::util::Flags<FlagsParam::EnumType>(f1) | f2; \
-  } \
-  inline atools::util::Flags<FlagsParam::EnumType> \
-  operator|(FlagsParam::EnumType f1, atools::util::Flags<FlagsParam::EnumType> f2) \
-  { \
-    return f2 | f1; \
-  }
-
-/* Stream I/O ======================================= */
-template<typename E>
-QDataStream& operator>>(QDataStream& stream, Flags<E>& flags)
-{
-  FlagType value;
-  stream >> value;
-  flags.value = value;
-  return stream;
-}
-
-template<typename E>
-QDataStream& operator<<(QDataStream& stream, atools::util::Flags<E> flags)
-{
-  stream << flags.asFlagType();
-  return stream;
-}
-
-template<typename E>
-inline uint qHash(const Flags<E>& flags)
-{
-  return static_cast<uint>(flags.value) ^ static_cast<uint>(flags.value >> 32);
-}
+        inline atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType> \
+        operator|(FlagsParam::EnumType f1, FlagsParam::EnumType f2) \
+        { \
+          return atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType>(f1) | f2; \
+        } \
+        inline atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType> \
+        operator|(FlagsParam::EnumType f1, atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType> f2) \
+        { \
+          return f2 | f1; \
+        } \
+        inline uint qHash(const FlagsParam& flags) \
+        { \
+          return ::qHash(flags.asFlagType()); \
+        } \
+        inline QDataStream& operator>>(QDataStream& stream, FlagsParam& flags) \
+        { \
+          FlagsParam::FlagType value; \
+          stream >> value; \
+          flags = value; \
+          return stream; \
+        } \
+        inline QDataStream& operator<<(QDataStream& stream, FlagsParam flags) \
+        { \
+          stream << flags.asFlagType(); \
+          return stream; \
+        }
 
 } // namespace util
 } // namespace atools

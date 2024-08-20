@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 #ifndef ATOOLS_FS_USERDATAMANAGER_H
 #define ATOOLS_FS_USERDATAMANAGER_H
 
+#include "util/flags.h"
 #include "sql/datamanagerbase.h"
 
 namespace atools {
@@ -33,7 +34,7 @@ class MagDecReader;
 }
 namespace userdata {
 
-enum Flag
+enum Flag : quint32
 {
   NONE,
 
@@ -44,8 +45,8 @@ enum Flag
   APPEND = 1 << 1
 };
 
-Q_DECLARE_FLAGS(Flags, Flag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::userdata::Flags)
+ATOOLS_DECLARE_FLAGS_32(Flags, Flag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::userdata::Flags)
 
 /*
  * Contains functionality around the userdata database which keeps user defined waypoints, bookmarks and others.

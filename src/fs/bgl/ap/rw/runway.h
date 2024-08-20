@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "fs/bgl/record.h"
 #include "fs/bgl/bglposition.h"
 #include "fs/bgl/surface.h"
+#include "util/flags.h"
 
 #include "runwayend.h"
 
@@ -39,7 +40,7 @@ namespace bgl {
 namespace rw {
 
 /* Runway pavement markings */
-enum RunwayMarkings
+enum RunwayMarkings : quint32
 {
   NO_FLAGS = 0,
   EDGES = 1 << 0,
@@ -63,8 +64,8 @@ enum RunwayMarkings
   NO_THRESHOLD_END_ARROWS = 1 << 23
 };
 
-Q_DECLARE_FLAGS(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings)
-Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags)
+ATOOLS_DECLARE_FLAGS_32(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags)
 
 /* Light intensity */
 enum Light

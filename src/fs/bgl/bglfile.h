@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ class Record;
 class Boundary;
 
 namespace flags {
-enum CreateFlag
+enum CreateFlag : quint32
 {
   NONE = 0,
   AIRPORT_FS9_FORMAT = 1 << 0,
@@ -61,8 +61,8 @@ enum CreateFlag
   AIRPORT_MSFS_NAVIGRAPH_NAVDATA = 1 << 3,
 };
 
-Q_DECLARE_FLAGS(CreateFlags, CreateFlag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::flags::CreateFlags)
+ATOOLS_DECLARE_FLAGS_32(CreateFlags, CreateFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::flags::CreateFlags)
 
 }
 /*

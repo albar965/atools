@@ -18,6 +18,8 @@
 #ifndef ATOOLS_FLIGHTPLANCONSTANTS_H
 #define ATOOLS_FLIGHTPLANCONSTANTS_H
 
+#include "util/flags.h"
+
 #include <limits>
 
 #include <QLatin1String>
@@ -56,7 +58,7 @@ enum WaypointType
   USER
 };
 
-enum Flag
+enum Flag : quint32
 {
   NONE = 0,
   PROCEDURE = 1 << 1, /* Flight plan entry is any procedure leg */
@@ -64,8 +66,8 @@ enum Flag
   TRACK = 1 << 3 /* Flight plan entry airway name is a track */
 };
 
-Q_DECLARE_FLAGS(Flags, Flag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::pln::entry::Flags)
+ATOOLS_DECLARE_FLAGS_32(Flags, Flag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::pln::entry::Flags)
 }
 
 /* File format for flight plans as detected by FlightplanIO::load and detectFormat */

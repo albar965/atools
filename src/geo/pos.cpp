@@ -63,11 +63,6 @@ const static QRegularExpression LONG_FORMAT_OLD_REGEXP(
 
 using atools::absInt;
 
-uint qHash(const atools::geo::Pos& pos)
-{
-  return static_cast<unsigned int>(pos.getLonX()) ^ static_cast<unsigned int>(pos.getLatY());
-}
-
 Pos::Pos(const QVariant& longitudeX, const QVariant& latitudeY, const QVariant& alt)
 {
   if(!longitudeX.isNull() && !latitudeY.isNull() && longitudeX.isValid() && latitudeY.isValid())

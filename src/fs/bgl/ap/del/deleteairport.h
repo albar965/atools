@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "fs/bgl/ap/del/deleterunway.h"
 #include "fs/bgl/ap/del/deletecom.h"
 #include "fs/bgl/ap/del/deletestart.h"
+#include "util/flags.h"
 
 #include <QList>
 
@@ -37,7 +38,7 @@ namespace bgl {
 
 namespace del {
 
-enum DeleteAllFlag
+enum DeleteAllFlag : quint32
 {
   // TODO missing not documented flags
   // deleteAllBlastFences = "TRUE"
@@ -76,8 +77,8 @@ enum DeleteAllFlag
   TAXIWAYS = 1 << 7
 };
 
-Q_DECLARE_FLAGS(DeleteAllFlags, DeleteAllFlag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::del::DeleteAllFlags)
+ATOOLS_DECLARE_FLAGS_32(DeleteAllFlags, DeleteAllFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::del::DeleteAllFlags)
 
 } // namespace del
 

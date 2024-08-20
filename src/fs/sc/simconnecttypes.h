@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 
 #ifndef ATOOLS_SC_TYPES_H
 #define ATOOLS_SC_TYPES_H
+
+#include "util/flags.h"
 
 #include <QVector>
 #include <QObject>
@@ -81,8 +83,8 @@ enum AircraftFlag : quint16
                       // Next is 0x2000
 };
 
-Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::AircraftFlags)
+ATOOLS_DECLARE_FLAGS_16(AircraftFlags, AircraftFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::AircraftFlags)
 
 void registerMetaTypes();
 

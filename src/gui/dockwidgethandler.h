@@ -18,6 +18,8 @@
 #ifndef ATOOLS_DOCKWIDGETHANDLER_H
 #define ATOOLS_DOCKWIDGETHANDLER_H
 
+#include "util/flags.h"
+
 #include <QBitArray>
 #include <QDockWidget>
 
@@ -32,7 +34,7 @@ class DockEventFilter;
 struct MainWindowState;
 
 /* Flags defining behavior when calling setFullScreenOn() */
-enum DockFlag
+enum DockFlag : quint32
 {
   NONE = 0,
   HIDE_DOCKS = 1 << 0, /* Hide docks initially when fullscreen mode has no saved layout yet */
@@ -41,8 +43,8 @@ enum DockFlag
   MAXIMIZE = 1 << 4 /* Maximize window when going into fullscreen instead of using full screen mode */
 };
 
-Q_DECLARE_FLAGS(DockFlags, DockFlag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::gui::DockFlags)
+ATOOLS_DECLARE_FLAGS_32(DockFlags, DockFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::gui::DockFlags)
 
 /*
  * Improves dock widget handling expecially if dock windows are stacked.

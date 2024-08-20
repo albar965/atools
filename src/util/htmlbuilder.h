@@ -18,6 +18,8 @@
 #ifndef ATOOLS_UTIL_HTMLBUILDER_H
 #define ATOOLS_UTIL_HTMLBUILDER_H
 
+#include "util/flags.h"
+
 #include <QBitArray>
 #include <QColor>
 #include <QCoreApplication>
@@ -30,7 +32,7 @@ namespace util {
 
 namespace html {
 /* HTML formatting flags for text */
-enum Flag
+enum Flag : quint32
 {
   NONE = 0,
 
@@ -60,8 +62,8 @@ enum Flag
                              * like: <p style='white-space:pre'>. Only for paragraphs. */
 };
 
-Q_DECLARE_FLAGS(Flags, Flag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(html::Flags)
+ATOOLS_DECLARE_FLAGS_32(Flags, Flag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(html::Flags)
 }
 
 /*

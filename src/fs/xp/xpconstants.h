@@ -18,6 +18,8 @@
 #ifndef ATOOLS_FS_XP_XPCONSTANTS_H
 #define ATOOLS_FS_XP_XPCONSTANTS_H
 
+#include "util/flags.h"
+
 #include <QString>
 
 namespace atools {
@@ -28,7 +30,7 @@ class MagDecReader;
 
 namespace xp {
 
-enum ContextFlag
+enum ContextFlag : quint32
 {
   NO_FLAG = 0x0000,
   IS_ADDON = 0x0001,
@@ -48,8 +50,8 @@ enum ContextFlag
   UPDATE_CYCLE = 0x4000 // Fetch airac cycle from header
 };
 
-Q_DECLARE_FLAGS(ContextFlags, ContextFlag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::xp::ContextFlags)
+ATOOLS_DECLARE_FLAGS_32(ContextFlags, ContextFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::xp::ContextFlags)
 
 /* Context passed to each line reading call */
 struct XpWriterContext

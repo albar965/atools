@@ -19,11 +19,11 @@
 #define ATOOLS_FS_NAVDATABASEOPTIONS_H
 
 #include "fs/fspaths.h"
+#include "util/flags.h"
 
 #include <functional>
 
 #include <QSet>
-#include <QFlags>
 #include <QRegExp>
 #include <QMap>
 #include <QStringList>
@@ -68,7 +68,7 @@ enum NavDbObjectType
 QString navDbObjectTypeToString(atools::fs::type::NavDbObjectType type);
 atools::fs::type::NavDbObjectType stringToNavDbObjectType(const QString& typeStr);
 
-enum OptionFlag
+enum OptionFlag : quint32
 {
   NO_OPTION_FLAG = 0,
   /*
@@ -144,8 +144,8 @@ enum OptionFlag
   CREATE_AIRPORT_TABLES = 1 << 16
 };
 
-Q_DECLARE_FLAGS(OptionFlags, OptionFlag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::type::OptionFlags)
+ATOOLS_DECLARE_FLAGS_32(OptionFlags, OptionFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::type::OptionFlags)
 
 }
 

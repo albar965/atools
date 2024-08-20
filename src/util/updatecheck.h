@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 #ifndef ATOOLS_UPDATECHECK_H
 #define ATOOLS_UPDATECHECK_H
 
+#include "util/flags.h"
+
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
@@ -25,7 +27,7 @@ namespace atools {
 namespace util {
 
 /* Updates can be fetched for each channel in one call */
-enum UpdateChannel
+enum UpdateChannel : quint32
 {
   NONE = 0,
   STABLE = 1 << 0,
@@ -33,8 +35,8 @@ enum UpdateChannel
   DEVELOP = 1 << 2
 };
 
-Q_DECLARE_FLAGS(UpdateChannels, UpdateChannel)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::util::UpdateChannels)
+ATOOLS_DECLARE_FLAGS_32(UpdateChannels, UpdateChannel)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::util::UpdateChannels)
 
 struct Update
 {

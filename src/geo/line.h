@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -272,7 +272,10 @@ private:
 /* Invalid line */
 const atools::geo::Line EMPTY_LINE;
 
-uint qHash(const atools::geo::Line& line);
+inline uint qHash(const atools::geo::Line& line)
+{
+  return qHash(line.getPos1()) ^ qHash(line.getPos2());
+}
 
 } // namespace geo
 } // namespace atools

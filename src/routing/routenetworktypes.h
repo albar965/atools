@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define ATOOLS_ROUTENETWORKBASE_H
 
 #include "geo/pos.h"
+#include "util/flags.h"
 
 namespace atools {
 namespace routing {
@@ -32,7 +33,7 @@ enum DataSource
 };
 
 /* Network mode. Changes which edges and nodes are returned as neighbours. */
-enum Mode : unsigned char
+enum Mode : quint8
 {
   MODE_NONE = 0,
   MODE_RADIONAV_VOR = 1 << 0, /* VOR/NDB to VOR/NDB */
@@ -61,8 +62,8 @@ enum Mode : unsigned char
   MODE_ALL = MODE_AIRWAY | MODE_NAVAID,
 };
 
-Q_DECLARE_FLAGS(Modes, Mode)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::routing::Modes)
+ATOOLS_DECLARE_FLAGS_8(Modes, Mode)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::routing::Modes)
 
 /* Type and subtype of a node */
 enum NodeType : unsigned char
@@ -80,7 +81,7 @@ enum NodeType : unsigned char
 QString nodeTypeToStr(NodeType type);
 
 /* Attached airway or tracks at a node. */
-enum NodeConnection : unsigned char
+enum NodeConnection : quint8
 {
   CONNECTION_NONE = 0, /* Single waypoint - not connected to airways */
   CONNECTION_VICTOR = 1 << 0, /* Airway waypoint */
@@ -92,8 +93,8 @@ enum NodeConnection : unsigned char
   CONNECTION_AIRWAY_TRACK = CONNECTION_AIRWAY_BOTH | CONNECTION_TRACK
 };
 
-Q_DECLARE_FLAGS(NodeConnections, NodeConnection)
-Q_DECLARE_OPERATORS_FOR_FLAGS(NodeConnections)
+ATOOLS_DECLARE_FLAGS_8(NodeConnections, NodeConnection)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(NodeConnections)
 
 QString nodeConnectionsToStr(NodeConnection con);
 
@@ -273,7 +274,7 @@ struct Node
   /* Set connections using QFlags wrapper */
   void setConnections(atools::routing::NodeConnections connections)
   {
-    con = static_cast<NodeConnection>(connections.operator unsigned int());
+    con = NodeConnection(connections);
   }
 
   /* Add flag to connections */

@@ -18,21 +18,23 @@
 #ifndef ATOOLS_NS_COMMON_H
 #define ATOOLS_NS_COMMON_H
 
+#include "util/flags.h"
+
 #include <QLoggingCategory>
 
 namespace atools {
 namespace fs {
 namespace ns {
 
-enum NavServerOption
+enum NavServerOption : quint32
 {
   NONE = 0x00,
   VERBOSE = 0x01,
   HIDE_HOST = 0x02
 };
 
-Q_DECLARE_FLAGS(NavServerOptions, NavServerOption)
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ns::NavServerOptions)
+ATOOLS_DECLARE_FLAGS_32(NavServerOptions, NavServerOption)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ns::NavServerOptions)
 
 /* Declare a own logging category to append in the text edit */
 Q_DECLARE_LOGGING_CATEGORY(gui)

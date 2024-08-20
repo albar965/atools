@@ -23,11 +23,6 @@
 namespace atools {
 namespace geo {
 
-uint qHash(const atools::geo::Line& line)
-{
-  return qHash(line.getPos1()) ^ qHash(line.getPos2());
-}
-
 Pos Line::intersectionWithCircle(const Pos& center, float radiusMeter, float accuracyMeter) const
 {
   float dist = lengthMeter();
