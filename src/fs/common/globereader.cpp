@@ -150,7 +150,10 @@ float GlobeReader::getElevation(const atools::geo::Pos& pos, float sampleRadiusM
   if(!valid || !pos.isValid())
     return atools::fs::common::INVALID;
 
-  if(sampleRadiusMeter > 0.f)
+  if(sampleRadiusMeter > 0.4f)
+    // Get maximum around pos using two rectangles
+    return std::max(elevationMax(pos, sampleRadiusMeter), elevationMax(pos, sampleRadiusMeter / 2.f));
+  else if(sampleRadiusMeter > 0.f)
     // Get maximum around pos
     return elevationMax(pos, sampleRadiusMeter);
   else
@@ -165,6 +168,7 @@ float GlobeReader::elevationMax(const geo::Pos& pos, float sampleRadiusMeter)
 {
   // Collect file indexes and offsets - use set to remove duplicates
   QSet<std::pair<int, qint64> > indexes;
+
   // Center point
   int fileIndex;
   qint64 fileOffset = calcFileOffset(pos.getLonX(), pos.getLatY(), fileIndex);
