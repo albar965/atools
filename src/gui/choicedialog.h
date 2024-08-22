@@ -36,6 +36,7 @@ namespace gui {
 
 /*
  * A configurable dialog that shows the user a list of checkboxes and/or radio buttons.
+ * Widgets are identified by an id/enum which should be constant since it is used to save the widget state.
  */
 class ChoiceDialog :
   public QDialog
@@ -51,6 +52,14 @@ public:
 
   ChoiceDialog(const ChoiceDialog& other) = delete;
   ChoiceDialog& operator=(const ChoiceDialog& other) = delete;
+
+  /* Add a widget with the given id. ChoiceDialog does not take ownership of the widget but
+   * its state and content is saved and restored. */
+  template<typename TYPE>
+  void addWidget(TYPE id, QWidget *widget)
+  {
+    addWidgetInt(static_cast<int>(id), widget);
+  }
 
   /* Add a checkbox with the given id, text and tooltip */
   template<typename TYPE>
@@ -85,28 +94,28 @@ public:
     addRadioButtonHiddenInt(static_cast<int>(id), static_cast<int>(groupId));
   }
 
+  /* Enable or disable any widget added */
   template<typename TYPE>
-  void enableButton(TYPE id, bool enable = true)
+  void enableWidget(TYPE id, bool enable = true)
   {
-    QAbstractButton *button = getButtonInt(static_cast<int>(id));
-    if(button != nullptr)
-      button->setEnabled(enable);
+    getWidgetInt(static_cast<int>(id))->setEnabled(enable);
   }
 
   template<typename TYPE>
-  void disableButton(TYPE id, bool disable = true)
+  void disableWidget(TYPE id, bool disable = true)
   {
-    enableButton(id, !disable);
+    enableWidget(id, !disable);
   }
 
-  /* true if box for id is checked and enabled */
+  /* true if box for id is checked and enabled. Not for plain widgets added with addWidget(). */
   template<typename TYPE>
   bool isButtonChecked(TYPE id) const
   {
     return isCheckedInt(static_cast<int>(id));
   }
 
-  /* ok button is enabled if at least one button for these ids is checked */
+  /* ok button is enabled if at least one button for these ids is checked.
+   * Not for plain widgets added with addWidget(). */
   void setRequiredAnyChecked(QSet<int> ids)
   {
     required = ids;
@@ -121,7 +130,9 @@ public:
   /* Add label text */
   void addLabel(const QString& text);
 
-  /* Call after adding all buttons to restore button state */
+  /* Call after adding all buttons to restore button state.
+   * Sends buttonToggled() for each checkbox or radio button.
+   * Uses assigned ids to identify widgets. */
   void restoreState();
 
   void setHelpOnlineUrl(const QString& value)
@@ -139,13 +150,14 @@ signals:
   void buttonToggled(int id, bool checked);
 
 private:
-  const QVector<std::pair<int, bool> > getCheckState() const;
   void buttonBoxClicked(QAbstractButton *button);
   void buttonToggledInternal(bool checked);
   void saveState() const;
   void updateButtonBoxState();
-  bool isCheckedInt(int id) const;
 
+  /* Internal methods using integer instead of enum as id */
+  bool isCheckedInt(int id) const;
+  void addWidgetInt(int id, QWidget *widget);
   void addCheckBoxInt(int id, const QString& text, const QString& tooltip = QString(), bool checked = false,
                       bool disabled = false, bool hidden = false);
   void addCheckBoxHiddenInt(int id);
@@ -154,13 +166,21 @@ private:
                          bool disabled = false, bool hidden = false);
   void addRadioButtonHiddenInt(int id, int groupId);
 
-  QAbstractButton *getButtonInt(int id) const;
+  QAbstractButton *getButtonInt(int id) const
+  {
+    return dynamic_cast<QAbstractButton *>(getWidgetInt(id));
+  }
+
+  QWidget *getWidgetInt(int id) const
+  {
+    return index.value(id, nullptr);
+  }
 
   Ui::ChoiceDialog *ui;
   QString helpBaseUrl, settingsPrefix, helpOnlineUrl, helpLanguageOnline;
 
-  /* Maps user given id to check box. */
-  QHash<int, QAbstractButton *> index;
+  /* Maps user given id to widget. */
+  QHash<int, QWidget *> index;
 
   /* Maps groupId to button groups */
   QHash<int, QButtonGroup *> buttonGroups;

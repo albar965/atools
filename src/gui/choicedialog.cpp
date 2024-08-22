@@ -16,10 +16,10 @@
 *****************************************************************************/
 
 #include "choicedialog.h"
+
 #include "ui_choicedialog.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
-#include  "settings/settings.h"
 
 #include <QMimeData>
 #include <QPushButton>
@@ -71,21 +71,28 @@ void ChoiceDialog::addCheckBoxHiddenInt(int id)
   addCheckBoxInt(id, QString(), QString(), false /* checked*/, true /* disabled */, true /* hidden */);
 }
 
+void ChoiceDialog::addWidgetInt(int id, QWidget *widget)
+{
+  widget->setObjectName(QString(widget->metaObject()->className()) + '_' + QString::number(id));
+  widget->setProperty(ID_PROPERTY, id);
+  index.insert(id, widget);
+
+  // Add widget before the button box and verticalSpacerChoice
+  ui->verticalLayoutScrollArea->insertWidget(-1, widget);
+}
+
 void ChoiceDialog::addCheckBoxInt(int id, const QString& text, const QString& tooltip, bool checked, bool disabled,
                                   bool hidden)
 {
   QCheckBox *button = new QCheckBox(text, this);
   button->setToolTip(tooltip);
   button->setStatusTip(tooltip);
-  button->setProperty(ID_PROPERTY, id);
   button->setChecked(checked);
   button->setDisabled(disabled);
   button->setHidden(hidden);
-  index.insert(id, button);
   connect(button, &QCheckBox::toggled, this, &ChoiceDialog::buttonToggledInternal);
 
-  // Add widget before the button box and verticalSpacerChoice
-  ui->verticalLayoutScrollArea->insertWidget(-1, button);
+  addWidgetInt(id, button);
 }
 
 void ChoiceDialog::addRadioButtonHiddenInt(int id, int groupId)
@@ -99,11 +106,9 @@ void ChoiceDialog::addRadioButtonInt(int id, int groupId, const QString& text, c
   QRadioButton *button = new QRadioButton(text, this);
   button->setToolTip(tooltip);
   button->setStatusTip(tooltip);
-  button->setProperty(ID_PROPERTY, id);
   button->setChecked(checked);
   button->setDisabled(disabled);
   button->setHidden(hidden);
-  index.insert(id, button);
   connect(button, &QRadioButton::toggled, this, &ChoiceDialog::buttonToggledInternal);
 
   QButtonGroup *buttonGroup = buttonGroups.value(groupId);
@@ -115,8 +120,7 @@ void ChoiceDialog::addRadioButtonInt(int id, int groupId, const QString& text, c
 
   buttonGroup->addButton(button);
 
-  // Add widget before the button box and verticalSpacerChoice
-  ui->verticalLayoutScrollArea->insertWidget(-1, button);
+  addWidgetInt(id, button);
 }
 
 void ChoiceDialog::addLine()
@@ -135,25 +139,14 @@ void ChoiceDialog::addLabel(const QString& text)
 
 void ChoiceDialog::addSpacer()
 {
-  ui->verticalLayoutScrollArea->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding)); // Move button up with spacer
-}
-
-const QVector<std::pair<int, bool> > ChoiceDialog::getCheckState() const
-{
-  QVector<std::pair<int, bool> > ids;
-  for(QAbstractButton *button : index)
-    ids.append(std::make_pair(button->property(ID_PROPERTY).toInt(), button->isChecked()));
-  return ids;
+  // Move button up with spacer
+  ui->verticalLayoutScrollArea->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 bool ChoiceDialog::isCheckedInt(int id) const
 {
-  return index.value(id)->isChecked() && index.value(id)->isEnabled();
-}
-
-QAbstractButton *ChoiceDialog::getButtonInt(int id) const
-{
-  return index.value(id);
+  QAbstractButton *button = getButtonInt(id);
+  return button != nullptr ? (button->isChecked() && button->isEnabled()) : false;
 }
 
 void ChoiceDialog::buttonBoxClicked(QAbstractButton *button)
@@ -177,43 +170,40 @@ void ChoiceDialog::buttonBoxClicked(QAbstractButton *button)
 void ChoiceDialog::buttonToggledInternal(bool checked)
 {
   updateButtonBoxState();
-  QAbstractButton *button = dynamic_cast<QAbstractButton *>(sender());
+  const QAbstractButton *button = dynamic_cast<const QAbstractButton *>(sender());
   if(button != nullptr)
     emit buttonToggled(button->property(ID_PROPERTY).toInt(), checked);
 }
 
 void ChoiceDialog::restoreState()
 {
+  QList<QObject *> widgets({this});
+  for(auto it = index.begin(); it != index.end(); ++it)
+    widgets.append(*it);
+
   atools::gui::WidgetState widgetState(settingsPrefix, false);
-  widgetState.restore(this);
+  widgetState.restore(widgets);
 
-  // Restore buttons
-  QStringList ids = atools::settings::Settings::instance().valueStrList(settingsPrefix + "ButtonStates");
-  for(int i = 0; i < ids.size(); i += 2)
-  {
-    int id = ids.at(i).toInt();
-    bool checked = ids.at(i + 1).toInt() > 0;
-
-    if(index.value(id) != nullptr)
-    {
-      index.value(id)->setChecked(checked);
-      emit buttonToggled(id, checked);
-    }
-  }
+  // Enable or disable ok button
   updateButtonBoxState();
+
+  // Send signal for all check boxes and radio buttons manually since state might not have changed
+  for(QWidget *widget: qAsConst(index))
+  {
+    const QAbstractButton *button = dynamic_cast<const QAbstractButton *>(widget);
+    if(button != nullptr)
+      emit buttonToggled(button->property(ID_PROPERTY).toInt(), button->isChecked());
+  }
 }
 
 void ChoiceDialog::saveState() const
 {
+  QList<const QObject *> widgets({this});
+  for(auto it = index.begin(); it != index.end(); ++it)
+    widgets.append(*it);
+
   atools::gui::WidgetState widgetState(settingsPrefix, false);
-  widgetState.save(this);
-
-  // Save buttons in a list of id 1, checked 1, id 2, checked 2, ...
-  QStringList ids;
-  for(const std::pair<int, bool>& state : getCheckState())
-    ids << QString::number(state.first) << QString::number(state.second);
-
-  atools::settings::Settings::instance().setValue(settingsPrefix + "ButtonStates", ids);
+  widgetState.save(widgets);
 }
 
 void ChoiceDialog::updateButtonBoxState()
@@ -223,7 +213,8 @@ void ChoiceDialog::updateButtonBoxState()
     bool found = false;
     for(int i : qAsConst(required))
     {
-      if(index.contains(i) && index.value(i)->isChecked())
+      const QAbstractButton *button = getButtonInt(i);
+      if(button != nullptr && button->isChecked())
         found = true;
     }
 
