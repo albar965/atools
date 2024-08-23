@@ -54,6 +54,24 @@ public:
   {
   }
 
+#ifdef ATOOLS_FLAGS_NO_INT
+  Flags(int flagValue)
+    : value(flagValue)
+  {
+  }
+
+  Flags(long flagValue)
+    : value(flagValue)
+  {
+  }
+
+  Flags(long long flagValue)
+    : value(flagValue)
+  {
+  }
+
+#endif
+
   Flags(const Flags& other)
   {
     value = other.value;
@@ -89,22 +107,22 @@ public:
   /* Comparison ======================================= */
   bool operator==(const ENUM& other) const
   {
-    return value == Flags(other).value;
+    return value == other;
   }
 
   bool operator==(const Flags& other) const
   {
-    return value == Flags(other).value;
+    return value == other.value;
   }
 
   bool operator!=(const ENUM& other) const
   {
-    return value != Flags(other).value;
+    return value != other;
   }
 
   bool operator!=(const Flags& other) const
   {
-    return value != Flags(other).value;
+    return value != other.value;
   }
 
   /* Bit operators ======================================= */
@@ -288,7 +306,9 @@ private:
 
 /* Definition macros ======================================= */
 
-/* Declare specific flags type using typedef */
+/* ============================================================================
+ * Declare specific flags type using typedef */
+
 #define ATOOLS_DECLARE_FLAGS_8(FlagsParam, EnumParam) \
         typedef atools::util::Flags<EnumParam, quint8> FlagsParam;
 
@@ -301,7 +321,9 @@ private:
 #define ATOOLS_DECLARE_FLAGS_64(FlagsParam, EnumParam) \
         typedef atools::util::Flags<EnumParam, quint64> FlagsParam;
 
-/* Declare operator|(), qHash(), operator>> and operator<< */
+/* ============================================================================
+ * Declare operator|(), qHash() and stream operators operator>> and operator<< */
+
 #define ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(FlagsParam) \
         inline atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType> \
         operator|(FlagsParam::EnumType f1, FlagsParam::EnumType f2) \
