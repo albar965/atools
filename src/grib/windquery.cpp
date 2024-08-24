@@ -408,11 +408,11 @@ void WindQuery::getWindForRect(WindPosList& result, atools::geo::Rect rect, floa
     layersByAlt(lower, upper, altFeet);
 
     // Split rectangle if it crosses the anti-meridian (date line)
-    for(const atools::geo::Rect& r : rect.splitAtAntiMeridian())
+    for(const atools::geo::Rect& splitRect : rect.splitAtAntiMeridian())
     {
-      for(float lonx = std::floor(r.getWest()); lonx <= r.getEast(); lonx += 1.f)
+      for(float lonx = std::floor(splitRect.getWest()); lonx <= splitRect.getEast(); lonx += 1.f)
       {
-        for(float laty = std::ceil(r.getNorth()); laty >= r.getSouth(); laty -= 1.f)
+        for(float laty = std::ceil(splitRect.getNorth()); laty >= splitRect.getSouth(); laty -= 1.f)
         {
           Pos cell(lonx, laty);
           if(gridSpacing > 1 && !cell.nearGrid(gridSpacing))

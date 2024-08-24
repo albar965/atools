@@ -109,6 +109,7 @@ Rect::Rect(const Pos& center, float radiusMeter, bool fast)
 
   topLeft = Pos(west, north);
   bottomRight = Pos(east, south);
+  normalize();
 }
 
 bool Rect::operator==(const Rect& other) const
@@ -125,10 +126,10 @@ bool Rect::contains(const Pos& pos) const
 {
   if(isValid() || pos.isValid())
   {
-    for(const Rect& r : splitAtAntiMeridian())
+    for(const Rect& splitRect : splitAtAntiMeridian())
     {
-      if(r.getWest() <= pos.getLonX() && pos.getLonX() <= r.getEast() &&
-         r.getNorth() >= pos.getLatY() && pos.getLatY() >= r.getSouth())
+      if(splitRect.getWest() <= pos.getLonX() && pos.getLonX() <= splitRect.getEast() &&
+         splitRect.getNorth() >= pos.getLatY() && pos.getLatY() >= splitRect.getSouth())
         return true;
     }
   }

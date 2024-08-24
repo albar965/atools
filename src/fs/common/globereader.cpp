@@ -178,22 +178,22 @@ float GlobeReader::elevationMax(const geo::Pos& pos, float sampleRadiusMeter)
   atools::geo::Rect rect(pos, sampleRadiusMeter, true /* fast */);
 
   // Get split if crossing anti-meridian
-  for(const atools::geo::Rect& r : rect.splitAtAntiMeridian())
+  for(const atools::geo::Rect& splitRect : rect.splitAtAntiMeridian())
   {
     // Top left
-    fileOffset = calcFileOffset(r.getTopLeft().getLonX(), r.getTopLeft().getLatY(), fileIndex);
+    fileOffset = calcFileOffset(splitRect.getTopLeft().getLonX(), splitRect.getTopLeft().getLatY(), fileIndex);
     indexes.insert(std::make_pair(fileIndex, fileOffset));
 
     // Top right
-    fileOffset = calcFileOffset(r.getTopRight().getLonX(), r.getTopRight().getLatY(), fileIndex);
+    fileOffset = calcFileOffset(splitRect.getTopRight().getLonX(), splitRect.getTopRight().getLatY(), fileIndex);
     indexes.insert(std::make_pair(fileIndex, fileOffset));
 
     // Bottom right
-    fileOffset = calcFileOffset(r.getBottomRight().getLonX(), r.getBottomRight().getLatY(), fileIndex);
+    fileOffset = calcFileOffset(splitRect.getBottomRight().getLonX(), splitRect.getBottomRight().getLatY(), fileIndex);
     indexes.insert(std::make_pair(fileIndex, fileOffset));
 
     // Bottom left
-    fileOffset = calcFileOffset(r.getBottomLeft().getLonX(), r.getBottomLeft().getLatY(), fileIndex);
+    fileOffset = calcFileOffset(splitRect.getBottomLeft().getLonX(), splitRect.getBottomLeft().getLatY(), fileIndex);
     indexes.insert(std::make_pair(fileIndex, fileOffset));
   }
 
