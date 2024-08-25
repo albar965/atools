@@ -281,10 +281,11 @@ private:
    * 26 Added parking suffix for MSFS.
    * 27 Columns "metadata.properties" added.
    * 28 All fixes related to atools 4.0.0.beta to 4.0.2.beta.
+   * 29 Waypoint name added.
    *
    * VERSION_NUMBER_TODO=
    */
-  static const int DB_VERSION_MINOR = 28;
+  static const int DB_VERSION_MINOR = 29;
 
   /* Additionally checking for last schema change using minor version to avoid user. Usually version of last version change. */
   static const int DB_VERSION_MINOR_OUTDATED = 24;
