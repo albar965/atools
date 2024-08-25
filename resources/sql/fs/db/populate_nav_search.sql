@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@
 delete from nav_search;
 
 -- Insert waypoints into nav_search table
-insert into nav_search (waypoint_id, waypoint_nav_id, file_id, ident, region, airport_id, airport_ident,
+insert into nav_search (waypoint_id, waypoint_nav_id, file_id, ident, name, region, airport_id, airport_ident,
   type, arinc_type, nav_type, waypoint_num_victor_airway, waypoint_num_jet_airway, scenery_local_path, bgl_filename, mag_var, lonx, laty)
-select w.waypoint_id, w.nav_id, w.file_id, w.ident, w.region, w.airport_id, a.ident as airport_ident,
+select w.waypoint_id, w.nav_id, w.file_id, w.ident, w.name, w.region, w.airport_id, a.ident as airport_ident,
   w.type, w.arinc_type, 'W', w.num_victor_airway, w.num_jet_airway, s.local_path, f.filename, w.mag_var, w.lonx, w.laty
 from waypoint w
 join bgl_file f on f.bgl_file_id = w.file_id

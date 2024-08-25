@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -107,10 +107,14 @@ create table trackpoint
                                       -- Otherweise waypoint_id
   nav_id integer,                     -- Refers to vor.vor_id or ndb.ndb_id depending on type
   ident varchar(5),                   -- ICAO ident
+  name varchar(50),
   region varchar(2),                  -- ICAO two letter region identifier
+  artificial integer,                 -- Created for VOR and NDB navaids to support airway generation.
+                                      -- 1 = for airways and 2 = for procedures (2 is only needed for LNM <= 2.4.5)
   type varchar(15),                   -- see enum atools::fs::bgl::nav::WaypointType
                                       -- N = NDB, OA = off airway, V = VOR, WN = named waypoint,
                                       -- WU = unnamed waypoint, WT = artificial track waypoint
+  arinc_type varchar(4),              -- ARINC Waypoint type as defined by the 3 columns of ARINC 424.18 field definition 5.42
   num_victor_airway integer not null, -- Number of victor (low altitude) airways crossing this waypoint
   num_jet_airway integer not null,    -- Number of jet (high altitude) airways crossing this waypoint
   mag_var double not null,            -- Magnetic variance in degree < 0 for West and > 0 for East

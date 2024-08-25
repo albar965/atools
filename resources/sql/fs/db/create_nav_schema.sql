@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ create table waypoint
   file_id integer not null,
   nav_id integer,                     -- Refers to vor.vor_id or ndb.ndb_id depending on type
   ident varchar(5) not null,          -- ICAO ident
+  name varchar(50),
   region varchar(2),                  -- ICAO two letter region identifier
   airport_id integer,                 -- Reference to airport if applicable
   airport_ident varchar(4),           -- Redundant to id - used for resolving id after compilation

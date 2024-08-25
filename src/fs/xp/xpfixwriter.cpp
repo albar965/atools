@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,10 +43,11 @@ enum FieldIndex
   IDENT = 2, /* Usually five characters. Unique within an ICAO region */
   AIRPORT = 3, /* Must be either airport identifier or "ENRT" */
   REGION = 4,
-  ARINC_TYPE = 5 /* 32 bit representation of the 3-byte field defined by ARINC
-                  * 424.18 field type definition 5.42, with the 4th byte set to 0 in
-                  * Little Endian byte order. This field can be empty ONLY for user
-                  * waypoints in user_fix.dat */
+  ARINC_TYPE = 5, /* 32 bit representation of the 3-byte field defined by ARINC
+                   * 424.18 field type definition 5.42, with the 4th byte set to 0 in
+                   * Little Endian byte order. This field can be empty ONLY for user
+                   * waypoints in user_fix.dat */
+  NAME /* Rest of field is name since XP12 */
 };
 
 XpFixWriter::XpFixWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
@@ -71,6 +72,7 @@ void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
   insertWaypointQuery->bindValue(":waypoint_id", ++curFixId);
   insertWaypointQuery->bindValue(":file_id", context.curFileId);
   insertWaypointQuery->bindValue(":ident", at(line, IDENT));
+  insertWaypointQuery->bindValue(":name", mid(line, NAME, true /* ignore error */));
   insertWaypointQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT)));
   insertWaypointQuery->bindValue(":airport_ident", atAirportIdent(line, AIRPORT));
   insertWaypointQuery->bindValue(":region", at(line, REGION)); // ZZ for no region

@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -230,10 +230,11 @@ left outer join tbl_runways r on
 
 delete from waypoint;
 
-insert into waypoint (file_id, ident, region, type, arinc_type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
+insert into waypoint (file_id, ident, name, region, type, arinc_type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
 select
   1 as file_id,
   waypoint_identifier as ident,
+  waypoint_name as name,
   icao_code as region,
   -- N = NDB, OA = off airway, V = VOR, WN = named waypoint, WU = unnamed waypoint
   case when substr(waypoint_type, 1, 1) = 'I' then 'WU' else 'WN' end as type,

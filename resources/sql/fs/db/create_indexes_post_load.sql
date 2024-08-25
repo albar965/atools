@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ create index if not exists idx_airport_file_file_id on airport_file(file_id);
 create index if not exists idx_waypoint_type on waypoint(type);
 create index if not exists idx_waypoint_region on waypoint(region);
 create index if not exists idx_waypoint_ident on waypoint(ident);
+create index if not exists idx_waypoint_name on waypoint(name);
 create index if not exists idx_waypoint_num_vairway on waypoint(num_victor_airway);
 create index if not exists idx_waypoint_num_rairway on waypoint(num_jet_airway);
 create index if not exists idx_waypoint_lonx on waypoint(lonx);
