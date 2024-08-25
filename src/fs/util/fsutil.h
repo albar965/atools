@@ -123,6 +123,9 @@ bool isNameClosed(const QString& airportName);
 /* Capitalize any string ignoring aviation acronyms */
 QString capNavString(const QString& str);
 
+/* Capitalize only if ident not equal to name. Used for waypoint names. */
+QString capWaypointNameString(const QString& ident, const QString& name, bool emptyIfEqual);
+
 /* Capitalize airport name making special designators (AFB, ...) upper case */
 QString capAirportName(const QString& str);
 

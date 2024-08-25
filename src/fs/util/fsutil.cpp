@@ -32,6 +32,7 @@ namespace util {
 // Closed airport by name
 const static QRegularExpression REGEXP_CLOSED(QLatin1String("(\\[X\\]|\\bCLSD\\b|\\bCLOSED\\b)"));
 const static QRegularExpression REGEXP_DIGIT("\\d");
+const static QRegularExpression REGEXP_WAYPOINT_DME("(\\w+) \\((\\w+) ([\\d\\.]+) DME\\)");
 const static QRegularExpression REGEXP_WHITESPACE("\\s");
 
 /* ICAO speed and altitude matches */
@@ -459,6 +460,25 @@ bool isNameMilitary(QString airportName)
   return false;
 }
 
+QString capWaypointNameString(const QString& ident, const QString& name, bool emptyIfEqual)
+{
+  if(ident == name)
+    return emptyIfEqual ? QString() : name;
+  else
+  {
+    if(name.contains('('))
+    {
+      QRegularExpressionMatch match = REGEXP_WAYPOINT_DME.match(name);
+      if(match.hasMatch())
+        // Special case "IKR138012 (KRE 11.2 DME)"
+        return match.captured(1) % " (" % match.captured(2).toUpper() % ' ' + match.captured(3) % " DME)";
+
+    }
+  }
+
+  return capNavString(name);
+}
+
 QString capNavString(const QString& str)
 {
   if(str.contains(REGEXP_DIGIT) && !str.contains(REGEXP_WHITESPACE))
@@ -482,8 +502,7 @@ QString capNavString(const QString& str)
           "TCA", "MCTR", "VFR", "IFR", "DFS", "TNA", "CAE", "LANTA",
           "TSRA" "AFB", "OCA", "ARB", "MCAS", "NAS", "NOLF", "NS", "NAWS", "USAF", "TMAD", "CON", "ATS", "MTMA",
           "TRSA", "SFB", "AAF", "DC", "CGAS", "RT", "ASPC", "UAC", "LTA",
-          "I", "II", "III", "IV", "V", "VI"
-        });
+          "I", "II", "III", "IV", "V", "VI", "NM"});
 
   return atools::capString(str, FORCE_UPPER).trimmed();
 }
