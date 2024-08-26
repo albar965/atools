@@ -57,7 +57,10 @@ ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::xp::ContextFlags)
 struct XpWriterContext
 {
   int curFileId = 0, cifpAirportId = 0, fileVersion = 0, lineNumber = 0;
-  QString localPath, fileName, filePath, cifpAirportIdent;
+  QString localPath,
+  fileName, /* "apt.dat" */
+  filePath, /* .../X-Plane 11 User Scenery/BIKF_Scenery_Pack/Earth nav data/apt.dat */
+  cifpAirportIdent;
   atools::fs::xp::ContextFlags flags = NO_FLAG;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
 

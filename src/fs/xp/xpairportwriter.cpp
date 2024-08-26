@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -266,12 +266,18 @@ void XpAirportWriter::write(const QStringList& line, const XpWriterContext& cont
   ctx = &context;
   AirportRowCode rowCode = static_cast<AirportRowCode>(at(line, ap::ROWCODE).toInt());
 
+  // if(context.lineNumber == 2657 && context.filePath.contains("KSEA_Scenery_Pack"))
+  // qDebug() << Q_FUNC_INFO;
+
   if(!contains(rowCode, {x::PAVEMENT_HEADER, x::NODE, x::NODE_AND_CONTROL_POINT,
                          x::NODE_CLOSE, x::NODE_AND_CONTROL_POINT_CLOSE}))
     finishPavement(context);
 
   if(rowCode != x::RAMP_START_METADATA)
     finishStartupLocation();
+
+  // ignore AIRPORT_BOUNDARY_HEADER 130 and LINEAR_FEATURE_HEADER 120
+  // Close pavement
 
   switch(rowCode)
   {
@@ -496,18 +502,21 @@ void XpAirportWriter::bindPavementNode(const QStringList& line, atools::fs::xp::
   if(!writingAirport)
     qWarning() << context.messagePrefix() << "Invalid writing airport state in bindPavementNode";
 
-  Pos node(at(line, n::LONX).toFloat(), at(line, n::LATY).toFloat());
-  Pos control;
-  airportRect.extend(node);
+  if(writingPavementBoundary || writingPavementHoles)
+  {
+    Pos node(at(line, n::LONX).toFloat(), at(line, n::LATY).toFloat());
+    Pos control;
+    airportRect.extend(node);
 
-  if(rowCode == x::NODE_AND_CONTROL_POINT || rowCode == x::NODE_AND_CONTROL_POINT_CLOSE)
-    // Bezier cubic or quad control point
-    control = Pos(at(line, n::CTRL_LONX).toFloat(), at(line, n::CTRL_LATY).toFloat());
+    if(rowCode == x::NODE_AND_CONTROL_POINT || rowCode == x::NODE_AND_CONTROL_POINT_CLOSE)
+      // Bezier cubic or quad control point
+      control = Pos(at(line, n::CTRL_LONX).toFloat(), at(line, n::CTRL_LATY).toFloat());
 
-  if(writingPavementBoundary)
-    currentPavement.addBoundaryNode(node, control);
-  else if(writingPavementHoles)
-    currentPavement.addHoleNode(node, control, writingPavementNewHole);
+    if(writingPavementBoundary)
+      currentPavement.addBoundaryNode(node, control);
+    else if(writingPavementHoles)
+      currentPavement.addHoleNode(node, control, writingPavementNewHole);
+  }
 
   writingPavementNewHole = false;
 
