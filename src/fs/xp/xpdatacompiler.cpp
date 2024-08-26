@@ -18,15 +18,15 @@
 #include "fs/xp/xpdatacompiler.h"
 
 #include "fs/navdatabaseoptions.h"
-#include "fs/xp/xpfixwriter.h"
-#include "fs/xp/xpmorawriter.h"
-#include "fs/xp/xpairportmsawriter.h"
-#include "fs/xp/xpholdingwriter.h"
-#include "fs/xp/xpnavwriter.h"
-#include "fs/xp/xpairwaywriter.h"
-#include "fs/xp/xpairportwriter.h"
-#include "fs/xp/xpcifpwriter.h"
-#include "fs/xp/xpairspacewriter.h"
+#include "fs/xp/xpfixreader.h"
+#include "fs/xp/xpmorareader.h"
+#include "fs/xp/xpairportmsareader.h"
+#include "fs/xp/xpholdingreader.h"
+#include "fs/xp/xpnavreader.h"
+#include "fs/xp/xpairwayreader.h"
+#include "fs/xp/xpairportreader.h"
+#include "fs/xp/xpcifpreader.h"
+#include "fs/xp/xpairspacereader.h"
 #include "fs/xp/scenerypacks.h"
 #include "fs/common/magdecreader.h"
 #include "sql/sqldatabase.h"
@@ -93,15 +93,15 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
 
   airportIndex = new AirportIndex();
 
-  airportWriter = new XpAirportWriter(db, airportIndex, options, progress, errors);
-  moraWriter = new XpMoraWriter(db, options, progress, errors);
-  airportMsaWriter = new XpAirportMsaWriter(db, airportIndex, options, progress, errors);
-  holdingWriter = new XpHoldingWriter(db, airportIndex, options, progress, errors);
-  fixWriter = new XpFixWriter(db, airportIndex, options, progress, errors);
-  navWriter = new XpNavWriter(db, airportIndex, options, progress, errors);
-  cifpWriter = new XpCifpWriter(db, airportIndex, options, progress, errors);
-  airspaceWriter = new XpAirspaceWriter(db, options, progress, errors);
-  airwayWriter = new XpAirwayWriter(db, options, progress, errors);
+  airportReader = new XpAirportReader(db, airportIndex, options, progress, errors);
+  moraReader = new XpMoraReader(db, options, progress, errors);
+  airportMsaReader = new XpAirportMsaReader(db, airportIndex, options, progress, errors);
+  holdingReader = new XpHoldingReader(db, airportIndex, options, progress, errors);
+  fixReader = new XpFixReader(db, airportIndex, options, progress, errors);
+  navReader = new XpNavReader(db, airportIndex, options, progress, errors);
+  cifpReader = new XpCifpReader(db, airportIndex, options, progress, errors);
+  airspaceReader = new XpAirspaceReader(db, options, progress, errors);
+  airwayReader = new XpAirwayReader(db, options, progress, errors);
   airwayPostProcess = new AirwayPostProcess(db);
   metadataWriter = new MetadataWriter(db);
   magDecReader = new MagDecReader();
@@ -127,7 +127,7 @@ bool XpDataCompiler::compileEarthFix()
 
   if(checkFile(Q_FUNC_INFO, path))
   {
-    if(readDataFile(path, 5, fixWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL))
+    if(readDataFile(path, 5, fixReader, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL))
       return true;
   }
   else
@@ -145,7 +145,7 @@ bool XpDataCompiler::compileEarthMora()
   if(checkFile(Q_FUNC_INFO, filepath))
   {
     // NO_FLAG - ignore AIRAC discrepancies
-    if(readDataFile(filepath, 5, moraWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL))
+    if(readDataFile(filepath, 5, moraReader, NO_FLAG, NUM_REPORT_STEPS_SMALL))
       return true;
   }
 
@@ -161,7 +161,7 @@ bool XpDataCompiler::compileEarthAirportMsa()
   if(checkFile(Q_FUNC_INFO, filepath))
   {
     // NO_FLAG - ignore AIRAC discrepancies
-    if(readDataFile(filepath, 5, airportMsaWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL))
+    if(readDataFile(filepath, 5, airportMsaReader, NO_FLAG, NUM_REPORT_STEPS_SMALL))
       return true;
   }
 
@@ -177,7 +177,7 @@ bool XpDataCompiler::compileEarthHolding()
   if(checkFile(Q_FUNC_INFO, filepath))
   {
     // NO_FLAG - ignore AIRAC discrepancies
-    if(readDataFile(filepath, 5, holdingWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL))
+    if(readDataFile(filepath, 5, holdingReader, NO_FLAG, NUM_REPORT_STEPS_SMALL))
       return true;
   }
 
@@ -192,7 +192,7 @@ bool XpDataCompiler::compileEarthAirway()
   if(checkFile(Q_FUNC_INFO, path))
   {
 
-    if(readDataFile(path, 11, airwayWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL))
+    if(readDataFile(path, 11, airwayReader, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL))
       return true;
   }
   else
@@ -219,7 +219,7 @@ bool XpDataCompiler::compileEarthNav()
   QString path = buildPathNoCase({basePath, "earth_nav.dat"});
   if(checkFile(Q_FUNC_INFO, path))
   {
-    if(readDataFile(path, 11, navWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL))
+    if(readDataFile(path, 11, navReader, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL))
       return true;
   }
   else
@@ -238,7 +238,7 @@ bool XpDataCompiler::compileCustomApt()
   for(const QString& aptdat : aptDatFiles)
   {
     // Only one progress report per file
-    if(readDataFile(aptdat, 1, airportWriter, IS_ADDON | READ_SHORT_REPORT, 1))
+    if(readDataFile(aptdat, 1, airportReader, IS_ADDON | READ_SHORT_REPORT, 1))
       return true;
   }
   db.commit();
@@ -254,7 +254,7 @@ bool XpDataCompiler::compileUserIncludeApt()
     for(const QString& aptdat : aptDatFiles)
     {
       // Only one progress report per file
-      if(readDataFile(aptdat, 1, airportWriter, IS_ADDON | READ_SHORT_REPORT, 1))
+      if(readDataFile(aptdat, 1, airportReader, IS_ADDON | READ_SHORT_REPORT, 1))
         return true;
     }
   }
@@ -269,7 +269,7 @@ bool XpDataCompiler::compileCustomGlobalApt()
 
   if(checkFile(Q_FUNC_INFO, path))
   {
-    if(readDataFile(path, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS))
+    if(readDataFile(path, 1, airportReader, xp::NO_FLAG, NUM_REPORT_STEPS))
       return true;
   }
 
@@ -284,7 +284,7 @@ bool XpDataCompiler::compileGlobalApt12()
 
   if(checkFile(Q_FUNC_INFO, path))
   {
-    if(readDataFile(path, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS))
+    if(readDataFile(path, 1, airportReader, xp::NO_FLAG, NUM_REPORT_STEPS))
       return true;
   }
 
@@ -300,7 +300,7 @@ bool XpDataCompiler::compileDefaultApt()
 
   if(checkFile(Q_FUNC_INFO, defaultAptDat))
   {
-    if(readDataFile(defaultAptDat, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS))
+    if(readDataFile(defaultAptDat, 1, airportReader, xp::NO_FLAG, NUM_REPORT_STEPS))
       return true;
   }
   else
@@ -322,7 +322,7 @@ bool XpDataCompiler::compileCifp()
   {
     if(options.isIncludedFilename(file))
     {
-      if(readDataFile(file, 1, cifpWriter, READ_CIFP | READ_SHORT_REPORT, 0))
+      if(readDataFile(file, 1, cifpReader, READ_CIFP | READ_SHORT_REPORT, 0))
         return true;
 
       if((row % rowsPerStep) == 0)
@@ -353,7 +353,7 @@ bool XpDataCompiler::compileAirspaces()
     if(options.isIncludedFilename(file))
     {
       // Only one progress report per file
-      if(readDataFile(file, 1, airspaceWriter, READ_AIRSPACE | READ_SHORT_REPORT, 1))
+      if(readDataFile(file, 1, airspaceReader, READ_AIRSPACE | READ_SHORT_REPORT, 1))
         return true;
     }
   }
@@ -370,7 +370,7 @@ bool XpDataCompiler::compileLocalizers()
   if(checkFile(Q_FUNC_INFO, path))
   {
     // Only one progress report per file
-    if(readDataFile(path, 11, navWriter, READ_LOCALIZERS | READ_SHORT_REPORT, 1))
+    if(readDataFile(path, 11, navReader, READ_LOCALIZERS | READ_SHORT_REPORT, 1))
       return true;
   }
 
@@ -385,7 +385,7 @@ bool XpDataCompiler::compileUserNav()
   if(checkFile(Q_FUNC_INFO, path))
   {
     // One progress report per file
-    if(readDataFile(path, 11, navWriter, READ_USER | READ_SHORT_REPORT, 1))
+    if(readDataFile(path, 11, navReader, READ_USER | READ_SHORT_REPORT, 1))
       return true;
   }
 
@@ -400,7 +400,7 @@ bool XpDataCompiler::compileUserFix()
   if(checkFile(Q_FUNC_INFO, path))
   {
     // One progress report per file
-    if(readDataFile(path, 5, fixWriter, READ_USER | READ_SHORT_REPORT, 1))
+    if(readDataFile(path, 5, fixReader, READ_USER | READ_SHORT_REPORT, 1))
       return true;
   }
 
@@ -416,8 +416,8 @@ bool XpDataCompiler::compileMagDeclBgl()
   return false;
 }
 
-bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWriter *writer,
-                                  atools::fs::xp::ContextFlags flags, int numReportSteps)
+bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpReader *reader, atools::fs::xp::ContextFlags flags,
+                                  int numReportSteps)
 {
   QFile file;
   QTextStream stream;
@@ -441,7 +441,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
     // Open file and read header - throws exception on error
     if(openFile(stream, file, filepath, flags, lineNum, totalNumLines, fileVersion))
     {
-      XpWriterContext context;
+      XpReaderContext context;
       context.curFileId = curFileId;
       context.fileName = fileinfo.fileName();
       context.filePath = fileinfo.filePath();
@@ -550,13 +550,13 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
             context.lineNumber = lineNum;
 
             // Call writer
-            writer->write(fields, context);
+            reader->read(fields, context);
           }
         }
         lineNum++;
       }
       if(!aborted)
-        writer->finish(context);
+        reader->finish(context);
 
       file.close();
 
@@ -575,13 +575,13 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
     }
     else
     {
-      writer->reset();
+      reader->reset();
       // Enrich error message and rethrow a new one
       throw atools::Exception(QString("Caught exception in file \"%1\" in line %2. Message: %3").
                               arg(fileinfo.filePath()).arg(lineNum).arg(e.what()));
     }
   }
-  writer->reset();
+  reader->reset();
   return aborted;
 }
 
@@ -682,32 +682,32 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
 
 void XpDataCompiler::close()
 {
-  delete fixWriter;
-  fixWriter = nullptr;
+  delete fixReader;
+  fixReader = nullptr;
 
-  delete moraWriter;
-  moraWriter = nullptr;
+  delete moraReader;
+  moraReader = nullptr;
 
-  delete navWriter;
-  navWriter = nullptr;
+  delete navReader;
+  navReader = nullptr;
 
-  delete cifpWriter;
-  cifpWriter = nullptr;
+  delete cifpReader;
+  cifpReader = nullptr;
 
-  delete airspaceWriter;
-  airspaceWriter = nullptr;
+  delete airspaceReader;
+  airspaceReader = nullptr;
 
-  delete airwayWriter;
-  airwayWriter = nullptr;
+  delete airwayReader;
+  airwayReader = nullptr;
 
-  delete airportWriter;
-  airportWriter = nullptr;
+  delete airportReader;
+  airportReader = nullptr;
 
-  delete airportMsaWriter;
-  airportMsaWriter = nullptr;
+  delete airportMsaReader;
+  airportMsaReader = nullptr;
 
-  delete holdingWriter;
-  holdingWriter = nullptr;
+  delete holdingReader;
+  holdingReader = nullptr;
 
   delete airwayPostProcess;
   airwayPostProcess = nullptr;

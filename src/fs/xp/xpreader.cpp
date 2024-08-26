@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xpwriter.h"
+#include "fs/xp/xpreader.h"
 #include "fs/navdatabaseerrors.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
@@ -27,35 +27,35 @@ namespace atools {
 namespace fs {
 namespace xp {
 
-XpWriter::XpWriter(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
+XpReader::XpReader(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                    atools::fs::NavDatabaseErrors *navdatabaseErrors)
   : db(sqlDb), options(opts), progress(progressHandler), errors(navdatabaseErrors)
 {
 
 }
 
-XpWriter::~XpWriter()
+XpReader::~XpReader()
 {
 
 }
 
-void XpWriter::fetchWaypoint(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos)
+void XpReader::fetchWaypoint(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos)
 {
   fetchNavaid(waypointQuery, ident, region, id, magvar, pos);
 }
 
-void XpWriter::fetchNdb(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos)
+void XpReader::fetchNdb(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos)
 {
   fetchNavaid(ndbQuery, ident, region, id, magvar, pos);
 }
 
-void XpWriter::fetchVor(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos,
+void XpReader::fetchVor(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos,
                         QString& vorType, bool& dmeOnly, bool& hasDme)
 {
   fetchNavaid(vorQuery, ident, region, id, magvar, pos, &vorType, &dmeOnly, &hasDme);
 }
 
-void XpWriter::fetchNavaid(atools::sql::SqlQuery *query, const QString& ident, const QString& region,
+void XpReader::fetchNavaid(atools::sql::SqlQuery *query, const QString& ident, const QString& region,
                            int& id, float& magvar, atools::geo::Pos& pos, QString *vorType,
                            bool *dmeOnly, bool *hasDme)
 {
@@ -87,7 +87,7 @@ void XpWriter::fetchNavaid(atools::sql::SqlQuery *query, const QString& ident, c
   query->finish();
 }
 
-void XpWriter::initNavQueries()
+void XpReader::initNavQueries()
 {
   deInitNavQueries();
 
@@ -106,7 +106,7 @@ void XpWriter::initNavQueries()
                     "where ident = :ident and region = :region limit 1");
 }
 
-void XpWriter::deInitNavQueries()
+void XpReader::deInitNavQueries()
 {
   delete waypointQuery;
   waypointQuery = nullptr;
@@ -118,7 +118,7 @@ void XpWriter::deInitNavQueries()
   vorQuery = nullptr;
 }
 
-void XpWriter::err(const QString& msg)
+void XpReader::err(const QString& msg)
 {
   if(ctx != nullptr)
     qWarning() << ctx->messagePrefix() << msg;
@@ -144,7 +144,7 @@ void XpWriter::err(const QString& msg)
   }
 }
 
-void XpWriter::errWarn(const QString& msg)
+void XpReader::errWarn(const QString& msg)
 {
   if(ctx != nullptr)
     qWarning() << ctx->messagePrefix() << msg;

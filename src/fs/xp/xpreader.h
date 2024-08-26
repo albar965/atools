@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_XP_WRITER_H
-#define ATOOLS_FS_XP_WRITER_H
+#ifndef ATOOLS_FS_XP_READER_h
+#define ATOOLS_FS_XP_READER_h
 
 #include "exception.h"
 #include "fs/xp/xpconstants.h"
@@ -42,24 +42,24 @@ class NavDatabaseErrors;
 
 namespace xp {
 
-struct XpWriterContext;
+struct XpReaderContext;
 
 /*
  * Base class for all X-Plane reading classes to read dat files.
  */
-class XpWriter
+class XpReader
 {
 public:
-  XpWriter(atools::sql::SqlDatabase& sqlDb,
+  XpReader(atools::sql::SqlDatabase& sqlDb,
            const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
            atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpWriter();
+  virtual ~XpReader();
 
   /* Called for each line read from a dat file */
-  virtual void write(const QStringList& line, const atools::fs::xp::XpWriterContext& context) = 0;
+  virtual void read(const QStringList& line, const atools::fs::xp::XpReaderContext& context) = 0;
 
   /* Called when finished with reading a dat file */
-  virtual void finish(const atools::fs::xp::XpWriterContext& context) = 0;
+  virtual void finish(const atools::fs::xp::XpReaderContext& context) = 0;
 
   /* Reset all internal states/caches etc. */
   virtual void reset() = 0;
@@ -107,7 +107,7 @@ protected:
   void initNavQueries();
   void deInitNavQueries();
 
-  const atools::fs::xp::XpWriterContext *ctx = nullptr;
+  const atools::fs::xp::XpReaderContext *ctx = nullptr;
   atools::sql::SqlDatabase& db;
   const atools::fs::NavDatabaseOptions& options;
   atools::fs::ProgressHandler *progress;
@@ -130,4 +130,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_XP_WRITER_H
+#endif // ATOOLS_FS_XP_READER_h

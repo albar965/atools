@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_XP_AIRPORTWRITER_H
-#define ATOOLS_FS_XP_AIRPORTWRITER_H
+#ifndef ATOOLS_FS_XP_AIRPORTREADER_h
+#define ATOOLS_FS_XP_AIRPORTREADER_h
 
-#include "fs/xp/xpwriter.h"
+#include "fs/xp/xpreader.h"
 
 #include "geo/rect.h"
 #include "geo/line.h"
@@ -50,22 +50,22 @@ namespace xp {
 /*
  * Reads one or more airports from an apt.dat file and writes them into a database
  */
-class XpAirportWriter :
-  public atools::fs::xp::XpWriter
+class XpAirportReader :
+  public atools::fs::xp::XpReader
 {
   Q_DECLARE_TR_FUNCTIONS(XpAirportWriter)
 
 public:
-  XpAirportWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
+  XpAirportReader(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                   const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
                   atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpAirportWriter() override;
+  virtual ~XpAirportReader() override;
 
-  XpAirportWriter(const XpAirportWriter& other) = delete;
-  XpAirportWriter& operator=(const XpAirportWriter& other) = delete;
+  XpAirportReader(const XpAirportReader& other) = delete;
+  XpAirportReader& operator=(const XpAirportReader& other) = delete;
 
-  virtual void write(const QStringList& line, const XpWriterContext& context) override;
-  virtual void finish(const XpWriterContext& context) override;
+  virtual void read(const QStringList& line, const XpReaderContext& context) override;
+  virtual void finish(const XpReaderContext& context) override;
 
   virtual void reset() override;
 
@@ -75,54 +75,54 @@ private:
 
   /* Fill airport data from the header into the query */
   void bindAirport(const QStringList& line, atools::fs::xp::AirportRowCode airportRowCode,
-                   const XpWriterContext& context);
+                   const XpReaderContext& context);
 
   /* Add metadata from key/value pairs */
-  void bindMetadata(const QStringList& line, const XpWriterContext& context);
+  void bindMetadata(const QStringList& line, const XpReaderContext& context);
 
   /* Add viewpoint as tower position */
-  void bindViewpoint(const QStringList& line, const XpWriterContext& context);
+  void bindViewpoint(const QStringList& line, const XpReaderContext& context);
 
   /* Add fuel flags from truck parking positions */
-  void bindFuel(const QStringList& line, const XpWriterContext& context);
+  void bindFuel(const QStringList& line, const XpReaderContext& context);
 
   /* Finalize and write airport */
-  void finishAirport(const XpWriterContext& context);
+  void finishAirport(const XpReaderContext& context);
 
   /* Collect runway data and write start positions */
-  void bindRunway(const QStringList& line, AirportRowCode airportRowCode, const XpWriterContext& context);
+  void bindRunway(const QStringList& line, AirportRowCode airportRowCode, const XpReaderContext& context);
 
   /* Write helipad and start positions */
-  void writeHelipad(const QStringList& line, const XpWriterContext& context);
+  void writeHelipad(const QStringList& line, const XpReaderContext& context);
 
   /* TWR, ASOS, ATIS, etc. */
-  void writeCom(const QStringList& line, AirportRowCode rowCode, const XpWriterContext& context, bool spacing833Khz);
+  void writeCom(const QStringList& line, AirportRowCode rowCode, const XpReaderContext& context, bool spacing833Khz);
 
   /* Add vasi to runway end */
-  void bindVasi(const QStringList& line, const XpWriterContext& context);
+  void bindVasi(const QStringList& line, const XpReaderContext& context);
 
   /* File metadata for lookup in GUI*/
   void writeAirportFile(const QString& icao, int curFileId);
 
   /* Start pavement (taxi and apron) by header */
-  void bindPavement(const QStringList& line, const atools::fs::xp::XpWriterContext& context);
+  void bindPavement(const QStringList& line, const atools::fs::xp::XpReaderContext& context);
   void bindPavementNode(const QStringList& line, atools::fs::xp::AirportRowCode rowCode,
-                        const XpWriterContext& context);
-  void finishPavement(const XpWriterContext& context);
+                        const XpReaderContext& context);
+  void finishPavement(const XpReaderContext& context);
 
   /* Obsolete type 15 */
-  void writeStartup(const QStringList& line, const XpWriterContext& context);
+  void writeStartup(const QStringList& line, const XpReaderContext& context);
 
   /* Write parking */
-  void writeStartupLocation(const QStringList& line, const XpWriterContext& context);
-  void writeStartupLocationMetadata(const QStringList& line, const XpWriterContext& context);
+  void writeStartupLocation(const QStringList& line, const XpReaderContext& context);
+  void writeStartupLocationMetadata(const QStringList& line, const XpReaderContext& context);
   void finishStartupLocation();
 
   /* Collect taxi nodes (not written) */
-  void bindTaxiNode(const QStringList& line, const XpWriterContext& context);
+  void bindTaxiNode(const QStringList& line, const XpReaderContext& context);
 
   /* Write taxi edges */
-  void bindTaxiEdge(const QStringList& line, const XpWriterContext& context);
+  void bindTaxiEdge(const QStringList& line, const XpReaderContext& context);
 
   int compareGate(const QString& gate1, const QString& gate2);
   int compareRamp(const QString& ramp1, const QString& ramp2);
@@ -217,4 +217,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_XP_AIRPORTWRITER_H
+#endif // ATOOLS_FS_XP_AIRPORTREADER_h

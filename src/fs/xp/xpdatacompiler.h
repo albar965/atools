@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_XP_DATAWRITER_H
-#define ATOOLS_XP_DATAWRITER_H
+#ifndef ATOOLS_XP_DATAREADER_h
+#define ATOOLS_XP_DATAREADER_h
 
 #include "fs/xp/xpconstants.h"
 
@@ -47,16 +47,16 @@ class AirportIndex;
 namespace xp {
 
 struct SceneryPack;
-class XpFixWriter;
-class XpMoraWriter;
-class XpAirportMsaWriter;
-class XpHoldingWriter;
-class XpNavWriter;
-class XpAirwayWriter;
-class XpAirportWriter;
-class XpCifpWriter;
-class XpAirspaceWriter;
-class XpWriter;
+class XpFixReader;
+class XpMoraReader;
+class XpAirportMsaReader;
+class XpHoldingReader;
+class XpNavReader;
+class XpAirwayReader;
+class XpAirportReader;
+class XpCifpReader;
+class XpAirspaceReader;
+class XpReader;
 class AirwayPostProcess;
 
 /*
@@ -250,8 +250,8 @@ private:
   bool openFile(QTextStream& stream, QFile& filepath, const QString& filename, ContextFlags flags,
                 int& lineNum, int& totalNumLines, int& fileVersion);
 
-  /* Read file line by line and call writer for each one */
-  bool readDataFile(const QString& filepath, int minColumns, atools::fs::xp::XpWriter *writer,
+  /* Read file line by line and call reader for each one */
+  bool readDataFile(const QString& filepath, int minColumns, atools::fs::xp::XpReader *reader,
                     atools::fs::xp::ContextFlags flags, int numReportSteps);
   static QString buildBasePath(const NavDatabaseOptions& opts, const QString& filename);
 
@@ -292,15 +292,15 @@ private:
   atools::sql::SqlDatabase& db;
   atools::fs::ProgressHandler *progress = nullptr;
 
-  atools::fs::xp::XpFixWriter *fixWriter = nullptr;
-  atools::fs::xp::XpMoraWriter *moraWriter = nullptr;
-  atools::fs::xp::XpAirportMsaWriter *airportMsaWriter = nullptr;
-  atools::fs::xp::XpHoldingWriter *holdingWriter = nullptr;
-  atools::fs::xp::XpAirwayWriter *airwayWriter = nullptr;
-  atools::fs::xp::XpNavWriter *navWriter = nullptr;
-  atools::fs::xp::XpAirportWriter *airportWriter = nullptr;
-  atools::fs::xp::XpCifpWriter *cifpWriter = nullptr; // Procedures
-  atools::fs::xp::XpAirspaceWriter *airspaceWriter = nullptr; // boundaries
+  atools::fs::xp::XpFixReader *fixReader = nullptr;
+  atools::fs::xp::XpMoraReader *moraReader = nullptr;
+  atools::fs::xp::XpAirportMsaReader *airportMsaReader = nullptr;
+  atools::fs::xp::XpHoldingReader *holdingReader = nullptr;
+  atools::fs::xp::XpAirwayReader *airwayReader = nullptr;
+  atools::fs::xp::XpNavReader *navReader = nullptr;
+  atools::fs::xp::XpAirportReader *airportReader = nullptr;
+  atools::fs::xp::XpCifpReader *cifpReader = nullptr; // Procedures
+  atools::fs::xp::XpAirspaceReader *airspaceReader = nullptr; // boundaries
   atools::fs::xp::AirwayPostProcess *airwayPostProcess = nullptr;
   atools::fs::common::AirportIndex *airportIndex = nullptr;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
@@ -316,4 +316,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_XP_DATAWRITER_H
+#endif // ATOOLS_XP_DATAREADER_h

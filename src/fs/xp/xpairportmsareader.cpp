@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2021 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xpairportmsawriter.h"
+#include "fs/xp/xpairportmsareader.h"
 
 #include "fs/common/airportindex.h"
 #include "fs/common/magdecreader.h"
@@ -58,16 +58,16 @@ enum HoldFixType
   MSA_RW_END = 10
 };
 
-XpAirportMsaWriter::XpAirportMsaWriter(atools::sql::SqlDatabase& sqlDb,
+XpAirportMsaReader::XpAirportMsaReader(atools::sql::SqlDatabase& sqlDb,
                                        atools::fs::common::AirportIndex *airportIndexParam,
                                        const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                                        atools::fs::NavDatabaseErrors *navdatabaseErrors)
-  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(airportIndexParam)
+  : XpReader(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(airportIndexParam)
 {
   initQueries();
 }
 
-XpAirportMsaWriter::~XpAirportMsaWriter()
+XpAirportMsaReader::~XpAirportMsaReader()
 {
   deInitQueries();
 }
@@ -89,7 +89,7 @@ XpAirportMsaWriter::~XpAirportMsaWriter()
 // lonx           DOUBLE       NOT NULL,
 // laty           DOUBLE       NOT NULL,
 // geometry       BLOB,
-void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& context)
+void XpAirportMsaReader::read(const QStringList& line, const XpReaderContext& context)
 {
   ctx = &context;
 
@@ -247,7 +247,7 @@ void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& c
     qWarning() << context.messagePrefix() << airportIdent << navIdent << "Invalid MSA center coordinate";
 }
 
-void XpAirportMsaWriter::initQueries()
+void XpAirportMsaReader::initQueries()
 {
   deInitQueries();
 
@@ -259,7 +259,7 @@ void XpAirportMsaWriter::initQueries()
   initNavQueries();
 }
 
-void XpAirportMsaWriter::deInitQueries()
+void XpAirportMsaReader::deInitQueries()
 {
   deInitNavQueries();
 
@@ -267,12 +267,12 @@ void XpAirportMsaWriter::deInitQueries()
   insertQuery = nullptr;
 }
 
-void XpAirportMsaWriter::finish(const XpWriterContext& context)
+void XpAirportMsaReader::finish(const XpReaderContext& context)
 {
   Q_UNUSED(context)
 }
 
-void XpAirportMsaWriter::reset()
+void XpAirportMsaReader::reset()
 {
 
 }

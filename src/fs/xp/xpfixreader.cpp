@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xpfixwriter.h"
+#include "fs/xp/xpfixreader.h"
 
 #include "fs/common/airportindex.h"
 #include "fs/common/magdecreader.h"
@@ -50,20 +50,20 @@ enum FieldIndex
   NAME /* Rest of field is name since XP12 */
 };
 
-XpFixWriter::XpFixWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
+XpFixReader::XpFixReader(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                          const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                          atools::fs::NavDatabaseErrors *navdatabaseErrors)
-  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(airportIndexParam)
+  : XpReader(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(airportIndexParam)
 {
   initQueries();
 }
 
-XpFixWriter::~XpFixWriter()
+XpFixReader::~XpFixReader()
 {
   deInitQueries();
 }
 
-void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
+void XpFixReader::read(const QStringList& line, const XpReaderContext& context)
 {
   ctx = &context;
 
@@ -94,17 +94,17 @@ void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
   progress->incNumWaypoints();
 }
 
-void XpFixWriter::finish(const XpWriterContext& context)
+void XpFixReader::finish(const XpReaderContext& context)
 {
   Q_UNUSED(context)
 }
 
-void XpFixWriter::reset()
+void XpFixReader::reset()
 {
 
 }
 
-void XpFixWriter::initQueries()
+void XpFixReader::initQueries()
 {
   deInitQueries();
 
@@ -114,7 +114,7 @@ void XpFixWriter::initQueries()
   insertWaypointQuery->prepare(util.buildInsertStatement("waypoint", QString(), {"nav_id"}));
 }
 
-void XpFixWriter::deInitQueries()
+void XpFixReader::deInitQueries()
 {
   delete insertWaypointQuery;
   insertWaypointQuery = nullptr;

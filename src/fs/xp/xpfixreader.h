@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_XP_CIFPWRITER_H
-#define ATOOLS_FS_XP_CIFPWRITER_H
+#ifndef ATOOLS_FS_XP_WAYPOINTREADER_h
+#define ATOOLS_FS_XP_WAYPOINTREADER_h
 
-#include "fs/xp/xpwriter.h"
-
-#include "sql/sqlrecord.h"
+#include "fs/xp/xpreader.h"
 
 namespace atools {
 
@@ -30,42 +28,48 @@ class SqlQuery;
 }
 
 namespace fs {
-class NavDatabaseErrors;
+
 class NavDatabaseOptions;
 class ProgressHandler;
+class NavDatabaseErrors;
 
 namespace common {
 class AirportIndex;
-class ProcedureWriter;
 }
 
 namespace xp {
 
 /*
- * Reads a CIFP file and writes all approaches,transitons, SIDs and STARs into the database.
+ * Reads earth_fix.dat and writes to waypoint table.
  */
-class XpCifpWriter :
-  public atools::fs::xp::XpWriter
+class XpFixReader :
+  public atools::fs::xp::XpReader
 {
 public:
-  XpCifpWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
-               const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
-               atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpCifpWriter() override;
+  XpFixReader(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
+              const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
+              atools::fs::NavDatabaseErrors *navdatabaseErrors);
+  virtual ~XpFixReader() override;
 
-  XpCifpWriter(const XpCifpWriter& other) = delete;
-  XpCifpWriter& operator=(const XpCifpWriter& other) = delete;
+  XpFixReader(const XpFixReader& other) = delete;
+  XpFixReader& operator=(const XpFixReader& other) = delete;
 
-  virtual void write(const QStringList& line, const XpWriterContext& context) override;
-  virtual void finish(const XpWriterContext& context) override;
+  virtual void read(const QStringList& line, const XpReaderContext& context) override;
+  virtual void finish(const XpReaderContext& context) override;
   virtual void reset() override;
 
 private:
-  atools::fs::common::ProcedureWriter *procWriter = nullptr;
+  void initQueries();
+  void deInitQueries();
+
+  int curFixId = 0;
+  atools::sql::SqlQuery *insertWaypointQuery = nullptr;
+  atools::fs::common::AirportIndex *airportIndex;
+
 };
 
 } // namespace xp
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_XP_CIFPWRITER_H
+#endif // ATOOLS_FS_XP_WAYPOINTREADER_h

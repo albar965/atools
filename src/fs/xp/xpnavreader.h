@@ -15,10 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_XP_NAVWRITER_H
-#define ATOOLS_FS_XP_NAVWRITER_H
+#ifndef ATOOLS_FS_XP_NAVREADER_h
+#define ATOOLS_FS_XP_NAVREADER_h
 
-#include "fs/xp/xpwriter.h"
+#include "fs/xp/xpreader.h"
 
 namespace atools {
 
@@ -45,30 +45,30 @@ namespace xp {
  * Reads earth_nav.dat and writes to tables, vor, ndb, marker and ils.
  */
 
-class XpNavWriter :
-  public atools::fs::xp::XpWriter
+class XpNavReader :
+  public atools::fs::xp::XpReader
 {
 public:
-  XpNavWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
+  XpNavReader(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
               const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
               atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpNavWriter() override;
+  virtual ~XpNavReader() override;
 
-  XpNavWriter(const XpNavWriter& other) = delete;
-  XpNavWriter& operator=(const XpNavWriter& other) = delete;
+  XpNavReader(const XpNavReader& other) = delete;
+  XpNavReader& operator=(const XpNavReader& other) = delete;
 
-  virtual void write(const QStringList& line, const XpWriterContext& context) override;
-  virtual void finish(const XpWriterContext& context) override;
+  virtual void read(const QStringList& line, const XpReaderContext& context) override;
+  virtual void finish(const XpReaderContext& context) override;
   virtual void reset() override;
 
 private:
   void initQueries();
   void deInitQueries();
   void writeVor(const QStringList& line, int curFileId, bool dmeOnly);
-  void writeNdb(const QStringList& line, int curFileId, const XpWriterContext& context);
+  void writeNdb(const QStringList& line, int curFileId, const XpReaderContext& context);
   void writeMarker(const QStringList& line, int curFileId, atools::fs::xp::NavRowCode rowCode);
 
-  void writeIlsSbasGbas(const QStringList& line, atools::fs::xp::NavRowCode rowCode, const XpWriterContext& context);
+  void writeIlsSbasGbas(const QStringList& line, atools::fs::xp::NavRowCode rowCode, const XpReaderContext& context);
   void updateIlsGlideslope(const QStringList& line);
   void updateIlsDme(const QStringList& line);
   void updateSbasGbasThreshold(const QStringList& line);
@@ -95,4 +95,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_XP_NAVWRITER_H
+#endif // ATOOLS_FS_XP_NAVREADER_h

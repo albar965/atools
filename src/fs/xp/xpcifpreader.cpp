@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xpcifpwriter.h"
+#include "fs/xp/xpcifpreader.h"
 
 #include "fs/common/airportindex.h"
 #include "fs/common/procedurewriter.h"
@@ -70,20 +70,20 @@ enum ProcedureFieldIndex
 };
 /* *INDENT-ON* */
 
-XpCifpWriter::XpCifpWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
+XpCifpReader::XpCifpReader(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                            const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                            atools::fs::NavDatabaseErrors *navdatabaseErrors)
-  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors)
+  : XpReader(sqlDb, opts, progressHandler, navdatabaseErrors)
 {
   procWriter = new atools::fs::common::ProcedureWriter(sqlDb, airportIndexParam);
 }
 
-XpCifpWriter::~XpCifpWriter()
+XpCifpReader::~XpCifpReader()
 {
   delete procWriter;
 }
 
-void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context)
+void XpCifpReader::read(const QStringList& line, const XpReaderContext& context)
 {
   ctx = &context;
   if(line.isEmpty())
@@ -164,7 +164,7 @@ void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context
   procWriter->write(procInput);
 }
 
-void XpCifpWriter::finish(const XpWriterContext& context)
+void XpCifpReader::finish(const XpReaderContext& context)
 {
   atools::fs::common::ProcedureInput procInput;
 
@@ -175,7 +175,7 @@ void XpCifpWriter::finish(const XpWriterContext& context)
   procWriter->finish(procInput);
 }
 
-void XpCifpWriter::reset()
+void XpCifpReader::reset()
 {
   procWriter->reset();
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2021 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xpholdingwriter.h"
+#include "fs/xp/xpholdingreader.h"
 
 #include "fs/common/airportindex.h"
-#include "fs/xp/xpconstants.h"
-#include "geo/calculations.h"
 #include "fs/common/magdecreader.h"
 #include "fs/util/fsutil.h"
+#include "fs/xp/xpconstants.h"
+#include "geo/calculations.h"
 #include "geo/pos.h"
-#include "atools.h"
 
 #include "sql/sqlutil.h"
 #include "sql/sqlquery.h"
@@ -59,16 +58,16 @@ enum HoldFixType
   HOLD_VOR = 3
 };
 
-XpHoldingWriter::XpHoldingWriter(atools::sql::SqlDatabase& sqlDb,
+XpHoldingReader::XpHoldingReader(atools::sql::SqlDatabase& sqlDb,
                                  atools::fs::common::AirportIndex *airportIndexParam,
                                  const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                                  atools::fs::NavDatabaseErrors *navdatabaseErrors)
-  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(airportIndexParam)
+  : XpReader(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(airportIndexParam)
 {
   initQueries();
 }
 
-XpHoldingWriter::~XpHoldingWriter()
+XpHoldingReader::~XpHoldingReader()
 {
   deInitQueries();
 }
@@ -92,7 +91,7 @@ XpHoldingWriter::~XpHoldingWriter()
 // speed integer,                      -- Speed limit in knots or null
 // lonx double not null,               -- Reference fix coordinates
 // laty double not null,
-void XpHoldingWriter::write(const QStringList& line, const XpWriterContext& context)
+void XpHoldingReader::read(const QStringList& line, const XpReaderContext& context)
 {
   ctx = &context;
 
@@ -190,7 +189,7 @@ void XpHoldingWriter::write(const QStringList& line, const XpWriterContext& cont
   insertQuery->clearBoundValues();
 }
 
-void XpHoldingWriter::initQueries()
+void XpHoldingReader::initQueries()
 {
   deInitQueries();
 
@@ -202,7 +201,7 @@ void XpHoldingWriter::initQueries()
   initNavQueries();
 }
 
-void XpHoldingWriter::deInitQueries()
+void XpHoldingReader::deInitQueries()
 {
   deInitNavQueries();
 
@@ -210,12 +209,12 @@ void XpHoldingWriter::deInitQueries()
   insertQuery = nullptr;
 }
 
-void XpHoldingWriter::finish(const XpWriterContext& context)
+void XpHoldingReader::finish(const XpReaderContext& context)
 {
   Q_UNUSED(context)
 }
 
-void XpHoldingWriter::reset()
+void XpHoldingReader::reset()
 {
   holdingSet.clear();
 }

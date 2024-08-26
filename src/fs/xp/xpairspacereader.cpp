@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xpairspacewriter.h"
+#include "fs/xp/xpairspacereader.h"
 
 #include "fs/progresshandler.h"
 #include "fs/userdata/airspacereaderopenair.h"
@@ -24,46 +24,46 @@ namespace atools {
 namespace fs {
 namespace xp {
 
-XpAirspaceWriter::XpAirspaceWriter(atools::sql::SqlDatabase& sqlDb,
+XpAirspaceReader::XpAirspaceReader(atools::sql::SqlDatabase& sqlDb,
                                    const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                                    atools::fs::NavDatabaseErrors *navdatabaseErrors)
-  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors)
+  : XpReader(sqlDb, opts, progressHandler, navdatabaseErrors)
 {
-  airspaceWriter = new atools::fs::userdata::AirspaceReaderOpenAir(&sqlDb);
+  airspaceReader = new atools::fs::userdata::AirspaceReaderOpenAir(&sqlDb);
 }
 
-XpAirspaceWriter::~XpAirspaceWriter()
+XpAirspaceReader::~XpAirspaceReader()
 {
-  delete airspaceWriter;
+  delete airspaceReader;
 }
 
-void XpAirspaceWriter::write(const QStringList& line, const XpWriterContext& context)
+void XpAirspaceReader::read(const QStringList& line, const XpReaderContext& context)
 {
   ctx = &context;
-  airspaceWriter->readLine(line, ctx->curFileId, ctx->filePath, ctx->lineNumber);
+  airspaceReader->readLine(line, ctx->curFileId, ctx->filePath, ctx->lineNumber);
   postWrite();
 }
 
-void XpAirspaceWriter::finish(const XpWriterContext& context)
+void XpAirspaceReader::finish(const XpReaderContext& context)
 {
   ctx = &context;
-  airspaceWriter->finish();
+  airspaceReader->finish();
   postWrite();
 }
 
-void XpAirspaceWriter::reset()
+void XpAirspaceReader::reset()
 {
-  airspaceWriter->reset();
+  airspaceReader->reset();
 }
 
-void XpAirspaceWriter::postWrite()
+void XpAirspaceReader::postWrite()
 {
-  for(const userdata::AirspaceReaderOpenAir::AirspaceErr& err : airspaceWriter->getErrors())
+  for(const userdata::AirspaceReaderOpenAir::AirspaceErr& err : airspaceReader->getErrors())
     errWarn(err.message);
-  progress->incNumBoundaries(airspaceWriter->getNumAirspacesRead());
+  progress->incNumBoundaries(airspaceReader->getNumAirspacesRead());
 
-  airspaceWriter->resetErrors();
-  airspaceWriter->resetNumRead();
+  airspaceReader->resetErrors();
+  airspaceReader->resetNumRead();
 }
 
 } // namespace xp

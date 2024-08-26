@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xpmorawriter.h"
+#include "fs/xp/xpmorareader.h"
 
 #include "fs/common/morareader.h"
 
@@ -23,17 +23,17 @@ namespace atools {
 namespace fs {
 namespace xp {
 
-XpMoraWriter::XpMoraWriter(atools::sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
+XpMoraReader::XpMoraReader(atools::sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
                            ProgressHandler *progressHandler, atools::fs::NavDatabaseErrors *navdatabaseErrors)
-  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors)
+  : XpReader(sqlDb, opts, progressHandler, navdatabaseErrors)
 {
 }
 
-XpMoraWriter::~XpMoraWriter()
+XpMoraReader::~XpMoraReader()
 {
 }
 
-void XpMoraWriter::write(const QStringList& line, const XpWriterContext& context)
+void XpMoraReader::read(const QStringList& line, const XpReaderContext& context)
 {
   ctx = &context;
 
@@ -42,7 +42,7 @@ void XpMoraWriter::write(const QStringList& line, const XpWriterContext& context
     lines.append(line);
 }
 
-void XpMoraWriter::finish(const XpWriterContext& context)
+void XpMoraReader::finish(const XpReaderContext& context)
 {
   Q_UNUSED(context)
 
@@ -51,7 +51,7 @@ void XpMoraWriter::finish(const XpWriterContext& context)
   morareader.fillDbFromFile(lines, context.curFileId);
 }
 
-void XpMoraWriter::reset()
+void XpMoraReader::reset()
 {
   lines.clear();
 }

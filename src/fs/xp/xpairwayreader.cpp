@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xpairwaywriter.h"
+#include "fs/xp/xpairwayreader.h"
 
 #include "sql/sqlutil.h"
 #include "sql/sqlquery.h"
@@ -45,19 +45,19 @@ enum FieldIndex
   NAME = 10
 };
 
-XpAirwayWriter::XpAirwayWriter(atools::sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
+XpAirwayReader::XpAirwayReader(atools::sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
                                ProgressHandler *progressHandler, atools::fs::NavDatabaseErrors *navdatabaseErrors)
-  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors)
+  : XpReader(sqlDb, opts, progressHandler, navdatabaseErrors)
 {
   initQueries();
 }
 
-atools::fs::xp::XpAirwayWriter::~XpAirwayWriter()
+atools::fs::xp::XpAirwayReader::~XpAirwayReader()
 {
   deInitQueries();
 }
 
-void XpAirwayWriter::write(const QStringList& line, const XpWriterContext& context)
+void XpAirwayReader::read(const QStringList& line, const XpReaderContext& context)
 {
   ctx = &context;
 
@@ -86,17 +86,17 @@ void XpAirwayWriter::write(const QStringList& line, const XpWriterContext& conte
   }
 }
 
-void XpAirwayWriter::finish(const XpWriterContext& context)
+void XpAirwayReader::finish(const XpReaderContext& context)
 {
   Q_UNUSED(context)
 }
 
-void XpAirwayWriter::reset()
+void XpAirwayReader::reset()
 {
 
 }
 
-void XpAirwayWriter::initQueries()
+void XpAirwayReader::initQueries()
 {
   deInitQueries();
 
@@ -106,7 +106,7 @@ void XpAirwayWriter::initQueries()
   insertAirwayQuery->prepare(util.buildInsertStatement("airway_temp"));
 }
 
-void XpAirwayWriter::deInitQueries()
+void XpAirwayReader::deInitQueries()
 {
   delete insertAirwayQuery;
   insertAirwayQuery = nullptr;

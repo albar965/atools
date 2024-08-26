@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_XP_WAYPOINTWRITER_H
-#define ATOOLS_FS_XP_WAYPOINTWRITER_H
+#ifndef ATOOLS_FS_XP_HOLDINGREADER_h
+#define ATOOLS_FS_XP_HOLDINGREADER_h
 
-#include "fs/xp/xpwriter.h"
+#include "fs/xp/xpreader.h"
+
+#include <QSet>
 
 namespace atools {
 
@@ -40,36 +42,36 @@ class AirportIndex;
 namespace xp {
 
 /*
- * Reads earth_fix.dat and writes to waypoint table.
+ * Reads earth_hold.dat and writes to holding table.
  */
-class XpFixWriter :
-  public atools::fs::xp::XpWriter
+class XpHoldingReader :
+  public atools::fs::xp::XpReader
 {
 public:
-  XpFixWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
-              const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
-              atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpFixWriter() override;
+  XpHoldingReader(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
+                  const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
+                  atools::fs::NavDatabaseErrors *navdatabaseErrors);
+  virtual ~XpHoldingReader() override;
 
-  XpFixWriter(const XpFixWriter& other) = delete;
-  XpFixWriter& operator=(const XpFixWriter& other) = delete;
+  XpHoldingReader(const XpHoldingReader& other) = delete;
+  XpHoldingReader& operator=(const XpHoldingReader& other) = delete;
 
-  virtual void write(const QStringList& line, const XpWriterContext& context) override;
-  virtual void finish(const XpWriterContext& context) override;
+  virtual void read(const QStringList& line, const XpReaderContext& context) override;
+  virtual void finish(const XpReaderContext& context) override;
   virtual void reset() override;
 
 private:
   void initQueries();
   void deInitQueries();
 
-  int curFixId = 0;
-  atools::sql::SqlQuery *insertWaypointQuery = nullptr;
+  QSet<QString> holdingSet;
+  int curHoldId = 0;
+  atools::sql::SqlQuery *insertQuery = nullptr;
   atools::fs::common::AirportIndex *airportIndex;
-
 };
 
 } // namespace xp
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_XP_WAYPOINTWRITER_H
+#endif // ATOOLS_FS_XP_HOLDINGREADER_h

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_XP_AIRSPACEWRITER_H
-#define ATOOLS_FS_XP_AIRSPACEWRITER_H
+#ifndef ATOOLS_FS_XP_AWYREADER_h
+#define ATOOLS_FS_XP_AWYREADER_h
 
-#include "fs/xp/xpwriter.h"
-
-#include "geo/linestring.h"
+#include "fs/xp/xpreader.h"
 
 namespace atools {
 
@@ -35,36 +33,33 @@ class NavDatabaseOptions;
 class ProgressHandler;
 class NavDatabaseErrors;
 
-namespace userdata {
-class AirspaceReaderOpenAir;
-}
-
 namespace xp {
 
 /*
- * Reads OpenAir files containing airspaces and writes them to the boundary table.
+ * Reads earth_awy.dat and writes it to table airway_temp
  */
-class XpAirportIndex;
-
-class XpAirspaceWriter
-  : public atools::fs::xp::XpWriter
+class XpAirwayReader :
+  public atools::fs::xp::XpReader
 {
 public:
-  XpAirspaceWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
-                   atools::fs::ProgressHandler *progressHandler,
-                   atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpAirspaceWriter() override;
+  XpAirwayReader(atools::sql::SqlDatabase& sqlDb,
+                 const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
+                 atools::fs::NavDatabaseErrors *navdatabaseErrors);
+  virtual ~XpAirwayReader() override;
 
-  XpAirspaceWriter(const XpAirspaceWriter& other) = delete;
-  XpAirspaceWriter& operator=(const XpAirspaceWriter& other) = delete;
+  XpAirwayReader(const XpAirwayReader& other) = delete;
+  XpAirwayReader& operator=(const XpAirwayReader& other) = delete;
 
-  virtual void write(const QStringList& line, const XpWriterContext& context) override;
-  virtual void finish(const XpWriterContext& context) override;
+  virtual void read(const QStringList& line, const XpReaderContext& context) override;
+  virtual void finish(const XpReaderContext& context) override;
   virtual void reset() override;
 
 private:
-  atools::fs::userdata::AirspaceReaderOpenAir *airspaceWriter;
-  void postWrite();
+  void initQueries();
+  void deInitQueries();
+
+  int curAirwayId = 0;
+  atools::sql::SqlQuery *insertAirwayQuery = nullptr;
 
 };
 
@@ -72,4 +67,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_XP_AIRSPACEWRITER_H
+#endif // ATOOLS_FS_XP_AWYREADER_h

@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xpnavwriter.h"
+#include "fs/xp/xpnavreader.h"
 
 #include "fs/common/airportindex.h"
 #include "fs/util/fsutil.h"
@@ -57,20 +57,20 @@ enum FieldIndex
   NAME = 11
 };
 
-XpNavWriter::XpNavWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
+XpNavReader::XpNavReader(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                          const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                          atools::fs::NavDatabaseErrors *navdatabaseErrors)
-  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(airportIndexParam)
+  : XpReader(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(airportIndexParam)
 {
   initQueries();
 }
 
-atools::fs::xp::XpNavWriter::~XpNavWriter()
+atools::fs::xp::XpNavReader::~XpNavReader()
 {
   deInitQueries();
 }
 
-void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
+void XpNavReader::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
 {
   // X-Plane 12 definition
   // 25 = terminal, 40 = low altitude, 130 = high altitude, 125 =
@@ -159,7 +159,7 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   progress->incNumVors();
 }
 
-void XpNavWriter::writeNdb(const QStringList& line, int curFileId, const XpWriterContext& context)
+void XpNavReader::writeNdb(const QStringList& line, int curFileId, const XpReaderContext& context)
 {
   int range = at(line, RANGE).toInt();
 
@@ -200,7 +200,7 @@ void XpNavWriter::writeNdb(const QStringList& line, int curFileId, const XpWrite
   progress->incNumNdbs();
 }
 
-void XpNavWriter::writeMarker(const QStringList& line, int curFileId, NavRowCode rowCode)
+void XpNavReader::writeMarker(const QStringList& line, int curFileId, NavRowCode rowCode)
 {
   QString type;
   if(rowCode == OM)
@@ -225,7 +225,7 @@ void XpNavWriter::writeMarker(const QStringList& line, int curFileId, NavRowCode
   progress->incNumMarker();
 }
 
-QChar XpNavWriter::ilsType(const QString& name, bool glideslope)
+QChar XpNavReader::ilsType(const QString& name, bool glideslope)
 {
   // ILS Localizer only, no glideslope   0
   // ILS Localizer/MLS/GLS Unknown cat   U
@@ -269,7 +269,7 @@ QChar XpNavWriter::ilsType(const QString& name, bool glideslope)
   return type;
 }
 
-void XpNavWriter::updateSbasGbasThreshold(const QStringList& line)
+void XpNavReader::updateSbasGbasThreshold(const QStringList& line)
 {
   /*  SBAS_GBAS_THRESHOLD 16 Landing threshold point or fictitious threshold point of an SBAS/GBAS approach */
   const QString& airportIdent = at(line, AIRPORT);
@@ -310,7 +310,7 @@ void XpNavWriter::updateSbasGbasThreshold(const QStringList& line)
   updateSbasGbasThresholdQuery->clearBoundValues();
 }
 
-void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, const XpWriterContext& context)
+void XpNavReader::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, const XpReaderContext& context)
 {
   const QString& airportIdent = at(line, AIRPORT);
   const QString& airportRegion = at(line, REGION);
@@ -390,7 +390,7 @@ void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
   progress->incNumIls();
 }
 
-void XpNavWriter::assignIlsGeometry(atools::sql::SqlQuery *query, const atools::geo::Pos& pos, float heading, float width)
+void XpNavReader::assignIlsGeometry(atools::sql::SqlQuery *query, const atools::geo::Pos& pos, float heading, float width)
 {
   Pos p1, p2, pmid;
   atools::fs::util::calculateIlsGeometry(pos, heading, width, atools::fs::util::DEFAULT_FEATHER_LEN_NM, p1, p2, pmid);
@@ -403,7 +403,7 @@ void XpNavWriter::assignIlsGeometry(atools::sql::SqlQuery *query, const atools::
   query->bindValue(":end2_laty", p2.getLatY());
 }
 
-void XpNavWriter::updateIlsGlideslope(const QStringList& line)
+void XpNavReader::updateIlsGlideslope(const QStringList& line)
 {
   const QString& airportIdent = at(line, AIRPORT);
   const QString& airportRegion = at(line, REGION);
@@ -426,7 +426,7 @@ void XpNavWriter::updateIlsGlideslope(const QStringList& line)
   updateIlsGsTypeQuery->clearBoundValues();
 }
 
-void XpNavWriter::updateIlsDme(const QStringList& line)
+void XpNavReader::updateIlsDme(const QStringList& line)
 {
   const QString& airportIdent = at(line, AIRPORT);
   const QString& airportRegion = at(line, REGION);
@@ -447,7 +447,7 @@ void XpNavWriter::updateIlsDme(const QStringList& line)
   updateIlsDmeQuery->clearBoundValues();
 }
 
-void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
+void XpNavReader::read(const QStringList& line, const XpReaderContext& context)
 {
   ctx = &context;
 
@@ -525,17 +525,17 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
   }
 }
 
-void XpNavWriter::finish(const XpWriterContext& context)
+void XpNavReader::finish(const XpReaderContext& context)
 {
   Q_UNUSED(context)
 }
 
-void XpNavWriter::reset()
+void XpNavReader::reset()
 {
   airportIndex->clearSkippedIls();
 }
 
-void XpNavWriter::initQueries()
+void XpNavReader::initQueries()
 {
   deInitQueries();
 
@@ -574,7 +574,7 @@ void XpNavWriter::initQueries()
                                         "where ils_id = :id");
 }
 
-void XpNavWriter::deInitQueries()
+void XpNavReader::deInitQueries()
 {
   delete insertVorQuery;
   insertVorQuery = nullptr;

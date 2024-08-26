@@ -752,18 +752,18 @@ HEADERS += \
   src/fs/userdata/airspacereadervatsim.h \
   src/fs/xp/airwaypostprocess.h \
   src/fs/xp/scenerypacks.h \
-  src/fs/xp/xpairportmsawriter.h \
-  src/fs/xp/xpairportwriter.h \
-  src/fs/xp/xpairspacewriter.h \
-  src/fs/xp/xpairwaywriter.h \
-  src/fs/xp/xpcifpwriter.h \
+  src/fs/xp/xpairportmsareader.h \
+  src/fs/xp/xpairportreader.h \
+  src/fs/xp/xpairspacereader.h \
+  src/fs/xp/xpairwayreader.h \
+  src/fs/xp/xpcifpreader.h \
   src/fs/xp/xpconstants.h \
   src/fs/xp/xpdatacompiler.h \
-  src/fs/xp/xpfixwriter.h \
-  src/fs/xp/xpholdingwriter.h \
-  src/fs/xp/xpmorawriter.h \
-  src/fs/xp/xpnavwriter.h \
-  src/fs/xp/xpwriter.h \
+  src/fs/xp/xpfixreader.h \
+  src/fs/xp/xpholdingreader.h \
+  src/fs/xp/xpmorareader.h \
+  src/fs/xp/xpnavreader.h \
+  src/fs/xp/xpreader.h \
   src/grib/windquery.h \
   src/grib/windtypes.h \
   src/routing/routefinder.h
@@ -901,18 +901,18 @@ SOURCES += \
   src/fs/userdata/airspacereadervatsim.cpp \
   src/fs/xp/airwaypostprocess.cpp \
   src/fs/xp/scenerypacks.cpp \
-  src/fs/xp/xpairportmsawriter.cpp \
-  src/fs/xp/xpairportwriter.cpp \
-  src/fs/xp/xpairspacewriter.cpp \
-  src/fs/xp/xpairwaywriter.cpp \
-  src/fs/xp/xpcifpwriter.cpp \
+  src/fs/xp/xpairportmsareader.cpp \
+  src/fs/xp/xpairportreader.cpp \
+  src/fs/xp/xpairspacereader.cpp \
+  src/fs/xp/xpairwayreader.cpp \
+  src/fs/xp/xpcifpreader.cpp \
   src/fs/xp/xpconstants.cpp \
   src/fs/xp/xpdatacompiler.cpp \
-  src/fs/xp/xpfixwriter.cpp \
-  src/fs/xp/xpholdingwriter.cpp \
-  src/fs/xp/xpmorawriter.cpp \
-  src/fs/xp/xpnavwriter.cpp \
-  src/fs/xp/xpwriter.cpp \
+  src/fs/xp/xpfixreader.cpp \
+  src/fs/xp/xpholdingreader.cpp \
+  src/fs/xp/xpmorareader.cpp \
+  src/fs/xp/xpnavreader.cpp \
+  src/fs/xp/xpreader.cpp \
   src/grib/windquery.cpp \
   src/grib/windtypes.cpp \
   src/routing/routefinder.cpp

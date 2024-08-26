@@ -23,7 +23,7 @@ namespace atools {
 namespace fs {
 namespace xp {
 
-QString surfaceToDb(Surface value, const XpWriterContext *context)
+QString surfaceToDb(Surface value, const XpReaderContext *context)
 {
   switch(value)
   {
@@ -108,7 +108,7 @@ bool isSurfaceWater(Surface value)
   return value == WATER;
 }
 
-int markingToDb(Marking value, const XpWriterContext *context)
+int markingToDb(Marking value, const XpReaderContext *context)
 {
   // EDGES = 1 << 0,
   // THRESHOLD = 1 << 1,
@@ -164,7 +164,7 @@ int markingToDb(Marking value, const XpWriterContext *context)
   return NO_MARKING;
 }
 
-QString alsToDb(ApproachLight value, const XpWriterContext *context)
+QString alsToDb(ApproachLight value, const XpReaderContext *context)
 {
   switch(value)
   {
@@ -212,7 +212,7 @@ QString alsToDb(ApproachLight value, const XpWriterContext *context)
   return QString();
 }
 
-QString approachIndicatorToDb(ApproachIndicator value, const XpWriterContext *context)
+QString approachIndicatorToDb(ApproachIndicator value, const XpReaderContext *context)
 {
   // return "VASI21";
   // return "VASI22";
@@ -258,7 +258,7 @@ QString approachIndicatorToDb(ApproachIndicator value, const XpWriterContext *co
   return QString();
 }
 
-QString XpWriterContext::messagePrefix() const
+QString XpReaderContext::messagePrefix() const
 {
   if(fileVersion > 0)
     return QString("File %1, version %2, line %3").arg(filePath).arg(fileVersion).arg(lineNumber);

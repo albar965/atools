@@ -54,7 +54,7 @@ ATOOLS_DECLARE_FLAGS_32(ContextFlags, ContextFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::xp::ContextFlags)
 
 /* Context passed to each line reading call */
-struct XpWriterContext
+struct XpReaderContext
 {
   int curFileId = 0, cifpAirportId = 0, fileVersion = 0, lineNumber = 0;
   QString localPath,
@@ -203,7 +203,7 @@ enum Surface
   CONCRETE_D_WORN = 57
 };
 
-QString surfaceToDb(atools::fs::xp::Surface value, const XpWriterContext *context);
+QString surfaceToDb(atools::fs::xp::Surface value, const XpReaderContext *context);
 bool isSurfaceHard(atools::fs::xp::Surface value);
 bool isSurfaceSoft(atools::fs::xp::Surface value);
 bool isSurfaceWater(atools::fs::xp::Surface value);
@@ -226,7 +226,7 @@ enum Marking
   EASA_PAP = 7, // EASA style precision approach markings
 };
 
-int markingToDb(atools::fs::xp::Marking value, const XpWriterContext *context);
+int markingToDb(atools::fs::xp::Marking value, const XpReaderContext *context);
 
 enum ApproachLight
 {
@@ -245,7 +245,7 @@ enum ApproachLight
   RAIL = 12 // Runway Alignment Indicator Lights. Sequenced strobes and green threshold lights, with no other approach lights
 };
 
-QString alsToDb(atools::fs::xp::ApproachLight value, const XpWriterContext *context);
+QString alsToDb(atools::fs::xp::ApproachLight value, const XpReaderContext *context);
 
 enum ApproachIndicator
 {
@@ -260,7 +260,7 @@ enum ApproachIndicator
   APAPI_R = 8, // (two-light) on left of runway - new in XP 12
 };
 
-QString approachIndicatorToDb(atools::fs::xp::ApproachIndicator value, const XpWriterContext *context);
+QString approachIndicatorToDb(atools::fs::xp::ApproachIndicator value, const XpReaderContext *context);
 
 } // namespace xp
 } // namespace fs
