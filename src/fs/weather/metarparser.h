@@ -42,7 +42,7 @@ struct Token
   QString text;
 };
 
-const Q_DECL_CONSTEXPR float INVALID_METAR_VALUE = std::numeric_limits<float>::max();
+const constexpr float INVALID_METAR_VALUE = std::numeric_limits<float>::max();
 
 class MetarParser;
 
@@ -461,6 +461,11 @@ public:
   int getWindDir() const
   {
     return _wind_dir;
+  }
+
+  float getWindDirF() const
+  {
+    return _wind_dir == -1 ? INVALID_METAR_VALUE : static_cast<float>(_wind_dir);
   }
 
   float getWindSpeedMeterPerSec() const
