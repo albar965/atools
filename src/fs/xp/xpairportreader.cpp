@@ -247,6 +247,62 @@ enum RunwayFieldIndex
 const static QRegularExpression REPLACE_SPECIAL_REGEXP("(\\[MIL\\]|\\[[A-Z]?\\])",
                                                        QRegularExpression::CaseInsensitiveOption);
 
+/* Keep runway information to ease assigning of VASI to a runway end */
+struct RunwayGeometry
+{
+  RunwayGeometry()
+  {
+  }
+
+  explicit RunwayGeometry(const QString& primaryNameParam, const QString& secondaryNameParam, float primaryHeadingParam,
+                          float secondaryHeadingParam, const atools::geo::Line& runwayParam)
+    : primaryName(primaryNameParam), secondaryName(secondaryNameParam), primaryHeading(primaryHeadingParam),
+    secondaryHeading(secondaryHeadingParam), runway(runwayParam)
+  {
+  }
+
+  QString primaryName, secondaryName;
+  float primaryHeading, secondaryHeading;
+  atools::geo::Line runway;
+};
+
+/* Keep runways until ICAO code is determined ============================================================== */
+struct RunwayEnds
+{
+  RunwayEnds()
+  {
+  }
+
+  explicit RunwayEnds(const QString& primaryNameParam, const QString& secondaryNameParam, int primaryEndIdParam, int secondaryEndIdParam,
+                      const atools::geo::Pos& primaryPosParam, const atools::geo::Pos& secondaryPosParam)
+    : primaryName(primaryNameParam), secondaryName(secondaryNameParam), primaryEndId(primaryEndIdParam),
+    secondaryEndId(secondaryEndIdParam), primaryPos(primaryPosParam), secondaryPos(secondaryPosParam)
+  {
+  }
+
+  QString primaryName, secondaryName;
+  int primaryEndId, secondaryEndId;
+  atools::geo::Pos primaryPos, secondaryPos;
+};
+
+/* Collect runways to determine longest ============================================================== */
+struct RunwayDimension
+{
+  RunwayDimension()
+  {
+  }
+
+  explicit RunwayDimension(float lengthParam, float widthParam, float headingParam, atools::fs::xp::Surface surfaceParam,
+                           const atools::geo::Pos& centerParam)
+    : length(lengthParam), width(widthParam), heading(headingParam), surface(surfaceParam), center(centerParam)
+  {
+  }
+
+  float length, width, heading;
+  atools::fs::xp::Surface surface;
+  atools::geo::Pos center;
+};
+
 XpAirportReader::XpAirportReader(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                                  const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                                  NavDatabaseErrors *navdatabaseErrors)
@@ -590,7 +646,7 @@ void XpAirportReader::bindVasi(const QStringList& line, const atools::fs::xp::Xp
     atools::geo::LineDistance curResult, nearestResult;
     QString closestRunwayName;
     // Find nearest runway by distance where VASI is along line
-    for(const RunwayGeo& rg: qAsConst(runwayGeometry))
+    for(const RunwayGeometry& rg: qAsConst(runwayGeometry))
     {
       // Calculate distance from VASI to runway
       rg.runway.distanceMeterToLine(vasiPos, curResult);
@@ -1208,7 +1264,7 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
   int secRwEndId = ++curRunwayEndId;
 
   // Add to index
-  runways.append(Runway(primaryName, secondaryName, primRwEndId, secRwEndId, primaryPos, secondaryPos));
+  runwayEnds.append(RunwayEnds(primaryName, secondaryName, primRwEndId, secRwEndId, primaryPos, secondaryPos));
 
   // Calculate heading and positions
   float lengthMeter = primaryPos.distanceMeterTo(secondaryPos);
@@ -1220,8 +1276,8 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
   airportRect.extend(primaryPos);
   airportRect.extend(secondaryPos);
 
-  runwayGeometry.append({primaryName, secondaryName, primaryHeading, secondaryHeading,
-                         atools::geo::Line(primaryPos, secondaryPos)});
+  runwayGeometry.append(RunwayGeometry(primaryName, secondaryName, primaryHeading, secondaryHeading,
+                                       atools::geo::Line(primaryPos, secondaryPos)));
 
   numRunway++;
 
@@ -1237,14 +1293,9 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
 
   // Remember data of longest runway
   QString surfaceStr = surfaceToDb(surface, &context);
-  if(lengthFeet > longestRunwayLength)
-  {
-    longestRunwayLength = lengthFeet;
-    longestRunwayWidth = widthFeet;
-    longestRunwayHeading = primaryHeading;
-    longestRunwaySurface = surfaceStr;
-    longestRunwayCenterPos = center;
-  }
+
+  // Collect runways to determine longest
+  runwayDimensions.append(RunwayDimension(lengthFeet, widthFeet, primaryHeading, surface, center));
 
   insertRunwayQuery->bindValue(":runway_id", primRwEndId);
   insertRunwayQuery->bindValue(":airport_id", curAirportId);
@@ -1518,10 +1569,8 @@ void XpAirportReader::bindAirport(const QStringList& line, AirportRowCode rowCod
 void XpAirportReader::reset()
 {
   airportRect = Rect();
-  longestRunwayCenterPos = airportPos = airportDatumPos = Pos();
+  airportPos = airportDatumPos = Pos();
 
-  longestRunwayLength = longestRunwayWidth = longestRunwayHeading = 0;
-  longestRunwaySurface = "UNKNOWN";
   numRunway = numSoftRunway = numWaterRunway = numHardRunway = numHelipad = numLightRunway = 0;
   numParkingGate = numParkingGaRamp = numParkingCargo = numParkingMilCargo = numParkingMilCombat = 0;
   numCom = numStart = numRunwayEndVasi = numApron = numTaxiPath = numRunwayEndAls = numParking = 0;
@@ -1536,7 +1585,8 @@ void XpAirportReader::reset()
   airportIcao.clear();
   runwayEndRecords.clear();
   runwayGeometry.clear();
-  runways.clear();
+  runwayEnds.clear();
+  runwayDimensions.clear();
   taxiNodes.clear();
   largestParkingGate.clear();
   largestParkingRamp.clear();
@@ -1554,6 +1604,15 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
       qDebug() << Q_FUNC_INFO << context.messagePrefix() << "Writing curAirportId" << curAirportId
                << "airportIdent" << airportIdent;
 
+    // Determine longest runway ==============================
+    const RunwayDimension *longestRunway = nullptr;
+    for(const RunwayDimension& runway : qAsConst(runwayDimensions))
+    {
+      if((longestRunway == nullptr || runway.length > longestRunway->length) && // First iteration or is longer
+         (runway.surface != WATER || (numSoftRunway == 0 && numHardRunway == 0))) // No water - if water count only of airport is water only
+        longestRunway = &runway;
+    }
+
     insertAirportQuery->bindValue(":ident", airportIdent);
     insertAirportQuery->bindValue(":iata", airportIata);
     insertAirportQuery->bindValue(":icao", airportIcao);
@@ -1561,10 +1620,21 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
     insertAirportQuery->bindValue(":local", airportLocal);
 
     // Update counts
-    insertAirportQuery->bindValue(":longest_runway_length", longestRunwayLength);
-    insertAirportQuery->bindValue(":longest_runway_width", longestRunwayWidth);
-    insertAirportQuery->bindValue(":longest_runway_heading", longestRunwayHeading);
-    insertAirportQuery->bindValue(":longest_runway_surface", longestRunwaySurface);
+    if(longestRunway != nullptr)
+    {
+      insertAirportQuery->bindValue(":longest_runway_length", longestRunway->length);
+      insertAirportQuery->bindValue(":longest_runway_width", longestRunway->width);
+      insertAirportQuery->bindValue(":longest_runway_heading", longestRunway->heading);
+      insertAirportQuery->bindValue(":longest_runway_surface", surfaceToDb(longestRunway->surface, &context));
+    }
+    else
+    {
+      insertAirportQuery->bindValue(":longest_runway_length", 0.f);
+      insertAirportQuery->bindValue(":longest_runway_width", 0.f);
+      insertAirportQuery->bindValue(":longest_runway_heading", 0.f);
+      insertAirportQuery->bindValue(":longest_runway_surface", surfaceToDb(UNKNOWN, &context));
+    }
+
     insertAirportQuery->bindValue(":num_runways", numSoftRunway + numWaterRunway + numHardRunway);
     insertAirportQuery->bindValue(":num_runway_hard", numHardRunway);
     insertAirportQuery->bindValue(":num_runway_soft", numSoftRunway);
@@ -1603,10 +1673,10 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
         airportRect = Rect(airportDatumPos);
         airportPos = airportDatumPos;
       }
-      else if(longestRunwayCenterPos.isValid())
+      else if(longestRunway != nullptr && longestRunway->center.isValid())
       {
-        airportRect = Rect(longestRunwayCenterPos);
-        airportPos = longestRunwayCenterPos;
+        airportRect = Rect(longestRunway->center);
+        airportPos = longestRunway->center;
       }
       else
         qWarning() << context.messagePrefix() << airportIdent << "Could not determine bounding rectangle for airport";
@@ -1626,8 +1696,8 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
         {
           // Datum is invalid use runway or center of rect
           // qWarning() << context.messagePrefix() << airportIcao << "Airport datum not within bounding rectangle";
-          if(numRunway == 1)
-            airportPos = longestRunwayCenterPos;
+          if(numRunway == 1 && longestRunway != nullptr)
+            airportPos = longestRunway->center;
           else
             airportPos = airportRect.getCenter();
         }
@@ -1641,7 +1711,7 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
     Pos center = airportPos.isValid() ? airportPos : airportRect.getCenter();
 
     airportIndex->addAirportId(airportIdent, curAirportId, center);
-    for(const Runway& rw : qAsConst(runways))
+    for(const RunwayEnds& rw : qAsConst(runwayEnds))
     {
       airportIndex->addRunwayEnd(airportIdent, rw.primaryName, rw.primaryEndId, rw.primaryPos);
       airportIndex->addRunwayEnd(airportIdent, rw.secondaryName, rw.secondaryEndId, rw.secondaryPos);

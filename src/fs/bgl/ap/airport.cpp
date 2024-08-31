@@ -602,16 +602,6 @@ void Airport::updateSummaryFields()
     reportFarCoordinate(rw.getSecondaryPosition(), "runway primary");
     points.append(rw.getPrimaryPosition());
 
-    // Remember the longest runway attributes
-    if(rw.getLength() > longestRunwayLength)
-    {
-      longestRunwayLength = rw.getLength();
-      longestRunwayWidth = rw.getWidth();
-      longestRunwayHeading = rw.getHeading();
-      longestRunwaySurface = rw.getSurface();
-      longestRunwayMaterialUuid = rw.getMaterialUuid();
-    }
-
     const RunwayEnd& primary = rw.getPrimary();
     const RunwayEnd& secondary = rw.getSecondary();
 

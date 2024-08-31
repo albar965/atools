@@ -296,39 +296,6 @@ public:
     return numParkingGate;
   }
 
-  /*
-   * @return Length of the longest runway in meter
-   */
-  float getLongestRunwayLength() const
-  {
-    return longestRunwayLength;
-  }
-
-  /*
-   * @return width of the longest runway in meter
-   */
-  float getLongestRunwayWidth() const
-  {
-    return longestRunwayWidth;
-  }
-
-  /*
-   * @return heading of the longest runway in degree true
-   */float getLongestRunwayHeading() const
-  {
-    return longestRunwayHeading;
-  }
-
-  atools::fs::bgl::Surface getLongestRunwaySurface() const
-  {
-    return longestRunwaySurface;
-  }
-
-  const QUuid& getLongestRunwayMaterialUuid() const
-  {
-    return longestRunwayMaterialUuid;
-  }
-
   atools::fs::bgl::ap::ParkingType getLargestParkingGaRamp() const
   {
     return largestParkingGaRamp;
@@ -403,10 +370,6 @@ private:
       numRunwayFullOpen = 0, numLightRunway = 0, numRunwayEndVasi = 0, numJetway = 0, numParkingGaRamp = 0,
       numParkingGate = 0, numParkingCargo = 0, numParkingMilitaryCargo = 0, numParkingMilitaryCombat = 0;
 
-  float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
-
-  atools::fs::bgl::Surface longestRunwaySurface = atools::fs::bgl::UNKNOWN;
-  QUuid longestRunwayMaterialUuid;
   atools::fs::bgl::ap::ParkingType largestParkingGaRamp = atools::fs::bgl::ap::UNKNOWN,
                                    largestParkingGate = atools::fs::bgl::ap::UNKNOWN;
 

@@ -245,21 +245,22 @@ void AirportWriter::writeObject(const Airport *type)
 
     bind(":num_approach", type->getApproaches().size());
 
-    int numHard = 0, numSoft = 0, numWater = 0;
+    // Count number of runway types ==============================
+    int numHardRunway = 0, numSoftRunway = 0, numWaterRunway = 0;
     for(const Runway& rw : type->getRunways())
     {
       atools::fs::bgl::Surface surface = rw.getSurface();
       if(!rw.getMaterialUuid().isNull())
         surface = atools::fs::bgl::surface::surfaceToType(getDataWriter().getSurface(rw.getMaterialUuid()));
 
-      numHard += atools::fs::bgl::surface::isHard(surface);
-      numSoft += atools::fs::bgl::surface::isSoft(surface);
-      numWater += atools::fs::bgl::surface::isWater(surface);
+      numHardRunway += atools::fs::bgl::surface::isHard(surface);
+      numSoftRunway += atools::fs::bgl::surface::isSoft(surface);
+      numWaterRunway += atools::fs::bgl::surface::isWater(surface);
     }
 
-    bind(":num_runway_soft", numSoft);
-    bind(":num_runway_hard", numHard);
-    bind(":num_runway_water", numWater);
+    bind(":num_runway_soft", numSoftRunway);
+    bind(":num_runway_hard", numHardRunway);
+    bind(":num_runway_water", numWaterRunway);
 
     bind(":num_runway_light", type->getNumLightRunway());
     bind(":num_runway_end_closed", type->getNumRunwayEndClosed());
@@ -272,16 +273,41 @@ void AirportWriter::writeObject(const Airport *type)
     bind(":num_starts", type->getStarts().size());
     bindNullInt(":num_runway_end_ils"); // Will be set later by SQL script "update_ils_ids.sql"
 
-    bind(":longest_runway_length", roundToInt(meterToFeet(type->getLongestRunwayLength())));
-    bind(":longest_runway_width", roundToInt(meterToFeet(type->getLongestRunwayWidth())));
-    bind(":longest_runway_heading", type->getLongestRunwayHeading());
+    // Determine longest runway ==============================
+    const Runway *longestRunway = nullptr;
+    for(const Runway& runway : type->getRunways())
+    {
+      atools::fs::bgl::Surface surface = runway.getSurface();
+      if(!runway.getMaterialUuid().isNull())
+        surface = atools::fs::bgl::surface::surfaceToType(getDataWriter().getSurface(runway.getMaterialUuid()));
+
+      if( // First iteration or is longer
+        (longestRunway == nullptr || runway.getLength() > longestRunway->getLength()) &&
+        // No water - if water count only of airport is water only
+        (!atools::fs::bgl::surface::isWater(surface) || (numSoftRunway == 0 && numHardRunway == 0)))
+        longestRunway = &runway;
+    }
 
     using atools::fs::bgl::surface::surfaceToDbStr;
-    // Use MSFS material library is UUID is set
-    if(!type->getLongestRunwayMaterialUuid().isNull())
-      bind(":longest_runway_surface", surfaceToDbStr(getDataWriter().getSurface(type->getLongestRunwayMaterialUuid())));
+    if(longestRunway != nullptr)
+    {
+      bind(":longest_runway_length", roundToInt(meterToFeet(longestRunway->getLength())));
+      bind(":longest_runway_width", roundToInt(meterToFeet(longestRunway->getWidth())));
+      bind(":longest_runway_heading", longestRunway->getHeading());
+
+      // Use MSFS material library is UUID is set
+      if(!longestRunway->getMaterialUuid().isNull())
+        bind(":longest_runway_surface", surfaceToDbStr(getDataWriter().getSurface(longestRunway->getMaterialUuid())));
+      else
+        bind(":longest_runway_surface", surfaceToDbStr(longestRunway->getSurface()));
+    }
     else
-      bind(":longest_runway_surface", surfaceToDbStr(type->getLongestRunwaySurface()));
+    {
+      bind(":longest_runway_length", 0.f);
+      bind(":longest_runway_width", 0.f);
+      bind(":longest_runway_heading", 0.f);
+      bind(":longest_runway_surface", surfaceToDbStr(atools::fs::bgl::UNKNOWN));
+    }
 
     bind(":num_runways", type->getRunways().size());
 

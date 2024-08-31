@@ -47,6 +47,10 @@ class NavDatabaseErrors;
 
 namespace xp {
 
+struct RunwayEnds;
+struct RunwayGeometry;
+struct RunwayDimension;
+
 /*
  * Reads one or more airports from an apt.dat file and writes them into a database
  */
@@ -157,44 +161,15 @@ private:
   const atools::sql::SqlRecord runwayEndRecord;
 
   /* Keep runway information to ease assigning of VASI to a runway end */
-  struct RunwayGeo
-  {
-    QString primaryName, secondaryName;
-    float primaryHeading, secondaryHeading;
-    atools::geo::Line runway;
-  };
+  QVector<atools::fs::xp::RunwayGeometry> runwayGeometry;
 
-  QVector<RunwayGeo> runwayGeometry;
+  /* Keep runway ends until ICAO code is determined */
+  QVector<atools::fs::xp::RunwayEnds> runwayEnds;
 
-  /* Keep runways until ICAO code is determined */
-  struct Runway
-  {
-    Runway()
-    {
-    }
-
-    Runway(const QString& primaryNameParam, const QString& secondaryNameParam,
-           int primaryEndIdParam, int secondaryEndIdParam,
-           const atools::geo::Pos& primaryPosParam, const atools::geo::Pos& secondaryPosParam) :
-      primaryName(primaryNameParam), secondaryName(secondaryNameParam),
-      primaryEndId(primaryEndIdParam), secondaryEndId(secondaryEndIdParam),
-      primaryPos(primaryPosParam), secondaryPos(secondaryPosParam)
-    {
-    }
-
-    QString primaryName, secondaryName;
-    int primaryEndId, secondaryEndId;
-    atools::geo::Pos primaryPos, secondaryPos;
-  };
-
-  QVector<Runway> runways;
+  /* Collect runways to determine longest ============================================================== */
+  QVector<atools::fs::xp::RunwayDimension> runwayDimensions;
 
   float airportAltitude = 0.f;
-  float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
-
-  QString longestRunwaySurface = "UNKNOWN";
-  atools::geo::Pos longestRunwayCenterPos;
-
   AirportRowCode airportRowCode = NO_ROWCODE;
 
   atools::sql::SqlQuery *insertAirportQuery = nullptr,
