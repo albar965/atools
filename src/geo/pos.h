@@ -285,7 +285,7 @@ public:
   /* Find point between start and end on GC route if distance between points is not known */
   atools::geo::Pos interpolate(const atools::geo::Pos& otherPos, float fraction) const;
 
-  /* positions includes this if numPoints > 0 but not pos2  */
+  /* positions includes this if numPoints > 0 but not otherPos  */
   void interpolatePoints(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints, atools::geo::LineString& positions) const;
   void interpolatePointsRhumb(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
                               atools::geo::LineString& positions) const;

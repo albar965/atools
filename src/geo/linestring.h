@@ -173,7 +173,7 @@ public:
   double lengthMeterDouble() const;
 
   /* Calculate bounding rectangle of all positions considering date boundary. Expensive. */
-  Rect boundingRect() const;
+  atools::geo::Rect boundingRect() const;
 
   bool isValid() const
   {
@@ -198,10 +198,10 @@ public:
 
   /* Returns a line with additional points added at the anti-meridian if it crosses.
    * Otherwise a copy of this or empty list if invalid. */
-  LineString splitAtAntiMeridian(bool *crossed = nullptr) const;
+  atools::geo::LineString splitAtAntiMeridian(bool *crossed = nullptr) const;
 
   /* Returns a list of lines split at the anti-meridian if it crosses. List size is > 1 if crossed. */
-  const QVector<LineString> splitAtAntiMeridianList() const;
+  const QVector<atools::geo::LineString> splitAtAntiMeridianList() const;
 
   /* Normalize all positions to -180 < lonx < 180 and -90 < laty < 90 and return reference */
   atools::geo::LineString& normalize();

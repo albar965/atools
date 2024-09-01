@@ -22,9 +22,5 @@
 -- Order is important to avoid fk conflicts
 
 -- drop routing and search
-drop table if exists route_edge_radio;
-drop table if exists route_edge_airway;
-drop table if exists route_node_radio;
-drop table if exists route_node_airway;
 drop table if exists nav_search;
 

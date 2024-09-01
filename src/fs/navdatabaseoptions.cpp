@@ -182,12 +182,12 @@ void NavDatabaseOptions::addToAddonFilterExclude(const QStringList& filter)
   addToFilterList(fromNativeSeparatorList(filter), addonFiltersExcl);
 }
 
-void NavDatabaseOptions::addToBglObjectFilterInclude(const QStringList& filters)
+void NavDatabaseOptions::addToNavDbObjectFilterInclude(const QStringList& filters)
 {
   addToBglObjectFilter(filters, navDbObjectTypeFiltersInc);
 }
 
-void NavDatabaseOptions::addToBglObjectFilterExclude(const QStringList& filters)
+void NavDatabaseOptions::addToNavDbObjectFilterExclude(const QStringList& filters)
 {
   addToBglObjectFilter(filters, navDbObjectTypeFiltersExcl);
 }
@@ -243,8 +243,6 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
   setVerbose(settings.value("Options/Verbose", false).toBool());
   setResolveAirways(settings.value("Options/ResolveRoutes", true).toBool());
   setLanguage(settings.value("Options/MsfsAirportLanguage", "en-US").toString());
-  setCreateRouteTables(settings.value("Options/CreateRouteTables", false).toBool());
-  setCreateAirportTables(settings.value("Options/CreateAirportTables", false).toBool());
   setDatabaseReport(settings.value("Options/DatabaseReport", true).toBool());
   setDeletes(settings.value("Options/ProcessDelete", true).toBool());
   setDeduplicate(settings.value("Options/Deduplicate", true).toBool());
@@ -267,8 +265,8 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
   addToAddonFilterExclude(settings.value("Filter/ExcludeAddonPathFilter").toStringList());
   addToAirportIcaoFilterInclude(settings.value("Filter/IncludeAirportIcaoFilter").toStringList());
   addToAirportIcaoFilterExclude(settings.value("Filter/ExcludeAirportIcaoFilter").toStringList());
-  addToBglObjectFilterInclude(settings.value("Filter/IncludeBglObjectFilter").toStringList());
-  addToBglObjectFilterExclude(settings.value("Filter/ExcludeBglObjectFilter").toStringList());
+  addToNavDbObjectFilterInclude(settings.value("Filter/IncludeBglObjectFilter").toStringList());
+  addToNavDbObjectFilterExclude(settings.value("Filter/ExcludeBglObjectFilter").toStringList());
 
   settings.beginGroup("BasicValidationTables");
 

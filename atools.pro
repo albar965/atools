@@ -713,7 +713,6 @@ HEADERS += \
   src/fs/db/nav/tacanwriter.h \
   src/fs/db/nav/vorwriter.h \
   src/fs/db/nav/waypointwriter.h \
-  src/fs/db/routeedgewriter.h \
   src/fs/db/runwayindex.h \
   src/fs/db/writerbase.h \
   src/fs/db/writerbasebasic.h \
@@ -863,7 +862,6 @@ SOURCES += \
   src/fs/db/nav/tacanwriter.cpp \
   src/fs/db/nav/vorwriter.cpp \
   src/fs/db/nav/waypointwriter.cpp \
-  src/fs/db/routeedgewriter.cpp \
   src/fs/db/runwayindex.cpp \
   src/fs/db/writerbasebasic.cpp \
   src/fs/dfd/dfdcompiler.cpp \

@@ -5,7 +5,6 @@
         <file>resources/sql/fs/db/create_indexes_post_load.sql</file>
         <file>resources/sql/fs/db/create_meta_schema.sql</file>
         <file>resources/sql/fs/db/create_nav_schema.sql</file>
-        <file>resources/sql/fs/db/create_route_schema.sql</file>
         <file>resources/sql/fs/db/create_views.sql</file>
         <file>resources/sql/fs/db/delete_duplicate_navaids.sql</file>
         <file>resources/sql/fs/db/drop_airport_facilities.sql</file>
@@ -17,8 +16,6 @@
         <file>resources/sql/fs/db/drop_view.sql</file>
         <file>resources/sql/fs/db/finish_schema.sql</file>
         <file>resources/sql/fs/db/populate_nav_search.sql</file>
-        <file>resources/sql/fs/db/populate_route_edge.sql</file>
-        <file>resources/sql/fs/db/populate_route_node.sql</file>
         <file>resources/sql/fs/db/update_airport.sql</file>
         <file>resources/sql/fs/db/update_approaches.sql</file>
         <file>resources/sql/fs/db/update_wp_ids.sql</file>
@@ -41,7 +38,6 @@
         <file>resources/sql/fs/logbook/drop_logbook_schema.sql</file>
         <file>resources/sql/fs/logbook/create_logbook_schema.sql</file>
         <file>resources/sql/fs/db/create_indexes_post_load_boundary.sql</file>
-        <file>resources/sql/fs/db/finish_schema_route.sql</file>
         <file>resources/sql/fs/track/drop_track_schema.sql</file>
         <file>resources/sql/fs/track/create_track_schema.sql</file>
         <file>resources/sql/fs/db/dfd/update_airport_ils.sql</file>
@@ -52,7 +48,6 @@
         <file>resources/sql/fs/db/dfd/populate_parking.sql</file>
         <file>resources/sql/fs/userdata/create_user_schema_undo.sql</file>
         <file>resources/sql/fs/logbook/create_logbook_schema_undo.sql</file>
-        <file>resources/sql/fs/db/finish_schema_airport.sql</file>
         <file>resources/json/stopwords-iso.json.gz</file>
         <file>resources/sql/fs/db/delete_duplicate_ils.sql</file>
         <file>resources/sql/fs/db/delete_duplicate_ils_fsx.sql</file>

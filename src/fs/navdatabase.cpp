@@ -24,7 +24,6 @@
 #include "fs/scenery/scenerycfg.h"
 #include "fs/scenery/addoncfg.h"
 #include "fs/db/airwayresolver.h"
-#include "fs/db/routeedgewriter.h"
 #include "fs/progresshandler.h"
 #include "fs/scenery/fileresolver.h"
 #include "fs/scenery/addonpackage.h"
@@ -149,7 +148,6 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
       return;
   }
 
-  script.executeScript(":/atools/resources/sql/fs/db/drop_view.sql");
   script.executeScript(":/atools/resources/sql/fs/db/drop_routing_search.sql");
   script.executeScript(":/atools/resources/sql/fs/db/drop_nav.sql");
   script.executeScript(":/atools/resources/sql/fs/db/drop_airport_facilities.sql");
@@ -166,10 +164,7 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
   script.executeScript(":/atools/resources/sql/fs/db/create_boundary_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_nav_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_ap_schema.sql");
-  // if(options->isCreateRouteTables())
-  script.executeScript(":/atools/resources/sql/fs/db/create_route_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_meta_schema.sql");
-  script.executeScript(":/atools/resources/sql/fs/db/create_views.sql");
   transaction.commit();
 }
 
@@ -415,12 +410,6 @@ int NavDatabase::countDfdSteps()
   total += PROGRESS_NUM_TASK_STEPS; // "Updating ILS Count"
   total += PROGRESS_NUM_TASK_STEPS; // "Collecting navaids for search"
 
-  if(options->isCreateRouteTables())
-  {
-    total++; // "Populating routing tables"
-    total += PROGRESS_NUM_TASK_STEPS; // "Creating route edges for VOR and NDB"
-    total += PROGRESS_NUM_TASK_STEPS; // "Creating route edges waypoints"
-  }
   total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes for airport"
   total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes for search"
   total++; // "Creating indexes for route"
@@ -779,23 +768,6 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   if((aborted = runScript(&progress, "fs/db/populate_nav_search.sql", tr("Collecting navaids for search"))))
     return result;
 
-  if(options->isCreateRouteTables())
-  {
-    // Fill tables for automatic flight plan calculation
-    if((aborted = runScript(&progress, "fs/db/populate_route_node.sql", tr("Populating routing tables"))))
-      return result;
-
-    if((aborted = progress.reportOther(tr("Creating route edges for VOR and NDB"))))
-      return result;
-
-    // Create a network of VOR and NDB stations that allow radio navaid routing
-    atools::fs::db::RouteEdgeWriter edgeWriter(db);
-    edgeWriter.run();
-
-    if((aborted = runScript(&progress, "fs/db/populate_route_edge.sql", tr("Creating route edges waypoints"))))
-      return result;
-  }
-
   if(!FsPaths::isAnyXplane(sim) && sim != FsPaths::NAVIGRAPH)
   {
     if((aborted = progress.reportOther(tr("Calculating airport rating"))))
@@ -815,18 +787,6 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
 
   if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
     return result;
-
-  if(options->isCreateAirportTables())
-  {
-    if((aborted = runScript(&progress, "fs/db/finish_schema_airport.sql", tr("Creating medium and large airport tables"))))
-      return result;
-  }
-
-  if(options->isCreateRouteTables())
-  {
-    if((aborted = runScript(&progress, "fs/db/finish_schema_route.sql", tr("Creating indexes for route"))))
-      return result;
-  }
 
   if(sim == FsPaths::MSFS)
   {
@@ -1299,17 +1259,6 @@ void NavDatabase::runPreparationPost245(atools::sql::SqlDatabase& db)
   qDebug() << Q_FUNC_INFO;
 
   SqlUtil util(db);
-
-  // Remove the unneeded routing tables since data is loaded dynamically in newer versions
-  if(util.hasTable("route_edge_airway"))
-    db.exec("delete from route_edge_airway");
-  if(util.hasTable("route_edge_radio"))
-    db.exec("delete from route_edge_radio");
-  if(util.hasTable("route_node_airway"))
-    db.exec("delete from route_node_airway");
-  if(util.hasTable("route_node_radio"))
-    db.exec("delete from route_node_radio");
-  db.commit();
 
   // Remove artificial waypoints since procedures now use coordinates and all navaids to resolve fixes
   if(util.hasTableAndColumn("waypoint", "artificial"))

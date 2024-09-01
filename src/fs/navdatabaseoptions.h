@@ -109,11 +109,6 @@ enum OptionFlag : quint32
   RESOLVE_AIRWAYS = 1 << 6,
 
   /*
-   * If true create all route_edge_* and route_node_* tables that are needed for flight plan creation
-   */
-  CREATE_ROUTE_TABLES = 1 << 7,
-
-  /*
    * True: create a final report on database content. Default is false.
    */
   DATABASE_REPORT = 1 << 8,
@@ -138,10 +133,7 @@ enum OptionFlag : quint32
   DROP_INDEXES = 1 << 14,
 
   /* Remove all indexes */
-  AIRPORT_VALIDATION = 1 << 15,
-
-  /* * Create airport large and medium tables */
-  CREATE_AIRPORT_TABLES = 1 << 16
+  AIRPORT_VALIDATION = 1 << 15
 };
 
 ATOOLS_DECLARE_FLAGS_32(OptionFlags, OptionFlag)
@@ -262,22 +254,6 @@ public:
   void setResolveAirways(bool value)
   {
     flags.setFlag(type::RESOLVE_AIRWAYS, value);
-  }
-
-  /*
-   * If true create all route_edge_* and route_node_* tables that are needed for flight plan creation
-   */
-  void setCreateRouteTables(bool value)
-  {
-    flags.setFlag(type::CREATE_ROUTE_TABLES, value);
-  }
-
-  /*
-   * If true create all route_edge_* and route_node_* tables that are needed for flight plan creation
-   */
-  void setCreateAirportTables(bool value)
-  {
-    flags.setFlag(type::CREATE_AIRPORT_TABLES, value);
   }
 
   /* Reads all inactive scenery regions if set to true */
@@ -423,16 +399,6 @@ public:
     return flags.testFlag(type::RESOLVE_AIRWAYS);
   }
 
-  bool isCreateRouteTables() const
-  {
-    return flags.testFlag(type::CREATE_ROUTE_TABLES);
-  }
-
-  bool isCreateAirportTables() const
-  {
-    return flags.testFlag(type::CREATE_AIRPORT_TABLES);
-  }
-
   bool isReadInactive() const
   {
     return flags.testFlag(type::READ_INACTIVE);
@@ -515,8 +481,8 @@ private:
   void addToAirportIcaoFilterExclude(const QStringList& filter);
   void addToPathFilterInclude(const QStringList& filter);
   void addToPathFilterExclude(const QStringList& filter);
-  void addToBglObjectFilterInclude(const QStringList& filters);
-  void addToBglObjectFilterExclude(const QStringList& filters);
+  void addToNavDbObjectFilterInclude(const QStringList& filters);
+  void addToNavDbObjectFilterExclude(const QStringList& filters);
 
   void addToHighPriorityFiltersInc(const QStringList& filters);
 
