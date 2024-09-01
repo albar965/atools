@@ -359,19 +359,39 @@ const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const T
 
 #endif
 
+/* For rolling lists. Valid for negative and overflowing indexes.
+ * rollIndex(5, 6) -> 1 and rollIndex(5, -1) -> 4 */
+inline int rollIndex(int size, int index)
+{
+  return index < 0 ? (((index % size) + size) % size) : (index % size);
+}
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 /* Functions roll over to first position on overflow */
 template<typename TYPE>
 const TYPE& atRoll(const QVector<TYPE>& list, int index)
 {
-  return index < list.size() ? list.at(index) : list.constFirst();
+  return list.at(rollIndex(list.size(), index));
+}
+
+template<typename TYPE>
+TYPE& atRoll(QVector<TYPE>& list, int index)
+{
+  return list[rollIndex(list.size(), index)];
 }
 
 #endif
+
 template<typename TYPE>
 const TYPE& atRoll(const QList<TYPE>& list, int index)
 {
-  return index < list.size() ? list.at(index) : list.constFirst();
+  return list.at(rollIndex(list.size(), index));
+}
+
+template<typename TYPE>
+TYPE& atRoll(QList<TYPE>& list, int index)
+{
+  return list[rollIndex(list.size(), index)];
 }
 
 /* Writes a warning message includiing the string list */
