@@ -60,6 +60,30 @@ namespace ng {
 
 static const float RNV_FEATHER_WIDTH_DEG = 8.f;
 
+/* Airspace segment containing information */
+struct AirspaceSegment
+{
+  explicit AirspaceSegment(const atools::geo::Pos& posParam, const atools::geo::Pos& centerParam, QString viaParam, float distanceParam)
+    : pos(posParam), center(centerParam), via(viaParam), distance(distanceParam)
+  {
+  }
+
+  atools::geo::Pos pos, center /* Circle or arc center */;
+  /* Flags ARINC chapter 5.118
+   * Col 1 Col 2 Description
+   * A           Arc by edge
+   * C           Circle
+   *       E     End of description, return to  original point
+   * G           Great Circle
+   * H           Rhumb Line
+   * L           Counter Clockwise Arc
+   * R           Clockwise Arc
+   */
+  QString via;
+
+  float distance; /* Circle or arc radius in NM */
+};
+
 DfdCompiler::DfdCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
                          ProgressHandler *progressHandler)
   : options(opts), db(sqlDb), progress(progressHandler)
@@ -855,7 +879,7 @@ void DfdCompiler::writeAirspaceGeometry(atools::sql::SqlQuery& query)
 {
   Pos pos(query.valueFloat("longitude"), query.valueFloat("latitude"));
   Pos center(query.valueFloat("arc_origin_longitude"), query.valueFloat("arc_origin_latitude"));
-  airspaceSegments.append({pos, center, query.valueStr("boundary_via"), query.valueFloat("arc_distance")});
+  airspaceSegments.append(AirspaceSegment(pos, center, query.valueStr("boundary_via"), query.valueFloat("arc_distance")));
 }
 
 void DfdCompiler::beginControlledAirspace(atools::sql::SqlQuery& query)
@@ -1069,23 +1093,72 @@ void DfdCompiler::finishAirspace()
     // Create geometry
     LineString curAirspaceLine;
 
-    for(int i = 0; i < airspaceSegments.size(); i++)
+    // Need to step over one iteration. Maybe need to generate rhumb line points for the last segment
+    for(int i = 0; i <= airspaceSegments.size(); i++)
     {
-      const AirspaceSeg& seg = airspaceSegments.at(i);
-      Pos nextPos = i < airspaceSegments.size() - 1 ? airspaceSegments.at(i + 1).pos : airspaceSegments.constFirst().pos;
+      // Last iteration is only for eventual rhumb line generation
+      bool rollover = i >= airspaceSegments.size();
 
-      if(seg.pos.isNull() && !seg.center.isNull())
-        // Create a circular polygon
-        curAirspaceLine.append(LineString(seg.center, ageo::nmToMeter(seg.distance), CIRCLE_SEGMENTS));
+      const AirspaceSegment& segment = atools::atRoll(airspaceSegments, i);
+      const AirspaceSegment& segmentPrev = atools::atRoll(airspaceSegments, i - 1);
+      const Pos& nextPos = atools::atRoll(airspaceSegments, i + 1).pos;
+
+      if(segment.pos.isNull() && !segment.center.isNull())
+      {
+        if(!rollover)
+          // Create a circular polygon
+          curAirspaceLine.append(LineString(segment.center, ageo::nmToMeter(segment.distance), CIRCLE_SEGMENTS));
+      }
       else
       {
-        if(seg.center.isNull())
-          curAirspaceLine.append(seg.pos);
-        else
+        if(segment.center.isNull())
         {
-          // Create an arc
-          bool clockwise = seg.via.isEmpty() ? true : seg.via.at(0) == "R";
-          LineString arc(seg.center, seg.pos, nextPos, clockwise, CIRCLE_SEGMENTS);
+          float lat = std::abs(segment.pos.getLatY());
+
+          // Use different number of points per NM depending on latitude
+          // Use odd/prime numbers to ease debugging / detecting artifial points
+          float distInterval;
+          if(lat > 70.f)
+            distInterval = 23;
+          else if(lat > 60.f)
+            distInterval = 43;
+          else if(lat > 30.f)
+            distInterval = 83;
+          else if(lat > 10.f)
+            distInterval = 171;
+          else
+            distInterval = 233;
+
+          // Linear feature =============================
+          if(atools::charAt(segmentPrev.via, 0) == 'H' && !curAirspaceLine.isEmpty() &&
+             curAirspaceLine.constLast().distanceMeterTo(segment.pos) > atools::geo::nmToMeter(distInterval * 2.f))
+          {
+            // Create a rhumb line using points ===============
+            const Pos& last = curAirspaceLine.constLast();
+            float dist = last.distanceMeterTo(segment.pos);
+            int numPoints = atools::ceilToInt(dist / atools::geo::nmToMeter(distInterval));
+
+            LineString positions;
+            last.interpolatePointsRhumb(segment.pos, dist, numPoints, positions);
+
+            if(!positions.isEmpty())
+              positions.removeFirst();
+
+            curAirspaceLine.append(positions);
+
+            if(!rollover)
+              // Add current position only if not rolling over. Do not close polygon
+              curAirspaceLine.append(segment.pos);
+          }
+          else if(!rollover)
+            // Lines are already drawn using GC - no need for intermediate points
+            curAirspaceLine.append(segment.pos);
+        }
+        else if(!rollover)
+        {
+          // Create an arc =============================
+          bool clockwise = segment.via.isEmpty() ? true : segment.via.at(0) == "R";
+          LineString arc(segment.center, segment.pos, nextPos, clockwise, CIRCLE_SEGMENTS);
 
           if(!arc.isEmpty())
             arc.removeLast();
@@ -1094,13 +1167,13 @@ void DfdCompiler::finishAirspace()
       }
     }
 
-    // Move points away from the poles to avoid display artifacts
+    // Move points slightly away from the poles to avoid display artifacts
     for(Pos& pos : curAirspaceLine)
     {
-      if(pos.getLatY() > 89.f)
-        pos.setLatY(89.f);
-      if(pos.getLatY() < -89.)
-        pos.setLatY(-89.f);
+      if(pos.getLatY() > 89.9f)
+        pos.setLatY(89.9f);
+      if(pos.getLatY() < -89.9f)
+        pos.setLatY(-89.9f);
     }
     airspaceWriteQuery->bindValue(":file_id", FILE_ID);
 
@@ -1217,7 +1290,7 @@ void DfdCompiler::writeAirways()
 
     lastRec = airways.record();
     lastName = name;
-    lastEndOfRoute = code.size() > 1 && code.at(1) == "E";
+    lastEndOfRoute = code.size() > 1 && code.at(1) == 'E';
 
     if(nameChange)
     {

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #define ATOOLS_DFDDATACOMPILER_H
 
 #include "geo/rect.h"
-#include "geo/linestring.h"
 #include "sql/sqltypes.h"
 
 #include <QString>
@@ -47,6 +46,7 @@ class ProgressHandler;
 
 namespace ng {
 
+struct AirspaceSegment;
 /*
  * Creates a Little Navmap scenery database from an extended DFD database.
  * Only for command line based compilation.
@@ -184,15 +184,8 @@ private:
   void updateTreeLetterAirportCodes(const QHash<QString, QString>& codeMap, const QString& table,
                                     const QString& column);
 
-  /* Airspace segment containing information */
-  struct AirspaceSeg
-  {
-    atools::geo::Pos pos, center /* Circle or arc center */;
-    QString via; /* Flags */
-    float distance; /* Circle or arc radius */
-  };
-
-  QVector<AirspaceSeg> airspaceSegments;
+  /* Airspace segments containing information */
+  QVector<AirspaceSegment> airspaceSegments;
 
   /* Maps concatenated FIR and UIR airspace key columns to boundary_id in database */
   QHash<QString, int> airspaceIdentIdMap;
