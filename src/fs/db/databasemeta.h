@@ -281,7 +281,11 @@ private:
    * 26 Added parking suffix for MSFS.
    * 27 Columns "metadata.properties" added.
    * 28 All fixes related to atools 4.0.0.beta to 4.0.2.beta.
-   * 29 Waypoint name added.
+   * 29 Added column "name" for table "waypoint" added.
+   *    Tables "airport_medium", "airport_large", "route_node_radio", "route_edge_radio", "route_node_airway" and
+   *    "route_edge_airway" removed for good.
+   *    View creation now disabled.
+   *
    *
    * VERSION_NUMBER_TODO=
    */
