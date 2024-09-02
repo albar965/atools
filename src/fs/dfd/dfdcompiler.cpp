@@ -69,7 +69,12 @@ struct AirspaceSegment
   }
 
   atools::geo::Pos pos, center /* Circle or arc center */;
-  /* Flags ARINC chapter 5.118
+
+  /* Definition/Description: The “Boundary VIA” defines the path
+   * of the boundary from the position identified in the record to
+   * the next defined position.
+   *
+   * Flags ARINC chapter 5.118
    * Col 1 Col 2 Description
    * A           Arc by edge
    * C           Circle
