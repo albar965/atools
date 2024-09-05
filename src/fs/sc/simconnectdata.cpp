@@ -19,10 +19,7 @@
 
 #include "fs/weather/metar.h"
 #include "geo/calculations.h"
-
-#ifdef DEBUG_MOVING_AIRCRAFT
 #include "util/average.h"
-#endif
 
 #include <QDebug>
 #include <QDataStream>
@@ -198,10 +195,9 @@ const SimConnectAircraft *SimConnectData::getAiAircraftConstById(int id) const
     return nullptr;
 }
 
-#ifdef DEBUG_MOVING_AIRCRAFT
 SimConnectData SimConnectData::buildDebugMovingAircraft(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
-                                                     float vertSpeed, float tas, float fuelflow, float totalFuel, float ice,
-                                                     float flightplanAlt, float magVar, bool jetFuel, bool helicopter)
+                                                        float vertSpeed, float tas, float fuelflow, float totalFuel, float ice,
+                                                        float flightplanAlt, float magVar, bool jetFuel, bool helicopter)
 {
   static QVector<float> lastHdgs;
   static atools::util::MovingAverage averageU(5), averageV(5);
@@ -283,7 +279,6 @@ SimConnectData SimConnectData::buildDebugMovingAircraft(const geo::Pos& pos, con
 
   return data;
 }
-#endif
 
 void SimConnectData::updateIndexesAndKeys()
 {
