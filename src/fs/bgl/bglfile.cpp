@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -265,7 +265,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
   createFlags.setFlag(bgl::flags::AIRPORT_MSFS_DUMMY, area.isNavdata());
 
   // There should be no duplicate airport idents in the file. Otherwise bail out of reading this file.
-  QSet<QString> airportIdents;
+  QHash<QString, int> airportIdentCount;
 
   for(Subsection& subsection : subsections)
   {
@@ -303,18 +303,27 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
               qWarning().nospace().noquote() << "Read airport is null at offset " << bs->tellg();
             else
             {
-              if(airportIdents.contains(ap->getIdent()))
-              {
-                qWarning().nospace().noquote() << "Duplicate airport ident " << ap->getIdent() << " at offset " << bs->tellg();
-
-                // Duplicates found. Bail out =================================================================
-                // Example of malformed file UWLS.bgl
-
-                throw atools::Exception(tr("Duplicate airport ident \"%1\" in file \"%2\". File is malformed.").
-                                        arg(ap->getIdent()).arg(getFilepath()));
-              }
+              auto countIterator = airportIdentCount.find(ap->getIdent());
+              if(countIterator == airportIdentCount.end())
+                // Add new counter
+                airportIdentCount.insert(ap->getIdent(), 1);
               else
-                airportIdents.insert(ap->getIdent());
+              {
+                if(countIterator.value() > 3)
+                {
+                  // Exceeded - throw exception
+                  qWarning().nospace().noquote() << "Multiple duplicate airport idents " << ap->getIdent() << " at offset " << bs->tellg();
+
+                  // Duplicates found. Bail out =================================================================
+                  // Example of malformed file UWLS.bgl
+
+                  throw atools::Exception(tr("Multiple duplicate airport idents \"%1\" in file \"%2\". File is malformed.").
+                                          arg(ap->getIdent()).arg(getFilepath()));
+                }
+                else
+                  // Already stored - increase counter
+                  countIterator.value()++;
+              }
             }
 
             rec = ap;
