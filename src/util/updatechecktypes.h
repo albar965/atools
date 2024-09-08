@@ -20,6 +20,8 @@
 
 #include "util/flags.h"
 
+#include <QString>
+
 namespace atools {
 namespace util {
 

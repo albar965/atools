@@ -19,6 +19,7 @@
 #define ATOOLS_FLAGS_H
 
 #include <QDataStream>
+#include <QHash>
 #include <initializer_list>
 
 namespace atools {
