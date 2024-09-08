@@ -18,16 +18,15 @@
 #ifndef ATOOLS_BGL_BGLFILE_H
 #define ATOOLS_BGL_BGLFILE_H
 
-#include "fs/bgl/sectiontype.h"
 #include "fs/bgl/header.h"
-#include "fs/bgl/section.h"
-#include "fs/bgl/subsection.h"
+#include "fs/bgl/sectiontype.h"
 #include "fs/navdatabaseoptions.h"
-#include "io/binarystream.h"
+#include "util/flags.h"
 
 #include <QString>
 #include <QList>
 #include <QDebug>
+#include <QCoreApplication>
 
 namespace atools {
 namespace io {
@@ -36,10 +35,29 @@ class BinaryStream;
 
 namespace fs {
 
+class NavDatabaseOptions;
+
 namespace scenery {
 class SceneryArea;
 }
 namespace bgl {
+
+// -------------------------------------------------------------------
+enum CreateFlag : quint32
+{
+  NO_CREATE_FLAGS = 0,
+  AIRPORT_FS9_FORMAT = 1 << 0,
+  AIRPORT_FSX_FORMAT = 1 << 1,
+  AIRPORT_MSFS_DUMMY = 1 << 2,
+  AIRPORT_MSFS_NAVIGRAPH_NAVDATA = 1 << 3,
+};
+
+ATOOLS_DECLARE_FLAGS_32(CreateFlags, CreateFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::CreateFlags)
+
+class Section;
+class Subsection;
+class Header;
 class Ils;
 class Vor;
 class Tacan;
@@ -51,32 +69,18 @@ class Namelist;
 class Record;
 class Boundary;
 
-namespace flags {
-enum CreateFlag : quint32
-{
-  NONE = 0,
-  AIRPORT_FS9_FORMAT = 1 << 0,
-  AIRPORT_FSX_FORMAT = 1 << 1,
-  AIRPORT_MSFS_DUMMY = 1 << 2,
-  AIRPORT_MSFS_NAVIGRAPH_NAVDATA = 1 << 3,
-};
-
-ATOOLS_DECLARE_FLAGS_32(CreateFlags, CreateFlag)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::flags::CreateFlags)
-
-}
 /*
  * Class for reading a full BGL file into its containers.
  */
 class BglFile
 {
-  Q_DECLARE_TR_FUNCTIONS(atools::fs::bgl::BglFile)
+  Q_DECLARE_TR_FUNCTIONS(BglFile)
 
 public:
   /*
    * @param readerOptions Configuration.
    */
-  BglFile(const NavDatabaseOptions *readerOptions);
+  explicit BglFile(const NavDatabaseOptions *readerOptions);
   virtual ~BglFile();
 
   void setSupportedSectionTypes(const QSet<atools::fs::bgl::section::SectionType>& sects)
@@ -181,7 +185,7 @@ private:
 
   template<typename TYPE>
   const TYPE *createRecord(atools::io::BinaryStream *bs, QList<const TYPE *> *list,
-                           atools::fs::bgl::flags::CreateFlags flags);
+                           atools::fs::bgl::CreateFlags flags);
 
   QString filename;
   qint64 size;
@@ -245,7 +249,7 @@ const TYPE *BglFile::createRecord(atools::io::BinaryStream *bs, QList<const TYPE
 
 template<typename TYPE>
 const TYPE *BglFile::createRecord(atools::io::BinaryStream *bs, QList<const TYPE *> *list,
-                                  atools::fs::bgl::flags::CreateFlags flags)
+                                  atools::fs::bgl::CreateFlags flags)
 {
   TYPE *rec = new TYPE(options, bs, flags);
 

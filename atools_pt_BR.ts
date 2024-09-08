@@ -17,40 +17,50 @@
 <context>
     <name>AircraftPerf</name>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="94"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="95"/>
         <source>Example Performance Profile</source>
         <translation>Exemplo de Perfil de Performance</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="95"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="96"/>
         <source>C172</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="131"/>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="400"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="132"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="401"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
         <translation>Não é possível abrir o arquivo de performance da aeronave &quot;%1&quot; para leitura.</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="144"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="145"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading. Invalid format.</source>
         <translation>Não é possível abrir o arquivo de desempenho da aeronave &quot;%1&quot; para leitura. Formato Inválido.</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="172"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="173"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>Não é possível abrir o arquivo %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="264"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="265"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="414"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="415"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
         <translation>Não é possível abrir o arquivo de performance da aeronave &quot;%1&quot; para gravação.</translation>
+    </message>
+</context>
+<context>
+    <name>AirspaceReaderIvao</name>
+    <message>
+        <location filename="src/fs/userdata/airspacereaderivao.cpp" line="226"/>
+        <location filename="src/fs/userdata/airspacereaderopenair.cpp" line="84"/>
+        <location filename="src/fs/userdata/airspacereadervatsim.cpp" line="297"/>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -71,6 +81,14 @@
     <message>
         <source>Populating VOR/NDB Routing Table</source>
         <translation type="vanished">Tabela de preenchimento VOR/NDB</translation>
+    </message>
+</context>
+<context>
+    <name>BglFile</name>
+    <message>
+        <location filename="src/fs/bgl/bglfile.cpp" line="320"/>
+        <source>Multiple duplicate airport idents &quot;%1&quot; in file &quot;%2&quot;. File is malformed.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -411,7 +429,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1114"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1497"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4036"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="4034"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -599,6 +617,62 @@ Ocorreu um erro no Sql
         <location filename="src/util/htmlbuilder.cpp" line="334"/>
         <source>Yes</source>
         <translation>Sim</translation>
+    </message>
+</context>
+<context>
+    <name>LogdataManager</name>
+    <message>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="214"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="266"/>
+        <source>File contains invalid data.
+&quot;%1&quot;
+Line %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="217"/>
+        <source>File is not valid. Neither departure nor destination ident is set.
+&quot;%1&quot;
+Line %2.</source>
+        <translation type="unfinished">O arquivo não é válido. Nem a identificação de partida nem de destino estão definidas.
+&quot;%1&quot;
+Linha %2.</translation>
+    </message>
+    <message>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="322"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="508"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="580"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="316"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="407"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="487"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="559"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="601"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="604"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="685"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="729"/>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
+        <translation type="unfinished">Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2.</translation>
+    </message>
+    <message>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="479"/>
+        <source>Imported from X-Plane logbook %1
+Number of landings: %2
+Cross country time: %3
+IFR time: %4
+Night time: %5</source>
+        <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in LogdataController::importXplane</extracomment>
+        <translation type="unfinished">Importado do logbook do X-Plane %1
+Número de pousos: %2
+Hora do país: %3
+Tempo IFR: %4
+Tempo Noturno: %5</translation>
+    </message>
+    <message>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="353"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="357"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="361"/>
+        <source>File is not an X-Plane user_fix.dat file.</source>
+        <translation type="unfinished">O arquivo não é um arquivo user_fix.dat do X-Plane.</translation>
     </message>
 </context>
 <context>
@@ -1219,40 +1293,39 @@ Ocorreu um erro no Sql
         <translation type="vanished">&quot;%1&quot; não encontrado</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="827"/>
         <source>Creating indexes for route</source>
-        <translation>Criando índices para rota</translation>
+        <translation type="vanished">Criando índices para rota</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="833"/>
+        <location filename="src/fs/navdatabase.cpp" line="793"/>
         <source>Loading translations</source>
         <translation>Carregando traduções</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="913"/>
+        <location filename="src/fs/navdatabase.cpp" line="873"/>
         <source>Analyze Database</source>
         <translation>Analizando Banco de Dados</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="972"/>
-        <location filename="src/fs/navdatabase.cpp" line="1002"/>
-        <location filename="src/fs/navdatabase.cpp" line="1108"/>
-        <location filename="src/fs/navdatabase.cpp" line="1257"/>
+        <location filename="src/fs/navdatabase.cpp" line="932"/>
+        <location filename="src/fs/navdatabase.cpp" line="962"/>
+        <location filename="src/fs/navdatabase.cpp" line="1068"/>
+        <location filename="src/fs/navdatabase.cpp" line="1217"/>
         <source>Creating boundary indexes</source>
         <translation>Criando índices de limite</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="986"/>
+        <location filename="src/fs/navdatabase.cpp" line="946"/>
         <source>Creating waypoints for procedures</source>
         <translation>Criando waypoints para procedimentos</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1008"/>
+        <location filename="src/fs/navdatabase.cpp" line="968"/>
         <source>Updating Navids in Waypoint</source>
         <translation>Atualizando Navaids nos Waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1271"/>
+        <location filename="src/fs/navdatabase.cpp" line="1231"/>
         <source>Basic Validation</source>
         <translation>Validação Básica</translation>
     </message>
@@ -1261,101 +1334,100 @@ Ocorreu um erro no Sql
         <translation type="vanished">Aeroportos Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1561"/>
+        <location filename="src/fs/navdatabase.cpp" line="1510"/>
         <source>Generic Airports</source>
         <translation>Aeroportos Genéricos</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1576"/>
+        <location filename="src/fs/navdatabase.cpp" line="1525"/>
         <source>Base Navigation</source>
         <translation>Navegação Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1625"/>
-        <location filename="src/fs/navdatabase.cpp" line="1672"/>
+        <location filename="src/fs/navdatabase.cpp" line="1574"/>
+        <location filename="src/fs/navdatabase.cpp" line="1621"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation>Complemento criptografado &quot;%1&quot; encontrado. O complemento pode não aparecer corretamente.</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1668"/>
+        <location filename="src/fs/navdatabase.cpp" line="1617"/>
         <source>Community</source>
         <translation>Comunidade</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1792"/>
-        <location filename="src/fs/navdatabase.cpp" line="1803"/>
+        <location filename="src/fs/navdatabase.cpp" line="1741"/>
+        <location filename="src/fs/navdatabase.cpp" line="1752"/>
         <source>Custom scenery path %1</source>
         <translation>Caminho personalizado do cenário: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="2088"/>
+        <location filename="src/fs/navdatabase.cpp" line="2037"/>
         <source>Counting files for %1 ...</source>
         <translation>Contando arquivos para %1 ...</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="978"/>
-        <location filename="src/fs/navdatabase.cpp" line="1121"/>
-        <location filename="src/fs/navdatabase.cpp" line="1263"/>
+        <location filename="src/fs/navdatabase.cpp" line="938"/>
+        <location filename="src/fs/navdatabase.cpp" line="1081"/>
+        <location filename="src/fs/navdatabase.cpp" line="1223"/>
         <source>Clean up</source>
         <translation>Limpando</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="812"/>
+        <location filename="src/fs/navdatabase.cpp" line="784"/>
         <source>Clean up runways</source>
         <translation>Limpar pistas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="779"/>
+        <location filename="src/fs/navdatabase.cpp" line="768"/>
         <source>Collecting navaids for search</source>
         <translation>Coletando navaids para pesquisa</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="148"/>
+        <location filename="src/fs/navdatabase.cpp" line="147"/>
         <source>Cleaning Database</source>
         <translation>Limpeza do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="163"/>
+        <location filename="src/fs/navdatabase.cpp" line="161"/>
         <source>Creating Database Schema</source>
         <translation>Criando Esquema do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="190"/>
+        <location filename="src/fs/navdatabase.cpp" line="185"/>
         <source>&quot;%1&quot; does not contain any scenery areas</source>
         <translation>&quot;%1&quot; não contém nenhuma área de cenário</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="200"/>
+        <location filename="src/fs/navdatabase.cpp" line="195"/>
         <source>Unknown exception while reading file</source>
         <translation>Exceção desconhecida ao ler o arquivo</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="742"/>
+        <location filename="src/fs/navdatabase.cpp" line="731"/>
         <source>Updating Navaids</source>
         <translation>Atualizando Navaids</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="749"/>
+        <location filename="src/fs/navdatabase.cpp" line="738"/>
         <source>Cleaning up waypoints</source>
         <translation>Limpando waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="801"/>
+        <location filename="src/fs/navdatabase.cpp" line="773"/>
         <source>Calculating airport rating</source>
         <translation>Calculando a classificação do aeroporto</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="821"/>
         <source>Creating medium and large airport tables</source>
-        <translation>Criando tabelas de aeroportos médios e grandes</translation>
+        <translation type="vanished">Criando tabelas de aeroportos médios e grandes</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="874"/>
+        <location filename="src/fs/navdatabase.cpp" line="834"/>
         <source>Creating Database preparation Script</source>
         <translation>Criando Script de preparação do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1549"/>
+        <location filename="src/fs/navdatabase.cpp" line="1498"/>
         <source>Base</source>
         <translation></translation>
     </message>
@@ -1364,50 +1436,44 @@ Ocorreu um erro no Sql
         <translation type="vanished">Criando airways</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="969"/>
-        <location filename="src/fs/navdatabase.cpp" line="997"/>
-        <location filename="src/fs/navdatabase.cpp" line="1105"/>
-        <location filename="src/fs/navdatabase.cpp" line="1254"/>
+        <location filename="src/fs/navdatabase.cpp" line="929"/>
+        <location filename="src/fs/navdatabase.cpp" line="957"/>
+        <location filename="src/fs/navdatabase.cpp" line="1065"/>
+        <location filename="src/fs/navdatabase.cpp" line="1214"/>
         <source>Creating indexes</source>
         <translation>Criando índices</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="807"/>
+        <location filename="src/fs/navdatabase.cpp" line="779"/>
         <source>Creating indexes for airport</source>
         <translation>Criando índices para o aeroporto</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="816"/>
+        <location filename="src/fs/navdatabase.cpp" line="788"/>
         <source>Creating indexes for search</source>
         <translation>Criando índices para fazer a procura</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1440"/>
+        <location filename="src/fs/navdatabase.cpp" line="1389"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Criando relatório em coordenadas duplicadas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1402"/>
+        <location filename="src/fs/navdatabase.cpp" line="1351"/>
         <source>Creating report on duplicates</source>
         <translation>Criando relatório em duplicata</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1396"/>
+        <location filename="src/fs/navdatabase.cpp" line="1345"/>
         <source>Creating report on values</source>
         <translation>Criando relatório em valores</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="788"/>
-        <source>Creating route edges for VOR and NDB</source>
-        <translation>Criando pontos de rotas para VOR e NDB</translation>
-    </message>
-    <message>
-        <location filename="src/fs/navdatabase.cpp" line="795"/>
         <source>Creating route edges waypoints</source>
-        <translation>Criando pontas de rotas waypoints</translation>
+        <translation type="vanished">Criando pontas de rotas waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1390"/>
+        <location filename="src/fs/navdatabase.cpp" line="1339"/>
         <source>Creating table statistics</source>
         <translation>Criando tabela de estatísticas</translation>
     </message>
@@ -1424,7 +1490,7 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não contém o diretório do &quot;Scenery&quot;</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="898"/>
+        <location filename="src/fs/navdatabase.cpp" line="858"/>
         <source>Dropping All Indexes</source>
         <translation>Retirando todos os índices</translation>
     </message>
@@ -1445,22 +1511,21 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é o diretório</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="731"/>
+        <location filename="src/fs/navdatabase.cpp" line="720"/>
         <source>Merging VOR and TACAN to VORTAC</source>
         <translation>Fundindo VOR e TACAN para VORTAC</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="635"/>
+        <location filename="src/fs/navdatabase.cpp" line="624"/>
         <source>Navigraph</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="785"/>
         <source>Populating routing tables</source>
-        <translation>Preenchendo tabelas de rotas</translation>
+        <translation type="vanished">Preenchendo tabelas de rotas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1131"/>
+        <location filename="src/fs/navdatabase.cpp" line="1091"/>
         <source>Preparing Airways</source>
         <translation>Preparando Airways</translation>
     </message>
@@ -1493,38 +1558,38 @@ Ocorreu um erro no Sql
         <translation type="vanished">Removendo visualização</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="758"/>
+        <location filename="src/fs/navdatabase.cpp" line="747"/>
         <source>Updating Airports</source>
         <translation>Atualizando Aeroportos</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="763"/>
-        <location filename="src/fs/navdatabase.cpp" line="770"/>
+        <location filename="src/fs/navdatabase.cpp" line="752"/>
+        <location filename="src/fs/navdatabase.cpp" line="759"/>
         <source>Updating ILS</source>
         <translation>Atualizando ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="775"/>
+        <location filename="src/fs/navdatabase.cpp" line="764"/>
         <source>Updating ILS Count</source>
         <translation>Atualizando contagem do ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="754"/>
+        <location filename="src/fs/navdatabase.cpp" line="743"/>
         <source>Updating approaches</source>
         <translation>Atualizando aproximações</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="736"/>
+        <location filename="src/fs/navdatabase.cpp" line="725"/>
         <source>Updating waypoints</source>
         <translation>Atualizando waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="905"/>
+        <location filename="src/fs/navdatabase.cpp" line="865"/>
         <source>Vacuum Database</source>
         <translation>Banco de Dados de Vácuo</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="649"/>
+        <location filename="src/fs/navdatabase.cpp" line="638"/>
         <source>X-Plane</source>
         <translation></translation>
     </message>
@@ -2013,7 +2078,7 @@ Ocorreu um erro no Sql
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="75"/>
-        <location filename="src/track/tracktypes.cpp" line="58"/>
+        <location filename="src/track/tracktypes.cpp" line="54"/>
         <source>Unknown</source>
         <translation>Desconhecido</translation>
     </message>
@@ -2181,17 +2246,17 @@ Ocorreu um erro no Sql
         <translation>Arquivo não existe</translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="61"/>
+        <location filename="src/track/tracktypes.cpp" line="57"/>
         <source>NAT</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="64"/>
+        <location filename="src/track/tracktypes.cpp" line="60"/>
         <source>PACOTS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="67"/>
+        <location filename="src/track/tracktypes.cpp" line="63"/>
         <source>AUSOTS</source>
         <translation></translation>
     </message>
@@ -2214,7 +2279,7 @@ Ocorreu um erro no Sql
         <translation> (alterado, não usado)</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="467"/>
+        <location filename="src/gui/application.cpp" line="468"/>
         <source>Version %5 (revision %6)</source>
         <translation>Versão %5 (revisão %6)</translation>
     </message>
@@ -2300,6 +2365,13 @@ Ocorreu um erro no Sql
         <location filename="src/gui/treedialog.ui" line="122"/>
         <source>&amp;Collapse All</source>
         <translation>&amp;Recolher Todos</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateCheck</name>
+    <message>
+        <source>Unknown Error</source>
+        <translation type="obsolete">Erro desconhecido</translation>
     </message>
 </context>
 <context>
@@ -2410,17 +2482,17 @@ Importação interrompida.</translation>
 <context>
     <name>XpDataCompiler</name>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1029"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1049"/>
         <source>AIRAC cycle in file is empty.</source>
         <translation>Arquivo do ciclo do Airac está vazio.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1047"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1067"/>
         <source>AIRAC cycle not found in file.</source>
         <translation>Arquivo do ciclo do Airac não foi encotrado.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1086"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1106"/>
         <source>Cannot find valid files for X-Plane navdata in either
 &quot;%1&quot; or
 &quot;%2&quot;
@@ -2458,42 +2530,42 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <translation>Pós-processamento de aerovias</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="894"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="914"/>
         <source>Counting files for Resources ...</source>
         <translation>Contando arquivos para Recursos ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="901"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="921"/>
         <source>Counting files for Custom Scenery/Global Airports ...</source>
         <translation>Contando arquivos para Cenários Personalizados/Aeroportos Globais ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="914"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="934"/>
         <source>Counting files for Global Scenery/Global Airports ...</source>
         <translation>Contando arquivos para Cenário Global/Aeroportos Globais...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="925"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="945"/>
         <source>Counting files for Airspaces ...</source>
         <translation>Contando arquivos para Espaços Aéreos...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="931"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="951"/>
         <source>Counting files for Custom Scenery ...</source>
         <translation>Contando arquivos para Cenários Personalizados ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="955"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="975"/>
         <source>Counting files for Custom Data ...</source>
         <translation>Contando arquivos para Dados Personalizados ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="965"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="985"/>
         <source>Counting files for User Included Path ...</source>
         <translation>Contando arquivos para o caminho de inclusão do Usuário ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1037"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1057"/>
         <source>Found different AIRAC cycles across navdata files. %1 and %2</source>
         <translation>Foi encontrado um ciclo do Airac diferente nos arquivos do navdata. %1 e %2</translation>
     </message>
@@ -2502,8 +2574,8 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <translation type="vanished">Processando Airways</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="331"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="428"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="330"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="427"/>
         <source>Reading: %1</source>
         <translation>Lendo: %1</translation>
     </message>
@@ -2628,9 +2700,8 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
 <context>
     <name>atools::fs::bgl::BglFile</name>
     <message>
-        <location filename="src/fs/bgl/bglfile.cpp" line="313"/>
         <source>Duplicate airport ident &quot;%1&quot; in file &quot;%2&quot;. File is malformed.</source>
-        <translation>Identificador duplicado do aeroporto &quot;%1&quot; no arquivo &quot;%2&quot;. Arquivo está malformado.</translation>
+        <translation type="vanished">Identificador duplicado do aeroporto &quot;%1&quot; no arquivo &quot;%2&quot;. Arquivo está malformado.</translation>
     </message>
 </context>
 <context>
@@ -2968,63 +3039,54 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
 <context>
     <name>atools::fs::userdata::AirspaceReaderIvao</name>
     <message>
-        <location filename="src/fs/userdata/airspacereaderivao.cpp" line="226"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation>Não é possível abrir o arquivo &quot;%1&quot;. Motivo: %2 (%3)</translation>
+        <translation type="vanished">Não é possível abrir o arquivo &quot;%1&quot;. Motivo: %2 (%3)</translation>
     </message>
 </context>
 <context>
     <name>atools::fs::userdata::AirspaceReaderOpenAir</name>
     <message>
-        <location filename="src/fs/userdata/airspacereaderopenair.cpp" line="84"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2 (%3)</translation>
+        <translation type="vanished">Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2 (%3)</translation>
     </message>
 </context>
 <context>
     <name>atools::fs::userdata::AirspaceReaderVatsim</name>
     <message>
-        <location filename="src/fs/userdata/airspacereadervatsim.cpp" line="297"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation>Não é possível abrir o arquivo &quot;%1&quot;. Motivo: %2 (%3)</translation>
+        <translation type="vanished">Não é possível abrir o arquivo &quot;%1&quot;. Motivo: %2 (%3)</translation>
     </message>
 </context>
 <context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="214"/>
         <source>File contains invalid data.
 &quot;%1&quot;
 Line %2.</source>
-        <translation>O arquivo contém dados inválidos.
+        <translation type="vanished">O arquivo contém dados inválidos.
 &quot;%1&quot;
 Linha %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="217"/>
         <source>File is not valid. Neither departure nor destination ident is set.
 &quot;%1&quot;
 Line %2.</source>
-        <translation>O arquivo não é válido. Nem a identificação de partida nem de destino estão definidas.
+        <translation type="vanished">O arquivo não é válido. Nem a identificação de partida nem de destino estão definidas.
 &quot;%1&quot;
 Linha %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="322"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="508"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="580"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2.</translation>
+        <translation type="vanished">Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="479"/>
         <source>Imported from X-Plane logbook %1
 Number of landings: %2
 Cross country time: %3
 IFR time: %4
 Night time: %5</source>
         <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in LogdataController::importXplane</extracomment>
-        <translation>Importado do logbook do X-Plane %1
+        <translation type="vanished">Importado do logbook do X-Plane %1
 Número de pousos: %2
 Hora do país: %3
 Tempo IFR: %4
@@ -3038,32 +3100,20 @@ Tempo Noturno: %5</translation>
 <context>
     <name>atools::fs::userdata::UserdataManager</name>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="266"/>
         <source>File contains invalid data.
 &quot;%1&quot;
 Line %2.</source>
-        <translation>O arquivo contém dados inválidos.
+        <translation type="vanished">O arquivo contém dados inválidos.
 &quot;%1”
 Linha %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="316"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="407"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="487"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="559"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="601"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="604"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="685"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="729"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2.</translation>
+        <translation type="vanished">Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="353"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="357"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="361"/>
         <source>File is not an X-Plane user_fix.dat file.</source>
-        <translation>O arquivo não é um arquivo user_fix.dat do X-Plane.</translation>
+        <translation type="vanished">O arquivo não é um arquivo user_fix.dat do X-Plane.</translation>
     </message>
 </context>
 <context>
@@ -3093,12 +3143,12 @@ Linha %2.</translation>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="438"/>
+        <location filename="src/gui/application.cpp" line="439"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="434"/>
+        <location filename="src/gui/application.cpp" line="435"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation></translation>
     </message>
@@ -3117,37 +3167,37 @@ Linha %2.</translation>
         <translation>&lt;p&gt;&lt;b&gt;%1 não foi encerrado corretamente da última vez.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Isso provavelmente foi causado por uma falha.&lt;/p&gt;&lt;p&gt;Um relatório de falha foi gerado e salvo com todos os arquivos relacionados em um arquivo Zip.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(clique para mostrar)&lt;/p&gt;&lt;p&gt;Você pode querer enviar este arquivo para o autor de %1 para investigar a falha.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Por favor, certifique-se de usar a versão mais recente de %1 antes de relatar uma falha e descreva todas as etapas para reproduzir o problema.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Clique aqui para informações de contato&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Iniciar agora no modo de segurança, o que significa pular o carregamento de todos os arquivos padrão como planos de voo, layout de janela e outras configurações que podem ter causado a falha anterior?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="360"/>
+        <location filename="src/gui/application.cpp" line="361"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;Press OK to exit application.&lt;/b&gt;</source>
         <translation>&lt;b&gt;Exceção capturada no arquivo &quot;%1&quot; linha %2.&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;Pressione OK para sair da aplicação.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="382"/>
+        <location filename="src/gui/application.cpp" line="383"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Encontrado uma exceção desconhecida de arquivo %1 linha %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK para sair do aplicativo.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="403"/>
+        <location filename="src/gui/application.cpp" line="404"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation>&lt;b&gt;Contato:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contato e Suporte&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="409"/>
+        <location filename="src/gui/application.cpp" line="410"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contato:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="460"/>
+        <location filename="src/gui/application.cpp" line="461"/>
         <source> 64-bit</source>
         <translation> 64-bit</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="462"/>
+        <location filename="src/gui/application.cpp" line="463"/>
         <source> 32-bit</source>
         <translation> 32-bit</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="330"/>
+        <location filename="src/gui/application.cpp" line="331"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach a text copy or a screenshot of this dialog, the log file and the configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation>&lt;b&gt;Se o problema persistir ou ocorrer durante a inicialização, delete todas as configurações e arquivos de banco de dados do %1 e tente novamente.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se desejar relatar este erro, anexe uma cópia do texto ou uma captura de tela deste diálogo, o arquivo de log e os arquivos de configuração ao seu relatório, adicione todas as outras informações disponíveis e envie para o endereço de contato abaixo.&lt;/b&gt;&lt;br/&gt;</translation>
@@ -3161,7 +3211,7 @@ Linha %2.</translation>
         <translation type="vanished">&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contato e Suporte&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="441"/>
+        <location filename="src/gui/application.cpp" line="442"/>
         <source>&lt;br/&gt;</source>
         <translation></translation>
     </message>

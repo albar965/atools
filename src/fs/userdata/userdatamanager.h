@@ -55,6 +55,8 @@ ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::userdata::Flags)
 class UserdataManager :
   public atools::sql::DataManagerBase
 {
+  Q_DECLARE_TR_FUNCTIONS(LogdataManager)
+
 public:
   UserdataManager(atools::sql::SqlDatabase *sqlDb);
   virtual ~UserdataManager() override;

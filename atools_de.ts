@@ -44,6 +44,13 @@
     </message>
 </context>
 <context>
+    <name>AirspaceReaderIvao</name>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
+        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
+    </message>
+</context>
+<context>
     <name>AirspaceWriter</name>
     <message>
         <source>In file &quot;%1&quot; on line %2: Index out of bounds: Index: %1, size: %2</source>
@@ -60,6 +67,13 @@
         <source>Populating VOR/NDB Routing Table</source>
         <translatorcomment>&quot;Verbreite&quot; durch &quot;Befülle&quot; ersetzt.</translatorcomment>
         <translation type="vanished">Befülle VOR/NDB Routentabelle</translation>
+    </message>
+</context>
+<context>
+    <name>BglFile</name>
+    <message>
+        <source>Multiple duplicate airport idents &quot;%1&quot; in file &quot;%2&quot;. File is malformed.</source>
+        <translation>Doppelte Flugplatzkennungen &quot;%1&quot; in Datei &quot;%2&quot;. Datei ist fehlerhaft.</translation>
     </message>
 </context>
 <context>
@@ -515,6 +529,46 @@ Datei: &quot;%2&quot;
     <message>
         <source>No</source>
         <translation>Nein</translation>
+    </message>
+</context>
+<context>
+    <name>LogdataManager</name>
+    <message>
+        <source>File contains invalid data.
+&quot;%1&quot;
+Line %2.</source>
+        <translation>Datei enthält ungültige Daten.
+&quot;%1&quot;
+Zeile %2.</translation>
+    </message>
+    <message>
+        <source>File is not valid. Neither departure nor destination ident is set.
+&quot;%1&quot;
+Line %2.</source>
+        <translation>Datei ist ungültig. Weder Start- noch Zielkennung gesetzt.
+&quot;%1&quot;
+Zeile %2.</translation>
+    </message>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
+        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
+    </message>
+    <message>
+        <source>Imported from X-Plane logbook %1
+Number of landings: %2
+Cross country time: %3
+IFR time: %4
+Night time: %5</source>
+        <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in LogdataController::importXplane</extracomment>
+        <translation>Aus X-Plane Logbuch importiert %1
+Anzahl Landungen: %2
+Überlandzeit: %3
+IFR-Zeit: %4
+Nachtzeit: %5</translation>
+    </message>
+    <message>
+        <source>File is not an X-Plane user_fix.dat file.</source>
+        <translation>Datei ist keine X-Plane user_fix-Datei.</translation>
     </message>
 </context>
 <context>
@@ -1133,17 +1187,17 @@ Datei: &quot;%2&quot;
     <message>
         <source>Populating routing tables</source>
         <translatorcomment>&quot;Verbreite&quot; durch &quot;Befülle&quot; ersetzt.</translatorcomment>
-        <translation>Befülle Routingtabellen</translation>
+        <translation type="vanished">Befülle Routingtabellen</translation>
     </message>
     <message>
         <source>Creating route edges for VOR and NDB</source>
         <translatorcomment>Was ist hier mit &quot;Ränder&quot; gemeint? Wäre &quot;Routengrenze&quot; evtl. nicht besser?</translatorcomment>
-        <translation>Erstelle Routen für VOR und NDB</translation>
+        <translation type="vanished">Erstelle Routen für VOR und NDB</translation>
     </message>
     <message>
         <source>Creating route edges waypoints</source>
         <translatorcomment>&quot;Routengrenze&quot;?</translatorcomment>
-        <translation>Erstelle Routen für Wegpunkte</translation>
+        <translation type="vanished">Erstelle Routen für Wegpunkte</translation>
     </message>
     <message>
         <source>Creating indexes for airport</source>
@@ -1212,7 +1266,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Creating indexes for route</source>
-        <translation>Erstelle Indizes für Routen</translation>
+        <translation type="vanished">Erstelle Indizes für Routen</translation>
     </message>
     <message>
         <source>Creating waypoints for procedures</source>
@@ -1276,7 +1330,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Creating medium and large airport tables</source>
-        <translation>Erstelle große und mittlere Flugplatztabellen</translation>
+        <translation type="vanished">Erstelle große und mittlere Flugplatztabellen</translation>
     </message>
     <message>
         <source>Custom scenery path %1</source>
@@ -1920,6 +1974,13 @@ Datei: &quot;%2&quot;
     </message>
 </context>
 <context>
+    <name>UpdateCheck</name>
+    <message>
+        <source>Unknown Error</source>
+        <translation type="obsolete">Unbekannter Fehler</translation>
+    </message>
+</context>
+<context>
     <name>UserdataManager</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
@@ -2204,7 +2265,7 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <name>atools::fs::bgl::BglFile</name>
     <message>
         <source>Duplicate airport ident &quot;%1&quot; in file &quot;%2&quot;. File is malformed.</source>
-        <translation>Doppelte Flugplatzkennung &quot;%1&quot; in Datei &quot;%2&quot;. Datei ist fehlerhaft.</translation>
+        <translation type="vanished">Doppelte Flugplatzkennung &quot;%1&quot; in Datei &quot;%2&quot;. Datei ist fehlerhaft.</translation>
     </message>
 </context>
 <context>
@@ -2486,28 +2547,28 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <name>atools::fs::userdata::AirspaceReaderIvao</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
+        <translation type="vanished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
     </message>
 </context>
 <context>
     <name>atools::fs::userdata::AirspaceReaderOpenAir</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
+        <translation type="vanished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
     </message>
 </context>
 <context>
     <name>atools::fs::userdata::AirspaceReaderVatsim</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
+        <translation type="vanished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
     </message>
 </context>
 <context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
+        <translation type="vanished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
     </message>
     <message>
         <source>Imported from X-Plane logbook %1
@@ -2516,7 +2577,7 @@ Cross country time: %3
 IFR time: %4
 Night time: %5</source>
         <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in LogdataController::importXplane</extracomment>
-        <translation>Aus X-Plane Logbuch importiert %1
+        <translation type="vanished">Aus X-Plane Logbuch importiert %1
 Anzahl Landungen: %2
 Überlandzeit: %3
 IFR-Zeit: %4
@@ -2530,7 +2591,7 @@ Nachtzeit: %5</translation>
         <source>File contains invalid data.
 &quot;%1&quot;
 Line %2.</source>
-        <translation>Datei enthält ungültige Daten.
+        <translation type="vanished">Datei enthält ungültige Daten.
 &quot;%1&quot;
 Zeile %2.</translation>
     </message>
@@ -2538,7 +2599,7 @@ Zeile %2.</translation>
         <source>File is not valid. Neither departure nor destination ident is set.
 &quot;%1&quot;
 Line %2.</source>
-        <translation>Datei ist ungültig. Weder Start- noch Zielkennung gesetzt.
+        <translation type="vanished">Datei ist ungültig. Weder Start- noch Zielkennung gesetzt.
 &quot;%1&quot;
 Zeile %2.</translation>
     </message>
@@ -2547,17 +2608,17 @@ Zeile %2.</translation>
     <name>atools::fs::userdata::UserdataManager</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
+        <translation type="vanished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
     </message>
     <message>
         <source>File is not an X-Plane user_fix.dat file.</source>
-        <translation>Datei ist keine X-Plane user_fix-Datei.</translation>
+        <translation type="vanished">Datei ist keine X-Plane user_fix-Datei.</translation>
     </message>
     <message>
         <source>File contains invalid data.
 &quot;%1&quot;
 Line %2.</source>
-        <translation>Datei enthält ungültige Daten.
+        <translation type="vanished">Datei enthält ungültige Daten.
 &quot;%1&quot;
 Zeile %2.</translation>
     </message>

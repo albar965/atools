@@ -257,12 +257,12 @@ const Record *BglFile::handleIlsVor(BinaryStream *bs)
 
 void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryArea& area)
 {
-  bgl::flags::CreateFlags createFlags = bgl::flags::NONE;
+  bgl::CreateFlags createFlags = bgl::NO_CREATE_FLAGS;
 
   // Set flag if MSFS scenery area is only navdata and dummy airports
   bool msfsNavigraphNavdata = area.isMsfsNavigraphNavdata();
-  createFlags.setFlag(bgl::flags::AIRPORT_MSFS_NAVIGRAPH_NAVDATA, msfsNavigraphNavdata);
-  createFlags.setFlag(bgl::flags::AIRPORT_MSFS_DUMMY, area.isNavdata());
+  createFlags.setFlag(bgl::AIRPORT_MSFS_NAVIGRAPH_NAVDATA, msfsNavigraphNavdata);
+  createFlags.setFlag(bgl::AIRPORT_MSFS_DUMMY, area.isNavdata());
 
   // There should be no duplicate airport idents in the file. Otherwise bail out of reading this file.
   QHash<QString, int> airportIdentCount;
@@ -333,7 +333,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
         case section::AIRPORT_ALT:
           qWarning() << "Found alternate airport ID";
           if(options->isIncludedNavDbObject(type::AIRPORT))
-            rec = createRecord<Airport>(bs, &airports, bgl::flags::NONE);
+            rec = createRecord<Airport>(bs, &airports, bgl::NO_CREATE_FLAGS);
           break;
 
         case section::NAME_LIST:

@@ -275,6 +275,7 @@ HEADERS += \
   src/util/str.h \
   src/util/timedcache.h \
   src/util/updatecheck.h \
+  src/util/updatechecktypes.h \
   src/util/version.h \
   src/util/xmlstream.h \
   src/win/activationcontext.h \
@@ -353,6 +354,7 @@ SOURCES += \
   src/util/str.cpp \
   src/util/timedcache.cpp \
   src/util/updatecheck.cpp \
+  src/util/updatechecktypes.cpp \
   src/util/version.cpp \
   src/util/xmlstream.cpp \
   src/win/activationcontext.cpp \
@@ -501,6 +503,7 @@ HEADERS += \
   src/gui/widgetstate.h \
   src/gui/widgetutil.h \
   src/util/htmlbuilder.h \
+  src/util/htmlbuilderflags.h \
   src/util/paintercontextsaver.h \
   src/util/polygontools.h \
   src/util/roundedpolygon.h
@@ -535,6 +538,7 @@ SOURCES += \
   src/gui/widgetstate.cpp \
   src/gui/widgetutil.cpp \
   src/util/htmlbuilder.cpp \
+  src/util/htmlbuilderflags.cpp \
   src/util/paintercontextsaver.cpp \
   src/util/polygontools.cpp \
   src/util/roundedpolygon.cpp

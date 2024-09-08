@@ -18,34 +18,13 @@
 #ifndef ATOOLS_UPDATECHECK_H
 #define ATOOLS_UPDATECHECK_H
 
-#include "util/flags.h"
+#include "util/updatechecktypes.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
 namespace atools {
 namespace util {
-
-/* Updates can be fetched for each channel in one call */
-enum UpdateChannel : quint32
-{
-  NONE = 0,
-  STABLE = 1 << 0,
-  BETA = 1 << 1,
-  DEVELOP = 1 << 2
-};
-
-ATOOLS_DECLARE_FLAGS_32(UpdateChannels, UpdateChannel)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::util::UpdateChannels)
-
-struct Update
-{
-  atools::util::UpdateChannels channel; /* The used update channel */
-  QString version, /* the offered version */
-          changelog; /* HTML changelog */
-};
-
-typedef QVector<atools::util::Update> UpdateList;
 
 /*
  * This class provides methods to search for updates by loading a file from a HTTP server.

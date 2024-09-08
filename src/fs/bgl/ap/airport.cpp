@@ -67,7 +67,7 @@ inline uint qHash(const ParkingKey& pair)
 
 using atools::io::BinaryStream;
 
-Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs::bgl::flags::CreateFlags flags)
+Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs::bgl::CreateFlags flags)
   : Record(options, bs)
 {
   /*int numRunways = TODO compare with number of subrecords */
@@ -228,7 +228,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
 
       case rec::APPROACH:
       case rec::MSFS_APPROACH_NEW:
-        if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::flags::AIRPORT_MSFS_NAVIGRAPH_NAVDATA))
+        if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::AIRPORT_MSFS_NAVIGRAPH_NAVDATA))
         {
           r.seekToStart();
           approaches.append(Approach(options, bs, type));
@@ -237,7 +237,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
 
       case rec::MSFS_SID:
       case rec::MSFS_STAR:
-        if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::flags::AIRPORT_MSFS_NAVIGRAPH_NAVDATA))
+        if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::AIRPORT_MSFS_NAVIGRAPH_NAVDATA))
         {
           r.seekToStart();
           sidsAndStars.append(SidStar(options, bs));
@@ -436,7 +436,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
   // Update all the number fields and the bounding rectangle
   updateSummaryFields();
 
-  if(flags & atools::fs::bgl::flags::AIRPORT_MSFS_DUMMY)
+  if(flags & atools::fs::bgl::AIRPORT_MSFS_DUMMY)
     // Add a delete record for an MSFS dummy airport which contains only approaches and COM
     deleteAirports.append(DeleteAirport(del::APPROACHES | del::COMS));
 
