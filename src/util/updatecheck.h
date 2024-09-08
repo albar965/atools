@@ -92,7 +92,7 @@ public:
 
 signals:
   /* Sent if updates were found */
-  void updateFound(atools::util::UpdateList updates);
+  void updateFound(atools::util::Updates updates);
 
   /* Sent on error */
   void updateFailed(QString errorString);
@@ -101,7 +101,7 @@ private:
   void httpFinished();
   void endRequest();
   void httpError(QNetworkReply::NetworkError code);
-  void readUpdateMessage(atools::util::UpdateList& updates, QString update);
+  void readUpdateMessage(atools::util::Updates& updates, QString updateStr);
 
   atools::util::UpdateChannels channels = atools::util::STABLE;
 

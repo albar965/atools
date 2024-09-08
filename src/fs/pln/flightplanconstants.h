@@ -66,7 +66,7 @@ enum Flag : quint32
   TRACK = 1 << 3 /* Flight plan entry airway name is a track */
 };
 
-ATOOLS_DECLARE_FLAGS_32(Flags, Flag)
+ATOOLS_DECLARE_FLAGS_32(Flags, atools::fs::pln::entry::Flag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::pln::entry::Flags)
 }
 

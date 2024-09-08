@@ -32,19 +32,71 @@ enum UpdateChannel : quint32
   DEVELOP = 1 << 2
 };
 
-ATOOLS_DECLARE_FLAGS_32(UpdateChannels, UpdateChannel)
+ATOOLS_DECLARE_FLAGS_32(UpdateChannels, atools::util::UpdateChannel)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::util::UpdateChannels)
 
-struct Update
+class Update
 {
-  atools::util::UpdateChannels channel; /* The used update channel */
+public:
+  Update()
+  {
+  }
+
+  Update(atools::util::UpdateChannels channelParam, const QString& versionParam, const QString& changelogParam)
+    : channel(channelParam), version(versionParam), changelog(changelogParam)
+  {
+  }
+
+  atools::util::UpdateChannel getChannel() const
+  {
+    return channel;
+  }
+
+  const QString& getVersion() const
+  {
+    return version;
+  }
+
+  const QString& getChangelog() const
+  {
+    return changelog;
+  }
+
+  void simplyfyChangelog()
+  {
+    changelog = changelog.simplified();
+  }
+
+  void setChannel(atools::util::UpdateChannel value)
+  {
+    channel = value;
+  }
+
+  void setVersion(const QString& value)
+  {
+    version = value;
+  }
+
+  void setChangelog(const QString& value)
+  {
+    changelog = value;
+  }
+
+  void appendChangelog(const QString& value)
+  {
+    changelog += value;
+  }
+
+private:
+  atools::util::UpdateChannel channel; /* The used update channel */
   QString version, /* the offered version */
           changelog; /* HTML changelog */
 };
 
-typedef QVector<atools::util::Update> UpdateList;
+typedef QVector<atools::util::Update> Updates;
 
 } // namespace util
+
 } // namespace atools
 
 #endif // ATOOLS_UPDATECHECKTYPES_H

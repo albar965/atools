@@ -45,7 +45,7 @@ enum Flag : quint32
   APPEND = 1 << 1
 };
 
-ATOOLS_DECLARE_FLAGS_32(Flags, Flag)
+ATOOLS_DECLARE_FLAGS_32(Flags, atools::fs::userdata::Flag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::userdata::Flags)
 
 /*

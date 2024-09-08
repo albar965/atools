@@ -35,7 +35,7 @@ enum ResultFlag : quint32
   COMPILE_FAILED = 1 << 3, /* Caught exception */
 };
 
-ATOOLS_DECLARE_FLAGS_32(ResultFlags, ResultFlag)
+ATOOLS_DECLARE_FLAGS_32(ResultFlags, atools::fs::ResultFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ResultFlags)
 
 } // namespace fs

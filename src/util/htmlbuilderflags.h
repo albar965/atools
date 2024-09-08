@@ -55,8 +55,8 @@ enum Flag : quint32
                              * like: <p style='white-space:pre'>. Only for paragraphs. */
 };
 
-ATOOLS_DECLARE_FLAGS_32(Flags, Flag)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(html::Flags)
+ATOOLS_DECLARE_FLAGS_32(Flags, atools::util::html::Flag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::util::html::Flags)
 
 } // namespace html
 } // namespace util

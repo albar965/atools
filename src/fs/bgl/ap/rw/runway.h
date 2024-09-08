@@ -65,7 +65,7 @@ enum RunwayMarkings : quint32
 };
 
 ATOOLS_DECLARE_FLAGS_32(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::rw::RunwayMarkingFlags)
 
 /* Light intensity */
 enum Light

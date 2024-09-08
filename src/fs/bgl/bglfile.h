@@ -52,7 +52,7 @@ enum CreateFlag : quint32
   AIRPORT_MSFS_NAVIGRAPH_NAVDATA = 1 << 3,
 };
 
-ATOOLS_DECLARE_FLAGS_32(CreateFlags, CreateFlag)
+ATOOLS_DECLARE_FLAGS_32(CreateFlags, atools::fs::bgl::CreateFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::CreateFlags)
 
 class Section;

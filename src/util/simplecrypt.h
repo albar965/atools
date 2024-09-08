@@ -249,7 +249,7 @@ public:
     CryptoFlagHash = 0x04
   };
 
-  ATOOLS_DECLARE_FLAGS_32(CryptoFlags, CryptoFlag)
+  ATOOLS_DECLARE_FLAGS_32(CryptoFlags, atools::util::SimpleCrypt::CryptoFlag)
 
 private:
   void splitKey();
@@ -261,7 +261,7 @@ private:
   Error m_lastError;
 };
 
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(SimpleCrypt::CryptoFlags)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::util::SimpleCrypt::CryptoFlags)
 
 } // namespace util
 } // namespace atools

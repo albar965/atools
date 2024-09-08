@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include <QNetworkReply>
 #include <QCoreApplication>
+#include <QStringBuilder>
 
 namespace atools {
 namespace util {
@@ -80,7 +81,7 @@ void UpdateCheck::httpFinished()
     {
       // Read received file
       QString update = reply->readAll();
-      UpdateList updates;
+      Updates updates;
       readUpdateMessage(updates, update);
 
       if(!updates.isEmpty() || notifyEmptyUpdates /* also send empty updates */)
@@ -112,20 +113,19 @@ void UpdateCheck::httpError(QNetworkReply::NetworkError code)
 }
 
 /* Parse the update file */
-void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
+void UpdateCheck::readUpdateMessage(atools::util::Updates& updates, QString updateStr)
 {
   Version programVersion(curProgramVersion);
   Version alreadyCheckedVersion(alreadyChecked);
-  QTextStream versioninfo(&update, QIODevice::ReadOnly);
+  QTextStream stream(&updateStr, QIODevice::ReadOnly);
 
   QHash<UpdateChannels, Update> map;
   UpdateChannels currentChannel = NONE;
   // Changelog will continue until a new keyword, a section or an empty line is found
   bool changelogContinuation = false;
-  while(!versioninfo.atEnd())
+  while(!stream.atEnd())
   {
-    QString rawLine = versioninfo.readLine();
-    QString line = rawLine.trimmed();
+    QString line = stream.readLine().trimmed();
 
     // Skip comments and empty lines
     if(line.isEmpty() || line.startsWith('#'))
@@ -163,8 +163,8 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
             // Check if there is a newer version
             if(version > programVersion || debug)
             {
-              map[currentChannel].version = value;
-              map[currentChannel].channel = currentChannel;
+              map[currentChannel].setVersion(value);
+              map[currentChannel].setChannel(currentChannel);
             }
             // else Leave version empty if it is to be skipped
           }
@@ -173,12 +173,12 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
         else if(key == "changelog" || key == "description")
         {
           // Start of changelog
-          map[currentChannel].changelog = rawValue;
+          map[currentChannel].setChangelog(rawValue);
           changelogContinuation = true;
         }
         else if(changelogContinuation)
           // More changelog lines
-          map[currentChannel].changelog += " " + line;
+          map[currentChannel].appendChangelog(" " % line);
       }
     }
   }
@@ -186,19 +186,18 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
   // Copy only valid updates that have a version
   for(auto it = map.begin(); it != map.end(); ++it)
   {
-    Update& upd = it.value();
-    if(!upd.version.isEmpty())
+    Update& update = it.value();
+    if(!update.getVersion().isEmpty())
     {
       // Remove line breaks and multiple spaces
-      upd.changelog = upd.changelog.simplified();
-      updates.append(upd);
+      update.simplyfyChangelog();
+      updates.append(update);
     }
   }
 
   // Put the newest versions on top
-  std::sort(updates.begin(), updates.end(), [](const Update& upd1, const Update& upd2) -> bool
-      {
-        return atools::util::Version(upd1.version) > atools::util::Version(upd2.version);
+  std::sort(updates.begin(), updates.end(), [](const Update& upd1, const Update& upd2) -> bool {
+        return atools::util::Version(upd1.getVersion()) > atools::util::Version(upd2.getVersion());
       });
 }
 

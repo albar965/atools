@@ -77,7 +77,7 @@ enum DeleteAllFlag : quint32
   TAXIWAYS = 1 << 7
 };
 
-ATOOLS_DECLARE_FLAGS_32(DeleteAllFlags, DeleteAllFlag)
+ATOOLS_DECLARE_FLAGS_32(DeleteAllFlags, atools::fs::bgl::del::DeleteAllFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::del::DeleteAllFlags)
 
 } // namespace del

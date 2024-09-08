@@ -50,7 +50,7 @@ enum ContextFlag : quint32
   UPDATE_CYCLE = 0x4000 // Fetch airac cycle from header
 };
 
-ATOOLS_DECLARE_FLAGS_32(ContextFlags, ContextFlag)
+ATOOLS_DECLARE_FLAGS_32(ContextFlags, atools::fs::xp::ContextFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::xp::ContextFlags)
 
 /* Context passed to each line reading call */

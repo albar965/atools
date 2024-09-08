@@ -33,7 +33,7 @@ enum NavServerOption : quint32
   HIDE_HOST = 0x02
 };
 
-ATOOLS_DECLARE_FLAGS_32(NavServerOptions, NavServerOption)
+ATOOLS_DECLARE_FLAGS_32(NavServerOptions, atools::fs::ns::NavServerOption)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ns::NavServerOptions)
 
 /* Declare a own logging category to append in the text edit */

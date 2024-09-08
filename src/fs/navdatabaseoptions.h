@@ -136,7 +136,7 @@ enum OptionFlag : quint32
   AIRPORT_VALIDATION = 1 << 15
 };
 
-ATOOLS_DECLARE_FLAGS_32(OptionFlags, OptionFlag)
+ATOOLS_DECLARE_FLAGS_32(OptionFlags, atools::fs::type::OptionFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::type::OptionFlags)
 
 }

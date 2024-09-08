@@ -19,7 +19,6 @@
 #define ATOOLS_FS_SIMCONNECTREPLY_H
 
 #include "fs/sc/simconnecttypes.h"
-#include "geo/pos.h"
 #include "fs/sc/simconnectdatabase.h"
 #include "fs/sc/weatherrequest.h"
 #include "util/flags.h"
@@ -33,13 +32,13 @@ namespace fs {
 namespace sc {
 
 // quint16
-enum CommandEnum : quint32
+enum Command : quint32
 {
   CMD_NONE,
   CMD_WEATHER_REQUEST
 };
 
-ATOOLS_DECLARE_FLAGS_32(Command, CommandEnum)
+ATOOLS_DECLARE_FLAGS_32(Commands, atools::fs::sc::Command)
 
 /*
  * Class that contains replay data from a client for SimConnectData.
@@ -102,12 +101,12 @@ public:
     return REPLY_VERSION;
   }
 
-  Command getCommand() const
+  Commands getCommand() const
   {
     return command;
   }
 
-  void setCommand(const Command& value)
+  void setCommand(const Commands& value)
   {
     command = value;
   }
@@ -130,7 +129,7 @@ private:
   QDateTime packetTs;
   atools::fs::sc::SimConnectStatus replyStatus = OK;
   quint32 magicNumber = 0, packetSize = 0, version = 2;
-  Command command;
+  Commands command;
   atools::fs::sc::WeatherRequest weatherRequest;
 
 };

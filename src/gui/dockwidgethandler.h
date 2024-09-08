@@ -43,7 +43,7 @@ enum DockFlag : quint32
   MAXIMIZE = 1 << 4 /* Maximize window when going into fullscreen instead of using full screen mode */
 };
 
-ATOOLS_DECLARE_FLAGS_32(DockFlags, DockFlag)
+ATOOLS_DECLARE_FLAGS_32(DockFlags, atools::gui::DockFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::gui::DockFlags)
 
 /*
