@@ -3293,25 +3293,25 @@ Linea %2.</translation>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="803"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="808"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="893"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="858"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="863"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="946"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>Errore leggendo &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="831"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="836"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="884"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="889"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation>Errore scrivendo %1: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="854"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="907"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation>Errore leggendo &quot;%1&quot;: Numero magico non valido. Non è un file di posizionamento finestre.</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="857"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="910"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation>Errore leggendo &quot;%1&quot;: Versione non valida. File di posizionamento finestre non compatibile.</translation>
     </message>
@@ -3641,7 +3641,7 @@ Linea numero %1</translation>
 <context>
     <name>atools::util::UpdateCheck</name>
     <message>
-        <location filename="src/util/updatecheck.cpp" line="109"/>
+        <location filename="src/util/updatecheck.cpp" line="110"/>
         <source>Unknown Error</source>
         <translation>Errore sconosciuto</translation>
     </message>

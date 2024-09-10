@@ -73,7 +73,7 @@ public:
   void raiseWindows();
 
   /* Raise on dock widget */
-  static void raiseFloatingDockWidget(QDockWidget *dockWidget);
+  void raiseFloatingDockWidget(QDockWidget *dockWidget) const;
 
   /* Connect all internally */
   void connectDockWindows();
@@ -130,17 +130,22 @@ public:
   /* Forbid docking if value is false. */
   void setDockingAllowed(bool allow);
 
+  /* Floating dock windows get a normal window frame and appear in the task bar if true */
+  void setWindowFrame(bool value);
+
+  bool getWindowFrame() const
+  {
+    return windowFrame;
+  }
+
   /* For one single widget not managed by this handler. */
-  static void setDockingAllowed(QDockWidget *dockWidget, bool allow);
+  void setDockingAllowed(QDockWidget *dockWidget, bool allow);
 
   /* Hide title bar for all docked windows. The title bar is restored if dock is floating */
   void setHideTitleBar(bool hide);
 
-  /* Hide title bar for given dock window if not floating. */
-  static void setHideTitleBar(QDockWidget *dockWidget, bool hide);
-
   /* Global status of title bar visibility */
-  bool getHideTitle() const
+  bool getHideTitleBar() const
   {
     return hideTitle;
   }
@@ -148,8 +153,14 @@ public:
   /* Forbid moving by click in title bar if value is false. */
   void setMovingAllowed(bool allow);
 
+  /* Hide title bar for given dock window if not floating. */
+  void setHideTitleBar(QDockWidget *dockWidget, bool hide) const;
+
+  /* Floating dock window gets a normal window frame and appears in the task bar if true */
+  void setDockWindowFrame(QDockWidget *dockWidget, bool frame) const;
+
   /* For one single widget not managed by this handler. */
-  static void setMovingAllowed(QDockWidget *dockWidget, bool allow);
+  void setMovingAllowed(QDockWidget *dockWidget, bool allow);
 
   /* Closes all docks, toolbars and menu bar depending on flags and sets the mainwindow to full screen.
    * Window will only be maximized depending on flags.
@@ -220,6 +231,10 @@ private:
   /* Dock widget docking area changed */
   void dockLocationChanged(Qt::DockWidgetArea area);
 
+  /* Dock shown or hidden */
+  void dockVisibilityChanged(bool visible);
+
+  /* Connect all signals */
   void connectDockWidget(QDockWidget *dockWidget);
 
   /* Stacks are only rememberd if this is true */
@@ -248,7 +263,7 @@ private:
   /* Saved state of main window including dock widgets and toolbars */
   MainWindowState *normalState, *fullscreenState;
 
-  bool fullscreen = false, delayedFullscreen = false, verbose = false, hideTitle = false;
+  bool fullscreen = false, delayedFullscreen = false, verbose = false, hideTitle = false, windowFrame = false;
 
   static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x2D6A9C2F;
   static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 2;

@@ -33,6 +33,7 @@
 #include <QApplication>
 #include <QScreen>
 #include <QFile>
+#include <QTimer>
 
 namespace atools {
 namespace gui {
@@ -129,7 +130,8 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
 
   // Check if window if off screen ==================
   bool visible = false;
-  qDebug() << Q_FUNC_INFO << "mainWindow->frameGeometry()" << mainWindow->frameGeometry();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "mainWindow->frameGeometry()" << mainWindow->frameGeometry();
 
   // Has to be visible for 20 pixels at least on one screen
   const QList<QScreen *> screens = QGuiApplication::screens();
@@ -139,7 +141,8 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
     QRect intersected = geometry.intersected(mainWindow->frameGeometry());
     if(intersected.width() > 20 && intersected.height() > 20)
     {
-      qDebug() << Q_FUNC_INFO << "Visible on" << screen->name() << geometry;
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << "Visible on" << screen->name() << geometry;
       visible = true;
       break;
     }
@@ -150,7 +153,8 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
     // Move back to primary top left plus offset
     QRect geometry = QApplication::primaryScreen()->availableGeometry();
     mainWindow->move(geometry.topLeft() + QPoint(20, 20));
-    qDebug() << Q_FUNC_INFO << "Getting window back on screen" << QApplication::primaryScreen()->name() << geometry;
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "Getting window back on screen" << QApplication::primaryScreen()->name() << geometry;
   }
 }
 
@@ -296,23 +300,35 @@ DockWidgetHandler::~DockWidgetHandler()
 void DockWidgetHandler::dockTopLevelChanged(bool topLevel)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << topLevel;
+    qDebug() << Q_FUNC_INFO << "topLevel" << topLevel;
 
   updateDockTabStatus();
 
   // Restore title bar state if widget is not floating
   QDockWidget *dockWidget = dynamic_cast<QDockWidget *>(sender());
-  if(dockWidget != nullptr)
-    setHideTitleBar(dockWidget, hideTitle && !topLevel);
+  setHideTitleBar(dockWidget, hideTitle && !topLevel);
+  setDockWindowFrame(dockWidget, windowFrame);
 }
 
 void DockWidgetHandler::dockLocationChanged(Qt::DockWidgetArea area)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << "area" << area;
 
   Q_UNUSED(area)
   updateDockTabStatus();
+
+  QDockWidget *dockWidget = dynamic_cast<QDockWidget *>(sender());
+  if(dockWidget != nullptr)
+    setHideTitleBar(dockWidget, hideTitle && !dockWidget->isFloating());
+}
+
+void DockWidgetHandler::dockVisibilityChanged(bool visible)
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "visible" << visible;
+
+  setDockWindowFrame(dynamic_cast<QDockWidget *>(sender()), windowFrame);
 }
 
 void DockWidgetHandler::connectDockWidget(QDockWidget *dockWidget)
@@ -321,6 +337,7 @@ void DockWidgetHandler::connectDockWidget(QDockWidget *dockWidget)
   connect(dockWidget->toggleViewAction(), &QAction::toggled, this, &DockWidgetHandler::dockViewToggled);
   connect(dockWidget, &QDockWidget::dockLocationChanged, this, &DockWidgetHandler::dockLocationChanged);
   connect(dockWidget, &QDockWidget::topLevelChanged, this, &DockWidgetHandler::dockTopLevelChanged);
+  connect(dockWidget, &QDockWidget::visibilityChanged, this, &DockWidgetHandler::dockVisibilityChanged);
   dockWidget->installEventFilter(dockEventFilter);
 }
 
@@ -398,15 +415,13 @@ void DockWidgetHandler::updateDockTabStatus(QDockWidget *dockWidget)
   QList<QDockWidget *> tabified = mainWindow->tabifiedDockWidgets(dockWidget);
   if(!tabified.isEmpty())
   {
-    auto it = std::find_if(dockStackList.begin(), dockStackList.end(), [dockWidget](QList<QDockWidget *>& list) -> bool
-        {
+    auto it = std::find_if(dockStackList.begin(), dockStackList.end(), [dockWidget](QList<QDockWidget *>& list) -> bool {
           return list.contains(dockWidget);
         });
 
     if(it == dockStackList.end())
     {
-      auto rmIt = std::remove_if(tabified.begin(), tabified.end(), [](QDockWidget *dock) -> bool
-          {
+      auto rmIt = std::remove_if(tabified.begin(), tabified.end(), [](QDockWidget *dock) -> bool {
             return dock->isFloating();
           });
       if(rmIt != tabified.end())
@@ -447,6 +462,7 @@ void DockWidgetHandler::activateWindow(QDockWidget *dockWidget)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO;
+
   dockWidget->show();
   dockWidget->activateWindow();
   dockWidget->raise();
@@ -578,6 +594,14 @@ void DockWidgetHandler::setDockingAllowed(bool allow)
   }
 }
 
+void DockWidgetHandler::setWindowFrame(bool show)
+{
+  windowFrame = show;
+
+  for(QDockWidget *dock : qAsConst(dockWidgets))
+    setDockWindowFrame(dock, windowFrame);
+}
+
 void DockWidgetHandler::setHideTitleBar(bool hide)
 {
   hideTitle = hide;
@@ -586,25 +610,62 @@ void DockWidgetHandler::setHideTitleBar(bool hide)
     setHideTitleBar(dock, hide);
 }
 
-void DockWidgetHandler::setHideTitleBar(QDockWidget *dockWidget, bool hide)
+void DockWidgetHandler::setDockWindowFrame(QDockWidget *dockWidget, bool frame) const
 {
-  // is null if default title bar is used - i.e. it is visible
-  QWidget *widget = dockWidget->titleBarWidget();
+  if(dockWidget != nullptr)
+  {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << dockWidget->objectName() << "floating" << dockWidget->isFloating()
+               << "visible" << dockWidget->isVisible() << "window flags" << dockWidget->windowFlags();
 
-  if(hide)
-  {
-    // Hide if not floating and not already hidden
-    if(!dockWidget->isFloating() && widget == nullptr)
-      dockWidget->setTitleBarWidget(new QWidget(dockWidget));
-  }
-  else
-  {
-    // Show if not already default
-    if(widget != nullptr)
+    if(dockWidget->isFloating() && dockWidget->isVisible())
     {
-      // Setting bar to null regains ownership of widget
-      widget->deleteLater();
-      dockWidget->setTitleBarWidget(nullptr);
+      if(frame)
+      {
+        if(dockWidget->windowFlags().testFlag(Qt::Tool))
+        {
+          dockWidget->setWindowFlags(Qt::Window | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint);
+          QTimer::singleShot(10, dockWidget, &QDockWidget::show);
+        }
+      }
+      else
+      {
+        if(!dockWidget->windowFlags().testFlag(Qt::Tool))
+        {
+          dockWidget->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
+          QTimer::singleShot(10, dockWidget, &QDockWidget::show);
+        }
+      }
+    }
+  }
+}
+
+void DockWidgetHandler::setHideTitleBar(QDockWidget *dockWidget, bool hide) const
+{
+  if(dockWidget != nullptr)
+  {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << dockWidget->objectName() << "floating" << dockWidget->isFloating()
+               << "visible" << dockWidget->isVisible() << "window flags" << dockWidget->windowFlags();
+
+    // is null if default title bar is used - i.e. it is visible
+    QWidget *titleBarWidget = dockWidget->titleBarWidget();
+
+    if(hide)
+    {
+      // Hide if not floating and not already hidden
+      if(!dockWidget->isFloating() && titleBarWidget == nullptr)
+        dockWidget->setTitleBarWidget(new QWidget(dockWidget));
+    }
+    else
+    {
+      // Show if not already default
+      if(titleBarWidget != nullptr)
+      {
+        // Setting bar to null regains ownership of widget
+        titleBarWidget->deleteLater();
+        dockWidget->setTitleBarWidget(nullptr);
+      }
     }
   }
 }
@@ -622,7 +683,7 @@ void DockWidgetHandler::setDockingAllowed(QDockWidget *dockWidget, bool allow)
   dockWidget->setAllowedAreas(allow ? Qt::AllDockWidgetAreas : Qt::NoDockWidgetArea);
 }
 
-void DockWidgetHandler::raiseFloatingDockWidget(QDockWidget *dockWidget)
+void DockWidgetHandler::raiseFloatingDockWidget(QDockWidget *dockWidget) const
 {
   if(dockWidget->isVisible() && dockWidget->isFloating())
     dockWidget->raise();
@@ -637,6 +698,9 @@ void DockWidgetHandler::connectDockWindows()
 
 void DockWidgetHandler::raiseWindows()
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
+
   for(QDockWidget *dock : qAsConst(dockWidgets))
     raiseFloatingDockWidget(dock);
 
@@ -823,9 +887,7 @@ void DockWidgetHandler::saveWindowState(const QString& filename, bool allowUndoc
 
     // Save all to stream
     QDataStream stream(&file);
-    stream << FILE_MAGIC_NUMBER << FILE_VERSION
-           << allowUndockCentral << fullscreen
-           << *normalState << *fullscreenState;
+    stream << FILE_MAGIC_NUMBER << FILE_VERSION << allowUndockCentral << fullscreen << *normalState << *fullscreenState;
 
     if(file.error() != QFileDevice::NoError)
       throw atools::Exception(tr("Error writing \"%1\": %2").arg(filename).arg(file.errorString()));
