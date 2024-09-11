@@ -130,7 +130,8 @@ public:
   /* Forbid docking if value is false. */
   void setDockingAllowed(bool allow);
 
-  /* Floating dock windows get a normal window frame and appear in the task bar if true */
+  /* Floating dock windows get a normal window frame and appear in the task bar if true.
+   * Disabled for now due to instability on Windows. */
   void setWindowFrame(bool value);
 
   bool getWindowFrame() const

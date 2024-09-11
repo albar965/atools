@@ -307,7 +307,10 @@ void DockWidgetHandler::dockTopLevelChanged(bool topLevel)
   // Restore title bar state if widget is not floating
   QDockWidget *dockWidget = dynamic_cast<QDockWidget *>(sender());
   setHideTitleBar(dockWidget, hideTitle && !topLevel);
+
+#ifdef DEBUG_DOCK_WINDOW_FRAME
   setDockWindowFrame(dockWidget, windowFrame);
+#endif
 }
 
 void DockWidgetHandler::dockLocationChanged(Qt::DockWidgetArea area)
@@ -328,7 +331,9 @@ void DockWidgetHandler::dockVisibilityChanged(bool visible)
   if(verbose)
     qDebug() << Q_FUNC_INFO << "visible" << visible;
 
+#ifdef DEBUG_DOCK_WINDOW_FRAME
   setDockWindowFrame(dynamic_cast<QDockWidget *>(sender()), windowFrame);
+#endif
 }
 
 void DockWidgetHandler::connectDockWidget(QDockWidget *dockWidget)
@@ -598,8 +603,10 @@ void DockWidgetHandler::setWindowFrame(bool show)
 {
   windowFrame = show;
 
+#ifdef DEBUG_DOCK_WINDOW_FRAME
   for(QDockWidget *dock : qAsConst(dockWidgets))
     setDockWindowFrame(dock, windowFrame);
+#endif
 }
 
 void DockWidgetHandler::setHideTitleBar(bool hide)
