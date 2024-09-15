@@ -4,6 +4,45 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
+# Version 4.0.10.rc1
+
+* Fixed issue where detection of malformed MSFS airports rejected valid airport add-ons with a
+  message `Duplicate airport ident`. This happened when add-on developers put more than one of the
+  same airport into one BGL file.
+* Better detection of the longest runway for airports. Now ignoring water runways if airport has
+  water and land runways.
+* Fixed wrong airport bounding rectangle calculation for X-Plane airports. Example: KSEA in
+  X-Plane 12. This resulted in a too far zoom out when double clicking the airport.
+* Better airspace display deometry for Navigraph database. Now considering Rhumb line segments in
+  airspace description. Note that this does not cover airspaces loaded from simulators since the required
+  information is missing and needs an updated Navigraph database.
+* Improved display of airspace that touch the poles.
+* Fixed duplicate reading of X-Plane `airspace.txt`. The file `airspace.txt` in `Custom Data` now
+  overrides the one in `Resources`.
+* Added waypoint names to X-Plane and DFD compilers. albar965/littlenavmap#1176
+* Now doing better capitalization function for waypoint names. albar965/littlenavmap#1176
+* Added missing columns `name`, `artificial` and `arinc_type` to table trackpoint which could
+  result in incomplete waypoint type display.
+* Fixed issue with bounding rectangle calculation which resulted in wrong results when searching by
+  `Distance from Mark` and other functions around the antimeridian. albar965/littlenavmap#1184
+* Increased number samples when calculating elevation from GLOBE data to avoid missing peaks when
+  drawing the elevation profile.
+* Fixed issue where RealityXP GNS export declared destination airport wrongly as userpoint when
+  using export option with userpoints.
+* Now using ISO date with offset from UTC in all flight plan files.
+* Now getting best guess for user aircraft type designator and category in MFSF. Using keys
+  `icao_type_designator` and `icao_model` from file `aircraft.cfg`. Added aircraft category to detect
+  helicopters.
+* Cleanup in navdatabase compiler. Tables `airport_medium`, `airport_large`, `route_node_radio`,
+  `route_edge_radio`, `route_node_airway` and `route_edge_airway` now removed. This breaks
+  compatibility with versions before 2020 of *Little Navmap*. The program will show an SQL exception
+  if this is the case. Users have to update *Little Navmap* if they run into this.
+* View creation in database now disabled.
+* Updated minor database version to 29 due to several schema changes. This results in a notice
+  about a previous database version although reloading is not required. albar965/littlenavmap#1176
+
+===============================================================================
+
 # Version 4.0.9
 
 * Added crash handler to catch signals/exceptions. Requires
