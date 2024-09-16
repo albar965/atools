@@ -3218,25 +3218,25 @@ Ligne %2.</translation>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="858"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="863"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="946"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="874"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="879"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="962"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation type="unfinished">Error reading &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="884"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="889"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="900"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="905"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation type="unfinished">Erreur d&apos;écriture &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="907"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="923"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot;: Nombre magique non valide. Pas un fichier de disposition de fenêtre.</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="910"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="926"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot;: Version non valable. Fichier de disposition des fenêtres incompatible.</translation>
     </message>
