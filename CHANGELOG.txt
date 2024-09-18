@@ -13,9 +13,11 @@ This text is partially Markdown, so the formatting is sometimes strange.
   water and land runways.
 * Fixed wrong airport bounding rectangle calculation for X-Plane airports. Example: KSEA in
   X-Plane 12. This resulted in a too far zoom out when double clicking the airport.
-* Better airspace display deometry for Navigraph database. Now considering Rhumb line segments in
-  airspace description. Note that this does not cover airspaces loaded from simulators since the required
-  information is missing and needs an updated Navigraph database.
+* Better airspace geometry for Navigraph databases and all airspaces read from simulator
+  libraries. Now considering Rhumb line segments in Navigraph airspace description. Note that a
+  workaround is used to detect these segments for simulator and user airspaces since required
+  information is missing in simulators. This eliminates wrong airspace boundaries drawn as
+  bows (Great Circle lines).
 * Improved display of airspace that touch the poles.
 * Fixed duplicate reading of X-Plane `airspace.txt`. The file `airspace.txt` in `Custom Data` now
   overrides the one in `Resources`.

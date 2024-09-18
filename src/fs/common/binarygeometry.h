@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,13 +35,16 @@ namespace common {
 class BinaryGeometry
 {
 public:
-  BinaryGeometry();
+  BinaryGeometry()
+  {
+
+  }
 
   /* Sets line string geometry and does nothing else */
-  BinaryGeometry(const atools::geo::LineString& value);
+  explicit BinaryGeometry(const atools::geo::LineString& lineString);
 
   /* Reads from byte array and provides line string */
-  BinaryGeometry(const QByteArray& bytes);
+  explicit BinaryGeometry(const QByteArray& bytes);
 
   void readFromByteArray(const QByteArray& bytes);
   QByteArray writeToByteArray() const;

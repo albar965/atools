@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include "fs/common/binarygeometry.h"
 #include "exception.h"
+#include "fs/util/fsutil.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
 
@@ -274,7 +275,7 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
               insertAirspaceQuery->bindValue(":min_laty", bounding.getSouth());
 
               // Create geometry blob
-              atools::fs::common::BinaryGeometry geo(line);
+              atools::fs::common::BinaryGeometry geo(atools::fs::util::correctBoundary(line));
               insertAirspaceQuery->bindValue(":geometry", geo.writeToByteArray());
 
               insertAirspaceQuery->exec();

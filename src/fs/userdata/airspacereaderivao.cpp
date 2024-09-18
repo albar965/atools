@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #include "fs/userdata/airspacereaderivao.h"
 
+#include "fs/util/fsutil.h"
 #include "geo/calculations.h"
 #include "fs/util/coordinates.h"
 #include "fs/common/binarygeometry.h"
@@ -201,7 +202,7 @@ bool AirspaceReaderIvao::readFile(const QString& filenameParam)
             insertAirspaceQuery->bindValue(":min_laty", bounding.getSouth());
 
             // Create geometry blob
-            atools::fs::common::BinaryGeometry geo(line);
+            atools::fs::common::BinaryGeometry geo(atools::fs::util::correctBoundary(line));
             insertAirspaceQuery->bindValue(":geometry", geo.writeToByteArray());
 
             insertAirspaceQuery->exec();

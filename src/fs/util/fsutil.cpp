@@ -16,8 +16,10 @@
 *****************************************************************************/
 
 #include "fs/util/fsutil.h"
+
 #include "atools.h"
 #include "geo/calculations.h"
+#include "geo/linestring.h"
 #include "geo/pos.h"
 
 #include <QDateTime>
@@ -1156,6 +1158,53 @@ bool isAircraftTypeDesignatorValid(const QString& type)
   const static QRegularExpression AIRCRAFT_TYPE("^[A-Z0-9]{2,4}$");
 
   return type.isEmpty() ? false : AIRCRAFT_TYPE.match(type).hasMatch();
+}
+
+atools::geo::LineString correctBoundary(const atools::geo::LineString& geometry)
+{
+  atools::geo::LineString boundary;
+  for(int i = 0; i < geometry.size(); i++)
+  {
+    const atools::geo::Pos& current = atools::atRollConst(geometry, i);
+    const atools::geo::Pos& next = atools::atRollConst(geometry, i + 1);
+
+    // Calculate NM between points depending on latitude
+    float lat = std::abs(current.getLatY());
+    float pointDistIntervalNm;
+    if(lat > 70.f)
+      pointDistIntervalNm = 20.f;
+    else if(lat > 60.f)
+      pointDistIntervalNm = 40.f;
+    else if(lat > 30.f)
+      pointDistIntervalNm = 70.f;
+    else if(lat > 10.f)
+      pointDistIntervalNm = 90.f;
+    else
+      pointDistIntervalNm = 250.f;
+
+    float distMeter = current.distanceMeterTo(next);
+    if(atools::almostEqual(current.getLatY(), next.getLatY()) && distMeter > atools::geo::nmToMeter(pointDistIntervalNm))
+    {
+      int numPoints = atools::ceilToInt(distMeter / atools::geo::nmToMeter(pointDistIntervalNm));
+
+      atools::geo::LineString positions;
+      current.interpolatePointsRhumb(next, distMeter, numPoints, positions);
+      boundary.append(positions);
+    }
+    else
+      boundary.append(current);
+  }
+
+  // Move points away from the poles
+  for(atools::geo::Pos& pos : boundary)
+  {
+    if(pos.getLatY() > 89.9f)
+      pos.setLatY(89.9f);
+    if(pos.getLatY() < -89.9f)
+      pos.setLatY(-89.9f);
+  }
+
+  return boundary;
 }
 
 } // namespace util

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,13 +16,15 @@
 *****************************************************************************/
 
 #include "fs/db/nav/boundarywriter.h"
-#include "fs/db/datawriter.h"
-#include "fs/common/binarygeometry.h"
-#include "fs/bgl/util.h"
-#include "fs/navdatabaseoptions.h"
-#include "fs/db/meta/bglfilewriter.h"
-#include "geo/calculations.h"
+
 #include "atools.h"
+#include "fs/bgl/util.h"
+#include "fs/common/binarygeometry.h"
+#include "fs/db/datawriter.h"
+#include "fs/db/meta/bglfilewriter.h"
+#include "fs/navdatabaseoptions.h"
+#include "fs/util/fsutil.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -79,7 +81,7 @@ void BoundaryWriter::writeObject(const Boundary *type)
   bind(":min_lonx", type->getMinPosition().getLonX());
   bind(":min_laty", type->getMinPosition().getLatY());
 
-  bind(":geometry", atools::fs::common::BinaryGeometry(fetchAirspaceLines(type)).writeToByteArray());
+  bind(":geometry", atools::fs::common::BinaryGeometry(atools::fs::util::correctBoundary(fetchAirspaceLines(type))).writeToByteArray());
   executeStatement();
 }
 

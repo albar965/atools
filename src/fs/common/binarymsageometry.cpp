@@ -51,7 +51,7 @@ void BinaryMsaGeometry::calculate(const atools::geo::Pos& center, float radiusNm
     // +180 to convert bearing relative to navaid to heading
     float bearingFromTrue = normalizeCourse(bearings.at(i) + 180.f + magvar);
     // Roll over to start if last
-    float bearingToTrue = normalizeCourse(atools::atRoll(bearings, i + 1) + 180.f + magvar);
+    float bearingToTrue = normalizeCourse(atools::atRollConst(bearings, i + 1) + 180.f + magvar);
 
     float labelBrg = 0.f; // Default is north of center
     if(bearings.size() > 1)

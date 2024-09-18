@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #include "fs/userdata/airspacereaderopenair.h"
 
+#include "fs/util/fsutil.h"
 #include "geo/calculations.h"
 #include "fs/util/coordinates.h"
 #include "fs/common/binarygeometry.h"
@@ -158,7 +159,7 @@ void AirspaceReaderOpenAir::writeBoundary()
       insertAirspaceQuery->bindValue(":min_laty", bounding.getSouth());
 
       // Create geometry blob
-      atools::fs::common::BinaryGeometry geo(curLine);
+      atools::fs::common::BinaryGeometry geo(atools::fs::util::correctBoundary(curLine));
       insertAirspaceQuery->bindValue(":geometry", geo.writeToByteArray());
 
       // Fields not used by X-Plane
@@ -234,8 +235,8 @@ void AirspaceReaderOpenAir::bindCoordinate(const QStringList& line)
       curLine.append(LineString(center, atools::geo::nmToMeter(radius), CIRCLE_SEGMENTS));
     else
       // Small values are apparently used to define colors
-      qWarning() << filename << ":" << lineNumber <<
-        "Found invalid radius or center coordinate in airspace record DC" << value;
+      qWarning() << filename << ":" << lineNumber
+                 << "Found invalid radius or center coordinate in airspace record DC" << value;
     clockwise = true;
   }
   else if(key == "V")

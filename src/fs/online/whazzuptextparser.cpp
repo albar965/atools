@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #include "fs/online/whazzuptextparser.h"
 
+#include "fs/util/fsutil.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
 #include "geo/calculations.h"
@@ -985,55 +986,55 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
 {
   // Columns in file
   // IVAO format .................................. // VATSIM format
-  // 0	Callsign                                    // 0  callsign
-  // 1	VID                                         // 1  cid
-  // 2	Name                                        // 2  realname
-  // 3	Client Type                                 // 3  clienttype
-  // 4	Frequency                                   // 4  frequency
+  // 0  Callsign                                    // 0  callsign
+  // 1  VID                                         // 1  cid
+  // 2  Name                                        // 2  realname
+  // 3  Client Type                                 // 3  clienttype
+  // 4  Frequency                                   // 4  frequency
   // 5  Latitude                                    // 5  latitude
   // 6  Longitude                                   // 6  longitude
   // 7  Altitude                                    // 7  altitude
   // 8  Groundspeed                                 // 8  groundspeed
   // 9  Flightplan: Aircraft                        // 9  planned_aircraft
-  // 10	Flightplan: Cruising Speed                  // 10 planned_tascruise
-  // 11	Flightplan: Departure Aerodrome             // 11 planned_depairport
-  // 12	Flightplan: Cruising Level                  // 12 planned_altitude
-  // 13	Flightplan: Destination Aerodrome           // 13 planned_destairport
-  // 14	Server                                      // 14 server
-  // 15	Protocol                                    // 15 protrevision
-  // 16	IGNORED                                     // 16 rating
-  // 17	Transponder Code                            // 17 transponder
-  // 18	Facility Type                               // 18 facilitytype
-  // 19	Visual Range                                // 19 visualrange
-  // 20	Flightplan: revision                        // 20 planned_revision
-  // 21	Flightplan: flight rules                    // 21 planned_flighttype
-  // 22	Flightplan: departure time                  // 22 planned_deptime
-  // 23	Flightplan: actual departure time           // 23 planned_actdeptime
-  // 24	Flightplan: EET (hours)                     // 24 planned_hrsenroute
-  // 25	Flightplan: EET (minutes)                   // 25 planned_minenroute
-  // 26	Flightplan: endurance (hours)               // 26 planned_hrsfuel
-  // 27	Flightplan: endurance (minutes)             // 27 planned_minfuel
-  // 28	Flightplan: Alternate Aerodrome             // 28 planned_altairport
-  // 29	Flightplan: item 18 (other info)            // 29 planned_remarks
-  // 30	Flightplan: route                           // 30 planned_route
+  // 10 Flightplan: Cruising Speed                  // 10 planned_tascruise
+  // 11 Flightplan: Departure Aerodrome             // 11 planned_depairport
+  // 12 Flightplan: Cruising Level                  // 12 planned_altitude
+  // 13 Flightplan: Destination Aerodrome           // 13 planned_destairport
+  // 14 Server                                      // 14 server
+  // 15 Protocol                                    // 15 protrevision
+  // 16 IGNORED                                     // 16 rating
+  // 17 Transponder Code                            // 17 transponder
+  // 18 Facility Type                               // 18 facilitytype
+  // 19 Visual Range                                // 19 visualrange
+  // 20 Flightplan: revision                        // 20 planned_revision
+  // 21 Flightplan: flight rules                    // 21 planned_flighttype
+  // 22 Flightplan: departure time                  // 22 planned_deptime
+  // 23 Flightplan: actual departure time           // 23 planned_actdeptime
+  // 24 Flightplan: EET (hours)                     // 24 planned_hrsenroute
+  // 25 Flightplan: EET (minutes)                   // 25 planned_minenroute
+  // 26 Flightplan: endurance (hours)               // 26 planned_hrsfuel
+  // 27 Flightplan: endurance (minutes)             // 27 planned_minfuel
+  // 28 Flightplan: Alternate Aerodrome             // 28 planned_altairport
+  // 29 Flightplan: item 18 (other info)            // 29 planned_remarks
+  // 30 Flightplan: route                           // 30 planned_route
   // 4 unused                                       // 31 IGNORED planned_depairport_lat
   // .............................................. // 34 IGNORED planned_depairport_lon
   // .............................................. // 31 IGNORED planned_destairport_lat
   // .............................................. // 32 IGNORED planned_destairport_lon
-  // 33	ATIS                                        // 35 atis_message
-  // 34	ATIS Time                                   // 36 time_last_atis_received
-  // 35	Connection Time                             // 37 time_logon
-  // 36	Software Name
-  // 37	Software Version
-  // 38	Administrative Version
-  // 30	ATC/Pilot Version
-  // 39	Flightplan: 2nd Alternate Aerodrome
-  // 41	Flightplan: Persons on Board
-  // 32	Flightplan: Type of Flight
-  // 43	Heading                                     // 38 heading
-  // 44	On ground
-  // 45	Simulator
-  // 46	Plane
+  // 33 ATIS                                        // 35 atis_message
+  // 34 ATIS Time                                   // 36 time_last_atis_received
+  // 35 Connection Time                             // 37 time_logon
+  // 36 Software Name
+  // 37 Software Version
+  // 38 Administrative Version
+  // 30 ATC/Pilot Version
+  // 39 Flightplan: 2nd Alternate Aerodrome
+  // 41 Flightplan: Persons on Board
+  // 32 Flightplan: Type of Flight
+  // 43 Heading                                     // 38 heading
+  // 44 On ground
+  // 45 Simulator
+  // 46 Plane
   // .............................................. // 39 QNH_iHg
   // .............................................. // 40 QNH_Mb
   // IVAO format .................................. // VATSIM format
@@ -1303,7 +1304,8 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
       insertQuery->bindValue(":min_laty", bounding.getSouth());
 
       // Store geometry in same format as boundaries
-      insertQuery->bindValue(":geometry", atools::fs::common::BinaryGeometry(lineString).writeToByteArray());
+      insertQuery->bindValue(":geometry",
+                             atools::fs::common::BinaryGeometry(atools::fs::util::correctBoundary(lineString)).writeToByteArray());
     }
     else
     {

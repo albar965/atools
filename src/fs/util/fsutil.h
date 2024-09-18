@@ -24,10 +24,14 @@ class QDateTime;
 
 namespace atools {
 namespace geo {
+class LineString;
 class Pos;
 }
 namespace fs {
 namespace util {
+
+/* Add rhumb line points for all lines having equal latY. Also moves points at the poles slightly away. */
+atools::geo::LineString correctBoundary(const atools::geo::LineString& geometry);
 
 /* Calculate the display points of an ILS feather */
 void calculateIlsGeometry(const atools::geo::Pos& pos, float headingTrue, float widthDeg, float featherLengthNm,

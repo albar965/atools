@@ -711,8 +711,7 @@ void DfdCompiler::writeAirspaces()
                      "fir_uir_latitude as latitude, fir_uir_longitude as longitude, " + arcCols);
 
   // FIR ===========================
-  SqlQuery fir("select "
-               + firUirCols +
+  SqlQuery fir("select " + firUirCols +
                "fir_uir_indicator, "
                "'M' as unit_indicator_lower_limit, "
                "0 as lower_limit, "
@@ -723,8 +722,7 @@ void DfdCompiler::writeAirspaces()
   writeAirspace(fir, &DfdCompiler::beginFirUirAirspaceNew); // new FIR/UIR type
 
   // UIR ===========================
-  SqlQuery uir("select "
-               + firUirCols +
+  SqlQuery uir("select " + firUirCols +
                "fir_uir_indicator, "
                "'M' as unit_indicator_lower_limit, "
                "uir_lower_limit as lower_limit, "
@@ -737,8 +735,7 @@ void DfdCompiler::writeAirspaces()
   // ==================================================================================================
   // Split all regions with attribute both into one FIR and one UIR record for old centers
   // FIR from regions with attribute both ===========================
-  SqlQuery fir2("select "
-                + firUirCols +
+  SqlQuery fir2("select " + firUirCols +
                 "'F' as fir_uir_indicator, "
                 "'M' as unit_indicator_lower_limit, "
                 "0 as lower_limit, "
@@ -749,8 +746,7 @@ void DfdCompiler::writeAirspaces()
   writeAirspace(fir2, &DfdCompiler::beginFirUirAirspaceNew); // new FIR/UIR type
 
   // UIR from regions with attribute both ===========================
-  SqlQuery uir2("select "
-                + firUirCols +
+  SqlQuery uir2("select " + firUirCols +
                 "'U' as fir_uir_indicator, "
                 "fir_uir_indicator, "
                 "'M' as unit_indicator_lower_limit, "
@@ -850,8 +846,7 @@ void DfdCompiler::updateAirspaceCom(const atools::sql::SqlQuery& com, atools::sq
   }
 }
 
-void DfdCompiler::writeAirspace(atools::sql::SqlQuery& query,
-                                void (DfdCompiler::*beginFunc)(atools::sql::SqlQuery&))
+void DfdCompiler::writeAirspace(atools::sql::SqlQuery& query, void (DfdCompiler::*beginFunc)(atools::sql::SqlQuery&))
 {
   query.exec();
 
@@ -1096,7 +1091,7 @@ void DfdCompiler::finishAirspace()
   if(!airspaceWriteQuery->boundValue(":type").isNull())
   {
     // Create geometry
-    LineString curAirspaceLine;
+    LineString curBoundary;
 
     // Need to step over one iteration. Maybe need to generate rhumb line points for the last segment
     for(int i = 0; i <= airspaceSegments.size(); i++)
@@ -1104,76 +1099,76 @@ void DfdCompiler::finishAirspace()
       // Last iteration is only for eventual rhumb line generation
       bool rollover = i >= airspaceSegments.size();
 
-      const AirspaceSegment& segment = atools::atRoll(airspaceSegments, i);
-      const AirspaceSegment& segmentPrev = atools::atRoll(airspaceSegments, i - 1);
-      const Pos& nextPos = atools::atRoll(airspaceSegments, i + 1).pos;
+      const AirspaceSegment& curSegment = atools::atRollConst(airspaceSegments, i);
+      const AirspaceSegment& prevSegment = atools::atRollConst(airspaceSegments, i - 1);
+      const Pos& nextPos = atools::atRollConst(airspaceSegments, i + 1).pos;
 
-      if(segment.pos.isNull() && !segment.center.isNull())
+      if(curSegment.pos.isNull() && !curSegment.center.isNull())
       {
         if(!rollover)
           // Create a circular polygon
-          curAirspaceLine.append(LineString(segment.center, ageo::nmToMeter(segment.distance), CIRCLE_SEGMENTS));
+          curBoundary.append(LineString(curSegment.center, ageo::nmToMeter(curSegment.distance), CIRCLE_SEGMENTS));
       }
       else
       {
-        if(segment.center.isNull())
+        if(curSegment.center.isNull())
         {
-          float lat = std::abs(segment.pos.getLatY());
+          float lat = std::abs(curSegment.pos.getLatY());
 
           // Use different number of points per NM depending on latitude
           // Use odd/prime numbers to ease debugging / detecting artifial points
-          float distInterval;
+          float pointDistIntervalNm;
           if(lat > 70.f)
-            distInterval = 23;
+            pointDistIntervalNm = 20.f;
           else if(lat > 60.f)
-            distInterval = 43;
+            pointDistIntervalNm = 40.f;
           else if(lat > 30.f)
-            distInterval = 83;
+            pointDistIntervalNm = 70.f;
           else if(lat > 10.f)
-            distInterval = 171;
+            pointDistIntervalNm = 90.f;
           else
-            distInterval = 233;
+            pointDistIntervalNm = 250.f;
 
           // Linear feature =============================
-          if(atools::charAt(segmentPrev.via, 0) == 'H' && !curAirspaceLine.isEmpty() &&
-             curAirspaceLine.constLast().distanceMeterTo(segment.pos) > atools::geo::nmToMeter(distInterval * 2.f))
+          if(atools::charAt(prevSegment.via, 0) == 'H' && !curBoundary.isEmpty() &&
+             curBoundary.constLast().distanceMeterTo(curSegment.pos) > atools::geo::nmToMeter(pointDistIntervalNm))
           {
             // Create a rhumb line using points ===============
-            const Pos& last = curAirspaceLine.constLast();
-            float dist = last.distanceMeterTo(segment.pos);
-            int numPoints = atools::ceilToInt(dist / atools::geo::nmToMeter(distInterval));
+            const Pos& last = curBoundary.constLast();
+            float dist = last.distanceMeterTo(curSegment.pos);
+            int numPoints = atools::ceilToInt(dist / atools::geo::nmToMeter(pointDistIntervalNm));
 
             LineString positions;
-            last.interpolatePointsRhumb(segment.pos, dist, numPoints, positions);
+            last.interpolatePointsRhumb(curSegment.pos, dist, numPoints, positions);
 
             if(!positions.isEmpty())
               positions.removeFirst();
 
-            curAirspaceLine.append(positions);
+            curBoundary.append(positions);
 
             if(!rollover)
               // Add current position only if not rolling over. Do not close polygon
-              curAirspaceLine.append(segment.pos);
+              curBoundary.append(curSegment.pos);
           }
           else if(!rollover)
             // Lines are already drawn using GC - no need for intermediate points
-            curAirspaceLine.append(segment.pos);
+            curBoundary.append(curSegment.pos);
         }
         else if(!rollover)
         {
           // Create an arc =============================
-          bool clockwise = segment.via.isEmpty() ? true : segment.via.at(0) == "R";
-          LineString arc(segment.center, segment.pos, nextPos, clockwise, CIRCLE_SEGMENTS);
+          bool clockwise = curSegment.via.isEmpty() ? true : curSegment.via.at(0) == "R";
+          LineString arc(curSegment.center, curSegment.pos, nextPos, clockwise, CIRCLE_SEGMENTS);
 
           if(!arc.isEmpty())
             arc.removeLast();
-          curAirspaceLine.append(arc);
+          curBoundary.append(arc);
         }
       }
     }
 
     // Move points slightly away from the poles to avoid display artifacts
-    for(Pos& pos : curAirspaceLine)
+    for(Pos& pos : curBoundary)
     {
       if(pos.getLatY() > 89.9f)
         pos.setLatY(89.9f);
@@ -1182,13 +1177,13 @@ void DfdCompiler::finishAirspace()
     }
     airspaceWriteQuery->bindValue(":file_id", FILE_ID);
 
-    Rect bounding = curAirspaceLine.boundingRect();
+    Rect bounding = curBoundary.boundingRect();
     airspaceWriteQuery->bindValue(":max_lonx", bounding.getEast());
     airspaceWriteQuery->bindValue(":max_laty", bounding.getNorth());
     airspaceWriteQuery->bindValue(":min_lonx", bounding.getWest());
     airspaceWriteQuery->bindValue(":min_laty", bounding.getSouth());
 
-    atools::fs::common::BinaryGeometry geo(curAirspaceLine);
+    atools::fs::common::BinaryGeometry geo(curBoundary);
     airspaceWriteQuery->bindValue(":geometry", geo.writeToByteArray());
     airspaceWriteQuery->exec();
   }
@@ -1582,8 +1577,7 @@ void DfdCompiler::writeAirportMsa()
     // MSA with airport as center point ========================================
     "select a.airport_id, a.ident as airport_ident, a.airport_id as nav_id, a.ident as nav_ident, m.icao_code as region, "
     "  m.multiple_code as multiple_code, 'A' as nav_type, null as vor_type, null as vor_dme_only, null as vor_has_dme, a.mag_var, "
-    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
-    + sectorColsStr +
+    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, " + sectorColsStr +
     "from tbl_airport_msa m join airport a on a.ident = m.airport_identifier "
     "where m.airport_identifier = m.msa_center and m.radius_limit is not null "
     "union "
@@ -1591,8 +1585,7 @@ void DfdCompiler::writeAirportMsa()
     "select a.airport_id, a.ident as airport_ident, v.vor_id as nav_id, v.ident as nav_ident, v.region as region, "
     "  m.multiple_code as multiple_code, 'V' as nav_type, v.type as vor_type, v.dme_only as vor_dme_only, "
     "  case when v.dme_altitude is null then 1 else 0 end as vor_has_dme, v.mag_var, "
-    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
-    + sectorColsStr +
+    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, " + sectorColsStr +
     "from tbl_airport_msa m join vor v on v.ident = m.msa_center and v.region = m.icao_code and "
     "  abs(v.laty - m.msa_center_latitude) < 0.00001 and abs(v.lonx - m.msa_center_longitude) < 0.00001 "
     "join airport a on a.ident = m.airport_identifier and m.radius_limit is not null "
@@ -1600,8 +1593,7 @@ void DfdCompiler::writeAirportMsa()
     // MSA with NDB as center point ========================================
     "select a.airport_id, a.ident as airport_ident, n.ndb_id as nav_id, n.ident as nav_ident, n.region as region, "
     "  m.multiple_code as multiple_code, 'N' as nav_type, null as vor_type, null as vor_dme_only, null as vor_has_dme, n.mag_var, "
-    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
-    + sectorColsStr +
+    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, " + sectorColsStr +
     "from tbl_airport_msa m join ndb n on n.ident = m.msa_center and n.region = m.icao_code and "
     "  abs(n.laty - m.msa_center_latitude) < 0.00001 and abs(n.lonx - m.msa_center_longitude) < 0.00001 "
     "join airport a on a.ident = m.airport_identifier and m.radius_limit is not null "
@@ -1609,8 +1601,7 @@ void DfdCompiler::writeAirportMsa()
     // MSA with runway end as center point ========================================
     "select a.airport_id, a.ident as airport_ident, r.runway_end_id as nav_id, r.name as nav_ident, a.region as region, "
     "  m.multiple_code as multiple_code, 'R' as nav_type, null as vor_type, null as vor_dme_only, null as vor_has_dme, a.mag_var, "
-    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
-    + sectorColsStr +
+    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, " + sectorColsStr +
     "from tbl_airport_msa m join runway_end r on r.name = substr(m.msa_center, 3) and a.region = m.icao_code and "
     "  abs(r.laty - m.msa_center_latitude) < 0.00001 and abs(r.lonx - m.msa_center_longitude) < 0.00001 "
     "join airport a on a.ident = m.airport_identifier and m.radius_limit is not null "

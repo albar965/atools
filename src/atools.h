@@ -369,7 +369,7 @@ inline int rollIndex(int size, int index)
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 /* Functions roll over to first position on overflow */
 template<typename TYPE>
-const TYPE& atRoll(const QVector<TYPE>& list, int index)
+const TYPE& atRollConst(const QVector<TYPE>& list, int index)
 {
   return list.at(rollIndex(list.size(), index));
 }
@@ -383,7 +383,7 @@ TYPE& atRoll(QVector<TYPE>& list, int index)
 #endif
 
 template<typename TYPE>
-const TYPE& atRoll(const QList<TYPE>& list, int index)
+const TYPE& atRollConst(const QList<TYPE>& list, int index)
 {
   return list.at(rollIndex(list.size(), index));
 }
