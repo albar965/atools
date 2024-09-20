@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,11 @@ using Qt::dec;
 
 using atools::io::BinaryStream;
 
-Record::Record(const NavDatabaseOptions *options, BinaryStream *bs)
-  : BglBase(options, bs)
+Record::Record(const NavDatabaseOptions *options, BinaryStream *stream)
+  : BglBase(options, stream)
 {
-  id = bs->readUShort();
-  size = bs->readUInt();
+  id = stream->readUShort();
+  size = stream->readUInt();
 }
 
 Record::~Record()

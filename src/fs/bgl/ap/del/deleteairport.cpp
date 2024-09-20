@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -59,14 +59,14 @@ QString DeleteAirport::deleteAllFlagsToStr(del::DeleteAllFlags flags)
   return retval;
 }
 
-DeleteAirport::DeleteAirport(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+DeleteAirport::DeleteAirport(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  flags = static_cast<del::DeleteAllFlags>(bs->readUShort());
-  numRunways = bs->readUByte();
-  numStarts = bs->readUByte();
-  numFrequencies = bs->readUByte();
-  bs->readUByte(); // unused
+  flags = static_cast<del::DeleteAllFlags>(stream->readUShort());
+  numRunways = stream->readUByte();
+  numStarts = stream->readUByte();
+  numFrequencies = stream->readUByte();
+  stream->readUByte(); // unused
 
   // Print warnings for unsupported deletion cases
   if(numRunways > 0)
@@ -77,13 +77,13 @@ DeleteAirport::DeleteAirport(const NavDatabaseOptions *options, BinaryStream *bs
     qWarning().nospace().noquote() << "Found DeleteAirport with " << numFrequencies << " numFrequencies";
 
   for(int i = 0; i < numRunways; i++)
-    deleteRunways.append(DeleteRunway(options, bs));
+    deleteRunways.append(DeleteRunway(options, stream));
 
   for(int i = 0; i < numStarts; i++)
-    deleteStarts.append(DeleteStart(options, bs));
+    deleteStarts.append(DeleteStart(options, stream));
 
   for(int i = 0; i < numFrequencies; i++)
-    deleteComs.append(DeleteCom(options, bs));
+    deleteComs.append(DeleteCom(options, stream));
 }
 
 DeleteAirport::DeleteAirport(del::DeleteAllFlags deleteAllFlags)

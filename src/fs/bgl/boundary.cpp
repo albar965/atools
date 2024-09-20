@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -141,8 +141,8 @@ Boundary::Boundary()
 {
 }
 
-Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
   if(id != rec::BOUNDARY)
   {
@@ -150,14 +150,14 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
     excluded = true;
     return;
   }
-  type = static_cast<boundary::BoundaryType>(bs->readUByte());
+  type = static_cast<boundary::BoundaryType>(stream->readUByte());
   if(type < boundary::NONE || type > boundary::TRAINING)
   {
     valid = false;
     return;
   }
 
-  int flags = bs->readUByte();
+  int flags = stream->readUByte();
   // TODO fix in wiki
   minAltType = static_cast<boundary::AltitudeType>(flags & 0xf);
   maxAltType = static_cast<boundary::AltitudeType>((flags >> 4) & 0xf);
@@ -174,15 +174,15 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
     return;
   }
 
-  minPosition = BglPosition(bs, true, 1000.f);
-  maxPosition = BglPosition(bs, true, 1000.f);
+  minPosition = BglPosition(stream, true, 1000.f);
+  maxPosition = BglPosition(stream, true, 1000.f);
   atools::io::Encoding encoding = options->getSimulatorType() ==
                                   atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
 
   int numFreq = 0;
-  while(bs->tellg() < startOffset + size)
+  while(stream->tellg() < startOffset + size)
   {
-    Record r(options, bs);
+    Record r(options, stream);
     rec::BoundaryRecordType t = r.getId<rec::BoundaryRecordType>();
     if(checkSubRecord(r))
       return;
@@ -193,19 +193,19 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
         com = true;
         numFreq++;
         // Read COM record directly here
-        comType = static_cast<com::ComType>(bs->readShort());
-        comFrequency = bs->readInt() / 1000;
-        comName = bs->readString(r.getSize() - 12, encoding);
+        comType = static_cast<com::ComType>(stream->readShort());
+        comFrequency = stream->readInt() / 1000;
+        comName = stream->readString(r.getSize() - 12, encoding);
         break;
       case rec::BOUNDARY_NAME:
-        name = bs->readString(r.getSize() - Record::SIZE, atools::io::LATIN1);
+        name = stream->readString(r.getSize() - Record::SIZE, atools::io::LATIN1);
         break;
       case rec::BOUNDARY_LINES:
         {
           // Read geometry
-          int numPoints = bs->readUShort();
+          int numPoints = stream->readUShort();
           for(int i = 0; i < numPoints; i++)
-            lines.append(BoundarySegment(options, bs));
+            lines.append(BoundarySegment(options, stream));
         }
         break;
         // default:

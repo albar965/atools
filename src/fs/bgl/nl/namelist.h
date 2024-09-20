@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class Namelist :
 {
 public:
   /* read nameslist from BGL */
-  Namelist(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+  Namelist(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream);
   virtual ~Namelist() override;
 
   const QList<atools::fs::bgl::NamelistEntry>& getNameList() const

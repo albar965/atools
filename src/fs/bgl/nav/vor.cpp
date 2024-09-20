@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -49,25 +49,25 @@ enum VorFlags
   FLAGS_NAV = 1 << 4
 };
 
-Vor::Vor(const NavDatabaseOptions *options, BinaryStream *bs)
-  : NavBase(options, bs)
+Vor::Vor(const NavDatabaseOptions *options, BinaryStream *stream)
+  : NavBase(options, stream)
 {
-  type = static_cast<nav::IlsVorType>(bs->readUByte());
-  int flags = bs->readUByte();
+  type = static_cast<nav::IlsVorType>(stream->readUByte());
+  int flags = stream->readUByte();
 
   dmeOnly = (flags & FLAGS_DME_ONLY) == 0;
   // TODO compare flags with record presence
   // hasDme = (flags & FLAGS_DME) == FLAGS_DME;
   // hasNav = (flags & FLAGS_NAV) == FLAGS_NAV;
 
-  position = BglPosition(bs, true, 1000.f);
-  frequency = bs->readInt() / 1000;
-  range = bs->readFloat();
-  magVar = converter::adjustMagvar(bs->readFloat());
+  position = BglPosition(stream, true, 1000.f);
+  frequency = stream->readInt() / 1000;
+  range = stream->readFloat();
+  magVar = converter::adjustMagvar(stream->readFloat());
 
-  ident = converter::intToIcao(bs->readUInt());
+  ident = converter::intToIcao(stream->readUInt());
 
-  unsigned int regionFlags = bs->readUInt();
+  unsigned int regionFlags = stream->readUInt();
   region = converter::intToIcao(regionFlags & 0x7ff, true);
 
   // TODO report wiki error ap ident is never set
@@ -75,9 +75,9 @@ Vor::Vor(const NavDatabaseOptions *options, BinaryStream *bs)
   atools::io::Encoding encoding = options->getSimulatorType() ==
                                   atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
 
-  while(bs->tellg() < startOffset + size)
+  while(stream->tellg() < startOffset + size)
   {
-    Record r(options, bs);
+    Record r(options, stream);
     rec::IlsVorRecordType t = r.getId<rec::IlsVorRecordType>();
     if(checkSubRecord(r))
       return;
@@ -85,11 +85,11 @@ Vor::Vor(const NavDatabaseOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::ILS_VOR_NAME:
-        name = bs->readString(r.getSize() - Record::SIZE, encoding);
+        name = stream->readString(r.getSize() - Record::SIZE, encoding);
         break;
       case rec::DME:
         r.seekToStart();
-        dme = new Dme(options, bs);
+        dme = new Dme(options, stream);
         break;
       case atools::fs::bgl::rec::LOCALIZER:
       case atools::fs::bgl::rec::GLIDESLOPE:

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Dme::Dme(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+Dme::Dme(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  bs->skip(2); // Unknown
-  position = BglPosition(bs, true, 1000.f);
-  range = bs->readFloat();
+  stream->skip(2); // Unknown
+  position = BglPosition(stream, true, 1000.f);
+  range = stream->readFloat();
 }
 
 Dme::~Dme()
@@ -42,10 +42,10 @@ QDebug operator<<(QDebug out, const Dme& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Dme["
-  << "range " << record.range
-  << ", " << record.position
-  << "]";
+                          << " Dme["
+                          << "range " << record.range
+                          << ", " << record.position
+                          << "]";
   return out;
 }
 

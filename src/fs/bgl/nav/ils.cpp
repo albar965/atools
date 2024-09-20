@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -45,11 +45,11 @@ enum IlsFlags
   FLAGS_NAV = 1 << 5
 };
 
-Ils::Ils(const NavDatabaseOptions *options, BinaryStream *bs)
-  : NavBase(options, bs), localizer(nullptr), glideslope(nullptr), dme(nullptr)
+Ils::Ils(const NavDatabaseOptions *options, BinaryStream *stream)
+  : NavBase(options, stream), localizer(nullptr), glideslope(nullptr), dme(nullptr)
 {
-  bs->readUByte();
-  int flags = bs->readUByte();
+  stream->readUByte();
+  int flags = stream->readUByte();
 
   backcourse = (flags & FLAGS_BC) == FLAGS_BC;
   // TODO  compare values with record presence
@@ -59,15 +59,15 @@ Ils::Ils(const NavDatabaseOptions *options, BinaryStream *bs)
   // hasNav = (flags & FLAGS_NAV) == FLAGS_NAV;
 
   // ILS transmitter position
-  position = BglPosition(bs, true, 1000.f);
-  frequency = bs->readInt() / 1000;
-  range = bs->readFloat();
-  magVar = converter::adjustMagvar(bs->readFloat());
+  position = BglPosition(stream, true, 1000.f);
+  frequency = stream->readInt() / 1000;
+  range = stream->readFloat();
+  magVar = converter::adjustMagvar(stream->readFloat());
 
   // ILS ident
-  ident = converter::intToIcao(bs->readUInt());
+  ident = converter::intToIcao(stream->readUInt());
 
-  unsigned int regionFlags = bs->readUInt();
+  unsigned int regionFlags = stream->readUInt();
   // Two letter region code
   region = converter::intToIcao(regionFlags & 0x7ff, true); // TODO wiki region is never set
   // Read airport ICAO ident
@@ -77,9 +77,9 @@ Ils::Ils(const NavDatabaseOptions *options, BinaryStream *bs)
                                   atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
 
   // Read all subrecords of ILS
-  while(bs->tellg() < startOffset + size)
+  while(stream->tellg() < startOffset + size)
   {
-    Record r(options, bs);
+    Record r(options, stream);
     rec::IlsVorRecordType t = r.getId<rec::IlsVorRecordType>();
     if(checkSubRecord(r))
       return;
@@ -87,20 +87,20 @@ Ils::Ils(const NavDatabaseOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::ILS_VOR_NAME:
-        name = bs->readString(r.getSize() - Record::SIZE, encoding);
+        name = stream->readString(r.getSize() - Record::SIZE, encoding);
         break;
       case rec::LOCALIZER:
         // This is actually not optional for an ILS
         r.seekToStart();
-        localizer = new Localizer(options, bs);
+        localizer = new Localizer(options, stream);
         break;
       case rec::GLIDESLOPE:
         r.seekToStart();
-        glideslope = new Glideslope(options, bs);
+        glideslope = new Glideslope(options, stream);
         break;
       case rec::DME:
         r.seekToStart();
-        dme = new Dme(options, bs);
+        dme = new Dme(options, stream);
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in ILS record 0x"

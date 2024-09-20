@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,15 +31,13 @@ using Qt::dec;
 
 using atools::io::BinaryStream;
 
-Subsection::Subsection(const atools::fs::NavDatabaseOptions *options,
-                       BinaryStream *bs,
-                       const Section& parentSect)
-  : BglBase(options, bs), parent(&parentSect)
+Subsection::Subsection(const atools::fs::NavDatabaseOptions *options, BinaryStream *stream, const Section& parentSect)
+  : BglBase(options, stream), parent(&parentSect)
 {
-  id = bs->readInt();
-  numDataRecords = bs->readInt();
-  firstDataRecordOffset = bs->readInt();
-  dataSize = bs->readInt();
+  id = stream->readInt();
+  numDataRecords = stream->readInt();
+  firstDataRecordOffset = stream->readInt();
+  dataSize = stream->readInt();
 }
 
 Subsection::~Subsection()
@@ -51,11 +49,11 @@ QDebug operator<<(QDebug out, const Subsection& section)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(section)
-  << " Subsection[parent type " << sectionTypeStr(section.getParent().getType())
-  << hex << ", id 0x" << section.id << dec
-  << ", records " << section.numDataRecords
-  << hex << ", offset 0x" << section.firstDataRecordOffset << dec
-  << ", size " << section.dataSize << "]";
+                          << " Subsection[parent type " << sectionTypeStr(section.getParent().getType())
+                          << hex << ", id 0x" << section.id << dec
+                          << ", records " << section.numDataRecords
+                          << hex << ", offset 0x" << section.firstDataRecordOffset << dec
+                          << ", size " << section.dataSize << "]";
   return out;
 }
 

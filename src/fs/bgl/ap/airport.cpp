@@ -67,21 +67,21 @@ inline uint qHash(const ParkingKey& pair)
 
 using atools::io::BinaryStream;
 
-Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs::bgl::CreateFlags flags)
-  : Record(options, bs)
+Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools::fs::bgl::CreateFlags flags)
+  : Record(options, stream)
 {
   /*int numRunways = TODO compare with number of subrecords */
-  bs->readUByte();
-  /*int numComs = TODO compare with number of subrecords*/ bs->readUByte();
-  bs->readUByte(); // numStarts
-  /*int numApproaches = TODO compare with number of subrecords*/ bs->readUByte();
-  /*int numAprons = TODO compare with number of subrecords*/ bs->readUByte();
+  stream->readUByte();
+  /*int numComs = TODO compare with number of subrecords*/ stream->readUByte();
+  stream->readUByte(); // numStarts
+  /*int numApproaches = TODO compare with number of subrecords*/ stream->readUByte();
+  /*int numAprons = TODO compare with number of subrecords*/ stream->readUByte();
   // int numDeleteRecords = (numAprons & 0x80) == 0x80; TODO compare with delete record presence
-  bs->readUByte(); // numHelipads TODO compare with number of subrecords
-  position = BglPosition(bs, true, 1000.f);
-  towerPosition = BglPosition(bs, true, 1000.f);
-  magVar = converter::adjustMagvar(bs->readFloat());
-  ident = converter::intToIcao(bs->readUInt());
+  stream->readUByte(); // numHelipads TODO compare with number of subrecords
+  position = BglPosition(stream, true, 1000.f);
+  towerPosition = BglPosition(stream, true, 1000.f);
+  magVar = converter::adjustMagvar(stream->readFloat());
+  ident = converter::intToIcao(stream->readUInt());
   msfs = options->getSimulatorType() == atools::fs::FsPaths::SimulatorType::MSFS;
 
   // Check if the airport is filtered out in the configuration file
@@ -93,41 +93,41 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
     return;
   }
 
-  region = converter::intToIcao(bs->readUInt()); // TODO wiki is always null
+  region = converter::intToIcao(stream->readUInt()); // TODO wiki is always null
 
-  fuelFlags = static_cast<ap::FuelFlags>(bs->readUInt());
+  fuelFlags = static_cast<ap::FuelFlags>(stream->readUInt());
 
   if(msfs)
   {
-    bs->skip(2);
-    quint8 msfsflags = bs->readUByte();
+    stream->skip(2);
+    quint8 msfsflags = stream->readUByte();
     if((msfsflags & 0x04) == 0x04)
       airportClosed = true;
     if((msfsflags & 0x01) == 0x01)
       msfsStar = true;
-    bs->skip(1);
+    stream->skip(1);
   }
   else
-    bs->skip(4); // unknown, traffic scalar, unknown (FSX only)
+    stream->skip(4); // unknown, traffic scalar, unknown (FSX only)
 
   if(msfs)
   {
     /*int numDepartures = TODO compare with number of departure subrecords*/
-    bs->readUByte();
-    bs->skip(1);
-    /*int numArrivals = TODO compare with number of arrival subrecords*/ bs->readUByte();
-    bs->skip(9); /* skip applyFlatten, and 4 16-bit counts */
+    stream->readUByte();
+    stream->skip(1);
+    /*int numArrivals = TODO compare with number of arrival subrecords*/ stream->readUByte();
+    stream->skip(9); /* skip applyFlatten, and 4 16-bit counts */
   }
   else if(!isCurrentRecordValid())
   {
     // FSX/FS9 structure recognition workaround
     // Check if the next record type is valid, if yes: FSX, otherwise it is a FS9 record where we have
     // to rewind 4 bytes
-    bs->skip(-4);
+    stream->skip(-4);
 
     if(!isCurrentRecordValid())
       // Still not valid - must be P3Dv5 structure
-      bs->skip(8);
+      stream->skip(8);
     else
       qInfo() << "Found fs9 airport structure for" << ident;
   }
@@ -142,14 +142,14 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
                                   atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
 
   int subrecordIndex = 0;
-  while(bs->tellg() < startOffset + size)
+  while(stream->tellg() < startOffset + size)
   {
-    Record r(options, bs);
+    Record r(options, stream);
     rec::AirportRecordType type = r.getId<rec::AirportRecordType>();
     if(checkSubRecord(r))
     {
       qWarning().noquote().nospace() << Q_FUNC_INFO << "Invalid record" << hex << " 0x" << r.getId()
-                                     << dec << " " << airportRecordTypeStr(type) << " offset " << bs->tellg();
+                                     << dec << " " << airportRecordTypeStr(type) << " offset " << stream->tellg();
       return;
     }
 
@@ -159,7 +159,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
     switch(type)
     {
       case rec::NAME:
-        name = bs->readString(r.getSize() - Record::SIZE, encoding);
+        name = stream->readString(r.getSize() - Record::SIZE, encoding);
         break;
 
       case rec::RUNWAY:
@@ -175,7 +175,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
           else if(type == rec::RUNWAY_MSFS)
             structureType = STRUCT_MSFS;
 
-          Runway rw = Runway(options, bs, ident, structureType);
+          Runway rw = Runway(options, stream, ident, structureType);
           if(!(options->isFilterRunways() && rw.getLength() <= MIN_RUNWAY_LENGTH_METER &&
                rw.getSurface() == bgl::GRASS))
           {
@@ -192,7 +192,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
         if(options->isIncludedNavDbObject(type::COM))
         {
           r.seekToStart();
-          Com com(options, bs);
+          Com com(options, stream);
 
           if(com.getFrequency() > 0) // MSFS has zero frequency COM values
             coms.append(com);
@@ -213,10 +213,10 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
           else if(type == rec::TAXI_PARKING_MSFS)
             structType = STRUCT_MSFS;
 
-          int numParkings = bs->readUShort();
+          int numParkings = stream->readUShort();
           for(int i = 0; i < numParkings; i++)
           {
-            Parking p(bs, structType);
+            Parking p(stream, structType);
 
             // Remove vehicle parking later to avoid index mess-up
 
@@ -231,7 +231,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
         if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::AIRPORT_MSFS_NAVIGRAPH_NAVDATA))
         {
           r.seekToStart();
-          approaches.append(Approach(options, bs, type));
+          approaches.append(Approach(options, stream, type));
         }
         break;
 
@@ -240,7 +240,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
         if(options->isIncludedNavDbObject(type::APPROACH) && !flags.testFlag(atools::fs::bgl::AIRPORT_MSFS_NAVIGRAPH_NAVDATA))
         {
           r.seekToStart();
-          sidsAndStars.append(SidStar(options, bs));
+          sidsAndStars.append(SidStar(options, stream));
         }
         break;
 
@@ -248,7 +248,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
         if(options->isIncludedNavDbObject(type::WAYPOINT))
         {
           r.seekToStart();
-          Waypoint wp(options, bs);
+          Waypoint wp(options, stream);
 
           if(wp.isValid())
             waypoints.append(wp);
@@ -259,7 +259,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
 
       case rec::DELETE_AIRPORT:
         r.seekToStart();
-        deleteAirports.append(DeleteAirport(options, bs));
+        deleteAirports.append(DeleteAirport(options, stream));
         break;
 
       case rec::APRON_FIRST_MSFS:
@@ -269,7 +269,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
         if(options->isIncludedNavDbObject(type::APRON))
         {
           r.seekToStart();
-          aprons.append(Apron(options, bs, type));
+          aprons.append(Apron(options, stream, type));
         }
         break;
 
@@ -283,7 +283,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
             structType = STRUCT_P3DV5;
           else if(type == rec::APRON_SECOND_P3D_V4)
             structType = STRUCT_P3DV4;
-          aprons2.append(Apron2(options, bs, structType));
+          aprons2.append(Apron2(options, stream, structType));
         }
         break;
 
@@ -291,7 +291,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
         if(options->isIncludedNavDbObject(type::HELIPAD))
         {
           r.seekToStart();
-          helipads.append(Helipad(options, bs));
+          helipads.append(Helipad(options, stream));
         }
         break;
 
@@ -299,7 +299,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
         if(options->isIncludedNavDbObject(type::START))
         {
           r.seekToStart();
-          Start start(options, bs);
+          Start start(options, stream);
           if(start.getType() == atools::fs::bgl::start::HELIPAD)
             start.setNumber(helipadStart++);
           else
@@ -312,7 +312,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
         if(options->isIncludedNavDbObject(type::PARKING))
         {
           r.seekToStart();
-          jetways.append(Jetway(options, bs));
+          jetways.append(Jetway(options, stream));
         }
         break;
 
@@ -334,11 +334,11 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
           else if(type == rec::TAXI_PATH_MSFS)
             structType = STRUCT_MSFS;
 
-          int numPaths = bs->readUShort();
+          int numPaths = stream->readUShort();
           for(int i = 0; i < numPaths; i++)
           {
 
-            TaxiPath path(bs, structType);
+            TaxiPath path(stream, structType);
 
             if((path.getType() == atools::fs::bgl::taxipath::RUNWAY &&
                 !options->isIncludedNavDbObject(type::TAXIWAY_RUNWAY)) ||
@@ -355,18 +355,18 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
       case rec::TAXI_POINT:
         if(options->isIncludedNavDbObject(type::TAXIWAY))
         {
-          int numPoints = bs->readUShort();
+          int numPoints = stream->readUShort();
           for(int i = 0; i < numPoints; i++)
-            taxipoints.append(TaxiPoint(bs, type == rec::TAXI_POINT_P3DV5 ? STRUCT_P3DV5 : STRUCT_FSX));
+            taxipoints.append(TaxiPoint(stream, type == rec::TAXI_POINT_P3DV5 ? STRUCT_P3DV5 : STRUCT_FSX));
         }
         break;
 
       case rec::TAXI_NAME:
         if(options->isIncludedNavDbObject(type::TAXIWAY))
         {
-          int numNames = bs->readUShort();
+          int numNames = stream->readUShort();
           for(int i = 0; i < numNames; i++)
-            taxinames.append(bs->readString(8, atools::io::LATIN1)); // First is always 0 and length always 8
+            taxinames.append(stream->readString(8, atools::io::LATIN1)); // First is always 0 and length always 8
         }
         break;
 
@@ -398,7 +398,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs, atools::fs
 #endif
         qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type in airport record for " << ident
                                        << hex << " 0x" << r.getId()
-                                       << dec << " " << airportRecordTypeStr(type) << " offset " << bs->tellg();
+                                       << dec << " " << airportRecordTypeStr(type) << " offset " << stream->tellg();
 
         if(subrecordIndex == 0)
         {

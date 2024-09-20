@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,22 +55,22 @@ Helipad::Helipad()
 {
 }
 
-Helipad::Helipad(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+Helipad::Helipad(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  surface = static_cast<Surface>(bs->readUByte() & SURFACE_MASK);
+  surface = static_cast<Surface>(stream->readUByte() & SURFACE_MASK);
 
-  int flags = bs->readUByte();
+  int flags = stream->readUByte();
   type = static_cast<helipad::HelipadType>(flags & 0xf);
   transparent = flags & (1 << 4);
   closed = flags & (1 << 5);
 
-  bs->skip(4); // color
+  stream->skip(4); // color
 
-  position = BglPosition(bs, true, 1000.f);
-  length = bs->readFloat();
-  width = bs->readFloat();
-  heading = bs->readFloat(); // TODO wiki heading is float degrees
+  position = BglPosition(stream, true, 1000.f);
+  length = stream->readFloat();
+  width = stream->readFloat();
+  heading = stream->readFloat(); // TODO wiki heading is float degrees
 }
 
 QDebug operator<<(QDebug out, const Helipad& record)
@@ -78,15 +78,15 @@ QDebug operator<<(QDebug out, const Helipad& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Helipad[type " << Helipad::helipadTypeToStr(record.type)
-  << ", surface " << surface::surfaceToDbStr(record.surface) << endl
-  << ", length " << record.length
-  << ", width " << record.width
-  << ", heading " << record.heading
-  << ", transparent " << record.transparent
-  << ", closed " << record.closed
-  << ", " << record.position
-  << "]";
+                          << " Helipad[type " << Helipad::helipadTypeToStr(record.type)
+                          << ", surface " << surface::surfaceToDbStr(record.surface) << endl
+                          << ", length " << record.length
+                          << ", width " << record.width
+                          << ", heading " << record.heading
+                          << ", transparent " << record.transparent
+                          << ", closed " << record.closed
+                          << ", " << record.position
+                          << "]";
 
   return out;
 }

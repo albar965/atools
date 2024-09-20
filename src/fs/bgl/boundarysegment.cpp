@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -59,20 +59,20 @@ BoundarySegment::BoundarySegment()
 {
 }
 
-BoundarySegment::BoundarySegment(const NavDatabaseOptions *options, BinaryStream *bs)
-  : BglBase(options, bs)
+BoundarySegment::BoundarySegment(const NavDatabaseOptions *options, BinaryStream *stream)
+  : BglBase(options, stream)
 {
-  type = static_cast<boundaryline::PointType>(bs->readUShort() & 0x7);
+  type = static_cast<boundaryline::PointType>(stream->readUShort() & 0x7);
 
   if(type == boundaryline::CIRCLE)
   {
-    bs->skip(4); // Skip unused latitude
-    radius = bs->readFloat();
+    stream->skip(4); // Skip unused latitude
+    radius = stream->readFloat();
   }
   else
   {
-    float latY = converter::intToLatY(bs->readInt());
-    float lonX = converter::intToLonX(bs->readInt());
+    float latY = converter::intToLatY(stream->readInt());
+    float lonX = converter::intToLonX(stream->readInt());
     position.setLatY(latY);
     position.setLonX(lonX);
     position.setAltitude(0.f);
@@ -84,9 +84,9 @@ QDebug operator<<(QDebug out, const BoundarySegment& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << " Boundaryline[type " << BoundarySegment::boundarylineTypeToStr(record.type)
-  << ", pos " << record.position
-  << "]";
+                          << " Boundaryline[type " << BoundarySegment::boundarylineTypeToStr(record.type)
+                          << ", pos " << record.position
+                          << "]";
 
   return out;
 }

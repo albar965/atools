@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -49,10 +49,10 @@ QString IlsVor::ilsVorTypeToStr(nav::IlsVorType type)
   return "INVALID";
 }
 
-IlsVor::IlsVor(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+IlsVor::IlsVor(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  type = static_cast<nav::IlsVorType>(bs->readUByte());
+  type = static_cast<nav::IlsVorType>(stream->readUByte());
 }
 
 IlsVor::~IlsVor()
@@ -64,9 +64,9 @@ QDebug operator<<(QDebug out, const IlsVor& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " IlsVor["
-  << "type " << IlsVor::ilsVorTypeToStr(record.getType())
-  << "]";
+                          << " IlsVor["
+                          << "type " << IlsVor::ilsVorTypeToStr(record.getType())
+                          << "]";
   return out;
 }
 

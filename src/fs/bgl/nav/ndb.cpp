@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,17 +52,17 @@ QString Ndb::ndbTypeToStr(nav::NdbType type)
   return "INVALID";
 }
 
-Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *bs)
-  : NavBase(options, bs)
+Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *stream)
+  : NavBase(options, stream)
 {
-  type = static_cast<nav::NdbType>(bs->readShort());
-  frequency = bs->readInt() / 10;
-  position = BglPosition(bs, true, 1000.f);
-  range = bs->readFloat();
-  magVar = converter::adjustMagvar(bs->readFloat());
-  ident = converter::intToIcao(bs->readUInt());
+  type = static_cast<nav::NdbType>(stream->readShort());
+  frequency = stream->readInt() / 10;
+  position = BglPosition(stream, true, 1000.f);
+  range = stream->readFloat();
+  magVar = converter::adjustMagvar(stream->readFloat());
+  ident = converter::intToIcao(stream->readUInt());
 
-  unsigned int regionFlags = bs->readUInt();
+  unsigned int regionFlags = stream->readUInt();
   region = converter::intToIcao(regionFlags & 0x7ff, true);
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
@@ -70,9 +70,9 @@ Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *bs)
                                   atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
 
   // Read only name subrecord
-  if(bs->tellg() < startOffset + size)
+  if(stream->tellg() < startOffset + size)
   {
-    Record r(options, bs);
+    Record r(options, stream);
     unsigned int id = r.getId();
 
     rec::NdbRecordType t = static_cast<rec::NdbRecordType>(id & 0x00ff);
@@ -82,7 +82,7 @@ Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::NDB_NAME:
-        name = bs->readString(r.getSize() - Record::SIZE, encoding);
+        name = stream->readString(r.getSize() - Record::SIZE, encoding);
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in NDB record 0x"

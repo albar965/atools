@@ -90,7 +90,7 @@ class Airport :
   public atools::fs::bgl::Record
 {
 public:
-  Airport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, atools::fs::bgl::CreateFlags flags);
+  Airport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream, atools::fs::bgl::CreateFlags flags);
   virtual ~Airport() override;
 
   const QList<atools::fs::bgl::Approach>& getApproaches() const

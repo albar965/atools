@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-DeleteCom::DeleteCom(const NavDatabaseOptions *options, BinaryStream *bs)
-  : BglBase(options, bs)
+DeleteCom::DeleteCom(const NavDatabaseOptions *options, BinaryStream *stream)
+  : BglBase(options, stream)
 {
-  unsigned int flags = bs->readUInt();
+  unsigned int flags = stream->readUInt();
   type = static_cast<com::ComType>((flags >> 28) & 0xf);
   frequency = (flags & 0x0fffffff) / 1000;
 }

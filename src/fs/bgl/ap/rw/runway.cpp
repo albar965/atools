@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -99,23 +99,23 @@ QString Runway::lightToStr(rw::Light type)
   return "INVALID";
 }
 
-Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QString& airportIdent, StructureType structureType)
-  : Record(options, bs)
+Runway::Runway(const NavDatabaseOptions *options, BinaryStream *stream, const QString& airportIdent, StructureType structureType)
+  : Record(options, stream)
 {
-  surface = static_cast<Surface>(bs->readShort() & SURFACE_MASK);
-  primary.number = bs->readUByte();
-  primary.designator = bs->readUByte();
-  secondary.number = bs->readUByte();
-  secondary.designator = bs->readUByte();
+  surface = static_cast<Surface>(stream->readShort() & SURFACE_MASK);
+  primary.number = stream->readUByte();
+  primary.designator = stream->readUByte();
+  secondary.number = stream->readUByte();
+  secondary.designator = stream->readUByte();
 
-  primary.ilsIdent = converter::intToIcao(bs->readUInt(), true);
-  secondary.ilsIdent = converter::intToIcao(bs->readUInt(), true);
+  primary.ilsIdent = converter::intToIcao(stream->readUInt(), true);
+  secondary.ilsIdent = converter::intToIcao(stream->readUInt(), true);
 
-  position = BglPosition(bs, true, 1000.f);
+  position = BglPosition(stream, true, 1000.f);
 
-  length = bs->readFloat();
-  width = bs->readFloat();
-  heading = bs->readFloat(); // Heading is float degrees
+  length = stream->readFloat();
+  width = stream->readFloat();
+  heading = stream->readFloat(); // Heading is float degrees
 
   primary.heading = heading;
   secondary.heading = atools::geo::opposedCourseDeg(heading);
@@ -126,13 +126,13 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
   secondary.pos = secondaryPos = position.getPos().endpoint(length / 2.f, heading);
   secondary.pos.setAltitude(position.getAltitude());
 
-  patternAltitude = bs->readFloat();
+  patternAltitude = stream->readFloat();
 
   primary.primaryEnd = true;
   secondary.primaryEnd = false;
 
   // Read combined flags and set attributes for primary and secondary ends
-  markingFlags = static_cast<rw::RunwayMarkings>(bs->readUShort());
+  markingFlags = static_cast<rw::RunwayMarkings>(stream->readUShort());
   if((markingFlags& rw::PRIMARY_CLOSED) == rw::PRIMARY_CLOSED)
     primary.closedMarkings = true;
   if((markingFlags& rw::SECONDARY_CLOSED) == rw::SECONDARY_CLOSED)
@@ -142,12 +142,12 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
   if((markingFlags& rw::SECONDARY_STOL) == rw::SECONDARY_STOL)
     secondary.stolMarkings = true;
 
-  lightFlags = static_cast<rw::LightFlags>(bs->readUByte());
+  lightFlags = static_cast<rw::LightFlags>(stream->readUByte());
   edgeLight = static_cast<rw::Light>(lightFlags & rw::EDGE_MASK);
   centerLight = static_cast<rw::Light>((lightFlags& rw::CENTER_MASK) >> 2);
   centerRed = (lightFlags& rw::CENTER_RED) == rw::CENTER_RED;
 
-  patternFlags = static_cast<rw::PatternFlags>(bs->readUByte());
+  patternFlags = static_cast<rw::PatternFlags>(stream->readUByte());
   if((patternFlags& rw::PRIMARY_TAKEOFF) == 0)
     primary.takeoff = true;
   if((patternFlags& rw::PRIMARY_LANDING) == 0)
@@ -168,22 +168,22 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
 
   if(structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5)
     // Skip P3D material set GUID for seasons
-    bs->skip(16);
+    stream->skip(16);
   else if(structureType == STRUCT_MSFS)
   {
-    bs->skip(24);
+    stream->skip(24);
     // UUID for runway material {B037EA38-EDF8-4AE5-B41B-2CA423ADA3EF}
     // Raw 38EA37B0-F8ED-E54A-B41B-2CA423ADA3EF
-    materialUuid = bs->readUuid();
-    bs->skip(4);
+    materialUuid = stream->readUuid();
+    stream->skip(4);
   }
 
   bool msfs = options->getSimulatorType() == atools::fs::FsPaths::MSFS;
 
   // Read all subrecords
-  while(bs->tellg() < startOffset + size)
+  while(stream->tellg() < startOffset + size)
   {
-    Record r(options, bs);
+    Record r(options, stream);
     rec::RunwayRecordType t = r.getId<rec::RunwayRecordType>();
     if(checkSubRecord(r))
       return;
@@ -219,29 +219,29 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
 
       case rec::VASI_PRIM_LEFT:
         r.seekToStart();
-        primary.leftVasi = RunwayVasi(options, bs);
+        primary.leftVasi = RunwayVasi(options, stream);
         break;
       case rec::VASI_PRIM_RIGHT:
         r.seekToStart();
-        primary.rightVasi = RunwayVasi(options, bs);
+        primary.rightVasi = RunwayVasi(options, stream);
         break;
       case rec::VASI_SEC_LEFT:
         r.seekToStart();
-        secondary.leftVasi = RunwayVasi(options, bs);
+        secondary.leftVasi = RunwayVasi(options, stream);
         break;
       case rec::VASI_SEC_RIGHT:
         r.seekToStart();
-        secondary.rightVasi = RunwayVasi(options, bs);
+        secondary.rightVasi = RunwayVasi(options, stream);
         break;
       case rec::APP_LIGHTS_PRIM:
       case rec::APP_LIGHTS_PRIM_MSFS:
         r.seekToStart();
-        primary.approachLights = RunwayApproachLights(options, bs);
+        primary.approachLights = RunwayApproachLights(options, stream);
         break;
       case rec::APP_LIGHTS_SEC:
       case rec::APP_LIGHTS_SEC_MSFS:
         r.seekToStart();
-        secondary.approachLights = RunwayApproachLights(options, bs);
+        secondary.approachLights = RunwayApproachLights(options, stream);
         break;
 
       case rec::MSFS_RUNWAY_DEFORMATION:
@@ -257,7 +257,7 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
                                        << hex << t << dec
                                        << " for ident " << airportIdent
                                        << " runway " << primary.getName() << "/" << secondary.getName()
-                                       << " offset " << bs->tellg();
+                                       << " offset " << stream->tellg();
     }
     r.seekToEnd();
   }

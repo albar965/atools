@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,58 +31,58 @@ using Qt::endl;
 
 using atools::io::BinaryStream;
 
-Namelist::Namelist(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+Namelist::Namelist(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  int numRegionNames = bs->readShort();
-  int numCountryNames = bs->readShort();
-  int numStateNames = bs->readShort();
-  int numCityNames = bs->readShort();
-  int numAirportNames = bs->readShort();
-  int numICAO = bs->readShort();
+  int numRegionNames = stream->readShort();
+  int numCountryNames = stream->readShort();
+  int numStateNames = stream->readShort();
+  int numCityNames = stream->readShort();
+  int numAirportNames = stream->readShort();
+  int numICAO = stream->readShort();
 
-  int regionListOffset = bs->readInt();
-  int countryListOffset = bs->readInt();
-  int stateListOffset = bs->readInt();
-  int cityListOffset = bs->readInt();
-  int airportListOffset = bs->readInt();
-  int icaoListOffset = bs->readInt();
+  int regionListOffset = stream->readInt();
+  int countryListOffset = stream->readInt();
+  int stateListOffset = stream->readInt();
+  int cityListOffset = stream->readInt();
+  int airportListOffset = stream->readInt();
+  int icaoListOffset = stream->readInt();
 
   atools::io::Encoding encoding = options->getSimulatorType() ==
                                   atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
 
   // Read all names from the different offsets
   QStringList regions;
-  readList(regions, bs, numRegionNames, regionListOffset, encoding);
+  readList(regions, stream, numRegionNames, regionListOffset, encoding);
 
   QStringList countries;
-  readList(countries, bs, numCountryNames, countryListOffset, encoding);
+  readList(countries, stream, numCountryNames, countryListOffset, encoding);
 
   QStringList states;
-  readList(states, bs, numStateNames, stateListOffset, encoding);
+  readList(states, stream, numStateNames, stateListOffset, encoding);
 
   QStringList cities;
-  readList(cities, bs, numCityNames, cityListOffset, encoding);
+  readList(cities, stream, numCityNames, cityListOffset, encoding);
 
   QStringList airports;
-  readList(airports, bs, numAirportNames, airportListOffset, encoding);
+  readList(airports, stream, numAirportNames, airportListOffset, encoding);
 
   // Goto to the offset that contains the name indexes
-  bs->seekg(startOffset + icaoListOffset);
+  stream->seekg(startOffset + icaoListOffset);
 
   // Now put the names into NamelistEntrys
   for(int i = 0; i < numICAO; i++)
   {
     NamelistEntry icaoRec;
-    icaoRec.regionName = regions.value(bs->readUByte());
-    icaoRec.countryName = countries.value(bs->readUByte());
-    icaoRec.stateName = states.value(bs->readShort() >> 4);
-    icaoRec.cityName = cities.value(bs->readShort());
-    icaoRec.airportName = airports.value(bs->readShort());
-    icaoRec.airportIdent = converter::intToIcao(bs->readUInt());
-    icaoRec.regionIdent = converter::intToIcao(bs->readUInt());
+    icaoRec.regionName = regions.value(stream->readUByte());
+    icaoRec.countryName = countries.value(stream->readUByte());
+    icaoRec.stateName = states.value(stream->readShort() >> 4);
+    icaoRec.cityName = cities.value(stream->readShort());
+    icaoRec.airportName = airports.value(stream->readShort());
+    icaoRec.airportIdent = converter::intToIcao(stream->readUInt());
+    icaoRec.regionIdent = converter::intToIcao(stream->readUInt());
 
-    bs->skip(4); // QMID Level 9 Square.
+    stream->skip(4); // QMID Level 9 Square.
 
     entries.append(icaoRec);
   }
@@ -92,20 +92,19 @@ Namelist::~Namelist()
 {
 }
 
-void Namelist::readList(QStringList& names, BinaryStream *bs, int numNames, int listOffset,
-                        atools::io::Encoding encoding)
+void Namelist::readList(QStringList& names, BinaryStream *stream, int numNames, int listOffset, atools::io::Encoding encoding)
 {
-  bs->seekg(startOffset + listOffset);
+  stream->seekg(startOffset + listOffset);
 
   int *indexes = new int[numNames];
   for(int i = 0; i < numNames; i++)
-    indexes[i] = bs->readInt();
+    indexes[i] = stream->readInt();
 
-  qint64 offs = bs->tellg();
+  qint64 offs = stream->tellg();
   for(int i = 0; i < numNames; i++)
   {
-    bs->seekg(offs + indexes[i]);
-    names.append(bs->readString(encoding));
+    stream->seekg(offs + indexes[i]);
+    names.append(stream->readString(encoding));
   }
   delete[] indexes;
 }

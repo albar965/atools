@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,13 +25,13 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Glideslope::Glideslope(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+Glideslope::Glideslope(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  bs->skip(2); // Unknown
-  position = BglPosition(bs, true, 1000.f);
-  range = bs->readFloat();
-  pitch = bs->readFloat();
+  stream->skip(2); // Unknown
+  position = BglPosition(stream, true, 1000.f);
+  range = stream->readFloat();
+  pitch = stream->readFloat();
 }
 
 Glideslope::~Glideslope()
@@ -43,11 +43,11 @@ QDebug operator<<(QDebug out, const Glideslope& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Glideslope["
-  << "range " << record.range
-  << ", pitch " << record.pitch
-  << ", " << record.position
-  << "]";
+                          << " Glideslope["
+                          << "range " << record.range
+                          << ", pitch " << record.pitch
+                          << ", " << record.position
+                          << "]";
   return out;
 }
 

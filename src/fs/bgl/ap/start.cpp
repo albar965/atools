@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,16 +42,16 @@ QString Start::startTypeToStr(start::StartType type)
   return "INVALID";
 }
 
-Start::Start(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+Start::Start(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  runwayNumber = bs->readUByte();
+  runwayNumber = stream->readUByte();
 
-  int flags = bs->readUByte();
+  int flags = stream->readUByte();
   runwayDesignator = flags & 0x0f;
   type = static_cast<start::StartType>((flags >> 4) & 0xf);
-  position = BglPosition(bs, true, 1000.f);
-  heading = bs->readFloat(); // TODO wiki heading is float degrees
+  position = BglPosition(stream, true, 1000.f);
+  heading = stream->readFloat(); // TODO wiki heading is float degrees
 }
 
 Start::~Start()
@@ -68,11 +68,11 @@ QDebug operator<<(QDebug out, const Start& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Start[type " << Start::startTypeToStr(record.type)
-  << ", rwy " << record.getRunwayName()
-  << ", heading " << record.heading
-  << ", " << record.position
-  << "]";
+                          << " Start[type " << Start::startTypeToStr(record.type)
+                          << ", rwy " << record.getRunwayName()
+                          << ", heading " << record.heading
+                          << ", " << record.position
+                          << "]";
 
   return out;
 }

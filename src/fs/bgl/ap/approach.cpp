@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,43 +35,43 @@ using Qt::endl;
 
 using atools::io::BinaryStream;
 
-Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs, rec::AirportRecordType airportRecType)
-  : Record(options, bs)
+Approach::Approach(const NavDatabaseOptions *options, BinaryStream *stream, rec::AirportRecordType airportRecType)
+  : Record(options, stream)
 {
-  suffix = bs->readByte();
-  runwayNumber = bs->readUByte();
+  suffix = stream->readByte();
+  runwayNumber = stream->readUByte();
 
-  int typeFlags = bs->readUByte();
+  int typeFlags = stream->readUByte();
   type = static_cast<ap::ApproachType>(typeFlags & 0xf);
   runwayDesignator = (typeFlags >> 4) & 0x7;
   gpsOverlay = (typeFlags & 0x80) == 0x80;
 
   // TODO compare numbers with actual record occurence
-  numTransitions = bs->readUByte();
-  int numLegs = bs->readUByte();
+  numTransitions = stream->readUByte();
+  int numLegs = stream->readUByte();
   Q_UNUSED(numLegs)
-  int numMissedLegs = bs->readUByte();
+  int numMissedLegs = stream->readUByte();
   Q_UNUSED(numMissedLegs)
 
-  unsigned int fixFlags = bs->readUInt();
+  unsigned int fixFlags = stream->readUInt();
   fixType = static_cast<ap::fix::ApproachFixType>(fixFlags & 0xf);
   fixIdent = converter::intToIcao((fixFlags >> 5) & 0xfffffff, true);
 
-  unsigned int fixIdentFlags = bs->readUInt();
+  unsigned int fixIdentFlags = stream->readUInt();
   fixRegion = converter::intToIcao(fixIdentFlags & 0x7ff, true);
   fixAirportIdent = converter::intToIcao((fixIdentFlags >> 11) & 0x1fffff, true);
 
-  altitude = bs->readFloat();
-  heading = bs->readFloat(); // Heading is float degrees
-  missedAltitude = bs->readFloat();
+  altitude = stream->readFloat();
+  heading = stream->readFloat(); // Heading is float degrees
+  missedAltitude = stream->readFloat();
 
   if(airportRecType == rec::MSFS_APPROACH_NEW)
-    bs->skip(4);
+    stream->skip(4);
 
   // Read subrecords
-  while(bs->tellg() < startOffset + size)
+  while(stream->tellg() < startOffset + size)
   {
-    Record r(options, bs);
+    Record r(options, stream);
     rec::ApprRecordType recType = r.getId<rec::ApprRecordType>();
     if(checkSubRecord(r))
       return;
@@ -84,9 +84,9 @@ Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs, rec::Air
       case rec::LEGS_MSFS_118:
         if(options->isIncludedNavDbObject(type::APPROACHLEG))
         {
-          int num = bs->readUShort();
+          int num = stream->readUShort();
           for(int i = 0; i < num; i++)
-            legs.append(ApproachLeg(bs, recType));
+            legs.append(ApproachLeg(stream, recType));
         }
         break;
 
@@ -96,9 +96,9 @@ Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs, rec::Air
       case rec::MISSED_LEGS_MSFS_118:
         if(options->isIncludedNavDbObject(type::APPROACHLEG))
         {
-          int num = bs->readUShort();
+          int num = stream->readUShort();
           for(int i = 0; i < num; i++)
-            missedLegs.append(ApproachLeg(bs, recType));
+            missedLegs.append(ApproachLeg(stream, recType));
         }
         break;
 
@@ -106,7 +106,7 @@ Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs, rec::Air
       case rec::TRANSITION_MSFS:
       case rec::TRANSITION_MSFS_116:
         r.seekToStart();
-        transitions.append(Transition(options, bs, recType));
+        transitions.append(Transition(options, stream, recType));
         break;
 
       default:
@@ -115,7 +115,7 @@ Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs, rec::Air
         if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
 #endif
         qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type 0x" << hex << recType << dec
-                                       << " for airport ident " << fixAirportIdent << " offset " << bs->tellg();
+                                       << " for airport ident " << fixAirportIdent << " offset " << stream->tellg();
     }
     r.seekToEnd();
   }

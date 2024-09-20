@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,14 +25,14 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-DeleteStart::DeleteStart(const NavDatabaseOptions *options, BinaryStream *bs)
-  : BglBase(options, bs)
+DeleteStart::DeleteStart(const NavDatabaseOptions *options, BinaryStream *stream)
+  : BglBase(options, stream)
 {
 
-  runwayNumber = bs->readUByte();
+  runwayNumber = stream->readUByte();
 
-  int flags = bs->readUByte();
-  runwayDesignator = bs->readUByte();
+  int flags = stream->readUByte();
+  runwayDesignator = stream->readUByte();
   type = static_cast<start::StartType>((flags >> 4) & 0xf);
 }
 
@@ -46,9 +46,9 @@ QDebug operator<<(QDebug out, const DeleteStart& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << " Start[type " << Start::startTypeToStr(record.type)
-  << ", rwy " << record.getRunwayName()
-  << "]";
+                          << " Start[type " << Start::startTypeToStr(record.type)
+                          << ", rwy " << record.getRunwayName()
+                          << "]";
   return out;
 }
 

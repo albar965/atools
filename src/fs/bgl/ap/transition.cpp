@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -88,39 +88,39 @@ bool Transition::isValid() const
 
 QString Transition::getDescription() const
 {
-  return "Transition[type " + Transition::transitionTypeToStr(type)
-         + ", fix type " + Transition::transitionFixTypeToStr(transFixType)
-         + ", fix " + transFixIdent
-         + ", ap " + fixAirportIdent
-         + ", dme " + dmeIdent;
+  return "Transition[type " + Transition::transitionTypeToStr(type) +
+         ", fix type " + Transition::transitionFixTypeToStr(transFixType) +
+         ", fix " + transFixIdent +
+         ", ap " + fixAirportIdent +
+         ", dme " + dmeIdent;
 }
 
-Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs, rec::ApprRecordType recType)
-  : Record(options, bs)
+Transition::Transition(const NavDatabaseOptions *options, BinaryStream *stream, rec::ApprRecordType recType)
+  : Record(options, stream)
 {
-  type = static_cast<ap::TransitionType>(bs->readUByte());
+  type = static_cast<ap::TransitionType>(stream->readUByte());
 
-  int numLegs = bs->readUByte();
+  int numLegs = stream->readUByte();
   Q_UNUSED(numLegs)
 
-  unsigned int transFixFlags = bs->readUInt();
+  unsigned int transFixFlags = stream->readUInt();
   transFixType = static_cast<ap::tfix::TransitionFixType>(transFixFlags & 0xf);
   transFixIdent = converter::intToIcao((transFixFlags >> 5) & 0xfffffff, true);
 
-  unsigned int fixIdentFlags = bs->readUInt();
+  unsigned int fixIdentFlags = stream->readUInt();
   fixRegion = converter::intToIcao(fixIdentFlags & 0x7ff, true);
   fixAirportIdent = converter::intToIcao((fixIdentFlags >> 11) & 0x1fffff, true);
 
-  altitude = bs->readFloat();
+  altitude = stream->readFloat();
 
   if(type == ap::DME)
   {
-    dmeIdent = converter::intToIcao(bs->readUInt());
-    unsigned int tempFixIdentFlags = bs->readUInt();
+    dmeIdent = converter::intToIcao(stream->readUInt());
+    unsigned int tempFixIdentFlags = stream->readUInt();
     dmeRegion = converter::intToIcao(tempFixIdentFlags & 0x7ff, true);
     dmeAirportIdent = converter::intToIcao((tempFixIdentFlags >> 11) & 0x1fffff, true);
-    dmeRadial = bs->readInt();
-    dmeDist = bs->readFloat();
+    dmeRadial = stream->readInt();
+    dmeDist = stream->readFloat();
   }
   else
   {
@@ -132,16 +132,16 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs, rec:
   }
 
   if(recType == rec::TRANSITION_MSFS_116)
-    bs->skip(8);
+    stream->skip(8);
 
-  while(bs->tellg() < startOffset + size)
+  while(stream->tellg() < startOffset + size)
   {
-    Record r(options, bs);
-    rec::ApprRecordType recType = r.getId<rec::ApprRecordType>();
+    Record r(options, stream);
+    rec::ApprRecordType subRecType = r.getId<rec::ApprRecordType>();
     if(checkSubRecord(r))
       return;
 
-    switch(recType)
+    switch(subRecType)
     {
       case rec::TRANSITION_LEGS:
       case rec::TRANSITION_LEGS_MSFS:
@@ -149,14 +149,14 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs, rec:
       case rec::TRANSITION_LEGS_MSFS_118:
         if(options->isIncludedNavDbObject(type::APPROACHLEG))
         {
-          int num = bs->readUShort();
+          int num = stream->readUShort();
           for(int i = 0; i < num; i++)
-            legs.append(ApproachLeg(bs, recType));
+            legs.append(ApproachLeg(stream, subRecType));
         }
         break;
 
       default:
-        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type 0x" << hex << recType << dec
+        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type 0x" << hex << subRecType << dec
                                        << " for airport ident " << fixAirportIdent;
     }
     r.seekToEnd();

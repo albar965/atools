@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -56,16 +56,16 @@ QString Marker::getObjectName() const
          arg(ident).arg(region).arg(position.getPos().toString());
 }
 
-Marker::Marker(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+Marker::Marker(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
   // TODO wiki clarify structure
-  heading = static_cast<float>(bs->readUByte()) / 255.f * 360.f;
-  type = static_cast<nav::MarkerType>(bs->readUByte());
+  heading = static_cast<float>(stream->readUByte()) / 255.f * 360.f;
+  type = static_cast<nav::MarkerType>(stream->readUByte());
 
-  position = BglPosition(bs, true, 1000.f);
-  ident = converter::intToIcao(bs->readUInt());
-  region = converter::intToIcao(bs->readUInt()); // TODO wiki is always null
+  position = BglPosition(stream, true, 1000.f);
+  ident = converter::intToIcao(stream->readUInt());
+  region = converter::intToIcao(stream->readUInt()); // TODO wiki is always null
 }
 
 Marker::~Marker()

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ class RunwayVasi :
 {
 public:
   RunwayVasi();
-  RunwayVasi(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+  RunwayVasi(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream);
   RunwayVasi(const atools::fs::bgl::RunwayVasi& other)
     : atools::fs::bgl::Record(other)
   {

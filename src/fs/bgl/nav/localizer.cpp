@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,8 @@
 
 #include "fs/bgl/nav/localizer.h"
 
-#include "fs/bgl/recordtypes.h"
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
-#include "geo/calculations.h"
 #include "fs/navdatabaseoptions.h"
 
 namespace atools {
@@ -29,13 +27,13 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Localizer::Localizer(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+Localizer::Localizer(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  runwayNumber = bs->readUByte();
-  runwayDesignator = bs->readUByte();
-  heading = bs->readFloat();
-  width = std::min(bs->readFloat(), 20.f);
+  runwayNumber = stream->readUByte();
+  runwayDesignator = stream->readUByte();
+  heading = stream->readFloat();
+  width = std::min(stream->readFloat(), 20.f);
 }
 
 Localizer::~Localizer()

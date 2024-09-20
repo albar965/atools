@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,11 @@ Jetway::Jetway() :
 {
 }
 
-Jetway::Jetway(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+Jetway::Jetway(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  parkingNumber = bs->readShort();
-  gateName = static_cast<atools::fs::bgl::ap::ParkingName>(bs->readShort());
+  parkingNumber = stream->readShort();
+  gateName = static_cast<atools::fs::bgl::ap::ParkingName>(stream->readShort());
   // WORD Gate Name
   // DWORD Size of the scenery object data to follow(0x40)
   // 64 LibraryObject record
@@ -44,8 +44,8 @@ QDebug operator<<(QDebug out, const Jetway& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Jetway[ parking index " << record.parkingNumber
-  << ", name " << Parking::parkingNameToStr(record.gateName) << "]";
+                          << " Jetway[ parking index " << record.parkingNumber
+                          << ", name " << Parking::parkingNameToStr(record.gateName) << "]";
 
   return out;
 }

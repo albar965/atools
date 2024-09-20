@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -104,16 +104,17 @@ Com::Com()
 {
 }
 
-Com::Com(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+Com::Com(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  type = static_cast<com::ComType>(bs->readShort());
-  frequency = bs->readInt() / 1000;
+  type = static_cast<com::ComType>(stream->readShort());
+  frequency = stream->readInt() / 1000;
 
   atools::io::Encoding encoding = options->getSimulatorType() ==
                                   atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
 
-  name = atools::removeNonAlphaNum(bs->readString(0x30, encoding));
+  name = atools::removeNonAlphaNum(stream->readString(0x30, encoding));
+
 }
 
 QDebug operator<<(QDebug out, const Com& record)

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #define ATOOLS_BGL_AP_SIDSTAR_H
 
 #include "fs/bgl/record.h"
-#include "fs/bgl/ap/approach.h"
 
 #include <QList>
 #include <QHash>
@@ -29,6 +28,8 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+class ApproachLeg;
+
 class SidStar :
   public atools::fs::bgl::Record
 {
@@ -36,7 +37,7 @@ public:
   /*
    * Read arrival/departure and all subrecords.
    */
-  SidStar(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+  SidStar(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream);
   virtual ~SidStar() override;
 
   const QHash<QString, QList<atools::fs::bgl::ApproachLeg> >& getEnrouteTransitions() const

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -45,16 +45,15 @@ QString AirwaySegment::airwayTypeToStr(nav::AirwayType type)
   return "INVALID";
 }
 
-AirwaySegment::AirwaySegment(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs,
-                             const atools::fs::bgl::Waypoint& waypoint)
-  : BglBase(options, bs)
+AirwaySegment::AirwaySegment(const atools::fs::NavDatabaseOptions *options, BinaryStream *stream, const atools::fs::bgl::Waypoint& waypoint)
+  : BglBase(options, stream)
 {
-  type = static_cast<nav::AirwayType>(bs->readUByte());
-  name = bs->readString(8, atools::io::LATIN1);
+  type = static_cast<nav::AirwayType>(stream->readUByte());
+  name = stream->readString(8, atools::io::LATIN1);
 
   mid = AirwayWaypoint(waypoint);
-  next = AirwayWaypoint(options, bs);
-  previous = AirwayWaypoint(options, bs);
+  next = AirwayWaypoint(options, stream);
+  previous = AirwayWaypoint(options, stream);
 }
 
 AirwaySegment::~AirwaySegment()

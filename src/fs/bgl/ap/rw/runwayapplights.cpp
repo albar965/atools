@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -91,11 +91,11 @@ RunwayApproachLights::RunwayApproachLights()
 {
 }
 
-RunwayApproachLights::RunwayApproachLights(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+RunwayApproachLights::RunwayApproachLights(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  int flags = bs->readUByte();
-  numStrobes = bs->readUByte();
+  int flags = stream->readUByte();
+  numStrobes = stream->readUByte();
 
   system = static_cast<rw::ApproachLightSystem>(flags & ALS_SYSTEM_MASK);
   endlights = (flags & ENDLIGHTS) == ENDLIGHTS;
@@ -108,12 +108,12 @@ QDebug operator<<(QDebug out, const RunwayApproachLights& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " AppLights[system " << RunwayApproachLights::appLightSystemToStr(record.system)
-  << ", hasEndlights " << record.endlights
-  << ", hasReils " << record.reils
-  << ", hasTouchdown " << record.touchdown
-  << ", numStrobes " << record.numStrobes
-  << "]";
+                          << " AppLights[system " << RunwayApproachLights::appLightSystemToStr(record.system)
+                          << ", hasEndlights " << record.endlights
+                          << ", hasReils " << record.reils
+                          << ", hasTouchdown " << record.touchdown
+                          << ", numStrobes " << record.numStrobes
+                          << "]";
 
   return out;
 }

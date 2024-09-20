@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,17 +30,17 @@ using Qt::dec;
 
 using atools::io::BinaryStream;
 
-Section::Section(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
-  : BglBase(options, bs)
+Section::Section(const atools::fs::NavDatabaseOptions *options, BinaryStream *stream)
+  : BglBase(options, stream)
 {
-  type = static_cast<section::SectionType>(bs->readUInt());
-  unsigned int sizeFlag = bs->readUInt();
+  type = static_cast<section::SectionType>(stream->readUInt());
+  unsigned int sizeFlag = stream->readUInt();
 
   // Most subsections have a size of 16 bytes. Only subsections for terrain seasons have a size of 20 bytes
   subsectionSize = ((sizeFlag & 0x10000) | 0x40000) >> 0x0E;
-  numSubsections = bs->readUInt();
-  firstSubsectionOffset = bs->readUInt();
-  totalSubsectionSize = bs->readUInt();
+  numSubsections = stream->readUInt();
+  firstSubsectionOffset = stream->readUInt();
+  totalSubsectionSize = stream->readUInt();
 }
 
 Section::~Section()
@@ -52,11 +52,11 @@ QDebug operator<<(QDebug out, const Section& section)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(section)
-  << " Section[type " << sectionTypeStr(section.type)
-  << ", size " << section.subsectionSize
-  << ", subsections " << section.numSubsections
-  << hex << ", offset 0x" << section.firstSubsectionOffset << dec
-  << ", total size " << section.totalSubsectionSize << "]";
+                          << " Section[type " << sectionTypeStr(section.type)
+                          << ", size " << section.subsectionSize
+                          << ", subsections " << section.numSubsections
+                          << hex << ", offset 0x" << section.firstSubsectionOffset << dec
+                          << ", total size " << section.totalSubsectionSize << "]";
   return out;
 }
 

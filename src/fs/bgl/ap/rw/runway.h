@@ -102,7 +102,7 @@ class Runway :
   public atools::fs::bgl::Record
 {
 public:
-  Runway(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
+  Runway(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream,
          const QString& airportIdent, atools::fs::bgl::StructureType structureType);
   virtual ~Runway() override;
 

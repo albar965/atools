@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "fs/bgl/ap/approachleg.h"
 #include "fs/bgl/recordtypes.h"
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
@@ -36,17 +37,17 @@ using Qt::endl;
 
 using atools::io::BinaryStream;
 
-SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
   /* select the suffix based on if it's SID or STAR. */
   suffix = (rec::MSFS_SID == id) ? 'D' : 'A';
-  bs->skip(2); /* skip 2 unknown bytes */
-  (void)bs->readUByte(); /* runwayTransitionCt */
-  (void)bs->readUByte(); /* commonRouteLegCt */
-  (void)bs->readUByte(); /* enrouteTransitionCt */
-  bs->skip(1); /* skip one more unknown byte */
-  ident = bs->readString(8, atools::io::Encoding::UTF8);
+  stream->skip(2); /* skip 2 unknown bytes */
+  (void)stream->readUByte(); /* runwayTransitionCt */
+  (void)stream->readUByte(); /* commonRouteLegCt */
+  (void)stream->readUByte(); /* enrouteTransitionCt */
+  stream->skip(1); /* skip one more unknown byte */
+  ident = stream->readString(8, atools::io::Encoding::UTF8);
 
   /*
    * The following are all sub records. There may be many runway records
@@ -68,9 +69,9 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
    * individual SID), and finally a set of enroute transitions which apply
    * to every SID as transitions.
    */
-  while(bs->tellg() < startOffset + size)
+  while(stream->tellg() < startOffset + size)
   {
-    Record r(options, bs);
+    Record r(options, stream);
     rec::ApprRecordType recType = r.getId<rec::ApprRecordType>();
     if(checkSubRecord(r))
       return;
@@ -89,9 +90,9 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
            * NOTE: Unlike enroute and runway transitions, these legs are direct
            * children of the procedure!
            */
-          int numLegs = bs->readUShort();
+          int numLegs = stream->readUShort();
           for(int i = 0; i < numLegs; i++)
-            commonRouteLegs.append(ApproachLeg(bs, recType));
+            commonRouteLegs.append(ApproachLeg(stream, recType));
         }
         break;
 
@@ -101,19 +102,19 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
            * This will tell us the runway number and designator, as well as legs
            * leading to, or from said runway.
            */
-          (void)bs->readUByte(); /* transitionCt */
-          int runwayNumber = bs->readUByte();
-          int runwayDesignator = bs->readUByte() & 0x7;
+          (void)stream->readUByte(); /* transitionCt */
+          int runwayNumber = stream->readUByte();
+          int runwayDesignator = stream->readUByte() & 0x7;
           /* Convert to a key */
           QString runwayName = converter::runwayToStr(runwayNumber, runwayDesignator);
-          bs->skip(3);
+          stream->skip(3);
           /* Create a container for the runway. */
           QList<ApproachLeg> legs;
           /* This will always be followed by 1 RUNWAY_TRANSITION_LEGS_MSFS(_116|_118) record */
-          Record legRec(options, bs);
-          int numLegs = bs->readUShort();
+          Record legRec(options, stream);
+          int numLegs = stream->readUShort();
           for(int i = 0; i < numLegs; i++)
-            legs.append(ApproachLeg(bs, legRec.getId<rec::ApprRecordType>()));
+            legs.append(ApproachLeg(stream, legRec.getId<rec::ApprRecordType>()));
 
           /* And finally, we'll add it to our hash of runways. */
           runwayTransitionLegs.insert(runwayName, legs);
@@ -129,8 +130,8 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
            * Either we fix that, or modify the database writer... yuck.
            */
           QString name;
-          (void)bs->readUByte(); /* transitionCt */
-          bs->skip(1); /* unknown byte, usually zero */
+          (void)stream->readUByte(); /* transitionCt */
+          stream->skip(1); /* unknown byte, usually zero */
           if(rec::ENROUTE_TRANSITIONS_MSFS_116 == recType)
           {
             /*
@@ -143,15 +144,15 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
              *
              * Therefore, these 8 bytes can be skipped.
              */
-            (void)bs->readString(8, atools::io::UTF8);
+            (void)stream->readString(8, atools::io::UTF8);
           }
           /* Create a container for the transition legs */
           QList<ApproachLeg> legs;
           /* This will always be followed by 1 ENROUTE_TRANSITION_LEGS_MSFS(_116|_118) record */
-          Record legRec(options, bs);
-          int numLegs = bs->readUShort();
+          Record legRec(options, stream);
+          int numLegs = stream->readUShort();
           for(int i = 0; i < numLegs; i++)
-            legs.append(ApproachLeg(bs, legRec.getId<rec::ApprRecordType>()));
+            legs.append(ApproachLeg(stream, legRec.getId<rec::ApprRecordType>()));
 
           if(!legs.isEmpty())
           {
@@ -178,7 +179,7 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
         /* Shouldn't ever occur, so print error and move on? */
         qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type " << ident
                                        << hex << " 0x" << r.getId()
-                                       << dec << " " << approachRecordTypeStr(recType) << " offset " << bs->tellg();
+                                       << dec << " " << approachRecordTypeStr(recType) << " offset " << stream->tellg();
 
     }
     r.seekToEnd();

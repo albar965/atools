@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@
 
 #include <QtDebug>
 
-#include <time.h>
-
 namespace atools {
 namespace fs {
 namespace bgl {
@@ -35,14 +33,14 @@ using Qt::dec;
 
 using atools::io::BinaryStream;
 
-Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
-  : BglBase(options, bs)
+Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *stream)
+  : BglBase(options, stream)
 {
-  magicNumber1 = bs->readUInt();
+  magicNumber1 = stream->readUInt();
   if(magicNumber1 != MAGIC_NUMBER1)
     validMagicNumber = false;
 
-  headerSize = bs->readUInt();
+  headerSize = stream->readUInt();
   if(headerSize != HEADER_SIZE)
   {
     if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
@@ -51,10 +49,10 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
     // validSize = false;
   }
 
-  lowDateTime = bs->readUInt();
-  highDateTime = bs->readUInt();
+  lowDateTime = stream->readUInt();
+  highDateTime = stream->readUInt();
 
-  magicNumber2 = bs->readUInt();
+  magicNumber2 = stream->readUInt();
   if(magicNumber2 != MAGIC_NUMBER2)
     validMagicNumber = false;
 
@@ -69,10 +67,10 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
     return;
 
   creationTimestamp = converter::filetime(lowDateTime, highDateTime);
-  numSections = bs->readUInt();
+  numSections = stream->readUInt();
 
   // QMIDs
-  bs->skip(4 * 8);
+  stream->skip(4 * 8);
 
   read = true;
 }

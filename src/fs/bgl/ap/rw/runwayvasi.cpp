@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -79,12 +79,12 @@ RunwayVasi::RunwayVasi()
 {
 }
 
-RunwayVasi::RunwayVasi(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+RunwayVasi::RunwayVasi(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  type = static_cast<rw::VasiType>(bs->readShort());
-  bs->skip(12); // TODO BiasX  BiasZ  Spacing
-  pitch = bs->readFloat();
+  type = static_cast<rw::VasiType>(stream->readShort());
+  stream->skip(12); // TODO BiasX  BiasZ  Spacing
+  pitch = stream->readFloat();
 }
 
 QDebug operator<<(QDebug out, const RunwayVasi& record)
@@ -92,9 +92,9 @@ QDebug operator<<(QDebug out, const RunwayVasi& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Vasi[type " << RunwayVasi::vasiTypeToStr(record.type)
-  << ", pitch " << record.pitch
-  << "]";
+                          << " Vasi[type " << RunwayVasi::vasiTypeToStr(record.type)
+                          << ", pitch " << record.pitch
+                          << "]";
 
   return out;
 }

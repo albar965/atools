@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-DeleteRunway::DeleteRunway(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
-  : BglBase(options, bs), surface(UNKNOWN)
+DeleteRunway::DeleteRunway(const atools::fs::NavDatabaseOptions *options, BinaryStream *stream)
+  : BglBase(options, stream), surface(UNKNOWN)
 {
-  surface = static_cast<Surface>(bs->readUByte() & SURFACE_MASK);
-  int numPrim = bs->readUByte();
-  int numSec = bs->readUByte();
-  int desig = bs->readUByte();
+  surface = static_cast<Surface>(stream->readUByte() & SURFACE_MASK);
+  int numPrim = stream->readUByte();
+  int numSec = stream->readUByte();
+  int desig = stream->readUByte();
   primaryName = converter::runwayToStr(numPrim, desig & 0x0f);
   secondaryName = converter::runwayToStr(numSec, (desig >> 4) & 0x0f);
 }
@@ -42,9 +42,9 @@ QDebug operator<<(QDebug out, const DeleteRunway& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << "DeleteRunway[prim name " << record.primaryName
-  << ", sec name " << record.secondaryName
-  << ", surface " << surface::surfaceToDbStr(record.surface) << "]";
+                          << "DeleteRunway[prim name " << record.primaryName
+                          << ", sec name " << record.secondaryName
+                          << ", surface " << surface::surfaceToDbStr(record.surface) << "]";
   return out;
 }
 

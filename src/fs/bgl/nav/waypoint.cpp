@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -86,17 +86,17 @@ QString Waypoint::getObjectName() const
          arg(ident).arg(region).arg(position.getPos().toString());
 }
 
-Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
+Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *stream)
+  : Record(options, stream)
 {
-  type = static_cast<nav::WaypointType>(bs->readUByte());
-  int numAirways = bs->readUByte();
-  position = BglPosition(bs);
-  magVar = converter::adjustMagvar(bs->readFloat());
-  unsigned int identInt = bs->readUInt();
+  type = static_cast<nav::WaypointType>(stream->readUByte());
+  int numAirways = stream->readUByte();
+  position = BglPosition(stream);
+  magVar = converter::adjustMagvar(stream->readFloat());
+  unsigned int identInt = stream->readUInt();
   ident = converter::intToIcao(identInt);
 
-  unsigned int regionFlags = bs->readUInt();
+  unsigned int regionFlags = stream->readUInt();
   region = converter::intToIcao(regionFlags & 0x7ff, true);
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
@@ -110,7 +110,7 @@ Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *bs)
   for(int i = 0; i < numAirways; i++)
   {
     // Read always to avoid messing up current file position
-    AirwaySegment segment(options, bs, *this);
+    AirwaySegment segment(options, stream, *this);
     if(options->isIncludedNavDbObject(type::AIRWAY))
     {
       airways.append(segment);

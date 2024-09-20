@@ -91,7 +91,7 @@ class DeleteAirport :
   public atools::fs::bgl::Record
 {
 public:
-  DeleteAirport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+  DeleteAirport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream);
   DeleteAirport(atools::fs::bgl::del::DeleteAllFlags deleteAllFlags);
   virtual ~DeleteAirport() override;
 
