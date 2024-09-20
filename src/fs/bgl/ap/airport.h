@@ -176,6 +176,11 @@ public:
     return towerObj;
   }
 
+  bool hasComs() const
+  {
+    return !coms.isEmpty();
+  }
+
   /*
    *  @return tower object position of tower viewpoint position
    */

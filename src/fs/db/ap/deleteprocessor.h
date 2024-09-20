@@ -27,15 +27,17 @@ class SqlDatabase;
 }
 namespace fs {
 
-namespace bgl {
+namespace scenery {
+class SceneryArea;
+}
 
+namespace bgl {
 class Airport;
 class DeleteAirport;
 }
 
 class NavDatabaseOptions;
 namespace db {
-
 class DataWriter;
 class ApproachWriter;
 
@@ -57,7 +59,8 @@ public:
   /*
    * Initialize the process for one airport before it is stored in the database. Extracts all features for the current airport.
    */
-  void init(const atools::fs::bgl::DeleteAirport *deleteAirportRec, const atools::fs::bgl::Airport *airport, int airportId,
+  void init(const atools::fs::bgl::DeleteAirport *deleteAirportRec, const atools::fs::scenery::SceneryArea *sceneryArea,
+            const atools::fs::bgl::Airport *airport, int airportId,
             const QString& name, const QString& city, const QString& state, const QString& country, const QString& region);
 
   /*
@@ -141,6 +144,7 @@ private:
   int prevAirportId = 0;
   atools::geo::Pos prevPos;
 
+  const scenery::SceneryArea *curSceneryArea;
 };
 
 } // namespace writer

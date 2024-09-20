@@ -544,20 +544,20 @@ QString Airport::getObjectName() const
 void Airport::extractMainComFrequencies(const QList<Com>& coms, int& towerFrequency, int& unicomFrequency,
                                         int& awosFrequency, int& asosFrequency, int& atisFrequency)
 {
-  for(const Com& c : coms)
+  for(const Com& com : coms)
   {
     // Use lowest frequency for default to have it deterministic
-    if((c.getType() == com::TOWER || c.getType() == com::TOWER_P3D_V5) && (towerFrequency == 0 || c.getFrequency() < towerFrequency))
-      towerFrequency = c.getFrequency();
-    else if((c.getType() == com::UNICOM || c.getType() == com::UNICOM_P3D_V5) &&
-            (unicomFrequency == 0 || c.getFrequency() < unicomFrequency))
-      unicomFrequency = c.getFrequency();
-    else if((c.getType() == com::AWOS || c.getType() == com::AWOS_P3D_V5) && (awosFrequency == 0 || c.getFrequency() < awosFrequency))
-      awosFrequency = c.getFrequency();
-    else if((c.getType() == com::ASOS || c.getType() == com::ASOS_P3D_V5) && (asosFrequency == 0 || c.getFrequency() < asosFrequency))
-      asosFrequency = c.getFrequency();
-    else if((c.getType() == com::ATIS || c.getType() == com::ATIS_P3D_V5) && (atisFrequency == 0 || c.getFrequency() < atisFrequency))
-      atisFrequency = c.getFrequency();
+    if((com.getType() == com::TOWER || com.getType() == com::TOWER_P3D_V5) && (towerFrequency == 0 || com.getFrequency() < towerFrequency))
+      towerFrequency = com.getFrequency();
+    else if((com.getType() == com::UNICOM || com.getType() == com::UNICOM_P3D_V5) &&
+            (unicomFrequency == 0 || com.getFrequency() < unicomFrequency))
+      unicomFrequency = com.getFrequency();
+    else if((com.getType() == com::AWOS || com.getType() == com::AWOS_P3D_V5) && (awosFrequency == 0 || com.getFrequency() < awosFrequency))
+      awosFrequency = com.getFrequency();
+    else if((com.getType() == com::ASOS || com.getType() == com::ASOS_P3D_V5) && (asosFrequency == 0 || com.getFrequency() < asosFrequency))
+      asosFrequency = com.getFrequency();
+    else if((com.getType() == com::ATIS || com.getType() == com::ATIS_P3D_V5) && (atisFrequency == 0 || com.getFrequency() < atisFrequency))
+      atisFrequency = com.getFrequency();
   }
 }
 

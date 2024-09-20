@@ -179,7 +179,7 @@ void AirportWriter::writeObject(const Airport *type)
     fetchAdmin(type, city, state, country, region);
     QString name = atools::fs::util::capAirportName(getDataWriter().getLanguage(type->getName())).simplified();
 
-    deleteProcessor.init(delAp, type, getCurrentId(), name, city, state, country, region);
+    deleteProcessor.init(delAp, &currentArea, type, getCurrentId(), name, city, state, country, region);
 
     if(options.isDeletes())
     {
@@ -358,13 +358,14 @@ void AirportWriter::writeObject(const Airport *type)
     RunwayWriter *rwWriter = dw.getRunwayWriter();
     rwWriter->write(type->getRunways());
 
+    ComWriter *comWriter = dw.getAirportComWriter();
+    comWriter->write(type->getComs());
+
+    // Features to ignore from the Navigraph BGL files since they are used and included from little_navmap_navigraph.sqlite
     if(!currentArea.isMsfsNavigraphNavdata())
     {
       WaypointWriter *waypointWriter = dw.getWaypointWriter();
       waypointWriter->write(type->getWaypoints());
-
-      ComWriter *comWriter = dw.getAirportComWriter();
-      comWriter->write(type->getComs());
 
       ApproachWriter *appWriter = dw.getApproachWriter();
       appWriter->write(type->getApproaches());

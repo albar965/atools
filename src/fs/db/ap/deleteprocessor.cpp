@@ -21,6 +21,7 @@
 #include "fs/bgl/ap/del/deleteairport.h"
 #include "fs/bgl/util.h"
 #include "fs/navdatabaseoptions.h"
+#include "fs/scenery/sceneryarea.h"
 #include "geo/calculations.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
@@ -38,7 +39,7 @@ using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 using bgl::util::isFlagSet;
 
-DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts)
+DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts)
   : options(opts), db(&sqlDb)
 {
   // Create all queries
@@ -190,12 +191,14 @@ DeleteProcessor::~DeleteProcessor()
   delete fetchBoundingStmt;
 }
 
-void DeleteProcessor::init(const DeleteAirport *deleteAirportRec, const Airport *airport, int airportId,
+void DeleteProcessor::init(const DeleteAirport *deleteAirportRec, const scenery::SceneryArea *sceneryArea,
+                           const Airport *airport, int airportId,
                            const QString& name, const QString& city, const QString& state, const QString& country, const QString& region)
 {
   if(options.isVerbose())
     qInfo() << Q_FUNC_INFO << airport->getIdent() << "curAirportId" << curAirportId;
 
+  curSceneryArea = sceneryArea;
   curAirport = airport;
   curAirportId = airportId;
   curName = name;
@@ -369,11 +372,8 @@ void DeleteProcessor::postProcessDelete()
   if(hasPrevious)
   {
     if(curAirport->getFuelFlags() == atools::fs::bgl::ap::NO_FUEL_FLAGS)
-    {
       // Copy fuel flags from previous airport if this one doesn't have any
-      for(const QString& col : FUEL_COLUMNS)
-        copyAirportColumns.append(col);
-    }
+      copyAirportColumns.append(FUEL_COLUMNS);
 
     // Update tower TODO not accurate
     if(!curAirport->hasTowerObj())
@@ -399,6 +399,7 @@ void DeleteProcessor::postProcessDelete()
 
   // Copy columns from previous airport to current airport
   copyAirportColumns.removeDuplicates();
+  copyAirportColumns.removeAll(QString());
   copyAirportValues(copyAirportColumns);
 
   // Airport has moved more than 500 meter from previous or has moved to a far position - update bounding rectangle for current airport
@@ -504,7 +505,7 @@ void DeleteProcessor::fetchIds(SqlQuery *stmt, QList<int>& ids, const QString& w
     qDebug() << ids.size() << " " << what /*<< "bound" << stmt->boundValues()*/;
 }
 
-/* use the remove of update query for a feture depending on the delete flag */
+/* use the remove or update query for a feture depending on the delete flag */
 void DeleteProcessor::removeOrUpdate(SqlQuery *deleteStmt, SqlQuery *updateStmt, bgl::del::DeleteAllFlags flag)
 {
   QString delTypeStr = bgl::DeleteAirport::deleteAllFlagsToStr(flag).toLower();
@@ -587,6 +588,10 @@ void DeleteProcessor::extractDeleteFlags()
   // Also do this as a workaround for MSFS airports like MKJS_Scene.bgl
   if(curAirport->getApproaches().isEmpty())
     deleteFlags &= ~bgl::del::APPROACHES;
+
+  // Delete all previous COM frequencies and take all from the new airport
+  if(options.getSimulatorType() == atools::fs::FsPaths::MSFS && curSceneryArea->isMsfsNavigraphNavdata() && curAirport->hasComs())
+    deleteFlags |= bgl::del::COMS;
 
   if(options.getSimulatorType() != atools::fs::FsPaths::MSFS)
   {
