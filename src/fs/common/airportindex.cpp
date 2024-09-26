@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,9 @@
 *****************************************************************************/
 
 #include "fs/common/airportindex.h"
+
 #include "geo/pos.h"
+#include "fs/util/fsutil.h"
 
 namespace atools {
 namespace fs {
@@ -69,7 +71,7 @@ QVariant AirportIndex::getRunwayEndIdVar(const QString& airportIdent, const QStr
 {
   if(!airportIdent.isEmpty())
   {
-    int id = getRunwayEndId(airportIdent, runwayName);
+    int id = getRunwayEndId(airportIdent, util::normalizeRunway(runwayName));
     if(id != -1)
       return id;
   }
@@ -78,13 +80,13 @@ QVariant AirportIndex::getRunwayEndIdVar(const QString& airportIdent, const QStr
 
 int AirportIndex::getRunwayEndId(const QString& airportIdent, const QString& runwayName) const
 {
-  return identRunwayNameToEndId.value(Name2(airportIdent, runwayName), -1);
+  return identRunwayNameToEndId.value(Name2(airportIdent, util::normalizeRunway(runwayName)), -1);
 }
 
 atools::geo::Pos AirportIndex::getRunwayEndPos(const QString& airportIdent, const QString& runwayName) const
 {
   if(!airportIdent.isEmpty())
-    return identRunwayNameToEndPos.value(Name2(airportIdent, runwayName), atools::geo::EMPTY_POS);
+    return identRunwayNameToEndPos.value(Name2(airportIdent, util::normalizeRunway(runwayName)), atools::geo::EMPTY_POS);
 
   return atools::geo::EMPTY_POS;
 }
@@ -104,8 +106,9 @@ bool AirportIndex::addAirportId(const QString& airportIdent, int airportId, cons
 void AirportIndex::addRunwayEnd(const QString& airportIdent, const QString& runwayName, int runwayEndId,
                                 const geo::Pos& runwayEndPos)
 {
-  identRunwayNameToEndId.insert(Name2(airportIdent, runwayName), runwayEndId);
-  identRunwayNameToEndPos.insert(Name2(airportIdent, runwayName), runwayEndPos);
+  QString rw = util::normalizeRunway(runwayName);
+  identRunwayNameToEndId.insert(Name2(airportIdent, rw), runwayEndId);
+  identRunwayNameToEndPos.insert(Name2(airportIdent, rw), runwayEndPos);
 }
 
 void AirportIndex::addAirportIls(const QString& airportIdent, const QString& airportRegion, const QString& ilsIdent,

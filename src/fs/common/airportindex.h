@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -59,8 +59,7 @@ public:
   atools::geo::Pos getAirportPos(const QString& airportIdent) const;
 
   /* Add runway end id to index. Returns true if it was added. ident should be ICAO for X-Plane. */
-  void addRunwayEnd(const QString& airportIdent, const QString& runwayName, int runwayEndId,
-                    const atools::geo::Pos& runwayEndPos);
+  void addRunwayEnd(const QString& airportIdent, const QString& runwayName, int runwayEndId, const atools::geo::Pos& runwayEndPos);
 
   /* Get runway end id packed in a variant or a null integer variant if not found.
    *  Returns null if airport id is ENRT */

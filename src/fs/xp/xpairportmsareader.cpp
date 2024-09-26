@@ -141,13 +141,19 @@ void XpAirportMsaReader::read(const QStringList& line, const XpReaderContext& co
       navType = "N";
       break;
 
-    case MSA_VOR:
+    case MSA_VOR: // or ILS
       fetchVor(navIdent, region, navId, magvar, center, vorType, vorDmeOnly, vorHasDme);
-      navType = "V";
+      if(navId == -1)
+      {
+        fetchIls(navIdent, region, navId, magvar, center);
+        navType = "I";
+      }
+      else
+        navType = "V";
+
       break;
 
     case MSA_RW_END:
-      navIdent = navIdent.mid(2);
       navId = airportIndex->getRunwayEndId(airportIdent, navIdent);
       if(navId == -1)
       {
@@ -241,10 +247,10 @@ void XpAirportMsaReader::read(const QStringList& line, const XpReaderContext& co
       insertQuery->clearBoundValues();
     }
     else
-      qWarning() << context.messagePrefix() << airportIdent << navIdent << "Invalid MSA geometry";
+      qWarning() << context.messagePrefix() << airportIdent << type << navIdent << "Invalid MSA geometry";
   }
   else
-    qWarning() << context.messagePrefix() << airportIdent << navIdent << "Invalid MSA center coordinate";
+    qWarning() << context.messagePrefix() << airportIdent << type << navIdent << "Invalid MSA center coordinate";
 }
 
 void XpAirportMsaReader::initQueries()

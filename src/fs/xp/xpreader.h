@@ -117,13 +117,14 @@ protected:
   void fetchNdb(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos);
   void fetchVor(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos,
                 QString& vorType, bool& dmeOnly, bool& hasDme);
+  void fetchIls(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos);
 
 private:
   // Fetch id, magvar and coordinates for a navaid by ident and region
   void fetchNavaid(atools::sql::SqlQuery *query, const QString& ident, const QString& region, int& id, float& magvar,
                    atools::geo::Pos& pos, QString *vorType = nullptr, bool *dmeOnly = nullptr, bool *hasDme = nullptr);
 
-  atools::sql::SqlQuery *waypointQuery = nullptr, *ndbQuery = nullptr, *vorQuery = nullptr;
+  atools::sql::SqlQuery *waypointQuery = nullptr, *ndbQuery = nullptr, *vorQuery = nullptr, *ilsQuery = nullptr;
 };
 
 } // namespace xp

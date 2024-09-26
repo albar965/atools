@@ -55,6 +55,11 @@ void XpReader::fetchVor(const QString& ident, const QString& region, int& id, fl
   fetchNavaid(vorQuery, ident, region, id, magvar, pos, &vorType, &dmeOnly, &hasDme);
 }
 
+void XpReader::fetchIls(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos)
+{
+  fetchNavaid(ilsQuery, ident, region, id, magvar, pos);
+}
+
 void XpReader::fetchNavaid(atools::sql::SqlQuery *query, const QString& ident, const QString& region,
                            int& id, float& magvar, atools::geo::Pos& pos, QString *vorType,
                            bool *dmeOnly, bool *hasDme)
@@ -104,6 +109,10 @@ void XpReader::initNavQueries()
   vorQuery = new atools::sql::SqlQuery(db);
   vorQuery->prepare("select vor_id as id, type, dme_only, dme_altitude, mag_var, lonx, laty from vor "
                     "where ident = :ident and region = :region limit 1");
+
+  ilsQuery = new atools::sql::SqlQuery(db);
+  ilsQuery->prepare("select ils_id as id, mag_var, lonx, laty from ils "
+                    "where ident = :ident and region = :region limit 1");
 }
 
 void XpReader::deInitNavQueries()
@@ -116,6 +125,9 @@ void XpReader::deInitNavQueries()
 
   delete vorQuery;
   vorQuery = nullptr;
+
+  delete ilsQuery;
+  ilsQuery = nullptr;
 }
 
 void XpReader::err(const QString& msg)
