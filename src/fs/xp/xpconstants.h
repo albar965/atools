@@ -58,9 +58,9 @@ struct XpReaderContext
 {
   int curFileId = 0, cifpAirportId = 0, fileVersion = 0, lineNumber = 0;
   QString localPath,
-  fileName, /* "apt.dat" */
-  filePath, /* .../X-Plane 11 User Scenery/BIKF_Scenery_Pack/Earth nav data/apt.dat */
-  cifpAirportIdent;
+          fileName, /* "apt.dat" */
+          filePath, /* .../X-Plane 11 User Scenery/BIKF_Scenery_Pack/Earth nav data/apt.dat */
+          cifpAirportIdent;
   atools::fs::xp::ContextFlags flags = NO_FLAG;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
 
@@ -174,31 +174,38 @@ enum Surface
   TRANSPARENT = 15, // Hard surface, but no texture / markings (use in custom scenery)
 
   // New X-Plane 12 types (WED 2.5)
-  ASPHALT_L = 20,
+  ASPHALT_L = 20, /* Light colored asphalt */
   ASPHALT_L_PATCHED = 21,
   ASPHALT_L_PLAIN = 22,
   ASPHALT_L_WORN = 23,
-  ASPHALT_PATCHED = 24,
+
+  ASPHALT_PATCHED = 24, /* Smilar to ASPHALT */
   ASPHALT_PLAIN = 25,
   ASPHALT_WORN = 26,
-  ASPHALT_D = 27,
+
+  ASPHALT_D = 27, /* Darker colored asphalt */
   ASPHALT_D_PATCHED = 28,
   ASPHALT_D_PLAIN = 29,
   ASPHALT_D_WORN = 30,
-  ASPHALT_D2 = 31,
+
+  ASPHALT_D2 = 31, /* Very dark colored asphalt */
   ASPHALT_D2_PATCHED = 32,
   ASPHALT_D2_PLAIN = 33,
   ASPHALT_D2_WORN = 34,
-  ASPHALT_D3 = 35,
+
+  ASPHALT_D3 = 35, /* Near black, new looking asphalt */
   ASPHALT_D3_PATCHED = 36,
   ASPHALT_D3_PLAIN = 37,
   ASPHALT_D3_WORN = 38,
-  CONCRETE_L = 50,
+
+  CONCRETE_L = 50, /* Light new looking concrete */
   CONCRETE_L_DIRTY = 51,
   CONCRETE_L_WORN = 52,
-  CONCRETE_DIRTY = 53,
+
+  CONCRETE_DIRTY = 53, /* Similar CONCRETE */
   CONCRETE_WORN = 54,
-  CONCRETE_D = 55,
+
+  CONCRETE_D = 55, /* Dark concrete */
   CONCRETE_D_DIRTY = 56,
   CONCRETE_D_WORN = 57
 };

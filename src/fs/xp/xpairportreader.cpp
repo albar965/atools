@@ -650,7 +650,7 @@ void XpAirportReader::bindVasi(const QStringList& line, const atools::fs::xp::Xp
     {
       // Calculate distance from VASI to runway
       rg.runway.distanceMeterToLine(vasiPos, curResult);
-      if(curResult.status == atools::geo::ALONG_TRACK)
+      if(curResult.status == atools::geo::ALONG_TRACK || curResult.status == atools::geo::BEFORE_START)
       {
         // VASI is at side of runway
         QString primaryName, secondaryName;
