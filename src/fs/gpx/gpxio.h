@@ -53,7 +53,6 @@ class GpxIO
 
 public:
   GpxIO();
-  ~GpxIO();
 
   /* true if file header looks like a GPX file */
   static bool isGpxFile(const QString& file);

@@ -49,11 +49,6 @@ GpxIO::GpxIO()
   errorMsg = tr("Cannot open file %1. Reason: %2");
 }
 
-GpxIO::~GpxIO()
-{
-
-}
-
 bool GpxIO::isGpxFile(const QString& file)
 {
   // Get first 30 non empty lines - always returns a list of 30
@@ -64,7 +59,9 @@ bool GpxIO::isGpxFile(const QString& file)
 
   // Next or same line with "<gpx"
   return lines.constFirst().startsWith("<?xml", Qt::CaseInsensitive) &&
-         (lines.at(1).startsWith("<gpx ", Qt::CaseInsensitive) || lines.constFirst().contains("<gpx ", Qt::CaseInsensitive));
+         (lines.at(0).startsWith("<gpx", Qt::CaseInsensitive) ||
+          lines.at(1).startsWith("<gpx", Qt::CaseInsensitive) ||
+          lines.at(2).startsWith("<gpx", Qt::CaseInsensitive));
 }
 
 void GpxIO::readPosGpx(atools::geo::PosD& pos, QString& name, atools::util::XmlStream& xmlStream, QDateTime *timestamp)

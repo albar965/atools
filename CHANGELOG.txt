@@ -45,6 +45,7 @@ This text is partially Markdown, so the formatting is sometimes strange.
 * Fixed issue with double and invalid COM frequencies for MSFS airports when using MSFS Navigraph update.
 * Fixed issues reading MSA centers for X-Plane where runways were not detected. Now also looking
   for center points of ILS.
+* Made GPX file detection more tolerant.
 
 ===============================================================================
 
