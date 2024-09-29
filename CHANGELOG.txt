@@ -4,7 +4,15 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
-# Version 4.0.10.rc1
+# Version 4.0.12
+
+Release for *Little Navmap*.
+
+===============================================================================
+
+# Version 4.0.11
+
+This is a release specific to the Navdatareader project.
 
 * Fixed issue where detection of malformed MSFS airports rejected valid airport add-ons with a
   message `Duplicate airport ident`. This happened when add-on developers put more than one of the
