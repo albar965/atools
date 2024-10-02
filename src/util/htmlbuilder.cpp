@@ -66,12 +66,6 @@ HtmlBuilder::HtmlBuilder(bool backgroundColorUsed)
 HtmlBuilder::HtmlBuilder(const atools::util::HtmlBuilder& other)
 {
   this->operator=(other);
-
-}
-
-HtmlBuilder::~HtmlBuilder()
-{
-
 }
 
 HtmlBuilder& HtmlBuilder::operator=(const atools::util::HtmlBuilder& other)
@@ -369,7 +363,8 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
         valueStr = QString("Error: Invalid variant type \"%1\"").arg(value.typeName());
 
     }
-    htmlText.append(alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).arg(asText(name, flags, color), value.toString()));
+    htmlText.append(alt(flags.testFlag(html::ALIGN_RIGHT) ? tableRowAlignRight : tableRow).arg(asText(name, flags, color),
+                                                                                               value.toString()));
     tableRowsCur++;
     numLines++;
   }
@@ -383,7 +378,7 @@ HtmlBuilder& HtmlBuilder::row2If(const QString& name, const QString& value, html
     flags |= row2AlignRightFlag ? html::ALIGN_RIGHT : html::NONE;
     if(!value.isEmpty())
     {
-      htmlText.append(alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
+      htmlText.append(alt(flags.testFlag(html::ALIGN_RIGHT) ? tableRowAlignRight : tableRow).
                       arg(asText(name, flags | atools::util::html::BOLD, color)).
                       arg(asText(value, flags, color)));
       tableRowsCur++;
@@ -429,7 +424,7 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::
   if(isId())
   {
     flags |= row2AlignRightFlag ? html::ALIGN_RIGHT : html::NONE;
-    htmlText.append(alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
+    htmlText.append(alt(flags.testFlag(html::ALIGN_RIGHT) ? tableRowAlignRight : tableRow).
                     arg(asText(name, flags | html::BOLD, color)).
                     // Add space to avoid formatting issues with table
                     arg(value.isEmpty() ? "&nbsp;" : asText(value, flags, color)));
@@ -457,9 +452,9 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, int value, html::Flags flags
 HtmlBuilder& HtmlBuilder::td(const QString& str, html::Flags flags, QColor color)
 {
   htmlText.append(QLatin1String("<td") %
-                  (flags & html::ALIGN_RIGHT ? " align=\"right\"" : "") %
-                  (flags & html::ALIGN_LEFT ? " align=\"left\"" : "") %
-                  (flags & html::ALIGN_CENTER ? " align=\"center\"" : "") %
+                  (flags.testFlag(html::ALIGN_RIGHT) ? " align=\"right\"" : "") %
+                  (flags.testFlag(html::ALIGN_LEFT) ? " align=\"left\"" : "") %
+                  (flags.testFlag(html::ALIGN_CENTER) ? " align=\"center\"" : "") %
                   ">");
   text(str, flags, color);
   htmlText.append("</td>\n");
@@ -469,9 +464,9 @@ HtmlBuilder& HtmlBuilder::td(const QString& str, html::Flags flags, QColor color
 HtmlBuilder& HtmlBuilder::tdF(html::Flags flags)
 {
   htmlText.append(QLatin1String("<td") %
-                  (flags & html::ALIGN_RIGHT ? " align=\"right\"" : "") %
-                  (flags & html::ALIGN_LEFT ? " align=\"left\"" : "") %
-                  (flags & html::ALIGN_CENTER ? " align=\"center\"" : "") %
+                  (flags.testFlag(html::ALIGN_RIGHT) ? " align=\"right\"" : "") %
+                  (flags.testFlag(html::ALIGN_LEFT) ? " align=\"left\"" : "") %
+                  (flags.testFlag(html::ALIGN_CENTER) ? " align=\"center\"" : "") %
                   ">");
   return *this;
 }
@@ -507,9 +502,9 @@ HtmlBuilder& HtmlBuilder::tdEnd()
 HtmlBuilder& HtmlBuilder::th(const QString& str, html::Flags flags, QColor color, int colspan)
 {
   htmlText.append(QLatin1String("<th") %
-                  (flags & html::ALIGN_RIGHT ? " align=\"right\"" : "") %
-                  (flags & html::ALIGN_LEFT ? " align=\"left\"" : "") %
-                  (flags & html::ALIGN_CENTER ? " align=\"center\"" : "") %
+                  (flags.testFlag(html::ALIGN_RIGHT) ? " align=\"right\"" : "") %
+                  (flags.testFlag(html::ALIGN_LEFT) ? " align=\"left\"" : "") %
+                  (flags.testFlag(html::ALIGN_CENTER) ? " align=\"center\"" : "") %
                   (colspan != -1 ? " colspan=\"" % QString::number(colspan) % "\"" : QString()) %
                   ">");
   text(str, flags, color);
@@ -796,7 +791,7 @@ HtmlBuilder& HtmlBuilder::br()
 
 HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
 {
-  if(flags & html::NOBR_WHITESPACE)
+  if(flags.testFlag(html::NOBR_WHITESPACE))
     htmlText.append("<p style=\"white-space:pre\">");
   else
     htmlText.append("<p>");
@@ -808,7 +803,7 @@ HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
 
 HtmlBuilder& HtmlBuilder::p(html::Flags flags)
 {
-  if(flags & html::NOBR_WHITESPACE)
+  if(flags.testFlag(html::NOBR_WHITESPACE))
     htmlText.append("<p style=\"white-space:pre\">");
   else
     htmlText.append("<p>");
@@ -868,7 +863,7 @@ HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flag
 {
   QString styleTxt;
 
-  if(flags & html::LINK_NO_UL)
+  if(flags.testFlag(html::LINK_NO_UL))
     styleTxt = "style=\"text-decoration:none;\"";
 
   htmlText.append("<a " % styleTxt % " " % (href.isEmpty() ? QString() : " href=\"" % href % "\"") % ">" %
@@ -880,10 +875,10 @@ HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flag
 QString HtmlBuilder::aUrl(const QString& text, const QString& href, html::Flags flags, QColor color, int elideText)
 {
   QStringList styles;
-  if(flags & html::LINK_NO_UL)
+  if(flags.testFlag(html::LINK_NO_UL))
     styles.append("text-decoration: none;");
 
-  if(flags & html::NOBR_WHITESPACE)
+  if(flags.testFlag(html::NOBR_WHITESPACE))
     styles.append("white-space: pre;");
 
   QString divStart, divEnd;
@@ -974,67 +969,67 @@ HtmlBuilder& HtmlBuilder::li(const QString& str, html::Flags flags, QColor color
 QString HtmlBuilder::asText(QString str, html::Flags flags, QColor foreground, QColor background)
 {
   QString prefix, suffix;
-  if(flags & html::BOLD)
+  if(flags.testFlag(html::BOLD))
   {
     prefix.append("<b>");
     suffix.prepend("</b>");
   }
 
-  if(flags & html::ITALIC)
+  if(flags.testFlag(html::ITALIC))
   {
     prefix.append("<i>");
     suffix.prepend("</i>");
   }
 
-  if(flags & html::UNDERLINE)
+  if(flags.testFlag(html::UNDERLINE))
   {
     prefix.append("<u>");
     suffix.prepend("</u>");
   }
 
-  if(flags & html::STRIKEOUT)
+  if(flags.testFlag(html::STRIKEOUT))
   {
     prefix.append("<s>");
     suffix.prepend("</s>");
   }
 
-  if(flags & html::SUBSCRIPT)
+  if(flags.testFlag(html::SUBSCRIPT))
   {
     prefix.append("<sub>");
     suffix.prepend("</sub>");
   }
 
-  if(flags & html::SUPERSCRIPT)
+  if(flags.testFlag(html::SUPERSCRIPT))
   {
     prefix.append("<sup>");
     suffix.prepend("</sup>");
   }
 
-  if(flags & html::SMALL)
+  if(flags.testFlag(html::SMALL))
   {
     prefix.append("<small>");
     suffix.prepend("</small>");
   }
 
-  if(flags & html::BIG)
+  if(flags.testFlag(html::BIG))
   {
     prefix.append("<big>");
     suffix.prepend("</big>");
   }
 
-  if(flags & html::CODE)
+  if(flags.testFlag(html::CODE))
   {
     prefix.append("<code>");
     suffix.prepend("</code>");
   }
 
-  if(flags & html::PRE)
+  if(flags.testFlag(html::PRE))
   {
     prefix.append("<pre>");
     suffix.prepend("</pre>");
   }
 
-  if(flags & html::NOBR)
+  if(flags.testFlag(html::NOBR))
   {
     prefix.append("<nobr>");
     suffix.prepend("</nobr>");
@@ -1058,10 +1053,10 @@ QString HtmlBuilder::asText(QString str, html::Flags flags, QColor foreground, Q
     suffix.prepend("</span>");
   }
 
-  if(!(flags & html::NO_ENTITIES))
+  if(!(flags.testFlag(html::NO_ENTITIES)))
     str = toEntities(str.toHtmlEscaped()).replace("\n", "<br/>");
 
-  if(flags & html::REPLACE_CRLF)
+  if(flags.testFlag(html::REPLACE_CRLF))
   {
     str = str.replace("\r\n", "<br/>");
     str = str.replace("\n", "<br/>");

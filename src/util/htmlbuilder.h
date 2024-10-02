@@ -51,7 +51,6 @@ public:
   HtmlBuilder(const QColor& rowColor, const QColor& rowColorAlt);
 
   HtmlBuilder(const atools::util::HtmlBuilder& other);
-  ~HtmlBuilder();
 
   const QString& getHtml() const
   {
