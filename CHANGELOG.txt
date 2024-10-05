@@ -54,6 +54,8 @@ This is a release specific to the Navdatareader project.
 * Fixed issues reading MSA centers for X-Plane where runways were not detected. Now also looking
   for center points of ILS.
 * Made GPX file detection more tolerant.
+* Fixed issues on OS shutdown where crash was detected wrongly.
+* DataExchange now always set exit flag to terminate application even if no other instance was found.
 
 ===============================================================================
 

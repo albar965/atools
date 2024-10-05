@@ -116,6 +116,9 @@ DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
 {
   exit = false;
 
+  // Copy command line parameters and add activate option to bring other to front
+  atools::util::Properties properties(atools::gui::Application::getStartupOptionsConst());
+
   // sharedMemory is accessess exclusively by the constructor here
   // Detect other running application instance with same settings - this is unsafe on Unix since sharedMemory can remain after crashes
   if(sharedMemory == nullptr)
@@ -161,9 +164,6 @@ DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
         // If timestamp is older than MAX_TIME_DIFFENCE_MS other might be crashed or frozen, start normally - otherwise send message
         if(QDateTime::fromMSecsSinceEpoch(datetime).msecsTo(QDateTime::currentDateTimeUtc()) < MAX_TIME_DIFFENCE_MS)
         {
-          // Copy command line parameters and add activate option to bring other to front
-          atools::util::Properties properties(atools::gui::Application::getStartupOptionsConst());
-
           if(!properties.contains(STARTUP_COMMAND_QUIT))
             properties.setPropertyBool(STARTUP_COMMAND_ACTIVATE, true); // Always raise other window except on qut
 
@@ -194,6 +194,9 @@ DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
       } // if(sharedMemory->lock())
     }
   }
+
+  if(properties.contains(STARTUP_COMMAND_QUIT))
+    exit = true;
 
   if(verbose)
     qDebug() << Q_FUNC_INFO << "exit" << exit;
