@@ -58,10 +58,10 @@ public:
    * Sets safe mode if user chooses to skip file loading.
    * Always creates a crash report in case of previous unsafe exit. */
   static void recordStartAndDetectCrash(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile,
-                                        const QStringList& filenames, const QString& helpOnlineUrl, const QString& helpDocument,
-                                        const QString& helpLanguageOnline);
+                                        const QStringList& filenames, const QString& helpOnlineUrl = QString(),
+                                        const QString& helpDocument = QString(), const QString& helpLanguageOnline = QString());
 
-  /* Removes lock file. Called by QCoreApplication::aboutToQuit(). */
+  /* Removes lock file. Has to be called by application. */
   static void recordExit();
 
   /* Record files and pack them into a zip for a crash report */
@@ -189,8 +189,13 @@ public:
   static void startup();
   static void startupFinished(const char *func);
 
+signals:
+  /* Called by queued connection from QGuiApplication::commitDataRequest */
+  void applicationAboutToQuit();
+
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
+  void applicationAboutToQuitInternal();
 
   static QHash<QString, QStringList> reportFiles;
 

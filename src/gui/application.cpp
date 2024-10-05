@@ -64,9 +64,10 @@ Application::Application(int& argc, char **argv, int)
 {
   startupOptions = new atools::util::Properties;
 
-  // Needed to catch program stopping during Windows shutdown
-  connect(this, &QCoreApplication::aboutToQuit, recordExit);
-
+  // Needed to catch program stopping during Windows shutdown - make signal public
+  // aboutToQuit is not called during OS shutdown
+  // commitDataRequest is only called if a main window is shown
+  connect(this, &QGuiApplication::commitDataRequest, this, &Application::applicationAboutToQuitInternal, Qt::QueuedConnection);
 }
 
 Application::~Application()
@@ -84,6 +85,12 @@ Application::~Application()
       qWarning() << Q_FUNC_INFO << "FAILED.";
   }
   ATOOLS_DELETE(startupOptions);
+}
+
+void Application::applicationAboutToQuitInternal()
+{
+  qInfo() << Q_FUNC_INFO;
+  emit applicationAboutToQuit();
 }
 
 bool Application::isShuttingDown()
@@ -259,7 +266,7 @@ void Application::recordExit()
 
   lockFile.clear();
 #else
-    qInfo() << Q_FUNC_INFO << "Lock file disabled";
+  qInfo() << Q_FUNC_INFO << "Lock file disabled";
 #endif
 }
 
@@ -295,6 +302,14 @@ void Application::buildCrashReport(const QString& crashReportFile, const QString
 
 bool Application::notify(QObject *receiver, QEvent *event)
 {
+#ifdef DEBUG_LOG_ALL_MESSAGES
+  if(receiver != nullptr)
+    qInfo() << Q_FUNC_INFO << receiver->objectName();
+
+  if(event != nullptr)
+    qInfo() << Q_FUNC_INFO << event->type();
+#endif
+
 #ifndef DEBUG_NO_APPLICATION_EXCEPTION
   try
   {
