@@ -56,11 +56,11 @@
 <context>
     <name>AirspaceReaderIvao</name>
     <message>
-        <location filename="src/fs/userdata/airspacereaderivao.cpp" line="226"/>
-        <location filename="src/fs/userdata/airspacereaderopenair.cpp" line="84"/>
-        <location filename="src/fs/userdata/airspacereadervatsim.cpp" line="297"/>
+        <location filename="src/fs/userdata/airspacereaderivao.cpp" line="227"/>
+        <location filename="src/fs/userdata/airspacereaderopenair.cpp" line="85"/>
+        <location filename="src/fs/userdata/airspacereadervatsim.cpp" line="298"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation type="unfinished">Impossibile aprire il file &quot;%1&quot;. Causa: %2 (%3)</translation>
+        <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -88,7 +88,7 @@
     <message>
         <location filename="src/fs/bgl/bglfile.cpp" line="320"/>
         <source>Multiple duplicate airport idents &quot;%1&quot; in file &quot;%2&quot;. File is malformed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Identità multiple duplicate dell&apos;aeroporto &quot;%1&quot; nel file &quot;%2&quot;. Il file è malformato.</translation>
     </message>
 </context>
 <context>
@@ -607,22 +607,22 @@ File: &quot;%2&quot;
         <translation>Impossibile aprire il file %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="63"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="58"/>
         <source>Cannot open empty GPX file &quot;%1&quot;.</source>
         <translation>Impossibile aprire un file GPX vuoto &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="95"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="92"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
         <translation>Posizione non valida nel file GPX &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="187"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="184"/>
         <source> - Flight Plan</source>
         <translation> - Piano di Volo</translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="236"/>
+        <location filename="src/fs/gpx/gpxio.cpp" line="233"/>
         <source> - Track</source>
         <translation> - Percorso</translation>
     </message>
@@ -674,12 +674,12 @@ File: &quot;%2&quot;
 <context>
     <name>HtmlBuilder</name>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="334"/>
+        <location filename="src/util/htmlbuilder.cpp" line="328"/>
         <source>Yes</source>
         <translation>Si</translation>
     </message>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="334"/>
+        <location filename="src/util/htmlbuilder.cpp" line="328"/>
         <source>No</source>
         <translation>No</translation>
     </message>
@@ -692,7 +692,7 @@ File: &quot;%2&quot;
         <source>File contains invalid data.
 &quot;%1&quot;
 Line %2.</source>
-        <translation type="unfinished">Il file contiene dati non validi
+        <translation>Il file contiene dati non validi.
 &quot;%1&quot;
 Linea %2.</translation>
     </message>
@@ -701,7 +701,7 @@ Linea %2.</translation>
         <source>File is not valid. Neither departure nor destination ident is set.
 &quot;%1&quot;
 Line %2.</source>
-        <translation type="unfinished">Il file non è valido. Non sono impostati né l&apos;identità di partenza né quella di destinazione.
+        <translation>Il file non è valido. Non sono impostati né l&apos;identità di partenza né quella di destinazione.
 &quot;%1&quot;
 Linea %2.</translation>
     </message>
@@ -718,7 +718,7 @@ Linea %2.</translation>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="685"/>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="729"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished">Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
+        <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
     </message>
     <message>
         <location filename="src/fs/userdata/logdatamanager.cpp" line="479"/>
@@ -728,7 +728,7 @@ Cross country time: %3
 IFR time: %4
 Night time: %5</source>
         <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in LogdataController::importXplane</extracomment>
-        <translation type="unfinished">Importato dal diario di bordo X-Plane %1
+        <translation>Importato dal diario di bordo X-Plane %1
 Numero di atterraggi: %2
 Ore di navigazione: %3
 Ore IFR: %4
@@ -739,7 +739,7 @@ Ore Notturne: %5</translation>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="357"/>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="361"/>
         <source>File is not an X-Plane user_fix.dat file.</source>
-        <translation type="unfinished">Il file non è un file user_fix.dat di X-Plane.</translation>
+        <translation>Il file non è un file user_fix.dat di X-Plane.</translation>
     </message>
 </context>
 <context>
@@ -1503,7 +1503,7 @@ Ore Notturne: %5</translation>
         <location filename="src/fs/navdatabase.cpp" line="788"/>
         <source>Creating indexes for search</source>
         <oldsource>Creating route edges for VOR and NDB</oldsource>
-        <translation type="unfinished">Creazione limiti di percorso per VOR e NDB</translation>
+        <translation>Creazione degli indici per la ricerca</translation>
     </message>
     <message>
         <source>Creating route edges waypoints</source>
@@ -2351,7 +2351,7 @@ Ore Notturne: %5</translation>
         <translation> (variato, non utilizzato)</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="468"/>
+        <location filename="src/gui/application.cpp" line="483"/>
         <source>Version %5 (revision %6)</source>
         <translation>Versione %5 (revisione %6)</translation>
     </message>
@@ -3209,7 +3209,7 @@ Linea %2.</translation>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="331"/>
+        <location filename="src/gui/application.cpp" line="346"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach a text copy or a screenshot of this dialog, the log file and the configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation>&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di %1 e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione al tuo report, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
@@ -3227,12 +3227,12 @@ Linea %2.</translation>
         <translation type="vanished">&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 non è uscito in modo pulito l&apos;ultima volta.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Molto probabilmente è stato causato da un crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;È stato generato un rapporto sul crash e salvato con tutti i file correlati in un archivio Zip.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Fare clic qui per aprire la cartella contenente il rapporto &quot;%3&quot;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Si consiglia di inviare questo file all&apos;autore di %4 per indagare sul crash.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Fare clic qui per le informazioni di contatto&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Avviare ora in modalità sicura significa saltare il caricamento di tutti i file predefiniti come i piani di volo, il layout delle finestre e altre impostazioni che potrebbero aver causato il precedente crash?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="172"/>
+        <location filename="src/gui/application.cpp" line="179"/>
         <source>&lt;p&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You can send this file to the author of %2 to investigate a problem. This is a Zip-file and you can look into the contents if needed.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure you are using the latest version of %2 before reporting a problem,&lt;br/&gt;and if possible, describe all the steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;È stato generato un rapporto sul problema e salvato con tutti i file correlati in un archivio Zip.&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click per mostrare)&lt;/p&gt;&lt;p&gt;È possibile inviare questo file all&apos;autore di %2 per indagare sul problema. Si tratta di un file Zip e, se necessario, è possibile esaminarne il contenuto.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Assicurarsi di utilizzare la versione più recente di %2 prima di segnalare un problema,&lt;br/&gt;e, se possibile, descrivere tutti i passaggi per riprodurre il problema.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Clicca qui per le informazioni sul contatto&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="210"/>
+        <location filename="src/gui/application.cpp" line="217"/>
         <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %1 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %1 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%1 non è uscito correttamente l&apos;ultima volta.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Molto probabilmente è stato causato da un crash.&lt;/p&gt;&lt;p&gt;È stato generato un rapporto sull&apos;incidente e salvato con tutti i file correlati in un archivio Zip.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click per mostrare)&lt;/p&gt;&lt;p&gt;Si consiglia di inviare questo file all&apos;autore di %1 per indagare sull&apos;arresto anomalo.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Assicurarsi di utilizzare la versione più recente di %1 prima di segnalare un arresto anomalo e descrivere tutti i passaggi per riprodurre il problema.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Clicca qui per le informazioni sul contatto&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Avviare ora in modalità sicura significa saltare il caricamento di tutti i file predefiniti come i piani di volo, il layout delle finestre e altre impostazioni che potrebbero aver causato il precedente crash?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
@@ -3241,32 +3241,32 @@ Linea %2.</translation>
         <translation type="vanished">&lt;b&gt;Catturata eccezione nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="361"/>
+        <location filename="src/gui/application.cpp" line="376"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;Press OK to exit application.&lt;/b&gt;</source>
         <translation>&lt;b&gt;Eccezione rilevata nel file &quot;%1&quot; linea %2.&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;Premere OK per uscire dall&apos;applicazione.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="383"/>
+        <location filename="src/gui/application.cpp" line="398"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Catturata eccezione sconosciuta nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="404"/>
+        <location filename="src/gui/application.cpp" line="419"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation>&lt;b&gt;Contatto:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contatto e Supporto&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="410"/>
+        <location filename="src/gui/application.cpp" line="425"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contattare:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="461"/>
+        <location filename="src/gui/application.cpp" line="476"/>
         <source> 64-bit</source>
         <translation> 64-bit</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="463"/>
+        <location filename="src/gui/application.cpp" line="478"/>
         <source> 32-bit</source>
         <translation> 32-bit</translation>
     </message>
@@ -3275,17 +3275,17 @@ Linea %2.</translation>
         <translation type="vanished">&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contatto e Supporto&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="435"/>
+        <location filename="src/gui/application.cpp" line="450"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="439"/>
+        <location filename="src/gui/application.cpp" line="454"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="442"/>
+        <location filename="src/gui/application.cpp" line="457"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>

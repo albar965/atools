@@ -56,6 +56,7 @@ This is a release specific to the Navdatareader project.
 * Made GPX file detection more tolerant.
 * Fixed issues on OS shutdown where crash was detected wrongly.
 * DataExchange now always set exit flag to terminate application even if no other instance was found.
+* Translations for French, Italian and Brazilian Portuguese updated. Thanks to Flavio, Patrick and Ricardo!
 
 ===============================================================================
 
