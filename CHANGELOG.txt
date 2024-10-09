@@ -8,6 +8,12 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 Release for *Little Navmap*.
 
+* From 3.0.10.rc1 to 3.0.11: Translations for French, Italian and Brazilian Portuguese updated.
+* Fixed issues with application shutdown. Method aboutToQuit() was not called on OS shutdown.
+  Replaced with signal commitDataRequest(). Now logging in method applicationAboutToQuitInternal().
+* DataExchange now always set exit flag to terminate application for command line options
+  `-q` / `--quit` even if no other instance was found.
+
 ===============================================================================
 
 # Version 4.0.11
