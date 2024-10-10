@@ -43,8 +43,6 @@ public:
   DatabaseMeta(atools::sql::SqlDatabase *sqlDb);
   DatabaseMeta(atools::sql::SqlDatabase& sqlDb);
 
-  void logInfo() const;
-
   /*
    * @return Version that is stored in the database schema
    */
@@ -200,11 +198,6 @@ public:
     return boundary;
   }
 
-  const atools::util::Properties& getProperties() const
-  {
-    return properties;
-  }
-
   void addProperty(const QString& name, const QString& value = QString())
   {
     properties.setPropertyStr(name, value);
@@ -232,6 +225,8 @@ public:
   }
 
 private:
+  friend QDebug operator<<(QDebug out, const atools::fs::db::DatabaseMeta& meta);
+
   /* This defines the database schema version of the application and should be updated for every incompatible
    * schema or content change.
    * Changing this requires a reload of a database.
@@ -312,6 +307,8 @@ private:
   QString airacCycle, validThrough, dataSource, compilerVersion;
   atools::util::Properties properties;
 };
+
+QDebug operator<<(QDebug out, const atools::fs::db::DatabaseMeta& meta);
 
 } // namespace db
 } // namespace fs

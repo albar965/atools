@@ -54,7 +54,7 @@ void Properties::read(QTextStream& stream)
 {
   while(!stream.atEnd())
   {
-    QString line = stream.readLine();
+    QString line = stream.readLine().trimmed();
     int idx = line.indexOf('#');
     if(idx >= 0)
       line.truncate(idx);

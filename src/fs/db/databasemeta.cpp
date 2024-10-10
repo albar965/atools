@@ -30,6 +30,12 @@ namespace atools {
 namespace fs {
 namespace db {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::hex;
+using Qt::dec;
+using Qt::endl;
+#endif
+
 using atools::sql::SqlUtil;
 using atools::sql::SqlQuery;
 
@@ -48,21 +54,6 @@ DatabaseMeta::DatabaseMeta(sql::SqlDatabase& sqlDb)
   : db(&sqlDb)
 {
   init();
-}
-
-void DatabaseMeta::logInfo() const
-{
-  qInfo() << Q_FUNC_INFO
-          << "Airac Cycle" << getAiracCycle()
-          << "Compiler Version" << getCompilerVersion()
-          << "Data Source" << getDataSource()
-          << "Last Load Time" << getLastLoadTime()
-          << "Database Version" << getDatabaseVersion()
-          << "Application Version" << getApplicationVersion()
-          << "Valid Through" << getValidThrough()
-          << "Valid" << isValid()
-          << "Schema" << hasSchema()
-          << "Data" << hasData();
 }
 
 util::Version DatabaseMeta::getDatabaseVersion() const
@@ -274,6 +265,29 @@ bool DatabaseMeta::isDatabaseCompatible() const
   }
 
   return false;
+}
+
+// bool valid = false, sidStar = false, routeType = false, data = false, schema = false, script = false, boundary = false;
+// QString airacCycle, validThrough, dataSource, compilerVersion;
+// atools::util::Properties properties;
+QDebug operator<<(QDebug out, const DatabaseMeta& meta)
+{
+  QDebugStateSaver saver(out);
+
+  out.noquote().nospace()
+    << "===================================" << endl
+    << "DatabaseMeta " << meta.db->getName() << meta.db->databaseName() << endl
+    << "Airac Cycle " << meta.airacCycle << endl
+    << "Compiler Version " << meta.compilerVersion << endl
+    << "Data Source " << meta.dataSource << endl
+    << "Last Load Time " << meta.lastLoadTime << endl
+    << "Database Version " << meta.getDatabaseVersion() << endl
+    << "Application Version " << DatabaseMeta::getApplicationVersion() << endl
+    << "Valid Through " << meta.validThrough << endl
+    << "valid " << meta.valid << " sidStar " << meta.sidStar << " routeType " << meta.routeType << " data " << meta.data
+    << " schema " << meta.schema << " script " << meta.script << " boundary " << meta.boundary
+    << " Properties " << meta.properties;
+  return out;
 }
 
 } // namespace db
