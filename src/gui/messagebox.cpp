@@ -28,6 +28,7 @@
 #include <QStyle>
 #include <QUrl>
 #include <QDebug>
+#include <QPushButton>
 
 namespace atools {
 namespace gui {
@@ -145,6 +146,7 @@ int MessageBox::exec()
 {
   atools::gui::logMessageBox(this, dialogIcon, ui->labelText->text());
 
+  QDialogButtonBox::StandardButton defBtn = defaultButton;
   if(acceptButtons.isEmpty())
   {
     // Set default button layout
@@ -155,16 +157,20 @@ int MessageBox::exec()
       case QMessageBox::Warning:
       case QMessageBox::Critical:
         addAcceptButton(QDialogButtonBox::Ok);
+        if(defBtn == QDialogButtonBox::NoButton)
+          defBtn = QDialogButtonBox::Ok;
         break;
 
       case QMessageBox::Question:
         addAcceptButton(QDialogButtonBox::Yes);
         addRejectButton(QDialogButtonBox::No);
+        if(defBtn == QDialogButtonBox::NoButton)
+          defBtn = QDialogButtonBox::No;
         break;
     }
   }
 
-  QDialogButtonBox::StandardButton retval = defaultButton;
+  QDialogButtonBox::StandardButton retval = defBtn;
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   // show only if the key is true or not given
@@ -175,6 +181,13 @@ int MessageBox::exec()
     // Layout contents before
     QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
     adjustSize();
+
+    if(defBtn != QDialogButtonBox::NoButton)
+    {
+      QPushButton *defaultPushButton = ui->buttonBox->button(defBtn);
+      if(defaultPushButton != nullptr)
+        defaultPushButton->setFocus();
+    }
 
     QDialog::exec();
     retval = clickedButton;

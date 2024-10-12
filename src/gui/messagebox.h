@@ -73,7 +73,8 @@ public:
   /* Set text for right aligned label */
   void setMessage(const QString& text);
 
-  /* Set a standard icon for the top left label.  */
+  /* Set a standard icon for the top left label. Determines default button if not set.
+   * For critical, information and the like it is Ok. For question it is No. */
   void setIcon(QMessageBox::Icon dialogIconParam);
 
   /* Standard button function if "do not show again" is set */
