@@ -28,19 +28,14 @@ class SqlQuery;
 }
 
 namespace fs {
+
 class NavDatabaseOptions;
 class ProgressHandler;
 
 namespace xp {
 
-/* X-Plane types */
-enum AirwayPointType
-{
-  AW_NONE = 0,
-  AW_FIX = 11,
-  AW_NDB = 2,
-  AW_VOR = 3
-};
+struct AirwaySegment;
+struct AirwayPoint;
 
 /* X-Plane types */
 enum AirwayType
@@ -51,45 +46,15 @@ enum AirwayType
   BOTH = 3 /* artifical type created by merge of victor and jet */
 };
 
-/* Waypoint along the airway */
-struct AirwayPoint
-{
-  QString ident, region;
-  AirwayPointType type = AW_NONE;
-};
-
-/* from/to airway segment */
-struct AirwaySegment
-{
-  AirwayPoint prev, next;
-  int minAlt = 0, maxAlt = 0;
-  char dir = '\0'; /* N = none, B = backward, F = forward */
-
-  /* reverse prev/next, direction and return a copy */
-  AirwaySegment reversed() const
-  {
-    AirwaySegment retval(*this);
-    retval.prev.ident.swap(retval.next.ident);
-    retval.prev.region.swap(retval.next.region);
-    std::swap(retval.prev.type, retval.next.type);
-    if(retval.dir == 'B')
-      retval.dir = 'F';
-    else if(dir == 'F')
-      retval.dir = 'B';
-    return retval;
-  }
-
-};
-
 /*
  * Takes the unordered from/to and to/from lists from X-Plane and converts them into an ordered list with from/via/to rows.
  * Reads from table airway_temp and inserts into tmp_airway_point
  */
-class AirwayPostProcess
+class XpAirwayPostProcess
 {
 public:
-  AirwayPostProcess(atools::sql::SqlDatabase& sqlDb);
-  virtual ~AirwayPostProcess();
+  XpAirwayPostProcess(atools::sql::SqlDatabase& sqlDb);
+  virtual ~XpAirwayPostProcess();
 
   /* Reads all from/to and to/from segments of all airways and creates from/via/to segments. */
   bool postProcessEarthAirway();
@@ -97,14 +62,14 @@ public:
 private:
   /* Sort and write out all segments of an airway. This also includes multiple fragments of the same airway name.
    * The list segments is emptied during this process. */
-  void writeSegments(QList<AirwaySegment>& segments, sql::SqlQuery& insert, const QString& name, AirwayType type);
+  void writeSegments(QList<AirwaySegment>& segments, sql::SqlQuery& insertTmpAirwayPoint, const QString& name, AirwayType type);
 
   /* Finds an airway segment starting or ending with airwayPoint in the list segments which can sorted by next or prev ids.*/
-  bool findSegment(QVector<AirwaySegment>& found, QSet<AirwaySegment>& done, const QVector<AirwaySegment>& segments,
+  bool findSegment(QList<AirwaySegment>& foundSegments, QSet<AirwaySegment>& finshedSegments, const QList<AirwaySegment>& segments,
                    AirwayPoint airwayPoint, AirwayPoint excludePoint, bool searchPrevious);
 
   /* Write a from/via/to (prev/mid/next) triplet into the database */
-  void writeSegment(atools::sql::SqlQuery& insert, const QString& name, AirwayType type,
+  void writeSegment(atools::sql::SqlQuery& insertTmpAirwayPoint, const QString& name, AirwayType type,
                     const AirwaySegment& prevSeg, const AirwaySegment& nextSeg);
 
   /* Used for sorting and binary search in the ordered segment lists. Sorts by next/to */

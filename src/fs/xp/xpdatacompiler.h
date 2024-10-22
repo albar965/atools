@@ -57,7 +57,7 @@ class XpAirportReader;
 class XpCifpReader;
 class XpAirspaceReader;
 class XpReader;
-class AirwayPostProcess;
+class XpAirwayPostProcess;
 
 /*
  * Provides methods to read X-Plane data from text files into the database.
@@ -301,7 +301,7 @@ private:
   atools::fs::xp::XpAirportReader *airportReader = nullptr;
   atools::fs::xp::XpCifpReader *cifpReader = nullptr; // Procedures
   atools::fs::xp::XpAirspaceReader *airspaceReader = nullptr; // boundaries
-  atools::fs::xp::AirwayPostProcess *airwayPostProcess = nullptr;
+  atools::fs::xp::XpAirwayPostProcess *airwayPostProcess = nullptr;
   atools::fs::common::AirportIndex *airportIndex = nullptr;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
   atools::fs::common::MetadataWriter *metadataWriter = nullptr;

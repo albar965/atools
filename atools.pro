@@ -753,11 +753,11 @@ HEADERS += \
   src/fs/userdata/airspacereaderivao.h \
   src/fs/userdata/airspacereaderopenair.h \
   src/fs/userdata/airspacereadervatsim.h \
-  src/fs/xp/airwaypostprocess.h \
   src/fs/xp/scenerypacks.h \
   src/fs/xp/xpairportmsareader.h \
   src/fs/xp/xpairportreader.h \
   src/fs/xp/xpairspacereader.h \
+  src/fs/xp/xpairwaypostprocess.h \
   src/fs/xp/xpairwayreader.h \
   src/fs/xp/xpcifpreader.h \
   src/fs/xp/xpconstants.h \
@@ -901,11 +901,11 @@ SOURCES += \
   src/fs/userdata/airspacereaderivao.cpp \
   src/fs/userdata/airspacereaderopenair.cpp \
   src/fs/userdata/airspacereadervatsim.cpp \
-  src/fs/xp/airwaypostprocess.cpp \
   src/fs/xp/scenerypacks.cpp \
   src/fs/xp/xpairportmsareader.cpp \
   src/fs/xp/xpairportreader.cpp \
   src/fs/xp/xpairspacereader.cpp \
+  src/fs/xp/xpairwaypostprocess.cpp \
   src/fs/xp/xpairwayreader.cpp \
   src/fs/xp/xpcifpreader.cpp \
   src/fs/xp/xpconstants.cpp \

@@ -33,7 +33,7 @@
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
 #include "settings/settings.h"
-#include "fs/xp/airwaypostprocess.h"
+#include "fs/xp/xpairwaypostprocess.h"
 #include "fs/progresshandler.h"
 #include "exception.h"
 #include "atools.h"
@@ -102,7 +102,7 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
   cifpReader = new XpCifpReader(db, airportIndex, options, progress, errors);
   airspaceReader = new XpAirspaceReader(db, options, progress, errors);
   airwayReader = new XpAirwayReader(db, options, progress, errors);
-  airwayPostProcess = new AirwayPostProcess(db);
+  airwayPostProcess = new XpAirwayPostProcess(db);
   metadataWriter = new MetadataWriter(db);
   magDecReader = new MagDecReader();
 
