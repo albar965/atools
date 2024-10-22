@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -85,8 +85,7 @@ struct AirwayResolver::AirwaySegment
   AirwaySegment(int fromId, int toId, char direction, int minAltitude, int maxAltitude, QString airwayType,
                 const atools::geo::Pos& fromPosition, const atools::geo::Pos& toPosition)
     : type(airwayType), dir(direction), fromWaypointId(fromId), toWaypointId(toId),
-    minAlt(minAltitude), maxAlt(maxAltitude),
-    fromPos(fromPosition), toPos(toPosition)
+    minAlt(minAltitude), maxAlt(maxAltitude), fromPos(fromPosition), toPos(toPosition)
   {
   }
 
@@ -98,8 +97,7 @@ struct AirwayResolver::AirwaySegment
 
   bool operator<(const AirwaySegment& other) const
   {
-    return std::pair<int, int>(fromWaypointId, toWaypointId) <
-           std::pair<int, int>(other.fromWaypointId, other.toWaypointId);
+    return std::pair<int, int>(fromWaypointId, toWaypointId) < std::pair<int, int>(other.fromWaypointId, other.toWaypointId);
   }
 
   QString type;
@@ -164,8 +162,7 @@ bool AirwayResolver::run(int numReportSteps)
 
   int totalRowCount = SqlUtil(db).rowCount("tmp_airway_point");
 
-  int rowsPerStep =
-    static_cast<int>(std::ceil(static_cast<float>(totalRowCount) / static_cast<float>(numReportSteps)));
+  int rowsPerStep = static_cast<int>(std::ceil(static_cast<float>(totalRowCount) / static_cast<float>(numReportSteps)));
   int row = 0, steps = 0;
 
   QElapsedTimer timer;
@@ -196,26 +193,7 @@ bool AirwayResolver::run(int numReportSteps)
     if(awName != currentAirway)
     {
       // A new airway comes from from the query save the current one to the database
-      if(!airway.empty())
-      {
-        // Build airway fragments
-        QVector<Fragment> fragments;
-        buildAirway(currentAirway, airway, fragments);
-
-        // Remove all fragments that are contained by others
-        cleanFragments(fragments);
-
-        for(const Fragment& fragment : qAsConst(fragments))
-        {
-          for(const TypeRowValueVector& bindRow : fragment.boundValues)
-          {
-            airwayInsertStmt.bindValues(bindRow);
-            airwayInsertStmt.exec();
-            numAirways += airwayInsertStmt.numRowsAffected();
-          }
-        }
-        airway.clear();
-      }
+      saveAirway(airway, currentAirway);
       currentAirway = awName;
     }
 
@@ -238,8 +216,7 @@ bool AirwayResolver::run(int numReportSteps)
       Pos prevPos(query.value("prev_lonx").toFloat(), query.value("prev_laty").toFloat());
 
       if(currentWpPos.distanceMeterTo(prevPos) < atools::geo::nmToMeter(maxAirwaySegmentLengthNm))
-        airway.insert(AirwaySegment(prevWpIdColVal.toInt(), currentWpId, prevDir, prevMinAlt, prevMaxAlt, awType,
-                                    prevPos, currentWpPos));
+        airway.insert(AirwaySegment(prevWpIdColVal.toInt(), currentWpId, prevDir, prevMinAlt, prevMaxAlt, awType, prevPos, currentWpPos));
     }
 
     if(!nextWpIdColVal.isNull())
@@ -248,10 +225,12 @@ bool AirwayResolver::run(int numReportSteps)
       Pos nextPos(query.value("next_lonx").toFloat(), query.value("next_laty").toFloat());
 
       if(currentWpPos.distanceMeterTo(nextPos) < atools::geo::nmToMeter(maxAirwaySegmentLengthNm))
-        airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextDir, nextMinAlt, nextMaxAlt, awType,
-                                    currentWpPos, nextPos));
+        airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextDir, nextMinAlt, nextMaxAlt, awType, currentWpPos, nextPos));
     }
   } // while(query.next())
+
+  // Save last remaining airway
+  saveAirway(airway, currentAirway);
 
   // Eat up any remaining progress steps
   progressHandler.increaseCurrent(numReportSteps - steps);
@@ -264,8 +243,31 @@ bool AirwayResolver::run(int numReportSteps)
   return aborted;
 }
 
-void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>& airway,
-                                 QVector<Fragment>& fragments)
+void AirwayResolver::saveAirway(QSet<AirwaySegment>& airway, const QString& currentAirway)
+{
+  if(!airway.empty())
+  {
+    // Build airway fragments
+    QVector<Fragment> fragments;
+    buildAirway(currentAirway, airway, fragments);
+
+    // Remove all fragments that are contained by others
+    cleanFragments(fragments);
+
+    for(const Fragment& fragment : qAsConst(fragments))
+    {
+      for(const TypeRowValueVector& bindRow : fragment.boundValues)
+      {
+        airwayInsertStmt.bindValues(bindRow);
+        airwayInsertStmt.exec();
+        numAirways += airwayInsertStmt.numRowsAffected();
+      }
+    }
+    airway.clear();
+  }
+}
+
+void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>& airway, QVector<Fragment>& fragments)
 {
   // Queue of waypoints that will get waypoints in order prependend and appendend
   QQueue<AirwaySegment> newAirway;
