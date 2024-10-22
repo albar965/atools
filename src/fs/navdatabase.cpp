@@ -700,7 +700,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
 
   if(options->isResolveAirways() && sim != FsPaths::NAVIGRAPH)
   {
-    // All simulators ====================
+    // All simulators including DFD and X-Plane ====================
     // Read tmp_airway_point table, connect all waypoints and write the ordered result into the airway table
     atools::fs::db::AirwayResolver resolver(db, progress);
 
@@ -1021,13 +1021,13 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
 
     if((aborted = xpDataCompiler->compileEarthMora()))
       return true;
-  }
 
-  if(options->getSimulatorType() == FsPaths::XPLANE_12)
-  {
-    // X-Plane 12/Global Scenery/Global Airports/Earth nav data/apt.dat
-    if((aborted = xpDataCompiler->compileGlobalApt12()))
-      return true;
+    if(options->getSimulatorType() == FsPaths::XPLANE_12)
+    {
+      // X-Plane 12/Global Scenery/Global Airports/Earth nav data/apt.dat
+      if((aborted = xpDataCompiler->compileGlobalApt12()))
+        return true;
+    }
   }
 
   if(options->isIncludedNavDbObject(atools::fs::type::ILS))
@@ -1048,10 +1048,8 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
       return true;
   }
 
-  if(options->isIncludedNavDbObject(atools::fs::type::VOR) ||
-     options->isIncludedNavDbObject(atools::fs::type::NDB) ||
-     options->isIncludedNavDbObject(atools::fs::type::MARKER) ||
-     options->isIncludedNavDbObject(atools::fs::type::ILS))
+  if(options->isIncludedNavDbObject(atools::fs::type::VOR) || options->isIncludedNavDbObject(atools::fs::type::NDB) ||
+     options->isIncludedNavDbObject(atools::fs::type::MARKER) || options->isIncludedNavDbObject(atools::fs::type::ILS))
   {
     // In resources or Custom Data - mandatory
     if((aborted = xpDataCompiler->compileEarthNav()))
