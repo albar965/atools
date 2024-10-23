@@ -40,10 +40,13 @@ void calculateIlsGeometry(const atools::geo::Pos& pos, float headingTrue, float 
 const float DEFAULT_FEATHER_LEN_NM = 9.f;
 
 /* Split runway name into parts and return true if name matches a runway number */
-bool runwayNameSplit(const QString& name, int *number = nullptr, QString *designator = nullptr, bool *trueHeading = nullptr);
+bool runwayNameSplitNum(const QString& name, int *number = nullptr, QString *designator = nullptr, bool *trueHeading = nullptr);
 
 /* Split runway name into parts and return true if name matches a runway number. Number is zero prefixed. */
-bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *designator = nullptr, bool *trueHeading = nullptr);
+bool runwayNameSplitStr(const QString& name, QString *number = nullptr, QString *designator = nullptr, bool *trueHeading = nullptr);
+
+/* true if any of "RW01", "RW1", "1", "01", "RW02C", "RW1C", "1C", "01C" or "02T" */
+bool runwayNameValid(const QString& name);
 
 /* Compare numerically by number and then by designator in order of L, C, R */
 int compareRunwayNumber(const QString& rw1, const QString& rw2);
