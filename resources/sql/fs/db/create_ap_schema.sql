@@ -323,7 +323,7 @@ create table runway_end
   has_reils integer not null,             -- Boolean has runway end identifier lights or not
   has_touchdown_lights integer not null,  -- Boolean lighting for the touchdown zone
   num_strobes integer not null,           -- Number of strobe lights
-  ils_ident varchar(10),                  -- Ident of the ILS or null if none
+  ils_ident varchar(10),                  -- Ident of the ILS or null if none - only used during compilation
   heading double not null,                -- Duplicated from runway
   altitude integer,                       -- Threshold elevation for this end if available
   lonx double not null,                   -- "

@@ -752,6 +752,11 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     if((aborted = runScript(&progress, "fs/db/dfd/update_airport_ils.sql", tr("Updating ILS"))))
       return result;
   }
+  else if(sim == FsPaths::MSFS)
+  {
+    if((aborted = runScript(&progress, "fs/db/update_airport_ils_msfs.sql", tr("Updating ILS"))))
+      return result;
+  }
   else if(!FsPaths::isAnyXplane(sim))
   {
     // The ids are already updated when reading the X-Plane data

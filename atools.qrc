@@ -51,5 +51,6 @@
         <file>resources/json/stopwords-iso.json.gz</file>
         <file>resources/sql/fs/db/delete_duplicate_ils.sql</file>
         <file>resources/sql/fs/db/delete_duplicate_ils_fsx.sql</file>
+        <file>resources/sql/fs/db/update_airport_ils_msfs.sql</file>
     </qresource>
 </RCC>

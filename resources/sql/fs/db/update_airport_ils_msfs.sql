@@ -16,26 +16,23 @@
 -- ****************************************************************************/
 
 -- *************************************************************
--- Remove any duplicates that are resulting from add-on BGL files.
--- Some add-on airport BGL files contain additional navaids that are
--- not (and cannot be) covered by the delete processor. These will
--- be removed here by keeping only the duplicate with the highest id.
--- This means stock/default/oldest are removed and add-on are kept.
--- The manhattan distance using deg is sufficient for a crude distance estimation
+-- Update ILS runway ids - only MSFS
 -- *************************************************************
 
+-- loc_runway_name is set in IlsWriter and determined by name
 
--- Delete duplicate ils same name and same type
-delete from ils where ils_id in (
-  select distinct w1.ils_id
-  from ils w1 join ils w2 on w1.ident = w2.ident and w1.name = w2.name
-  where
-    w1.ils_id < w2.ils_id and (abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.1);
+update ils set loc_runway_end_id = (
+  select runway_end_id
+  from runway_end e
+  join runway r on e.runway_end_id = r.primary_end_id
+  join airport a on r.airport_id = a.airport_id
+  where e.name = ils.loc_runway_name and a.ident = ils.loc_airport_ident
+) where loc_runway_end_id is null;
 
--- -- Delete duplicate ils same name and close by
-delete from ils where ils_id in (
-  select distinct w1.ils_id
-  from ils w1 join ils w2 on w1.ident = w2.ident
-  where
-    w1.ils_id < w2.ils_id and (abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.01);
-
+update ils set loc_runway_end_id = (
+  select runway_end_id
+  from runway_end e
+  join runway r on e.runway_end_id = r.secondary_end_id
+  join airport a on r.airport_id = a.airport_id
+  where e.name = ils.loc_runway_name and a.ident = ils.loc_airport_ident
+) where loc_runway_end_id is null;

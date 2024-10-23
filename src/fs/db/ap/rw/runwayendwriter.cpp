@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,9 +47,8 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
   bind(":is_takeoff", type->isTakeoff());
   bind(":is_landing", type->isLanding());
   bind(":is_pattern", bgl::RunwayEnd::patternToStr(type->getPattern()));
-  bind(":app_light_system_type",
-       bgl::util::enumToStr(bgl::RunwayApproachLights::appLightSystemToStr,
-                            type->getApproachLights().getSystem()));
+  bind(":app_light_system_type", bgl::util::enumToStr(bgl::RunwayApproachLights::appLightSystemToStr,
+                                                      type->getApproachLights().getSystem()));
   bind(":has_end_lights", type->getApproachLights().hasEndlights());
   bind(":has_reils", type->getApproachLights().hasReils());
   bind(":has_touchdown_lights", type->getApproachLights().hasTouchdown());

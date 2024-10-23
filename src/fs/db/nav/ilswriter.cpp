@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,10 @@ void IlsWriter::writeObject(const Ils *type)
     return;
   }
 
+  QString name = type->getName().trimmed();
   bind(":ils_id", getNextId());
-  bind(":ident", type->getIdent());
-  bind(":name", type->getName());
+  bind(":ident", type->getIdent().trimmed());
+  bind(":name", name);
   bind(":region", type->getRegion());
   bind(":type", type->getType());
   bind(":frequency", type->getFrequency());
@@ -123,21 +124,39 @@ void IlsWriter::writeObject(const Ils *type)
     bindNullFloat(":gs_laty");
   }
 
-  bool isComplete = false;
-  QString apIdent = type->getAirportIdent();
-
   bindNullInt(":loc_runway_end_id");
   bindNullFloat(":loc_heading");
   bindNullFloat(":loc_width");
 
+  QString apIdent = type->getAirportIdent();
   if(!apIdent.isEmpty())
     bind(":loc_airport_ident", apIdent);
   else
     bindNullString(":loc_airport_ident");
 
+  bool isComplete = false;
   if(loc != nullptr)
   {
-    bind(":loc_runway_name", loc->getRunwayName());
+    QString locName = loc->getRunwayName().trimmed();
+
+    // Try to extract the runway number from the name if invalid ===========================
+    if(getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS && (locName.isEmpty() || locName == "0" || locName == "00"))
+    {
+      // "IGS RWY 13", "ILS 01", "ILS 32", "ILS 32R", "ILS CAT III RWY 05R", "ILS CAT III RWY 23", "ILS RW01", "ILS RW01C",
+      // "ILS RW01L", "ILS RW01R", "ILS RW36L", "ILS RW36R", "ILS RWY 05", "ILS RWY 05L", "ILS RWY 15", "ILS RWY 31", "ILS04",
+      // "ILS08L", "ILSZ22R", "ILSZ4L", "LOC RWY 33", "ils runway 06", "ils runway 24"
+      locName = name.toUpper().simplified().remove("IGS").remove("ILSZ").remove("ILSX").remove("ILSY").remove("ILS").remove("CAT").
+                remove("I").remove("II").remove("III").remove("LOC").remove("RUNWAY").remove("RWY").remove("RW").remove(' ');
+
+      if(!atools::fs::util::runwayNameValid(locName))
+        locName.clear();
+    }
+
+    if(!locName.isEmpty())
+      bind(":loc_runway_name", locName);
+    else
+      bindNullString(":loc_runway_name");
+
     bind(":loc_heading", headingTrue);
     bind(":loc_width", loc->getWidth());
   }
