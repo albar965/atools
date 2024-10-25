@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,21 +25,21 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-TaxiPath::TaxiPath(io::BinaryStream *bs, StructureType structureType)
+TaxiPath::TaxiPath(io::BinaryStream *stream, StructureType structureType)
 {
-  startPoint = bs->readShort();
-  int flags = bs->readShort();
-  endPoint = flags & 0xfff;
+  startIndex = stream->readUShort();
+  int flags = stream->readShort();
+  endIndex = flags & 0xfff; // Not MSFS
   runwayDesignator = (flags >> 12) & 0xf;
 
-  flags = bs->readUByte();
+  flags = stream->readUByte();
   type = static_cast<taxipath::Type>(flags & 0xf);
   drawSurface = flags & (1 << 5);
   drawDetail = flags & (1 << 6);
 
-  runwayNumTaxiName = bs->readUByte();
+  runwayNumTaxiName = stream->readUByte();
 
-  flags = bs->readUByte();
+  flags = stream->readUByte();
   centerline = flags & 1;
   centerlineLight = flags & 2;
   leftEdge = static_cast<taxipath::EdgeType>((flags >> 2) & 0x3);
@@ -47,28 +47,28 @@ TaxiPath::TaxiPath(io::BinaryStream *bs, StructureType structureType)
   rightEdge = static_cast<taxipath::EdgeType>((flags >> 5) & 0x3);
   rightEdgeLight = flags & (1 << 7);
 
-  surface = static_cast<Surface>(bs->readUByte() & SURFACE_MASK);
-  width = bs->readFloat();
-  bs->skip(4); // weight limit
-  bs->skip(4);
+  surface = static_cast<Surface>(stream->readUByte() & SURFACE_MASK);
+  width = stream->readFloat();
+  stream->skip(4); // weight limit
+  stream->skip(4);
 
   if(structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5)
     // Skip P3D material set GUID for seasons
-    bs->skip(16);
+    stream->skip(16);
 
   if(structureType == STRUCT_P3DV5)
-    bs->skip(4);
+    stream->skip(4);
 
   if(structureType == STRUCT_MSFS)
   {
-    bs->skip(4);
+    stream->skip(4);
 
     // UUID for taxi material {B037EA38-EDF8-4AE5-B41B-2CA423ADA3EF}
     // Raw 38EA37B0-F8ED-E54A-B41B-2CA423ADA3EF
-    materialUuid = bs->readUuid();
+    materialUuid = stream->readUuid();
 
-    bs->skip(6);
-    endPoint = bs->readShort();
+    stream->skip(6);
+    endIndex = stream->readUShort();
   }
 }
 
@@ -139,8 +139,8 @@ QDebug operator<<(QDebug out, const TaxiPath& record)
                           << ", name " << record.getName()
                           << ", left edge " << TaxiPath::edgeTypeToString(record.leftEdge)
                           << ", right edge " << TaxiPath::edgeTypeToString(record.rightEdge)
-                          << ", start pos " << record.start
-                          << ", end pos " << record.end
+                          << ", start pos " << record.startIndex << record.startPos
+                          << ", end pos " << record.endIndex << record.endPos
                           << "]";
 
   return out;

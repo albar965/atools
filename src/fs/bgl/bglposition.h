@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,11 +42,11 @@ public:
 
   /*
    * Reads position from the stream.
-   * @param bs
+   * @param stream
    * @param hasAltitude true if there is an altitude saved in the binary data
    * @param altitudeDivisor Divide altitude by this value after readings
    */
-  BglPosition(atools::io::BinaryStream *bs, bool hasAltitude = false, float altitudeDivisor = 1.f);
+  BglPosition(atools::io::BinaryStream *stream, bool hasAltitude = false, float altitudeDivisor = 1.f);
 
   float getLonX() const
   {

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,15 +25,15 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-TaxiPoint::TaxiPoint(io::BinaryStream *bs, atools::fs::bgl::StructureType structureType)
+TaxiPoint::TaxiPoint(io::BinaryStream *stream, atools::fs::bgl::StructureType structureType)
 {
-  type = static_cast<taxipoint::PointType>(bs->readUByte());
-  dir = static_cast<taxipoint::PointDir>(bs->readUByte());
-  bs->skip(2);
-  pos = BglPosition(bs);
+  type = static_cast<taxipoint::PointType>(stream->readUByte());
+  dir = static_cast<taxipoint::PointDir>(stream->readUByte());
+  stream->skip(2);
+  position = BglPosition(stream);
 
   if(structureType == STRUCT_P3DV5)
-    bs->skip(4);
+    stream->skip(4);
 }
 
 TaxiPoint::TaxiPoint()
@@ -47,7 +47,7 @@ TaxiPoint::TaxiPoint(const Parking& parkingSpot)
   // Create a taxi point from a parking spot. This does not have a BGL equivalent.
   type = taxipoint::PARKING;
   dir = taxipoint::UNKNOWN_DIR;
-  pos = parkingSpot.getPosition();
+  position = parkingSpot.getPosition();
   parking = parkingSpot;
 }
 
@@ -104,7 +104,7 @@ QDebug operator<<(QDebug out, const TaxiPoint& record)
   out.nospace().noquote() << " TaxiPoint["
                           << "type " << TaxiPoint::pointTypeToString(record.type)
                           << ", dir " << TaxiPoint::dirToString(record.dir)
-                          << ", pos " << record.pos << "]";
+                          << ", pos " << record.position << "]";
 
   return out;
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,35 +28,35 @@ namespace bgl {
 using Qt::endl;
 #endif
 
-Apron2::Apron2(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, StructureType structureType)
-  : bgl::Record(options, bs)
+Apron2::Apron2(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream, StructureType structureType)
+  : bgl::Record(options, stream)
 {
-  surface = static_cast<Surface>(bs->readUByte() & SURFACE_MASK);
+  surface = static_cast<Surface>(stream->readUByte() & SURFACE_MASK);
 
-  int flags = bs->readUByte();
+  int flags = stream->readUByte();
   drawSurface = (flags & 1) == 1;
   drawDetail = (flags & 2) == 2;
 
   if(structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5)
     // Skip P3D material set GUID for seasons
-    bs->skip(16);
+    stream->skip(16);
 
   if(structureType == STRUCT_P3DV5)
-    bs->skip(4);
+    stream->skip(4);
 
-  int numVertices = bs->readShort();
-  int numTriangles = bs->readShort();
+  int numVertices = stream->readShort();
+  int numTriangles = stream->readShort();
 
   if(options->isIncludedNavDbObject(type::GEOMETRY))
   {
     for(int i = 0; i < numVertices; i++)
-      vertices.append(BglPosition(bs));
+      vertices.append(BglPosition(stream));
 
     for(int i = 0; i < numTriangles; i++)
     {
-      triangles.append(bs->readUShort());
-      triangles.append(bs->readUShort());
-      triangles.append(bs->readUShort());
+      triangles.append(stream->readUShort());
+      triangles.append(stream->readUShort());
+      triangles.append(stream->readUShort());
     }
   }
 }

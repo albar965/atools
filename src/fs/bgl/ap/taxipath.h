@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ enum EdgeType
 class TaxiPath
 {
 public:
-  TaxiPath(atools::io::BinaryStream *bs, atools::fs::bgl::StructureType structureType);
+  TaxiPath(atools::io::BinaryStream *stream, atools::fs::bgl::StructureType structureType);
 
   /*
    * @return Taxiway name or full runway name if Type is RUNWAY
@@ -72,12 +72,12 @@ public:
 
   const atools::fs::bgl::TaxiPoint& getStartPoint() const
   {
-    return start;
+    return startPos;
   }
 
   const atools::fs::bgl::TaxiPoint& getEndPoint() const
   {
-    return end;
+    return endPos;
   }
 
   /*
@@ -142,13 +142,18 @@ public:
   static QString pathTypeToString(taxipath::Type type);
   static QString edgeTypeToString(taxipath::EdgeType type);
 
+  bool isValid() const
+  {
+    return startPos.isValid() && endPos.isValid();
+  }
+
 private:
   friend class Airport;
   friend QDebug operator<<(QDebug out, const TaxiPath& record);
 
   QString taxiName;
-  int startPoint;
-  int endPoint;
+  int startIndex;
+  int endIndex;
   int runwayDesignator;
 
   atools::fs::bgl::taxipath::Type type;
@@ -161,7 +166,7 @@ private:
   atools::fs::bgl::Surface surface;
   float width;
 
-  atools::fs::bgl::TaxiPoint start, end;
+  atools::fs::bgl::TaxiPoint startPos, endPos;
 
   bool drawSurface, drawDetail, centerline, centerlineLight, leftEdgeLight, rightEdgeLight;
   QUuid materialUuid;

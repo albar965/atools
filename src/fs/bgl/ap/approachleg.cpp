@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,39 +28,39 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
+ApproachLeg::ApproachLeg(io::BinaryStream *stream, rec::ApprRecordType recType)
 {
   missed = recType == rec::MISSED_LEGS || recType == rec::MISSED_LEGS_MSFS || recType == rec::MISSED_LEGS_MSFS_116 ||
            recType == rec::MISSED_LEGS_MSFS_118;
 
-  type = static_cast<leg::Type>(bs->readUByte());
+  type = static_cast<leg::Type>(stream->readUByte());
 
-  altDescriptor = static_cast<leg::AltDescriptor>(bs->readUByte());
-  int flags = bs->readUShort();
+  altDescriptor = static_cast<leg::AltDescriptor>(stream->readUByte());
+  int flags = stream->readUShort();
   turnDirection = static_cast<leg::TurnDirection>(flags & 0x3);
   trueCourse = flags & (1 << 8);
   time = flags & (1 << 9);
   flyover = flags & (1 << 10);
 
-  unsigned int fixFlags = bs->readUInt();
+  unsigned int fixFlags = stream->readUInt();
   fixType = static_cast<ap::fix::ApproachFixType>(fixFlags & 0xf);
   fixIdent = converter::intToIcao((fixFlags >> 5) & 0xfffffff, true);
 
-  unsigned int fixIdentFlags = bs->readUInt();
+  unsigned int fixIdentFlags = stream->readUInt();
   fixRegion = converter::intToIcao(fixIdentFlags & 0x7ff, true);
   fixAirportIdent = converter::intToIcao((fixIdentFlags >> 11) & 0x1fffff, true);
 
-  unsigned int recFixFlags = bs->readUInt();
+  unsigned int recFixFlags = stream->readUInt();
   recommendedFixType = static_cast<ap::fix::ApproachFixType>(recFixFlags & 0xf);
   recommendedFixIdent = converter::intToIcao((recFixFlags >> 5) & 0xfffffff, true);
-  recommendedFixRegion = converter::intToIcao(bs->readUInt() & 0x7ff, true);
+  recommendedFixRegion = converter::intToIcao(stream->readUInt() & 0x7ff, true);
 
-  theta = bs->readFloat(); // heading
-  rho = bs->readFloat(); // distance
-  course = bs->readFloat();
-  distOrTime = bs->readFloat();
-  altitude1 = bs->readFloat();
-  altitude2 = bs->readFloat();
+  theta = stream->readFloat(); // heading
+  rho = stream->readFloat(); // distance
+  course = stream->readFloat();
+  distOrTime = stream->readFloat();
+  altitude1 = stream->readFloat();
+  altitude2 = stream->readFloat();
 
   // Determine type by using record id =============================
   // Common MSFS records
@@ -75,9 +75,9 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
   if(msfs)
   {
     // Not type given - assuming max speed
-    speedLimit = bs->readFloat();
-    verticalAngle = bs->readFloat();
-    bs->skip(8); // unknown
+    speedLimit = stream->readFloat();
+    verticalAngle = stream->readFloat();
+    stream->skip(8); // unknown
 
     if(msfs116 || msfs118)
     {
@@ -93,20 +93,20 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
         // The recommended fix is used as the arc center navaid in the LNM database due to historical reasons
         // The original recommended fix has to be wiped out here which is not an
         // issue since this overlaps only in a dozen or so cases
-        recFixFlags = bs->readUInt();
+        recFixFlags = stream->readUInt();
         recommendedFixType = static_cast<ap::fix::ApproachFixType>(recFixFlags & 0xf);
         recommendedFixIdent = converter::intToIcao((recFixFlags >> 5) & 0xfffffff, true);
-        recommendedFixRegion = converter::intToIcao(bs->readUInt() & 0x7ff, true);
+        recommendedFixRegion = converter::intToIcao(stream->readUInt() & 0x7ff, true);
       }
       else
         // Skip center fix data
-        bs->skip(8);
+        stream->skip(8);
     }
   }
 
   if(msfs118)
     // Unknown data
-    bs->skip(4);
+    stream->skip(4);
 }
 
 QString ApproachLeg::legTypeToString(leg::Type type)

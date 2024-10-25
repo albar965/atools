@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -317,34 +317,34 @@ Parking::Parking()
 
 }
 
-Parking::Parking(BinaryStream *bs, atools::fs::bgl::StructureType structureType)
+Parking::Parking(BinaryStream *stream, atools::fs::bgl::StructureType structureType)
 {
-  unsigned int flags = bs->readUInt();
+  unsigned int flags = stream->readUInt();
   name = static_cast<ap::ParkingName>(flags & 0x3f);
   pushBack = static_cast<ap::PushBack>((flags >> 6) & 0x3);
   type = static_cast<ap::ParkingType>((flags >> 8) & 0xf);
   number = (flags >> 12) & 0xfff;
   int numAirlineCodes = (flags >> 24) & 0xff;
 
-  radius = bs->readFloat();
-  heading = bs->readFloat(); // TODO wiki heading is float degrees
+  radius = stream->readFloat();
+  heading = stream->readFloat(); // TODO wiki heading is float degrees
 
   if(structureType == STRUCT_FSX || structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5 || structureType == STRUCT_MSFS)
-    bs->skip(16); // teeOffset 1-4 not FS9
+    stream->skip(16); // teeOffset 1-4 not FS9
 
-  position = BglPosition(bs);
+  position = BglPosition(stream);
 
   for(int i = 0; i < numAirlineCodes; i++)
-    airlineCodes.append(bs->readString(4, atools::io::LATIN1));
+    airlineCodes.append(stream->readString(4, atools::io::LATIN1));
 
   // Skip material and runway stuff
   if(structureType == STRUCT_P3DV5)
-    bs->skip(4);
+    stream->skip(4);
   else if(structureType == STRUCT_MSFS)
   {
-    bs->skip(1);
-    suffix = static_cast<ap::ParkingNameSuffix>(bs->readByte());
-    bs->skip(18);
+    stream->skip(1);
+    suffix = static_cast<ap::ParkingNameSuffix>(stream->readByte());
+    stream->skip(18);
   }
 }
 

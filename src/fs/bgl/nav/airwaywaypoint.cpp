@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,12 +55,12 @@ AirwayWaypoint::AirwayWaypoint(const Waypoint& waypoint)
   }
 }
 
-AirwayWaypoint::AirwayWaypoint(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs)
-  : BglBase(options, bs)
+AirwayWaypoint::AirwayWaypoint(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream)
+  : BglBase(options, stream)
 {
-  unsigned int nextFlags = bs->readUInt();
-  unsigned int nextIdFlags = bs->readUInt();
-  minimumAltitude = bs->readFloat();
+  unsigned int nextFlags = stream->readUInt();
+  unsigned int nextIdFlags = stream->readUInt();
+  minimumAltitude = stream->readFloat();
 
   type = static_cast<nav::AirwayWaypointType>(nextFlags & 0x7);
   ident = converter::intToIcao((nextFlags >> 5) & 0x7ffffff, true);

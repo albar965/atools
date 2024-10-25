@@ -149,7 +149,7 @@ class Parking
 {
 public:
   Parking();
-  Parking(atools::io::BinaryStream *bs, atools::fs::bgl::StructureType structureType);
+  Parking(atools::io::BinaryStream *stream, atools::fs::bgl::StructureType structureType);
 
   /*
    * @return true if parking is a gate
@@ -245,6 +245,11 @@ public:
   static QString parkingNameToStr(atools::fs::bgl::ap::ParkingName type);
   static QString pushBackToStr(atools::fs::bgl::ap::PushBack type);
   static QString parkingSuffixToStr(atools::fs::bgl::ap::ParkingNameSuffix type);
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Parking& record);

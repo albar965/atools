@@ -55,11 +55,9 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Namelist& record);
 
+  void readList(QStringList& names, atools::io::BinaryStream *bs, int numRegionNames, int regionListOffset, atools::io::Encoding encoding);
+
   QList<atools::fs::bgl::NamelistEntry> entries;
-
-  void readList(QStringList& names, atools::io::BinaryStream *bs, int numRegionNames, int regionListOffset,
-                atools::io::Encoding encoding);
-
 };
 
 } // namespace bgl

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,32 +30,32 @@ using Qt::dec;
 using Qt::endl;
 #endif
 
-Apron::Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
+Apron::Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream,
              atools::fs::bgl::rec::AirportRecordType type)
-  : bgl::Record(options, bs)
+  : bgl::Record(options, stream)
 {
-  surface = static_cast<Surface>(bs->readUByte() & SURFACE_MASK);
+  surface = static_cast<Surface>(stream->readUByte() & SURFACE_MASK);
 
   if(options->getSimulatorType() == atools::fs::FsPaths::MSFS)
   {
-    bs->skip(5);
-    materialUuid = bs->readUuid();
-    bs->skip(16);
+    stream->skip(5);
+    materialUuid = stream->readUuid();
+    stream->skip(16);
   }
 
   if(type == rec::APRON_FIRST_P3D_V5)
-    bs->skip(21);
+    stream->skip(21);
 
   if(type == rec::APRON_FIRST_MSFS_NEW)
-    bs->skip(4);
+    stream->skip(4);
 
-  int numVertices = bs->readShort();
+  int numVertices = stream->readShort();
   if(options->getSimulatorType() == atools::fs::FsPaths::MSFS)
-    bs->skip(2);
+    stream->skip(2);
 
   if(options->isIncludedNavDbObject(type::GEOMETRY))
     for(int i = 0; i < numVertices; i++)
-      vertices.append(BglPosition(bs));
+      vertices.append(BglPosition(stream));
 }
 
 Apron::~Apron()

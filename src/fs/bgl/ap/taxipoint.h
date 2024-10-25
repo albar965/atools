@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ class TaxiPoint
 {
 public:
   TaxiPoint();
-  TaxiPoint(atools::io::BinaryStream *bs, atools::fs::bgl::StructureType structureType);
+  TaxiPoint(atools::io::BinaryStream *stream, atools::fs::bgl::StructureType structureType);
   TaxiPoint(const atools::fs::bgl::Parking& parking);
 
   atools::fs::bgl::taxipoint::PointType getType() const
@@ -82,7 +82,7 @@ public:
 
   const atools::fs::bgl::BglPosition& getPosition() const
   {
-    return pos;
+    return position;
   }
 
   /*
@@ -96,12 +96,17 @@ public:
   static QString pointTypeToString(atools::fs::bgl::taxipoint::PointType type);
   static QString dirToString(atools::fs::bgl::taxipoint::PointDir dir);
 
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const TaxiPoint& record);
 
   atools::fs::bgl::taxipoint::PointType type = atools::fs::bgl::taxipoint::UNKNOWN;
   atools::fs::bgl::taxipoint::PointDir dir = atools::fs::bgl::taxipoint::UNKNOWN_DIR;
-  atools::fs::bgl::BglPosition pos;
+  atools::fs::bgl::BglPosition position;
   atools::fs::bgl::Parking parking;
 };
 

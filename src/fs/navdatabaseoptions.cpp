@@ -459,12 +459,6 @@ QString type::navDbObjectTypeToString(type::NavDbObjectType type)
     case TAXIWAY:
       return "TAXIWAY";
 
-    case TAXIWAY_RUNWAY:
-      return "TAXIWAY_RUNWAY";
-
-    case VEHICLE:
-      return "VEHICLE";
-
     case GEOMETRY:
       return "GEOMETRY";
 
@@ -510,10 +504,6 @@ type::NavDbObjectType type::stringToNavDbObjectType(const QString& typeStr)
     return APRON2;
   else if(typeStr == "TAXIWAY")
     return TAXIWAY;
-  else if(typeStr == "VEHICLE")
-    return VEHICLE;
-  else if(typeStr == "TAXIWAY_RUNWAY")
-    return TAXIWAY_RUNWAY;
   else if(typeStr == "AIRWAY")
     return AIRWAY;
   else if(typeStr == "GEOMETRY")

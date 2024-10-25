@@ -59,8 +59,6 @@ enum NavDbObjectType
   APRON, /* apron and its vertices */
   APRON2, /* apron and its vertices2 lists */
   TAXIWAY,
-  VEHICLE, /* taxiway and parking for airport vehicles */
-  TAXIWAY_RUNWAY, /* taxiway across runways */
   AIRWAY, /* all airway route processing */
   GEOMETRY /* apron geometry */
 };

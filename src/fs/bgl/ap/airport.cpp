@@ -216,12 +216,16 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
           int numParkings = stream->readUShort();
           for(int i = 0; i < numParkings; i++)
           {
-            Parking p(stream, structType);
+            Parking parking(stream, structType);
+
+#ifdef DEBUG_INFORMATION_TAXI
+            if(!parking.isValid())
+              qWarning() << Q_FUNC_INFO << "Invalid parking point #" << i << ident;
+#endif
 
             // Remove vehicle parking later to avoid index mess-up
-
-            parkings.append(p);
-            parkingNumberIndex.insert({p.getNumber(), p.getName()}, parkings.size() - 1);
+            parkings.append(parking);
+            parkingNumberIndex.insert({parking.getNumber(), parking.getName()}, parkings.size() - 1);
           }
         }
         break;
@@ -253,7 +257,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
           if(wp.isValid())
             waypoints.append(wp);
           else
-            qWarning() << "Found invalid record: " << wp.getObjectName();
+            qWarning() << Q_FUNC_INFO << "Found invalid record: " << wp.getObjectName();
         }
         break;
 
@@ -337,16 +341,12 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
           int numPaths = stream->readUShort();
           for(int i = 0; i < numPaths; i++)
           {
-
             TaxiPath path(stream, structType);
+            taxipath::Type pathType = path.getType();
 
-            if((path.getType() == atools::fs::bgl::taxipath::RUNWAY &&
-                !options->isIncludedNavDbObject(type::TAXIWAY_RUNWAY)) ||
-               (path.getType() == atools::fs::bgl::taxipath::VEHICLE &&
-                !options->isIncludedNavDbObject(type::VEHICLE)))
-              continue;
-
-            taxipaths.append(path);
+            if(pathType == atools::fs::bgl::taxipath::TAXI || pathType == atools::fs::bgl::taxipath::PATH ||
+               pathType == atools::fs::bgl::taxipath::PARKING)
+              taxipaths.append(path);
           }
         }
         break;
@@ -357,7 +357,15 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
         {
           int numPoints = stream->readUShort();
           for(int i = 0; i < numPoints; i++)
-            taxipoints.append(TaxiPoint(stream, type == rec::TAXI_POINT_P3DV5 ? STRUCT_P3DV5 : STRUCT_FSX));
+          {
+            TaxiPoint taxiPoint(stream, type == rec::TAXI_POINT_P3DV5 ? STRUCT_P3DV5 : STRUCT_FSX);
+
+#ifdef DEBUG_INFORMATION_TAXI
+            if(!taxiPoint.isValid())
+              qWarning() << Q_FUNC_INFO << "Invalid taxi point #" << i << ident;
+#endif
+            taxipoints.append(taxiPoint);
+          }
         }
         break;
 
@@ -385,7 +393,6 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
       case rec::DELETE_AIRPORT_NAVIGATION:
       case rec::MSFS_AIRPORT_PROJECTED_MESH:
       case rec::MSFS_AIRPORT_GROUND_MERGING_TRANSFER:
-
       case rec::MSFS_AIRPORT_UNKNOWN_0058:
       case rec::MSFS_AIRPORT_UNKNOWN_0059:
         break;
@@ -402,7 +409,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
 
         if(subrecordIndex == 0)
         {
-          qWarning().nospace().noquote() << "Ignoring airport. Unexpected initial record type in Airport record 0x"
+          qWarning().nospace().noquote() << Q_FUNC_INFO << "Ignoring airport. Unexpected initial record type in Airport record 0x"
                                          << hex << type << dec << getObjectName();
 
           // Stop reading when the first subrecord is already invalid
@@ -430,8 +437,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
   // Set the jetway flag on parking
   updateParking(jetways, parkingNumberIndex);
 
-  if(!options->isIncludedNavDbObject(type::VEHICLE))
-    removeVehicleParking();
+  removeVehicleParking();
 
   // Update all the number fields and the bounding rectangle
   updateSummaryFields();
@@ -441,7 +447,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
     deleteAirports.append(DeleteAirport(del::APPROACHES | del::COMS));
 
   if(deleteAirports.size() > 1)
-    qWarning() << "Found more than one delete record in" << getObjectName();
+    qWarning() << Q_FUNC_INFO << "Found more than one delete record in" << getObjectName();
 
   // Print warnings for any invalid procedure legs =========================
   for(const Approach& app : qAsConst(approaches))
@@ -567,7 +573,7 @@ void Airport::reportFarCoordinate(const atools::geo::Pos& pos, const QString& te
   {
     float dist = atools::geo::meterToNm(position.getPos().distanceMeterTo(pos));
     if(dist > 10.f)
-      qWarning() << "Airport" << ident << "at" << position.getPos()
+      qWarning() << Q_FUNC_INFO << "Airport" << ident << "at" << position.getPos()
                  << "has far" << text << "coordinate" << pos << "at" << dist << "NM";
   }
 }
@@ -741,14 +747,14 @@ void Airport::updateParking(const QList<atools::fs::bgl::Jetway>& jetways,
     if(index != -1 && index < parkings.size())
     {
       if(parkings.at(index).jetway)
-        qWarning().nospace().noquote() << "Parking for jetway " << jw << " already set" << dec
+        qWarning().nospace().noquote() << Q_FUNC_INFO << "Parking for jetway " << jw << " already set" << dec
                                        << " for parking " << parkings.at(index)
                                        << " for ident " << ident;
       else
         parkings[index].jetway = true;
     }
     else
-      qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << dec
+      qWarning().nospace().noquote() << Q_FUNC_INFO << "Parking for jetway " << jw << " not found" << dec
                                      << " for ident " << ident;
   }
 }
@@ -789,58 +795,80 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
     switch(taxiPath.type)
     {
       case atools::fs::bgl::taxipath::UNKNOWN:
-        break;
-      case atools::fs::bgl::taxipath::PATH:
       case atools::fs::bgl::taxipath::CLOSED:
-      case atools::fs::bgl::taxipath::TAXI:
       case atools::fs::bgl::taxipath::VEHICLE:
-        if(inRange(taxinames, taxiPath.runwayNumTaxiName) && inRange(taxipoints, taxiPath.startPoint) &&
-           inRange(taxipoints, taxiPath.endPoint))
-        {
+      case atools::fs::bgl::taxipath::RUNWAY:
+        break;
+
+      case atools::fs::bgl::taxipath::PATH:
+      case atools::fs::bgl::taxipath::TAXI:
+        if(inRange(taxinames, taxiPath.runwayNumTaxiName))
           taxiPath.taxiName = taxinames.at(taxiPath.runwayNumTaxiName);
-          taxiPath.start = taxipoints.at(taxiPath.startPoint);
-          taxiPath.end = taxipoints.at(taxiPath.endPoint);
+        else
+#ifndef DEBUG_INFORMATION
+        if(!msfs)
+#endif
+          qWarning() << Q_FUNC_INFO << "One or more taxiway name indexes out of bounds in" << ident
+                     << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
+
+        if(inRange(taxipoints, taxiPath.startIndex) && inRange(taxipoints, taxiPath.endIndex))
+        {
+          taxiPath.startPos = taxipoints.at(taxiPath.startIndex);
+          taxiPath.endPos = taxipoints.at(taxiPath.endIndex);
         }
-        else if(!msfs)
-          qWarning() << "One or more taxiway indexes out of bounds in" << ident
+        else
+#ifndef DEBUG_INFORMATION
+        if(!msfs)
+#endif
+          qWarning() << Q_FUNC_INFO << "One or more taxiway indexes out of bounds in" << ident
                      << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
         break; // avoid fallthrough warning
 
-      case atools::fs::bgl::taxipath::RUNWAY:
-        if(inRange(taxipoints, taxiPath.startPoint) && inRange(taxipoints, taxiPath.endPoint))
+      case atools::fs::bgl::taxipath::PARKING:
+        if(inRange(taxinames, taxiPath.runwayNumTaxiName))
+          taxiPath.taxiName = taxinames.at(taxiPath.runwayNumTaxiName);
+        else
+#ifndef DEBUG_INFORMATION
+        if(!msfs)
+#endif
+          qWarning() << Q_FUNC_INFO << "One or more taxiway name indexes out of bounds in" << ident
+                     << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
+
+        if(inRange(taxipoints, taxiPath.startIndex) && inRange(parkings, taxiPath.endIndex))
         {
-          taxiPath.start = taxipoints.at(taxiPath.startPoint);
-          taxiPath.end = taxipoints.at(taxiPath.endPoint);
+          taxiPath.startPos = taxipoints.at(taxiPath.startIndex);
+          taxiPath.endPos = TaxiPoint(parkings.at(taxiPath.endIndex));
         }
         else
-          qWarning() << "One or more taxiway indexes out of bounds in" << ident
-                     << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
-        break;
-      case atools::fs::bgl::taxipath::PARKING:
-        if(inRange(taxinames, taxiPath.runwayNumTaxiName) && inRange(taxipoints, taxiPath.startPoint) &&
-           inRange(parkings, taxiPath.endPoint))
-        {
-          taxiPath.taxiName = taxinames.at(taxiPath.runwayNumTaxiName);
-          taxiPath.start = taxipoints.at(taxiPath.startPoint);
-          taxiPath.end = TaxiPoint(parkings.at(taxiPath.endPoint));
-        }
-        else if(!msfs)
-          qWarning() << "One or more taxiway indexes out of bounds in" << ident
+#ifndef DEBUG_INFORMATION
+        if(!msfs)
+#endif
+          qWarning() << Q_FUNC_INFO << "One or more taxiway indexes out of bounds in" << ident
                      << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
         break;
     }
   }
 
-  // Remove all paths that remain invalid because of wrong indexes
-  QList<TaxiPath>::iterator it = std::remove_if(taxipaths.begin(), taxipaths.end(),
-                                                [](const TaxiPath& p) -> bool
-        {
-          return !p.getStartPoint().getPosition().isValid() ||
-                 !p.getEndPoint().getPosition().isValid();
-        });
+#ifdef DEBUG_INFORMATION_TAXI
+  int num = taxipaths.size();
 
-  if(it != taxipaths.end())
-    taxipaths.erase(it, taxipaths.end());
+  for(int i = 0; i < taxipaths.size(); i++)
+  {
+    const TaxiPath& path = taxipaths.at(i);
+    if(!path.isValid())
+      qWarning() << Q_FUNC_INFO << "Invalid path #" << i << "path" << path;
+  }
+#endif
+  // Remove all paths that remain invalid because of wrong indexes
+  taxipaths.erase(std::remove_if(taxipaths.begin(), taxipaths.end(), [](const TaxiPath& path) -> bool {
+          return !path.isValid();
+        }), taxipaths.end());
+
+#ifdef DEBUG_INFORMATION_TAXI
+  if(num != taxipaths.size())
+    qWarning() << Q_FUNC_INFO << "Removed" << (num - taxipaths.size()) << "Taxipaths";
+#endif
+
 }
 
 QDebug operator<<(QDebug out, const Airport& record)
