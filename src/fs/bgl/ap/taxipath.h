@@ -152,14 +152,9 @@ private:
   friend QDebug operator<<(QDebug out, const TaxiPath& record);
 
   QString taxiName;
-  int startIndex;
-  int endIndex;
-  int runwayDesignator;
+  int startIndex, endIndex, runwayDesignator, nameIndex;
 
   atools::fs::bgl::taxipath::Type type;
-
-  int runwayNumTaxiName;
-
   atools::fs::bgl::taxipath::EdgeType leftEdge;
   atools::fs::bgl::taxipath::EdgeType rightEdge;
 

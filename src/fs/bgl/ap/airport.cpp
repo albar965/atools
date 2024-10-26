@@ -790,6 +790,7 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
 {
   using atools::inRange;
 
+  // Assign names ========================================================
   for(TaxiPath& taxiPath : taxipaths)
   {
     switch(taxiPath.type)
@@ -802,73 +803,64 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
 
       case atools::fs::bgl::taxipath::PATH:
       case atools::fs::bgl::taxipath::TAXI:
-        if(inRange(taxinames, taxiPath.runwayNumTaxiName))
-          taxiPath.taxiName = taxinames.at(taxiPath.runwayNumTaxiName);
+      case atools::fs::bgl::taxipath::PARKING:
+        if(inRange(taxinames, taxiPath.nameIndex))
+          taxiPath.taxiName = taxinames.at(taxiPath.nameIndex);
         else
 #ifndef DEBUG_INFORMATION
         if(!msfs)
 #endif
-          qWarning() << Q_FUNC_INFO << "One or more taxiway name indexes out of bounds in" << ident
-                     << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
+          qWarning() << Q_FUNC_INFO << "Taxiway name index out of bounds in" << ident
+                     << "path" << taxiPath << "taxinames.size()" << taxinames.size();
+        break;
+    }
+  }
 
+  // Assign start and end positions ========================================================
+  for(TaxiPath& taxiPath : taxipaths)
+  {
+    switch(taxiPath.type)
+    {
+      case atools::fs::bgl::taxipath::UNKNOWN:
+      case atools::fs::bgl::taxipath::CLOSED:
+      case atools::fs::bgl::taxipath::VEHICLE:
+      case atools::fs::bgl::taxipath::RUNWAY:
+        break;
+
+      case atools::fs::bgl::taxipath::PATH:
+      case atools::fs::bgl::taxipath::TAXI:
         if(inRange(taxipoints, taxiPath.startIndex) && inRange(taxipoints, taxiPath.endIndex))
         {
           taxiPath.startPos = taxipoints.at(taxiPath.startIndex);
           taxiPath.endPos = taxipoints.at(taxiPath.endIndex);
         }
-        else
-#ifndef DEBUG_INFORMATION
-        if(!msfs)
-#endif
-          qWarning() << Q_FUNC_INFO << "One or more taxiway indexes out of bounds in" << ident
-                     << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
-        break; // avoid fallthrough warning
+        break;
 
       case atools::fs::bgl::taxipath::PARKING:
-        if(inRange(taxinames, taxiPath.runwayNumTaxiName))
-          taxiPath.taxiName = taxinames.at(taxiPath.runwayNumTaxiName);
-        else
-#ifndef DEBUG_INFORMATION
-        if(!msfs)
-#endif
-          qWarning() << Q_FUNC_INFO << "One or more taxiway name indexes out of bounds in" << ident
-                     << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
-
         if(inRange(taxipoints, taxiPath.startIndex) && inRange(parkings, taxiPath.endIndex))
         {
           taxiPath.startPos = taxipoints.at(taxiPath.startIndex);
           taxiPath.endPos = TaxiPoint(parkings.at(taxiPath.endIndex));
         }
-        else
-#ifndef DEBUG_INFORMATION
-        if(!msfs)
-#endif
-          qWarning() << Q_FUNC_INFO << "One or more taxiway indexes out of bounds in" << ident
-                     << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
         break;
     }
   }
 
-#ifdef DEBUG_INFORMATION_TAXI
-  int num = taxipaths.size();
-
-  for(int i = 0; i < taxipaths.size(); i++)
+  for(int i = 0; i < taxipaths.mid(0, 50).size(); i++)
   {
     const TaxiPath& path = taxipaths.at(i);
     if(!path.isValid())
-      qWarning() << Q_FUNC_INFO << "Invalid path #" << i << "path" << path;
+      qWarning() << Q_FUNC_INFO << "Invalid taxi path in" << ident << "#" << i << "path" << path;
   }
-#endif
+
   // Remove all paths that remain invalid because of wrong indexes
+  int num = taxipaths.size();
   taxipaths.erase(std::remove_if(taxipaths.begin(), taxipaths.end(), [](const TaxiPath& path) -> bool {
           return !path.isValid();
         }), taxipaths.end());
 
-#ifdef DEBUG_INFORMATION_TAXI
   if(num != taxipaths.size())
-    qWarning() << Q_FUNC_INFO << "Removed" << (num - taxipaths.size()) << "Taxipaths";
-#endif
-
+    qWarning() << Q_FUNC_INFO << "Removed" << (num - taxipaths.size()) << "invalid taxipaths showing max 50 invalid";
 }
 
 QDebug operator<<(QDebug out, const Airport& record)

@@ -37,7 +37,7 @@ TaxiPath::TaxiPath(io::BinaryStream *stream, StructureType structureType)
   drawSurface = flags & (1 << 5);
   drawDetail = flags & (1 << 6);
 
-  runwayNumTaxiName = stream->readUByte();
+  nameIndex = stream->readUByte();
 
   flags = stream->readUByte();
   centerline = flags & 1;
@@ -75,7 +75,7 @@ TaxiPath::TaxiPath(io::BinaryStream *stream, StructureType structureType)
 QString TaxiPath::getName() const
 {
   if(type == taxipath::RUNWAY)
-    return converter::runwayToStr(runwayNumTaxiName, runwayDesignator);
+    return converter::runwayToStr(nameIndex, runwayDesignator);
   else
     return taxiName;
 }
@@ -136,11 +136,10 @@ QDebug operator<<(QDebug out, const TaxiPath& record)
   out.nospace().noquote() << " TaxiPath["
                           << "type " << TaxiPath::pathTypeToString(record.type)
                           << ", surface " << surface::surfaceToDbStr(record.surface)
+                          << ", start " << record.startIndex << record.startPos
+                          << ", end " << record.endIndex << record.endPos
+                          << ", nameIndex " << record.nameIndex
                           << ", name " << record.getName()
-                          << ", left edge " << TaxiPath::edgeTypeToString(record.leftEdge)
-                          << ", right edge " << TaxiPath::edgeTypeToString(record.rightEdge)
-                          << ", start pos " << record.startIndex << record.startPos
-                          << ", end pos " << record.endIndex << record.endPos
                           << "]";
 
   return out;
