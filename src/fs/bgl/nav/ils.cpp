@@ -103,7 +103,7 @@ Ils::Ils(const NavDatabaseOptions *options, BinaryStream *stream)
         dme = new Dme(options, stream);
         break;
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in ILS record 0x"
+        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in ILS record 0x"
                                        << hex << t << dec << " for ident " << ident;
     }
     r.seekToEnd();

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,9 @@ enum AirportRecordType
   MSFS_APPROACH_NEW = 0x00fa,
 
   MSFS_AIRPORT_UNKNOWN_0058 = 0x0058,
-  MSFS_AIRPORT_UNKNOWN_0059 = 0x0059
+  MSFS_AIRPORT_UNKNOWN_0059 = 0x0059,
+  MSFS_AIRPORT_UNKNOWN_005A = 0x005a,
+  MSFS_AIRPORT_UNKNOWN_005B = 0x005b
 };
 
 QString airportRecordTypeStr(AirportRecordType type);

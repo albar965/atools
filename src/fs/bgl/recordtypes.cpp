@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -75,17 +75,11 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
 {
   switch(type)
   {
-    case atools::fs::bgl::rec::APRON_FIRST_MSFS_NEW:
+    case rec::APRON_FIRST_MSFS_NEW:
       return "APRON_FIRST_MSFS_NEW";
 
-    case atools::fs::bgl::rec::MSFS_APPROACH_NEW:
+    case rec::MSFS_APPROACH_NEW:
       return "MSFS_APPROACH_NEW";
-
-    case atools::fs::bgl::rec::MSFS_AIRPORT_UNKNOWN_0058:
-      return "MSFS_AIRPORT_UNKNOWN_0058";
-
-    case atools::fs::bgl::rec::MSFS_AIRPORT_UNKNOWN_0059:
-      return "MSFS_AIRPORT_UNKNOWN_0059";
 
     case rec::MSFS_AIRPORT_PROJECTED_MESH:
       return "MSFS_AIRPORT_PROJECTED_MESH";
@@ -221,6 +215,18 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
 
     case rec::TAXI_PATH_MSFS:
       return "TAXI_PATH_MSFS";
+
+    case rec::MSFS_AIRPORT_UNKNOWN_0058:
+      return "MSFS_AIRPORT_UNKNOWN_0058";
+
+    case rec::MSFS_AIRPORT_UNKNOWN_0059:
+      return "MSFS_AIRPORT_UNKNOWN_0059";
+
+    case rec::MSFS_AIRPORT_UNKNOWN_005A:
+      return "MSFS_AIRPORT_UNKNOWN_005A";
+
+    case rec::MSFS_AIRPORT_UNKNOWN_005B:
+      return "MSFS_AIRPORT_UNKNOWN_005B";
   }
   // qWarning().nospace().noquote() << "Invalid airport record type " << type;
   return "INVALID";
@@ -232,8 +238,6 @@ bool airportRecordTypeValid(rec::AirportRecordType type)
   {
     case rec::APRON_FIRST_MSFS_NEW:
     case rec::MSFS_APPROACH_NEW:
-    case rec::MSFS_AIRPORT_UNKNOWN_0058:
-    case rec::MSFS_AIRPORT_UNKNOWN_0059:
 
     case rec::DELETE_AIRPORT_NAVIGATION:
     case rec::MSFS_AIRPORT_PAINTED_LINE:
@@ -287,6 +291,10 @@ bool airportRecordTypeValid(rec::AirportRecordType type)
 
     // Unknown records to silence warnings
     case rec::AIRPORT_UNKNOWN_003B:
+    case rec::MSFS_AIRPORT_UNKNOWN_0058:
+    case rec::MSFS_AIRPORT_UNKNOWN_0059:
+    case rec::MSFS_AIRPORT_UNKNOWN_005A:
+    case rec::MSFS_AIRPORT_UNKNOWN_005B:
       return true;
   }
   return false;

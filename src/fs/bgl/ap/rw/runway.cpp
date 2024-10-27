@@ -249,10 +249,6 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *stream, const QS
         break;
 
       default:
-#ifndef DEBUG_INFORMATION
-        // Log unknown types only for other simulators than MSFS since this one comes up with  surprises
-        if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
-#endif
         qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in Runway record 0x"
                                        << hex << t << dec
                                        << " for ident " << airportIdent

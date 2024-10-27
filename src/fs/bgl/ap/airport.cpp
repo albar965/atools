@@ -395,21 +395,18 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
       case rec::MSFS_AIRPORT_GROUND_MERGING_TRANSFER:
       case rec::MSFS_AIRPORT_UNKNOWN_0058:
       case rec::MSFS_AIRPORT_UNKNOWN_0059:
+      case rec::MSFS_AIRPORT_UNKNOWN_005A:
+      case rec::MSFS_AIRPORT_UNKNOWN_005B:
         break;
 
       default:
-
-#ifndef DEBUG_INFORMATION
-        // Log unknown types only for other simulators than MSFS since this one comes up with  surprises
-        if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
-#endif
         qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type in airport record for " << ident
                                        << hex << " 0x" << r.getId()
                                        << dec << " " << airportRecordTypeStr(type) << " offset " << stream->tellg();
 
         if(subrecordIndex == 0)
         {
-          qWarning().nospace().noquote() << Q_FUNC_INFO << "Ignoring airport. Unexpected initial record type in Airport record 0x"
+          qWarning().nospace().noquote() << Q_FUNC_INFO << " Ignoring airport. Unexpected initial record type in Airport record 0x"
                                          << hex << type << dec << getObjectName();
 
           // Stop reading when the first subrecord is already invalid
@@ -807,9 +804,6 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
         if(inRange(taxinames, taxiPath.nameIndex))
           taxiPath.taxiName = taxinames.at(taxiPath.nameIndex);
         else
-#ifndef DEBUG_INFORMATION
-        if(!msfs)
-#endif
           qWarning() << Q_FUNC_INFO << "Taxiway name index out of bounds in" << ident
                      << "path" << taxiPath << "taxinames.size()" << taxinames.size();
         break;
@@ -850,7 +844,7 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
   {
     const TaxiPath& path = taxipaths.at(i);
     if(!path.isValid())
-      qWarning() << Q_FUNC_INFO << "Invalid taxi path in" << ident << "#" << i << "path" << path;
+      qWarning() << Q_FUNC_INFO << "Invalid taxi path in" << ident << "#" << i << "of" << taxipaths.size() << "path" << path;
   }
 
   // Remove all paths that remain invalid because of wrong indexes

@@ -85,7 +85,7 @@ Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *stream)
         name = stream->readString(r.getSize() - Record::SIZE, encoding);
         break;
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in NDB record 0x"
+        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in NDB record 0x"
                                        << hex << t << dec << " for ident " << ident;
     }
     r.seekToEnd();
