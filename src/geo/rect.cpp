@@ -109,6 +109,7 @@ Rect::Rect(const Pos& center, float radiusMeter, bool fast)
 
   topLeft = Pos(west, north);
   bottomRight = Pos(east, south);
+
   normalize();
 }
 
@@ -386,6 +387,14 @@ Rect& Rect::normalize()
 {
   topLeft.normalize();
   bottomRight.normalize();
+
+  // Correct overflow due to normalization which can result in -180 to -180
+  if(atools::almostEqual(std::abs(topLeft.getLonX()), 180.f) && atools::almostEqual(std::abs(bottomRight.getLonX()), 180.f))
+  {
+    topLeft.setLonX(-180.f); // West
+    bottomRight.setLonX(180.f); // East
+  }
+
   return *this;
 }
 
