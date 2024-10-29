@@ -4,6 +4,23 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
+# Version 4.0.13
+
+* Better error reporting and validation in log file for invalid taxiway structures in MSFS.
+  albar965/littlenavmap#1200
+* Work on BGL compiler. Removed compiler filters TAXIWAY_RUNWAY and VEHICLE which are now omitted
+  by default.
+* Fixed issue where ILS were missing for MSFS. Examples EGPH using ILS approach with an add-on
+  airport and EDDF double ILS approach like 25R.
+* Fixed broken airway collection for X-Plane. Example: Airway W66 not found for
+  `ZUCK ATBUG W66 JNQ  ZWWW`. albar965/littlenavmap#1197
+* Airport exclude configuration did not work for X-Plane 12 in navdatacompiler.
+* Fixed issue where last airway in scenery library was missed adding to the database. This affected
+  all simulators except the DFD compiler.
+* Fixed issues with incorrect rectangle bounds when creating from position and radius.
+
+===============================================================================
+
 # Version 4.0.12
 
 Release for *Little Navmap*.
