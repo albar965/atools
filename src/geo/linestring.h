@@ -180,6 +180,11 @@ public:
     return !isEmpty();
   }
 
+  bool isValidPolygon() const
+  {
+    return size() > 2;
+  }
+
   /* true if all points are valid. O(n) runtime. */
   bool hasAllValidPoints() const;
 

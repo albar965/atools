@@ -1174,7 +1174,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
 
     // Value -1: not applicable / not set
     circleRadius = atcRadius.value(facilityType, -1);
-    if(circleRadius == -1)
+    if(circleRadius == -1 && visualRange > 0)
       circleRadius = visualRange;
 
     insertQuery->bindValue(":type", boundaryType);
@@ -1281,10 +1281,10 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
       if(geometryCallback)
       {
         // Try to get from callback (i.e. user airspace database)
-        const LineString *ptr = geometryCallback(callsign, facilityType);
-        if(ptr != nullptr)
-          // Copy cache object
-          lineString = *ptr;
+        const LineString *ls = geometryCallback(callsign, facilityType);
+        if(ls != nullptr && ls->isValidPolygon())
+          // Copy cache object if valid
+          lineString = *ls;
       }
 
       if(lineString.isEmpty())
