@@ -103,13 +103,13 @@ void XpAirportMsaReader::read(const QStringList& line, const XpReaderContext& co
   QString navIdent = at(line, IDENT);
 
   // Bail out if airport does not exist which happes too often to report
-  int airportId = airportIndex->getAirportId(airportIdent);
+  int airportId = airportIndex->getAirportId(airportIdent, false /* allIdents */);
   if(airportId == -1)
     // qWarning() << context.messagePrefix() << airportIdent << "Airport not found";
     return;
 
   // Airport center position
-  Pos airportPos = airportIndex->getAirportPos(airportIdent);
+  Pos airportPos = airportIndex->getAirportPos(airportIdent, false /* allIdents */);
 
   QString region = at(line, REGION);
 
@@ -154,13 +154,13 @@ void XpAirportMsaReader::read(const QStringList& line, const XpReaderContext& co
       break;
 
     case MSA_RW_END:
-      navId = airportIndex->getRunwayEndId(airportIdent, navIdent);
+      navId = airportIndex->getRunwayEndId(airportIdent, navIdent, false /* allAirportIdents */);
       if(navId == -1)
       {
         // Runway end not found - try variants lile 11C and 13C for a 12C
         for(const QString& rw : atools::fs::util::runwayNameVariants(navIdent))
         {
-          navId = airportIndex->getRunwayEndId(airportIdent, rw);
+          navId = airportIndex->getRunwayEndId(airportIdent, rw, false /* allAirportIdents */);
           if(navId != -1)
           {
             // Found runway end - replace name with variant
@@ -170,7 +170,7 @@ void XpAirportMsaReader::read(const QStringList& line, const XpReaderContext& co
         }
       }
 
-      center = airportIndex->getRunwayEndPos(airportIdent, navIdent);
+      center = airportIndex->getRunwayEndPos(airportIdent, navIdent, false /* allAirportIdents */);
       magvar = context.magDecReader->getMagVar(airportPos);
       navType = "R";
       break;

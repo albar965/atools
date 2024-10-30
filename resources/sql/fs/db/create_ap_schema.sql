@@ -343,12 +343,13 @@ drop table if exists approach;
 create table approach
 (
   approach_id integer primary key,
-  airport_id integer not null,
+  airport_id integer,
   runway_end_id integer,            -- Runway end id - can be null if the approach allows circling
   arinc_name varchar(6),            -- ARINC 424.18+, section 5.10 (APPRAOCH IDENT).
                                     -- Examples: I26L, B08R, R29 for approaches or
                                     -- runway identifier 5.11 (TRANS IDENT) for SID and STAR or "ALL"
-  airport_ident varchar(4),
+  airport_ident varchar(4),         -- This is the original X-Plane CIFP airport ident which might not match the
+                                    -- ident for the given airport by airport_id. May be ICAO, FAA or local code.
   runway_name varchar(10),          -- Runway name if procedure can be assigned to one single runway
   type varchar(25) not null,        -- see enum atools::fs::bgl::ap::ApproachType
   suffix varchar(1),                -- Approach suffix - indicates SID/STAR for P3D

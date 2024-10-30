@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -179,7 +179,7 @@ void DfdCompiler::writeAirports()
     airportWriteQuery->bindValue(":airport_id", ++curAirportId);
 
     // Add ident to id mapping
-    airportIndex->addAirportId(ident, curAirportId, pos);
+    airportIndex->addAirportId(ident, QString(), QString(), QString(), curAirportId, pos);
 
     airportWriteQuery->bindValue(":file_id", FILE_ID);
     airportWriteQuery->bindValue(":ident", ident);
@@ -333,7 +333,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
 
     // Write runway =======================================
     runwayWriteQuery->bindValue(":runway_id", ++curRunwayId);
-    runwayWriteQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(apt));
+    runwayWriteQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(apt, false /* allIdents */));
     runwayWriteQuery->bindValue(":primary_end_id", primaryEndId);
     runwayWriteQuery->bindValue(":secondary_end_id", secondaryEndId);
     runwayWriteQuery->bindValue(":length", length);
@@ -421,7 +421,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
   }
 
   // Update airport information
-  airportUpdateQuery->bindValue(":aptid", airportIndex->getAirportIdVar(apt));
+  airportUpdateQuery->bindValue(":aptid", airportIndex->getAirportIdVar(apt, false /* allIdents */));
   airportUpdateQuery->bindValue(":num_runway_hard", numRunwayHard);
   airportUpdateQuery->bindValue(":num_runway_soft", numRunwaySoft);
   airportUpdateQuery->bindValue(":num_runway_water", numRunwayWater);
@@ -1369,8 +1369,8 @@ void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
                         arg(query.valueStr("transition_identifier"));
 
     procInput.airportIdent = airportIdent;
-    procInput.airportId = airportIndex->getAirportId(airportIdent);
-    procInput.airportPos = ageo::PosD(airportIndex->getAirportPos(airportIdent));
+    procInput.airportId = airportIndex->getAirportId(airportIdent, false /* allIdents */);
+    procInput.airportPos = ageo::PosD(airportIndex->getAirportPos(airportIdent, false /* allIdents */));
 
     // Fill data for procedure writer
     fillProcedureInput(procInput, query);

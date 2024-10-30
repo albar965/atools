@@ -117,7 +117,7 @@ void XpHoldingReader::read(const QStringList& line, const XpReaderContext& conte
 
   // Check for enroute fixes without airport
   if(!airportIdent.isEmpty())
-    airportId = airportIndex->getAirportId(airportIdent);
+    airportId = airportIndex->getAirportId(airportIdent, false /* allIdents */);
   else
     airportIdent.clear();
 

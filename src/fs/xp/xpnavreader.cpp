@@ -123,7 +123,7 @@ void XpNavReader::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   insertVorQuery->bindValue(":frequency", frequency * 10);
   insertVorQuery->bindValue(":mag_var", at(line, MAGVAR).toFloat());
   insertVorQuery->bindValue(":dme_only", dmeOnly);
-  insertVorQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT)));
+  insertVorQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT), false /* allIdents */));
   insertVorQuery->bindValue(":airport_ident", atAirportIdent(line, AIRPORT));
 
   if(suffix == "TACAN" || suffix == "VORTAC")
@@ -183,7 +183,7 @@ void XpNavReader::writeNdb(const QStringList& line, int curFileId, const XpReade
   insertNdbQuery->bindValue(":type", type);
   insertNdbQuery->bindValue(":frequency", at(line, FREQ).toInt() * 100);
   insertNdbQuery->bindValue(":range", range);
-  insertNdbQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT)));
+  insertNdbQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT), false /* allIdents */));
   insertNdbQuery->bindValue(":airport_ident", atAirportIdent(line, AIRPORT));
 
   // NDBs never have an altitude
@@ -344,7 +344,7 @@ void XpNavReader::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
   else if(rowCode == GBAS)
   {
     /*  15 GBAS differential ground station of a GLS */
-    Pos rwpos = airportIndex->getRunwayEndPos(airportIdent, runwayName);
+    Pos rwpos = airportIndex->getRunwayEndPos(airportIdent, runwayName, false /* allAirportIdents */);
     if(rwpos.isValid())
       pos = rwpos;
     // else Use station position as a fall back
@@ -373,7 +373,7 @@ void XpNavReader::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
   insertIlsQuery->bindValue(":region", at(line, REGION));
   insertIlsQuery->bindValue(":loc_runway_name", runwayName);
   insertIlsQuery->bindValue(":name", ilsName);
-  insertIlsQuery->bindValue(":loc_runway_end_id", airportIndex->getRunwayEndIdVar(airportIdent, runwayName));
+  insertIlsQuery->bindValue(":loc_runway_end_id", airportIndex->getRunwayEndIdVar(airportIdent, runwayName, false /* allAirportIdents */));
   insertIlsQuery->bindValue(":altitude", at(line, ALT).toInt());
   insertIlsQuery->bindValue(":lonx", pos.getLonX());
   insertIlsQuery->bindValue(":laty", pos.getLatY());

@@ -550,8 +550,17 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
   SqlRecord rec(APPROACH_RECORD);
 
   // rec.setValue(":approach_id", curApproachId);
-  rec.setValue(":airport_id", line.airportId);
-  rec.setValue(":airport_ident", line.airportIdent);
+
+  // Orphaned procedures where airport is not present in simulator - mostly X-Plane
+  if(line.airportId == -1)
+    rec.setNull(":airport_id");
+  else
+    rec.setValue(":airport_id", line.airportId);
+
+  if(line.airportIdent.isEmpty())
+    rec.setNull(":airport_ident");
+  else
+    rec.setValue(":airport_ident", line.airportIdent);
 
   QString suffix, rwy;
   QString apprIdent = line.sidStarAppIdent.trimmed();
@@ -621,7 +630,7 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
   else
   {
     rec.setValue(":runway_name", rwy);
-    rec.setValue(":runway_end_id", airportIndex->getRunwayEndIdVar(line.airportIdent, rwy));
+    rec.setValue(":runway_end_id", airportIndex->getRunwayEndIdVar(line.airportId, rwy));
   }
 
   NavIdInfo navInfo = navaidTypeFix(line);

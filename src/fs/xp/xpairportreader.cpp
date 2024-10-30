@@ -1710,11 +1710,11 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
     // Center position
     Pos center = airportPos.isValid() ? airportPos : airportRect.getCenter();
 
-    airportIndex->addAirportId(airportIdent, curAirportId, center);
+    airportIndex->addAirportId(airportIdent, airportIcao, airportFaa, airportLocal, curAirportId, center);
     for(const RunwayEnds& rw : qAsConst(runwayEnds))
     {
-      airportIndex->addRunwayEnd(airportIdent, rw.primaryName, rw.primaryEndId, rw.primaryPos);
-      airportIndex->addRunwayEnd(airportIdent, rw.secondaryName, rw.secondaryEndId, rw.secondaryPos);
+      airportIndex->addRunwayEnd(curAirportId, rw.primaryName, rw.primaryEndId, rw.primaryPos);
+      airportIndex->addRunwayEnd(curAirportId, rw.secondaryName, rw.secondaryEndId, rw.secondaryPos);
     }
 
     insertAirportQuery->bindValue(":left_lonx", airportRect.getTopLeft().getLonX());

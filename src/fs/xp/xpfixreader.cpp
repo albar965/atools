@@ -73,7 +73,7 @@ void XpFixReader::read(const QStringList& line, const XpReaderContext& context)
   insertWaypointQuery->bindValue(":file_id", context.curFileId);
   insertWaypointQuery->bindValue(":ident", at(line, IDENT));
   insertWaypointQuery->bindValue(":name", mid(line, NAME, true /* ignore error */));
-  insertWaypointQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT)));
+  insertWaypointQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT), false /* allIdents */));
   insertWaypointQuery->bindValue(":airport_ident", atAirportIdent(line, AIRPORT));
   insertWaypointQuery->bindValue(":region", at(line, REGION)); // ZZ for no region
   insertWaypointQuery->bindValue(":type", "WN"); // All named waypoints

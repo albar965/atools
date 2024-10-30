@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 -- ****************************************************************************/
 
 -- *************************************************************
--- Update runway references for approaches
+-- Update runway references for approaches where missing
 -- *************************************************************
 
 update approach set runway_end_id = (
@@ -25,7 +25,7 @@ update approach set runway_end_id = (
   join runway r on r.airport_id = a.airport_id
   join runway_end e on r.primary_end_id = e.runway_end_id
   where e.name = approach.runway_name and a.ident = approach.airport_ident
-);
+) where approach.runway_end_id is null;
 
 update approach set runway_end_id = (
   select runway_end_id
