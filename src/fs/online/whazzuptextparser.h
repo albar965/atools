@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -82,9 +82,9 @@ public:
   void resetForNewOptions();
 
   /* Set default circle radii for certain ATC types where visual range is unusable */
-  void setAtcSize(const QHash<atools::fs::online::fac::FacilityType, int>& value)
+  void setAtcSize(const AtcSizeMap& sizeMap)
   {
-    atcRadius = value;
+    atcSizeMap = sizeMap;
   }
 
   /* Set a callback that tries to fetch geometry from the user airspace database.
@@ -161,7 +161,7 @@ private:
   // Keep a map of callsign to row id in the database to reuse the ids for the same centers and clients
   // This is to avoid id changes on every reload
   QHash<QString, int> clientIdMap, atcIdMap;
-  QHash<atools::fs::online::fac::FacilityType, int> atcRadius;
+  AtcSizeMap atcSizeMap;
 
   // Report errors on warning channel
   bool error = false;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -231,9 +231,9 @@ int OnlinedataManager::getNumClients() const
   return SqlUtil(db).rowCount("client");
 }
 
-void OnlinedataManager::setAtcSize(const QHash<fac::FacilityType, int>& value)
+void OnlinedataManager::setAtcSize(const atools::fs::online::AtcSizeMap& sizeMap)
 {
-  whazzup->setAtcSize(value);
+  whazzup->setAtcSize(sizeMap);
 }
 
 void OnlinedataManager::setGeometryCallback(GeoCallbackType func)

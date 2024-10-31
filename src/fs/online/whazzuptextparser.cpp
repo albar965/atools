@@ -1115,10 +1115,10 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
   insertQuery->bindValue(":server", at(line, c::SERVER, error));
 
   int visualRange = atInt(line, c::VISUALRANGE, error);
-  int circleRadius = visualRange;
 
   atools::fs::online::fac::FacilityType facilityType =
     static_cast<atools::fs::online::fac::FacilityType>(atInt(line, c::FACILITYTYPE, error));
+  int circleRadius = 10;
 
   if(atc)
   {
@@ -1169,19 +1169,24 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
         boundaryType = "D";
         comType = "D"; // Departure control
         break;
-
     }
 
-    // Value -1: not applicable / not set
-    circleRadius = atcRadius.value(facilityType, -1);
-    if(circleRadius == -1 && visualRange > 0)
-      circleRadius = visualRange;
+    if(atcSizeMap.contains(facilityType))
+    {
+      const AtcSizeMapValue& value = atcSizeMap.value(facilityType);
+      if(value.first)
+        // Use given range if valid
+        circleRadius = visualRange > 0 ? visualRange : value.second;
+      else
+        // Always use user defined range
+        circleRadius = value.second;
+    }
 
     insertQuery->bindValue(":type", boundaryType);
     insertQuery->bindValue(":com_type", comType);
     insertQuery->bindValue(":radius", circleRadius);
     insertQuery->bindValue(":visual_range", visualRange);
-  }
+  } // if(atc)
   else
   {
     // Not ATC - client ====================
@@ -1227,7 +1232,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
     insertQuery->bindValue(":flightplan_alternate_aerodrome", at(line, c::PLANNED_ALTAIRPORT, error));
     insertQuery->bindValue(":flightplan_other_info", at(line, c::PLANNED_REMARKS, error));
     insertQuery->bindValue(":flightplan_route", at(line, c::PLANNED_ROUTE, error));
-  }
+  } // else if(atc)
 
   if(format == IVAO || format == IVAO_JSON2)
   {

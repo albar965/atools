@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ public:
   int getNumClients() const;
 
   /* Set default circle radii for certain ATC types where visual range is unusable */
-  void setAtcSize(const QHash<atools::fs::online::fac::FacilityType, int>& value);
+  void setAtcSize(const atools::fs::online::AtcSizeMap& sizeMap);
 
   /* Set a callback that tries to fetch geometry from the user airspace database.
    * Default circle will be used if this returns an empty byte array or a null pointer. */
