@@ -47,10 +47,7 @@ namespace sc {
 class SimConnectApi
 {
 public:
-  SimConnectApi();
-  ~SimConnectApi();
-
-  bool bindFunctions(win::ActivationContext& context);
+  bool bindFunctions(win::ActivationContext& context, const QString& libraryName);
 
   HRESULT Open(LPCSTR szName, HWND hWnd, DWORD UserEventWin32, HANDLE hEventHandle, DWORD ConfigIndex);
   HRESULT Close();
@@ -371,7 +368,8 @@ private:
                                                          const char *szFilterPath, DWORD cbUnitSize, void *pFilterData) = nullptr;
   HRESULT(_stdcall * SC_ClearAllFacilityDataDefinitionFilters)(HANDLE hSimConnect, SIMCONNECT_DATA_DEFINITION_ID DefineID) = nullptr;
 
-  HANDLE hSimConnect = NULL;
+  HANDLE hSimConnect = nullptr;
+  bool functionsBound = false;
 };
 
 } // namespace sc

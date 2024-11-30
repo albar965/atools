@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,10 @@
 #include "fs/sc/connecthandler.h"
 
 namespace atools {
+
+namespace win {
+class ActivationContext;
+}
 namespace fs {
 namespace sc {
 
@@ -37,7 +41,7 @@ class SimConnectHandler :
   public atools::fs::sc::ConnectHandler
 {
 public:
-  SimConnectHandler(bool verboseLogging = false);
+  SimConnectHandler(atools::win::ActivationContext& activationContext, const QString& libraryName, bool verboseLogging = false);
   virtual ~SimConnectHandler() override;
 
   /* Activate context and load SimConnect DLL */

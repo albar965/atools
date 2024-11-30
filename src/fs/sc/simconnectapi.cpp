@@ -26,130 +26,127 @@
 
 #define BINDSC(a) (error |= \
                      ((*(FARPROC *)&SC_ ## a = \
-                         (FARPROC)context.getProcAddress("SimConnect.dll", "SimConnect_" # a)) == NULL))
+                         (FARPROC)context.getProcAddress(name, "SimConnect_" # a)) == NULL))
 
 namespace atools {
 namespace fs {
 namespace sc {
 
-SimConnectApi::SimConnectApi()
-{
-
-}
-
-SimConnectApi::~SimConnectApi()
-{
-
-}
-
-bool SimConnectApi::bindFunctions(atools::win::ActivationContext& context)
+bool SimConnectApi::bindFunctions(atools::win::ActivationContext& context, const QString& libraryName)
 {
   qDebug() << Q_FUNC_INFO;
-
   bool error = false;
 
-#if defined(SIMCONNECT_BUILD_WIN32) || defined(SIMCONNECT_BUILD_WIN64)
-  BINDSC(MapClientEventToSimEvent);
-  BINDSC(TransmitClientEvent);
-  BINDSC(SetSystemEventState);
-  BINDSC(AddClientEventToNotificationGroup);
-  BINDSC(RemoveClientEvent);
-  BINDSC(SetNotificationGroupPriority);
-  BINDSC(ClearNotificationGroup);
-  BINDSC(RequestNotificationGroup);
-  BINDSC(AddToDataDefinition);
-  BINDSC(ClearDataDefinition);
-  BINDSC(RequestDataOnSimObject);
-  BINDSC(RequestDataOnSimObjectType);
-  BINDSC(SetDataOnSimObject);
-  BINDSC(MapInputEventToClientEvent);
-  BINDSC(SetInputGroupPriority);
-  BINDSC(RemoveInputEvent);
-  BINDSC(ClearInputGroup);
-  BINDSC(SetInputGroupState);
-  BINDSC(RequestReservedKey);
-  BINDSC(SubscribeToSystemEvent);
-  BINDSC(UnsubscribeFromSystemEvent);
-  BINDSC(WeatherRequestInterpolatedObservation);
-  BINDSC(WeatherRequestObservationAtStation);
-  BINDSC(WeatherRequestObservationAtNearestStation);
-  BINDSC(WeatherCreateStation);
-  BINDSC(WeatherRemoveStation);
-  BINDSC(WeatherSetObservation);
-  BINDSC(WeatherSetModeServer);
-  BINDSC(WeatherSetModeTheme);
-  BINDSC(WeatherSetModeGlobal);
-  BINDSC(WeatherSetModeCustom);
-  BINDSC(WeatherSetDynamicUpdateRate);
-  BINDSC(WeatherRequestCloudState);
-  BINDSC(WeatherCreateThermal);
-  BINDSC(WeatherRemoveThermal);
-  BINDSC(AICreateParkedATCAircraft);
-  BINDSC(AICreateEnrouteATCAircraft);
-  BINDSC(AICreateNonATCAircraft);
-  BINDSC(AICreateSimulatedObject);
-  BINDSC(AIReleaseControl);
-  BINDSC(AIRemoveObject);
-  BINDSC(AISetAircraftFlightPlan);
-  BINDSC(ExecuteMissionAction);
-  BINDSC(CompleteCustomMissionAction);
-  BINDSC(Close);
-  BINDSC(RetrieveString);
-  BINDSC(GetLastSentPacketID);
-  BINDSC(Open);
-  BINDSC(CallDispatch);
-  BINDSC(GetNextDispatch);
-  BINDSC(RequestResponseTimes);
-  BINDSC(InsertString);
-  BINDSC(CameraSetRelative6DOF);
-  BINDSC(MenuAddItem);
-  BINDSC(MenuDeleteItem);
-  BINDSC(MenuAddSubItem);
-  BINDSC(MenuDeleteSubItem);
-  BINDSC(RequestSystemState);
-  BINDSC(SetSystemState);
-  BINDSC(MapClientDataNameToID);
-  BINDSC(CreateClientData);
-  BINDSC(AddToClientDataDefinition);
-  BINDSC(ClearClientDataDefinition);
-  BINDSC(RequestClientData);
-  BINDSC(SetClientData);
-  BINDSC(FlightLoad);
-  BINDSC(FlightSave);
-  BINDSC(FlightPlanLoad);
-  BINDSC(Text);
-  BINDSC(SubscribeToFacilities);
-  BINDSC(UnsubscribeToFacilities);
-  BINDSC(RequestFacilitiesList);
+  if(!functionsBound)
+  {
+    QByteArray nameBytes = libraryName.toLatin1();
+    const char *name = nameBytes.constData();
 
-  /* Below are new in MSFS ================================================== */
+#if defined(SIMCONNECT_BUILD_WIN32) || defined(SIMCONNECT_BUILD_WIN64)
+    BINDSC(MapClientEventToSimEvent);
+    BINDSC(TransmitClientEvent);
+    BINDSC(SetSystemEventState);
+    BINDSC(AddClientEventToNotificationGroup);
+    BINDSC(RemoveClientEvent);
+    BINDSC(SetNotificationGroupPriority);
+    BINDSC(ClearNotificationGroup);
+    BINDSC(RequestNotificationGroup);
+    BINDSC(AddToDataDefinition);
+    BINDSC(ClearDataDefinition);
+    BINDSC(RequestDataOnSimObject);
+    BINDSC(RequestDataOnSimObjectType);
+    BINDSC(SetDataOnSimObject);
+    BINDSC(MapInputEventToClientEvent);
+    BINDSC(SetInputGroupPriority);
+    BINDSC(RemoveInputEvent);
+    BINDSC(ClearInputGroup);
+    BINDSC(SetInputGroupState);
+    BINDSC(RequestReservedKey);
+    BINDSC(SubscribeToSystemEvent);
+    BINDSC(UnsubscribeFromSystemEvent);
+    BINDSC(WeatherRequestInterpolatedObservation);
+    BINDSC(WeatherRequestObservationAtStation);
+    BINDSC(WeatherRequestObservationAtNearestStation);
+    BINDSC(WeatherCreateStation);
+    BINDSC(WeatherRemoveStation);
+    BINDSC(WeatherSetObservation);
+    BINDSC(WeatherSetModeServer);
+    BINDSC(WeatherSetModeTheme);
+    BINDSC(WeatherSetModeGlobal);
+    BINDSC(WeatherSetModeCustom);
+    BINDSC(WeatherSetDynamicUpdateRate);
+    BINDSC(WeatherRequestCloudState);
+    BINDSC(WeatherCreateThermal);
+    BINDSC(WeatherRemoveThermal);
+    BINDSC(AICreateParkedATCAircraft);
+    BINDSC(AICreateEnrouteATCAircraft);
+    BINDSC(AICreateNonATCAircraft);
+    BINDSC(AICreateSimulatedObject);
+    BINDSC(AIReleaseControl);
+    BINDSC(AIRemoveObject);
+    BINDSC(AISetAircraftFlightPlan);
+    BINDSC(ExecuteMissionAction);
+    BINDSC(CompleteCustomMissionAction);
+    BINDSC(Close);
+    BINDSC(RetrieveString);
+    BINDSC(GetLastSentPacketID);
+    BINDSC(Open);
+    BINDSC(CallDispatch);
+    BINDSC(GetNextDispatch);
+    BINDSC(RequestResponseTimes);
+    BINDSC(InsertString);
+    BINDSC(CameraSetRelative6DOF);
+    BINDSC(MenuAddItem);
+    BINDSC(MenuDeleteItem);
+    BINDSC(MenuAddSubItem);
+    BINDSC(MenuDeleteSubItem);
+    BINDSC(RequestSystemState);
+    BINDSC(SetSystemState);
+    BINDSC(MapClientDataNameToID);
+    BINDSC(CreateClientData);
+    BINDSC(AddToClientDataDefinition);
+    BINDSC(ClearClientDataDefinition);
+    BINDSC(RequestClientData);
+    BINDSC(SetClientData);
+    BINDSC(FlightLoad);
+    BINDSC(FlightSave);
+    BINDSC(FlightPlanLoad);
+    BINDSC(Text);
+    BINDSC(SubscribeToFacilities);
+    BINDSC(UnsubscribeToFacilities);
+    BINDSC(RequestFacilitiesList);
+
+    /* Below are new in MSFS ================================================== */
 #if defined(SIMCONNECT_BUILD_WIN64)
-  BINDSC(TransmitClientEvent_EX1);
-  BINDSC(AddToFacilityDefinition);
-  BINDSC(RequestFacilityData);
-  BINDSC(SubscribeToFacilities_EX1);
-  BINDSC(UnsubscribeToFacilities_EX1);
-  BINDSC(RequestFacilitiesList_EX1);
-  BINDSC(RequestFacilityData_EX1);
-  BINDSC(RequestJetwayData);
-  BINDSC(EnumerateControllers);
-  BINDSC(MapInputEventToClientEvent_EX1);
-  BINDSC(ExecuteAction);
-  BINDSC(EnumerateInputEvents);
-  BINDSC(GetInputEvent);
-  BINDSC(SetInputEvent);
-  BINDSC(SubscribeInputEvent);
-  BINDSC(UnsubscribeInputEvent);
-  BINDSC(EnumerateInputEventParams);
-  BINDSC(AddFacilityDataDefinitionFilter);
-  BINDSC(ClearAllFacilityDataDefinitionFilters);
+    BINDSC(TransmitClientEvent_EX1);
+    BINDSC(AddToFacilityDefinition);
+    BINDSC(RequestFacilityData);
+    BINDSC(SubscribeToFacilities_EX1);
+    BINDSC(UnsubscribeToFacilities_EX1);
+    BINDSC(RequestFacilitiesList_EX1);
+    BINDSC(RequestFacilityData_EX1);
+    BINDSC(RequestJetwayData);
+    BINDSC(EnumerateControllers);
+    BINDSC(MapInputEventToClientEvent_EX1);
+    BINDSC(ExecuteAction);
+    BINDSC(EnumerateInputEvents);
+    BINDSC(GetInputEvent);
+    BINDSC(SetInputEvent);
+    BINDSC(SubscribeInputEvent);
+    BINDSC(UnsubscribeInputEvent);
+    BINDSC(EnumerateInputEventParams);
+    BINDSC(AddFacilityDataDefinitionFilter);
+    BINDSC(ClearAllFacilityDataDefinitionFilters);
 #endif
 
 #else
-  Q_UNUSED(context)
+    Q_UNUSED(context)
 #endif
 
-  qDebug() << Q_FUNC_INFO << "done";
+    qDebug() << Q_FUNC_INFO << "done";
+
+    functionsBound = true;
+  }
 
   return !error;
 }
@@ -276,8 +273,7 @@ HRESULT SimConnectApi::RequestDataOnSimObject(SIMCONNECT_DATA_REQUEST_ID Request
   if(hSimConnect == NULL || SC_RequestDataOnSimObject == nullptr)
     return E_FAIL;
   else
-    return SC_RequestDataOnSimObject(hSimConnect, RequestID, DefineID, ObjectID, Period, Flags, origin, interval,
-                                     limit);
+    return SC_RequestDataOnSimObject(hSimConnect, RequestID, DefineID, ObjectID, Period, Flags, origin, interval, limit);
 }
 
 HRESULT SimConnectApi::RequestDataOnSimObjectType(SIMCONNECT_DATA_REQUEST_ID RequestID,
@@ -308,9 +304,7 @@ HRESULT SimConnectApi::MapInputEventToClientEvent(SIMCONNECT_INPUT_GROUP_ID Grou
   if(hSimConnect == NULL || SC_MapInputEventToClientEvent == nullptr)
     return E_FAIL;
   else
-    return SC_MapInputEventToClientEvent(hSimConnect, GroupID, szInputDefinition, DownEventID, DownValue, UpEventID,
-                                         UpValue,
-                                         bMaskable);
+    return SC_MapInputEventToClientEvent(hSimConnect, GroupID, szInputDefinition, DownEventID, DownValue, UpEventID, UpValue, bMaskable);
 }
 
 HRESULT SimConnectApi::SetInputGroupPriority(SIMCONNECT_INPUT_GROUP_ID GroupID, DWORD uPriority)
@@ -483,8 +477,7 @@ HRESULT SimConnectApi::WeatherCreateThermal(SIMCONNECT_DATA_REQUEST_ID RequestID
     return E_FAIL;
   else
     return SC_WeatherCreateThermal(hSimConnect, RequestID, lat, lon, alt, radius, height, coreRate, coreTurbulence,
-                                   sinkRate, sinkTurbulence, coreSize, coreTransitionSize, sinkLayerSize,
-                                   sinkTransitionSize);
+                                   sinkRate, sinkTurbulence, coreSize, coreTransitionSize, sinkLayerSize, sinkTransitionSize);
 }
 
 HRESULT SimConnectApi::WeatherRemoveThermal(SIMCONNECT_OBJECT_ID ObjectID)
@@ -514,8 +507,7 @@ HRESULT SimConnectApi::AICreateEnrouteATCAircraft(const char *szContainerTitle, 
     return E_FAIL;
   else
     return SC_AICreateEnrouteATCAircraft(hSimConnect, szContainerTitle, szTailNumber, iFlightNumber, szFlightPlanPath,
-                                         dFlightPlanPosition, bTouchAndGo,
-                                         RequestID);
+                                         dFlightPlanPosition, bTouchAndGo, RequestID);
 }
 
 HRESULT SimConnectApi::AICreateNonATCAircraft(const char *szContainerTitle, const char *szTailNumber,
@@ -578,8 +570,7 @@ HRESULT SimConnectApi::CompleteCustomMissionAction(const GUID guidInstanceId)
     return SC_CompleteCustomMissionAction(hSimConnect, guidInstanceId);
 }
 
-HRESULT SimConnectApi::RetrieveString(SIMCONNECT_RECV *pData, DWORD cbData, void *pStringV, char **pszString,
-                                      DWORD *pcbString)
+HRESULT SimConnectApi::RetrieveString(SIMCONNECT_RECV *pData, DWORD cbData, void *pStringV, char **pszString, DWORD *pcbString)
 {
   if(SC_RetrieveString == nullptr)
     return E_FAIL;
@@ -628,8 +619,7 @@ HRESULT SimConnectApi::InsertString(char *pDest, DWORD cbDest, void **ppEnd, DWO
 }
 
 HRESULT SimConnectApi::CameraSetRelative6DOF(float fDeltaX, float fDeltaY, float fDeltaZ, float fPitchDeg,
-                                             float fBankDeg,
-                                             float fHeadingDeg)
+                                             float fBankDeg, float fHeadingDeg)
 {
   if(hSimConnect == NULL || SC_CameraSetRelative6DOF == nullptr)
     return E_FAIL;
@@ -654,8 +644,7 @@ HRESULT SimConnectApi::MenuDeleteItem(SIMCONNECT_CLIENT_EVENT_ID MenuEventID)
 }
 
 HRESULT SimConnectApi::MenuAddSubItem(SIMCONNECT_CLIENT_EVENT_ID MenuEventID, const char *szMenuItem,
-                                      SIMCONNECT_CLIENT_EVENT_ID SubMenuEventID,
-                                      DWORD dwData)
+                                      SIMCONNECT_CLIENT_EVENT_ID SubMenuEventID, DWORD dwData)
 {
   if(hSimConnect == NULL || SC_MenuAddSubItem == nullptr)
     return E_FAIL;
