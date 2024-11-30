@@ -206,7 +206,7 @@ public:
   bool isFlying() const
   {
     if(isHelicopter())
-      return !isOnGround() && getAltitudeAboveGroundFt() > 10.f;
+      return !isOnGround() && getAltitudeAboveGroundFt() > 50.f;
     else
       return !isOnGround() && getGroundSpeedKts() > 10.f && getAltitudeAboveGroundFt() > 10.f;
   }
