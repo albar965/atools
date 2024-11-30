@@ -49,9 +49,6 @@ bool SimConnectApi::bindFunctions(atools::win::ActivationContext& context)
   bool error = false;
 
 #if defined(SIMCONNECT_BUILD_WIN32) || defined(SIMCONNECT_BUILD_WIN64)
-  BINDSC(Open);
-  BINDSC(Close);
-
   BINDSC(MapClientEventToSimEvent);
   BINDSC(TransmitClientEvent);
   BINDSC(SetSystemEventState);
@@ -96,8 +93,10 @@ bool SimConnectApi::bindFunctions(atools::win::ActivationContext& context)
   BINDSC(AISetAircraftFlightPlan);
   BINDSC(ExecuteMissionAction);
   BINDSC(CompleteCustomMissionAction);
+  BINDSC(Close);
   BINDSC(RetrieveString);
   BINDSC(GetLastSentPacketID);
+  BINDSC(Open);
   BINDSC(CallDispatch);
   BINDSC(GetNextDispatch);
   BINDSC(RequestResponseTimes);
@@ -122,6 +121,30 @@ bool SimConnectApi::bindFunctions(atools::win::ActivationContext& context)
   BINDSC(SubscribeToFacilities);
   BINDSC(UnsubscribeToFacilities);
   BINDSC(RequestFacilitiesList);
+
+  /* Below are new in MSFS ================================================== */
+#if defined(SIMCONNECT_BUILD_WIN64)
+  BINDSC(TransmitClientEvent_EX1);
+  BINDSC(AddToFacilityDefinition);
+  BINDSC(RequestFacilityData);
+  BINDSC(SubscribeToFacilities_EX1);
+  BINDSC(UnsubscribeToFacilities_EX1);
+  BINDSC(RequestFacilitiesList_EX1);
+  BINDSC(RequestFacilityData_EX1);
+  BINDSC(RequestJetwayData);
+  BINDSC(EnumerateControllers);
+  BINDSC(MapInputEventToClientEvent_EX1);
+  BINDSC(ExecuteAction);
+  BINDSC(EnumerateInputEvents);
+  BINDSC(GetInputEvent);
+  BINDSC(SetInputEvent);
+  BINDSC(SubscribeInputEvent);
+  BINDSC(UnsubscribeInputEvent);
+  BINDSC(EnumerateInputEventParams);
+  BINDSC(AddFacilityDataDefinitionFilter);
+  BINDSC(ClearAllFacilityDataDefinitionFilters);
+#endif
+
 #else
   Q_UNUSED(context)
 #endif
@@ -448,8 +471,6 @@ HRESULT SimConnectApi::WeatherRequestCloudState(SIMCONNECT_DATA_REQUEST_ID Reque
     return E_FAIL;
   else
     return SC_WeatherRequestCloudState(hSimConnect, RequestID, minLat, minLon, minAlt, maxLat, maxLon, maxAlt, dwFlags);
-
-
 }
 
 HRESULT SimConnectApi::WeatherCreateThermal(SIMCONNECT_DATA_REQUEST_ID RequestID, float lat, float lon, float alt,
@@ -712,8 +733,6 @@ HRESULT SimConnectApi::RequestClientData(SIMCONNECT_CLIENT_DATA_ID ClientDataID,
     return E_FAIL;
   else
     return SC_RequestClientData(hSimConnect, ClientDataID, RequestID, DefineID, Period, Flags, origin, interval, limit);
-
-
 }
 
 HRESULT SimConnectApi::SetClientData(SIMCONNECT_CLIENT_DATA_ID ClientDataID,
@@ -782,6 +801,168 @@ HRESULT SimConnectApi::RequestFacilitiesList(SIMCONNECT_FACILITY_LIST_TYPE type,
     return E_FAIL;
   else
     return SC_RequestFacilitiesList(hSimConnect, type, RequestID);
+}
+
+HRESULT SimConnectApi::TransmitClientEvent_EX1(SIMCONNECT_OBJECT_ID ObjectID, SIMCONNECT_CLIENT_EVENT_ID EventID,
+                                               SIMCONNECT_NOTIFICATION_GROUP_ID GroupID, SIMCONNECT_EVENT_FLAG Flags, DWORD dwData0,
+                                               DWORD dwData1, DWORD dwData2, DWORD dwData3, DWORD dwData4)
+{
+  if(hSimConnect == NULL || SC_TransmitClientEvent_EX1 == nullptr)
+    return E_FAIL;
+  else
+    return SC_TransmitClientEvent_EX1(hSimConnect, ObjectID, EventID, GroupID, Flags, dwData0, dwData1, dwData2, dwData3, dwData4);
+}
+
+HRESULT SimConnectApi::AddToFacilityDefinition(SIMCONNECT_DATA_DEFINITION_ID DefineID, const char *FieldName)
+{
+  if(hSimConnect == NULL || SC_AddToFacilityDefinition == nullptr)
+    return E_FAIL;
+  else
+    return SC_AddToFacilityDefinition(hSimConnect, DefineID, FieldName);
+}
+
+HRESULT SimConnectApi::RequestFacilityData(SIMCONNECT_DATA_DEFINITION_ID DefineID, SIMCONNECT_DATA_REQUEST_ID RequestID, const char *ICAO,
+                                           const char *Region)
+{
+  if(hSimConnect == NULL || SC_RequestFacilityData == nullptr)
+    return E_FAIL;
+  else
+    return SC_RequestFacilityData(hSimConnect, DefineID, RequestID, ICAO, Region);
+}
+
+HRESULT SimConnectApi::SubscribeToFacilities_EX1(SIMCONNECT_FACILITY_LIST_TYPE type, SIMCONNECT_DATA_REQUEST_ID newElemInRangeRequestID,
+                                                 SIMCONNECT_DATA_REQUEST_ID oldElemOutRangeRequestID)
+{
+  if(hSimConnect == NULL || SC_SubscribeToFacilities_EX1 == nullptr)
+    return E_FAIL;
+  else
+    return SC_SubscribeToFacilities_EX1(hSimConnect, type, newElemInRangeRequestID, oldElemOutRangeRequestID);
+}
+
+HRESULT SimConnectApi::UnsubscribeToFacilities_EX1(SIMCONNECT_FACILITY_LIST_TYPE type, bool bUnsubscribeNewInRange,
+                                                   bool bUnsubscribeOldOutRange)
+{
+  if(hSimConnect == NULL || SC_UnsubscribeToFacilities_EX1 == nullptr)
+    return E_FAIL;
+  else
+    return SC_UnsubscribeToFacilities_EX1(hSimConnect, type, bUnsubscribeNewInRange, bUnsubscribeOldOutRange);
+}
+
+HRESULT SimConnectApi::RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE type, SIMCONNECT_DATA_REQUEST_ID RequestID)
+{
+  if(hSimConnect == NULL || SC_RequestFacilitiesList_EX1 == nullptr)
+    return E_FAIL;
+  else
+    return SC_RequestFacilitiesList_EX1(hSimConnect, type, RequestID);
+}
+
+HRESULT SimConnectApi::RequestFacilityData_EX1(SIMCONNECT_DATA_DEFINITION_ID DefineID, SIMCONNECT_DATA_REQUEST_ID RequestID,
+                                               const char *ICAO, const char *Region, char Type)
+{
+  if(hSimConnect == NULL || SC_RequestFacilityData_EX1 == nullptr)
+    return E_FAIL;
+  else
+    return SC_RequestFacilityData_EX1(hSimConnect, DefineID, RequestID, ICAO, Region, Type);
+}
+
+HRESULT SimConnectApi::RequestJetwayData(const char *AirportIcao, DWORD ArrayCount, int *Indexes)
+{
+  if(hSimConnect == NULL || SC_RequestJetwayData == nullptr)
+    return E_FAIL;
+  else
+    return SC_RequestJetwayData(hSimConnect, AirportIcao, ArrayCount, Indexes);
+}
+
+HRESULT SimConnectApi::EnumerateControllers()
+{
+  if(hSimConnect == NULL || SC_EnumerateControllers == nullptr)
+    return E_FAIL;
+  else
+    return SC_EnumerateControllers(hSimConnect);
+}
+
+HRESULT SimConnectApi::MapInputEventToClientEvent_EX1(SIMCONNECT_INPUT_GROUP_ID GroupID, const char *szInputDefinition,
+                                                      SIMCONNECT_CLIENT_EVENT_ID DownEventID, DWORD DownValue,
+                                                      SIMCONNECT_CLIENT_EVENT_ID UpEventID, DWORD UpValue, BOOL bMaskable)
+{
+  if(hSimConnect == NULL || SC_MapInputEventToClientEvent_EX1 == nullptr)
+    return E_FAIL;
+  else
+    return SC_MapInputEventToClientEvent_EX1(hSimConnect, GroupID, szInputDefinition, DownEventID, DownValue, UpEventID, UpValue,
+                                             bMaskable);
+}
+
+HRESULT SimConnectApi::ExecuteAction(DWORD cbRequestID, const char *szActionID, DWORD cbUnitSize, void *pParamValues)
+{
+  if(hSimConnect == NULL || SC_ExecuteAction == nullptr)
+    return E_FAIL;
+  else
+    return SC_ExecuteAction(hSimConnect, cbRequestID, szActionID, cbUnitSize, pParamValues);
+}
+
+HRESULT SimConnectApi::EnumerateInputEvents(SIMCONNECT_DATA_REQUEST_ID RequestID)
+{
+  if(hSimConnect == NULL || SC_EnumerateInputEvents == nullptr)
+    return E_FAIL;
+  else
+    return SC_EnumerateInputEvents(hSimConnect, RequestID);
+}
+
+HRESULT SimConnectApi::GetInputEvent(SIMCONNECT_DATA_REQUEST_ID RequestID, UINT64 Hash)
+{
+  if(hSimConnect == NULL || SC_GetInputEvent == nullptr)
+    return E_FAIL;
+  else
+    return SC_GetInputEvent(hSimConnect, RequestID, Hash);
+}
+
+HRESULT SimConnectApi::SetInputEvent(UINT64 Hash, DWORD cbUnitSize, void *Value)
+{
+  if(hSimConnect == NULL || SC_SetInputEvent == nullptr)
+    return E_FAIL;
+  else
+    return SC_SetInputEvent(hSimConnect, Hash, cbUnitSize, Value);
+}
+
+HRESULT SimConnectApi::SubscribeInputEvent(UINT64 Hash)
+{
+  if(hSimConnect == NULL || SC_SubscribeInputEvent == nullptr)
+    return E_FAIL;
+  else
+    return SC_SubscribeInputEvent(hSimConnect, Hash);
+}
+
+HRESULT SimConnectApi::UnsubscribeInputEvent(UINT64 Hash)
+{
+  if(hSimConnect == NULL || SC_UnsubscribeInputEvent == nullptr)
+    return E_FAIL;
+  else
+    return SC_UnsubscribeInputEvent(hSimConnect, Hash);
+}
+
+HRESULT SimConnectApi::EnumerateInputEventParams(UINT64 Hash)
+{
+  if(hSimConnect == NULL || SC_EnumerateInputEventParams == nullptr)
+    return E_FAIL;
+  else
+    return SC_EnumerateInputEventParams(hSimConnect, Hash);
+}
+
+HRESULT SimConnectApi::AddFacilityDataDefinitionFilter(SIMCONNECT_DATA_DEFINITION_ID DefineID, const char *szFilterPath, DWORD cbUnitSize,
+                                                       void *pFilterData)
+{
+  if(hSimConnect == NULL || SC_AddFacilityDataDefinitionFilter == nullptr)
+    return E_FAIL;
+  else
+    return SC_AddFacilityDataDefinitionFilter(hSimConnect, DefineID, szFilterPath, cbUnitSize, pFilterData);
+}
+
+HRESULT SimConnectApi::ClearAllFacilityDataDefinitionFilters(SIMCONNECT_DATA_DEFINITION_ID DefineID)
+{
+  if(hSimConnect == NULL || SC_ClearAllFacilityDataDefinitionFilters == nullptr)
+    return E_FAIL;
+  else
+    return SC_ClearAllFacilityDataDefinitionFilters(hSimConnect, DefineID);
 }
 
 } // namespace sc

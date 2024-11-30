@@ -505,4 +505,109 @@ SIMCONNECTAPI SimConnect_RequestFacilitiesList(HANDLE hSimConnect, SIMCONNECT_FA
   return E_FAIL;
 }
 
+HRESULT SimConnect_TransmitClientEvent_EX1(HANDLE hSimConnect, SIMCONNECT_OBJECT_ID ObjectID, SIMCONNECT_CLIENT_EVENT_ID EventID,
+                                           SIMCONNECT_NOTIFICATION_GROUP_ID GroupID, SIMCONNECT_EVENT_FLAG Flags, DWORD dwData0,
+                                           DWORD dwData1, DWORD dwData2, DWORD dwData3, DWORD dwData4)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_AddToFacilityDefinition(HANDLE hSimConnect, SIMCONNECT_DATA_DEFINITION_ID DefineID, const char *FieldName)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_RequestFacilityData(HANDLE hSimConnect, SIMCONNECT_DATA_DEFINITION_ID DefineID, SIMCONNECT_DATA_REQUEST_ID RequestID,
+                                       const char *ICAO, const char *Region)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_SubscribeToFacilities_EX1(HANDLE hSimConnect, SIMCONNECT_FACILITY_LIST_TYPE type,
+                                             SIMCONNECT_DATA_REQUEST_ID newElemInRangeRequestID,
+                                             SIMCONNECT_DATA_REQUEST_ID oldElemOutRangeRequestID)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_UnsubscribeToFacilities_EX1(HANDLE hSimConnect, SIMCONNECT_FACILITY_LIST_TYPE type, bool bUnsubscribeNewInRange,
+                                               bool bUnsubscribeOldOutRange)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_RequestFacilitiesList_EX1(HANDLE hSimConnect, SIMCONNECT_FACILITY_LIST_TYPE type, SIMCONNECT_DATA_REQUEST_ID RequestID)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_RequestFacilityData_EX1(HANDLE hSimConnect, SIMCONNECT_DATA_DEFINITION_ID DefineID, SIMCONNECT_DATA_REQUEST_ID RequestID,
+                                           const char *ICAO, const char *Region, char Type)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_RequestJetwayData(HANDLE hSimConnect, const char *AirportIcao, DWORD ArrayCount, int *Indexes)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_EnumerateControllers(HANDLE hSimConnect)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_MapInputEventToClientEvent_EX1(HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID, const char *szInputDefinition,
+                                                  SIMCONNECT_CLIENT_EVENT_ID DownEventID, DWORD DownValue,
+                                                  SIMCONNECT_CLIENT_EVENT_ID UpEventID, DWORD UpValue, BOOL bMaskable)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_ExecuteAction(HANDLE hSimConnect, DWORD cbRequestID, const char *szActionID, DWORD cbUnitSize, void *pParamValues)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_EnumerateInputEvents(HANDLE hSimConnect, SIMCONNECT_DATA_REQUEST_ID RequestID)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_GetInputEvent(HANDLE hSimConnect, SIMCONNECT_DATA_REQUEST_ID RequestID, UINT64 Hash)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_SetInputEvent(HANDLE hSimConnect, UINT64 Hash, DWORD cbUnitSize, void *Value)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_SubscribeInputEvent(HANDLE hSimConnect, UINT64 Hash)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_UnsubscribeInputEvent(HANDLE hSimConnect, UINT64 Hash)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_EnumerateInputEventParams(HANDLE hSimConnect, UINT64 Hash)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_AddFacilityDataDefinitionFilter(HANDLE hSimConnect, SIMCONNECT_DATA_DEFINITION_ID DefineID, const char *szFilterPath,
+                                                   DWORD cbUnitSize, void *pFilterData)
+{
+  return E_FAIL;
+}
+
+HRESULT SimConnect_ClearAllFacilityDataDefinitionFilters(HANDLE hSimConnect, SIMCONNECT_DATA_DEFINITION_ID DefineID)
+{
+  return E_FAIL;
+}
+
 #endif
