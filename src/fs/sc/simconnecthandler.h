@@ -41,11 +41,12 @@ class SimConnectHandler :
   public atools::fs::sc::ConnectHandler
 {
 public:
-  SimConnectHandler(atools::win::ActivationContext& activationContext, const QString& libraryName, bool verboseLogging = false);
+  SimConnectHandler(bool verboseLogging = false);
   virtual ~SimConnectHandler() override;
 
   /* Activate context and load SimConnect DLL */
-  bool loadSimConnect(const QString& manifestPath);
+  bool loadSimConnect(atools::win::ActivationContext& activationContext, const QString& libraryName, const QString& manifestPath);
+  void releaseSimConnect(atools::win::ActivationContext& activationContext);
   virtual bool isLoaded() const override;
 
   /* Connect to fs.. Returns true if successful. */
@@ -74,7 +75,6 @@ private:
   // Used to all the windows and SimConnect stuff out of the header files
   SimConnectHandlerPrivate *p = nullptr;
   QByteArray appName;
-
 };
 
 } // namespace sc

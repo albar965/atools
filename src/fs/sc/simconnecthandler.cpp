@@ -70,6 +70,7 @@ enum DataDefinitionId
   DATA_DEFINITION_AI_BOAT = 40
 };
 
+#pragma pack(push, 1)
 /* Struct that will be filled with raw data from the simconnect interface. */
 struct SimDataAircraft
 {
@@ -164,14 +165,15 @@ struct SimData
   qint32 timeZoneOffsetSeconds;
 };
 
+#pragma pack(pop)
+
 class SimConnectHandlerPrivate
 {
 public:
-  SimConnectHandlerPrivate(bool verboseLogging, atools::win::ActivationContext& activationContext, const QString& libraryNameParam)
-    : verbose(verboseLogging), libraryName(libraryNameParam)
+  SimConnectHandlerPrivate(bool verboseLogging)
+    : verbose(verboseLogging)
   {
     api = new SimConnectApi;
-    api->bindFunctions(activationContext, libraryNameParam);
   }
 
   ~SimConnectHandlerPrivate()
@@ -180,7 +182,6 @@ public:
   }
 
   atools::fs::sc::SimConnectApi *api;
-  atools::win::ActivationContext context;
   QString libraryName;
 
   /* Callback receiving the data. */
@@ -704,10 +705,10 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
 // SimConnectHandler
 // ===============================================================================================
 
-SimConnectHandler::SimConnectHandler(atools::win::ActivationContext& activationContext, const QString& libraryName, bool verboseLogging)
+SimConnectHandler::SimConnectHandler(bool verboseLogging)
   : appName(QCoreApplication::applicationName().toLatin1())
 {
-  p = new SimConnectHandlerPrivate(verboseLogging, activationContext, libraryName);
+  p = new SimConnectHandlerPrivate(verboseLogging);
 }
 
 SimConnectHandler::~SimConnectHandler()
@@ -715,16 +716,22 @@ SimConnectHandler::~SimConnectHandler()
   HRESULT hr = p->api->Close();
   if(hr != S_OK)
     qWarning() << "Error closing SimConnect";
-
-  p->context.freeLibrary(p->libraryName);
-  p->context.deactivate();
-  p->context.release();
   delete p;
 }
 
-bool SimConnectHandler::loadSimConnect(const QString& manifestPath)
+void SimConnectHandler::releaseSimConnect(atools::win::ActivationContext& activationContext)
 {
   p->simConnectLoaded = false;
+  activationContext.freeLibrary("SimConnect.dll");
+  activationContext.deactivate();
+  activationContext.release();
+}
+
+bool SimConnectHandler::loadSimConnect(atools::win::ActivationContext& activationContext, const QString& libraryName,
+                                       const QString& manifestPath)
+{
+  p->simConnectLoaded = false;
+  p->libraryName = libraryName;
 
   // Try local copy first
   QString simconnectDll = QCoreApplication::applicationDirPath() + QDir::separator() + p->libraryName;
@@ -732,29 +739,30 @@ bool SimConnectHandler::loadSimConnect(const QString& manifestPath)
   if(!QFile::exists(simconnectDll))
   {
     // No local copy - load default from WinSxS
-    if(!p->context.create(manifestPath))
+    if(!activationContext.create(manifestPath))
       return false;
 
-    if(!p->context.activate())
+    if(!activationContext.activate())
       return false;
 
     p->libraryName = simconnectDll = "SimConnect.dll";
     activated = true;
   }
 
-  if(!p->context.loadLibrary(simconnectDll))
+  if(!activationContext.loadLibrary(simconnectDll))
     return false;
 
   if(activated)
   {
-    if(!p->context.deactivate())
+    if(!activationContext.deactivate())
       return false;
   }
 
-  if(!p->api->bindFunctions(p->context, p->libraryName))
+  if(!p->api->bindFunctions(activationContext, p->libraryName))
     return false;
 
   p->simConnectLoaded = true;
+
   return true;
 }
 
