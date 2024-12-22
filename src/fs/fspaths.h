@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -80,12 +80,16 @@ public:
     /* Microsoft Flight Simulator 2020 */
     MSFS = 10,
 
+    /* Microsoft Flight Simulator 2020 */
+    MSFS_2024 = 13,
+
     /* Special value to pass to certain queries */
     ALL_SIMULATORS = -1,
 
     /* No simulator found */
     NONE = -2
 
+    // Next is 14
   };
 
   Q_ENUM(SimulatorType)
@@ -116,24 +120,30 @@ public:
   /* Path to official MSFS scenery containing fs-base and fs-base-nav */
   static QString getMsfsOfficialPath();
 
+  /* Default path. C:\Users\USERNAME\AppData\Local\Packages\Microsoft.Limitless_8wekyb3d8bbwe\LocalState\StreamedPackages\ */
+  static QString getMsfs24StreamedPackagesPath();
+
   /* Detected installation type of MSFS */
   static MsfsInstallType getMsfsInstallType();
+  static MsfsInstallType getMsfs24InstallType();
 
   /* Path to official folder for changed base where base is like
    * .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/[OneStore|Steam]
-   *  Checking for OneStore and Steam folders and layout files.
+   *  Checking for OneStore and Steam folders and layout files. Not used for MSFS 2024.
    * Empty if path not valid. */
+  /* Path based on non-default path */
   static QString getMsfsOfficialPath(const QString& basePath);
 
-  /* Path to community folder. Default. */
+  /* Path to community folder for MSFS. Default. */
   static QString getMsfsCommunityPath();
 
   /* Path to community folder for changed base where base is like
    * .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Community .
    * Empty if path not valid. */
+  /* Path based on non-default path */
   static QString getMsfsCommunityPath(const QString& basePath);
 
-  /* Short abbreviated names */
+  /* Short abbreviated names for file reference but not user display. */
   static QString typeToShortName(atools::fs::FsPaths::SimulatorType type);
 
   /* return true if simulator can be found in the registry or base path was found */
@@ -182,7 +192,7 @@ private:
   static QString documentsDirectory(QString simBasePath);
   static QString nonWindowsPath(atools::fs::FsPaths::SimulatorType type);
   static QString xplaneBasePath(const QString& installationFile);
-  static QString msfsBasePath(const QString& userCfgOptFile);
+  static QString msfsBasePath(const QString& userCfgOptFile, atools::fs::FsPaths::SimulatorType type);
   static QString nonWindowsPathFull(atools::fs::FsPaths::SimulatorType type);
 
 };

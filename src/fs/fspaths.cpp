@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,13 +44,13 @@ static QHash<atools::fs::FsPaths::SimulatorType, QString> sceneryFilepathMap;
 static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
     {
       FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::P3D_V6,
-      FsPaths::XPLANE_11, FsPaths::XPLANE_12, FsPaths::MSFS
+      FsPaths::XPLANE_11, FsPaths::XPLANE_12, FsPaths::MSFS, FsPaths::MSFS_2024
     });
 
 /* All supported MS simulators using SimConnect on Windows */
 static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_MS(
     {
-      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::P3D_V6, FsPaths::MSFS
+      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::P3D_V6, FsPaths::MSFS, FsPaths::MSFS_2024
     });
 
 /* All supported X-Plane simulators using Xpconnect */
@@ -70,6 +70,7 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TY
       {FsPaths::XPLANE_11, "XP11"},
       {FsPaths::XPLANE_12, "XP12"},
       {FsPaths::MSFS, "MSFS"},
+      {FsPaths::MSFS_2024, "MSFS24"},
       {FsPaths::NAVIGRAPH, "NAVIGRAPH"}
     });
 
@@ -84,6 +85,7 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_DI
       {FsPaths::XPLANE_11, "X-Plane 11"},
       {FsPaths::XPLANE_12, "X-Plane 12"},
       {FsPaths::MSFS, "Microsoft Flight Simulator 2020"},
+      {FsPaths::MSFS_2024, "Microsoft Flight Simulator 2024"},
       {FsPaths::NAVIGRAPH, "Navigraph"}
     }
   );
@@ -98,12 +100,13 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_SH
       {FsPaths::P3D_V6, "P3D v6"},
       {FsPaths::XPLANE_11, "X-Plane 11"},
       {FsPaths::XPLANE_12, "X-Plane 12"},
-      {FsPaths::MSFS, "MSFS"},
+      {FsPaths::MSFS, "MSFS 2020"},
+      {FsPaths::MSFS_2024, "MSFS 2024"},
       {FsPaths::NAVIGRAPH, "Navigraph"}
     }
   );
 
-static QString msfsOfficialPath, msfsCommunityPath, msfsSimPath;
+static QString msfsOfficialPath, msfsCommunityPath, msfsSimPath, msfs24SimPath, msfs24StreamedPackagesPath;
 
 /* Platform: FSX, FSX XPack, FSX Gold */
 const QLatin1String FSX_REGISTRY_PATH("HKEY_CURRENT_USER\\Software\\Microsoft");
@@ -139,6 +142,7 @@ const QLatin1String SETTINGS_P3D_V6_PATH("FsPaths/P3dV6Path");
 const QLatin1String SETTINGS_XPLANE_11_PATH("FsPaths/XPlane11Path");
 const QLatin1String SETTINGS_XPLANE_12_PATH("FsPaths/XPlane12Path");
 const QLatin1String SETTINGS_MSFS_PATH("FsPaths/MsfsPath");
+const QLatin1String SETTINGS_MSFS24_PATH("FsPaths/Msfs24Path");
 
 /* Paths for non Windows systems - used for development and debugging purposes */
 const QLatin1String FSX_NO_WINDOWS_PATH("Microsoft Flight Simulator X");
@@ -148,8 +152,10 @@ const QLatin1String P3D_V4_NO_WINDOWS_PATH("Prepar3D v4");
 const QLatin1String P3D_V5_NO_WINDOWS_PATH("Prepar3D v5");
 const QLatin1String P3D_V6_NO_WINDOWS_PATH("Prepar3D v6");
 const QLatin1String MSFS_NO_WINDOWS_PATH("MSFS2020");
+const QLatin1String MSFS24_NO_WINDOWS_PATH("MSFS2024");
 
 static FsPaths::MsfsInstallType msfsInstallType = FsPaths::MSFS_INSTALL_NONE;
+static FsPaths::MsfsInstallType msfs24InstallType = FsPaths::MSFS_INSTALL_NONE;
 
 static QProcessEnvironment environment;
 
@@ -177,6 +183,7 @@ void FsPaths::logAllPaths()
     QString filesPath = filesPathMap.value(type);
     QString sceneryFilepath = sceneryFilepathMap.value(type);
 
+    qInfo() << "==============================================";
     qInfo().nospace().noquote() << ALL_SIMULATOR_TYPE_NAMES[type] << " - " << ALL_SIMULATOR_DISPLAY_NAMES[type];
     if(basePath.isEmpty())
       qInfo() << "  Base is empty";
@@ -195,9 +202,12 @@ void FsPaths::logAllPaths()
 
     if(type == MSFS)
     {
-      qInfo() << "msfsCommunityPath" << msfsCommunityPath;
-      qInfo() << "msfsOfficialPath" << msfsOfficialPath;
+      qInfo() << "  msfsCommunityPath" << msfsCommunityPath;
+      qInfo() << "  msfsOfficialPath" << msfsOfficialPath;
     }
+
+    if(type == MSFS_2024)
+      qInfo() << "  msfs24StreamedPackagesPath" << msfs24StreamedPackagesPath;
   }
 }
 
@@ -245,9 +255,19 @@ QString FsPaths::getMsfsOfficialPath()
   return msfsOfficialPath;
 }
 
+QString FsPaths::getMsfs24StreamedPackagesPath()
+{
+  return msfs24StreamedPackagesPath;
+}
+
 FsPaths::MsfsInstallType FsPaths::getMsfsInstallType()
 {
   return msfsInstallType;
+}
+
+FsPaths::MsfsInstallType FsPaths::getMsfs24InstallType()
+{
+  return msfs24InstallType;
 }
 
 QString FsPaths::getMsfsOfficialPath(const QString& basePath)
@@ -304,7 +324,7 @@ QString FsPaths::initBasePath(SimulatorType type)
   if(type == NAVIGRAPH || type == NONE)
     return QString();
 
-  if(type == XPLANE_11)
+  if(type == XPLANE_11) // ===============================================================================================
   {
     // =====================================================
     // The location of this file varies by operating system:
@@ -327,7 +347,7 @@ QString FsPaths::initBasePath(SimulatorType type)
 
 #endif
   }
-  else if(type == XPLANE_12)
+  else if(type == XPLANE_12) // ===============================================================================================
   {
 #if defined(Q_OS_WIN32)
     // "C:\Users\USERS\AppData\Local\x-plane_install_12.txt"
@@ -343,7 +363,7 @@ QString FsPaths::initBasePath(SimulatorType type)
 
 #endif
   }
-  else if(type == MSFS)
+  else if(type == MSFS) // ===============================================================================================
   {
     // Read UserCfg.opt to find the packages installation path
 #if defined(Q_OS_WIN32)
@@ -352,7 +372,7 @@ QString FsPaths::initBasePath(SimulatorType type)
     // MS online installation ====================
     // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
     temp = msfsBasePath(environment.value("LOCALAPPDATA") % SEP % "Packages" % SEP %
-                        "Microsoft.FlightSimulator_8wekyb3d8bbwe" % SEP % "LocalCache" % SEP % "UserCfg.opt");
+                        "Microsoft.FlightSimulator_8wekyb3d8bbwe" % SEP % "LocalCache" % SEP % "UserCfg.opt", type);
     if(checkDir(Q_FUNC_INFO, temp))
     {
       fsPath = temp;
@@ -367,7 +387,7 @@ QString FsPaths::initBasePath(SimulatorType type)
 
     // Steam installation ====================
     // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator\UserCfg.opt
-    temp = msfsBasePath(environment.value("APPDATA") % SEP % "Microsoft Flight Simulator" % SEP % "UserCfg.opt");
+    temp = msfsBasePath(environment.value("APPDATA") % SEP % "Microsoft Flight Simulator" % SEP % "UserCfg.opt", type);
     if(checkDir(Q_FUNC_INFO, temp))
     {
       fsPath = temp;
@@ -382,7 +402,7 @@ QString FsPaths::initBasePath(SimulatorType type)
 
     // MS Boxed installation ====================
     // C:\Users\USER\AppData\Local\MSFSPackages\UserCfg.opt
-    temp = msfsBasePath(environment.value("LOCALAPPDATA") % SEP % "MSFSPackages" % SEP % "UserCfg.opt");
+    temp = msfsBasePath(environment.value("LOCALAPPDATA") % SEP % "MSFSPackages" % SEP % "UserCfg.opt", type);
     if(checkDir(Q_FUNC_INFO, temp))
     {
       fsPath = temp;
@@ -400,9 +420,9 @@ QString FsPaths::initBasePath(SimulatorType type)
     QString temp;
     QString nonWinPath = nonWindowsPathFull(type);
 
-    ///home/alex/Simulators/MSFS2020\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
+    /// home/USERNAME/Simulators/MSFS2020\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
     temp = msfsBasePath(nonWinPath % SEP % "Packages" % SEP %
-                        "Microsoft.FlightSimulator_8wekyb3d8bbwe" % SEP % "LocalCache" % SEP % "UserCfg.opt");
+                        "Microsoft.FlightSimulator_8wekyb3d8bbwe" % SEP % "LocalCache" % SEP % "UserCfg.opt", type);
     if(checkDir(Q_FUNC_INFO, temp))
     {
       fsPath = temp;
@@ -427,6 +447,74 @@ QString FsPaths::initBasePath(SimulatorType type)
       msfsOfficialPath = getMsfsOfficialPath(fsPath);
       qInfo() << Q_FUNC_INFO << "Found MSFS official path" << msfsOfficialPath;
     }
+  }
+  else if(type == MSFS_2024) // ===============================================================================================
+  {
+    // Read UserCfg.opt to find the packages installation path
+#if defined(Q_OS_WIN32)
+    QString temp;
+
+    // MS online installation ====================
+    // C:\Users\USER\AppData\Local\Packages\Microsoft.Limitless_8wekyb3d8bbwe\LocalCache\UserCfg.opt
+    temp = msfsBasePath(environment.value("LOCALAPPDATA") % SEP % "Packages" % SEP %
+                        "Microsoft.Limitless_8wekyb3d8bbwe" % SEP % "LocalCache" % SEP % "UserCfg.opt", type);
+    if(checkDir(Q_FUNC_INFO, temp))
+    {
+      fsPath = temp;
+      qInfo() << Q_FUNC_INFO << "Found MSFS 2024 path" << fsPath;
+
+      // C:\Users\USER\AppData\Local\Packages\Microsoft.Limitless_8wekyb3d8bbwe
+      msfs24SimPath = environment.value("LOCALAPPDATA") % SEP % "Packages" % SEP % "Microsoft.Limitless_8wekyb3d8bbwe";
+      qInfo() << Q_FUNC_INFO << "Found MSFS 2024 Online simulator path" << msfs24SimPath;
+
+      msfs24InstallType = MSFS_INSTALL_ONLINE;
+    }
+
+    // Steam installation ====================
+    // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator 2024\UserCfg.opt
+    temp = msfsBasePath(environment.value("APPDATA") % SEP % "Microsoft Flight Simulator 2024" % SEP % "UserCfg.opt", type);
+    if(checkDir(Q_FUNC_INFO, temp))
+    {
+      fsPath = temp;
+      qInfo() << Q_FUNC_INFO << "Found MSFS 2024 path" << fsPath;
+
+      // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator 2024
+      msfs24SimPath = environment.value("APPDATA") % SEP % "Microsoft Flight Simulator 2024";
+      qInfo() << Q_FUNC_INFO << "Found MSFS 2024 Steam simulator path" << msfs24SimPath;
+
+      msfs24InstallType = MSFS_INSTALL_STEAM;
+    }
+
+#elif defined(DEBUG_FS_PATHS)
+
+    QString temp;
+    QString nonWinPath = nonWindowsPathFull(type);
+
+    /// home/USERNAME/Simulators/MSFS2024\Packages\Microsoft.Limitless_8wekyb3d8bbwe.Limitless_8wekyb3d8bbwe\LocalCache\UserCfg.opt
+    temp = msfsBasePath(nonWinPath % SEP % "Packages" % SEP %
+                        "Microsoft.Limitless_8wekyb3d8bbwe" % SEP % "LocalCache" % SEP % "UserCfg.opt", type);
+    if(checkDir(Q_FUNC_INFO, temp))
+    {
+      fsPath = temp;
+      qInfo() << Q_FUNC_INFO << "Found MSFS 2024 path" << fsPath;
+
+      // C:\Users\USER\AppData\Local\Packages\Microsoft.Limitless_8wekyb3d8bbwe
+      msfs24SimPath = nonWinPath % SEP % "Packages" % SEP % "Microsoft.Limitless_8wekyb3d8bbwe";
+      qInfo() << Q_FUNC_INFO << "Found MSFS 2024 simulator path" << msfs24SimPath;
+
+      msfs24InstallType = MSFS_INSTALL_ONLINE;
+    }
+#endif
+    if(!fsPath.isEmpty())
+    {
+      // C:\Users\USERNAME\AppData\Local\Packages\Microsoft.Limitless_8wekyb3d8bbwe\LocalState\StreamedPackages
+      msfs24StreamedPackagesPath = msfs24SimPath % SEP % "LocalState" % SEP % "StreamedPackages";
+      checkDir(Q_FUNC_INFO, msfs24StreamedPackagesPath);
+
+      qInfo() << Q_FUNC_INFO << "Found MSFS 2024 Streamed Packages Path" << msfs24StreamedPackagesPath;
+    }
+
+    fsPath = msfs24StreamedPackagesPath;
   }
   else
   {
@@ -555,12 +643,23 @@ QString FsPaths::initFilesPath(SimulatorType type)
       break;
 
     case atools::fs::FsPaths::MSFS:
+      // %localappdata%
       // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState
       fsFilesDir = msfsSimPath % SEP % "LocalState";
       if(!checkDir(Q_FUNC_INFO, fsFilesDir))
         // Steam uses top level as path
         // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
         fsFilesDir = msfsSimPath;
+      break;
+
+    case atools::fs::FsPaths::MSFS_2024:
+      // %localappdata%
+      // C:\Users\USER\AppData\Local\Packages\Microsoft.Limitless_8wekyb3d8bbwe\LocalState
+      fsFilesDir = msfs24SimPath % SEP % "LocalState";
+      if(!checkDir(Q_FUNC_INFO, fsFilesDir))
+        // Steam uses top level as path
+        // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator 2024
+        fsFilesDir = msfs24SimPath;
       break;
 
     case atools::fs::FsPaths::FSX:
@@ -715,6 +814,7 @@ QString FsPaths::initSceneryLibraryPath(SimulatorType type)
 
     // Disable compiler warnings - simulators that dont have a file reference
     case MSFS:
+    case MSFS_2024:
     case XPLANE_11:
     case XPLANE_12:
     case NAVIGRAPH:
@@ -725,7 +825,7 @@ QString FsPaths::initSceneryLibraryPath(SimulatorType type)
 
   if(sceneryPath.isEmpty())
   {
-    if(!atools::contains(type, {MSFS, XPLANE_11, XPLANE_12}))
+    if(!atools::contains(type, {MSFS, MSFS_2024, XPLANE_11, XPLANE_12}))
       qWarning() << Q_FUNC_INFO << "Scenery path for" << typeToShortName(type) << "not found.";
   }
   else
@@ -770,6 +870,8 @@ FsPaths::SimulatorType FsPaths::stringToType(const QString& typeStr)
     return XPLANE_12;
   else if(type == "MSFS")
     return MSFS;
+  else if(type == "MSFS24")
+    return MSFS_2024;
   else if(type == "NAVIGRAPH" || type == "DFD")
     return NAVIGRAPH;
   else
@@ -812,6 +914,9 @@ QString FsPaths::settingsKey(SimulatorType type)
     case MSFS:
       return SETTINGS_MSFS_PATH;
 
+    case MSFS_2024:
+      return SETTINGS_MSFS24_PATH;
+
     case NAVIGRAPH:
     case NONE:
     case ALL_SIMULATORS:
@@ -843,6 +948,7 @@ QString FsPaths::registryPath(SimulatorType type)
       return P3D_V6_REGISTRY_PATH;
 
     case MSFS:
+    case MSFS_2024:
     case XPLANE_11:
     case XPLANE_12:
     case NAVIGRAPH:
@@ -876,6 +982,7 @@ QStringList FsPaths::registryKey(SimulatorType type)
       return P3D_V6_REGISTRY_KEY;
 
     case MSFS:
+    case MSFS_2024:
     case XPLANE_11:
     case XPLANE_12:
     case NAVIGRAPH:
@@ -911,6 +1018,9 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
     case MSFS:
       return MSFS_NO_WINDOWS_PATH;
 
+    case MSFS_2024:
+      return MSFS24_NO_WINDOWS_PATH;
+
     case XPLANE_11:
     case XPLANE_12:
     case NAVIGRAPH:
@@ -921,7 +1031,7 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
   return QString();
 }
 
-QString FsPaths::msfsBasePath(const QString& userCfgOptFile)
+QString FsPaths::msfsBasePath(const QString& userCfgOptFile, SimulatorType type)
 {
   qInfo() << Q_FUNC_INFO << "Checking MSFS path from" << userCfgOptFile;
 
@@ -961,20 +1071,23 @@ QString FsPaths::msfsBasePath(const QString& userCfgOptFile)
     qInfo() << Q_FUNC_INFO << "Found MSFS base path" << dir;
 
     // Official/Steam or Official/OneStore is required =================
-    if(!dir.isEmpty())
+    if(type == MSFS)
     {
-      if(getMsfsOfficialPath(dir).isEmpty())
+      if(!dir.isEmpty())
       {
-        dir.clear();
-        qWarning() << Q_FUNC_INFO << "MSFS official path not found";
+        if(getMsfsOfficialPath(dir).isEmpty())
+        {
+          dir.clear();
+          qWarning() << Q_FUNC_INFO << "MSFS official path not found";
+        }
       }
-    }
 
-    // Community is not required - loading process will show a warning about the missing folder =================
-    if(!dir.isEmpty())
-    {
-      if(getMsfsCommunityPath(dir).isEmpty())
-        qWarning() << Q_FUNC_INFO << "MSFS community path not found";
+      // Community is not required - loading process will show a warning about the missing folder =================
+      if(!dir.isEmpty())
+      {
+        if(getMsfsCommunityPath(dir).isEmpty())
+          qWarning() << Q_FUNC_INFO << "MSFS community path not found";
+      }
     }
   }
   else
