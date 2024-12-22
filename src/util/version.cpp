@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,10 +37,8 @@ Version::Version(int verMajor, int verMinor, int verPatchlevel, const QString& v
   : majorVersion(verMajor), minorVersion(verMinor), patchlevelVersion(verPatchlevel), nameSubVersion(verNameSub),
   name(verName)
 {
-  // "1.12.24.rc1"
-  versionString = tr("%1.%2%3%4%5", "Used to build a version string like 1.2.33.beta1").
-                  arg(majorVersion).
-                  arg(minorVersion).
+  // "1.12.24.rc1" or "1.2.33.beta1"
+  versionString = QString("%1.%2%3%4%5").arg(majorVersion).arg(minorVersion).
                   arg(patchlevelVersion >= 0 ? tr(".%1", "Patchlevel in version string").arg(patchlevelVersion) : QString()).
                   arg(name.isEmpty() ? QString() : tr(".%1", "Name like \"beta\" in version string").arg(name)).
                   arg(nameSubVersion >= 0 ? QString::number(nameSubVersion) : QString());
