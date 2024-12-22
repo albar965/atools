@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -122,6 +122,7 @@ bool ActivationContext::create(QString manifestPath)
 bool ActivationContext::activate()
 {
   qDebug() << Q_FUNC_INFO;
+
 #if defined(Q_OS_WIN32)
   bool retval = ActivateActCtx(p->activationContext, &p->cookie);
   p->lastError = GetLastError();
@@ -220,6 +221,7 @@ bool ActivationContext::loadLibrary(QString libraryName)
 
 bool ActivationContext::freeLibrary(QString libraryName)
 {
+  qDebug() << Q_FUNC_INFO << libraryName;
 #if defined(Q_OS_WIN32)
   libraryName = atools::nativeCleanPath(libraryName);
   QString libraryKey = QFileInfo(libraryName).fileName();
@@ -244,7 +246,7 @@ bool ActivationContext::freeLibrary(QString libraryName)
 #endif
 }
 
-void *ActivationContext::getProcAddress(QString libraryName, const QString& procName)
+void *ActivationContext::getProcAddress(QString libraryName, const QString& procName) const
 {
 #if defined(Q_OS_WIN32)
   FARPROC ptr = GetProcAddress(p->loadedLibraries.value(libraryName), procName.toLocal8Bit().data());
