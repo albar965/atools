@@ -893,18 +893,18 @@ QString runwayBestFit(const QString& runwayName, const QStringList& airportRunwa
   return QString();
 }
 
-QString runwayDesignatorLong(const QString& name)
+QString runwayDesignatorLong(const QString& designatorName)
 {
-  if(name.startsWith('L'))
+  if(designatorName.startsWith('L'))
     return "LEFT";
-  else if(name.startsWith('R'))
+  else if(designatorName.startsWith('R'))
     return "RIGHT";
-  else if(name.startsWith('C'))
+  else if(designatorName.startsWith('C'))
     return "CENTER";
-  else if(name.startsWith('W'))
+  else if(designatorName.startsWith('W'))
     return "WATER";
 
-  return name;
+  return designatorName;
 }
 
 bool runwayNameValid(const QString& name)
@@ -1209,6 +1209,24 @@ atools::geo::LineString correctBoundary(const atools::geo::LineString& geometry)
   }
 
   return boundary;
+}
+
+QString runwayNumber(const QString& runwayName)
+{
+  int number;
+  if(atools::fs::util::runwayNameSplitNum(runwayName, &number))
+    return QString::number(number);
+  else
+    return QString();
+}
+
+QString runwayDesignator(const QString& runwayName)
+{
+  QString designator;
+  if(atools::fs::util::runwayNameSplitNum(runwayName, nullptr, &designator))
+    return atools::fs::util::runwayDesignatorLong(designator);
+  else
+    return QString();
 }
 
 } // namespace util

@@ -150,7 +150,7 @@ void DfdCompiler::writeAirports()
   airportWriteQuery->bindValue(":num_runway_water", 0);
   airportWriteQuery->bindValue(":longest_runway_length", 0);
   airportWriteQuery->bindValue(":longest_runway_width", 0);
-  airportWriteQuery->bindValue(":longest_runway_heading", 0);
+  airportWriteQuery->bindValue(":longest_runway_heading", 0.f);
   airportWriteQuery->bindValue(":num_runway_end_ils", 0);
   airportWriteQuery->bindValue(":num_runways", 0);
 

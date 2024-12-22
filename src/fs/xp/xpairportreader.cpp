@@ -1622,15 +1622,15 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
     // Update counts
     if(longestRunway != nullptr)
     {
-      insertAirportQuery->bindValue(":longest_runway_length", longestRunway->length);
-      insertAirportQuery->bindValue(":longest_runway_width", longestRunway->width);
+      insertAirportQuery->bindValue(":longest_runway_length", atools::roundToInt(longestRunway->length));
+      insertAirportQuery->bindValue(":longest_runway_width", atools::roundToInt(longestRunway->width));
       insertAirportQuery->bindValue(":longest_runway_heading", longestRunway->heading);
       insertAirportQuery->bindValue(":longest_runway_surface", surfaceToDb(longestRunway->surface, &context));
     }
     else
     {
-      insertAirportQuery->bindValue(":longest_runway_length", 0.f);
-      insertAirportQuery->bindValue(":longest_runway_width", 0.f);
+      insertAirportQuery->bindValue(":longest_runway_length", 0);
+      insertAirportQuery->bindValue(":longest_runway_width", 0);
       insertAirportQuery->bindValue(":longest_runway_heading", 0.f);
       insertAirportQuery->bindValue(":longest_runway_surface", surfaceToDb(UNKNOWN, &context));
     }

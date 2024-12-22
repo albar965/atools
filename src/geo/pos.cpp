@@ -840,6 +840,30 @@ double PosD::angleDegTo(const PosD& otherPos) const
   return normalizeCourse(toDegree(Pos::courseRad(toRadians(lonX), toRadians(latY), toRadians(otherPos.lonX), toRadians(otherPos.latY))));
 }
 
+PosD& PosD::normalize()
+{
+  if(isValid())
+  {
+    lonX = normalizeLonXDeg(lonX);
+    latY = normalizeLatYDeg(latY);
+  }
+  return *this;
+}
+
+PosD PosD::endpoint(double distanceMeter, double angleDeg) const
+{
+  if(!isValid())
+    return EMPTY_POSD;
+
+  if(distanceMeter == 0.)
+    return *this;
+
+  double lon, lat;
+  endpointRad(toRadians(lonX), toRadians(latY), meterToRad(distanceMeter), toRadians(-angleDeg + 360.), lon, lat);
+
+  return PosD(toDegree(lon), toDegree(lat)).normalize();
+}
+
 bool PosD::almostEqual(const PosD& other, double epsilon) const
 {
   return atools::almostEqual(lonX, other.lonX, epsilon) && atools::almostEqual(latY, other.latY, epsilon);

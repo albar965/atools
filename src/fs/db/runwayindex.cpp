@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,7 @@ void RunwayIndex::add(const QString& airportIdent, const QString& runwayName, in
   runwayIndexMap[RunwayIndexKeyType(airportIdent, runwayName)] = runwayEndId;
 }
 
-int RunwayIndex::getRunwayEndId(const QString& airportIdent,
-                                const QString& runwayName,
-                                const QString& sourceObject)
+int RunwayIndex::getRunwayEndId(const QString& airportIdent, const QString& runwayName, const QString& sourceObject) const
 {
   if(runwayName == NO_RWY)
     return -1;
@@ -46,8 +44,8 @@ int RunwayIndex::getRunwayEndId(const QString& airportIdent,
     return it.value();
   else
   {
-    qWarning().nospace().noquote() << "Runway end ID for airport " << airportIdent << " and runway " <<
-      runwayName
+    qWarning().nospace().noquote() << "Runway end ID for airport " << airportIdent << " and runway "
+                                   << runwayName
                                    << " not found for " << sourceObject;
     return -1;
   }

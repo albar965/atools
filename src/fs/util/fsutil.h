@@ -51,7 +51,14 @@ bool runwayNameValid(const QString& name);
 /* Compare numerically by number and then by designator in order of L, C, R */
 int compareRunwayNumber(const QString& rw1, const QString& rw2);
 
-QString runwayDesignatorLong(const QString& name);
+/* From "L", "R" to "LEFT" and "RIGHT" */
+QString runwayDesignatorLong(const QString& designatorName);
+
+/* "01R" to "1" */
+QString runwayNumber(const QString& runwayName);
+
+/* "01R" to "R" */
+QString runwayDesignator(const QString& runwayName);
 
 /* Get the closes matching runway name from the list of airport runways or empty if none.
  * Returns the runway as formatted in runwayName */

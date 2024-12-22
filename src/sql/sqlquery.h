@@ -196,6 +196,12 @@ public:
 
   void exec();
 
+  void execAndClearBounds()
+  {
+    exec();
+    clearBoundValues();
+  }
+
   void execBatch(QSqlQuery::BatchExecutionMode mode = QSqlQuery::ValuesAsRows);
   void prepare(const QString& queryString);
 

@@ -426,7 +426,7 @@ create table transition
   altitude integer,             -- Overfly altitude in feet for the transition fix
   dme_ident varchar(5),         -- Contains the DME ICAO ident if transition type is DME
   dme_region varchar(2),        -- ICAO two letter region code for DME if transition type is DME
-  dme_airport_ident,
+  dme_airport_ident varchar(5),
   dme_radial double,            -- Radial point where the transition starts
   dme_distance integer,         -- DME distance in NM
 foreign key(approach_id) references approach(approach_id)

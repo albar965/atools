@@ -460,6 +460,8 @@ public:
   /* Angle to other point (initial course) */
   double angleDegTo(const atools::geo::PosD& otherPos) const;
 
+  atools::geo::PosD endpoint(double distanceMeter, double angleDeg) const;
+
   /* Compare for equal with accuracy depending on epsilon. Does not compare altitude. */
   bool almostEqual(const atools::geo::PosD& other, double epsilon = DPOS_EPSILON_MIN) const;
 
@@ -513,6 +515,8 @@ public:
   {
     altitude = value;
   }
+
+  PosD& normalize();
 
 private:
   friend QDebug operator<<(QDebug out, const atools::geo::PosD& record);
