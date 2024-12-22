@@ -123,14 +123,9 @@ void LineString::setAltitude(float alt)
 
 void LineString::removeInvalid()
 {
-  auto it = std::remove_if(begin(), end(),
-                           [](const Pos& pos) -> bool
-      {
+  erase(std::remove_if(begin(), end(), [](const Pos& pos) -> bool {
         return !pos.isValid();
-      });
-
-  if(it != end())
-    erase(it, end());
+      }), end());
 }
 
 void LineString::removeDuplicates(float epsilon)

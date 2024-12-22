@@ -426,11 +426,9 @@ void DockWidgetHandler::updateDockTabStatus(QDockWidget *dockWidget)
 
     if(it == dockStackList.end())
     {
-      auto rmIt = std::remove_if(tabified.begin(), tabified.end(), [](QDockWidget *dock) -> bool {
+      tabified.erase(std::remove_if(tabified.begin(), tabified.end(), [](QDockWidget *dock) -> bool {
             return dock->isFloating();
-          });
-      if(rmIt != tabified.end())
-        tabified.erase(rmIt, tabified.end());
+          }), tabified.end());
 
       if(!tabified.isEmpty())
       {

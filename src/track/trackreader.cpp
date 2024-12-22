@@ -103,8 +103,7 @@ int TrackReader::removeInvalid()
 
 int TrackReader::removeInvalid(TrackVectorType& trackVector)
 {
-  auto it = std::remove_if(trackVector.begin(), trackVector.end(), [](const Track& track) -> bool
-      {
+  auto it = std::remove_if(trackVector.begin(), trackVector.end(), [](const Track& track) -> bool {
         bool valid = track.isFullyValid();
         if(!valid)
           qWarning() << "TrackReader: Invalid track " << track;
@@ -325,15 +324,9 @@ void TrackReader::extractTracks(const QStringList& lines, const QRegularExpressi
 
   // Remove elements without waypoints =======================================
   if(removeEmpty)
-  {
-    atools::track::TrackVectorType::iterator it = std::remove_if(temp.begin(), temp.end(), [](const Track& t) -> bool
-        {
+    temp.erase(std::remove_if(temp.begin(), temp.end(), [](const Track& t) -> bool {
           return t.route.isEmpty();
-        });
-
-    if(it != temp.end())
-      temp.erase(it, temp.end());
-  }
+        }), temp.end());
 
   tracks.append(temp);
 }

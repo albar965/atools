@@ -135,8 +135,7 @@ void AirspaceReaderOpenAir::writeBoundary()
   insertAirspaceQuery->bindValue(":file_id", fileId);
 
   // Remove all remaining invalid points
-  auto it = std::remove_if(curLine.begin(), curLine.end(), [](const Pos& p) -> bool
-        {
+  auto it = std::remove_if(curLine.begin(), curLine.end(), [](const Pos& p) -> bool {
           return !p.isValidRange();
         });
 

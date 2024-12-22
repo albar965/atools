@@ -135,7 +135,7 @@ void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& d
           // ac.setCoordinates(pos);
         }
 
-        // // Move N8
+        //// Move N8
         // if(reg.startsWith("N8"))
         // {
         // atools::geo::Pos pos = ac.getPosition();
@@ -349,26 +349,14 @@ void DataReaderThread::run()
         // Remove boat and ship traffic depending on settings for testing purposes
         QVector<SimConnectAircraft>& aiAircraft = data.getAiAircraft();
         if(!(opts & atools::fs::sc::FETCH_AI_AIRCRAFT))
-        {
-          QVector<SimConnectAircraft>::iterator it =
-            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [] (const SimConnectAircraft &aircraft)->bool
-                           {
-                             return !aircraft.isUser() && !aircraft.isAnyBoat();
-                           });
-          if(it != aiAircraft.end())
-            aiAircraft.erase(it, aiAircraft.end());
-        }
+          aiAircraft.erase(std::remove_if(aiAircraft.begin(), aiAircraft.end(), [] (const SimConnectAircraft& aircraft)->bool {
+                  return !aircraft.isUser() && !aircraft.isAnyBoat();
+                }), aiAircraft.end());
 
         if(!(opts & atools::fs::sc::FETCH_AI_BOAT))
-        {
-          QVector<SimConnectAircraft>::iterator it =
-            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [] (const SimConnectAircraft &aircraft)->bool
-                           {
-                             return !aircraft.isUser() && aircraft.isAnyBoat();
-                           });
-          if(it != aiAircraft.end())
-            aiAircraft.erase(it, aiAircraft.end());
-        }
+          aiAircraft.erase(std::remove_if(aiAircraft.begin(), aiAircraft.end(), [] (const SimConnectAircraft& aircraft)->bool {
+                  return !aircraft.isUser() && aircraft.isAnyBoat();
+                }), aiAircraft.end());
 
         if(!replayWhazzupFile.isEmpty())
           debugWriteWhazzup(data);
@@ -376,9 +364,9 @@ void DataReaderThread::run()
 #ifdef DEBUG_CREATE_WHAZZUP_TEST_FILTER
 
         data.getAiAircraft().erase(std::remove_if(data.getAiAircraft().begin(), data.getAiAircraft().end(),
-                                                  [] (const SimConnectAircraft &type)->bool {
-                                                    return type.getAirplaneRegistration() != "N2092Z";
-                                                  }), data.getAiAircraft().end());
+                                                  [] (const SimConnectAircraft& type)->bool {
+                return type.getAirplaneRegistration() != "N2092Z";
+              }), data.getAiAircraft().end());
 #endif
 
         emit postSimConnectData(data);
@@ -472,9 +460,9 @@ void DataReaderThread::run()
   closeReplay();
 
   if(failedTerminally)
-    terminate = true;  // Drop dead
+    terminate = true; // Drop dead
   else
-    terminate = false;  // Allow restart
+    terminate = false; // Allow restart
 
   connected = false;
   reconnecting = false;

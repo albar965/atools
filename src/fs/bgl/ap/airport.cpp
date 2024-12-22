@@ -773,14 +773,9 @@ void Airport::updateHelipads()
 
 void Airport::removeVehicleParking()
 {
-  QList<Parking>::iterator it = std::remove_if(parkings.begin(), parkings.end(),
-                                               [](const Parking& p) -> bool
-        {
+  parkings.erase(std::remove_if(parkings.begin(), parkings.end(), [](const Parking& p) -> bool {
           return p.getType() == atools::fs::bgl::ap::VEHICLES;
-        });
-
-  if(it != parkings.end())
-    parkings.erase(it, parkings.end());
+        }), parkings.end());
 }
 
 void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringList& taxinames)
