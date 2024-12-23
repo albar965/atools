@@ -47,6 +47,14 @@ void WaypointWriter::writeObject(const Waypoint *type)
     return;
   }
 
+  if(type->getRegion().size() == 1)
+  {
+    // MSFS 2024 sepciality - a lot of duplicate waypoints at the same position having an invalid region
+    qWarning() << Q_FUNC_INFO << "Found waypoint" << type->getIdent() << "with invalid region" << type->getRegion() << "in file"
+               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    return;
+  }
+
   QString waypointType = bgl::Waypoint::waypointTypeToStr(type->getType());
   if(waypointType.isEmpty())
   {

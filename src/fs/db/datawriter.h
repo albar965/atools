@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ public:
    */
   void writeSceneryArea(const atools::fs::scenery::SceneryArea& area);
 
-  void readMagDeclBgl(const QString& fileScenery);
+  void readMagDeclBgl(const QString& fileScenery, bool forceWmm = false);
 
   /*
    * Log written record number, etc. to the log/console.
@@ -289,6 +289,10 @@ public:
   {
     return db;
   }
+
+  /* Get next ids from writers */
+  int getNextSceneryId() const;
+  int getNextFileId() const;
 
 private:
   int numFiles = 0, numNamelists = 0, numVors = 0, numIls = 0,

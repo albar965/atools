@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -208,6 +208,16 @@ QString DataWriter::getSurface(const QUuid& key)
     return QString();
 }
 
+int DataWriter::getNextSceneryId() const
+{
+  return sceneryAreaWriter->getNextId();
+}
+
+int DataWriter::getNextFileId() const
+{
+  return bglFileWriter->getNextId();
+}
+
 QString DataWriter::getLanguage(const QString& key)
 {
   if(languageIndex != nullptr)
@@ -241,7 +251,10 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
     for(int i = 0; i < filepaths.size(); i++)
     {
       progressHandler->setNumFiles(numFiles);
-      progressHandler->setNumAirports(airportIdents.size());
+
+      // Do not reset airport counter which was read before from MSFS 2024 SimConnect
+      if(options.getSimulatorType() != FsPaths::MSFS_2024)
+        progressHandler->setNumAirports(airportIdents.size());
       progressHandler->setNumNamelists(numNamelists);
       progressHandler->setNumVors(numVors);
       progressHandler->setNumIls(numIls);
@@ -367,67 +380,72 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
   }
 }
 
-void DataWriter::readMagDeclBgl(const QString& fileScenery)
+void DataWriter::readMagDeclBgl(const QString& fileScenery, bool forceWmm)
 {
-  QString fileSettings = atools::buildPath({atools::settings::Settings::getPath(), "magdec.bgl"});
-  QString fileApp = atools::buildPath({QCoreApplication::applicationDirPath(), "magdec", "magdec.bgl"});
-
   QString file;
-  if(QFileInfo::exists(fileScenery) && QFileInfo(fileScenery).isFile())
-    // Check if there is a file in the simulator scenery directory
-    file = fileScenery;
-  else if(QFileInfo::exists(fileSettings) && QFileInfo(fileSettings).isFile())
-    // Check if there is a file in the settings directory
-    file = fileSettings;
-  else if(QFileInfo::exists(fileApp) && QFileInfo(fileApp).isFile())
-    // Check if there is a file in the application directory
-    file = fileApp;
-
-  qInfo() << "Reading" << file;
-
   bool loaded = false;
 
-  if(!file.isEmpty())
+  if(!forceWmm)
   {
-    try
-    {
-      magDecReader->readFromBgl(file);
-    }
-    catch(atools::Exception& e)
-    {
-      qCritical() << "Caught exception reading" << file << ":" << e.what();
-      progressHandler->reportError();
-      if(sceneryErrors != nullptr)
-        sceneryErrors->fileErrors.append({file, QString(e.what()), 0});
-    }
-    catch(...)
-    {
-      qCritical() << "Caught unknown exception reading" << file;
-      progressHandler->reportError();
-      if(sceneryErrors != nullptr)
-        sceneryErrors->fileErrors.append({file, tr("Cannot read file. Falling back to world magnetic model."), 0});
-    }
+    // Try to read from various places =================================================
+    QString fileSettings = atools::buildPath({atools::settings::Settings::getPath(), "magdec.bgl"});
+    QString fileApp = atools::buildPath({QCoreApplication::applicationDirPath(), "magdec", "magdec.bgl"});
 
-    if(magDecReader->isValid())
+    if(QFileInfo::exists(fileScenery) && QFileInfo(fileScenery).isFile())
+      // Check if there is a file in the simulator scenery directory
+      file = fileScenery;
+    else if(QFileInfo::exists(fileSettings) && QFileInfo(fileSettings).isFile())
+      // Check if there is a file in the settings directory
+      file = fileSettings;
+    else if(QFileInfo::exists(fileApp) && QFileInfo(fileApp).isFile())
+      // Check if there is a file in the application directory
+      file = fileApp;
+
+    qInfo() << "Reading" << file;
+
+    if(!file.isEmpty())
     {
-      magDecReader->writeToTable(db);
-      db.commit();
-      loaded = true;
+      try
+      {
+        magDecReader->readFromBgl(file);
+      }
+      catch(atools::Exception& e)
+      {
+        qCritical() << "Caught exception reading" << file << ":" << e.what();
+        progressHandler->reportError();
+        if(sceneryErrors != nullptr)
+          sceneryErrors->fileErrors.append({file, QString(e.what()), 0});
+      }
+      catch(...)
+      {
+        qCritical() << "Caught unknown exception reading" << file;
+        progressHandler->reportError();
+        if(sceneryErrors != nullptr)
+          sceneryErrors->fileErrors.append({file, tr("Cannot read file. Falling back to world magnetic model."), 0});
+      }
+
+      if(magDecReader->isValid())
+      {
+        magDecReader->writeToTable(db);
+        db.commit();
+        loaded = true;
+      }
+      else
+      {
+        progressHandler->reportError();
+        if(sceneryErrors != nullptr)
+          sceneryErrors->fileErrors.append({file, tr("File not valid. Falling back to world magnetic model."), 0});
+      }
     }
     else
     {
       progressHandler->reportError();
       if(sceneryErrors != nullptr)
-        sceneryErrors->fileErrors.append({file, tr("File not valid. Falling back to world magnetic model."), 0});
+        sceneryErrors->fileErrors.append({"magdec.bgl", tr("File not found. Falling back to world magnetic model."), 0});
     }
   }
-  else
-  {
-    progressHandler->reportError();
-    if(sceneryErrors != nullptr)
-      sceneryErrors->fileErrors.append({"magdec.bgl", tr("File not found. Falling back to world magnetic model."), 0});
-  }
 
+  // Eiter no file found above or reading of WMM forced ==========================================
   if(!loaded)
   {
     magDecReader->readFromWmm();

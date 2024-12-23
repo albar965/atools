@@ -140,7 +140,9 @@ void IlsWriter::writeObject(const Ils *type)
     QString locName = loc->getRunwayName().trimmed();
 
     // Try to extract the runway number from the name if invalid ===========================
-    if(getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS && (locName.isEmpty() || locName == "0" || locName == "00"))
+    if((getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS ||
+        getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS_2024) &&
+       (locName.isEmpty() || locName == "0" || locName == "00"))
     {
       // "IGS RWY 13", "ILS 01", "ILS 32", "ILS 32R", "ILS CAT III RWY 05R", "ILS CAT III RWY 23", "ILS RW01", "ILS RW01C",
       // "ILS RW01L", "ILS RW01R", "ILS RW36L", "ILS RW36R", "ILS RWY 05", "ILS RWY 05L", "ILS RWY 15", "ILS RWY 31", "ILS04",
