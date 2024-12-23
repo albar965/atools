@@ -162,7 +162,7 @@ void BglFile::handleBoundaries(BinaryStream *bs)
     Record rec(options, bs);
     rec::RecordType type = rec.getId<rec::RecordType>();
 
-    if(type == rec::BOUNDARY)
+    if(type == rec::BOUNDARY || type == rec::BOUNDARY_MSFS2024)
     {
       rec.seekToStart();
       const Record *r = createRecord<Boundary>(bs, &boundaries);
@@ -263,6 +263,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
   bool msfsNavigraphNavdata = area.isMsfsNavigraphNavdata();
   createFlags.setFlag(bgl::AIRPORT_MSFS_NAVIGRAPH_NAVDATA, msfsNavigraphNavdata);
   createFlags.setFlag(bgl::AIRPORT_MSFS_DUMMY, area.isNavdata());
+  FsPaths::SimulatorType sim = options->getSimulatorType();
 
   // There should be no duplicate airport idents in the file. Otherwise bail out of reading this file.
   QHash<QString, int> airportIdentCount;
@@ -293,7 +294,8 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
       switch(type)
       {
         case section::AIRPORT:
-          if(options->isIncludedNavDbObject(type::AIRPORT))
+          // Do not read airports from MSFS 2024. These are fetched via SimConnect.
+          if(sim != FsPaths::MSFS_2024 && options->isIncludedNavDbObject(type::AIRPORT))
           {
             // Will return null if ICAO is excluded in configuration
             // Read airport and all subrecords, like runways, com, approaches, waypoints and so on
@@ -331,38 +333,59 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
           break;
 
         case section::AIRPORT_ALT:
-          qWarning() << "Found alternate airport ID";
-          if(options->isIncludedNavDbObject(type::AIRPORT))
+          qWarning() << Q_FUNC_INFO << "Found alternate airport ID";
+          if(sim != FsPaths::MSFS_2024 && options->isIncludedNavDbObject(type::AIRPORT))
             rec = createRecord<Airport>(bs, &airports, bgl::NO_CREATE_FLAGS);
           break;
 
         case section::NAME_LIST:
-          rec = createRecord<Namelist>(bs, &namelists);
+          // Do not read airports/namelists from MSFS 2024. These are fetched via SimConnect.
+          if(sim != FsPaths::MSFS_2024)
+            rec = createRecord<Namelist>(bs, &namelists);
           break;
 
         case section::P3D_TACAN:
-          rec = createRecord<Tacan>(bs, &tacans);
+          // TACAN secion type overlaps with a MSFS 2024 section type
+          if(sim != FsPaths::MSFS_2024)
+            rec = createRecord<Tacan>(bs, &tacans);
           break;
 
         case section::ILS_VOR:
+          // Read VOR, VORDME, DME. Also TACAN for MSFS 2024
+          // Do not read from MSFS 2020 Navigraph extension
           if(!msfsNavigraphNavdata)
+          {
             rec = handleIlsVor(bs);
+            if(options->isVerbose() && rec != nullptr)
+              qDebug() << Q_FUNC_INFO << "ILS_VOR" << hex << rec->getId();
+          }
           break;
 
         case section::NDB:
+          // Do not read from MSFS 2020 Navigraph extension
           if(options->isIncludedNavDbObject(type::NDB) && !msfsNavigraphNavdata)
+          {
             rec = createRecord<Ndb>(bs, &ndbs);
+            if(options->isVerbose() && rec != nullptr)
+              qDebug() << Q_FUNC_INFO << "NDB" << hex << rec->getId();
+          }
           break;
 
         case section::MARKER:
+          // Do not read from MSFS 2020 Navigraph extension
           if(options->isIncludedNavDbObject(type::MARKER) && !msfsNavigraphNavdata)
             rec = createRecord<Marker>(bs, &marker);
           break;
 
         case section::WAYPOINT:
+          // Do not read from MSFS 2020 Navigraph extension
           if(options->isIncludedNavDbObject(type::WAYPOINT) && !msfsNavigraphNavdata)
+          {
             // Read waypoints and airways
             rec = createRecord<Waypoint>(bs, &waypoints);
+            if(options->isVerbose() && rec != nullptr)
+              qDebug() << Q_FUNC_INFO << "WAYPOINT" << hex << rec->getId();
+          }
           break;
 
         // MSFS sections not found yet

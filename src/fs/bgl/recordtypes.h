@@ -26,7 +26,9 @@ namespace bgl {
 
 namespace rec {
 
-/* Top level record types */
+/* Top level record types.
+Not used in BglFile which relies on section types.
+Reading classes use these types to detect BGL version / simulator. */
 enum RecordType
 {
   AIRPORT = 0x003c,
@@ -41,7 +43,14 @@ enum RecordType
   NAMELIST = 0x0027,
   VOR_ILS_ICAO_INDEX = 0x0028,
   NDB_ICAO_INDEX = 0x0029,
-  WAYPOINT_ICAO_INDEX = 0x002A
+  WAYPOINT_ICAO_INDEX = 0x002A,
+
+  /* MSFS 2024: New record types for top-level records.
+   * Have structure changes and this id value is checked in the classes Ils, Vor, Ndb and Boundary. */
+  ILS_VOR_MSFS2024 = 0x0105,
+  WAYPOINT_MSFS2024 = 0x0108,
+  NDB_MSFS2024 = 0x0106,
+  BOUNDARY_MSFS2024 = 0x0107
 };
 
 QString recordTypeStr(RecordType type);
@@ -199,7 +208,11 @@ enum IlsVorRecordType
   LOCALIZER = 0x0014,
   GLIDESLOPE = 0x0015,
   DME = 0x0016,
-  ILS_VOR_NAME = 0x0019
+  ILS_VOR_NAME = 0x0019,
+
+  /* MSFS 2024: New record types for ILS and VOR sub-records. No changes in structure */
+  DME_MSFS2024 = 0x0114,
+  LOCALIZER_MSFS2024 = 0x0115
 };
 
 QString ilsvorRecordTypeStr(IlsVorRecordType type);

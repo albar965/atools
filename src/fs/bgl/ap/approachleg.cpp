@@ -217,6 +217,24 @@ QString ApproachLeg::altDescriptorToString(leg::AltDescriptor altDescr)
   return "INVALID";
 }
 
+QString ApproachLeg::speedDescriptorToString(leg::SpeedDescriptor speedDescr)
+{
+  switch(speedDescr)
+  {
+    case leg::UNKNOWN_SPEED:
+    case leg::AT:
+      return QString();
+
+    case leg::AT_OR_ABOVE:
+      return "+";
+
+    case leg::AT_OR_BELOW:
+      return "-";
+  }
+  qWarning().nospace().noquote() << "Invalid approach altitude descriptor " << speedDescr;
+  return "INVALID";
+}
+
 QString ApproachLeg::turnDirToString(leg::TurnDirection turnDir)
 {
   switch(turnDir)

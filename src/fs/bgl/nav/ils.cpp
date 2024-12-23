@@ -52,7 +52,6 @@ Ils::Ils(const NavDatabaseOptions *options, BinaryStream *stream)
   int flags = stream->readUByte();
 
   backcourse = (flags & FLAGS_BC) == FLAGS_BC;
-  // TODO  compare values with record presence
   // dmeOnlyOrIls = (flags & FLAGS_DME_ONLY) == FLAGS_DME_ONLY;
   // hasGlideslope = (flags & FLAGS_GS) == FLAGS_GS;
   // hasDme = (flags & FLAGS_DME) == FLAGS_DME;
@@ -62,19 +61,23 @@ Ils::Ils(const NavDatabaseOptions *options, BinaryStream *stream)
   position = BglPosition(stream, true, 1000.f);
   frequency = stream->readInt() / 1000;
   range = stream->readFloat();
-  magVar = converter::adjustMagvar(stream->readFloat());
+  float mv = stream->readFloat();
+  magVar = converter::adjustMagvar(mv);
 
   // ILS ident
-  ident = converter::intToIcao(stream->readUInt());
+  ident = id == rec::ILS_VOR_MSFS2024 ? converter::intToIcaoLong(stream->readULong()) : converter::intToIcao(stream->readUInt());
 
   unsigned int regionFlags = stream->readUInt();
   // Two letter region code
-  region = converter::intToIcao(regionFlags & 0x7ff, true); // TODO wiki region is never set
+  region = converter::intToIcao(regionFlags & 0x7ff, true); // Region is never set
   // Read airport ICAO ident
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
-  atools::io::Encoding encoding = options->getSimulatorType() ==
-                                  atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
+  atools::io::Encoding encoding = options->getSimulatorType() == FsPaths::MSFS || id == rec::ILS_VOR_MSFS2024 ?
+                                  atools::io::UTF8 : atools::io::LATIN1;
+
+  if(id == rec::ILS_VOR_MSFS2024)
+    stream->skip(4); // Skip unknown data
 
   // Read all subrecords of ILS
   while(stream->tellg() < startOffset + size)
@@ -89,19 +92,25 @@ Ils::Ils(const NavDatabaseOptions *options, BinaryStream *stream)
       case rec::ILS_VOR_NAME:
         name = stream->readString(r.getSize() - Record::SIZE, encoding);
         break;
+
       case rec::LOCALIZER:
-        // This is actually not optional for an ILS
+      case rec::LOCALIZER_MSFS2024:
+        // Required for ILS
         r.seekToStart();
-        localizer = new Localizer(options, stream);
+        localizer = new Localizer(options, stream, magVar);
         break;
+
       case rec::GLIDESLOPE:
         r.seekToStart();
         glideslope = new Glideslope(options, stream);
         break;
+
       case rec::DME:
+      case rec::DME_MSFS2024:
         r.seekToStart();
         dme = new Dme(options, stream);
         break;
+
       default:
         qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in ILS record 0x"
                                        << hex << t << dec << " for ident " << ident;

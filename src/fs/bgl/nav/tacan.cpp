@@ -50,8 +50,8 @@ Tacan::Tacan(const NavDatabaseOptions *options, BinaryStream *stream)
   region = converter::intToIcao(regionFlags & 0x7ff, true);
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
-  atools::io::Encoding encoding = options->getSimulatorType() ==
-                                  atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
+  atools::io::Encoding encoding = options->getSimulatorType() == FsPaths::MSFS || id == rec::ILS_VOR_MSFS2024 ?
+                                  atools::io::UTF8 : atools::io::LATIN1;
 
   while(stream->tellg() < startOffset + size)
   {
@@ -65,11 +65,15 @@ Tacan::Tacan(const NavDatabaseOptions *options, BinaryStream *stream)
       case rec::ILS_VOR_NAME:
         name = stream->readString(r.getSize() - Record::SIZE, encoding);
         break;
+
       case rec::DME:
+      case rec::DME_MSFS2024:
         r.seekToStart();
         dme = new Dme(options, stream);
         break;
+
       case rec::LOCALIZER:
+      case rec::LOCALIZER_MSFS2024:
       case rec::GLIDESLOPE:
         break;
       default:

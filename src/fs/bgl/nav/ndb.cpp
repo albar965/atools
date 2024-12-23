@@ -60,14 +60,17 @@ Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *stream)
   position = BglPosition(stream, true, 1000.f);
   range = stream->readFloat();
   magVar = converter::adjustMagvar(stream->readFloat());
-  ident = converter::intToIcao(stream->readUInt());
+  ident = id == rec::NDB_MSFS2024 ? converter::intToIcaoLong(stream->readULong()) : converter::intToIcao(stream->readUInt());
 
   unsigned int regionFlags = stream->readUInt();
   region = converter::intToIcao(regionFlags & 0x7ff, true);
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
-  atools::io::Encoding encoding = options->getSimulatorType() ==
-                                  atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
+  if(id == rec::NDB_MSFS2024)
+    stream->skip(4); // Skip unknown
+
+  atools::io::Encoding encoding = options->getSimulatorType() == FsPaths::MSFS || id == rec::NDB_MSFS2024 ?
+                                  atools::io::UTF8 : atools::io::LATIN1;
 
   // Read only name subrecord
   if(stream->tellg() < startOffset + size)
@@ -84,6 +87,7 @@ Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *stream)
       case rec::NDB_NAME:
         name = stream->readString(r.getSize() - Record::SIZE, encoding);
         break;
+
       default:
         qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in NDB record 0x"
                                        << hex << t << dec << " for ident " << ident;

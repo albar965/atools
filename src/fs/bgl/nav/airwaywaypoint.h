@@ -50,7 +50,7 @@ class AirwayWaypoint :
 {
 public:
   AirwayWaypoint(const Waypoint& waypoint);
-  AirwayWaypoint(const NavDatabaseOptions *options, atools::io::BinaryStream *stream);
+  AirwayWaypoint(const NavDatabaseOptions *options, atools::io::BinaryStream *stream, const atools::fs::bgl::Waypoint& waypoint);
   virtual ~AirwayWaypoint() override;
 
   AirwayWaypoint()

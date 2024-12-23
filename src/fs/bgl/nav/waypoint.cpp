@@ -18,6 +18,7 @@
 #include "fs/bgl/nav/waypoint.h"
 #include "fs/bgl/converter.h"
 #include "fs/bgl/nav/airwaysegment.h"
+#include "fs/bgl/recordtypes.h"
 #include "io/binarystream.h"
 #include "fs/navdatabaseoptions.h"
 
@@ -93,8 +94,7 @@ Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *stream)
   int numAirways = stream->readUByte();
   position = BglPosition(stream);
   magVar = converter::adjustMagvar(stream->readFloat());
-  unsigned int identInt = stream->readUInt();
-  ident = converter::intToIcao(identInt);
+  ident = id == rec::WAYPOINT_MSFS2024 ? converter::intToIcaoLong(stream->readULong()) : converter::intToIcao(stream->readUInt());
 
   unsigned int regionFlags = stream->readUInt();
   region = converter::intToIcao(regionFlags & 0x7ff, true);
@@ -106,7 +106,10 @@ Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *stream)
   if(ident.isEmpty() && type != nav::UNNAMED && !isDisabled() && options->getSimulatorType() != atools::fs::FsPaths::MSFS)
     qWarning().nospace().noquote() << "Waypoint at " << position << " region " << region << " has no ident";
 
-  // Read airways if desired by configuration
+  if(id == rec::WAYPOINT_MSFS2024)
+    stream->skip(4); // Skip unknown data
+
+  // Read airways
   for(int i = 0; i < numAirways; i++)
   {
     // Read always to avoid messing up current file position

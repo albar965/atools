@@ -136,8 +136,15 @@ enum TurnDirection
   BOTH = 3
 };
 
-}
+enum SpeedDescriptor
+{
+  UNKNOWN_SPEED = 0,
+  AT = 1,
+  AT_OR_ABOVE = 2,
+  AT_OR_BELOW = 3,
+};
 
+}
 /*
  * Approach or transition leg. Not an actual record since it does not contain a header or size.
  */
@@ -296,6 +303,7 @@ public:
   static QString legTypeToString(atools::fs::bgl::leg::Type type, const QString& src, bool warn);
   static QString altDescriptorToString(atools::fs::bgl::leg::AltDescriptor altDescr);
   static QString turnDirToString(atools::fs::bgl::leg::TurnDirection turnDir);
+  static QString speedDescriptorToString(leg::SpeedDescriptor speedDescr); /* Only MSFS 2024 via SimConnect */
 
 private:
   friend QDebug operator<<(QDebug out, const ApproachLeg& record);

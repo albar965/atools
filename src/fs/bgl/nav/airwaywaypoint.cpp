@@ -16,9 +16,11 @@
 *****************************************************************************/
 
 #include "fs/bgl/nav/airwaywaypoint.h"
+
 #include "fs/bgl/converter.h"
-#include "io/binarystream.h"
 #include "fs/bgl/nav/waypoint.h"
+#include "fs/bgl/recordtypes.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {
@@ -42,6 +44,7 @@ AirwayWaypoint::AirwayWaypoint(const Waypoint& waypoint)
     case atools::fs::bgl::nav::FAF:
     case atools::fs::bgl::nav::RNAV:
     case atools::fs::bgl::nav::VFR:
+      // Airway waypoint has a limited number of types
       type = nav::AIRWAY_WP_OTHER;
       break;
 
@@ -55,17 +58,33 @@ AirwayWaypoint::AirwayWaypoint(const Waypoint& waypoint)
   }
 }
 
-AirwayWaypoint::AirwayWaypoint(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream)
+AirwayWaypoint::AirwayWaypoint(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream, const Waypoint& waypoint)
   : BglBase(options, stream)
 {
-  unsigned int nextFlags = stream->readUInt();
-  unsigned int nextIdFlags = stream->readUInt();
-  minimumAltitude = stream->readFloat();
+  if(waypoint.getId() == rec::WAYPOINT_MSFS2024)
+  {
+    ident = converter::intToIcaoLong(stream->readULong());
+    region = converter::intToIcao(stream->readUInt() & 0x7ff, true);
 
-  type = static_cast<nav::AirwayWaypointType>(nextFlags & 0x7);
-  ident = converter::intToIcao((nextFlags >> 5) & 0x7ffffff, true);
-  region = converter::intToIcao(nextIdFlags & 0x7ff, true);
-  airportIdent = converter::intToIcao((nextIdFlags >> 11) & 0xfffff, true);
+    stream->skip(4); // float of maximum altitude? Alyway 0
+    minimumAltitude = stream->readFloat();
+
+    // Type not given in MSFS 2024
+    type = nav::AIRWAY_WP_OTHER;
+  }
+  else
+  {
+    // FSX, P3D and MSFS 2020
+    unsigned int nextFlags = stream->readUInt();
+    type = static_cast<nav::AirwayWaypointType>(nextFlags & 0x7);
+    ident = converter::intToIcao((nextFlags >> 5) & 0x7ffffff, true);
+
+    unsigned int nextIdFlags = stream->readUInt();
+    region = converter::intToIcao(nextIdFlags & 0x7ff, true);
+    airportIdent = converter::intToIcao((nextIdFlags >> 11) & 0xfffff, true);
+
+    minimumAltitude = stream->readFloat();
+  }
 }
 
 AirwayWaypoint::~AirwayWaypoint()

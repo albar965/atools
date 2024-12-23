@@ -40,23 +40,24 @@ namespace ap {
 
 enum ParkingType
 {
-  UNKNOWN = 0x0,
-  RAMP_GA = 0x1,
-  RAMP_GA_SMALL = 0x2,
-  RAMP_GA_MEDIUM = 0x3,
-  RAMP_GA_LARGE = 0x4,
-  RAMP_CARGO = 0x5,
-  RAMP_MIL_CARGO = 0x6,
-  RAMP_MIL_COMBAT = 0x7,
-  GATE_SMALL = 0x8,
-  GATE_MEDIUM = 0x9,
-  GATE_HEAVY = 0xa,
-  DOCK_GA = 0xb,
-  FUEL = 0xc,
-  VEHICLES = 0xd,
+  UNKNOWN = 0x00,
+  RAMP_GA = 0x01,
+  RAMP_GA_SMALL = 0x02,
+  RAMP_GA_MEDIUM = 0x03,
+  RAMP_GA_LARGE = 0x04,
+  RAMP_CARGO = 0x05,
+  RAMP_MIL_CARGO = 0x06,
+  RAMP_MIL_COMBAT = 0x07,
+  GATE_SMALL = 0x08,
+  GATE_MEDIUM = 0x09,
+  GATE_HEAVY = 0x0a,
+  DOCK_GA = 0x0b,
+  FUEL = 0x0c,
+  VEHICLES = 0x0d,
 
-  RAMP_GA_EXTRA = 0xe,
-  GATE_EXTRA = 0xf
+  RAMP_GA_EXTRA = 0x0e,
+  GATE_EXTRA = 0x0f,
+  MSFS_2024_UNKNOWN = 0x10 // Unknown parking type. Most likely a gate
 };
 
 enum PushBack

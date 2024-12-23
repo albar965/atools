@@ -29,14 +29,20 @@ QString Start::startTypeToStr(start::StartType type)
 {
   switch(type)
   {
-    case atools::fs::bgl::start::RUNWAY:
+    case start::RUNWAY:
       return "R";
 
-    case atools::fs::bgl::start::WATER:
+    case start::WATER:
       return "W";
 
-    case atools::fs::bgl::start::HELIPAD:
+    case start::HELIPAD:
       return "H";
+
+    case start::TRACK:
+      return "T";
+
+    case start::UNKNOWN:
+      return "UNKNOWN";
   }
   qWarning().nospace().noquote() << "Invalid START type " << type;
   return "INVALID";
@@ -51,7 +57,7 @@ Start::Start(const NavDatabaseOptions *options, BinaryStream *stream)
   runwayDesignator = flags & 0x0f;
   type = static_cast<start::StartType>((flags >> 4) & 0xf);
   position = BglPosition(stream, true, 1000.f);
-  heading = stream->readFloat(); // TODO wiki heading is float degrees
+  heading = stream->readFloat(); // Heading is float degrees
 }
 
 Start::~Start()

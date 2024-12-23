@@ -52,6 +52,9 @@ QString recordTypeStr(rec::RecordType type)
     case rec::BOUNDARY:
       return "BOUNDARY";
 
+    case rec::BOUNDARY_MSFS2024:
+      return "BOUNDARY_MSFS2024";
+
     case rec::GEOPOL:
       return "GEOPOL";
 
@@ -66,6 +69,15 @@ QString recordTypeStr(rec::RecordType type)
 
     case rec::WAYPOINT_ICAO_INDEX:
       return "WAYPOINT_ICAO_INDEX";
+
+    case ILS_VOR_MSFS2024:
+      return "ILS_VOR_MSFS2024";
+
+    case WAYPOINT_MSFS2024:
+      return "WAYPOINT_MSFS2024";
+
+    case NDB_MSFS2024:
+      return "NDB_MSFS2024";
   }
   qWarning().nospace().noquote() << "Invalid record type " << type;
   return "INVALID";
@@ -458,11 +470,17 @@ QString ilsvorRecordTypeStr(rec::IlsVorRecordType type)
     case rec::LOCALIZER:
       return "LOCALIZER";
 
+    case LOCALIZER_MSFS2024:
+      return "LOCALIZER_MSFS2024";
+
     case rec::GLIDESLOPE:
       return "GLIDESLOPE";
 
     case rec::DME:
       return "DME";
+
+    case DME_MSFS2024:
+      return "DME_MSFS2024";
 
     case rec::ILS_VOR_NAME:
       return "ILS_VOR_NAME";

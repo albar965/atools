@@ -144,7 +144,7 @@ Boundary::Boundary()
 Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *stream)
   : Record(options, stream)
 {
-  if(id != rec::BOUNDARY)
+  if(id != rec::BOUNDARY && id != rec::BOUNDARY_MSFS2024)
   {
     qWarning() << "Not a boundary record" << hex << "0x" << id << dec;
     excluded = true;
@@ -158,7 +158,6 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *stream)
   }
 
   int flags = stream->readUByte();
-  // TODO fix in wiki
   minAltType = static_cast<boundary::AltitudeType>(flags & 0xf);
   maxAltType = static_cast<boundary::AltitudeType>((flags >> 4) & 0xf);
 
@@ -176,8 +175,11 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *stream)
 
   minPosition = BglPosition(stream, true, 1000.f);
   maxPosition = BglPosition(stream, true, 1000.f);
-  atools::io::Encoding encoding = options->getSimulatorType() ==
-                                  atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
+  atools::io::Encoding encoding = options->getSimulatorType() == atools::fs::FsPaths::MSFS || id != rec::BOUNDARY_MSFS2024 ?
+                                  atools::io::UTF8 : atools::io::LATIN1;
+
+  if(id == rec::BOUNDARY_MSFS2024)
+    stream->skip(20); // Skip unknown data
 
   int numFreq = 0;
   while(stream->tellg() < startOffset + size)
@@ -197,9 +199,11 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *stream)
         comFrequency = stream->readInt() / 1000;
         comName = stream->readString(r.getSize() - 12, encoding);
         break;
+
       case rec::BOUNDARY_NAME:
         name = stream->readString(r.getSize() - Record::SIZE, atools::io::LATIN1);
         break;
+
       case rec::BOUNDARY_LINES:
         {
           // Read geometry

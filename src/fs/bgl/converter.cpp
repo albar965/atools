@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,25 +25,23 @@ namespace fs {
 namespace bgl {
 namespace converter {
 
-static const char *RUNWAY_DESIGNATORS[] = {"", "L", "R", "C", "W", "A", "B"};
-
-QString intToIcao(unsigned int icao, bool noBitShift)
+QString intToIcaoInternal(quint64 icao, int numChars, int bitShift)
 {
   QString icaoStr;
-  unsigned int value = icao;
+  quint64 value = icao;
   // The ICAO identifiers for primary and secondary ILS in a runway record are not shifted.
-  if(!noBitShift)
-    value = value >> 5;
+  value = value >> bitShift;
 
   if(value == 0)
     return QString();
 
-  QVarLengthArray<unsigned int, 5> codedArr({0, 0, 0, 0, 0});
-  unsigned int coded = 0;
+  // Max of 8 characters for MSFS 2024
+  QVarLengthArray<quint64, 8> codedArr({0, 0, 0, 0, 0, 0, 0, 0});
+  quint64 coded = 0;
 
   // First extract the coded/compressed values
   int idx = 0;
-  if(value > 37)
+  if(value > 37) // More than "Z"
   {
     while(value > 37)
     {
@@ -64,24 +62,37 @@ QString intToIcao(unsigned int icao, bool noBitShift)
     }
   }
   else
+    // More or equal than "0" and lower or equal than "Z"
     codedArr[idx++] = value;
 
   // Convert the decompressed bytes to characters
-  for(int i = 0; i < 5; i++)
+  for(int i = 0; i < numChars; i++)
   {
-    coded = codedArr.at(i);
-    if(coded == 0)
+    unsigned int codedChar = static_cast<unsigned int>(codedArr.at(i));
+    if(codedChar == 0)
       break;
-    if(coded > 1 && coded < 12)
-      icaoStr.insert(0, '0' + (coded - 2));
+    if(codedChar > 1 && codedChar < 12)
+      icaoStr.insert(0, '0' + (codedChar - 2));
     else
-      icaoStr.insert(0, 'A' + (coded - 12));
+      icaoStr.insert(0, 'A' + (codedChar - 12));
   }
+
   return icaoStr;
+}
+
+QString intToIcao(unsigned int icao, bool noBitShift)
+{
+  return intToIcaoInternal(icao, 5 /* numChars */, noBitShift ? 0 : 5 /* bitShift */);
+}
+
+QString intToIcaoLong(quint64 icao, bool noBitShift)
+{
+  return intToIcaoInternal(icao, 8 /* numChars */, noBitShift ? 0 : 6 /* bitShift */);
 }
 
 QString designatorStr(int designator)
 {
+  static const QVarLengthArray<const char *, 7> RUNWAY_DESIGNATORS({"", "L", "R", "C", "W", "A", "B"});
 
   if(designator >= 0 && designator <= 6)
     return RUNWAY_DESIGNATORS[designator];
@@ -152,8 +163,8 @@ time_t filetime(unsigned int lowDateTime, unsigned int highDateTime)
   static const unsigned long long FILETIME_EPOCH_DIFF = 11644473600LL;
   static const unsigned long long FILETIME_SECOND = 10000000LL;
 
-  unsigned long long filetime = ((static_cast<unsigned long long>(highDateTime)) << 32)
-                                + static_cast<unsigned long long>(lowDateTime);
+  unsigned long long filetime = ((static_cast<unsigned long long>(highDateTime)) << 32) +
+                                static_cast<unsigned long long>(lowDateTime);
   filetime /= FILETIME_SECOND;
   filetime -= FILETIME_EPOCH_DIFF;
   return static_cast<time_t>(filetime);

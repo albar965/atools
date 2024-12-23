@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -48,18 +48,27 @@ inline float intToLatY(int latY)
 time_t filetime(unsigned int lowDateTime, unsigned int highDateTime);
 
 /*
- * Convert the BGL ICAO format to string
- * @param noBitShift if true do not shift 5 bits to the right
+ * Convert the BGL ICAO format to string for FSX, P3D and MSFS 2020
+ * Max of five characters into four bytes.
+ * @param noBitShift if true do not shift 5 bits to the right before decoding
  */
 QString intToIcao(unsigned int icao, bool noBitShift = false);
 
 /*
- * Convert BGL runway designator to a string like "L", "C", "R" or "W"
+ * Convert the BGL ICAO format to string using MSFS 2024 eight character format.
+ * Uses a different bit shift of 6.
+ * Max of eight characters into six or eight bytes.
+ * @param noBitShift if true do not shift 6 bits to the right before decoding
+ */
+QString intToIcaoLong(quint64 icao, bool noBitShift = false);
+
+/*
+ * Convert BGL runway designator number to a string like "L", "C", "R" or "W"
  */
 QString designatorStr(int designator);
 
 /*
- * Create a full runway name from number and designator.
+ * Create a full runway name from number and designator. Number is always two digits except special codes like "N" or "E".
  * @return Runway name like "12", "24C" or "NE"
  */
 QString runwayToStr(int runwayNumber, int designator);

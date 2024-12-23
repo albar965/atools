@@ -28,7 +28,8 @@ namespace bgl {
 class Dme;
 
 /*
- * VHF omnidirectional range - VOR/DME/VORDME record
+ * VOR/DME/VORDME record
+ * Also reads MSFS 2024 TACAN
  */
 class Vor :
   public atools::fs::bgl::NavBase
@@ -64,11 +65,17 @@ public:
     return type;
   }
 
+  /* true if MSFS 2024 TACAN */
+  bool isTacan() const
+  {
+    return tacan;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Vor& record);
 
   atools::fs::bgl::nav::IlsVorType type;
-  bool dmeOnly;
+  bool dmeOnly, tacan;
   atools::fs::bgl::Dme *dme = nullptr;
 };
 

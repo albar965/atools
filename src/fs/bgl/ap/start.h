@@ -36,9 +36,11 @@ namespace bgl {
 namespace start {
 enum StartType
 {
+  UNKNOWN = 0,
   RUNWAY = 1,
   WATER = 2,
-  HELIPAD = 3 // TOOD fix in wiki
+  HELIPAD = 3,
+  TRACK = 4 /* MSFS 2024 */
 };
 
 } // namespace start

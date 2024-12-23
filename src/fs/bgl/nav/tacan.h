@@ -27,7 +27,7 @@ namespace bgl {
 class Dme;
 
 /*
- * TACAN
+ * TACAN. Not used for MSFS 2024.
  */
 class Tacan :
   public atools::fs::bgl::NavBase

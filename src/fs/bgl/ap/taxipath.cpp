@@ -84,25 +84,25 @@ QString TaxiPath::pathTypeToString(taxipath::Type type)
 {
   switch(type)
   {
-    case atools::fs::bgl::taxipath::VEHICLE:
-      return "V";
-
-    case atools::fs::bgl::taxipath::UNKNOWN:
+    case taxipath::VEHICLE:
+    case taxipath::ROAD:
+    case taxipath::PAINTEDLINE:
+    case taxipath::UNKNOWN:
       return "UNKNOWN";
 
-    case atools::fs::bgl::taxipath::TAXI:
+    case taxipath::TAXI:
       return "T";
 
-    case atools::fs::bgl::taxipath::RUNWAY:
+    case taxipath::RUNWAY:
       return "R";
 
-    case atools::fs::bgl::taxipath::PARKING:
+    case taxipath::PARKING:
       return "P";
 
-    case atools::fs::bgl::taxipath::PATH:
+    case taxipath::PATH:
       return "PT";
 
-    case atools::fs::bgl::taxipath::CLOSED:
+    case taxipath::CLOSED:
       return "C";
   }
   qWarning().nospace().noquote() << "Invalid taxi path type " << type;
@@ -113,16 +113,16 @@ QString TaxiPath::edgeTypeToString(taxipath::EdgeType type)
 {
   switch(type)
   {
-    case atools::fs::bgl::taxipath::NONE:
+    case taxipath::NONE:
       return "NONE";
 
-    case atools::fs::bgl::taxipath::SOLID:
+    case taxipath::SOLID:
       return "SOLID";
 
-    case atools::fs::bgl::taxipath::DASHED:
+    case taxipath::DASHED:
       return "DASHED";
 
-    case atools::fs::bgl::taxipath::SOLID_DASHED:
+    case taxipath::SOLID_DASHED:
       return "SOLID_DASHED";
   }
   qWarning().nospace().noquote() << "Invalid taxi path edge type " << type;

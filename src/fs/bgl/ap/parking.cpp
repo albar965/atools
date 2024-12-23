@@ -75,6 +75,9 @@ QString Parking::parkingTypeToStr(ap::ParkingType type)
 
     case ap::GATE_EXTRA:
       return "GE";
+
+    case ap::MSFS_2024_UNKNOWN:
+      return "UNKN";
   }
   qWarning().nospace().noquote() << "Invalid parking type " << type;
   return "INVALID";
@@ -361,6 +364,8 @@ bool Parking::isGate() const
     return true;
   else if(type == ap::GATE_HEAVY)
     return true;
+  else if(type == ap::GATE_EXTRA)
+    return true;
 
   return false;
 }
@@ -374,6 +379,8 @@ bool Parking::isGaRamp() const
   else if(type == ap::RAMP_GA_MEDIUM)
     return true;
   else if(type == ap::RAMP_GA_LARGE)
+    return true;
+  else if(type == ap::RAMP_GA_EXTRA)
     return true;
 
   return false;

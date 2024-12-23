@@ -36,17 +36,12 @@ using Qt::dec;
 
 enum VorFlags
 {
-  // bit 0: if 0 then DME only, otherwise 1 for ILS
-  // bit 2: backcourse (0 = false, 1 = true)
-  // bit 3: glideslope present
-  // bit 4: DME present
-  // bit 5: NAV true
-
-  FLAGS_DME_ONLY = 1 << 0,
-  FLAGS_BC = 1 << 1,
-  FLAGS_GS = 1 << 2,
-  FLAGS_DME = 1 << 3,
-  FLAGS_NAV = 1 << 4
+  FLAGS_DME_ONLY = 1 << 0, // if 0 then DME only, otherwise 1 for ILS
+  FLAGS_BC = 1 << 1, // backcourse (0 = false, 1 = true)
+  FLAGS_GS = 1 << 2, // glideslope present
+  FLAGS_DME = 1 << 3, // DME present
+  FLAGS_NAV = 1 << 4, // NAV true
+  FLAGS_TACAN_MSFS = 1 << 1 /* 2020 and 2024 */
 };
 
 Vor::Vor(const NavDatabaseOptions *options, BinaryStream *stream)
@@ -54,26 +49,33 @@ Vor::Vor(const NavDatabaseOptions *options, BinaryStream *stream)
 {
   type = static_cast<nav::IlsVorType>(stream->readUByte());
   int flags = stream->readUByte();
-
-  dmeOnly = (flags & FLAGS_DME_ONLY) == 0;
-  // TODO compare flags with record presence
+  tacan = flags & FLAGS_TACAN_MSFS;
+  dmeOnly = (flags & FLAGS_DME_ONLY) == 0 && !tacan;
   // hasDme = (flags & FLAGS_DME) == FLAGS_DME;
   // hasNav = (flags & FLAGS_NAV) == FLAGS_NAV;
+
+  // Flag fields found in MSFS 2024
+  // "TCN" "ZZ" 0x33 0b110011 0x0 dmeOnly false dummy 0x0
+  // "VDM" "ZZ" 0x31 0b110001 0x0 dmeOnly false dummy 0x0
+  // "VOR" "ZZ" 0x1  0b000001 0x0 dmeOnly false dummy 0x0
+  // "DME" "ZZ" 0x10 0b010000 0x0 dmeOnly true dummy 0x0
 
   position = BglPosition(stream, true, 1000.f);
   frequency = stream->readInt() / 1000;
   range = stream->readFloat();
   magVar = converter::adjustMagvar(stream->readFloat());
-
-  ident = converter::intToIcao(stream->readUInt());
+  ident = id == rec::ILS_VOR_MSFS2024 ? converter::intToIcaoLong(stream->readULong()) : converter::intToIcao(stream->readUInt());
 
   unsigned int regionFlags = stream->readUInt();
   region = converter::intToIcao(regionFlags & 0x7ff, true);
 
-  // TODO report wiki error ap ident is never set
+  // Airport ident is never set
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
-  atools::io::Encoding encoding = options->getSimulatorType() ==
-                                  atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
+  atools::io::Encoding encoding = options->getSimulatorType() == FsPaths::MSFS || id == rec::ILS_VOR_MSFS2024 ?
+                                  atools::io::UTF8 : atools::io::LATIN1;
+
+  if(id == rec::ILS_VOR_MSFS2024)
+    stream->skip(4); // Skip unknown data
 
   while(stream->tellg() < startOffset + size)
   {
@@ -87,16 +89,21 @@ Vor::Vor(const NavDatabaseOptions *options, BinaryStream *stream)
       case rec::ILS_VOR_NAME:
         name = stream->readString(r.getSize() - Record::SIZE, encoding);
         break;
+
       case rec::DME:
+      case rec::DME_MSFS2024:
         r.seekToStart();
         dme = new Dme(options, stream);
         break;
-      case atools::fs::bgl::rec::LOCALIZER:
-      case atools::fs::bgl::rec::GLIDESLOPE:
+
+      // Only ILS records - should not appear here
+      case rec::LOCALIZER:
+      case rec::LOCALIZER_MSFS2024:
+      case rec::GLIDESLOPE:
+      default:
+        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in VOR record 0x" << hex << t << dec
+                                       << " for ident " << ident;
         break;
-        // default:
-        // qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in VOR record 0x" << hex << t << dec <<
-        // " for ident " << ident;
     }
     r.seekToEnd();
   }

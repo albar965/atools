@@ -43,7 +43,9 @@ enum Type
   PARKING = 3,
   PATH = 4,
   CLOSED = 5,
-  VEHICLE = 6 // TODO add wiki
+  VEHICLE = 6,
+  ROAD = 7, /* MSFS 2024 */
+  PAINTEDLINE = 8 /* MSFS 2024 */
 };
 
 enum EdgeType

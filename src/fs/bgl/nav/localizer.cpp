@@ -17,9 +17,10 @@
 
 #include "fs/bgl/nav/localizer.h"
 
-#include "io/binarystream.h"
 #include "fs/bgl/converter.h"
+#include "fs/bgl/recordtypes.h"
 #include "fs/navdatabaseoptions.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {
@@ -27,12 +28,18 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Localizer::Localizer(const NavDatabaseOptions *options, BinaryStream *stream)
+Localizer::Localizer(const NavDatabaseOptions *options, BinaryStream *stream, float magVar)
   : Record(options, stream)
 {
-  runwayNumber = stream->readUByte();
-  runwayDesignator = stream->readUByte();
+  runwayNumber = stream->readUByte(); // Not set
+  runwayDesignator = stream->readUByte(); // Not set
   heading = stream->readFloat();
+
+  if(id == rec::LOCALIZER_MSFS2024)
+    // MSFS 2024 gives heading in magnetic instead of true
+    heading += magVar;
+
+  // Limit width
   width = std::min(stream->readFloat(), 20.f);
 }
 

@@ -51,9 +51,11 @@ AirwaySegment::AirwaySegment(const atools::fs::NavDatabaseOptions *options, Bina
   type = static_cast<nav::AirwayType>(stream->readUByte());
   name = stream->readString(8, atools::io::LATIN1);
 
+  // Current waypoint
   mid = AirwayWaypoint(waypoint);
-  next = AirwayWaypoint(options, stream);
-  previous = AirwayWaypoint(options, stream);
+
+  next = AirwayWaypoint(options, stream, waypoint);
+  previous = AirwayWaypoint(options, stream, waypoint);
 }
 
 AirwaySegment::~AirwaySegment()
