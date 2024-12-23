@@ -26,12 +26,20 @@
 #include <QFileInfo>
 
 namespace atools {
+namespace win {
+class ActivationContext;
+}
 namespace sql {
 class SqlDatabase;
 class SqlUtil;
 }
 
 namespace fs {
+namespace sc {
+namespace airport {
+class SimConnectLoader;
+}
+}
 class NavDatabaseOptions;
 class NavDatabaseErrors;
 
@@ -72,7 +80,13 @@ public:
    * @param sqlDb Database to fill with data
    */
   NavDatabase(const atools::fs::NavDatabaseOptions *readerOptions, atools::sql::SqlDatabase *sqlDb,
-              atools::fs::NavDatabaseErrors *databaseErrors, const QString& revision);
+              atools::fs::NavDatabaseErrors *databaseErrors, const QString& revision)
+    : db(sqlDb), errors(databaseErrors), options(readerOptions), gitRevision(revision)
+  {
+
+  }
+
+  ~NavDatabase();
 
   /* Read all BGL or X-Plane files and load data into database. atools::Exception is thrown in case of error.
    * @param codec Scenery.cfg codec only applies to FSX/P3D */
@@ -112,6 +126,13 @@ public:
 
   /* Delete all tables that are not used in versions > 2.4.5 */
   static void runPreparationPost245(atools::sql::SqlDatabase& db);
+
+  /* Set parameters needed to create SimConnectLoader to load airports from SimConnect */
+  void setActivationContext(const atools::win::ActivationContext *context, const QString& libraryNameParam)
+  {
+    activationContext = context;
+    libraryName = libraryNameParam;
+  }
 
 private:
   /* Creates database schema only */
@@ -188,10 +209,16 @@ private:
   int countMsfsSteps(ProgressHandler *progress, const scenery::SceneryCfg& cfg);
   int countMsSimSteps();
 
-  void calculateRating(FsPaths::SimulatorType sim);
+  /* Initialize API - SimConnect DLL has to be loaded before. */
+  void createSimConnectLoader();
+  void calculateRating(atools::fs::FsPaths::SimulatorType sim);
 
   /* Detect Navigraph navdata update packages for special handling. */
   bool isNavigraphNavdata(atools::fs::scenery::ManifestJson& manifest);
+
+  atools::fs::sc::airport::SimConnectLoader *simconnectLoader = nullptr;
+  const atools::win::ActivationContext *activationContext = nullptr;
+  QString libraryName;
 
   atools::sql::SqlDatabase *db;
   atools::fs::NavDatabaseErrors *errors = nullptr;

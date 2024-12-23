@@ -16,28 +16,31 @@
 *****************************************************************************/
 
 #include "fs/navdatabase.h"
-#include "sql/sqldatabase.h"
-#include "sql/sqlscript.h"
-#include "fs/db/datawriter.h"
-#include "sql/sqlutil.h"
-#include "sql/sqltransaction.h"
-#include "fs/scenery/scenerycfg.h"
-#include "fs/scenery/addoncfg.h"
-#include "fs/db/airwayresolver.h"
-#include "fs/progresshandler.h"
-#include "fs/scenery/fileresolver.h"
-#include "fs/scenery/addonpackage.h"
-#include "fs/xp/xpdatacompiler.h"
-#include "fs/dfd/dfdcompiler.h"
-#include "fs/db/databasemeta.h"
+
 #include "atools.h"
 #include "exception.h"
+#include "fs/common/metadatawriter.h"
+#include "fs/db/airwayresolver.h"
+#include "fs/db/databasemeta.h"
+#include "fs/db/datawriter.h"
+#include "fs/dfd/dfdcompiler.h"
+#include "fs/progresshandler.h"
+#include "fs/sc/airport/simconnectloader.h"
+#include "fs/scenery/addoncfg.h"
+#include "fs/scenery/addonpackage.h"
+#include "fs/scenery/contentxml.h"
+#include "fs/scenery/fileresolver.h"
+#include "fs/scenery/languagejson.h"
 #include "fs/scenery/layoutjson.h"
 #include "fs/scenery/manifestjson.h"
-#include "fs/scenery/languagejson.h"
 #include "fs/scenery/materiallib.h"
-#include "fs/scenery/contentxml.h"
+#include "fs/scenery/scenerycfg.h"
 #include "fs/util/fsutil.h"
+#include "fs/xp/xpdatacompiler.h"
+#include "sql/sqldatabase.h"
+#include "sql/sqlscript.h"
+#include "sql/sqltransaction.h"
+#include "sql/sqlutil.h"
 
 #include <QDir>
 #include <QElapsedTimer>
@@ -58,6 +61,9 @@ using Qt::endl;
 
 // Number of steps for general tasks - increase > 1 to make them more visible in progress
 static const int PROGRESS_NUM_TASK_STEPS = 10;
+
+// MSFS 2024 loader
+static const int PROGRESS_SIMCONNECT_LOADER_STEPS = 8;
 
 // runScript()
 static const int PROGRESS_NUM_SCRIPT_STEPS = PROGRESS_NUM_TASK_STEPS;
@@ -81,11 +87,9 @@ using atools::fs::scenery::AddOnPackage;
 using atools::fs::FsPaths;
 using atools::buildPathNoCase;
 
-NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb, NavDatabaseErrors *databaseErrors,
-                         const QString& revision)
-  : db(sqlDb), errors(databaseErrors), options(readerOptions), gitRevision(revision)
+NavDatabase::~NavDatabase()
 {
-
+  ATOOLS_DELETE_LOG(simconnectLoader);
 }
 
 atools::fs::ResultFlags NavDatabase::compileDatabase()
@@ -168,6 +172,20 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
   transaction.commit();
 }
 
+void NavDatabase::createSimConnectLoader()
+{
+  if(options->getSimulatorType() == FsPaths::MSFS_2024 && simconnectLoader == nullptr)
+  {
+    if(activationContext == nullptr)
+      throw Exception("Activation context not set for MSFS 2024");
+
+    if(libraryName.isEmpty())
+      throw Exception("DLL name not set for MSFS 2024");
+
+    simconnectLoader = new atools::fs::sc::airport::SimConnectLoader(activationContext, libraryName, *db, options->isVerbose());
+  }
+}
+
 bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& codec, QStringList& errors)
 {
   errors.append(atools::checkFileMsg(filename));
@@ -228,6 +246,14 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, 
     }
 
     errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "Community"})));
+  }
+  else if(type == FsPaths::MSFS_2024)
+  {
+    // Base is C:/Users/USER/AppData/Local/Packages/Microsoft.Limitless_8wekyb3d8bbwe/LocalState/StreamedPackages/fs-base-nav/content/scenery
+    QString baseNavMs = buildPathNoCase({filepath, "fs-base-nav", "content", "scenery"});
+    if(!checkDir(Q_FUNC_INFO, baseNavMs))
+      // Does not exist add error messages
+      errors.append(atools::checkDirMsg(baseNavMs));
   }
   else
     // FSX and P3D ======================================================
@@ -513,11 +539,16 @@ int NavDatabase::countMsSimSteps()
   int total = 0;
   total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes"
   total += PROGRESS_NUM_TASK_STEPS; // "Creating boundary indexes"
+
   if(options->isDeduplicate())
     total += PROGRESS_NUM_TASK_STEPS; // "Clean up"
+
   if(options->isResolveAirways())
     total += PROGRESS_NUM_RESOLVE_AIRWAY_STEPS; // "Creating airways"
-  total += PROGRESS_NUM_TASK_STEPS; // "Merging VOR and TACAN to VORTAC"
+
+  if(options->getSimulatorType() != FsPaths::MSFS_2024)
+    total += PROGRESS_NUM_TASK_STEPS; // "Merging VOR and TACAN to VORTAC"
+
   total += PROGRESS_NUM_TASK_STEPS; // "Updating waypoints"
   total += PROGRESS_NUM_TASK_STEPS; // "Updating approaches"
   total += PROGRESS_NUM_TASK_STEPS; // "Updating Airports"
@@ -529,8 +560,10 @@ int NavDatabase::countMsSimSteps()
   total += PROGRESS_NUM_TASK_STEPS; // "Clean up runways"
   total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes for search"
   total += PROGRESS_NUM_TASK_STEPS; // "Calculating airport rating"
+
   if(options->isVacuumDatabase())
     total += PROGRESS_NUM_TASK_STEPS; // "Vacuum Database"
+
   if(options->isAnalyzeDatabase())
     total += PROGRESS_NUM_TASK_STEPS; // "Analyze Database"
 
@@ -557,6 +590,10 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   if(options->isAutocommit())
     db->setAutocommit(true);
 
+  // Create and register SimConnect API
+  if(options->getSimulatorType() == FsPaths::MSFS_2024)
+    createSimConnectLoader();
+
   // ==============================================================================
   // Calculate the total number of progress steps
   FsPaths::SimulatorType sim = options->getSimulatorType();
@@ -565,7 +602,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     total = countXplaneSteps(&progress);
   else if(sim == FsPaths::NAVIGRAPH)
     total = countDfdSteps();
-  else if(sim == FsPaths::MSFS)
+  else if(sim == FsPaths::MSFS || sim == FsPaths::MSFS_2024)
   {
     // Fill with default required entries but does not read a file
     readSceneryConfigMsfs(sceneryCfg);
@@ -646,39 +683,43 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     loadXplane(&progress, xpDataCompiler.data(), area);
     xpDataCompiler->close();
   }
-  else if(sim == FsPaths::MSFS)
+  else if(sim == FsPaths::MSFS || sim == FsPaths::MSFS_2024)
   {
     // Load FSX / P3D scenery database ======================================================
     fsDataWriter.reset(new atools::fs::db::DataWriter(*db, *options, &progress));
 
     // Base is
-    // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
-    // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore\fs-base\en-US.locPak
+    // C:/Users/alex/AppData/Local/Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages
+    // C:/Users/alex/AppData/Local/Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/fs-base/en-US.locPak
 
-    // Load the language index for lookup for airport names and more - first from fs-base
-    QString packageBase = options->getMsfsOfficialPath();
-    QFileInfo langFile = buildPathNoCase({packageBase, "fs-base", options->getLanguage() % ".locPak"});
-    if(!atools::checkFile(Q_FUNC_INFO, langFile, true /* warn */))
-      langFile = buildPathNoCase({packageBase, "fs-base", "en-US.locPak"});
+    if(sim == FsPaths::MSFS)
+    {
+      QString packageBase = options->getMsfsOfficialPath();
+      // Load the language index for lookup for airport names and more - first from fs-base
+      QFileInfo langFile = buildPathNoCase({packageBase, "fs-base", options->getLanguage() % ".locPak"});
+      if(!atools::checkFile(Q_FUNC_INFO, langFile, true /* warn */))
+        langFile = buildPathNoCase({packageBase, "fs-base", "en-US.locPak"});
 
-    // Load the language index for lookup for airport names from fs-base-genericairports
-    QFileInfo langFileGeneric = buildPathNoCase({packageBase, "fs-base-genericairports", options->getLanguage() % ".locPak"});
-    if(!atools::checkFile(Q_FUNC_INFO, langFileGeneric, true /* warn */))
-      langFileGeneric = buildPathNoCase({packageBase, "fs-base-genericairports", "en-US.locPak"});
+      QFileInfo langFileGeneric;
+      // Load the language index for lookup for airport names from fs-base-genericairports
+      langFileGeneric = buildPathNoCase({packageBase, "fs-base-genericairports", options->getLanguage() % ".locPak"});
+      if(!atools::checkFile(Q_FUNC_INFO, langFileGeneric, true /* warn */))
+        langFileGeneric = buildPathNoCase({packageBase, "fs-base-genericairports", "en-US.locPak"});
 
-    // Load translation file in current language for airport names ====================================
-    languageIndex.reset(new scenery::LanguageJson());
-    languageIndex->clear();
-    if(langFile.exists() && langFile.isFile())
-      languageIndex->readFromFile(langFile.filePath(), {"AIRPORT"});
-    if(langFileGeneric.exists() && langFileGeneric.isFile())
-      languageIndex->readFromFile(langFileGeneric.filePath(), {"AIRPORT"});
-    fsDataWriter->setLanguageIndex(languageIndex.data());
+      // Load translation file in current language for airport names ====================================
+      languageIndex.reset(new scenery::LanguageJson());
+      languageIndex->clear();
+      if(langFile.exists() && langFile.isFile())
+        languageIndex->readFromFile(langFile.filePath(), {"AIRPORT"});
+      if(langFileGeneric.exists() && langFileGeneric.isFile())
+        languageIndex->readFromFile(langFileGeneric.filePath(), {"AIRPORT"});
+      fsDataWriter->setLanguageIndex(languageIndex.data());
 
-    // Load the two official material libraries ================================
-    materialLib.reset(new scenery::MaterialLib(options));
-    materialLib->readOfficial(packageBase);
-    fsDataWriter->setMaterialLib(materialLib.data());
+      // Load the two official material libraries ================================
+      materialLib.reset(new scenery::MaterialLib(options));
+      materialLib->readOfficial(packageBase);
+      fsDataWriter->setMaterialLib(materialLib.data());
+    }
 
     // Load all community and official scenery/BGL files  =====================================
     loadMsfs(&progress, fsDataWriter.data(), sceneryCfg);
@@ -714,7 +755,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
       return result;
   }
 
-  if(!FsPaths::isAnyXplane(sim) && sim != FsPaths::NAVIGRAPH && sim != FsPaths::MSFS)
+  if(!FsPaths::isAnyXplane(sim) && sim != FsPaths::NAVIGRAPH && sim != FsPaths::MSFS && sim != FsPaths::MSFS_2024)
   {
     // Create VORTACs
     if((aborted = runScript(&progress, "fs/db/update_vor.sql", tr("Merging VOR and TACAN to VORTAC"))))
@@ -752,7 +793,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     if((aborted = runScript(&progress, "fs/db/dfd/update_airport_ils.sql", tr("Updating ILS"))))
       return result;
   }
-  else if(sim == FsPaths::MSFS)
+  else if(sim == FsPaths::MSFS || sim == FsPaths::MSFS_2024)
   {
     if((aborted = runScript(&progress, "fs/db/update_airport_ils_msfs.sql", tr("Updating ILS"))))
       return result;
@@ -1125,8 +1166,7 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
   // Prepare structure for error collection
   NavDatabaseErrors::SceneryErrors err;
   fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
-  fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getBasepath(), "Scenery", "Base", "Scenery",
-                                                "magdec.bgl"}));
+  fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getBasepath(), "Scenery", "Base", "Scenery", "magdec.bgl"}));
   if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
     errors->sceneryErrors.append(err);
 
@@ -1146,7 +1186,11 @@ bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWrit
 
   // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
   // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/fs-base/scenery/Base/scenery/magdec.bgl
-  fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getMsfsOfficialPath(), "fs-base", "scenery", "Base", "scenery", "magdec.bgl"}));
+  if(options->getSimulatorType() == FsPaths::MSFS_2024)
+    fsDataWriter->readMagDeclBgl(QString(), true /* forceWmm */); // MSFS 2024 does not have a declination file
+  else
+    fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getMsfsOfficialPath(), "fs-base", "scenery", "Base", "scenery", "magdec.bgl"}));
+
   if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
     errors->sceneryErrors.append(err);
 
@@ -1169,40 +1213,73 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
       if((aborted = progress->reportSceneryArea(&area)))
         return true;
 
-      NavDatabaseErrors::SceneryErrors err = NavDatabaseErrors::SceneryErrors();
-      fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
-
-      QFileInfo fileinfo(area.getLocalPath());
-      if(!fileinfo.isAbsolute())
+      // MSFS 2024 ======================================
+      if(area.isSimconnect())
       {
-        if(area.isIncluded())
-          // Include from GUI has full path
-          fileinfo.setFile(area.getLocalPath());
-        else if(area.isCommunity())
-          fileinfo.setFile(options->getMsfsCommunityPath() % SEP % area.getLocalPath());
-        else if(area.isAddOn())
-          fileinfo.setFile(options->getMsfsOfficialPath() % SEP % area.getLocalPath());
-      }
+        if(simconnectLoader != nullptr)
+        {
+          int fileId = fsDataWriter->getNextFileId();
+          int sceneryId = fsDataWriter->getNextSceneryId();
 
-      if(options->getSimulatorType() == FsPaths::MSFS && (area.isAddOn() || area.isCommunity() || area.isIncluded()))
+          atools::fs::common::MetadataWriter metadataWriter(*db);
+          metadataWriter.writeSceneryArea(QString(), "SimConnect", sceneryId);
+          metadataWriter.writeFile(QString(), "Airports", sceneryId, fileId);
+
+          simconnectLoader->setProgressCallback([progress](const QString& identFrom, const QString& identTo, int rawBatchSize,
+                                                           int totalWritten)->bool {
+                progress->setNumAirports(totalWritten);
+                return progress->reportOtherInc(tr("Loading airports %1 ... %2 and procedures").arg(identFrom).arg(identTo),
+                                                rawBatchSize / PROGRESS_SIMCONNECT_LOADER_STEPS);
+              });
+
+          if(!simconnectLoader->loadAirports(fileId))
+            qWarning() << Q_FUNC_INFO << "Errors loading airports" << simconnectLoader->getErrors();
+
+          if((aborted = simconnectLoader->isAborted()))
+            return true;
+        }
+        else
+          throw Exception("SimConnectLoader is null.");
+      }
+      else
       {
-        // Load package specific material library for MSFS
-        materialLib.clear();
-        materialLib.readCommunity(fileinfo.absoluteFilePath());
-        fsDataWriter->setMaterialLibScenery(&materialLib);
+        NavDatabaseErrors::SceneryErrors err = NavDatabaseErrors::SceneryErrors();
+        fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
+
+        QFileInfo fileinfo(area.getLocalPath());
+        if(!fileinfo.isAbsolute())
+        {
+          if(area.isIncluded())
+            // Include from GUI has full path
+            fileinfo.setFile(area.getLocalPath());
+          else if(area.isCommunity())
+            fileinfo.setFile(options->getMsfsCommunityPath() % SEP % area.getLocalPath());
+          else if(area.isAddOn())
+            fileinfo.setFile(options->getMsfsOfficialPath() % SEP % area.getLocalPath());
+          else if(options->getSimulatorType() == FsPaths::MSFS_2024)
+            fileinfo.setFile(options->getMsfs24StreamedPackagesPath() % SEP % area.getLocalPath());
+        }
+
+        if(options->getSimulatorType() == FsPaths::MSFS && (area.isAddOn() || area.isCommunity() || area.isIncluded()))
+        {
+          // Load package specific material library for MSFS
+          materialLib.clear();
+          materialLib.readCommunity(fileinfo.absoluteFilePath());
+          fsDataWriter->setMaterialLibScenery(&materialLib);
+        }
+
+        // Read all BGL files in the scenery area into classes of the bgl namespace and
+        // write the contents to the database
+        fsDataWriter->writeSceneryArea(area);
+
+        if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
+        {
+          err.scenery = area;
+          errors->sceneryErrors.append(err);
+        }
+
+        fsDataWriter->setMaterialLibScenery(nullptr);
       }
-
-      // Read all BGL files in the scenery area into classes of the bgl namespace and
-      // write the contents to the database
-      fsDataWriter->writeSceneryArea(area);
-
-      if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
-      {
-        err.scenery = area;
-        errors->sceneryErrors.append(err);
-      }
-
-      fsDataWriter->setMaterialLibScenery(nullptr);
 
       if((aborted = fsDataWriter->isAborted()))
         return true;
@@ -1222,8 +1299,16 @@ bool NavDatabase::loadFsxP3dMsfsPost(ProgressHandler *progress)
 
   if(options->isDeduplicate())
   {
+    QStringList scripts;
+    scripts.append("fs/db/delete_duplicate_navaids.sql");
+
+    if(options->getSimulatorType() == FsPaths::MSFS_2024)
+      scripts.append("fs/db/delete_duplicate_navaids_msfs24.sql");
+    else
+      scripts.append("fs/db/delete_duplicate_ils_fsx.sql");
+
     // Delete duplicates before any foreign keys ids are assigned
-    if((aborted = runScripts(progress, {"fs/db/delete_duplicate_navaids.sql", "fs/db/delete_duplicate_ils_fsx.sql"}, tr("Clean up"))))
+    if((aborted = runScripts(progress, scripts, tr("Clean up"))))
       return true;
   }
   return false;
@@ -1450,7 +1535,7 @@ void NavDatabase::calculateRating(FsPaths::SimulatorType sim)
       // int calculateAirportRating(bool isAddon, bool hasTower, bool msfs, int numTaxiPaths, int numParkings, int numAprons)
       int rating = util::calculateAirportRating(query.valueInt("is_addon") > 0,
                                                 query.valueInt("has_tower_object") > 0,
-                                                sim == FsPaths::MSFS,
+                                                sim == FsPaths::MSFS || sim == FsPaths::MSFS_2024,
                                                 query.valueInt("num_taxi_path") > 0,
                                                 query.valueInt("num_parking") > 0,
                                                 query.valueInt("num_apron") > 0);
@@ -1466,6 +1551,7 @@ void NavDatabase::calculateRating(FsPaths::SimulatorType sim)
 void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 {
   // Force well known layer piority to avoid mess up due to not documented "Content.xml"
+  const static int LAYER_NUM_SIMCONNECT_AIRPORTS = -1003; // Read first - airports from SimConnect
   const static int LAYER_NUM_GENERIC_AIRPORTS = -1002; // Read first - airports
   const static int LAYER_NUM_BASE = -1001; // Read second - procedures
   const static int LAYER_NUM_BASE_NAV = -1000; // Read last navaids and then "Community"
@@ -1498,30 +1584,39 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     contentXml.read(contentXmlPath);
 
   // fs-base ======================================================
-  SceneryArea areaBase(LAYER_NUM_BASE, tr("Base"), "fs-base");
-  areaBase.setActive(true);
-
-  // Get version numbers from manifest - needed to determine record changes for SID and STAR
-  manifest.clear();
-  manifest.read(options->getMsfsOfficialPath() % SEP % "fs-base" % SEP % "manifest.json");
-  areaBase.setMinGameVersion(manifest.getMinGameVersion());
-  areaBase.setPackageVersion(manifest.getPackageVersion());
-
-  cfg.appendArea(areaBase);
-
-  // fs-base-genericairports ======================================================
-  SceneryArea areaGeneric(LAYER_NUM_GENERIC_AIRPORTS, tr("Generic Airports"), "fs-base-genericairports");
-  areaGeneric.setActive(true);
-
-  // Get version numbers from manifest - needed to determine record changes for SID and STAR
-  manifest.clear();
-  manifest.read(options->getMsfsOfficialPath() % SEP % "fs-base-genericairports" % SEP % "manifest.json");
-
-  if(manifest.isValid())
+  if(options->getSimulatorType() == FsPaths::MSFS)
   {
-    areaGeneric.setMinGameVersion(manifest.getMinGameVersion());
-    areaGeneric.setPackageVersion(manifest.getPackageVersion());
-    cfg.appendArea(areaGeneric);
+    SceneryArea areaBase(LAYER_NUM_BASE, tr("Base"), "fs-base");
+    areaBase.setActive(true);
+
+    // Get version numbers from manifest - needed to determine record changes for SID and STAR
+    manifest.clear();
+    manifest.read(options->getMsfsOfficialPath() % SEP % "fs-base" % SEP % "manifest.json");
+    areaBase.setMinGameVersion(manifest.getMinGameVersion());
+    areaBase.setPackageVersion(manifest.getPackageVersion());
+    cfg.appendArea(areaBase);
+
+    // fs-base-genericairports ======================================================
+    SceneryArea areaGeneric(LAYER_NUM_GENERIC_AIRPORTS, tr("Generic Airports"), "fs-base-genericairports");
+    areaGeneric.setActive(true);
+
+    // Get version numbers from manifest - needed to determine record changes for SID and STAR
+    manifest.clear();
+    manifest.read(options->getMsfsOfficialPath() % SEP % "fs-base-genericairports" % SEP % "manifest.json");
+
+    if(manifest.isValid())
+    {
+      areaGeneric.setMinGameVersion(manifest.getMinGameVersion());
+      areaGeneric.setPackageVersion(manifest.getPackageVersion());
+      cfg.appendArea(areaGeneric);
+    }
+  }
+  else if(options->getSimulatorType() == FsPaths::MSFS_2024)
+  {
+    SceneryArea areaSimConnectAirports(LAYER_NUM_SIMCONNECT_AIRPORTS, tr("SimConnect Airports"), QString());
+    areaSimConnectAirports.setActive(true);
+    areaSimConnectAirports.setSimconnect(true);
+    cfg.appendArea(areaSimConnectAirports);
   }
 
   // fs-base-nav ======================================================
@@ -1530,106 +1625,115 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   areaNav.setActive(true);
 
   // Get version numbers from manifest - needed to determine record changes for SID and STAR
-  manifest.clear();
-  manifest.read(options->getMsfsOfficialPath() % SEP % "fs-base-nav" % SEP % "manifest.json");
-  areaNav.setMinGameVersion(manifest.getMinGameVersion());
-  areaNav.setPackageVersion(manifest.getPackageVersion());
-
-  areaNav.setNavdata(); // Set flag to allow dummy airport handling
+  if(options->getSimulatorType() == FsPaths::MSFS)
+  {
+    manifest.clear();
+    manifest.read(options->getMsfsOfficialPath() % SEP % "fs-base-nav" % SEP % "manifest.json");
+    areaNav.setMinGameVersion(manifest.getMinGameVersion());
+    areaNav.setPackageVersion(manifest.getPackageVersion());
+    areaNav.setNavdata(); // Set flag to allow dummy airport handling
+  }
   cfg.appendArea(areaNav);
 
   scenery::LayoutJson layout;
 
   // Read add-on packages in official ===============================
-  const QDir dirOfficial(options->getMsfsOfficialPath(), QString(),
-                         QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
-  QString baseName = dirOfficial.dirName();
-  const QFileInfoList entriesOfficial = dirOfficial.entryInfoList();
-  for(QFileInfo fileinfo : entriesOfficial)
+  if(options->getSimulatorType() == FsPaths::MSFS)
   {
-    QString name = fileinfo.fileName();
-    fileinfo.setFile(atools::canonicalFilePath(fileinfo));
-
-    if(contentXml.isDisabled(name))
+    QString path = options->getMsfsOfficialPath();
+    const QDir dirOfficial(path, QString(), QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+    QString baseName = dirOfficial.dirName();
+    const QFileInfoList entriesOfficial = dirOfficial.entryInfoList();
+    for(QFileInfo fileinfo : entriesOfficial)
     {
-      // Entry is present in Content.xml and has has active="false"
-      qDebug() << Q_FUNC_INFO << "Skipping disabled" << name;
-      continue;
-    }
+      QString name = fileinfo.fileName();
+      fileinfo.setFile(atools::canonicalFilePath(fileinfo));
 
-    if(name == "fs-base-nav" || name == "fs-base" || name == "fs-base-genericairports")
-      // Already read before - do not touch name or priority
-      continue;
-
-    // Read manifest to check type
-    manifest.clear();
-    manifest.read(fileinfo.filePath() % SEP % "manifest.json");
-
-    if(manifest.isAnyScenery())
-    {
-      // Read BGL and material file locations from layout file
-      layout.clear();
-      layout.read(fileinfo.filePath() % SEP % "layout.json");
-
-      SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), baseName, atools::canonicalFilePath(fileinfo));
-      if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
-        errors->sceneryErrors.append(
-          NavDatabaseErrors::SceneryErrors(addonArea, tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
-                                           true /* isWarning */));
-
-      if(!layout.getBglPaths().isEmpty())
+      if(contentXml.isDisabled(name))
       {
-        // Indicate add-on in official path
-        addonArea.setAddOn(true);
+        // Entry is present in Content.xml and has has active="false"
+        qDebug() << Q_FUNC_INFO << "Skipping disabled" << name;
+        continue;
+      }
 
-        // Detect Navigraph navdata update packages for special handling
-        addonArea.setMsfsNavigraphNavdata(isNavigraphNavdata(manifest));
+      if(name == "fs-base-nav" || name == "fs-base" || name == "fs-base-genericairports")
+        // Already read before - do not touch name or priority
+        continue;
 
-        cfg.getAreas().append(addonArea);
+      // Read manifest to check type
+      manifest.clear();
+      manifest.read(fileinfo.filePath() % SEP % "manifest.json");
+
+      if(manifest.isAnyScenery())
+      {
+        // Read BGL and material file locations from layout file
+        layout.clear();
+        layout.read(fileinfo.filePath() % SEP % "layout.json");
+
+        SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), baseName, atools::canonicalFilePath(fileinfo));
+        if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
+          errors->sceneryErrors.append(
+            NavDatabaseErrors::SceneryErrors(addonArea, tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
+                                             true /* isWarning */));
+
+        if(!layout.getBglPaths().isEmpty())
+        {
+          // Indicate add-on in official path
+          addonArea.setAddOn(true);
+
+          // Detect Navigraph navdata update packages for special handling
+          addonArea.setMsfsNavigraphNavdata(isNavigraphNavdata(manifest));
+
+          cfg.getAreas().append(addonArea);
+        }
       }
     }
-  }
 
-  // Read community packages ===============================
-  // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
-  const QDir dirCommunity(options->getMsfsCommunityPath(), QString(),
-                          QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
-
-  const QFileInfoList entriesCommunity = dirCommunity.entryInfoList();
-  for(QFileInfo fileinfo : entriesCommunity)
-  {
-    QString name = fileinfo.fileName();
-    fileinfo.setFile(atools::canonicalFilePath(fileinfo));
-
-    if(contentXml.isDisabled(name))
+    // Read community packages ===============================
+    if(options->getSimulatorType() == FsPaths::MSFS)
     {
-      // Entry is present in Content.xml and has has active="false"
-      qDebug() << Q_FUNC_INFO << "Skipping disabled" << name;
-      continue;
-    }
+      // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
+      const QDir dirCommunity(options->getMsfsCommunityPath(), QString(),
+                              QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
-    manifest.clear();
-    manifest.read(fileinfo.filePath() % SEP % "manifest.json");
-
-    if(manifest.isAnyScenery())
-    {
-      // Read BGL and material file locations from layout file
-      layout.clear();
-      layout.read(fileinfo.filePath() % SEP % "layout.json");
-
-      SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), tr("Community"), atools::canonicalFilePath(fileinfo));
-      addonArea.setCommunity(true);
-      if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
-        errors->sceneryErrors.append(
-          NavDatabaseErrors::SceneryErrors(addonArea, tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
-                                           true /* isWarning */));
-
-      if(!layout.getBglPaths().isEmpty())
+      const QFileInfoList entriesCommunity = dirCommunity.entryInfoList();
+      for(QFileInfo fileinfo : entriesCommunity)
       {
-        // Detect Navigraph navdata update packages for special handling
-        addonArea.setMsfsNavigraphNavdata(isNavigraphNavdata(manifest));
+        QString name = fileinfo.fileName();
+        fileinfo.setFile(atools::canonicalFilePath(fileinfo));
 
-        cfg.getAreas().append(addonArea);
+        if(contentXml.isDisabled(name))
+        {
+          // Entry is present in Content.xml and has has active="false"
+          qDebug() << Q_FUNC_INFO << "Skipping disabled" << name;
+          continue;
+        }
+
+        manifest.clear();
+        manifest.read(fileinfo.filePath() % SEP % "manifest.json");
+
+        if(manifest.isAnyScenery())
+        {
+          // Read BGL and material file locations from layout file
+          layout.clear();
+          layout.read(fileinfo.filePath() % SEP % "layout.json");
+
+          SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), tr("Community"), atools::canonicalFilePath(fileinfo));
+          addonArea.setCommunity(true);
+          if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
+            errors->sceneryErrors.append(
+              NavDatabaseErrors::SceneryErrors(addonArea,
+                                               tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
+                                               true /* isWarning */));
+
+          if(!layout.getBglPaths().isEmpty())
+          {
+            // Detect Navigraph navdata update packages for special handling
+            addonArea.setMsfsNavigraphNavdata(isNavigraphNavdata(manifest));
+
+            cfg.getAreas().append(addonArea);
+          }
+        }
       }
     }
   }
@@ -2040,7 +2144,26 @@ void NavDatabase::countFiles(ProgressHandler *progress, const QList<atools::fs::
     if((aborted = progress->reportOtherMsg(tr("Counting files for %1 ...").arg(area.getTitle()))))
       return;
 
-    int num = resolver.getFiles(area);
+    int num = 0;
+    if(area.isSimconnect())
+    {
+      if(simconnectLoader != nullptr)
+      {
+        if(!options->getAirportIcaoFiltersInc().isEmpty())
+          simconnectLoader->setAirportIdents(options->getAirportIcaoFiltersInc());
+
+        // Load airport list which will be used later to load airport facility details
+        if(!simconnectLoader->loadAirportIdents())
+          throw atools::Exception(tr("Failed to open SimConnect for MSFS 2024. "
+                                     "Start MSFS 2024 and wait until the simulator shows the start menu."));
+
+        num = simconnectLoader->getAirportIdents().size() / PROGRESS_SIMCONNECT_LOADER_STEPS;
+      }
+      else
+        throw Exception("SimConnectLoader is null.");
+    }
+    else
+      num = resolver.getFiles(area);
 
     if(num > 0)
     {
