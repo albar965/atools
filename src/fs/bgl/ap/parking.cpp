@@ -351,61 +351,6 @@ Parking::Parking(BinaryStream *stream, atools::fs::bgl::StructureType structureT
   }
 }
 
-bool Parking::isFuel() const
-{
-  return type == ap::FUEL;
-}
-
-bool Parking::isGate() const
-{
-  if(type == ap::GATE_SMALL)
-    return true;
-  else if(type == ap::GATE_MEDIUM)
-    return true;
-  else if(type == ap::GATE_HEAVY)
-    return true;
-  else if(type == ap::GATE_EXTRA)
-    return true;
-
-  return false;
-}
-
-bool Parking::isGaRamp() const
-{
-  if(type == ap::RAMP_GA)
-    return true;
-  else if(type == ap::RAMP_GA_SMALL)
-    return true;
-  else if(type == ap::RAMP_GA_MEDIUM)
-    return true;
-  else if(type == ap::RAMP_GA_LARGE)
-    return true;
-  else if(type == ap::RAMP_GA_EXTRA)
-    return true;
-
-  return false;
-}
-
-bool Parking::isCargo() const
-{
-  if(type == ap::RAMP_CARGO)
-    return true;
-  else if(type == ap::RAMP_MIL_CARGO)
-    return true;
-
-  return false;
-}
-
-bool Parking::isMilitary() const
-{
-  if(type == ap::RAMP_MIL_CARGO)
-    return true;
-  else if(type == ap::RAMP_MIL_COMBAT)
-    return true;
-
-  return false;
-}
-
 QDebug operator<<(QDebug out, const Parking& record)
 {
   QDebugStateSaver saver(out);

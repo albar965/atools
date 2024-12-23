@@ -143,6 +143,34 @@ enum ParkingNameSuffix
 
 } // namespace ap
 
+inline bool isGate(bgl::ap::ParkingType type)
+{
+  return type == atools::fs::bgl::ap::GATE_HEAVY || type == atools::fs::bgl::ap::GATE_MEDIUM || type == atools::fs::bgl::ap::GATE_SMALL ||
+         type == atools::fs::bgl::ap::GATE_EXTRA;
+}
+
+inline bool isRamp(bgl::ap::ParkingType type)
+{
+  return type == atools::fs::bgl::ap::RAMP_GA || type == atools::fs::bgl::ap::RAMP_GA_LARGE ||
+         type == atools::fs::bgl::ap::RAMP_GA_MEDIUM || type == atools::fs::bgl::ap::RAMP_GA_SMALL ||
+         type == atools::fs::bgl::ap::RAMP_GA_EXTRA;
+}
+
+inline bool isCargo(bgl::ap::ParkingType type)
+{
+  return type == atools::fs::bgl::ap::RAMP_CARGO;
+}
+
+inline bool isMilCargo(bgl::ap::ParkingType type)
+{
+  return type == atools::fs::bgl::ap::RAMP_MIL_CARGO;
+}
+
+inline bool isMilCombat(bgl::ap::ParkingType type)
+{
+  return type == atools::fs::bgl::ap::RAMP_MIL_COMBAT;
+}
+
 /*
  * Parking spot. Subrecord of airport. Includes fuel and vehicle parking.s
  */
@@ -155,24 +183,39 @@ public:
   /*
    * @return true if parking is a gate
    */
-  bool isGate() const;
+  bool isGate() const
+  {
+    return atools::fs::bgl::isGate(type);
+  }
 
   /*
    * @return true if parking is a general aviation ramp
    */
-  bool isGaRamp() const;
+  bool isGaRamp() const
+  {
+    return atools::fs::bgl::isRamp(type);
+  }
 
   /*
    * @return true if parking is a cargo or military cargo ramp
    */
-  bool isCargo() const;
+  bool isCargo() const
+  {
+    return atools::fs::bgl::isCargo(type) || atools::fs::bgl::isMilCargo(type);
+  }
 
   /*
    * @return true if parking is military cargo or military combat
    */
-  bool isMilitary() const;
+  bool isMilitary() const
+  {
+    return atools::fs::bgl::isMilCargo(type) || atools::fs::bgl::isMilCombat(type);
+  }
 
-  bool isFuel() const;
+  bool isFuel() const
+  {
+    return type == ap::FUEL;
+  }
 
   /*
    * @return heading in degree true
