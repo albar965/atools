@@ -229,12 +229,26 @@ public:
     included = value;
   }
 
+  /* MSFS 2024: Scenery area where airports and procedures are loaded from SimConnect facility interface */
+  bool isSimconnect() const
+  {
+    return simconnect;
+  }
+
+  void setSimconnect(bool value)
+  {
+    simconnect = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
 
   int areaNumber = 0, textureId = 0, layer = 0;
   bool active = false, required = false, highPriority = false, addOn = false, community = false, included = false,
-       msfsNavigraphNavdata = false, navdata = false; /* Only MSFS */
+       msfsNavigraphNavdata = false,
+       navdata = false, /* Only MSFS 2020 */
+       simconnect = false; /* Only MSFS 2024 */
+
   QString title, remotePath, localPath, exclude,
           minGameVersion, packageVersion; // Only MSFS
 };

@@ -24,6 +24,7 @@
 #include <QtDebug>
 #include <QFile>
 #include <QDir>
+#include <QRegularExpression>
 
 namespace atools {
 namespace fs {
@@ -54,7 +55,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
   else
   {
     // Scenery local path is relative - add base path
-    if(options.getSimulatorType() == atools::fs::FsPaths::MSFS)
+    if(options.getSimulatorType() == atools::fs::FsPaths::MSFS || options.getSimulatorType() == atools::fs::FsPaths::MSFS_2024)
     {
       // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
 
@@ -63,14 +64,19 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
         sceneryAreaDirStr = areaLocalPathStr;
       else if(area.isCommunity())
         // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
-        sceneryAreaDirStr = options.getMsfsCommunityPath() + atools::SEP + areaLocalPathStr;
+        sceneryAreaDirStr = options.getMsfsCommunityPath() + SEP + areaLocalPathStr;
       else
-        // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
-        sceneryAreaDirStr = options.getMsfsOfficialPath() + atools::SEP + areaLocalPathStr;
+      {
+        if(options.getSimulatorType() == atools::fs::FsPaths::MSFS)
+          // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
+          sceneryAreaDirStr = options.getMsfsOfficialPath() + SEP + areaLocalPathStr;
+        else if(options.getSimulatorType() == atools::fs::FsPaths::MSFS_2024)
+          sceneryAreaDirStr = options.getMsfs24StreamedPackagesPath() + SEP + areaLocalPathStr + SEP + "content" + SEP + "scenery";
+      }
     }
     else
       // FSX or P3D
-      sceneryAreaDirStr = options.getBasepath() + atools::SEP + areaLocalPathStr;
+      sceneryAreaDirStr = options.getBasepath() + SEP + areaLocalPathStr;
   }
 
   // Remove any .. in the path but do not change symlinks
@@ -82,8 +88,8 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     if(sceneryArea.isDir())
     {
       QFileInfoList sceneryDirs;
-      if(options.getSimulatorType() == atools::fs::FsPaths::MSFS)
-        // MSFS has one one scenery folder with layout.json
+      if(options.getSimulatorType() == atools::fs::FsPaths::MSFS || options.getSimulatorType() == atools::fs::FsPaths::MSFS_2024)
+        // MSFS has one scenery folder with layout.json
         sceneryDirs.append(sceneryArea);
       else
       {
@@ -113,10 +119,34 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
             {
               // Read MSFS layout file and add all BGL files ================
               layout.clear();
-              layout.read(scenery.absoluteFilePath() + atools::SEP + "layout.json");
+              layout.read(scenery.absoluteFilePath() + SEP + "layout.json");
 
               for(const QString& path : layout.getBglPaths())
-                bglFiles.append(sceneryArea.filePath() + atools::SEP + path);
+              {
+              // Fix paths with wrong case for testing on Linux
+                const static QRegularExpression SEPREGEXP("[\\/]");
+                QStringList pathList;
+#ifdef Q_OS_LINUX
+                pathList.append("/");
+#endif
+                pathList.append(sceneryArea.filePath().split(SEPREGEXP));
+                pathList.append(path.split(SEPREGEXP));
+                bglFiles.append(atools::buildPathNoCase(pathList));
+              }
+            }
+            else if(options.getSimulatorType() == atools::fs::FsPaths::MSFS_2024)
+            {
+              QDir sceneryAreaDirObj(scenery.absoluteFilePath());
+              QFileInfoList dirs = sceneryAreaDirObj.entryInfoList(QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot,
+                                                                   QDir::Name | QDir::IgnoreCase);
+              for(const QFileInfo& dir : qAsConst(dirs))
+              {
+                QDir dirObj(dir.absoluteFilePath());
+                bglFiles.append(dirObj.entryInfoList({"*.bgl"},
+                                                     QDir::Files | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot,
+                                                     QDir::Name | QDir::IgnoreCase));
+
+              }
             }
             else
             {
