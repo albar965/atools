@@ -383,6 +383,9 @@ public:
   void updateAircraftNames(const QString& airplaneTypeParam, const QString& airplaneAirlineParam,
                            const QString& airplaneTitleParam, const QString& airplaneModelParam);
 
+  /* Clear all names which are translation of other keys */
+  void cleanAircraftNames();
+
   const atools::util::Props& getProperties() const
   {
     return properties;
@@ -454,6 +457,8 @@ public:
   }
 
 private:
+  bool nameValid(const QString& name) const;
+
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
   friend class atools::fs::sc::SimConnectData;

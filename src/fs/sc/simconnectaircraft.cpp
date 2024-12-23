@@ -154,6 +154,24 @@ void SimConnectAircraft::updateAircraftNames(const QString& airplaneTypeParam, c
   airplaneModel = airplaneModelParam;
 }
 
+bool SimConnectAircraft::nameValid(const QString& name) const
+{
+  // "ATCCOM.ATC_NAME CESSNA.0.text" or "$$:Generic"
+  return !name.startsWith("$$") && !name.startsWith("ATCCOM");
+}
+
+void SimConnectAircraft::cleanAircraftNames()
+{
+  if(!nameValid(airplaneType))
+    airplaneType.clear();
+  if(!nameValid(airplaneAirline))
+    airplaneAirline.clear();
+  if(!nameValid(airplaneTitle))
+    airplaneTitle.clear();
+  if(!nameValid(airplaneModel))
+    airplaneModel.clear();
+}
+
 } // namespace sc
 } // namespace fs
 } // namespace atools
