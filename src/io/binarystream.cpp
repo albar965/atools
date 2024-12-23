@@ -52,6 +52,16 @@ quint32 BinaryStream::readUInt()
   return retval;
 }
 
+quint64 BinaryStream::readULong()
+{
+  quint64 retval;
+  is >> retval;
+
+  checkStream("readLong");
+
+  return retval;
+}
+
 int BinaryStream::readBytes(char bytes[], int size)
 {
   int numRead = is.readRawData(bytes, size);
@@ -138,6 +148,16 @@ quint8 BinaryStream::readUByte()
   return retval;
 }
 
+qint16 BinaryStream::readShort()
+{
+  qint16 retval;
+  is >> retval;
+
+  checkStream("readShort");
+
+  return retval;
+}
+
 qint32 BinaryStream::readInt()
 {
   qint32 retval;
@@ -148,12 +168,12 @@ qint32 BinaryStream::readInt()
   return retval;
 }
 
-qint16 BinaryStream::readShort()
+qint64 BinaryStream::readLong()
 {
-  qint16 retval;
+  qint64 retval;
   is >> retval;
 
-  checkStream("readShort");
+  checkStream("readLong");
 
   return retval;
 }

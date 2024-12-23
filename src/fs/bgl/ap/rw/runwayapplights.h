@@ -50,7 +50,7 @@ enum ApproachLightSystem
   MALS = 0x0b,
   SALS = 0x0c,
   SSALS = 0x0d,
-  SALSF = 0x0e // TODO add to wiki
+  SALSF = 0x0e
 };
 
 } // namespace rw

@@ -303,8 +303,8 @@ void AirportWriter::writeObject(const Airport *type)
     }
     else
     {
-      bind(":longest_runway_length", 0.f);
-      bind(":longest_runway_width", 0.f);
+      bind(":longest_runway_length", 0);
+      bind(":longest_runway_width", 0);
       bind(":longest_runway_heading", 0.f);
       bind(":longest_runway_surface", surfaceToDbStr(atools::fs::bgl::UNKNOWN));
     }

@@ -93,7 +93,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
     return;
   }
 
-  region = converter::intToIcao(stream->readUInt()); // TODO wiki is always null
+  region = converter::intToIcao(stream->readUInt()); // Always null
 
   fuelFlags = static_cast<ap::FuelFlags>(stream->readUInt());
 
@@ -432,7 +432,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
   updateTaxiPaths(taxipoints, taxinames);
 
   // Set the jetway flag on parking
-  updateParking(jetways, parkingNumberIndex);
+  updateJetwayParking(jetways, parkingNumberIndex);
 
   removeVehicleParking();
 
@@ -650,41 +650,41 @@ void Airport::updateSummaryFields()
     }
   }
 
-  for(const Parking& p : qAsConst(parkings))
+  for(const Parking& parking : qAsConst(parkings))
   {
-    reportFarCoordinate(p.getPosition().getPos(), "parking");
-    points.append(p.getPosition().getPos());
+    reportFarCoordinate(parking.getPosition().getPos(), "parking");
+    points.append(parking.getPosition().getPos());
 
     // Assign fuel from parking if not set in flags
     // https://devsupport.flightsimulator.com/questions/10232/su10-u3-removed-fuel-flags-from-bgl-files.html
-    if(p.isFuel() && msfs && fuelFlags == ap::NO_FUEL_FLAGS)
+    if(parking.isFuel() && msfs && fuelFlags == ap::NO_FUEL_FLAGS)
       fuelFlags = atools::fs::bgl::ap::MSFS_DEFAULT_FUEL;
 
-    if(p.hasJetway())
+    if(parking.hasJetway())
       numJetway++;
 
-    if(p.isGate())
+    if(parking.isGate())
     {
       numParkingGate++;
 
-      if(largestParkingGate == ap::UNKNOWN || largestParkingGate < p.getType())
-        largestParkingGate = p.getType();
+      if(largestParkingGate == ap::UNKNOWN || largestParkingGate < parking.getType())
+        largestParkingGate = parking.getType();
     }
 
-    if(p.isGaRamp())
+    if(parking.isGaRamp())
     {
       numParkingGaRamp++;
-      if(largestParkingGaRamp == ap::UNKNOWN || largestParkingGaRamp < p.getType())
-        largestParkingGaRamp = p.getType();
+      if(largestParkingGaRamp == ap::UNKNOWN || largestParkingGaRamp < parking.getType())
+        largestParkingGaRamp = parking.getType();
     }
 
-    if(p.getType() == ap::RAMP_CARGO)
+    if(parking.getType() == ap::RAMP_CARGO)
       numParkingCargo++;
 
-    if(p.getType() == ap::RAMP_MIL_CARGO)
+    if(parking.getType() == ap::RAMP_MIL_CARGO)
       numParkingMilitaryCargo++;
 
-    if(p.getType() == ap::RAMP_MIL_COMBAT)
+    if(parking.getType() == ap::RAMP_MIL_COMBAT)
       numParkingMilitaryCombat++;
   }
 
@@ -734,24 +734,24 @@ void Airport::updateSummaryFields()
   boundingRect = atools::geo::bounding(points);
 }
 
-void Airport::updateParking(const QList<atools::fs::bgl::Jetway>& jetways,
-                            const QHash<ParkingKey, int>& parkingNumberIndex)
+void Airport::updateJetwayParking(const QList<atools::fs::bgl::Jetway>& jetways,
+                                  const QHash<ParkingKey, int>& parkingNumberIndex)
 {
-  for(const Jetway& jw : jetways)
+  for(const Jetway& jetway : jetways)
   {
-    int index = parkingNumberIndex.value({jw.getParkingNumber(), jw.getGateName()}, -1);
+    int index = parkingNumberIndex.value({jetway.getParkingNumber(), jetway.getGateName()}, -1);
 
     if(index != -1 && index < parkings.size())
     {
       if(parkings.at(index).jetway)
-        qWarning().nospace().noquote() << Q_FUNC_INFO << "Parking for jetway " << jw << " already set" << dec
+        qWarning().nospace().noquote() << Q_FUNC_INFO << "Parking for jetway " << jetway << " already set" << dec
                                        << " for parking " << parkings.at(index)
                                        << " for ident " << ident;
       else
         parkings[index].jetway = true;
     }
     else
-      qWarning().nospace().noquote() << Q_FUNC_INFO << "Parking for jetway " << jw << " not found" << dec
+      qWarning().nospace().noquote() << Q_FUNC_INFO << "Parking for jetway " << jetway << " not found" << dec
                                      << " for ident " << ident;
   }
 }
@@ -763,8 +763,7 @@ void Airport::updateHelipads()
     int startIdx = 1;
     for(const Start& start : qAsConst(starts))
     {
-      if(start.getPosition().getPos().almostEqual(helipad.getPosition().getPos(),
-                                                  atools::geo::Pos::POS_EPSILON_5M))
+      if(start.getPosition().getPos().almostEqual(helipad.getPosition().getPos(), atools::geo::Pos::POS_EPSILON_5M))
         helipad.setStartIndex(startIdx);
       startIdx++;
     }
@@ -787,15 +786,17 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
   {
     switch(taxiPath.type)
     {
-      case atools::fs::bgl::taxipath::UNKNOWN:
-      case atools::fs::bgl::taxipath::CLOSED:
-      case atools::fs::bgl::taxipath::VEHICLE:
-      case atools::fs::bgl::taxipath::RUNWAY:
+      case taxipath::UNKNOWN:
+      case taxipath::CLOSED:
+      case taxipath::VEHICLE:
+      case taxipath::RUNWAY:
+      case taxipath::ROAD:
+      case taxipath::PAINTEDLINE:
         break;
 
-      case atools::fs::bgl::taxipath::PATH:
-      case atools::fs::bgl::taxipath::TAXI:
-      case atools::fs::bgl::taxipath::PARKING:
+      case taxipath::PATH:
+      case taxipath::TAXI:
+      case taxipath::PARKING:
         if(inRange(taxinames, taxiPath.nameIndex))
           taxiPath.taxiName = taxinames.at(taxiPath.nameIndex);
         else
@@ -810,14 +811,16 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
   {
     switch(taxiPath.type)
     {
-      case atools::fs::bgl::taxipath::UNKNOWN:
-      case atools::fs::bgl::taxipath::CLOSED:
-      case atools::fs::bgl::taxipath::VEHICLE:
-      case atools::fs::bgl::taxipath::RUNWAY:
+      case taxipath::UNKNOWN:
+      case taxipath::CLOSED:
+      case taxipath::VEHICLE:
+      case taxipath::RUNWAY:
+      case taxipath::ROAD:
+      case taxipath::PAINTEDLINE:
         break;
 
-      case atools::fs::bgl::taxipath::PATH:
-      case atools::fs::bgl::taxipath::TAXI:
+      case taxipath::PATH:
+      case taxipath::TAXI:
         if(inRange(taxipoints, taxiPath.startIndex) && inRange(taxipoints, taxiPath.endIndex))
         {
           taxiPath.startPos = taxipoints.at(taxiPath.startIndex);
@@ -825,7 +828,7 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
         }
         break;
 
-      case atools::fs::bgl::taxipath::PARKING:
+      case taxipath::PARKING:
         if(inRange(taxipoints, taxiPath.startIndex) && inRange(parkings, taxiPath.endIndex))
         {
           taxiPath.startPos = taxipoints.at(taxiPath.startIndex);

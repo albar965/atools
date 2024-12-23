@@ -42,8 +42,8 @@ enum PointType
   NORMAL = 1,
   HOLD_SHORT = 2,
   ILS_HOLD_SHORT = 4,
-  HOLD_SHORT_NO_DRAW = 5, // TODO wiki add
-  ILS_HOLD_SHORT_NO_DRAW = 6, // TODO wiki add
+  HOLD_SHORT_NO_DRAW = 5,
+  ILS_HOLD_SHORT_NO_DRAW = 6,
   PARKING /* not a BGL type */
 };
 

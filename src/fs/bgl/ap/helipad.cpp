@@ -70,7 +70,7 @@ Helipad::Helipad(const NavDatabaseOptions *options, BinaryStream *stream)
   position = BglPosition(stream, true, 1000.f);
   length = stream->readFloat();
   width = stream->readFloat();
-  heading = stream->readFloat(); // TODO wiki heading is float degrees
+  heading = stream->readFloat(); // Heading is float degrees
 }
 
 QDebug operator<<(QDebug out, const Helipad& record)

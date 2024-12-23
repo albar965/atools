@@ -348,7 +348,7 @@ private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
 
   void updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringList& taxinames);
-  void updateParking(const QList<atools::fs::bgl::Jetway>& jetways,
+  void updateJetwayParking(const QList<atools::fs::bgl::Jetway>& jetways,
                      const QHash<atools::fs::bgl::ParkingKey, int>& parkingNumberIndex);
   void updateSummaryFields();
   void removeVehicleParking();

@@ -59,7 +59,6 @@ QString Marker::getObjectName() const
 Marker::Marker(const NavDatabaseOptions *options, BinaryStream *stream)
   : Record(options, stream)
 {
-  // TODO wiki clarify structure
   heading = static_cast<float>(stream->readUByte()) / 255.f * 360.f;
   type = static_cast<nav::MarkerType>(stream->readUByte());
 

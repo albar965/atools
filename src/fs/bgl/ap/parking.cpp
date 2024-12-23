@@ -327,7 +327,7 @@ Parking::Parking(BinaryStream *stream, atools::fs::bgl::StructureType structureT
   int numAirlineCodes = (flags >> 24) & 0xff;
 
   radius = stream->readFloat();
-  heading = stream->readFloat(); // TODO wiki heading is float degrees
+  heading = stream->readFloat(); // Heading is float degrees
 
   if(structureType == STRUCT_FSX || structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5 || structureType == STRUCT_MSFS)
     stream->skip(16); // teeOffset 1-4 not FS9

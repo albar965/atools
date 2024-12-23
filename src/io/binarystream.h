@@ -50,10 +50,12 @@ public:
   qint8 readByte();
   qint16 readShort();
   qint32 readInt();
+  qint64 readLong();
 
   quint8 readUByte();
   quint16 readUShort();
   quint32 readUInt();
+  quint64 readULong();
 
   float readFloat();
 
