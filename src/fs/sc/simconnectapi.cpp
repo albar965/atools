@@ -26,23 +26,23 @@
 
 #define BINDSC(a) (error |= \
                      ((*(FARPROC *)&SC_ ## a = \
-                         (FARPROC)context.getProcAddress(name, "SimConnect_" # a)) == NULL))
+                         (FARPROC)context->getProcAddress(name, "SimConnect_" # a)) == NULL))
 
 namespace atools {
 namespace fs {
 namespace sc {
 
-bool SimConnectApi::bindFunctions(atools::win::ActivationContext& context, const QString& libraryName)
+bool SimConnectApi::bindFunctions(const atools::win::ActivationContext *context, const QString& libraryName)
 {
   qDebug() << Q_FUNC_INFO;
   bool error = false;
 
   if(!functionsBound)
   {
+#if defined(SIMCONNECT_BUILD_WIN32) || defined(SIMCONNECT_BUILD_WIN64)
     QByteArray nameBytes = libraryName.toLatin1();
     const char *name = nameBytes.constData();
 
-#if defined(SIMCONNECT_BUILD_WIN32) || defined(SIMCONNECT_BUILD_WIN64)
     BINDSC(MapClientEventToSimEvent);
     BINDSC(TransmitClientEvent);
     BINDSC(SetSystemEventState);
@@ -141,9 +141,10 @@ bool SimConnectApi::bindFunctions(atools::win::ActivationContext& context, const
 
 #else
     Q_UNUSED(context)
+    Q_UNUSED(libraryName)
 #endif
 
-    qDebug() << Q_FUNC_INFO << "done";
+    qDebug() << Q_FUNC_INFO << "done error" << error;
 
     functionsBound = true;
   }

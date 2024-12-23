@@ -45,12 +45,30 @@ public:
   virtual ~SimConnectHandler() override;
 
   /* Activate context and load SimConnect DLL */
-  bool loadSimConnect(atools::win::ActivationContext& activationContext, const QString& libraryName, const QString& manifestPath);
-  void releaseSimConnect(atools::win::ActivationContext& activationContext);
+  bool loadSimConnect(win::ActivationContext *activationContext, const QString& libraryName);
+  void releaseSimConnect();
   virtual bool isLoaded() const override;
 
   /* Connect to fs.. Returns true if successful. */
   virtual bool connect() override;
+
+  /* Closes connection. Reopen with connect() */
+  void close();
+
+  /* Closes the SimConnect connection until resumeSimConnect() is called */
+  void pauseSimConnect()
+  {
+    close();
+  }
+
+  /* Reopens connection, fills data definitions and subscribes to events again */
+  void resumeSimConnect()
+  {
+    connect();
+  }
+
+  /* Returns true if SimConnect can be opened */
+  bool checkSimConnect() const;
 
   /* Fetch data from simulator. Returns false if no data was retrieved due to paused or not running fs. */
   virtual bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm, atools::fs::sc::Options options) override;

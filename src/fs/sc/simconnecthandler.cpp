@@ -32,6 +32,7 @@
 #include <QCache>
 #include <QLatin1String>
 #include <QCoreApplication>
+#include <QStringBuilder>
 #include <QDir>
 
 #pragma GCC diagnostic ignored "-Wold-style-cast"
@@ -181,7 +182,8 @@ public:
     ATOOLS_DELETE_LOG(api);
   }
 
-  atools::fs::sc::SimConnectApi *api;
+  atools::fs::sc::SimConnectApi *api = nullptr;
+  atools::win::ActivationContext *activationContext = nullptr;
   QString libraryName;
 
   /* Callback receiving the data. */
@@ -241,17 +243,16 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
       // MSFS ==========
       // SimConnectHandler App Name KittyHawk App Version 11.0 App Build 282174.999 Version 11.0 Build 62651.3
 
+      // MSFS ==========
+      // SimConnectHandler App Name SunRise App Version 12.1 App Build 282174.999 Version 12.1 Build 0.0
+
       // Print some useful simconnect interface data to log ====================
-      qInfo() << Q_FUNC_INFO
-              << "App Name" << openData.szApplicationName
-              << "App Version" << openData.dwApplicationVersionMajor
-              << "." << openData.dwApplicationVersionMinor
-              << "App Build" << openData.dwApplicationBuildMajor
-              << "." << openData.dwApplicationBuildMinor
-              << "Version" << openData.dwSimConnectVersionMajor
-              << "." << openData.dwSimConnectVersionMinor
-              << "Build" << openData.dwSimConnectBuildMajor
-              << "." << openData.dwSimConnectBuildMinor;
+      qInfo().nospace() << Q_FUNC_INFO
+                        << " App Name " << openData.szApplicationName
+                        << " App Version " << openData.dwApplicationVersionMajor << "." << openData.dwApplicationVersionMinor
+                        << " App Build " << openData.dwApplicationBuildMajor << "." << openData.dwApplicationBuildMinor
+                        << " Version " << openData.dwSimConnectVersionMajor << "." << openData.dwSimConnectVersionMinor
+                        << " Build " << openData.dwSimConnectBuildMajor << "." << openData.dwSimConnectBuildMinor;
       break;
 
     case SIMCONNECT_RECV_ID_EXCEPTION:
@@ -713,52 +714,58 @@ SimConnectHandler::SimConnectHandler(bool verboseLogging)
 
 SimConnectHandler::~SimConnectHandler()
 {
+  close();
+  ATOOLS_DELETE_LOG(p);
+}
+
+void SimConnectHandler::close()
+{
   HRESULT hr = p->api->Close();
   if(hr != S_OK)
     qWarning() << "Error closing SimConnect";
-  delete p;
 }
 
-void SimConnectHandler::releaseSimConnect(atools::win::ActivationContext& activationContext)
+void SimConnectHandler::releaseSimConnect()
 {
   p->simConnectLoaded = false;
-  activationContext.freeLibrary("SimConnect.dll");
-  activationContext.deactivate();
-  activationContext.release();
+  p->activationContext->freeLibrary(p->libraryName);
+  p->activationContext->deactivate();
+  p->activationContext->release();
 }
 
-bool SimConnectHandler::loadSimConnect(atools::win::ActivationContext& activationContext, const QString& libraryName,
-                                       const QString& manifestPath)
+bool SimConnectHandler::loadSimConnect(atools::win::ActivationContext *activationContext, const QString& libraryName)
 {
   p->simConnectLoaded = false;
   p->libraryName = libraryName;
+  p->activationContext = activationContext;
 
   // Try local copy first
-  QString simconnectDll = QCoreApplication::applicationDirPath() + QDir::separator() + p->libraryName;
+  QString simconnectDll = QCoreApplication::applicationDirPath() % QDir::separator() % p->libraryName;
   bool activated = false;
   if(!QFile::exists(simconnectDll))
   {
     // No local copy - load default from WinSxS
-    if(!activationContext.create(manifestPath))
+    if(!activationContext->create(QCoreApplication::applicationDirPath() % atools::SEP % "simconnect" % atools::SEP %
+                                  "simconnect.manifest"))
       return false;
 
-    if(!activationContext.activate())
+    if(!activationContext->activate())
       return false;
 
     p->libraryName = simconnectDll = "SimConnect.dll";
     activated = true;
   }
 
-  if(!activationContext.loadLibrary(simconnectDll))
+  if(!activationContext->loadLibrary(simconnectDll))
     return false;
 
   if(activated)
   {
-    if(!activationContext.deactivate())
+    if(!activationContext->deactivate())
       return false;
   }
 
-  if(!p->api->bindFunctions(activationContext, p->libraryName))
+  if(!p->api->bindFunctions(activationContext, libraryName))
     return false;
 
   p->simConnectLoaded = true;
@@ -1097,9 +1104,20 @@ const WeatherRequest& SimConnectHandler::getWeatherRequest() const
   return p->weatherRequest;
 }
 
-QString atools::fs::sc::SimConnectHandler::getName() const
+QString SimConnectHandler::getName() const
 {
   return QLatin1String("SimConnect");
+}
+
+bool SimConnectHandler::checkSimConnect() const
+{
+  HRESULT hr = p->api->Open(QCoreApplication::applicationName().toLatin1().constData(), nullptr, 0, nullptr, 0);
+  if(hr == S_OK)
+    p->api->Close();
+
+  if(hr != S_OK)
+    return false;
+  return true;
 }
 
 } // namespace sc

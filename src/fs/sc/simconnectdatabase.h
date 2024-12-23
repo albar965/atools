@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,8 +47,7 @@ public:
    */
   QString getStatusText() const;
 
-  static int writeBlock(QIODevice *ioDevice, const QByteArray& block,
-                        atools::fs::sc::SimConnectStatus& status);
+  static int writeBlock(QIODevice *ioDevice, const QByteArray& block, atools::fs::sc::SimConnectStatus& status);
 
   static void writeString(QDataStream& out, const QString& str);
 
