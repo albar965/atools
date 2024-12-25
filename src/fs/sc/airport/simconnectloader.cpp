@@ -33,6 +33,7 @@ namespace fs {
 namespace sc {
 namespace airport {
 
+#if !defined(SIMCONNECT_BUILD_WIN32)
 const static SIMCONNECT_DATA_DEFINITION_ID FACILITY_DATA_AIRPORT_DEFINITION_ID = 1000;
 const static SIMCONNECT_DATA_REQUEST_ID FACILITY_LIST_REQUEST_AIRPORT_ID = 100;
 // const static SIMCONNECT_DATA_REQUEST_ID FACILITY_LIST_REQUEST_WAYPOINT_ID = 200;
@@ -126,7 +127,6 @@ public:
   // Key is pFacilityData->UserRequestId
   QMap<unsigned long, atools::fs::sc::airport::Airport> airportMap;
 
-  // Parent type when reading data in dispatch - pFacilityData->Type
   SIMCONNECT_FACILITY_DATA_TYPE legsParentType = SIMCONNECT_FACILITY_DATA_AIRPORT;
   SIMCONNECT_FACILITY_DATA_TYPE legsParentType2 = SIMCONNECT_FACILITY_DATA_AIRPORT;
 
@@ -933,55 +933,97 @@ bool SimConnectLoaderPrivate::writeAirportBatchToDatabase()
   return aborted;
 }
 
+#endif
+
 // ==================================================================================================================
 // ==================================================================================================================
 SimConnectLoader::SimConnectLoader(const win::ActivationContext *activationContext, const QString& libraryName,
                                    atools::sql::SqlDatabase& sqlDb, bool verbose)
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   p = new SimConnectLoaderPrivate(activationContext, sqlDb, libraryName, verbose);
+#else
+  Q_UNUSED(activationContext)
+  Q_UNUSED(libraryName)
+  Q_UNUSED(sqlDb)
+  Q_UNUSED(verbose)
+#endif
 }
 
 SimConnectLoader::~SimConnectLoader()
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   delete p;
+#endif
 }
 
 bool SimConnectLoader::loadAirports(const QStringList& idents, int fileId)
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   p->fileId = fileId;
   p->airportIdentDetail = idents;
   return p->loadAirports();
+#else
+  Q_UNUSED(idents)
+  Q_UNUSED(fileId)
+  return false;
+#endif
 }
 
 QStringList SimConnectLoader::loadAirportIdents() const
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   p->loadAirportIdents();
   return p->airportIdents;
+#else
+  return QStringList();
+#endif
 }
 
 bool SimConnectLoader::isAborted() const
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   return p->aborted;
+#else
+  return false;
+#endif
 }
 
 void SimConnectLoader::setBatchSize(int value)
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   p->batchSize = value;
+#else
+  Q_UNUSED(value)
+#endif
 }
 
 const QStringList& SimConnectLoader::getErrors() const
 {
+  const static QStringList EMPTY;
+#if !defined(SIMCONNECT_BUILD_WIN32)
   return p->errors;
+#else
+  return EMPTY;
+#endif
 }
 
 void SimConnectLoader::setAirportIdents(const QList<QRegExp>& airportIcaoFiltersInc)
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   p->airportIcaoFiltersInc = airportIcaoFiltersInc;
+#else
+  Q_UNUSED(airportIcaoFiltersInc)
+#endif
 }
 
 void SimConnectLoader::setProgressCallback(const SimConnectLoaderProgressCallback& callback)
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   p->progressCallback = callback;
+#else
+  Q_UNUSED(callback)
+#endif
 }
 
 } // namespace airport
