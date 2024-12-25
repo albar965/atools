@@ -75,8 +75,9 @@ win32 { contains(QT_ARCH, i386) { WINARCH = win32 } else { WINARCH = win64 } }
 
 GIT_PATH=$$(ATOOLS_GIT_PATH)
 SIMCONNECT_PATH_WIN32=$$(ATOOLS_SIMCONNECT_PATH_WIN32)
-SIMCONNECT_PATH_WIN64=$$(ATOOLS_SIMCONNECT_PATH_WIN64)
-DEPLOY_BASE=$$(DEPLOY_BASE)
+ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2020=$$(ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2020)
+ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024=$$(ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024)
+DEPLOY_BASE=$$(DEPLOY_BASE)D
 QUIET=$$(ATOOLS_QUIET)
 
 # Disables files
@@ -113,18 +114,20 @@ QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wn
 
 win32 {
   contains(QT_ARCH, i386) {
-  # FSX or P3D
+    # FSX or P3D
+    DEFINES += WINARCH32
     !isEmpty(SIMCONNECT_PATH_WIN32) {
-      DEFINES += SIMCONNECT_BUILD_WIN32 WINARCH32
+      DEFINES += SIMCONNECT_BUILD_WIN32
       INCLUDEPATH += $$SIMCONNECT_PATH_WIN32"\inc"
       LIBS += $$SIMCONNECT_PATH_WIN32"\lib\SimConnect.lib"
     }
   } else {
-  # MSFS
-    !isEmpty(SIMCONNECT_PATH_WIN64) {
-      DEFINES += SIMCONNECT_BUILD_WIN64 WINARCH64
-      INCLUDEPATH += $$SIMCONNECT_PATH_WIN64"\include"
-      LIBS += $$SIMCONNECT_PATH_WIN64"\lib\SimConnect.lib"
+    # MSFS
+    DEFINES += WINARCH64
+    !isEmpty(ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024) {
+      DEFINES += SIMCONNECT_BUILD_WIN64
+      INCLUDEPATH += $$ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024"\include"
+      LIBS += $$ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024"\lib\SimConnect.lib"
     }
   }
 
@@ -194,7 +197,8 @@ message(ATOOLS_NO_WMM: $$ATOOLS_NO_WMM)
 message(ATOOLS_NO_NAVSERVER: $$ATOOLS_NO_NAVSERVER)
 message(ATOOLS_NO_CRASHHANDLER: $$ATOOLS_NO_CRASHHANDLER)
 message(SIMCONNECT_PATH_WIN32: $$SIMCONNECT_PATH_WIN32)
-message(SIMCONNECT_PATH_WIN64: $$SIMCONNECT_PATH_WIN64)
+message(ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2020: $$ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2020)
+message(ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024: $$ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024)
 message(DEFINES: $$DEFINES)
 message(INCLUDEPATH: $$INCLUDEPATH)
 message(LIBS: $$LIBS)
@@ -217,6 +221,9 @@ HEADERS += \
   src/fs/gpx/gpxio.h \
   src/fs/gpx/gpxtypes.h \
   src/fs/navdatabaseflags.h \
+  src/fs/sc/airport/simconnectfacilities.h \
+  src/fs/sc/airport/simconnectloader.h \
+  src/fs/sc/airport/simconnectwriter.h \
   src/fs/sc/connecthandler.h \
   src/fs/sc/datareaderthread.h \
   src/fs/sc/simconnectaircraft.h \
@@ -299,6 +306,9 @@ SOURCES += \
   src/fs/gpx/gpxio.cpp \
   src/fs/gpx/gpxtypes.cpp \
   src/fs/navdatabaseflags.cpp \
+  src/fs/sc/airport/simconnectfacilities.cpp \
+  src/fs/sc/airport/simconnectloader.cpp \
+  src/fs/sc/airport/simconnectwriter.cpp \
   src/fs/sc/connecthandler.cpp \
   src/fs/sc/datareaderthread.cpp \
   src/fs/sc/simconnectaircraft.cpp \
