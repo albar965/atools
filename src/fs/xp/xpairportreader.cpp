@@ -1397,7 +1397,6 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
   }
 
   rec.setValue(":has_end_lights", 0); // not available
-  rec.setValue(":num_strobes", 0); // not available
   rec.setValue(":overrun", 0); // not available
   rec.setValue(":has_closed_markings", airportClosed); // From name
   rec.setValue(":has_stol_markings", 0); // not available
@@ -1447,7 +1446,6 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
   }
 
   rec.setValue(":has_end_lights", 0);
-  rec.setValue(":num_strobes", 0);
   rec.setValue(":overrun", 0);
   rec.setValue(":has_closed_markings", airportClosed); // From name
   rec.setValue(":has_stol_markings", 0);
@@ -1806,7 +1804,7 @@ void XpAirportReader::initQueries()
   insertRunwayQuery->prepare(util.buildInsertStatement("runway"));
 
   insertRunwayEndQuery = new SqlQuery(db);
-  insertRunwayEndQuery->prepare(util.buildInsertStatement("runway_end"));
+  insertRunwayEndQuery->prepare(util.buildInsertStatement("runway_end", QString(), {"num_strobes"}));
 
   insertHelipadQuery = new SqlQuery(db);
   insertHelipadQuery->prepare(util.buildInsertStatement("helipad"));

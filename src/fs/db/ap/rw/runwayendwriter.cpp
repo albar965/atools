@@ -52,7 +52,6 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
   bind(":has_end_lights", type->getApproachLights().hasEndlights());
   bind(":has_reils", type->getApproachLights().hasReils());
   bind(":has_touchdown_lights", type->getApproachLights().hasTouchdown());
-  bind(":num_strobes", type->getApproachLights().getNumStrobes());
 
   if(type->getIlsIdent().isEmpty())
     bindNullString(":ils_ident");

@@ -365,7 +365,6 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
     runwayEndWriteQuery->bindValue(":has_end_lights", 0);
     runwayEndWriteQuery->bindValue(":has_reils", 0);
     runwayEndWriteQuery->bindValue(":has_touchdown_lights", 0);
-    runwayEndWriteQuery->bindValue(":num_strobes", 0);
     runwayEndWriteQuery->bindValue(":ils_ident", primaryRec.valueStr("llz_identifier"));
     runwayEndWriteQuery->bindValue(":heading", heading);
     runwayEndWriteQuery->bindValue(":altitude", primaryRec.valueInt("landing_threshold_elevation"));
@@ -388,7 +387,6 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
     runwayEndWriteQuery->bindValue(":has_end_lights", 0);
     runwayEndWriteQuery->bindValue(":has_reils", 0);
     runwayEndWriteQuery->bindValue(":has_touchdown_lights", 0);
-    runwayEndWriteQuery->bindValue(":num_strobes", 0);
     runwayEndWriteQuery->bindValue(":ils_ident", secondaryRec.valueStr("llz_identifier"));
     runwayEndWriteQuery->bindValue(":heading", opposedHeading);
     runwayEndWriteQuery->bindValue(":altitude", secondaryRec.valueInt("landing_threshold_elevation"));
@@ -1800,8 +1798,7 @@ void DfdCompiler::initQueries()
 
   runwayEndWriteQuery = new SqlQuery(db);
   runwayEndWriteQuery->prepare(SqlUtil(db).buildInsertStatement("runway_end", QString(), {
-          "left_vasi_type", "left_vasi_pitch", "right_vasi_type", "right_vasi_pitch", "app_light_system_type"
-        }));
+          "left_vasi_type", "left_vasi_pitch", "right_vasi_type", "right_vasi_pitch", "app_light_system_type", "num_strobes"}));
 
   airportUpdateQuery = new SqlQuery(db);
   airportUpdateQuery->prepare("update airport set "
