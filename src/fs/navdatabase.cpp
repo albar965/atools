@@ -2161,6 +2161,8 @@ void NavDatabase::countFiles(ProgressHandler *progress, const QList<atools::fs::
         if(num == 0 || simconnectLoader->hasErrors())
           throw atools::Exception(tr("Failed to open SimConnect for MSFS 2024. No airports found. "
                                      "Start MSFS 2024 and wait until the simulator shows the start menu."));
+
+        num /= PROGRESS_SIMCONNECT_LOADER_STEPS;
       }
       else
         throw Exception("SimConnectLoader is null.");

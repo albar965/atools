@@ -62,9 +62,14 @@ using atools::geo::meterToNm;
 using atools::fs::bgl::util::enumToStr;
 
 // Binding inline helper functions ===================================================
+inline bool valid(const geo::Pos& pos)
+{
+  return pos.isValid() && !pos.isNull();
+}
+
 inline void bindPos(atools::sql::SqlQuery *query, const geo::Pos& pos, const QString& prefix = QString())
 {
-  if(pos.isValid() && !pos.isNull())
+  if(valid(pos))
   {
     query->bindValue(":" % prefix % "lonx", pos.getLonX());
     query->bindValue(":" % prefix % "laty", pos.getLatY());
@@ -80,7 +85,7 @@ inline void bindPosAlt(atools::sql::SqlQuery *query, const atools::geo::Pos& pos
 {
   bindPos(query, pos, prefix);
 
-  if(pos.isValid() && !pos.isNull())
+  if(valid(pos))
     query->bindValue(":" % prefix % "altitude", pos.getAltitude());
   else
     query->bindNullFloat(":" % prefix % "altitude");
@@ -127,7 +132,7 @@ void SimConnectWriter::initQueries()
   airportStmt = new SqlQuery(db);
   airportStmt->prepare(util.buildInsertStatement("airport", QString(),
                                                  {"icao", "iata", "faa", "local", "city", "state", "country", "flatten", "type",
-                                                  "has_tower_object", "scenery_local_path", "bgl_filename"}));
+                                                  "scenery_local_path", "bgl_filename"}));
 
   airportFileStmt = new SqlQuery(db);
   airportFileStmt->prepare(util.buildInsertStatement("airport_file"));
@@ -224,6 +229,7 @@ void SimConnectWriter::writeAirportsToDatabase(const QMap<unsigned long, atools:
     {
       // Write airport =========================================================================================
       Pos airportPos(airportFacility.longitude, airportFacility.latitude, meterToFeet(airportFacility.altitude));
+      Pos towerPos(airportFacility.towerLongitude, airportFacility.towerLatitude, meterToFeet(airportFacility.towerAltitude));
       Rect bounding(airportPos);
 
       if(verbose)
@@ -291,7 +297,6 @@ void SimConnectWriter::writeAirportsToDatabase(const QMap<unsigned long, atools:
       airportStmt->bindValue(":is_3d", 0);
       airportStmt->bindValue(":mag_var", bgl::converter::adjustMagvar(airportFacility.magvar));
 
-      Pos towerPos(airportFacility.towerLongitude, airportFacility.towerLatitude, meterToFeet(airportFacility.towerAltitude));
       bindPosAlt(airportStmt, towerPos, "tower_");
       bounding.extend(towerPos);
 
@@ -309,18 +314,15 @@ void SimConnectWriter::writeAirportsToDatabase(const QMap<unsigned long, atools:
         // Primary threshold // Primary blastpad // Primary overrun
         // Secondary threshold // Secondary blastpad // Secondary overrun
         if(runway.getPavementFacilities().size() != 6)
-          throw Exception(tr("Wrong pavements size %1 in airport %2").
-                          arg(runway.getPavementFacilities().size()).arg(icao));
+          throw Exception(tr("Wrong pavements size %1 in airport %2").arg(runway.getPavementFacilities().size()).arg(icao));
 
         // Primary approach lights // Secondary approach lights
         if(runway.getApproachLightFacilities().size() != 2)
-          throw Exception(tr("Wrong approach lights size %1 in airport %2").
-                          arg(runway.getApproachLightFacilities().size()).arg(icao));
+          throw Exception(tr("Wrong approach lights size %1 in airport %2").arg(runway.getApproachLightFacilities().size()).arg(icao));
 
         // Primary left vasi // Primary right vasi // Secondary left vasi // Secondary right vasi
         if(runway.getVasiFacilities().size() != 4)
-          throw Exception(tr("Wrong VASI lights size %1 in airport %2").
-                          arg(runway.getVasiFacilities().size()).arg(icao));
+          throw Exception(tr("Wrong VASI lights size %1 in airport %2").arg(runway.getVasiFacilities().size()).arg(icao));
 
         // Runway ===========================================================================================
         const RunwayFacility& runwayFacility = runway.getFacility();
@@ -445,33 +447,37 @@ void SimConnectWriter::writeAirportsToDatabase(const QMap<unsigned long, atools:
       {
         Pos startPos(start.longitude, start.latitude, meterToFeet(start.altitude));
 
-        startStmt->bindValue(":start_id", ++startId);
-        startStmt->bindValue(":airport_id", airportId);
-
-        // Look for runway ends in index if start is of type runway =======================
-        bgl::start::StartType startType = static_cast<bgl::start::StartType>(start.type);
-        if(startType == bgl::start::RUNWAY)
+        if(valid(startPos))
         {
-          QString name = bgl::converter::runwayToStr(start.number, start.designator);
-          int endId = runwayIndex.getRunwayEndId(icao, name, "SimConnect - start " % startPos.toString());
+          startStmt->bindValue(":start_id", ++startId);
+          startStmt->bindValue(":airport_id", airportId);
 
-          if(endId > 0)
-            startStmt->bindValue(":runway_end_id", endId);
+          // Look for runway ends in index if start is of type runway =======================
+          bgl::start::StartType startType = static_cast<bgl::start::StartType>(start.type);
+          if(startType == bgl::start::RUNWAY)
+          {
+            QString name = bgl::converter::runwayToStr(start.number, start.designator);
+            int endId = runwayIndex.getRunwayEndId(icao, name, "SimConnect - start " % startPos.toString());
+
+            if(endId > 0)
+              startStmt->bindValue(":runway_end_id", endId);
+            else
+              startStmt->bindNullStr(":runway_end_id");
+
+            startStmt->bindValue(":runway_name", name);
+          }
           else
-            startStmt->bindNullStr(":runway_end_id");
+            startStmt->bindNullStr(":runway_name");
 
-          startStmt->bindValue(":runway_name", name);
+          startStmt->bindValue(":type", enumToStr(bgl::Start::startTypeToStr, startType));
+          startStmt->bindValue(":heading", start.heading);
+          startStmt->bindValue(":number", start.number);
+
+          bindPosAlt(startStmt, startPos);
+          startStmt->execAndClearBounds();
+          bounding.extend(startPos);
+          startIndex.append(std::make_pair(startPos, startId));
         }
-        else
-          startStmt->bindNullStr(":runway_name");
-
-        startStmt->bindValue(":type", enumToStr(bgl::Start::startTypeToStr, startType));
-        startStmt->bindValue(":heading", start.heading);
-        startStmt->bindValue(":number", start.number);
-        bindPosAlt(startStmt, startPos);
-        startStmt->execAndClearBounds();
-        bounding.extend(startPos);
-        startIndex.append(std::make_pair(startPos, startId));
       }
 
       // Frequencies / COM ===========================================================================================
@@ -490,35 +496,38 @@ void SimConnectWriter::writeAirportsToDatabase(const QMap<unsigned long, atools:
       {
         // Look for a start position by coordinates for the helipad =========
         Pos helipadPos(helipad.longitude, helipad.latitude, meterToFeet(helipad.altitude));
-        int helipadStartId = -1;
-        for(const std::pair<Pos, int>& start : startIndex)
+        if(valid(helipadPos))
         {
-          if(start.first.almostEqual(helipadPos, atools::geo::Pos::POS_EPSILON_5M))
+          int helipadStartId = -1;
+          for(const std::pair<Pos, int>& start : startIndex)
           {
-            helipadStartId = start.second;
-            break;
+            if(start.first.almostEqual(helipadPos, atools::geo::Pos::POS_EPSILON_5M))
+            {
+              helipadStartId = start.second;
+              break;
+            }
           }
+
+          helipadStmt->bindValue(":helipad_id", ++helipadId);
+          helipadStmt->bindValue(":airport_id", airportId);
+
+          if(helipadStartId > 0)
+            helipadStmt->bindValue(":start_id", helipadStartId);
+          else
+            helipadStmt->bindNullInt(":start_id");
+
+          helipadStmt->bindValue(":surface", surfaceToDb(static_cast<Surface>(helipad.surface)));
+          helipadStmt->bindValue(":type", enumToStr(bgl::Helipad::helipadTypeToStr, static_cast<bgl::helipad::HelipadType>(helipad.type)));
+
+          helipadStmt->bindValue(":length", meterToFeet(helipad.length));
+          helipadStmt->bindValue(":width", meterToFeet(helipad.width));
+          helipadStmt->bindValue(":heading", helipad.heading);
+          helipadStmt->bindValue(":is_transparent", 0);
+          helipadStmt->bindValue(":is_closed", 0);
+          bindPosAlt(helipadStmt, helipadPos);
+          helipadStmt->execAndClearBounds();
+          bounding.extend(helipadPos);
         }
-
-        helipadStmt->bindValue(":helipad_id", ++helipadId);
-        helipadStmt->bindValue(":airport_id", airportId);
-
-        if(helipadStartId > 0)
-          helipadStmt->bindValue(":start_id", helipadStartId);
-        else
-          helipadStmt->bindNullInt(":start_id");
-
-        helipadStmt->bindValue(":surface", surfaceToDb(static_cast<Surface>(helipad.surface)));
-        helipadStmt->bindValue(":type", enumToStr(bgl::Helipad::helipadTypeToStr, static_cast<bgl::helipad::HelipadType>(helipad.type)));
-
-        helipadStmt->bindValue(":length", meterToFeet(helipad.length));
-        helipadStmt->bindValue(":width", meterToFeet(helipad.width));
-        helipadStmt->bindValue(":heading", helipad.heading);
-        helipadStmt->bindValue(":is_transparent", 0);
-        helipadStmt->bindValue(":is_closed", 0);
-        bindPosAlt(helipadStmt, helipadPos);
-        helipadStmt->execAndClearBounds();
-        bounding.extend(helipadPos);
       }
 
       // Approaches ===========================================================================================
@@ -763,9 +772,10 @@ void SimConnectWriter::writeAirportsToDatabase(const QMap<unsigned long, atools:
       {
         bgl::ap::ParkingType parkingType = static_cast<bgl::ap::ParkingType>(parking.type);
         QString parkingTypeStr = enumToStr(bgl::Parking::parkingTypeToStr, parkingType);
+        Pos parkingPos(calcPosFromBias(airportPos, parking.biasX, parking.biasY));
 
         // Add only valid and omit vehicle parking
-        if(parkingType != bgl::ap::VEHICLES && !parkingTypeStr.isEmpty())
+        if(valid(parkingPos) && parkingType != bgl::ap::VEHICLES && !parkingTypeStr.isEmpty())
         {
           // Detect fuel availability for airport
           if(parking.type == bgl::ap::FUEL)
@@ -783,11 +793,12 @@ void SimConnectWriter::writeAirportsToDatabase(const QMap<unsigned long, atools:
           parkingStmt->bindValue(":heading", parking.heading);
           parkingStmt->bindValue(":has_jetway", jetwayIndexes.contains(std::make_pair(parking.name, parking.suffix)));
 
-          Pos parkingPos(calcPosFromBias(airportPos, parking.biasX, parking.biasY));
           bindPos(parkingStmt, parkingPos);
           parkingStmt->execAndClearBounds();
           bounding.extend(parkingPos);
         }
+
+        // Insert all parking spots
         parkingIndexes.insert(index, &parking);
 
         index++;
@@ -861,13 +872,16 @@ void SimConnectWriter::writeAirportsToDatabase(const QMap<unsigned long, atools:
             }
           }
 
-          taxiPathStmt->bindValue(":end_type", endType);
-          taxiPathStmt->bindValue(":end_dir", endDir);
-          bindPos(taxiPathStmt, endPos, "end_");
-          taxiPathStmt->execAndClearBounds();
+          if(valid(startPos) && valid(endPos))
+          {
+            taxiPathStmt->bindValue(":end_type", endType);
+            taxiPathStmt->bindValue(":end_dir", endDir);
+            bindPos(taxiPathStmt, endPos, "end_");
+            taxiPathStmt->execAndClearBounds();
 
-          bounding.extend(startPos);
-          bounding.extend(endPos);
+            bounding.extend(startPos);
+            bounding.extend(endPos);
+          }
         }
       }
 
@@ -875,6 +889,7 @@ void SimConnectWriter::writeAirportsToDatabase(const QMap<unsigned long, atools:
       airportStmt->bindValue(":fuel_flags", airportHasFuel ? bgl::ap::MSFS_DEFAULT_FUEL : bgl::ap::NO_FUEL_FLAGS);
       airportStmt->bindValue(":has_avgas", airportHasFuel);
       airportStmt->bindValue(":has_jetfuel", airportHasFuel);
+      airportStmt->bindValue(":has_tower_object", valid(towerPos) && airport.getTowerFrequency().toInt() > 0);
       airportStmt->bindValue(":num_runway_light", numLightedRunways);
       airportStmt->bindValue(":num_approach", numProcedures);
       airportStmt->bindValue(":left_lonx", bounding.getTopLeft().getLonX());

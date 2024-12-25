@@ -274,6 +274,8 @@ void SimConnectLoaderPrivate::addFacilityDefinitions()
 bool SimConnectLoaderPrivate::loadAirportIdents()
 {
   airportIdents.clear();
+  facilitiesFetched = false;
+
   HRESULT hr = api->Open(QCoreApplication::applicationName().toLatin1().constData(), nullptr, 0, nullptr, 0);
   if(hr == S_OK)
   {

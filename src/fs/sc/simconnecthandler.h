@@ -56,16 +56,10 @@ public:
   void close();
 
   /* Closes the SimConnect connection until resumeSimConnect() is called */
-  void pauseSimConnect()
-  {
-    close();
-  }
+  void pauseSimConnect();
 
   /* Reopens connection, fills data definitions and subscribes to events again */
-  void resumeSimConnect()
-  {
-    connect();
-  }
+  void resumeSimConnect();
 
   /* Returns true if SimConnect can be opened */
   bool checkSimConnect() const;

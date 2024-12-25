@@ -216,7 +216,7 @@ public:
   SIMCONNECT_RECV_OPEN openData;
 
   bool simRunning = true, simPaused = false, verbose = false, simConnectLoaded = false,
-       userDataFetched = false, aiDataFetched = false, weatherDataFetched = false;
+       userDataFetched = false, aiDataFetched = false, weatherDataFetched = false, paused = false;
 
 #if defined(SIMCONNECT_BUILD_WIN64)
   QDateTime lastSystemRequestTime; // Do not request for every fetch
@@ -565,6 +565,9 @@ bool SimConnectHandlerPrivate::callDispatch(bool& dataFetched, const QString& me
   dataFetched = false;
   do
   {
+    if(paused)
+      break;
+
     HRESULT hr = api->CallDispatch(dispatchCallback, this);
 
     if(hr != S_OK)
@@ -725,6 +728,20 @@ void SimConnectHandler::close()
     qWarning() << "Error closing SimConnect";
 }
 
+void SimConnectHandler::pauseSimConnect()
+{
+  qDebug() << Q_FUNC_INFO;
+  p->paused = true;
+  close();
+}
+
+void SimConnectHandler::resumeSimConnect()
+{
+  qDebug() << Q_FUNC_INFO;
+  p->paused = false;
+  connect();
+}
+
 void SimConnectHandler::releaseSimConnect()
 {
   p->simConnectLoaded = false;
@@ -842,6 +859,9 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   if(p->verbose)
     qDebug() << "fetchData entered ================================================================";
 
+  if(p->paused)
+    return false;
+
   // === Get AI aircraft =======================================================
   p->simDataAircraftList.clear();
   p->simDataAircraftObjectIds.clear();
@@ -883,9 +903,8 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   if(p->state == sc::STATEOK)
   {
     // === Get user aircraft =======================================================
-    hr = p->api->RequestDataOnSimObjectType(
-      DATA_REQUEST_ID_USER_AIRCRAFT, DATA_DEFINITION_USER_AIRCRAFT, 0,
-      SIMCONNECT_SIMOBJECT_TYPE_USER);
+    hr = p->api->RequestDataOnSimObjectType(DATA_REQUEST_ID_USER_AIRCRAFT, DATA_DEFINITION_USER_AIRCRAFT, 0,
+                                            SIMCONNECT_SIMOBJECT_TYPE_USER);
     if(!p->checkCall(hr, "DATA_REQUEST_ID_USER_AIRCRAFT"))
       return false;
 
@@ -1004,6 +1023,8 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
 {
 #if defined(SIMCONNECT_BUILD_WIN32)
+  if(p->paused)
+    return false;
 
   if(p->weatherRequest.isValid())
   {
