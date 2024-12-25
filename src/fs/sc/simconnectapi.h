@@ -47,6 +47,7 @@ namespace sc {
 class SimConnectApi
 {
 public:
+  /* Binds all DLL functions and returns true if successfull */
   bool bindFunctions(const win::ActivationContext *context, const QString& libraryName);
 
   HRESULT Open(LPCSTR szName, HWND hWnd, DWORD UserEventWin32, HANDLE hEventHandle, DWORD ConfigIndex);

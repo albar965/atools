@@ -1232,8 +1232,11 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
                                                 rawBatchSize / PROGRESS_SIMCONNECT_LOADER_STEPS);
               });
 
-          if(!simconnectLoader->loadAirports(fileId))
+          if(!simconnectLoader->loadAirports(simconnectLoader->loadAirportIdents(), fileId))
+          {
             qWarning() << Q_FUNC_INFO << "Errors loading airports" << simconnectLoader->getErrors();
+            throw Exception("SimConnectLoader has errors" + simconnectLoader->getErrors().join(','));
+          }
 
           if((aborted = simconnectLoader->isAborted()))
             return true;
@@ -2153,11 +2156,11 @@ void NavDatabase::countFiles(ProgressHandler *progress, const QList<atools::fs::
           simconnectLoader->setAirportIdents(options->getAirportIcaoFiltersInc());
 
         // Load airport list which will be used later to load airport facility details
-        if(!simconnectLoader->loadAirportIdents())
-          throw atools::Exception(tr("Failed to open SimConnect for MSFS 2024. "
-                                     "Start MSFS 2024 and wait until the simulator shows the start menu."));
+        num = simconnectLoader->loadAirportIdents().size();
 
-        num = simconnectLoader->getAirportIdents().size() / PROGRESS_SIMCONNECT_LOADER_STEPS;
+        if(num == 0 || simconnectLoader->hasErrors())
+          throw atools::Exception(tr("Failed to open SimConnect for MSFS 2024. No airports found. "
+                                     "Start MSFS 2024 and wait until the simulator shows the start menu."));
       }
       else
         throw Exception("SimConnectLoader is null.");
