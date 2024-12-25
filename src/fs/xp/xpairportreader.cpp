@@ -306,8 +306,8 @@ struct RunwayDimension
 XpAirportReader::XpAirportReader(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                                  const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                                  NavDatabaseErrors *navdatabaseErrors)
-  : XpReader(sqlDb, opts, progressHandler, navdatabaseErrors),
-  runwayEndRecord(sqlDb.record("runway_end", ":")), airportIndex(airportIndexParam)
+  : XpReader(sqlDb, opts, progressHandler, navdatabaseErrors), runwayEndRecord(sqlDb.record("runway_end", ":", {"num_strobes"})),
+  airportIndex(airportIndexParam)
 {
   initQueries();
 }

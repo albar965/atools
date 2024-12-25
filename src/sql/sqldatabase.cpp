@@ -260,7 +260,7 @@ QSqlIndex SqlDatabase::primaryIndex(const QString& tablename) const
   return db.primaryIndex(tablename);
 }
 
-SqlRecord SqlDatabase::record(const QString& tablename, const QString& prefix) const
+SqlRecord SqlDatabase::record(const QString& tablename, const QString& prefix, const QStringList& excludeColumns) const
 {
   checkError(isValid(), "SqlDatabase::record() on invalid database");
   checkError(isOpen(), "SqlDatabase::record() on closed database");
@@ -272,7 +272,10 @@ SqlRecord SqlDatabase::record(const QString& tablename, const QString& prefix) c
   {
     SqlRecord prefixedRec;
     for(int i = 0; i < rec.count(); i++)
-      prefixedRec.appendField(prefix + rec.fieldName(i), rec.fieldType(i));
+    {
+      if(!excludeColumns.contains(rec.fieldName(i)))
+        prefixedRec.appendField(prefix + rec.fieldName(i), rec.fieldType(i));
+    }
     return prefixedRec;
   }
 }
