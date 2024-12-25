@@ -29,11 +29,10 @@ enum TrackType : char
 {
   UNKNOWN = '\0',
   NAT = 'N',
-  PACOTS = 'P',
-  AUSOTS = 'A'
+  PACOTS = 'P'
 };
 
-static const QVector<TrackType> ALL_TRACK_TYPES = {NAT, PACOTS, AUSOTS};
+static const QVector<TrackType> ALL_TRACK_TYPES = {NAT, PACOTS};
 
 QString typeToString(atools::track::TrackType type);
 

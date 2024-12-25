@@ -43,7 +43,7 @@ enum Mode : quint8
   MODE_JET = 1 << 4, /* High airways */
 
   MODE_NO_RNAV = 1 << 5, /* Do not use RNAV airways */
-  MODE_TRACK = 1 << 6, /* Use NAT, PACOTS or AUSOTS tracks */
+  MODE_TRACK = 1 << 6, /* Use NAT or PACOTS tracks */
 
   MODE_POINT_TO_POINT = 1 << 7, /* Calculate between selected present route legs
                                 * instead of airport to airport.
@@ -105,7 +105,7 @@ enum EdgeType : unsigned char
   EDGE_VICTOR = 1, /* Airway edge as loaded from the database */
   EDGE_JET = 2, /* " */
   EDGE_BOTH = 3, /* " */
-  EDGE_TRACK = 4 /* NAT, PACOTS or AUSOTS track */
+  EDGE_TRACK = 4 /* NAT or PACOTS track */
 };
 
 enum RouteType : unsigned char
@@ -118,7 +118,7 @@ enum RouteType : unsigned char
   OFFICIAL = 'O', /* O Officially Designated Airways, except RNAV, Helicopter Airways (appears in DFD) */
   RNAV = 'R', /* R RNAV Airways (appears in DFD) */
   UNDESIGNATED = 'S', /* S Undesignated ATS Route */
-  TRACK = 'T' /* NAT, PACTOTS or AUSOTS track. Not a real ARINC route type. */
+  TRACK = 'T' /* NAT or PACTOTS track. Not a real ARINC route type. */
 };
 
 /* Network edge that connects two nodes. Is loaded from the database or

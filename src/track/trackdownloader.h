@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,10 @@ class HttpDownloader;
 namespace track {
 
 /*
- * Downloads HTML pages asynchronously from various services for NAT, AUSOTS and PACOTS and fills a list
+ * Downloads HTML pages asynchronously from various services for NAT and PACOTS and fills a list
  * of Track objects.
  *
  * Default URLs are:
- * AUSOTS: https://www.airservicesaustralia.com/flextracks/text.asp?ver=1
  * NAT: https://notams.aim.faa.gov/nat.html
  * PACOTS: https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do
  *         Uses POST with parameters "queryType=pacificTracks&actionType=advancedNOTAMFunctions"
@@ -97,11 +96,9 @@ signals:
 private:
   void natDownloadFinished(const QByteArray& data, QString downloadUrl);
   void pacotsDownloadFinished(const QByteArray& data, QString downloadUrl);
-  void ausotsDownloadFinished(const QByteArray& data, QString downloadUrl);
 
   void natDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
   void pacotsDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
-  void ausotsDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
 
   /* Download classes */
   QHash<atools::track::TrackType, atools::util::HttpDownloader *> downloaders;

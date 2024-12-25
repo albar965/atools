@@ -58,9 +58,6 @@ QString typeToString(TrackType type)
 
     case atools::track::PACOTS:
       return QObject::tr("PACOTS");
-
-    case atools::track::AUSOTS:
-      return QObject::tr("AUSOTS");
   }
   return QString();
 }

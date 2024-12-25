@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -362,7 +362,7 @@ void RouteNetworkLoader::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap, boo
       // Calculate hash including type to avoid jumping between tracks
       edge.airwayHash = trackHash(query.valueStr(NAME), query.valueStr(TRACK_TYPE));
 
-      /* T NAT, PACOTS or AUSOTS track */
+      /* T NAT or PACOTS track */
       edge.routeType = TRACK;
       edge.type = EDGE_TRACK;
 

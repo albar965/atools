@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,38 +34,22 @@ const QHash<atools::track::TrackType, QString> TrackDownloader::URL =
 {
   // NAT
   // curl  "https://notams.aim.faa.gov/nat.html" > NAT.html
-  {
-    NAT, "https://www.notams.faa.gov/common/nat.html"
-  },
+  {NAT, "https://www.notams.faa.gov/common/nat.html"},
 
   // PACOTS
   // https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do
   // ["queryType"] = "pacificTracks", ["actionType"] = "advancedNOTAMFunctions"
   // curl --data "queryType=pacificTracks&actionType=advancedNOTAMFunctions" https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do >PACOTS.html
-  {
-    PACOTS, "https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do"
-  },
-
-  // AUSOTS
-  // curl  "https://www.airservicesaustralia.com/flextracks/text.asp?ver=1" > AUSOTS.html
-  {
-    AUSOTS, "https://www.airservicesaustralia.com/flextracks/text.asp?ver=1"
-  }
+  {PACOTS, "https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do"},
 };
 
 const QHash<atools::track::TrackType, QStringList> TrackDownloader::PARAM =
 {
-  {
-    NAT, {}
+  {NAT, {}
   },
 
-  {
-    PACOTS, {"queryType", "pacificTracks", "actionType", "advancedNOTAMFunctions"}
+  {PACOTS, {"queryType", "pacificTracks", "actionType", "advancedNOTAMFunctions"}
   },
-
-  {
-    AUSOTS, {}
-  }
 };
 
 TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose)
@@ -92,17 +76,6 @@ TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose)
   connect(pacotsDownloader, &HttpDownloader::downloadSslErrors, this, &TrackDownloader::trackDownloadSslErrors);
   downloaders.insert(PACOTS, pacotsDownloader);
   trackList.insert(PACOTS, atools::track::TrackVectorType());
-
-  // Initialize AUSOTS downloader ============================================================
-  HttpDownloader *ausotsDownloader = new HttpDownloader(parent, verbose);
-  ausotsDownloader->setUrl(URL.value(AUSOTS));
-  ausotsDownloader->setPostParameters(PARAM.value(AUSOTS));
-  ausotsDownloader->setAcceptEncoding("gzip");
-  connect(ausotsDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::ausotsDownloadFinished);
-  connect(ausotsDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::ausotsDownloadFailed);
-  connect(ausotsDownloader, &HttpDownloader::downloadSslErrors, this, &TrackDownloader::trackDownloadSslErrors);
-  downloaders.insert(AUSOTS, ausotsDownloader);
-  trackList.insert(AUSOTS, atools::track::TrackVectorType());
 }
 
 TrackDownloader::~TrackDownloader()
@@ -162,32 +135,6 @@ void TrackDownloader::pacotsDownloadFinished(const QByteArray& data, QString dow
   }
 }
 
-void TrackDownloader::ausotsDownloadFinished(const QByteArray& data, QString downloadUrl)
-{
-  try
-  {
-#ifdef DEBUG_TRACK_TEST_SAVE
-    QFile file("/tmp/AUSOTS.txt");
-    if(file.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-      file.write(data);
-      file.close();
-    }
-#endif
-
-    TrackReader reader;
-    reader.readTracks(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO), AUSOTS);
-    trackList[AUSOTS] = reader.getTracks();
-
-    emit trackDownloadFinished(trackList.value(AUSOTS), AUSOTS);
-  }
-  catch(atools::Exception& e)
-  {
-    qWarning() << Q_FUNC_INFO << e.what() << downloadUrl;
-    emit trackDownloadFailed(e.what(), 0, downloadUrl, AUSOTS);
-  }
-}
-
 void TrackDownloader::natDownloadFailed(const QString& error, int errorCode, QString downloadUrl)
 {
   emit trackDownloadFailed(error, errorCode, downloadUrl, NAT);
@@ -196,11 +143,6 @@ void TrackDownloader::natDownloadFailed(const QString& error, int errorCode, QSt
 void TrackDownloader::pacotsDownloadFailed(const QString& error, int errorCode, QString downloadUrl)
 {
   emit trackDownloadFailed(error, errorCode, downloadUrl, PACOTS);
-}
-
-void TrackDownloader::ausotsDownloadFailed(const QString& error, int errorCode, QString downloadUrl)
-{
-  emit trackDownloadFailed(error, errorCode, downloadUrl, AUSOTS);
 }
 
 void TrackDownloader::setUrl(TrackType type, const QString& url)

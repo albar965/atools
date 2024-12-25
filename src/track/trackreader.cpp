@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -88,10 +88,6 @@ void TrackReader::readTracks(QTextStream& stream, TrackType type)
         // Get flex tracks
         extractPacotsTracksFlex(sections);
       }
-      break;
-
-    case atools::track::AUSOTS:
-      extractAusotsTracks(lines);
       break;
   }
 }
@@ -238,12 +234,6 @@ void TrackReader::extractPacotsTracks(const QStringList& lines)
 {
   static const QRegularExpression PACOT_NAME_REGEXP("^\\(TDM TRK (\\S+)");
   extractTracks(lines, PACOT_NAME_REGEXP, PACOTS, false /* removeEmpty */);
-}
-
-void TrackReader::extractAusotsTracks(const QStringList& lines)
-{
-  static const QRegularExpression AUSOT_NAME_REGEXP("^TDM TRK (\\S+)");
-  extractTracks(lines, AUSOT_NAME_REGEXP, AUSOTS, true /* removeEmpty */);
 }
 
 void TrackReader::extractTracks(const QStringList& lines, const QRegularExpression& nameRegexp, TrackType type,

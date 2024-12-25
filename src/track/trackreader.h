@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,9 @@ namespace atools {
 namespace track {
 
 /*
- * Parses HTML pages from the various services for NAT, AUSOTS and PACOTS and returns a list
+ * Parses HTML pages from the various services for NAT and PACOTS and returns a list
  * of Track objects.
  *
- * AUSOTS: https://www.airservicesaustralia.com/flextracks/text.asp?ver=1
  * NAT: https://notams.aim.faa.gov/nat.html
  * PACOTS:  https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do
  */
@@ -92,9 +91,6 @@ private:
 
   /* Extract the PACOTS flex tracks into the track vector. */
   void extractPacotsTracksFlex(const QStringList& text);
-
-  /* Extract AUSOTS tracks into the track vector. */
-  void extractAusotsTracks(const QStringList& lines);
 
   atools::track::TrackVectorType tracks;
 

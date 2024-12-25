@@ -24,7 +24,7 @@ create table trackmeta
 (
   trackmeta_id integer primary key,
   track_name varchar(15) not null,          -- Track name, letter or number
-  track_type varchar(1) not null,           -- N = NAT track, P = PACOTS track, A = AUSOTS track
+  track_type varchar(1) not null,           -- N = NAT track, P = PACOTS track
   route varchar(255) not null,              -- Track name, letter or number
   startpoint_id integer not null,           -- Start of track. Refers to trackpoint.trackpoint_id.
   endpoint_id integer not null,             -- End of track. Refers to trackpoint.trackpoint_id.
@@ -50,7 +50,7 @@ create table track
   track_id integer primary key,        -- Id uses offset to have it unique with airways
   trackmeta_id integer not null,
   track_name varchar(15) not null,     -- Track name, letter or number
-  track_type varchar(1) not null,      -- N = NAT track, P = PACOTS track, A = AUSOTS track
+  track_type varchar(1) not null,      -- N = NAT track, P = PACOTS track
   track_fragment_no integer not null,  -- Designates a not connected fragment with the same name - needed for queries
   sequence_no integer not null,        -- Segment number
 
