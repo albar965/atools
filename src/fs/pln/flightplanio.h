@@ -97,6 +97,9 @@ public:
   /* Microsoft Flight Simulator 2020 with star as degree separator */
   void savePlnMsfs(const atools::fs::pln::Flightplan& plan, const QString& file) const;
 
+  /* Microsoft Flight Simulator 2024 */
+  void savePlnMsfs24(const atools::fs::pln::Flightplan& plan, const QString& file) const;
+
   /* Microsoft Flight Simulator 2020 with ° as degree separator for add-ons */
   void savePlnMsfsCompat(const Flightplan& plan, const QString& file) const;
 
@@ -180,7 +183,7 @@ public:
   static const int LNMPLN_VERSION_MINOR = 2;
 
 private:
-  void savePlnInternal(const Flightplan& plan, const QString& filename, bool msfs, bool simavionics, bool pms50, bool starDeg,
+  void savePlnInternal(const Flightplan& plan, const QString& filename, bool msfs, bool msfs24, bool simavionics, bool pms50, bool starDeg,
                        int userWpLength) const;
   void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format, bool iniBuildsFormat) const;
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan) const;
@@ -190,10 +193,10 @@ private:
   atools::fs::pln::entry::WaypointType garminToWaypointType(const QString& typeStr) const;
 
   /* Load specific formats after content detection */
-  void loadPln(atools::fs::pln::Flightplan& plan, const QString& filename) const;
+  void loadPln(atools::fs::pln::Flightplan& plan, const QString& filename, FileFormat format) const; /* FSX, P3D, MSFS 2020 and MSFS 2024 */
   void loadFs9(atools::fs::pln::Flightplan& plan, const QString& filename) const;
   void loadFlp(atools::fs::pln::Flightplan& plan, const QString& filename) const;
-  void loadFms(atools::fs::pln::Flightplan& plan, const QString& filename) const;
+  void loadFms(atools::fs::pln::Flightplan& plan, const QString& filename) const; /* X-Plane 11 and 12 format 3 and 11 */
   void loadFsc(atools::fs::pln::Flightplan& plan, const QString& filename) const;
   void loadFlightGear(atools::fs::pln::Flightplan& plan, const QString& filename) const;
 

@@ -83,7 +83,8 @@ enum FileFormat
   FLIGHTGEAR, /* FlightGear XML format - load and save  */
   LNM_PLN, /* Little Navmap's own flight plan format  */
   GARMIN_FPL, /* Garmin FPL - XML format */
-  MSFS_PLN, /* MSFS PLN  */
+  MSFS_PLN, /* MSFS 2020 PLN  */
+  MSFS_PLN_2024, /* MSFS 2024 PLN  */
   GARMIN_GFP /* Garmin GFP - One line text format prefixed with "FPN/RI:..." */
 };
 

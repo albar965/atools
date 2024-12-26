@@ -251,8 +251,8 @@ QString buildPath(const QStringList& paths);
  * Do not delete the returned pointer. */
 QTextCodec *codecForFile(QIODevice& file, QTextCodec *defaultCodec = nullptr);
 
-/* Get the first four lines of a file converted to lowercase to check type.
- *  Returns a list with always four strings.
+/* Get the first numLinesRead lines of a file converted to lowercase to check type.
+ *  Returns a list with always numLinesRead strings.
  *  Empty lines are removed and line length is limited to 80 characters.
  *  All trimmed and converted to lower case. */
 QStringList probeFile(const QString& file, int numLinesRead = 6);
