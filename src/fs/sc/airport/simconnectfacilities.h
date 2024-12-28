@@ -490,6 +490,10 @@ struct JetwayFacility
 class Runway
 {
 public:
+  Runway()
+  {
+  }
+
   Runway(const RunwayFacility& runwayFacility)
     : runway(runwayFacility)
   {
@@ -535,6 +539,10 @@ private:
 class ApproachTransition
 {
 public:
+  ApproachTransition()
+  {
+  }
+
   ApproachTransition(const ApproachTransitionFacility& transitionFacility)
     : transition(transitionFacility)
   {
@@ -561,6 +569,10 @@ private:
 class Approach
 {
 public:
+  Approach()
+  {
+  }
+
   Approach(const ApproachFacility& approachFacility)
     : approach(approachFacility)
   {
@@ -599,6 +611,10 @@ private:
 class RunwayTransition
 {
 public:
+  RunwayTransition()
+  {
+  }
+
   RunwayTransition(const RunwayTransitionFacility& transitionFacility)
     : transition(transitionFacility)
   {
@@ -625,6 +641,10 @@ private:
 class EnrouteTransition
 {
 public:
+  EnrouteTransition()
+  {
+  }
+
   EnrouteTransition(const EnrouteTransitionFacility& transitionFacility)
     : transition(transitionFacility)
   {
@@ -651,6 +671,10 @@ private:
 class Arrival
 {
 public:
+  Arrival()
+  {
+  }
+
   Arrival(const ArrivalFacility& approachFacility)
     : arrival(approachFacility)
   {
@@ -689,6 +713,10 @@ private:
 class Departure
 {
 public:
+  Departure()
+  {
+  }
+
   Departure(const DepartureFacility& departureFacility)
     : departure(departureFacility)
   {
