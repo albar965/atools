@@ -27,6 +27,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QThread>
+#include <QRegExp>
 
 namespace atools {
 namespace fs {

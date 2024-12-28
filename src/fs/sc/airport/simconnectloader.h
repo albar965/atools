@@ -21,6 +21,8 @@
 #include <QMap>
 #include <QCoreApplication>
 
+class QRegExp;
+
 namespace atools {
 
 namespace win {

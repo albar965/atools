@@ -43,7 +43,7 @@ class RunwayIndex;
 namespace sc {
 namespace airport {
 
-class LegFacility;
+struct LegFacility;
 class Airport;
 class Runway;
 
