@@ -174,6 +174,7 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
 
 void NavDatabase::createSimConnectLoader()
 {
+#ifdef Q_OS_WIN
   if(options->getSimulatorType() == FsPaths::MSFS_2024 && simconnectLoader == nullptr)
   {
     if(activationContext == nullptr)
@@ -184,6 +185,7 @@ void NavDatabase::createSimConnectLoader()
 
     simconnectLoader = new atools::fs::sc::airport::SimConnectLoader(activationContext, libraryName, *db, options->isVerbose());
   }
+#endif
 }
 
 bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& codec, QStringList& errors)
@@ -1556,7 +1558,9 @@ void NavDatabase::calculateRating(FsPaths::SimulatorType sim)
 void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 {
   // Force well known layer piority to avoid mess up due to not documented "Content.xml"
+#ifdef Q_OS_WIN
   const static int LAYER_NUM_SIMCONNECT_AIRPORTS = -1003; // Read first - airports from SimConnect
+#endif
   const static int LAYER_NUM_GENERIC_AIRPORTS = -1002; // Read first - airports
   const static int LAYER_NUM_BASE = -1001; // Read second - procedures
   const static int LAYER_NUM_BASE_NAV = -1000; // Read last navaids and then "Community"
@@ -1616,6 +1620,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
       cfg.appendArea(areaGeneric);
     }
   }
+#ifdef Q_OS_WIN
   else if(options->getSimulatorType() == FsPaths::MSFS_2024)
   {
     SceneryArea areaSimConnectAirports(LAYER_NUM_SIMCONNECT_AIRPORTS, tr("SimConnect Airports"), QString());
@@ -1623,6 +1628,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     areaSimConnectAirports.setSimconnect(true);
     cfg.appendArea(areaSimConnectAirports);
   }
+#endif
 
   // fs-base-nav ======================================================
   SceneryArea areaNav(LAYER_NUM_BASE_NAV, tr("Base Navigation"), "fs-base-nav");
