@@ -16,12 +16,7 @@
 -- ****************************************************************************/
 
 -- *************************************************************
--- Remove any duplicates that are resulting from add-on BGL files.
--- Some add-on airport BGL files contain additional navaids that are
--- not (and cannot be) covered by the delete processor. These will
--- be removed here by keeping only the duplicate with the highest id.
--- This means stock/default/oldest are removed and add-on are kept.
--- The manhattan distance using deg is sufficient for a crude distance estimation
+-- Remove any duplicates that are resulting from BGL files.
 -- *************************************************************
 
 -- Delete all waypoint duplicates not having airways and no airport ident attached
@@ -51,7 +46,7 @@ where
 w1.waypoint_id < w2.waypoint_id and w1.num_victor_airway = 0 and w1.num_jet_airway = 0 and
 (abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.00000001 order by w1.ident);
 
--- Delete all waypoint duplicates having the same airport ident not having airways attached
+-- Delete remaining other waypoint duplicates having the same airport ident not having airways attached
 delete from waypoint where waypoint_id in (
 select distinct w1.waypoint_id
 from waypoint w1

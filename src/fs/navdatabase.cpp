@@ -1305,9 +1305,11 @@ bool NavDatabase::loadFsxP3dMsfsPost(ProgressHandler *progress)
     QStringList scripts;
     scripts.append("fs/db/delete_duplicate_navaids.sql");
 
-    if(options->getSimulatorType() == FsPaths::MSFS_2024)
-      scripts.append("fs/db/delete_duplicate_navaids_msfs24.sql");
-    else
+    if(options->getSimulatorType() == FsPaths::MSFS_2024 || options->getSimulatorType() == FsPaths::MSFS)
+      scripts.append("fs/db/delete_duplicate_navaids_msfs.sql");
+
+    if(options->getSimulatorType() != FsPaths::MSFS_2024)
+      // De-duplicate ILS from add-ons - MSFS 2024 does not provide add-on ILS
       scripts.append("fs/db/delete_duplicate_ils_fsx.sql");
 
     // Delete duplicates before any foreign keys ids are assigned

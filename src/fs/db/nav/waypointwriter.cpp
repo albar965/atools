@@ -47,10 +47,12 @@ void WaypointWriter::writeObject(const Waypoint *type)
     return;
   }
 
-  if(getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS && type->getRegion().size() == 1)
+  // One letter codes like "P" and "K" are valid and used for unnamed, charted intersections
+  // The invalid code "KZ" can be removed
+  if((getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS_2024 || getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS) &&
+     type->getRegion() == "KZ" && /*type->getNumJetAirway() == 0 && type->getNumVictorAirway() == 0 && */type->getAirportIdent().isEmpty())
   {
-    // MSFS 2024 sepciality - a lot of duplicate waypoints at the same position having an invalid region
-    qWarning() << Q_FUNC_INFO << "Found waypoint" << type->getIdent() << "with invalid region" << type->getRegion() << "in file"
+    qWarning() << Q_FUNC_INFO << "Found invalid waypoint" << type->getIdent() << "with invalid region" << type->getRegion() << "in file"
                << getDataWriter().getBglFileWriter()->getCurrentFilepath();
     return;
   }
