@@ -96,21 +96,23 @@ Rect::Rect(const Pos& center, float radiusMeter, bool fast)
   float north = center.getLatY() + radiusNm / 60.f;
   float south = center.getLatY() - radiusNm / 60.f;
 
+  // Do own normalization
   if(north > 90.f || south < -90.f)
   {
+    // Rect wraps whole globe if exceeding North or South
     east = 180.f;
     west = -180.f;
   }
 
+  // Adjust bounds
   if(north > 90.f)
     north = 90.f;
+
   if(south < -90.f)
     south = -90.f;
 
   topLeft = Pos(west, north);
   bottomRight = Pos(east, south);
-
-  normalize();
 }
 
 bool Rect::operator==(const Rect& other) const
@@ -139,7 +141,6 @@ bool Rect::contains(const Pos& pos) const
 
 bool Rect::overlaps(const Rect& other) const
 {
-
   if(!isValid() || !other.isValid())
     return false;
 
