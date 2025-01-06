@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -91,9 +91,9 @@ public:
 
   void clear();
 
-  typedef atools::util::Str<8> Name;
-  typedef atools::util::StrPair<8> Name2;
-  typedef atools::util::StrTriple<8> Name3;
+  typedef atools::util::Str<10> Name;
+  typedef atools::util::StrPair<10> Name2;
+  typedef atools::util::StrTriple<10> Name3;
 
   typedef std::pair<int, atools::geo::Pos> IdPos;
   typedef std::pair<int, Name> IdName;

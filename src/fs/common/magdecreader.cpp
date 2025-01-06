@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -87,14 +87,14 @@ void MagDecReader::readFromBgl(const QString& filename)
 
   if(file.open(QIODevice::ReadOnly))
   {
-    // Offset	Length	Description	Content
-    // 0x00	1 - BYTE	World set number	0X01
-    // 0x01	127 - ?	Unknown	All 0, except 0x80 at offset 0x6E
-    // 0x80	2 - WORD	Number of longitude values	0x168 (360)
-    // 0x82	2 - WORD	Number of latitude values	0xB5 (181)
-    // 0x84	1 - BYTE	Reference date day (?)	0x01
-    // 0x85	1 - BYTE	Reference date month (?)	0x01 (FS2004) - 0x11 (FSX/P3D)
-    // 0x86	2 - WORD	Reference date year (?)	0x1993 (FS2004) - 0x2006 (FSX/P3D)
+    // Offset Length  Description Content
+    // 0x00 1 - BYTE  World set number  0X01
+    // 0x01 127 - ? Unknown All 0, except 0x80 at offset 0x6E
+    // 0x80 2 - WORD  Number of longitude values  0x168 (360)
+    // 0x82 2 - WORD  Number of latitude values 0xB5 (181)
+    // 0x84 1 - BYTE  Reference date day (?)  0x01
+    // 0x85 1 - BYTE  Reference date month (?)  0x01 (FS2004) - 0x11 (FSX/P3D)
+    // 0x86 2 - WORD  Reference date year (?) 0x1993 (FS2004) - 0x2006 (FSX/P3D)
 
     atools::io::BinaryStream stream(&file);
     int worldSet = stream.readByte();
@@ -216,6 +216,11 @@ void MagDecReader::clear()
 bool MagDecReader::isValid() const
 {
   return magDecValues != nullptr;
+}
+
+float MagDecReader::getMagVar(float longitudeX, float latitudeY) const
+{
+  return getMagVar(Pos(longitudeX, latitudeY));
 }
 
 QByteArray MagDecReader::writeToBytes() const

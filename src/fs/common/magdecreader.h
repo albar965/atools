@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@ public:
   /* East values are positive while West values are negative.
    * Throws exception if object is not valid.
    */
+  float getMagVar(float longitudeX, float latitudeY) const;
   float getMagVar(const atools::geo::Pos& pos) const;
 
   const QDate& getReferenceDate() const

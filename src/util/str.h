@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,9 +36,15 @@ template<int SIZE>
 class Str
 {
 public:
+  explicit Str(const char *strParam)
+  {
+    std::strncpy(str, strParam, SIZE - 1); // Limit to SIZE
+    str[SIZE - 1] = '\0'; // Ensure null termination
+  }
+
   explicit Str(const QString& strParam)
   {
-    std::strncpy(str, strParam.toLatin1().constData(), SIZE); // Limit to SIZE
+    std::strncpy(str, strParam.toLatin1().constData(), SIZE - 1); // Limit to SIZE
     str[SIZE - 1] = '\0'; // Ensure null termination
   }
 
@@ -102,6 +108,11 @@ public:
   }
 
   explicit StrPair(const Str<SIZE>& firstParam, const Str<SIZE>& secondParam)
+    : first(firstParam), second(secondParam)
+  {
+  }
+
+  explicit StrPair(const char *firstParam, const char *secondParam)
     : first(firstParam), second(secondParam)
   {
   }
@@ -170,6 +181,11 @@ public:
   {
   }
 
+  explicit StrTriple(const char *firstParam, const char *secondParam, const char *thirdParam)
+    : first(firstParam), second(secondParam), third(thirdParam)
+  {
+  }
+
   StrTriple()
   {
   }
@@ -223,8 +239,81 @@ private:
   Str<SIZE> first, second, third;
 };
 
-} // namespace util
-} // namespace atools
+/*
+ * Same as above but for three strings
+ */
+template<int SIZE>
+class StrQuad
+{
+public:
+  explicit StrQuad(const QString& firstParam, const QString& secondParam, const QString& thirdParam, const QString& fourthParam)
+    : first(firstParam), second(secondParam), third(thirdParam), fourth(fourthParam)
+  {
+  }
+
+  explicit StrQuad(const Str<SIZE>& firstParam, const Str<SIZE>& secondParam, const Str<SIZE>& thirdParam, const Str<SIZE>& fourthParam)
+    : first(firstParam), second(secondParam), third(thirdParam), fourth(fourthParam)
+  {
+  }
+
+  StrQuad()
+  {
+  }
+
+  StrQuad(const StrQuad<SIZE>& other)
+  {
+    this->operator=(other);
+  }
+
+  StrQuad& operator=(const StrQuad<SIZE>& other)
+  {
+    first = other.first;
+    second = other.second;
+    third = other.third;
+    fourth = other.fourth;
+    return *this;
+  }
+
+  friend bool operator==(const StrQuad<SIZE>& str1, const StrQuad<SIZE>& str2)
+  {
+    return std::tie(str1.first, str1.second, str1.third, str1.fourth) == std::tie(str2.first, str2.second, str2.third, str1.fourth);
+  }
+
+  friend bool operator!=(const StrQuad<SIZE>& str1, const StrQuad<SIZE>& str2)
+  {
+    return !operator==(str1, str2);
+  }
+
+  friend bool operator<(const StrQuad<SIZE>& str1, const StrQuad<SIZE>& str2)
+  {
+    return std::tie(str1.first, str1.second, str1.third, str1.fourth) < std::tie(str2.first, str2.second, str2.third, str1.fourth);
+  }
+
+  const Str<SIZE>& getFirst() const
+  {
+    return first;
+  }
+
+  const Str<SIZE>& getSecond() const
+  {
+    return second;
+  }
+
+  const Str<SIZE>& getThird() const
+  {
+    return third;
+  }
+
+  const Str<SIZE>& getFourth() const
+  {
+    return fourth;
+  }
+
+  const static int size = SIZE;
+
+private:
+  Str<SIZE> first, second, third, fourth;
+};
 
 template<int SIZE>
 inline uint qHash(const atools::util::Str<SIZE>& str)
@@ -243,9 +332,18 @@ inline uint qHash(const atools::util::StrTriple<SIZE>& str)
 }
 
 template<int SIZE>
+inline uint qHash(const atools::util::StrQuad<SIZE>& str)
+{
+  return qHash(str.getFirst()) ^ qHash(str.getSecond()) ^ qHash(str.getThird()) ^ qHash(str.getFourth());
+}
+
+template<int SIZE>
 inline uint qHash(const atools::util::StrPair<SIZE>& str)
 {
   return qHash(str.getFirst()) ^ qHash(str.getSecond());
 }
+
+} // namespace util
+} // namespace atools
 
 #endif // ATOOLS_STR_H
