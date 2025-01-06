@@ -36,7 +36,7 @@ class SqlUtil;
 
 namespace fs {
 namespace sc {
-namespace airport {
+namespace db {
 class SimConnectLoader;
 }
 }
@@ -216,7 +216,7 @@ private:
   /* Detect Navigraph navdata update packages for special handling. */
   bool isNavigraphNavdata(atools::fs::scenery::ManifestJson& manifest);
 
-  atools::fs::sc::airport::SimConnectLoader *simconnectLoader = nullptr;
+  atools::fs::sc::db::SimConnectLoader *simconnectLoader = nullptr;
   const atools::win::ActivationContext *activationContext = nullptr;
   QString libraryName;
 

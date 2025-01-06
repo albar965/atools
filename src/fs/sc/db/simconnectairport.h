@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,21 +15,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_SIMCONNECTFACILITIES_H
-#define ATOOLS_SIMCONNECTFACILITIES_H
+#ifndef ATOOLS_SIMCONNECTAIRPORTFACILITIES_H
+#define ATOOLS_SIMCONNECTAIRPORTFACILITIES_H
 
+#include <QVarLengthArray>
 #include <QVector>
 
 class QVariant;
 namespace atools {
 namespace fs {
 namespace sc {
-namespace airport {
+namespace db {
 
 // ==============================================================================================================
 /*
- * Raw and packed data structures filled by SimConnect used by the data definitions.
- * These do not model the parent/child relations but are only flat structures.
+ * Raw and packed data structures filled by SimConnect used by the data definitions to fetch
+ * airport and child structures.
+ *
+ * These structs do not model the parent/child relations but are only flat structures.
  *
  * Definition names in brackets are documented but not used.
  *
@@ -39,9 +42,61 @@ namespace airport {
 /* Avoid padding and alignment in structures */
 #pragma pack(push, 1)
 
-/* Airport - Top level =========================================================================== */
+/* ==============================================================================================================
+ * The layout of these structures has to match the layout requested in the methods
+ * void SimConnectLoaderPrivate::addAirportNumFacilityDefinition();
+ * void SimConnectLoaderPrivate::addAirportBaseFacilityDefinition();
+ * void SimConnectLoaderPrivate::addAirportFrequencyFacilityDefinition();
+ * void SimConnectLoaderPrivate::addAirportHelipadFacilityDefinition();
+ * void SimConnectLoaderPrivate::addAirportRunwayFacilityDefinition();
+ * void SimConnectLoaderPrivate::addAirportStartFacilityDefinition();
+ * void SimConnectLoaderPrivate::addAirportProcedureFacilityDefinition();
+ * void SimConnectLoaderPrivate::addAirportTaxiFacilityDefinition(); */
+
+/* Airport - Top level before start, frequency etc. ============================================================ */
+struct AirportFacilityIcao
+{
+  // ICAO STRING8
+  char icao[8];
+};
+
+/* Used to get counts for airport features which are requested depending if count is > 0 or not
+ * FACILITY_DATA_AIRPORT_NUM_DEFINITION_ID  */
+struct AirportFacilityNum
+{
+  // ICAO STRING8
+  // N_RUNWAYS  INT32
+  // N_STARTS INT32
+  // N_FREQUENCIES  INT32
+  // N_HELIPADS INT32
+  // N_APPROACHES INT32
+  // N_DEPARTURES INT32
+  // N_ARRIVALS INT32
+  // N_TAXI_POINTS  INT32
+  // N_TAXI_PARKINGS  INT32
+  // N_TAXI_PATHS INT32
+  // N_TAXI_NAMES INT32
+  // N_JETWAYS  INT32
+  char icao[8] = "\0"; // Identifier for valid state
+  int numRunways;
+  int numStarts;
+  int numFrequencies;
+  int numHelipads;
+  int numApproaches;
+  int numDepartures;
+  int numArrivals;
+  int numTaxiPoints;
+  int numTaxiParkings;
+  int numTaxiPaths;
+  int numTaxiNames;
+  int numJetways;
+};
+
+/* FACILITY_DATA_AIRPORT_BASE_DEFINITION_ID */
 struct AirportFacility
 {
+  // ICAO STRING8
+  // REGION STRING8
   // LATITUDE FLOAT64
   // LONGITUDE FLOAT64
   // ALTITUDE FLOAT64
@@ -55,13 +110,13 @@ struct AirportFacility
   // TOWER_ALTITUDE FLOAT64
   // TRANSITION_ALTITUDE FLOAT32
   // TRANSITION_LEVEL FLOAT32
+  char icao[8];
+  char region[8];
   double latitude;
   double longitude;
   double altitude;
   float magvar;
   char name[64];
-  char icao[8] = "\0"; // Identifier for valid state
-  char region[8];
   double towerLatitude;
   double towerLongitude;
   double towerAltitude;
@@ -69,7 +124,8 @@ struct AirportFacility
   float transitionLevel;
 };
 
-/* Child member of the AIRPORT entry point */
+/* Child member of the AIRPORT entry point
+ * FACILITY_DATA_AIRPORT_RW_DEFINITION_ID */
 struct RunwayFacility
 {
   // LATITUDE FLOAT64
@@ -142,7 +198,7 @@ struct ApproachLightFacility
   // HAS_REIL_LIGHTS INT32
   // HAS_TOUCHDOWN_LIGHTS INT32
   // (ON_GROUND INT32)
-  // ENABLE INT32
+  // (ENABLE INT32)
   // (OFFSET FLOAT32)
   // (SPACING FLOAT32)
   // (SLOPE FLOAT32)
@@ -150,7 +206,6 @@ struct ApproachLightFacility
   qint32 hasEndLights;
   qint32 hasReilLights;
   qint32 hasTouchdownLights;
-  qint32 enable;
 };
 
 /* Child member of the RUNWAY entry point */
@@ -165,7 +220,8 @@ struct VasiFacility
   float angle;
 };
 
-/* Child member of the AIRPORT entry point */
+/* Child member of the AIRPORT entry point
+ * FACILITY_DATA_AIRPORT_START_DEFINITION_ID */
 struct StartFacility
 {
   // LATITUDE FLOAT64
@@ -184,7 +240,8 @@ struct StartFacility
   qint32 type;
 };
 
-/* Child member of the AIRPORT entry point */
+/* Child member of the AIRPORT entry point
+ * FACILITY_DATA_AIRPORT_FREQ_DEFINITION_ID */
 struct FrequencyFacility
 {
   // TYPE INT32
@@ -195,7 +252,8 @@ struct FrequencyFacility
   char name[64];
 };
 
-/* Child member of the AIRPORT entry point */
+/* Child member of the AIRPORT entry point
+ * FACILITY_DATA_AIRPORT_HELIPAD_DEFINITION_ID */
 struct HelipadFacility
 {
   // LATITUDE FLOAT64
@@ -220,7 +278,8 @@ struct HelipadFacility
 };
 
 /* Child member of the AIRPORT entry point, and is itself an entry point for the
- * APPROACH_TRANSITION, FINAL_APPROACH_LEG, and MISSED_APPROACH_LEG members. */
+ * APPROACH_TRANSITION, FINAL_APPROACH_LEG, and MISSED_APPROACH_LEG members.
+ * FACILITY_DATA_AIRPORT_PROC_DEFINITION_ID */
 struct ApproachFacility
 {
   // TYPE INT32
@@ -233,10 +292,10 @@ struct ApproachFacility
   // FAF_ALTITUDE FLOAT32
   // FAF_TYPE INT32
   // MISSED_ALTITUDE FLOAT32
-  // (HAS_LNAV INT32)
-  // (HAS_LNAVVNAV INT32)
-  // (HAS_LP INT32)
-  // (HAS_LPV INT32)
+  // (HAS_LNAV INT32) Returns whether the approach has lateral navigation
+  // (HAS_LNAVVNAV INT32) Returns whether the approach has lateral and vertical navigation
+  // (HAS_LP INT32) Returns whether the approach has localizer performance
+  // (HAS_LPV INT32) Returns whether the approach has localizer performance with vertical guidance (1) or not (0).
   // IS_RNPAR INT32
   // (IS_RNPAR_MISSED INT32)
   qint32 type;
@@ -264,7 +323,7 @@ struct ApproachTransitionFacility
   // DMC_ARC_TYPE INT32
   // DME_ARC_RADIAL INT32
   // DME_ARC_DISTANCE FLOAT32
-  // NAME CHAR[8]
+  // (NAME CHAR[8])
   qint32 type;
   char iafIcao[8];
   char iafRegion[8];
@@ -275,7 +334,6 @@ struct ApproachTransitionFacility
   qint32 dmeArcType;
   qint32 dmeArcRadial;
   float dmeArcDistance;
-  char name[8];
 };
 
 /* APPROACH_LEG, FINAL_APPROACH_LEG and MISSED_APPROACH_LEG
@@ -286,9 +344,9 @@ struct LegFacility
   // FIX_ICAO CHAR[8]
   // FIX_REGION CHAR[8]
   // FIX_TYPE INT32
-  // FIX_LATITUDE FLOAT64
-  // FIX_LONGITUDE FLOAT64
-  // FIX_ALTITUDE FLOAT64
+  // (FIX_LATITUDE FLOAT64)
+  // (FIX_LONGITUDE FLOAT64)
+  // (FIX_ALTITUDE FLOAT64)
   // FLY_OVER INT32
   // DISTANCE_MINUTE INT32
   // TRUE_DEGREE INT32
@@ -296,9 +354,9 @@ struct LegFacility
   // ORIGIN_ICAO CHAR[8]
   // ORIGIN_REGION CHAR[8]
   // ORIGIN_TYPE INT32
-  // ORIGIN_LATITUDE FLOAT64
-  // ORIGIN_LONGITUDE FLOAT64
-  // ORIGIN_ALTITUDE FLOAT64
+  // (ORIGIN_LATITUDE FLOAT64)
+  // (ORIGIN_LONGITUDE FLOAT64)
+  // (ORIGIN_ALTITUDE FLOAT64)
   // THETA FLOAT32
   // RHO FLOAT32
   // COURSE FLOAT32
@@ -311,9 +369,9 @@ struct LegFacility
   // ARC_CENTER_FIX_ICAO CHAR[8]
   // ARC_CENTER_FIX_REGION CHAR[8]
   // ARC_CENTER_FIX_TYPE
-  // ARC_CENTER_FIX_LATITUDE FLOAT64
-  // ARC_CENTER_FIX_LONGITUDE FLOAT64
-  // ARC_CENTER_FIX_ALTITUDE FLOAT64
+  // (ARC_CENTER_FIX_LATITUDE FLOAT64)
+  // (ARC_CENTER_FIX_LONGITUDE FLOAT64)
+  // (ARC_CENTER_FIX_ALTITUDE FLOAT64)
   // RADIUS FLOAT32
   // IS_IAF INT32
   // IS_IF INT32
@@ -325,9 +383,6 @@ struct LegFacility
   char fixIcao[8];
   char fixRegion[8];
   qint32 fixType;
-  double fixLatitude;
-  double fixLongitude;
-  double fixAltitude;
   qint32 flyOver;
   qint32 distanceMinute;
   qint32 trueDegree;
@@ -335,9 +390,6 @@ struct LegFacility
   char originIcao[8];
   char originRegion[8];
   qint32 originType;
-  double originLatitude;
-  double originLongitude;
-  double originAltitude;
   float theta;
   float rho;
   float course;
@@ -350,9 +402,6 @@ struct LegFacility
   char arcCenterFixIcao[8];
   char arcCenterFixRegion[8];
   qint32 arcCenterFixType;
-  double arcCenterFixLatitude;
-  double arcCenterFixLongitude;
-  double arcCenterFixAltitude;
   float radius;
   qint32 isIaf;
   qint32 isIf;
@@ -361,22 +410,25 @@ struct LegFacility
   float requiredNavigationPerformance;
 };
 
-/* Child member of the AIRPORT entry point, and is itself and
- * entry point for RUNWAY_TRANSITION, ENROUTE_TRANSITION, and APPROACH_LEG. */
+/* STAR. Child member of the AIRPORT entry point, and is itself and
+ * entry point for RUNWAY_TRANSITION, ENROUTE_TRANSITION, and APPROACH_LEG.
+ * FACILITY_DATA_AIRPORT_PROC_DEFINITION_ID */
 struct ArrivalFacility
 {
   // NAME CHAR[8]
   char name[8];
 };
 
-/* Child member of the AIRPORT entry point, and is itself an entry point
- * for RUNWAY_TRANSITION, ENROUTE_TRANSITION, and APPROACH_LEG. */
+/* SID. Child member of the AIRPORT entry point, and is itself an entry point
+ * for RUNWAY_TRANSITION, ENROUTE_TRANSITION, and APPROACH_LEG.
+ * FACILITY_DATA_AIRPORT_PROC_DEFINITION_ID */
 struct DepartureFacility
 {
   // NAME CHAR[8]
   char name[8];
 };
 
+/* Always present for an approach, a SID or a STAR */
 struct RunwayTransitionFacility
 {
   // RUNWAY_NUMBER  INT32
@@ -385,13 +437,15 @@ struct RunwayTransitionFacility
   qint32 runwayDesignator;
 };
 
+/* Converts into table transition. */
 struct EnrouteTransitionFacility
 {
   // NAME Char[8]
   char name[8];
 };
 
-/* Child member of the AIRPORT entry point */
+/* Child member of the AIRPORT entry point
+ * FACILITY_DATA_AIRPORT_TAXI_DEFINITION_ID */
 struct TaxiParkingFacility
 {
   // TYPE INT32
@@ -416,7 +470,8 @@ struct TaxiParkingFacility
   float biasY;
 };
 
-/* Child member of the AIRPORT entry point */
+/* Child member of the AIRPORT entry point
+ * FACILITY_DATA_AIRPORT_TAXI_DEFINITION_ID */
 struct TaxiPointFacility
 {
   // TYPE INT32
@@ -429,7 +484,8 @@ struct TaxiPointFacility
   float biasY;
 };
 
-/* Child member of the AIRPORT entry point */
+/* Child member of the AIRPORT entry point
+ * FACILITY_DATA_AIRPORT_TAXI_DEFINITION_ID */
 struct TaxiPathFacility
 {
   // TYPE INT32
@@ -460,14 +516,16 @@ struct TaxiPathFacility
   quint32 nameIndex;
 };
 
-/* Child member of the AIRPORT entry point */
+/* Child member of the AIRPORT entry point
+ * FACILITY_DATA_AIRPORT_TAXI_DEFINITION_ID */
 struct TaxiNameFacility
 {
   // NAME CHAR[32]
   char name[32];
 };
 
-/* Child member of the AIRPORT entry point */
+/* Child member of the AIRPORT entry point
+ * FACILITY_DATA_AIRPORT_TAXI_DEFINITION_ID */
 struct JetwayFacility
 {
   // PARKING_GATE INT32
@@ -505,19 +563,19 @@ public:
   }
 
   /* Primary threshold, blastpad,overrun and secondary threshold, blastpad,overrun */
-  const QVector<PavementFacility>& getPavementFacilities() const
+  const QVarLengthArray<PavementFacility, 6>& getPavementFacilities() const
   {
     return pavements;
   }
 
   /* Primary and secondary */
-  const QVector<ApproachLightFacility>& getApproachLightFacilities() const
+  const QVarLengthArray<ApproachLightFacility, 2>& getApproachLightFacilities() const
   {
     return approachLights;
   }
 
   /* Primary left, right and secondary left, right */
-  const QVector<VasiFacility>& getVasiFacilities() const
+  const QVarLengthArray<VasiFacility, 4>& getVasiFacilities() const
   {
     return vasi;
   }
@@ -530,9 +588,12 @@ private:
   friend class SimConnectLoaderPrivate;
 
   RunwayFacility runway;
-  QVector<PavementFacility> pavements;
-  QVector<ApproachLightFacility> approachLights;
-  QVector<VasiFacility> vasi;
+
+  /* Below are always fixed size and are created on the stack.
+   * Facilities are added in the order as they appear in the dispatchFunction (as registered defintions). */
+  QVarLengthArray<PavementFacility, 6> pavements;
+  QVarLengthArray<ApproachLightFacility, 2> approachLights;
+  QVarLengthArray<VasiFacility, 4> vasi;
 };
 
 // =============================================
@@ -667,7 +728,7 @@ private:
   QVector<LegFacility> legs;
 };
 
-// =============================================
+// STAR =============================================
 class Arrival
 {
 public:
@@ -709,7 +770,7 @@ private:
   QVector<EnrouteTransition> enrouteTransitions;
 };
 
-// =============================================
+// SID =============================================
 class Departure
 {
 public:
@@ -752,6 +813,7 @@ private:
 };
 
 // =============================================
+/* Top level for all child structures */
 class Airport
 {
 public:
@@ -759,27 +821,43 @@ public:
   {
   }
 
-  Airport(const AirportFacility& airportFacility)
-    : airport(airportFacility)
+  Airport(const AirportFacilityNum& airportFacility)
+    : airportNum(airportFacility)
   {
   }
 
   /* true if not airport at all. */
-  bool isPoiDummy() const
+  bool isEmptyByNum() const
   {
-    return runways.isEmpty() && taxiPaths.isEmpty() && helipads.isEmpty() && taxiParkings.isEmpty() && taxiPoints.isEmpty() &&
-           starts.isEmpty();
+    return airportNum.numRunways == 0 && airportNum.numHelipads == 0 && airportNum.numTaxiParkings == 0 && airportNum.numStarts == 0;
   }
 
+  bool isCoordinateNull() const;
+
   /* true if invalid or default constructed */
-  bool isValid()
+  bool isValid() const
   {
-    return ::strlen(airport.icao) > 0;
+    return strlen(airportNum.icao) > 0;
+  }
+
+  QString getIcao() const
+  {
+    return airportNum.icao;
+  }
+
+  QString getRegion() const
+  {
+    return airport.region;
   }
 
   const AirportFacility& getAirportFacility() const
   {
     return airport;
+  }
+
+  const AirportFacilityNum& getAirportFacilityNum() const
+  {
+    return airportNum;
   }
 
   const QVector<Runway>& getRunways() const
@@ -842,7 +920,7 @@ public:
     return jetways;
   }
 
-  /* Get first matching frequency */
+  /* Get first matching frequency or null variant if not available */
   const QVariant getTowerFrequency() const;
   const QVariant getAtisFrequency() const;
   const QVariant getAwosFrequency() const;
@@ -865,21 +943,31 @@ public:
   int getNumRunwayEndIls() const;
   int getLongestRunwayIndex() const;
 
-  /* Largest type or null variant */
+  /* Largest type or null variant if none */
   const QVariant getLargestParkingGate() const;
   const QVariant getLargestParkingRamp() const;
 
 private:
   friend class SimConnectLoaderPrivate;
 
+  /* Only for counting facilites */
+  AirportFacilityNum airportNum;
+
+  /* Airport base information */
   AirportFacility airport;
+
+  /* Airport facilities */
   QVector<Runway> runways;
   QVector<StartFacility> starts;
   QVector<FrequencyFacility> frequencies;
   QVector<HelipadFacility> helipads;
+
+  /* Procedures */
   QVector<Approach> approaches;
   QVector<Arrival> arrivals;
   QVector<Departure> departures;
+
+  /* Taxi structure */
   QVector<TaxiParkingFacility> taxiParkings;
   QVector<TaxiPointFacility> taxiPoints;
   QVector<TaxiPathFacility> taxiPaths;
@@ -887,7 +975,37 @@ private:
   QVector<JetwayFacility> jetways;
 };
 
-/* MSFS 2024 surface definition */
+/* VASI facility indexes in the order as they are sent from SimConnect
+ * and registered by void SimConnectLoaderPrivate::addAirportRunwayFacilityDefinition(); */
+enum
+{
+  VASI_PRIMARY_LEFT,
+  VASI_PRIMARY_RIGHT,
+  VASI_SECONDARY_LEFT,
+  VASI_SECONDARY_RIGHT
+};
+
+/* ALS facility indexes in the order as they are sent from SimConnect
+ * and registered by void SimConnectLoaderPrivate::addAirportRunwayFacilityDefinition(); */
+enum
+{
+  APPROACH_LIGHTS_PRIMARY,
+  APPROACH_LIGHTS_SECONDARY
+};
+
+/* Runway pavement indexes in the order as they are sent from SimConnect
+ * and registered by void SimConnectLoaderPrivate::addAirportRunwayFacilityDefinition(); */
+enum RunwayPavement
+{
+  PRIMARY_THRESHOLD,
+  PRIMARY_BLASTPAD,
+  PRIMARY_OVERRUN,
+  SECONDARY_THRESHOLD,
+  SECONDARY_BLASTPAD,
+  SECONDARY_OVERRUN
+};
+
+/* MSFS 2024 surface definitions differ from FSX, P3D and MSFS 2020 */
 enum Surface
 {
   CONCRETE = 0,
@@ -932,9 +1050,9 @@ enum Surface
 /* Maps to simplified default surface types */
 QVariant surfaceToDb(Surface surface);
 
-} // namespace airport
+} // namespace db
 } // namespace sc
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_SIMCONNECTFACILITIES_H
+#endif // ATOOLS_SIMCONNECTAIRPORTFACILITIES_H

@@ -221,9 +221,11 @@ HEADERS += \
   src/fs/gpx/gpxio.h \
   src/fs/gpx/gpxtypes.h \
   src/fs/navdatabaseflags.h \
-  src/fs/sc/airport/simconnectfacilities.h \
-  src/fs/sc/airport/simconnectloader.h \
-  src/fs/sc/airport/simconnectwriter.h \
+  src/fs/sc/db/simconnectairport.h \
+  src/fs/sc/db/simconnectid.h \
+  src/fs/sc/db/simconnectloader.h \
+  src/fs/sc/db/simconnectnav.h \
+  src/fs/sc/db/simconnectwriter.h \
   src/fs/sc/connecthandler.h \
   src/fs/sc/datareaderthread.h \
   src/fs/sc/simconnectaircraft.h \
@@ -307,9 +309,11 @@ SOURCES += \
   src/fs/gpx/gpxio.cpp \
   src/fs/gpx/gpxtypes.cpp \
   src/fs/navdatabaseflags.cpp \
-  src/fs/sc/airport/simconnectfacilities.cpp \
-  src/fs/sc/airport/simconnectloader.cpp \
-  src/fs/sc/airport/simconnectwriter.cpp \
+  src/fs/sc/db/simconnectairport.cpp \
+  src/fs/sc/db/simconnectid.cpp \
+  src/fs/sc/db/simconnectloader.cpp \
+  src/fs/sc/db/simconnectnav.cpp \
+  src/fs/sc/db/simconnectwriter.cpp \
   src/fs/sc/connecthandler.cpp \
   src/fs/sc/datareaderthread.cpp \
   src/fs/sc/simconnectaircraft.cpp \

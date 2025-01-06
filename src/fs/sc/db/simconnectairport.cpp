@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/sc/airport/simconnectfacilities.h"
+#include "fs/sc/db/simconnectairport.h"
 
+#include "atools.h"
 #include "fs/bgl/ap/com.h"
 #include "fs/bgl/ap/parking.h"
 
@@ -25,7 +26,12 @@
 namespace atools {
 namespace fs {
 namespace sc {
-namespace airport {
+namespace db {
+
+bool Airport::isCoordinateNull() const
+{
+  return atools::almostEqual(airport.latitude, 0.) && atools::almostEqual(airport.longitude, 0.);
+}
 
 const QVariant Airport::getTowerFrequency() const
 {
@@ -172,11 +178,11 @@ int Airport::getNumRunwayEndVasi() const
   for(const Runway& runway : runways)
   {
     // Primary end left/right
-    if(runway.getVasiFacilities().at(0).type > 0 || runway.getVasiFacilities().at(1).type > 0)
+    if(runway.getVasiFacilities().at(VASI_PRIMARY_LEFT).type > 0 || runway.getVasiFacilities().at(VASI_PRIMARY_RIGHT).type > 0)
       num++;
 
     // Secondary end left/right
-    if(runway.getVasiFacilities().at(2).type > 0 || runway.getVasiFacilities().at(3).type > 0)
+    if(runway.getVasiFacilities().at(VASI_SECONDARY_LEFT).type > 0 || runway.getVasiFacilities().at(VASI_PRIMARY_RIGHT).type > 0)
       num++;
   }
   return num;
@@ -188,11 +194,11 @@ int Airport::getNumRunwayEndAls() const
   for(const Runway& runway : runways)
   {
     // Primary end
-    if(runway.getApproachLightFacilities().at(0).system > 0)
+    if(runway.getApproachLightFacilities().at(APPROACH_LIGHTS_PRIMARY).system > 0)
       num++;
 
     // Secondary end
-    if(runway.getApproachLightFacilities().at(1).system > 0)
+    if(runway.getApproachLightFacilities().at(APPROACH_LIGHTS_SECONDARY).system > 0)
       num++;
   }
   return num;
@@ -380,7 +386,7 @@ QVariant surfaceToDb(Surface surface)
   return "UNKNOWN";
 }
 
-} // namespace airport
+} // namespace db
 } // namespace sc
 } // namespace fs
 } // namespace atools

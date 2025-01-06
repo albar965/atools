@@ -25,7 +25,7 @@
 #include "fs/db/datawriter.h"
 #include "fs/dfd/dfdcompiler.h"
 #include "fs/progresshandler.h"
-#include "fs/sc/airport/simconnectloader.h"
+#include "fs/sc/db/simconnectloader.h"
 #include "fs/scenery/addoncfg.h"
 #include "fs/scenery/addonpackage.h"
 #include "fs/scenery/contentxml.h"
@@ -62,11 +62,11 @@ using Qt::endl;
 // Number of steps for general tasks - increase > 1 to make them more visible in progress
 static const int PROGRESS_NUM_TASK_STEPS = 10;
 
-// MSFS 2024 loader
-static const int PROGRESS_SIMCONNECT_LOADER_STEPS = 8;
-
 // runScript()
 static const int PROGRESS_NUM_SCRIPT_STEPS = PROGRESS_NUM_TASK_STEPS;
+
+// SimConnectLoader
+static const int PROGRESS_NUM_SIMCONNECT_STEPS = PROGRESS_NUM_TASK_STEPS * 20;
 
 // AirwayResolver steps - larger number makes task take more time of progress bar
 static const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1000;
@@ -183,7 +183,7 @@ void NavDatabase::createSimConnectLoader()
     if(libraryName.isEmpty())
       throw Exception("DLL name not set for MSFS 2024");
 
-    simconnectLoader = new atools::fs::sc::airport::SimConnectLoader(activationContext, libraryName, *db, options->isVerbose());
+    simconnectLoader = new atools::fs::sc::db::SimConnectLoader(activationContext, libraryName, *db, options->isVerbose());
   }
 #endif
 }
@@ -1212,6 +1212,7 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
       {
         if(simconnectLoader != nullptr)
         {
+          simconnectLoader->prepareLoading(true /* loadFacilityDefinitions */, true /* initSqlQueries */);
           int fileId = fsDataWriter->getNextFileId();
           int sceneryId = fsDataWriter->getNextSceneryId();
 
@@ -1219,18 +1220,27 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
           metadataWriter.writeSceneryArea(QString(), "SimConnect", sceneryId);
           metadataWriter.writeFile(QString(), "Airports", sceneryId, fileId);
 
-          simconnectLoader->setProgressCallback([progress](const QString& identFrom, const QString& identTo, int rawBatchSize,
-                                                           int totalWritten)->bool {
-                progress->setNumAirports(totalWritten);
-                return progress->reportOtherInc(tr("Loading airports %1 ... %2 and procedures").arg(identFrom).arg(identTo),
-                                                rawBatchSize / PROGRESS_SIMCONNECT_LOADER_STEPS);
+          simconnectLoader->setProgressCallback([progress](const QString& message, bool incProgress, int airportsLoaded,
+                                                           int waypointsLoaded, int vorLoaded, int ndbLoaded)->bool {
+                progress->setNumAirports(airportsLoaded);
+                progress->setNumWaypoints(waypointsLoaded);
+                progress->setNumVors(vorLoaded);
+                progress->setNumNdbs(ndbLoaded);
+
+                if(incProgress)
+                  // Called simconnectLoader->getNumSteps() times
+                  return progress->reportOtherInc(message, PROGRESS_NUM_SIMCONNECT_STEPS);
+                else
+                  return progress->reportOtherMsg(message);
               });
 
-          if(!simconnectLoader->loadAirports(simconnectLoader->loadAirportIdents(), fileId))
-          {
-            qWarning() << Q_FUNC_INFO << "Errors loading airports" << simconnectLoader->getErrors();
-            throw Exception("SimConnectLoader has errors" + simconnectLoader->getErrors().join(','));
-          }
+          aborted = simconnectLoader->loadAirports(fileId);
+          aborted = simconnectLoader->loadNavaids(fileId);
+
+          // Takes too long to run - disabled for now
+          // aborted = simconnectLoader->loadDisconnectedNavaids(fileId);
+
+          simconnectLoader->finishLoading();
 
           if((aborted = simconnectLoader->isAborted()))
             return true;
@@ -1253,8 +1263,6 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
             fileinfo.setFile(options->getMsfsCommunityPath() % SEP % area.getLocalPath());
           else if(area.isAddOn())
             fileinfo.setFile(options->getMsfsOfficialPath() % SEP % area.getLocalPath());
-          else if(options->getSimulatorType() == FsPaths::MSFS_2024)
-            fileinfo.setFile(options->getMsfs24StreamedPackagesPath() % SEP % area.getLocalPath());
         }
 
         if(options->getSimulatorType() == FsPaths::MSFS && (area.isAddOn() || area.isCommunity() || area.isIncluded()))
@@ -1622,21 +1630,20 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   }
 #endif
 
-  // fs-base-nav ======================================================
-  SceneryArea areaNav(LAYER_NUM_BASE_NAV, tr("Base Navigation"), "fs-base-nav");
-  // areaNav.setActive(!contentXml.isDisabled("fs-base-nav"));
-  areaNav.setActive(true);
-
   // Get version numbers from manifest - needed to determine record changes for SID and STAR
   if(options->getSimulatorType() == FsPaths::MSFS)
   {
+    // fs-base-nav ======================================================
+    SceneryArea areaNav(LAYER_NUM_BASE_NAV, tr("Base Navigation"), "fs-base-nav");
+    // areaNav.setActive(!contentXml.isDisabled("fs-base-nav"));
+    areaNav.setActive(true);
     manifest.clear();
     manifest.read(options->getMsfsOfficialPath() % SEP % "fs-base-nav" % SEP % "manifest.json");
     areaNav.setMinGameVersion(manifest.getMinGameVersion());
     areaNav.setPackageVersion(manifest.getPackageVersion());
     areaNav.setNavdata(); // Set flag to allow dummy airport handling
+    cfg.appendArea(areaNav);
   }
-  cfg.appendArea(areaNav);
 
   scenery::LayoutJson layout;
 
@@ -2155,14 +2162,8 @@ void NavDatabase::countFiles(ProgressHandler *progress, const QList<atools::fs::
         if(!options->getAirportIcaoFiltersInc().isEmpty())
           simconnectLoader->setAirportIdents(options->getAirportIcaoFiltersInc());
 
-        // Load airport list which will be used later to load airport facility details
-        num = simconnectLoader->loadAirportIdents().size();
-
-        if(num == 0 || simconnectLoader->hasErrors())
-          throw atools::Exception(tr("Failed to open SimConnect for MSFS 2024. No airports found. "
-                                     "Start MSFS 2024 and wait until the simulator shows the start menu."));
-
-        num /= PROGRESS_SIMCONNECT_LOADER_STEPS;
+        // Get number of progress calls by simconnectLoader
+        num = simconnectLoader->getNumSteps() * PROGRESS_NUM_SIMCONNECT_STEPS;
       }
       else
         throw Exception("SimConnectLoader is null.");
