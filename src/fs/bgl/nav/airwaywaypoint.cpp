@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,31 +34,10 @@ AirwayWaypoint::AirwayWaypoint(const Waypoint& waypoint)
   region = waypoint.getRegion();
   airportIdent = waypoint.getAirportIdent();
   minimumAltitude = 0.f;
-
-  switch(waypoint.getType())
-  {
-    case atools::fs::bgl::nav::NAMED:
-    case atools::fs::bgl::nav::UNNAMED:
-    case atools::fs::bgl::nav::OFF_AIRWAY:
-    case atools::fs::bgl::nav::IAF:
-    case atools::fs::bgl::nav::FAF:
-    case atools::fs::bgl::nav::RNAV:
-    case atools::fs::bgl::nav::VFR:
-      // Airway waypoint has a limited number of types
-      type = nav::AIRWAY_WP_OTHER;
-      break;
-
-    case atools::fs::bgl::nav::VOR:
-      type = nav::AIRWAY_WP_VOR;
-      break;
-
-    case atools::fs::bgl::nav::NDB:
-      type = nav::AIRWAY_WP_NDB;
-      break;
-  }
+  type = Waypoint::airwayWaypointTypeFromWaypointType(waypoint.getType());
 }
 
-AirwayWaypoint::AirwayWaypoint(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream, const Waypoint& waypoint)
+AirwayWaypoint::AirwayWaypoint(const NavDatabaseOptions *options, atools::io::BinaryStream *stream, const Waypoint& waypoint)
   : BglBase(options, stream)
 {
   if(waypoint.getId() == rec::WAYPOINT_MSFS2024)

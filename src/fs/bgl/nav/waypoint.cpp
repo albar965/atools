@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,9 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
 {
   switch(type)
   {
+    case nav::WP_NONE:
+      return "WP_NONE";
+
     case nav::RNAV:
       return "RNAV";
 
@@ -65,6 +68,33 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
   }
   qWarning().nospace().noquote() << "Invalid waypoint type " << type;
   return "INVALID";
+}
+
+nav::AirwayWaypointType Waypoint::airwayWaypointTypeFromWaypointType(nav::WaypointType type)
+{
+  switch(type)
+  {
+    case nav::WP_NONE:
+    case nav::NAMED:
+    case nav::UNNAMED:
+    case nav::OFF_AIRWAY:
+    case nav::IAF:
+    case nav::FAF:
+    case nav::RNAV:
+    case nav::VFR:
+      // Airway waypoint has a limited number of types
+      return nav::AIRWAY_WP_OTHER;
+      break;
+
+    case nav::VOR:
+      return nav::AIRWAY_WP_VOR;
+      break;
+
+    case nav::NDB:
+      return nav::AIRWAY_WP_NDB;
+      break;
+  }
+  return nav::AIRWAY_WP_NONE;
 }
 
 bool Waypoint::isValid() const

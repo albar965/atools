@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ void WaypointWriter::writeObject(const Waypoint *type)
   // One letter codes like "P" and "K" are valid and used for unnamed, charted intersections
   // The invalid code "KZ" can be removed
   if((getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS_2024 || getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS) &&
-     type->getRegion() == "KZ" && /*type->getNumJetAirway() == 0 && type->getNumVictorAirway() == 0 && */type->getAirportIdent().isEmpty())
+     type->getRegion() == "KZ" && /*type->getNumJetAirway() == 0 && type->getNumVictorAirway() == 0 && */ type->getAirportIdent().isEmpty())
   {
     qWarning() << Q_FUNC_INFO << "Found invalid waypoint" << type->getIdent() << "with invalid region" << type->getRegion() << "in file"
                << getDataWriter().getBglFileWriter()->getCurrentFilepath();
@@ -74,10 +74,9 @@ void WaypointWriter::writeObject(const Waypoint *type)
 
   bindNullInt(":airport_id");
   bind(":airport_ident", type->getAirportIdent());
-
+  bind(":artificial", type->getType() == bgl::nav::NDB || type->getType() == bgl::nav::VOR);
   bind(":num_victor_airway", type->getNumVictorAirway());
   bind(":num_jet_airway", type->getNumJetAirway());
-
   bind(":mag_var", getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
