@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ public:
     /* No simulator found */
     NONE = -2
 
-    // Next is 14
+           // Next is 14
   };
 
   Q_ENUM(SimulatorType)
@@ -119,9 +119,6 @@ public:
 
   /* Path to official MSFS scenery containing fs-base and fs-base-nav */
   static QString getMsfsOfficialPath();
-
-  /* Default path. C:\Users\USERNAME\AppData\Local\Packages\Microsoft.Limitless_8wekyb3d8bbwe\LocalState\StreamedPackages\ */
-  static QString getMsfs24StreamedPackagesPath();
 
   /* Detected installation type of MSFS */
   static MsfsInstallType getMsfsInstallType();

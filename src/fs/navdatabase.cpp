@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -249,15 +249,7 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, 
 
     errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "Community"})));
   }
-  else if(type == FsPaths::MSFS_2024)
-  {
-    // Base is C:/Users/USER/AppData/Local/Packages/Microsoft.Limitless_8wekyb3d8bbwe/LocalState/StreamedPackages/fs-base-nav/content/scenery
-    QString baseNavMs = buildPathNoCase({filepath, "fs-base-nav", "content", "scenery"});
-    if(!checkDir(Q_FUNC_INFO, baseNavMs))
-      // Does not exist add error messages
-      errors.append(atools::checkDirMsg(baseNavMs));
-  }
-  else
+  else if(type != FsPaths::MSFS_2024)
     // FSX and P3D ======================================================
     // If path exists check for scenery directory
     errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "scenery"})));

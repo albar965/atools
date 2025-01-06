@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -70,8 +70,6 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
         if(options.getSimulatorType() == atools::fs::FsPaths::MSFS)
           // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
           sceneryAreaDirStr = options.getMsfsOfficialPath() + SEP + areaLocalPathStr;
-        else if(options.getSimulatorType() == atools::fs::FsPaths::MSFS_2024)
-          sceneryAreaDirStr = options.getMsfs24StreamedPackagesPath() + SEP + areaLocalPathStr + SEP + "content" + SEP + "scenery";
       }
     }
     else
@@ -123,7 +121,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
 
               for(const QString& path : layout.getBglPaths())
               {
-              // Fix paths with wrong case for testing on Linux
+                // Fix paths with wrong case for testing on Linux
                 const static QRegularExpression SEPREGEXP("[\\/]");
                 QStringList pathList;
 #ifdef Q_OS_LINUX

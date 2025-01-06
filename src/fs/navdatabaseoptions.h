@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -180,11 +180,6 @@ public:
     msfsOfficialPath = value;
   }
 
-  void setMsfs24StreamedPackagesPath(const QString& value)
-  {
-    msfs24StreamedPackagesPath = value;
-  }
-
   /*
    * Set source database to copy from.
    */
@@ -325,13 +320,6 @@ public:
   const QString& getMsfsOfficialPath() const
   {
     return msfsOfficialPath;
-  }
-
-  /* C:/Users/USER/AppData/Local/Packages/Microsoft.Limitless_8wekyb3d8bbwe/LocalState/StreamedPackages
-   * C:/Users/USER/AppData/Local/Packages/Microsoft Flight Simulator 2024/LocalState/StreamedPackages */
-  const QString& getMsfs24StreamedPackagesPath() const
-  {
-    return msfs24StreamedPackagesPath;
   }
 
   const QString& getSourceDatabase() const
@@ -515,7 +503,7 @@ private:
 
   bool includedGui(const QFileInfo& path, const QList<QRegExp>& fileExclude, const QList<QRegExp>& dirExclude) const;
 
-  QString sceneryFile, basepath, msfsCommunityPath, msfsOfficialPath, msfs24StreamedPackagesPath, sourceDatabase, language = "en-US";
+  QString sceneryFile, basepath, msfsCommunityPath, msfsOfficialPath, sourceDatabase, language = "en-US";
 
   atools::fs::type::OptionFlags flags;
 
