@@ -74,7 +74,12 @@ void WaypointWriter::writeObject(const Waypoint *type)
 
   bindNullInt(":airport_id");
   bind(":airport_ident", type->getAirportIdent());
-  bind(":artificial", type->getType() == bgl::nav::NDB || type->getType() == bgl::nav::VOR);
+
+  if((type->getType() == bgl::nav::NDB || type->getType() == bgl::nav::VOR))
+    bind(":artificial", 1);
+  else
+    bindNullInt(":artificial");
+
   bind(":num_victor_airway", type->getNumVictorAirway());
   bind(":num_jet_airway", type->getNumJetAirway());
   bind(":mag_var", getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));

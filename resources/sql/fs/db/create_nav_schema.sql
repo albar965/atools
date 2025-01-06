@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ create table waypoint
   airport_ident varchar(4),           -- Redundant to id - used for resolving id after compilation
   artificial integer,                 -- Created for VOR and NDB navaids to support airway generation.
                                       -- 1 = for airways and 2 = for procedures (2 is only needed for LNM <= 2.4.5)
+                                      -- Must be null for not artificial points
   type varchar(15),                   -- see enum atools::fs::bgl::nav::WaypointType
                                       -- N = NDB, V = VOR, WN = named waypoint, WU = unnamed waypoint
                                       -- MSFS: OA = off airway, RNAV, VFR, IAF, FAF
