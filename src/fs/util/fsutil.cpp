@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1103,6 +1103,7 @@ void calculateIlsGeometry(const atools::geo::Pos& pos, float headingTrue, float 
 {
   float hdg = atools::geo::opposedCourseDeg(headingTrue);
   float lengthMeter = atools::geo::nmToMeter(featherLengthNm);
+  widthDeg = std::max(2.f, widthDeg);
 
   if(!(widthDeg < atools::geo::INVALID_FLOAT) || widthDeg < 0.1f)
     widthDeg = 4.f;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ namespace util {
 /* Add rhumb line points for all lines having equal latY. Also moves points at the poles slightly away. */
 atools::geo::LineString correctBoundary(const atools::geo::LineString& geometry);
 
-/* Calculate the display points of an ILS feather */
+/* Calculate the display points of an ILS feather. Minimum width is 2 degrees */
 void calculateIlsGeometry(const atools::geo::Pos& pos, float headingTrue, float widthDeg, float featherLengthNm,
                           geo::Pos& p1, geo::Pos& p2, geo::Pos& pmid);
 
