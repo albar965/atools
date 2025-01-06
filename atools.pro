@@ -267,6 +267,7 @@ HEADERS += \
   src/util/average.h \
   src/util/contextsaver.h \
   src/util/crashhandler.h \
+  src/util/csvfilereader.h \
   src/util/csvreader.h \
   src/util/filechecker.h \
   src/util/fileoperations.h \
@@ -349,6 +350,7 @@ SOURCES += \
   src/util/average.cpp \
   src/util/contextsaver.cpp \
   src/util/crashhandler.cpp \
+  src/util/csvfilereader.cpp \
   src/util/csvreader.cpp \
   src/util/filechecker.cpp \
   src/util/fileoperations.cpp \
