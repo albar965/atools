@@ -1619,7 +1619,6 @@ bool SimConnectLoader::loadAirports(int fileId)
   p->fileId = fileId;
   return p->loadAirports();
 #else
-  Q_UNUSED(idents)
   Q_UNUSED(fileId)
   return false;
 #endif
@@ -1652,6 +1651,7 @@ bool SimConnectLoader::loadDisconnectedNavaids(int fileId)
 
 bool SimConnectLoader::prepareLoading(bool loadFacilityDefinitions, bool initSqlQueries)
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   if(initSqlQueries)
     p->writer->initQueries();
 
@@ -1674,11 +1674,13 @@ bool SimConnectLoader::prepareLoading(bool loadFacilityDefinitions, bool initSql
     p->addAirportTaxiFacilityDefinition();
     p->addNavFacilityDefinition();
   }
+#endif
   return true;
 }
 
 bool SimConnectLoader::finishLoading()
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   p->writer->deInitQueries();
   p->clear();
   HRESULT hr = p->api->Close();
@@ -1687,6 +1689,7 @@ bool SimConnectLoader::finishLoading()
     p->errors.append("Error closing SimConnect.");
     return false;
   }
+#endif
   return true;
 }
 
