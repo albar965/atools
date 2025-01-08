@@ -19,6 +19,7 @@
 #define ATOOLS_UTIL_CSVFILEREADER_H
 
 #include <QStringList>
+#include <QVector>
 
 class QTextStream;
 
