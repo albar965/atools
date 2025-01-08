@@ -509,6 +509,20 @@ int NavDatabase::countFsxP3dSteps(ProgressHandler *progress, const SceneryCfg& c
   return total;
 }
 
+// SimConnect reportOtherInc "Loading airport count"
+// SimConnect reportOtherInc "Loading airport facility numbers"
+// SimConnect reportOtherInc "Loading airport base information"
+// SimConnect reportOtherInc "Loading airport COM"
+// SimConnect reportOtherInc "Loading airport helipads"
+// SimConnect reportOtherInc "Loading airport runways"
+// SimConnect reportOtherInc "Loading airport start positions"
+// SimConnect reportOtherInc "Loading airport procedures"
+// SimConnect reportOtherInc "Loading airport taxiways and parking"
+// SimConnect reportOtherInc "Writing airport facilities to database"
+// SimConnect reportOtherInc "Loading waypoints, VOR, ILS, NDB and airways"
+// SimConnect reportOtherInc "Writing waypoints and airways to database"
+// SimConnect reportOtherInc "Writing VOR and ILS to database"
+// SimConnect reportOtherInc "Writing NDB to database"
 int NavDatabase::countMsfsSteps(ProgressHandler *progress, const SceneryCfg& cfg)
 {
   int numProgressReports = 0, numSceneryAreas = 0;
@@ -1228,8 +1242,12 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
                 progress->setNumNdbs(ndbLoaded);
 
                 if(incProgress)
+                {
                   // Called simconnectLoader->getNumSteps() times
+                  qDebug() << Q_FUNC_INFO << "SimConnect reportOtherInc" << message;
+
                   return progress->reportOtherInc(message, PROGRESS_NUM_SIMCONNECT_STEPS);
+                }
                 else
                   return progress->reportOtherMsg(message);
               });
@@ -2176,8 +2194,10 @@ void NavDatabase::countFiles(ProgressHandler *progress, const QList<atools::fs::
       numFiles += num;
       numSceneryAreas++;
     }
+
+    qDebug() << Q_FUNC_INFO << area.getTitle() << num;
   }
-  qDebug() << Q_FUNC_INFO << "Exit";
+  qDebug() << Q_FUNC_INFO << "Exit numFiles" << numFiles << "numSceneryAreas" << numSceneryAreas;
 }
 
 } // namespace fs

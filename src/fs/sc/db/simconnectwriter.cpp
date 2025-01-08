@@ -318,7 +318,7 @@ void SimConnectWriter::deInitQueries()
   ATOOLS_DELETE(tmpAirwayPointStmt);
 }
 
-void SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId, atools::fs::sc::db::Airport>& airports, int fileId)
+bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId, atools::fs::sc::db::Airport>& airports, int fileId)
 {
   ilsToRunwayMap.clear();
 
@@ -1061,9 +1061,10 @@ void SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
   } // for(auto it = airports.begin(); it != airports.end(); ++it)
 
   transaction.commit();
+  return aborted;
 }
 
-void SimConnectWriter::writeNdbToDatabase(const QList<NdbFacility>& ndbs, int fileId)
+bool SimConnectWriter::writeNdbToDatabase(const QList<NdbFacility>& ndbs, int fileId)
 {
   atools::sql::SqlTransaction transaction(db);
 
@@ -1072,7 +1073,7 @@ void SimConnectWriter::writeNdbToDatabase(const QList<NdbFacility>& ndbs, int fi
   for(const NdbFacility& ndb : ndbs)
   {
     if(aborted)
-      return;
+      return true;
 
     ndbStmt->bindValue(":ndb_id", ++ndbId);
     ndbStmt->bindValue(":file_id", fileId);
@@ -1103,9 +1104,11 @@ void SimConnectWriter::writeNdbToDatabase(const QList<NdbFacility>& ndbs, int fi
   }
 
   transaction.commit();
+  return aborted;
+
 }
 
-void SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, int fileId)
+bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, int fileId)
 {
   atools::sql::SqlTransaction transaction(db);
 
@@ -1114,7 +1117,7 @@ void SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
   for(const VorFacility& vorIls : vors)
   {
     if(aborted)
-      return;
+      return true;
 
     // Type is not reliable - have to use other methods to detect ILS
     if(lsTypeValid(static_cast<LsCategory>(vorIls.lsCategory)) && vorIls.localizerWidth > 0.f)
@@ -1230,9 +1233,10 @@ void SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
     }
   }
   transaction.commit();
+  return aborted;
 }
 
-void SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned long, Waypoint>& waypoints, int fileId)
+bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned long, Waypoint>& waypoints, int fileId)
 {
   atools::sql::SqlTransaction transaction(db);
 
@@ -1247,7 +1251,7 @@ void SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned lo
   for(const Waypoint& waypoint : waypoints)
   {
     if(aborted)
-      return;
+      return true;
 
     const WaypointFacility& waypointFacility = waypoint.getWaypointFacility();
     bgl::nav::WaypointType type = static_cast<bgl::nav::WaypointType>(waypointFacility.type);
@@ -1324,6 +1328,8 @@ void SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned lo
     }
   }
   transaction.commit();
+
+  return aborted;
 }
 
 void SimConnectWriter::bindRunway(atools::sql::SqlQuery *query, const atools::fs::db::RunwayIndex& runwayIndex, const QString& airportIcao,

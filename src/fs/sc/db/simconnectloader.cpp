@@ -562,11 +562,13 @@ bool SimConnectLoaderPrivate::loadAirports()
   aborted = callProgress(SimConnectLoader::tr("Loading airport count"));
 
   // Get list of all airports into airportIds
-  requestAirportList();
+  if((aborted = requestAirportList()))
+    return true;
 
   // Initially fill airportFacilities with airports to count airport facilities
   aborted = callProgress(SimConnectLoader::tr("Loading airport facility numbers"));
-  aborted = requestAirports(FACILITY_DATA_AIRPORT_NUM_DEFINITION_ID);
+  if((aborted = requestAirports(FACILITY_DATA_AIRPORT_NUM_DEFINITION_ID)))
+    return true;
 
   // Remove all empty/dummy/POI airports and references to them
   IcaoIdSet ids;
@@ -585,7 +587,8 @@ bool SimConnectLoaderPrivate::loadAirports()
 
   // Fill airportFacilities with base information
   aborted = callProgress(SimConnectLoader::tr("Loading airport base information"));
-  aborted = requestAirports(FACILITY_DATA_AIRPORT_BASE_DEFINITION_ID);
+  if((aborted = requestAirports(FACILITY_DATA_AIRPORT_BASE_DEFINITION_ID)))
+    return true;
 
   // Remove all airports having an invalid coordinate and references to them
   ids.clear();
@@ -604,35 +607,41 @@ bool SimConnectLoaderPrivate::loadAirports()
 
   // Fetch COM and fill into the respective airport facility structure in the hash airportFacilities
   aborted = callProgress(SimConnectLoader::tr("Loading airport COM"));
-  aborted = requestAirports(FACILITY_DATA_AIRPORT_FREQ_DEFINITION_ID);
+  if((aborted = requestAirports(FACILITY_DATA_AIRPORT_FREQ_DEFINITION_ID)))
+    return true;
 
   // Fetch helipads and fill into the respective airport facility structure in the hash airportFacilities
   aborted = callProgress(SimConnectLoader::tr("Loading airport helipads"));
-  aborted = requestAirports(FACILITY_DATA_AIRPORT_HELIPAD_DEFINITION_ID);
+  if((aborted = requestAirports(FACILITY_DATA_AIRPORT_HELIPAD_DEFINITION_ID)))
+    return true;
 
   // Fetch runways and fill into the respective airport facility structure in the hash airportFacilities
   // Also adds ILS references from runways to navaidIds
   aborted = callProgress(SimConnectLoader::tr("Loading airport runways"));
-  aborted = requestAirports(FACILITY_DATA_AIRPORT_RW_DEFINITION_ID);
+  if((aborted = requestAirports(FACILITY_DATA_AIRPORT_RW_DEFINITION_ID)))
+    return true;
 
   // Fetch start position and fill into the respective airport facility structure in the hash airportFacilities
   // Also connect runway starts to runways
   aborted = callProgress(SimConnectLoader::tr("Loading airport start positions"));
-  aborted = requestAirports(FACILITY_DATA_AIRPORT_START_DEFINITION_ID);
+  if((aborted = requestAirports(FACILITY_DATA_AIRPORT_START_DEFINITION_ID)))
+    return true;
 
   // Fetch approaches, SID, STAR and legs and fill into the respective airport facility structure in the hash airportFacilities
   // Also adds all navaid references from fixes and recommended fixes to navaidIds
   aborted = callProgress(SimConnectLoader::tr("Loading airport procedures"));
-  aborted = requestAirports(FACILITY_DATA_AIRPORT_PROC_DEFINITION_ID);
+  if((aborted = requestAirports(FACILITY_DATA_AIRPORT_PROC_DEFINITION_ID)))
+    return true;
 
   // Fetch taxiway and parking and fill into the respective airport facility structure in the hash airportFacilities
   aborted = callProgress(SimConnectLoader::tr("Loading airport taxiways and parking"));
-  aborted = requestAirports(FACILITY_DATA_AIRPORT_TAXI_DEFINITION_ID);
+  if((aborted = requestAirports(FACILITY_DATA_AIRPORT_TAXI_DEFINITION_ID)))
+    return true;
 
   if(!aborted)
   {
     // Write all into the database - consumes records from airportFacilities
-    writer->writeAirportsToDatabase(airportFacilities, fileId);
+    aborted = writer->writeAirportsToDatabase(airportFacilities, fileId);
     airportFacilities.clear();
   }
   return aborted;
@@ -679,7 +688,7 @@ bool SimConnectLoaderPrivate::writeAirportsToDatabase()
   if(!aborted)
   {
     // Write to database and commit batch ===================================================
-    writer->writeAirportsToDatabase(airportFacilities, fileId);
+    aborted = writer->writeAirportsToDatabase(airportFacilities, fileId);
     errors.append(writer->getErrors());
   }
 
@@ -693,21 +702,21 @@ bool SimConnectLoaderPrivate::writeNavaidsToDatabase()
            << ndbFacilities.size();
   if(!aborted)
   {
-    writer->writeWaypointsAndAirwaysToDatabase(waypointFacilities, fileId);
+    aborted = writer->writeWaypointsAndAirwaysToDatabase(waypointFacilities, fileId);
     errors.append(writer->getErrors());
     waypointFacilities.clear();
   }
 
   if(!aborted)
   {
-    writer->writeVorAndIlsToDatabase(vorFacilities, fileId);
+    aborted = writer->writeVorAndIlsToDatabase(vorFacilities, fileId);
     errors.append(writer->getErrors());
     vorFacilities.clear();
   }
 
   if(!aborted)
   {
-    writer->writeNdbToDatabase(ndbFacilities, fileId);
+    aborted = writer->writeNdbToDatabase(ndbFacilities, fileId);
     errors.append(writer->getErrors());
     ndbFacilities.clear();
   }
@@ -772,7 +781,7 @@ bool SimConnectLoaderPrivate::requestAirportList()
   HRESULT hr = api->RequestFacilitiesList(SIMCONNECT_FACILITY_LIST_TYPE_AIRPORT, FACILITY_LIST_REQUEST_AIRPORT_ID);
 
   // Repeat until requested number of idents was fetched in dispatch
-  while(!facilityListFetched)
+  while(!facilityListFetched && !aborted)
   {
     if(verbose)
       qDebug() << Q_FUNC_INFO << "SimConnect_CallDispatch";
@@ -805,7 +814,7 @@ bool SimConnectLoaderPrivate::requestAirportList()
 
   qDebug() << Q_FUNC_INFO << "Fetched" << airportIds.size() << "airports";
 
-  return true;
+  return aborted;
 }
 
 bool SimConnectLoaderPrivate::requestAirports(FacilityDataDefinitionId definitionId)
@@ -893,6 +902,10 @@ bool SimConnectLoaderPrivate::requestAirports(FacilityDataDefinitionId definitio
 
       while(facilitiesFetchedBatch + numException < requested && !aborted)
       {
+        callProgressUpdate();
+        if(aborted)
+          return true;
+
         hr = api->CallDispatch(dispatchFunction, this);
         if(hr != S_OK)
         {
@@ -912,7 +925,6 @@ bool SimConnectLoaderPrivate::requestAirports(FacilityDataDefinitionId definitio
 #ifdef DEBUG_INFORMATION
       qDebug() << Q_FUNC_INFO << i << definitionId;
 #endif
-      callProgressUpdate();
     }
   }
 
@@ -928,7 +940,7 @@ bool SimConnectLoaderPrivate::requestNavaids()
 
   int requested = 0;
   int i = 0;
-  while(!navaidIds.isEmpty())
+  while(!navaidIds.isEmpty() && !aborted)
   {
     const FacilityId id = navaidIds.takeFirst();
 
@@ -974,6 +986,10 @@ bool SimConnectLoaderPrivate::requestNavaids()
 
       while(facilitiesFetchedBatch + numException < requested && !aborted)
       {
+        callProgressUpdate();
+        if(aborted)
+          return true;
+
         HRESULT hr = api->CallDispatch(dispatchFunction, this);
         if(hr != S_OK)
         {
@@ -993,7 +1009,6 @@ bool SimConnectLoaderPrivate::requestNavaids()
 #ifdef DEBUG_INFORMATION
       qDebug() << Q_FUNC_INFO << navaidIds.size();
 #endif
-      callProgressUpdate();
     }
 
     i++;
@@ -1678,8 +1693,22 @@ bool SimConnectLoader::finishLoading()
 int SimConnectLoader::getNumSteps() const
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
-  // grep -c "aborted = callProgress(" simconnectloader.cpp
-  return 16; // With disconnected disabled otherwise 17
+  // grep -c "aborted = callProgress(" simconnect*.cpp
+  // SimConnect reportOtherInc "Loading airport count"
+  // SimConnect reportOtherInc "Loading airport facility numbers"
+  // SimConnect reportOtherInc "Loading airport base information"
+  // SimConnect reportOtherInc "Loading airport COM"
+  // SimConnect reportOtherInc "Loading airport helipads"
+  // SimConnect reportOtherInc "Loading airport runways"
+  // SimConnect reportOtherInc "Loading airport start positions"
+  // SimConnect reportOtherInc "Loading airport procedures"
+  // SimConnect reportOtherInc "Loading airport taxiways and parking"
+  // SimConnect reportOtherInc "Writing airport facilities to database"
+  // SimConnect reportOtherInc "Loading waypoints, VOR, ILS, NDB and airways"
+  // SimConnect reportOtherInc "Writing waypoints and airways to database"
+  // SimConnect reportOtherInc "Writing VOR and ILS to database"
+  // SimConnect reportOtherInc "Writing NDB to database"
+  return 14; // With disconnected disabled otherwise 17
 #else
   return 0;
 #endif

@@ -85,19 +85,19 @@ public:
   /* Writes all airport and child structures to the database and commits after finishing. The map key is not used.
    * fileId is used to fill db.file_id field for all airports.
    * Entries from the map airports are consumed while writing */
-  void writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId, atools::fs::sc::db::Airport>& airports, int fileId);
+  bool writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId, atools::fs::sc::db::Airport>& airports, int fileId);
 
   /* Writes all waypoints and airways to the database and commits after finishing. The map key is not used.
    * fileId is used to fill db.file_id field for all navaids. */
-  void writeWaypointsAndAirwaysToDatabase(const QMap<unsigned long, atools::fs::sc::db::Waypoint>& waypoints, int fileId);
+  bool writeWaypointsAndAirwaysToDatabase(const QMap<unsigned long, atools::fs::sc::db::Waypoint>& waypoints, int fileId);
 
   /* Writes all VOR and ILS to the database and commits after finishing. The map key is not used.
    * fileId is used to fill db.file_id field for all navaids. */
-  void writeVorAndIlsToDatabase(const QList<atools::fs::sc::db::VorFacility>& vors, int fileId);
+  bool writeVorAndIlsToDatabase(const QList<atools::fs::sc::db::VorFacility>& vors, int fileId);
 
   /* Writes all NDB to the database and commits after finishing. The map key is not used.
    * fileId is used to fill db.file_id field for all navaids. */
-  void writeNdbToDatabase(const QList<atools::fs::sc::db::NdbFacility>& ndbs, int fileId);
+  bool writeNdbToDatabase(const QList<atools::fs::sc::db::NdbFacility>& ndbs, int fileId);
 
   /* Get full list of navaid ids from the database tables waypoint, ils, vor and ndb. */
   atools::fs::sc::db::FacilityIdSet getNavaidIds();
