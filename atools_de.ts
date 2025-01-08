@@ -1340,6 +1340,10 @@ Nachtzeit: %5</translation>
         <source>Calculating airport rating</source>
         <translation>Berechne Flugplatzwertung</translation>
     </message>
+    <message>
+        <source>SimConnect Airports</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -1722,7 +1726,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>AUSOTS</source>
-        <translation>AUSOTS</translation>
+        <translation type="vanished">AUSOTS</translation>
     </message>
     <message>
         <source>Error reading &quot;%1&quot;: %2</source>
@@ -1910,6 +1914,128 @@ Nachtzeit: %5</translation>
     </message>
 </context>
 <context>
+    <name>SimConnectLoader</name>
+    <message>
+        <source>Loading airport count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading airport facility numbers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading airport base information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading airport COM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading airport helipads</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading airport runways</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading airport start positions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading airport procedures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading airport taxiways and parking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading waypoints, VOR, ILS, NDB and airways</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading disconnected facilities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading disconnected VOR and ILS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Writing waypoints and airways to database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too many errors reading airport data. Stopping.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too many errors reading navaid data. Stopping.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>.</source>
+        <translation type="unfinished">.</translation>
+    </message>
+</context>
+<context>
+    <name>SimConnectWriter</name>
+    <message>
+        <source> </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>.</source>
+        <translation type="unfinished">.</translation>
+    </message>
+    <message>
+        <source>Writing airport facilities to database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wrong pavements size %1 in airport %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wrong approach lights size %1 in airport %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wrong VASI lights size %1 in airport %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Caught exception writing airport %1. Error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Caught unknown exception writing airport %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Too many errors writing airport data. Stopping.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Writing NDB to database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Writing VOR and ILS to database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Writing waypoints and airways to database</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SqlQueryDialog</name>
     <message>
         <source>Little Navmap - </source>
@@ -2056,7 +2182,7 @@ Importieren gestoppt.</translation>
     <message>
         <source>%1.%2%3%4%5</source>
         <comment>Used to build a version string like 1.2.33.beta1</comment>
-        <translation>%1.%2%3%4%5</translation>
+        <translation type="vanished">%1.%2%3%4%5</translation>
     </message>
     <message>
         <source>.%1</source>
