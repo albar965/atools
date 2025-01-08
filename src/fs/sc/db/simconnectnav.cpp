@@ -18,6 +18,8 @@
 #include "fs/sc/db/simconnectnav.h"
 #include "fs/bgl/nav/airwaysegment.h"
 
+#include <QVariant>
+
 namespace atools {
 namespace fs {
 namespace sc {
