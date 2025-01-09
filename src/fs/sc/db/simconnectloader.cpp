@@ -704,22 +704,22 @@ bool SimConnectLoaderPrivate::writeNavaidsToDatabase()
   {
     aborted = writer->writeWaypointsAndAirwaysToDatabase(waypointFacilities, fileId);
     errors.append(writer->getErrors());
-    waypointFacilities.clear();
   }
+  waypointFacilities.clear();
 
   if(!aborted)
   {
     aborted = writer->writeVorAndIlsToDatabase(vorFacilities, fileId);
     errors.append(writer->getErrors());
-    vorFacilities.clear();
   }
+  vorFacilities.clear();
 
   if(!aborted)
   {
     aborted = writer->writeNdbToDatabase(ndbFacilities, fileId);
     errors.append(writer->getErrors());
-    ndbFacilities.clear();
   }
+  ndbFacilities.clear();
 
   return aborted;
 }
@@ -1052,7 +1052,6 @@ QSet<FacilityId> SimConnectLoaderPrivate::disconnectedNavaids(const QString& typ
 
 void SimConnectLoaderPrivate::clear()
 {
-  aborted = false;
   errors.clear();
   airportIds.clear();
   navaidIds.clear();
@@ -1655,6 +1654,8 @@ bool SimConnectLoader::prepareLoading(bool loadFacilityDefinitions, bool initSql
   if(initSqlQueries)
     p->writer->initQueries();
 
+  p->aborted = false;
+
   HRESULT hr = p->api->Open(QCoreApplication::applicationName().toLatin1().constData(), nullptr, 0, nullptr, 0);
 
   if(hr != S_OK)
@@ -1759,7 +1760,8 @@ void SimConnectLoader::setProgressCallback(const SimConnectLoaderProgressCallbac
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->progressCallback = callback;
   p->writer->setProgressCallback([ = ](const QString& message, bool incProgress)->bool {
-            return p->callProgress(message, incProgress);
+            p->aborted = p->callProgress(message, incProgress);
+            return p->aborted;
           });
 #else
   Q_UNUSED(callback)

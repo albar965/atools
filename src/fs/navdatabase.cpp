@@ -106,6 +106,8 @@ atools::fs::ResultFlags NavDatabase::compileDatabase()
   atools::fs::ResultFlags result = createInternal(sceneryCfgCodec);
   if(aborted)
   {
+    qDebug() << Q_FUNC_INFO << "COMPILE_CANCELED";
+
     // Remove all (partial) changes
     result |= COMPILE_CANCELED;
     db->rollback();
@@ -1183,7 +1185,10 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
 
   loadFsxP3dMsfsSimulator(progress, fsDataWriter, cfg.getAreas());
 
-  return loadFsxP3dMsfsPost(progress);
+  if(!aborted)
+    aborted = loadFsxP3dMsfsPost(progress);
+
+  return aborted;
 }
 
 bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWriter, const SceneryCfg& cfg)
@@ -1207,7 +1212,10 @@ bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWrit
 
   loadFsxP3dMsfsSimulator(progress, fsDataWriter, cfg.getAreas());
 
-  return loadFsxP3dMsfsPost(progress);
+  if(!aborted)
+    aborted = loadFsxP3dMsfsPost(progress);
+
+  return aborted;
 }
 
 bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWriter *fsDataWriter,
@@ -1252,8 +1260,11 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
                   return progress->reportOtherMsg(message);
               });
 
-          aborted = simconnectLoader->loadAirports(fileId);
-          aborted = simconnectLoader->loadNavaids(fileId);
+          if(!aborted)
+            aborted = simconnectLoader->loadAirports(fileId);
+
+          if(!aborted)
+            aborted = simconnectLoader->loadNavaids(fileId);
 
           // Takes too long to run - disabled for now
           // aborted = simconnectLoader->loadDisconnectedNavaids(fileId);
