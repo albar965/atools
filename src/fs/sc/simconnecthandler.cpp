@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -921,6 +921,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       if(!objectIds.contains(oid))
       {
         const SimDataAircraft& simDataAircraft = p->simDataAircraftList.at(i);
+
         atools::fs::sc::SimConnectAircraft aiAircraft;
         p->copyToSimConnectAircraft(simDataAircraft, aiAircraft);
 
@@ -933,6 +934,10 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
         aiAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0);
 #endif
         aiAircraft.objectId = static_cast<unsigned int>(oid);
+
+#if defined(SIMCONNECT_BUILD_WIN64)
+        if(aiAircraft.isAnyFlying() && aiAircraft.isAnyBoat())
+#endif
         data.aiAircraft.append(aiAircraft);
         objectIds.insert(aiAircraft.objectId);
       }
