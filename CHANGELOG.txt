@@ -4,16 +4,59 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
+# Version 4.0.14.beta1
+
+## MSFS 2024 Scenery Library #1198
+
+* Added loading of navaids to MSFS 2024 compiler. Fetching all navaids based on airport procedure
+  references Then starting with these traverse the airway/route network.
+* Adapted SimConnect interface and dummy interface to new MSFS 2024 functions.
+* Now setting all VOR and NDB waypoints to artificial in FSX, P3D and MSFS simulators to hide them
+  in the user interface.
+* Now omitting duplicate waypoints with invalid regions in MSFS simulators. Also using better
+  duplicate waypoint removal for MSFS 2020 now.
+* Adapted build file to use both MSFS 2020 and 2024 SDK. Replaced ATOOLS_SIMCONNECT_PATH_WIN64 with
+  new ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2020 and ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024 for 64-bit
+  build.
+* Added reading or airports, their facilities and procedures from MSFS 2024 SimConnect. This
+  fetches airports, runways, starts, parking taxiways and all procedures via SimConnect and writes
+  them to the database.
+* Added script to delete waypoint duplicates for MSFS 2024.
+* Added methods to clear invalid and not translatable aircraft properties. For MSFS 2024
+* Adapted main database compilation to MSFS 2024.
+* Added detection of MSFS 2024 installation.
+* Moved activation context out of the SimConnectHandler for more flexibility.
+* Add option for DLL name when binding functions of SimConnect.
+
+## MSFS 2024 Flight Plan #1216
+
+* Added detection, reading and writing of MSFS 2024 flight plans.
+
+## Other
+
+* Updated to World Magnetic Model 2025 for more accurate declination calculation.
+* Disabled unused number of strobes for approach lights in table. Removed obsolete and unused
+  num_strobes field in runway_end.
+* Removed AUSOTS track system since it is discontinued. Now uses preferred routes.
+* ILS feather geometry is now using a minimum width of 2 degrees to avoid invisible ILS feathers in
+  all simulators.
+* Fixed issues in rectangle normalization. This resulted in disappearing large distance rings. #1207
+* Fix for on-ground approximation to avoid wrong takeoff detection when hovering with helicopters.
+* Fixed version string patterns to avoid unwanted translation.
+* Updated translation files and add Chinese back again.
+
+===============================================================================
+
 # Version 4.0.13
 
 * Better error reporting and validation in log file for invalid taxiway structures in MSFS.
-  albar965/littlenavmap#1200
+  #1200
 * Work on BGL compiler. Removed compiler filters TAXIWAY_RUNWAY and VEHICLE which are now omitted
   by default.
 * Fixed issue where ILS were missing for MSFS. Examples EGPH using ILS approach with an add-on
   airport and EDDF double ILS approach like 25R.
 * Fixed broken airway collection for X-Plane. Example: Airway W66 not found for
-  `ZUCK ATBUG W66 JNQ  ZWWW`. albar965/littlenavmap#1197
+  `ZUCK ATBUG W66 JNQ  ZWWW`. #1197
 * Airport exclude configuration did not work for X-Plane 12 in navdatacompiler.
 * Fixed issue where last airway in scenery library was missed adding to the database. This affected
   all simulators except the DFD compiler.
@@ -57,12 +100,12 @@ This is a release specific to the Navdatareader project.
 * Improved display of airspace that touch the poles.
 * Fixed duplicate reading of X-Plane `airspace.txt`. The file `airspace.txt` in `Custom Data` now
   overrides the one in `Resources`.
-* Added waypoint names to X-Plane and DFD compilers. albar965/littlenavmap#1176
-* Now doing better capitalization function for waypoint names. albar965/littlenavmap#1176
+* Added waypoint names to X-Plane and DFD compilers. #1176
+* Now doing better capitalization function for waypoint names. #1176
 * Added missing columns `name`, `artificial` and `arinc_type` to table trackpoint which could
   result in incomplete waypoint type display.
 * Fixed issue with bounding rectangle calculation which resulted in wrong results when searching by
-  `Distance from Mark` and other functions around the antimeridian. albar965/littlenavmap#1184
+  `Distance from Mark` and other functions around the antimeridian. #1184
 * Increased number samples when calculating elevation from GLOBE data to avoid missing peaks when
   drawing the elevation profile.
 * Fixed issue where RealityXP GNS export declared destination airport wrongly as userpoint when
@@ -77,7 +120,7 @@ This is a release specific to the Navdatareader project.
   if this is the case. Users have to update *Little Navmap* if they run into this.
 * View creation in database now disabled.
 * Updated minor database version to 29 due to several schema changes. This results in a notice
-  about a previous database version although reloading is not required. albar965/littlenavmap#1176
+  about a previous database version although reloading is not required. #1176
 * Fixed issue with double and invalid COM frequencies for MSFS airports when using MSFS Navigraph update.
 * Fixed issues reading MSA centers for X-Plane where runways were not detected. Now also looking
   for center points of ILS.
@@ -117,7 +160,7 @@ This is a release specific to the Navdatareader project.
 
 * Completely reworked SQL error reporting. Now optionally opening SQLite database readonly.
 * Fixed issues where coordinates received the wrong sign near Meridian line.
-* Added radio buttons to ChoiceDialog. albar965/littlenavmap#1013
+* Added radio buttons to ChoiceDialog. #1013
 * Added methods to clear dialog positions in WidgetState.
 * Function to center a widget on the main screen. Now also centering main window in
   DockWidgetHandler::resetWindowState.
@@ -127,7 +170,7 @@ This is a release specific to the Navdatareader project.
 * Now bailing out early when reading malformed BGL files. Example broken UWLS.bgl
 * Fix for crash when reading BGL files having invalid airports.
 * Made loading of MSFS PLN flight plan files more tolerant for missing altitude
-* Fixes and optimizations for boundary calculations in geo albar965/littlenavmap#1126
+* Fixes and optimizations for boundary calculations in geo #1126
 * Fixed crash in metar index and spatial index.
 * Now blocking METAR access while reading files to avoid crashes due to invalid index.
 * Made reading of METAR strings more robust for invalid characters
@@ -151,7 +194,7 @@ index to calculate and cache interpolated METARs. More optimizations.
 * Removed annotated PLN export and added option for star or degree sign.
 * Added new X-Plane 12 VASI types APAPI_L and APAPI_R.
 * Fixed issue where X-Plane airways had wrong type. Example:
-  EVMON to PAPAL airway Z8 wrongly declared Jet. albar965/littlenavmap#1111
+  EVMON to PAPAL airway Z8 wrongly declared Jet. #1111
 * Added clearSelection to updateTextEdit.
 * Added methods to save and restore collected aircraft performance.
 * Closing splash screen in error handler now.
@@ -268,8 +311,8 @@ index to calculate and cache interpolated METARs. More optimizations.
   languages.
 * Added ATOOLS_DELETE macro for logging and reset of pointers.
 * Now setting "is_draw_surface" always to 1 for X-Plane to avoid transparent aprons.
-  albar965/littlenavmap#1059
-* Adde min and max altitude to GpxData class. albar965/littlenavmap#97
+  #1059
+* Adde min and max altitude to GpxData class. #97
 * Added message box which stays open when clicking help button for crash handler, for example.
 * Added zlib to atools to create Zip files.
 * Added functionality to automatically generate a crash report on startup.
@@ -282,7 +325,7 @@ index to calculate and cache interpolated METARs. More optimizations.
 * Doubled number or arc and circle segments for more accuracy in map display airspaces.
 * elidedTexts to QFontMetricsF for more text placement accuracy.
 * LineString getStartCourse and getEndCourse added.
-* Fixed wrong altitude in route section for GPX export. albar965/littlenavmap#1053
+* Fixed wrong altitude in route section for GPX export. #1053
 * Added cleanup preview functions to LogdataManager and UserdataManager.
 * Optimizations in flight plan export.
 * Made selection color of inactive table elements the same as active on Windows.
@@ -314,7 +357,7 @@ index to calculate and cache interpolated METARs. More optimizations.
 # Version 3.8.16
 
 * Added support for Prepar3D v6. Note that this is untested. Let me know if you find any issues.
-* Fix in flight plan export for MSFS where waypoints are moved to North. albar965/littlenavmap#1038
+* Fix in flight plan export for MSFS where waypoints are moved to North. #1038
 * Fixed issues where no error was shown when importing invalid userpoint or logbook CSV files.
 * Fixed issue where an aborted CSV import might corrupt the undo data.
 * Update CSV import and export for userpoints to allow unit suffixes in altitude. Now detecting
@@ -343,13 +386,13 @@ index to calculate and cache interpolated METARs. More optimizations.
 * Fixed country names appearing as language keys when compiling MSFS.
 * Now optionally disabling ok button in choice dialog if required checkboxes are not set.
 * Changed ids from list to set in DataManagerBase.
-* Added option to read extra scenery library folder. albar965/littlenavmap#959
+* Added option to read extra scenery library folder. #959
 * Fixed crash in dialog class if checkbox is not set. Now allowing empty settingsKey for all methods.
 * Now adding start positions for runways in DFD compiler to allow departure parking selection.
 * Corrected detection and reading of Navigraph navdata update in MSFS.
   Now reading airport add-ons from update. Navdata and procedures are ignored. Wrongly excluded
   package is now read. Speed up for reading scenery library by ignoring unused procedures from
-  navdata update. albar965/littlenavmap#1019
+  navdata update. #1019
 * X-Plane 12 manually corrected localizers are now read.
 * Fix for missing aircraft model translations since MSFS SU12.
 * Corrected overzealous filter for MSFS airport dummy structures which removed add-on helipads or
@@ -367,11 +410,11 @@ index to calculate and cache interpolated METARs. More optimizations.
 # Version 3.8.14
 
 * More parameters in buildDebugForPosition
-* Now populating ils.loc_width in DFD compiler albar965/littlenavmap#1011
+* Now populating ils.loc_width in DFD compiler #1011
 * Added option for extra buttons in tab handler.
 * Added density and pressure altitude calculation
 * Adjusted airport rating calculation for MSFS. Now setting airports having only apron snippets to
-  zero rating equal to empty albar965/littlenavmap#1010
+  zero rating equal to empty #1010
 * Airport name adjustements
 * Added workaround for missing translations in MSFS for AI or multiplayer aircraft.
 * Added option to disable obsolete airport_large and airport_medium tables.
@@ -457,7 +500,7 @@ index to calculate and cache interpolated METARs. More optimizations.
 * Fixes for overriding log and settings path when using portable mode scripts.
   Corrected wrong settings file name from `little_navmap` to `little_navmap.ini` when using portable mode.
 * Fix for X-Plane 12 METAR. Made file matching pattern more tolerant and applied
-  optimizations for faster readin albar965/littlenavmap#950
+  optimizations for faster readin #950
 * MoraReader now checks for table in nav and sim database.
 * Moved ILS feather calculation to common function.
 * Fixed issues where merge aircraft performance where example profile values showed up.
@@ -477,8 +520,8 @@ index to calculate and cache interpolated METARs. More optimizations.
 * Added option to hide title bars in dock widget handler.
 * Added workaround for wrong on-ground state in MSFS AI.
 * Changed fuel detection for MSFS. An airport now gets Avgas and Jet A availability assigned if it
-  has a fuel pad (which has no fuel type information). albar965/littlenavmap#918
-* Restructuring, code cleanup and optimizations in winds aloft code. albar965/littlenavmap#940
+  has a fuel pad (which has no fuel type information). #918
+* Restructuring, code cleanup and optimizations in winds aloft code. #940
 * Updated default aircraft performance file to get values without warnings.
 * Fixed issue where paths were stored with the wrong separators in the database on Windows.
 * Fixed remaining issues with macOS aliases. These can now be used in X- Plane `Custom Scenery`.
@@ -589,9 +632,9 @@ index to calculate and cache interpolated METARs. More optimizations.
 * Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in
   wrong search results.
 * Updated database minor version to 25. Reloading is advised.
-* Allowing to set flags for HTML warning, error and note messages now. albar965/littlenavmap#656
+* Allowing to set flags for HTML warning, error and note messages now. #656
 * Extended tree dialog to allow disabling of items. Added signal handler for checkbox changes.
-  albar965/littlenavmap#656
+  #656
 * Extended waypoint coordinate parser for all ARINC 424 Code Convention full degree waypoint
   formats.
 * Now saving invalid and null parking names from MSFS with indicator `NONE` into the database to
@@ -609,15 +652,15 @@ index to calculate and cache interpolated METARs. More optimizations.
   does not apply to MSFS. Before a feature was not updated if the new airport did not contain new
   features like aprons or taxiways. Example LICC add-on.
 * Corrected issues with true course runways in runway mangling and de-mangling functions. Simplified
-  functions for runway comparison. albar965/littlenavmap#870
+  functions for runway comparison. #870
 * Corrected issues with true course runways like in BGTL for X-Plane and DFD compiler. Approaches
-  were missing runway assignments and could not be resolved. albar965/littlenavmap#870
+  were missing runway assignments and could not be resolved. #870
 * Reworked weather URL test functions to allow API keys. Added METAR format reader for IVAO JSON.
-  Added header parameters to HttpDownloader for API keys. albar965/littlenavmap#864
+  Added header parameters to HttpDownloader for API keys. #864
 * Fix for window icon notification prevents hiding toolbar on windows with `raise windows` enabled.
 * Added airport transition level for X-Plane and DFD compiler. Improved transition level and
   altitude reading for X-Plane since users add various wrong variants.
-* Fixed crash with OpenAir airspace reader. albar965/littlenavmap#490
+* Fixed crash with OpenAir airspace reader. #490
 * Added reader for IVAO and VATSIM JSON boundaries.
 * Fixed exception while loading X-Plane scenery library if earth_hold.dat, earth_mora.dat or
   earth_msa.dat cannot be found in Custom Data despite existing fix, nav and awy files.
@@ -628,7 +671,7 @@ index to calculate and cache interpolated METARs. More optimizations.
   optional column missing.
 * Prepared data compilation for X-Plane 12 based on limited information. Added X-Plane 12 detection
   to FsPaths. Now allowing the `no simulator` state instead of using always active X-Plane.
-  albar965/littlenavmap#867
+  #867
 * Added "has_vertical_angle" and "has_rnp" to table "approach".
 
 ## Version 3.7.8.develop
@@ -645,7 +688,7 @@ index to calculate and cache interpolated METARs. More optimizations.
 
 ## Version 3.7.7.develop
 
-* Added flight plan export for iFly Jets Advanced Series. albar965/littlenavmap#817
+* Added flight plan export for iFly Jets Advanced Series. #817
 * Now dropping all artificial waypoints created only for procedure or airway resolution from
   nav_search table.
 * Fixed issue in scenery library loader where airports were wrongly recognized as MSFS POI dummies.
@@ -658,15 +701,15 @@ index to calculate and cache interpolated METARs. More optimizations.
   X-Plane compiler. This did not allow to recognize the difference between bearing 0 and bearing not
   given.
 * Better error message when failing to read BGL files.
-* Added undo/redo functionality to logbook and userpoint data manager classes. albar965/littlenavmap#280
+* Added undo/redo functionality to logbook and userpoint data manager classes. #280
 * Fixed issues with anti-meridian detection when point is on meridian. Added anti-meridian split to
   line and line string classes.
 * Fixed issue where flight plan metadata was not read correctly when loading LNMPLN or FMS.
 * Added simulator field to aircraft performance.
-* Added autopilot altitude option to aircraft simulation. albar965/littlenavmap#247
+* Added autopilot altitude option to aircraft simulation. #247
 * Added more functions to clean up invalid characters in file names. Fixed issues with wrong regexp
   in adjustMsfsUserWpName. Added flight plan file pattern example and validation to flight plan.
-  albar965/littlenavmap#751
+  #751
 * Fixed issue where runway end table had altitude not set for X-Plane and MSFS.
 * Now skipping empty lines in X-Plane apt.dat file header.
 * Added validation method for aircraft type designators.
@@ -683,7 +726,7 @@ index to calculate and cache interpolated METARs. More optimizations.
 * Added TreeDialog for settings. Copied ChoiceDialog from littlenavmap project.
 * Added logging function to database metadata.
 * Added saving and loading of custom departures to LNMPLN flight plan. Custom approach can now be
-  saved with an offset course. albar965/littlenavmap#696
+  saved with an offset course. #696
 * Added ActionTool to help building context menus.
 * Fixed X-Plane scenery compiler wrongly writing ENRT as airport ident for VOR, NDB, waypoints and
   holdings.
@@ -691,27 +734,27 @@ index to calculate and cache interpolated METARs. More optimizations.
 * Reading transition altitude from X-Plane airports now.
 * Optimizations to HTML HtmlBuilder. Now using QStringBuilder. Added mark and id methods to
   HtmlBuilder. Now counting table rows and providing methods for detecting empty tables.
-  albar965/littlenavmap#768
-* Added descentSpeedForPathAngle albar965/littlenavmap#803
+  #768
+* Added descentSpeedForPathAngle #803
 * Added vertical angle to approach and transition legs now read from DFD, X-Plane and MSFS.
-  albar965/littlenavmap#803
+  #803
 * Added define option to silence scenery library compiler warnings.
-  albar965/littlenavmap#797
+  #797
 * Better coordinate parsing. Removing separators now.
 * Changed MoraReader to allow automatic selection of valid database.
 * Added compiling of en-route holdings to DFD and X-Plane compiler.
 * Added writing of airport MSA sectors and pre-calculated geometry to DFD and X-Plane compiler.
-  albar965/littlenavmap#498
+  #498
 * Changes to airport index in compiler. Added file id to MORA table. Avoiding invalid positions in
-  MagDecReader::getMagVar now. Preparation for albar965/littlenavmap#363 and
-  albar965/littlenavmap#498
+  MagDecReader::getMagVar now. Preparation for #363 and
+  #498
 * Added writing of MORA grid from X-Plane database in data compiler.
 * Increased feather width for GLS and RNP approaches in DFD and X-Plane compiler.
-  albar965/littlenavmap#640
+  #640
 * Corrected assignment of runway end ids to ILS in DFD compiler.
 * Added SBAS/GBAS paths points and stations to X-Plane and DFD databases. Fixed issues when
   resolving recommended procedure fixes in DFD compiler. Now also searching for ILS and other
-  approach facilities. Added ils type to FSX/P3D/MSFS compiler. albar965/littlenavmap#640
+  approach facilities. Added ils type to FSX/P3D/MSFS compiler. #640
 * Fixing equal runway end positions for DFD compiler now which resulted in zero-length runways when
   drawing. Corrected wrong number of ILS for airport in DFD compiler.
 * Added gate positions to DFD compiler.
@@ -800,24 +843,24 @@ index to calculate and cache interpolated METARs. More optimizations.
   Enabled parking position for MSFS flight plan export and import.
 * Corrected airport filter to avoid omitting airport updates when loading FSX/P3D/MSFS scenery.
 * Fixed reading of new procedure records in MSFS BGL. Thanks to @icykoneko for the implementation
-  and the help. Closes albar965/littlenavmap#649
+  and the help. Closes #649
 * Fixed issue where some navaids did not get airport_id assigned if in different BGL file. Now
   resolving id later in database after reading BGLs.
 * Fixed loading and saving of GPX tracks. Now also considering timestamps and disconnected track
   segments.
 * Prepared user aircraft data blocks for future functions. Added data flags to allow omitting
   strings. Added autopilot set target altitude.
-* Added decodeTransponderCode and fixed decoding for FSX, P3D and MSFS. albar965/littlenavmap#525
+* Added decodeTransponderCode and fixed decoding for FSX, P3D and MSFS. #525
 * Added transponder code to user and AI aircraft. Fetching transponder code for all simulators now.
   Increased data version to 11 to force incompatibility. Added properties to avoid future
-  incompatibilities when adding new value types. albar965/littlenavmap#525
+  incompatibilities when adding new value types. #525
 * Added new airspace types MCTR, TRSA and GCA where the last one is for unknown and general
-  airspace types. albar965/littlenavmap#607
+  airspace types. #607
 * Fixed issue where a flight plan calculation resulted in not optimal routes. This happened when a
   nearby navaid connected to the airway system could not be found.
 * Now omitting closed dummy airport structures having no runways which are added as MSFS POIs.
 * Corrected Aerosoft CRJ flight plan export. Adapted changed keywords in flp file and compressing
-  airway segments now. albar965/littlenavmap#632
+  airway segments now. #632
 * Write MSFS SIDs and STARs to database
 * Corrected default flight plan pattern to use departure and destination ident if flight plan
   pattern is empty.
