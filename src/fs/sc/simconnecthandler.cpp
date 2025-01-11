@@ -935,10 +935,10 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 #endif
         aiAircraft.objectId = static_cast<unsigned int>(oid);
 
-#if defined(SIMCONNECT_BUILD_WIN64)
-        if(aiAircraft.isAnyFlying() && aiAircraft.isAnyBoat())
-#endif
-        data.aiAircraft.append(aiAircraft);
+        // Add only aircraft, helicopters and ships
+        if(aiAircraft.isAnyFlying() || aiAircraft.isAnyBoat())
+          data.aiAircraft.append(aiAircraft);
+
         objectIds.insert(aiAircraft.objectId);
       }
     }
