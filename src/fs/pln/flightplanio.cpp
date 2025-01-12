@@ -2195,7 +2195,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   if(msfs24 && !properties.value(pln::SID).isEmpty())
   {
     writer.writeStartElement("DepartureDetails");
-    writeTextElementIf(writer, "RunwayNumberFP", util::runwayNamePrefixZero(util::runwayNumber(properties.value(pln::SID_RW))));
+    writeTextElementIf(writer, "RunwayNumberFP", util::runwayNumber(properties.value(pln::SID_RW)));
     writeTextElementIf(writer, "RunwayDesignatorFP", util::runwayDesignator(properties.value(pln::SID_RW)));
     writeTextElementIf(writer, "DepartureFP", properties.value(pln::SID));
     writeTextElementIf(writer, "TransitionFP", properties.value(pln::SID_TRANS));
@@ -2317,7 +2317,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     if(!properties.value(pln::STAR).isEmpty())
     {
       writer.writeStartElement("ArrivalDetails");
-      writeTextElementIf(writer, "RunwayNumberFP", util::runwayNamePrefixZero(util::runwayNumber(properties.value(pln::STAR_RW))));
+      writeTextElementIf(writer, "RunwayNumberFP", util::runwayNumber(properties.value(pln::STAR_RW)));
       writeTextElementIf(writer, "RunwayDesignatorFP", atools::fs::util::runwayDesignator(properties.value(pln::STAR_RW)));
       writeTextElementIf(writer, "ArrivalFP", properties.value(pln::STAR));
       writeTextElementIf(writer, "TransitionFP", properties.value(pln::STAR_TRANS));
@@ -2333,8 +2333,8 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     if(!properties.value(pln::APPROACH_TYPE).isEmpty())
     {
       writer.writeStartElement("ApproachDetails");
-      writeTextElementIf(writer, "ApproachTypeFP", properties.value(pln::APPROACH_TYPE));
-      writeTextElementIf(writer, "RunwayNumberFP", util::runwayNamePrefixZero(util::runwayNumber(properties.value(pln::APPROACH_RW))));
+      writeTextElementIf(writer, "ApproachTypeFP", approachToMsfs(properties.value(pln::APPROACH_TYPE)));
+      writeTextElementIf(writer, "RunwayNumberFP", util::runwayNumber(properties.value(pln::APPROACH_RW)));
       writeTextElementIf(writer, "RunwayDesignatorFP", util::runwayDesignator(properties.value(pln::APPROACH_RW)));
       writeTextElementIf(writer, "SuffixFP", properties.value(pln::APPROACH_SUFFIX));
       writeTextElementIf(writer, "TransitionFP", properties.value(pln::TRANSITION));
