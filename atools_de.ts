@@ -1262,7 +1262,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>Creating boundary indexes</source>
-        <translation>Erstellen von Grenzindizes</translation>
+        <translation>Erstelle Indizes für Lufträume</translation>
     </message>
     <message>
         <source>Creating indexes for route</source>
