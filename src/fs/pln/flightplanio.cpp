@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -2230,7 +2230,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     // if(pms50 && entry.getWaypointType() == atools::fs::pln::entry::USER && !anyProcedureName)
     // writer.writeAttribute("id", atools::fs::util::toDegMinFormat(entry.getPosition()));
     // else
-    if(!msfs24)
+    if(!msfs24 || entry.getWaypointType() == entry::USER)
       writer.writeAttribute("id", ident);
 
     writer.writeTextElement("ATCWaypointType", entry.getWaypointTypeAsFsxString());
@@ -2268,12 +2268,20 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     {
       // Write always for MSFS ==================
       writer.writeStartElement("ICAO");
-      if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
-        // Avoid region since it is not reliable for airports in MSFS and
-        // the sim garbles the flight plan when loading
-        writeTextElementIf(writer, "ICAORegion", entry.getRegion());
-      writeTextElementIf(writer, "ICAOIdent", ident);
-      writeTextElementIf(writer, "ICAOAirport", entry.getAirport()); // Write airport for waypoint if available
+
+      if(msfs24 && entry.getWaypointType() == entry::USER)
+        // <WorldLocation>N52° 22' 42.75", E13° 31' 14.27",+006000.00</WorldLocation>
+        writer.writeTextElement("WorldLocation", entry.getPosition().toLongString(false /* starDeg */));
+      else
+      {
+        if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
+          // Avoid region since it is not reliable for airports in MSFS and
+          // the sim garbles the flight plan when loading
+          writeTextElementIf(writer, "ICAORegion", entry.getRegion());
+        writeTextElementIf(writer, "ICAOIdent", ident);
+        writeTextElementIf(writer, "ICAOAirport", entry.getAirport()); // Write airport for waypoint if available
+      }
+
       writer.writeEndElement(); // ICAO
     }
     else if(simavionics)
@@ -4741,6 +4749,8 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
           entry.setIdent(reader.readElementText());
         else if(iName == "ICAOAirport") // MSFS
           entry.setAirport(reader.readElementText());
+        else if(iName == "WorldLocation") // MSFS 2024
+          entry.setPosition(geo::Pos(reader.readElementText()));
         else
           reader.skipCurrentElement();
       }
@@ -4751,7 +4761,8 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
   entry.setRunway(runway, designator);
   entry.setApproach(approach, suffix, approachTransition);
 
-  plan.append(entry);
+  if(entry.getPosition().isValid() || entry.getWaypointType() != entry::USER)
+    plan.append(entry);
 }
 
 void FlightplanIO::writePropertyFloat(QXmlStreamWriter& writer, const QString& name, float value) const
