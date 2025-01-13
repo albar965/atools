@@ -2211,6 +2211,8 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       // MSFS 2024 does not include departure and destination airport
       continue;
 
+    bool userWaypoint = entry.getWaypointType() == entry::USER;
+
     // MSFS 2024
     // <ATCWaypoint>
     // <ATCWaypointType>VOR</ATCWaypointType>
@@ -2230,7 +2232,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     // if(pms50 && entry.getWaypointType() == atools::fs::pln::entry::USER && !anyProcedureName)
     // writer.writeAttribute("id", atools::fs::util::toDegMinFormat(entry.getPosition()));
     // else
-    if(!msfs24 || entry.getWaypointType() == entry::USER)
+    if(!msfs24 || userWaypoint)
       writer.writeAttribute("id", ident);
 
     writer.writeTextElement("ATCWaypointType", entry.getWaypointTypeAsFsxString());
@@ -2238,7 +2240,18 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     if(!entry.getPosition().isValid())
       throw atools::Exception("Invalid position in flightplan for id " % entry.getIdent());
 
-    if(!msfs24)
+    // MSFS 2024
+    // <ATCWaypoint>
+    // <ATCWaypointType>User</ATCWaypointType>
+    // <WorldPosition>N58° 42' 3.72",W156° 42' 5.59",+002147.24</WorldPosition>
+    // <ICAO>
+    // <ICAOIdent>RW303</ICAOIdent>
+    // </ICAO>
+    // </ATCWaypoint>
+    if(msfs24 && userWaypoint)
+      // Coordinates for MSFS 2024 userpoints only ================
+      writer.writeTextElement("WorldPosition", entry.getPosition().toLongString(false /* starDeg */));
+    else
       writer.writeTextElement("WorldPosition", entry.getPosition().toLongString(starDeg));
 
     writeTextElementIf(writer, "ATCAirway", entry.getAirway());
@@ -2269,9 +2282,14 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       // Write always for MSFS ==================
       writer.writeStartElement("ICAO");
 
-      if(msfs24 && entry.getWaypointType() == entry::USER)
-        // <WorldLocation>N52° 22' 42.75", E13° 31' 14.27",+006000.00</WorldLocation>
-        writer.writeTextElement("WorldLocation", entry.getPosition().toLongString(false /* starDeg */));
+      if(msfs24)
+      {
+        if(!userWaypoint)
+          writeTextElementIf(writer, "ICAORegion", entry.getRegion());
+        writeTextElementIf(writer, "ICAOIdent", ident);
+        if(!userWaypoint)
+          writeTextElementIf(writer, "ICAOAirport", entry.getAirport()); // Write airport for waypoint if available
+      }
       else
       {
         if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
@@ -4749,8 +4767,6 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
           entry.setIdent(reader.readElementText());
         else if(iName == "ICAOAirport") // MSFS
           entry.setAirport(reader.readElementText());
-        else if(iName == "WorldLocation") // MSFS 2024
-          entry.setPosition(geo::Pos(reader.readElementText()));
         else
           reader.skipCurrentElement();
       }
