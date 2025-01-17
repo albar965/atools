@@ -1960,10 +1960,6 @@ Nachtzeit: %5</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Loading disconnected VOR and ILS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Writing waypoints and airways to database</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1982,6 +1978,10 @@ Nachtzeit: %5</translation>
     <message>
         <source>.</source>
         <translation type="unfinished">.</translation>
+    </message>
+    <message>
+        <source>Loading waypoints, VOR, ILS and NDB</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
