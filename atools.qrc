@@ -53,5 +53,6 @@
         <file>resources/sql/fs/db/delete_duplicate_ils_fsx.sql</file>
         <file>resources/sql/fs/db/update_airport_ils_msfs.sql</file>
         <file>resources/sql/fs/db/delete_duplicate_navaids_msfs.sql</file>
+        <file>resources/sql/fs/db/create_ap_schema_index.sql</file>
     </qresource>
 </RCC>

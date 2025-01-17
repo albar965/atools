@@ -170,6 +170,8 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
   script.executeScript(":/atools/resources/sql/fs/db/create_boundary_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_nav_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_ap_schema.sql");
+  if(options->getSimulatorType() != FsPaths::MSFS_2024)
+    script.executeScript(":/atools/resources/sql/fs/db/create_ap_schema_index.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_meta_schema.sql");
   transaction.commit();
 }
@@ -1325,7 +1327,12 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
 
 bool NavDatabase::loadFsxP3dMsfsPost(ProgressHandler *progress)
 {
-  if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
+  QStringList scripts;
+  if(options->getSimulatorType() == FsPaths::MSFS_2024)
+    scripts.append("fs/db/create_ap_schema_index.sql");
+  scripts.append("fs/db/create_indexes_post_load.sql");
+
+  if((aborted = runScripts(progress, scripts, tr("Creating indexes"))))
     return true;
 
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load_boundary.sql", tr("Creating boundary indexes"))))

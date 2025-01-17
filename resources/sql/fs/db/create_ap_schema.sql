@@ -118,9 +118,6 @@ create table airport
 foreign key(file_id) references bgl_file(bgl_file_id)
 );
 
-create index if not exists idx_airport_file_id on airport(file_id);
-create index if not exists idx_airport_ident on airport(ident);
-
 -- **************************************************
 
 drop table if exists airport_file;
@@ -150,8 +147,6 @@ create table com
 foreign key(airport_id) references airport(airport_id)
 );
 
-create index if not exists idx_com_airport_id on com(airport_id);
-
 -- **************************************************
 
 drop table if exists helipad;
@@ -176,8 +171,6 @@ foreign key(airport_id) references airport(airport_id),
 foreign key(start_id) references start(start_id)
 );
 
-create index if not exists idx_helipad_airport_id on helipad(helipad_id);
-
 -- **************************************************
 
 drop table if exists start;
@@ -198,9 +191,6 @@ create table start
 foreign key(airport_id) references airport(airport_id),
 foreign key(runway_end_id) references runway_end(runway_end_id)
 );
-
-create index if not exists idx_start_airport_id on start(airport_id);
-create index if not exists idx_start_runway_end_id on start(runway_end_id);
 
 -- **************************************************
 
@@ -223,9 +213,6 @@ create table apron
   geometry blob,                    -- Optional field: X-Plane apron and taxiway geometry
 foreign key(airport_id) references airport(airport_id)
 );
-
-create index if not exists idx_apron_airport_id on apron(airport_id);
-
 
 -- **************************************************
 
@@ -253,8 +240,6 @@ create table taxi_path
   end_laty double not null,                 -- "
 foreign key(airport_id) references airport(airport_id)
 );
-
-create index if not exists idx_taxi_path_airport_id on taxi_path(airport_id);
 
 -- **************************************************
 
@@ -292,10 +277,6 @@ foreign key(primary_end_id) references runway_end(runway_end_id),
 foreign key(secondary_end_id) references runway_end(runway_end_id)
 );
 
-create index if not exists idx_runway_airport_id on runway(airport_id);
-create index if not exists idx_runway_primary_end_id on runway(primary_end_id);
-create index if not exists idx_runway_secondary_end_id on runway(secondary_end_id);
-
 -- **************************************************
 
 drop table if exists runway_end;
@@ -329,8 +310,6 @@ create table runway_end
   lonx double not null,                   -- "
   laty double not null                    -- "
 );
-
-create index if not exists idx_runway_end_name on runway_end(name);
 
 -- **************************************************
 
@@ -387,11 +366,6 @@ foreign key(airport_id) references airport(airport_id),
 foreign key(runway_end_id) references runway_end(runway_end_id)
 );
 
-create index if not exists idx_approach_airport_id on approach(airport_id);
-create index if not exists idx_approach_runway_end_id on approach(runway_end_id);
-create index if not exists idx_approach_airport_ident on approach(airport_ident);
-create index if not exists idx_approach_runway_name on approach(runway_name);
-
 -- **************************************************
 
 drop table if exists transition;
@@ -431,8 +405,6 @@ create table transition
   dme_distance integer,         -- DME distance in NM
 foreign key(approach_id) references approach(approach_id)
 );
-
-create index if not exists idx_transition_approach_id on transition(approach_id);
 
 -- **************************************************
 
@@ -477,8 +449,6 @@ create table approach_leg
 foreign key(approach_id) references approach(approach_id)
 );
 
-create index if not exists idx_approach_leg_approach_id on approach_leg(approach_id);
-
 -- **************************************************
 
 drop table if exists transition_leg;
@@ -520,8 +490,6 @@ create table transition_leg
 foreign key(transition_id) references transition(transition_id)
 );
 
-create index if not exists idx_transition_leg_transition_id on transition_leg(transition_id);
-
 -- **************************************************
 
 drop table if exists parking;
@@ -545,5 +513,4 @@ create table parking
 foreign key(airport_id) references airport(airport_id)
 );
 
-create index if not exists idx_parking_airport_id on parking(airport_id);
 
