@@ -43,12 +43,21 @@ const static QRegularExpression REGEXP_SPDALT_ALL("^([NMK])(\\d{3,4})([FSAM])(\\
 
 // Look for longer military designators - taken from MSFS
 static const QStringList CONTAINS_MIL({
+        "HEERESFLUGPLATZ", // DE MSFS 2024
+        "FLIEGERHORST", // DE MSFS 2024
         "MILITÄR", // de-DE.locPak:
         "BASE AÉREA", // es-ES.locPak:
         "BASE AÉRIENNE", // fr-FR.locPak:
         "BASE AEREA", // it-IT.locPak:
+        // "BASE AEREAS", // it-IT.locPak:
         "BAZA LOTNICZA", // pl-PL.locPak:
-        "BASE AÉREA BRACCIANO" // pt-BR.locPak:
+        "FORÇA AÉREA"
+        "MILITAR"
+        "MILITAIRE",
+        "MILITÆRE",
+        "BASE AÉRIENNE",
+        "MILITÄRFLYGBAS",
+        "BASE AÉREA" // pt-BR.locPak:
       });
 
 // Look for military designator words - if an airport name matches
