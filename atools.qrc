@@ -54,5 +54,6 @@
         <file>resources/sql/fs/db/update_airport_ils_msfs.sql</file>
         <file>resources/sql/fs/db/delete_duplicate_navaids_msfs.sql</file>
         <file>resources/sql/fs/db/create_ap_schema_index.sql</file>
+        <file>resources/navdata/navaids.csv.gz</file>
     </qresource>
 </RCC>

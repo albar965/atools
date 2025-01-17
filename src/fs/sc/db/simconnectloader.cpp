@@ -24,6 +24,7 @@
 #include "fs/sc/db/simconnectnav.h"
 #include "fs/sc/db/simconnectwriter.h"
 #include "fs/sc/simconnectapi.h"
+#include "util/csvfilereader.h"
 #include "zip/gzip.h"
 
 #include <QString>
@@ -75,21 +76,26 @@ enum FacilityDataDefinitionId : SIMCONNECT_DATA_DEFINITION_ID
 
   /* Navaids and children =========================================================== */
   FACILITY_DATA_NAVAID_DEFINITION_ID = 2000,
+
   /* Waypoints and route/airway children */
-  FACILITY_DATA_WAYPOINT_DEFINITION_ID = FACILITY_DATA_NAVAID_DEFINITION_ID + 1,
+  FACILITY_DATA_WAYPOINT_ROUTE_DEFINITION_ID = FACILITY_DATA_NAVAID_DEFINITION_ID + 1,
+
+  /* Waypoints only*/
+  FACILITY_DATA_WAYPOINT_DEFINITION_ID = FACILITY_DATA_NAVAID_DEFINITION_ID + 2,
 
   /* NDB */
-  FACILITY_DATA_NDB_DEFINITION_ID = FACILITY_DATA_NAVAID_DEFINITION_ID + 2,
+  FACILITY_DATA_NDB_DEFINITION_ID = FACILITY_DATA_NAVAID_DEFINITION_ID + 3,
 
   /* VOR and ILS */
-  FACILITY_DATA_VOR_DEFINITION_ID = FACILITY_DATA_NAVAID_DEFINITION_ID + 3
+  FACILITY_DATA_VOR_DEFINITION_ID = FACILITY_DATA_NAVAID_DEFINITION_ID + 4
 };
 
 const static SIMCONNECT_DATA_REQUEST_ID FACILITY_LIST_REQUEST_AIRPORT_ID = 100;
-const static SIMCONNECT_DATA_REQUEST_ID FACILITY_DATA_AIRPORT_REQUEST_ID = 1000;
-const static SIMCONNECT_DATA_REQUEST_ID FACILITY_DATA_WAYPOINT_REQUEST_ID = 2000;
-const static SIMCONNECT_DATA_REQUEST_ID FACILITY_DATA_NDB_REQUEST_ID = 3000;
-const static SIMCONNECT_DATA_REQUEST_ID FACILITY_DATA_VOR_REQUEST_ID = 4000;
+const static SIMCONNECT_DATA_REQUEST_ID FACILITY_DATA_AIRPORT_REQUEST_ID = 1000; // 840000 airports
+const static SIMCONNECT_DATA_REQUEST_ID FACILITY_DATA_NDB_REQUEST_ID = 100000; // 4000 NDB
+const static SIMCONNECT_DATA_REQUEST_ID FACILITY_DATA_VOR_REQUEST_ID = 200000; // 5000 VOR
+const static SIMCONNECT_DATA_REQUEST_ID FACILITY_DATA_WAYPOINT_ROUTE_REQUEST_ID = 300000; // 45000 waypoints with airways
+const static SIMCONNECT_DATA_REQUEST_ID FACILITY_DATA_WAYPOINT_REQUEST_ID = 400000; // 200000 waypoint
 
 // Do no send progress updates more often than this
 const static int UPDATE_RATE_MS = 2000;
@@ -130,10 +136,7 @@ public:
   // Traverse airway network and write navaids loaded from above
   bool loadNavaids();
 
-#ifdef DEBUG_DISCONNECTED_NAVAIDS
   bool loadDisconnectedNavaids();
-
-#endif
 
   // Add all facility definitions for airports and their children
   // The definitions have to match the structs in fs/sc/db/simconnectairport.h
@@ -154,6 +157,11 @@ public:
   void addNavaid(const char *icao, char type)
   {
     addNavaid(icao, nullptr, type);
+  }
+
+  void addNavaid(const FacilityId& id)
+  {
+    addNavaid(id.getIdent(), id.getRegion(), id.getType());
   }
 
   void addNavaidsForLeg(const LegFacility *leg)
@@ -227,13 +235,11 @@ public:
 
   // Request all navaids from navaidIds and consume navaids from the list
   // Traverses the route network and keeps adding waypoints until done
-  bool requestNavaids();
+  bool requestNavaids(bool fetchRoutes);
 
-#ifdef DEBUG_DISCONNECTED_NAVAIDS
   // Read navaids not connectedd to the airway network or procedures
-  QSet<FacilityId> disconnectedNavaids(const QString& typeFilter);
+  void disconnectedNavaids(const QString& typeFilter);
 
-#endif
   // Free all memory
   void clear();
 
@@ -323,6 +329,7 @@ public:
   int facilitiesFetchedBatch = 0, // Counter to detect end of batch
       batchSize = 2000, fileId = 0, numException = 0;
 
+  int airportFetchDelay = 50, navaidFetchDelay = 50;
   const int MAX_ERRORS = 1000;
 };
 
@@ -353,13 +360,19 @@ SimConnectLoaderPrivate& SimConnectLoaderPrivate::addLegs(const char *name)
 void SimConnectLoaderPrivate::addNavFacilityDefinition()
 {
   // Waypoint and route  =======================================================
-  defId(FACILITY_DATA_WAYPOINT_DEFINITION_ID);
+  defId(FACILITY_DATA_WAYPOINT_ROUTE_DEFINITION_ID);
   open("WAYPOINT").
   add("LATITUDE").add("LONGITUDE").add("TYPE").add("ICAO").add("REGION").
   open("ROUTE").
   add("NAME").add("TYPE").add("NEXT_ICAO").add("NEXT_REGION").add("NEXT_TYPE").add("NEXT_ALTITUDE").
   add("PREV_ICAO").add("PREV_REGION").add("PREV_TYPE").add("PREV_ALTITUDE").
   close("ROUTE");
+  close("WAYPOINT");
+
+  // Waypoint only  =======================================================
+  defId(FACILITY_DATA_WAYPOINT_DEFINITION_ID);
+  open("WAYPOINT").
+  add("LATITUDE").add("LONGITUDE").add("TYPE").add("ICAO").add("REGION").
   close("WAYPOINT");
 
   // NDB  =======================================================
@@ -649,11 +662,13 @@ bool SimConnectLoaderPrivate::loadAirports()
 
 bool SimConnectLoaderPrivate::loadNavaids()
 {
+  addNavaid("OEJ", "LO", 'V');
+
   // Consume navaidIds and insert navaids found on routes into the list for further fetching
   // Breadth-first search through network
   aborted = callProgress(SimConnectLoader::tr("Loading waypoints, VOR, ILS, NDB and airways"));
   if(!aborted)
-    aborted = requestNavaids();
+    aborted = requestNavaids(true /* fetchRoutes */);
 
   if(!aborted)
     // Write all into the database - clears facility lists when done
@@ -662,15 +677,18 @@ bool SimConnectLoaderPrivate::loadNavaids()
   return aborted;
 }
 
-#ifdef DEBUG_DISCONNECTED_NAVAIDS
 bool SimConnectLoaderPrivate::loadDisconnectedNavaids()
 {
   aborted = callProgress(SimConnectLoader::tr("Loading disconnected facilities"));
+
+  // Clear and then fill navaidIds
   if(!aborted)
-    navaidIds = disconnectedNavaids("VN");
+    disconnectedNavaids("VNW");
+
   if(!aborted)
-    aborted = callProgress(SimConnectLoader::tr("Loading disconnected VOR and ILS"));
-  aborted = requestNavaids();
+    aborted = callProgress(SimConnectLoader::tr("Loading waypoints, VOR, ILS and NDB"));
+
+  aborted = requestNavaids(false /* fetchRoutes */);
   if(!aborted)
   {
     aborted = callProgress(SimConnectLoader::tr("Writing waypoints and airways to database"));
@@ -678,8 +696,6 @@ bool SimConnectLoaderPrivate::loadDisconnectedNavaids()
   }
   return aborted;
 }
-
-#endif
 
 bool SimConnectLoaderPrivate::writeAirportsToDatabase()
 {
@@ -874,6 +890,7 @@ bool SimConnectLoaderPrivate::requestAirports(FacilityDataDefinitionId definitio
         case FACILITY_DATA_NONE_DEFINITION_ID:
         case FACILITY_DATA_AIRPORT_DEFINITION_ID:
         case FACILITY_DATA_NAVAID_DEFINITION_ID:
+        case FACILITY_DATA_WAYPOINT_ROUTE_DEFINITION_ID:
         case FACILITY_DATA_WAYPOINT_DEFINITION_ID:
         case FACILITY_DATA_NDB_DEFINITION_ID:
         case FACILITY_DATA_VOR_DEFINITION_ID:
@@ -918,7 +935,7 @@ bool SimConnectLoaderPrivate::requestAirports(FacilityDataDefinitionId definitio
           errors.append(SimConnectLoader::tr("Too many errors reading airport data. Stopping."));
           return false;
         }
-        QThread::msleep(10);
+        QThread::msleep(airportFetchDelay);
       }
       requested = 0;
 
@@ -933,7 +950,7 @@ bool SimConnectLoaderPrivate::requestAirports(FacilityDataDefinitionId definitio
   return aborted;
 }
 
-bool SimConnectLoaderPrivate::requestNavaids()
+bool SimConnectLoaderPrivate::requestNavaids(bool fetchRoutes)
 {
   if(aborted)
     return true;
@@ -949,8 +966,16 @@ bool SimConnectLoaderPrivate::requestNavaids()
     SIMCONNECT_DATA_REQUEST_ID requestId;
     if(id.getType() == 'W')
     {
-      currentFacilityDefinition = FACILITY_DATA_WAYPOINT_DEFINITION_ID;
-      requestId = FACILITY_DATA_WAYPOINT_REQUEST_ID + static_cast<unsigned int>(i);
+      if(fetchRoutes)
+      {
+        currentFacilityDefinition = FACILITY_DATA_WAYPOINT_ROUTE_DEFINITION_ID;
+        requestId = FACILITY_DATA_WAYPOINT_ROUTE_REQUEST_ID + static_cast<unsigned int>(i);
+      }
+      else
+      {
+        currentFacilityDefinition = FACILITY_DATA_WAYPOINT_DEFINITION_ID;
+        requestId = FACILITY_DATA_WAYPOINT_REQUEST_ID + static_cast<unsigned int>(i);
+      }
     }
     else if(id.getType() == 'V')
     {
@@ -1002,7 +1027,7 @@ bool SimConnectLoaderPrivate::requestNavaids()
           errors.append(SimConnectLoader::tr("Too many errors reading navaid data. Stopping."));
           return false;
         }
-        QThread::msleep(10);
+        QThread::msleep(navaidFetchDelay);
       }
       requested = 0;
 
@@ -1019,12 +1044,27 @@ bool SimConnectLoaderPrivate::requestNavaids()
   return aborted;
 }
 
-#ifdef DEBUG_DISCONNECTED_NAVAIDS
-QSet<FacilityId> SimConnectLoaderPrivate::disconnectedNavaids(const QString& typeFilter)
+void SimConnectLoaderPrivate::disconnectedNavaids(const QString& typeFilter)
 {
-  FacilityIdSet ids;
   if(!aborted)
   {
+    // sqlite3 -csv little_navmap_msfs.sqlite
+    // 'select distinct ident, region, type from
+    // (
+    // select ident, region, 'V' as type from vor
+    // union
+    // select ident, region, 'N' as type from ndb
+    // union
+    // select i.ident, a.region, 'V' as type from ils i join airport a on i.loc_airport_ident = a.ident
+    // union
+    // select ident, region, 'W' as type from waypoint
+    // )
+    // ;'>navaids.csv
+
+    ndbFacilities.clear();
+    vorFacilities.clear();
+    waypointFacilities.clear();
+    navaidIds.clear();
     QFile file(":/atools/resources/navdata/navaids.csv.gz");
     if(file.open(QIODevice::ReadOnly))
     {
@@ -1035,20 +1075,18 @@ QSet<FacilityId> SimConnectLoaderPrivate::disconnectedNavaids(const QString& typ
 
       for(const QStringList& row : csvReader.getValues())
       {
-        QChar type = row.at(2).at(0);
-        FacilityId id(row.at(0), row.at(1), type);
-        if(!navaidIdsRequested.contains(id) && (typeFilter.isEmpty() || typeFilter.contains(type)))
-          ids.insert(id);
+        if(!row.at(1).isEmpty())
+        {
+          QChar type = row.at(2).at(0);
+          if((typeFilter.isEmpty() || typeFilter.contains(type)))
+            addNavaid(FacilityId(row.at(0), row.at(1), type));
+        }
       }
     }
     else
       qWarning() << Q_FUNC_INFO << "Cannot open" << file.fileName() << "error" << file.errorString();
   }
-
-  return ids;
 }
-
-#endif
 
 void SimConnectLoaderPrivate::clear()
 {
@@ -1145,6 +1183,7 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
         // Navdata ======================================================================
         if(facilityDataType == SIMCONNECT_FACILITY_DATA_WAYPOINT)
         {
+          // Waypoint with or without route
           const WaypointFacility *waypointFacility = static_cast<const WaypointFacility *>(facilityData);
           waypointFacilities.insert(recvFacilityData->UserRequestId, Waypoint(*waypointFacility));
           waypointsLoaded++;
@@ -1237,6 +1276,7 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
             case FACILITY_DATA_AIRPORT_DEFINITION_ID:
             case FACILITY_DATA_NONE_DEFINITION_ID:
             case FACILITY_DATA_NAVAID_DEFINITION_ID:
+            case FACILITY_DATA_WAYPOINT_ROUTE_DEFINITION_ID:
             case FACILITY_DATA_WAYPOINT_DEFINITION_ID:
             case FACILITY_DATA_NDB_DEFINITION_ID:
             case FACILITY_DATA_VOR_DEFINITION_ID:
@@ -1634,7 +1674,6 @@ bool SimConnectLoader::loadNavaids(int fileId)
 #endif
 }
 
-#ifdef DEBUG_DISCONNECTED_NAVAIDS
 bool SimConnectLoader::loadDisconnectedNavaids(int fileId)
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
@@ -1645,8 +1684,6 @@ bool SimConnectLoader::loadDisconnectedNavaids(int fileId)
   return false;
 #endif
 }
-
-#endif
 
 bool SimConnectLoader::prepareLoading(bool loadFacilityDefinitions, bool initSqlQueries)
 {
@@ -1766,6 +1803,16 @@ void SimConnectLoader::setProgressCallback(const SimConnectLoaderProgressCallbac
 #else
   Q_UNUSED(callback)
 #endif
+}
+
+void SimConnectLoader::setAirportFetchDelay(int value)
+{
+  p->airportFetchDelay = value;
+}
+
+void SimConnectLoader::setNavaidFetchDelay(int value)
+{
+  p->navaidFetchDelay = value;
 }
 
 } // namespace db

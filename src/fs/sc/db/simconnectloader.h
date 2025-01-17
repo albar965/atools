@@ -86,11 +86,8 @@ public:
    * to traverse airway network. */
   bool loadNavaids(int fileId);
 
-#ifdef DEBUG_DISCONNECTED_NAVAIDS
   /* Load VOR and NDB which are not connected to procedures or airways */
   bool loadDisconnectedNavaids(int fileId);
-
-#endif
 
   /* Progress callback returned true */
   bool isAborted() const;
@@ -113,6 +110,10 @@ public:
 
   /* Progress callback called before writing a batch to the database. Return true to abort loading. */
   void setProgressCallback(const SimConnectLoaderProgressCallback& callback);
+
+  /* Delay in milliseconds between CallDispatch calls */
+  void setAirportFetchDelay(int value);
+  void setNavaidFetchDelay(int value);
 
 private:
   // Hides implementation details from the header
