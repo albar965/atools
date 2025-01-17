@@ -51,7 +51,7 @@ struct WaypointFacility
   // LONGITUDE FLOAT64
   // (ALTITUDE FLOAT64)
   // TYPE INT32
-  // MAGVAR FLOAT32
+  // (MAGVAR FLOAT32)
   // (N_ROUTES INT32)
   // ICAO CHAR[8]
   // REGION CHAR[8]
@@ -59,7 +59,6 @@ struct WaypointFacility
   double latitude;
   double longitude;
   qint32 type;
-  float magvar;
   char icao[8];
   char region[8];
 };
@@ -103,7 +102,7 @@ struct NdbFacility
   // FREQUENCY  UINT32
   // TYPE INT32
   // RANGE  FLOAT32
-  // MAGVAR FLOAT32
+  // (MAGVAR FLOAT32)
   // ICAO CHAR[8]
   // REGION CHAR[8]
   // (IS_TERMINAL_NDB  INT32)
@@ -115,7 +114,6 @@ struct NdbFacility
   quint32 frequency;
   qint32 type;
   float range;
-  float magvar;
   char icao[8];
   char region[8];
   char name[64];

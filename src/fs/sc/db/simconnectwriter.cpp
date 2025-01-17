@@ -423,7 +423,6 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
 
       // SimConnect MAGVAR gives wrong indications - calculate using WMM for airports
       airportStmt->bindValue(":mag_var", magDecReader->getMagVar(airportPos));
-      // airportStmt->bindValue(":mag_var", bgl::converter::adjustMagvar(airportFacility.magvar));
 
       bindPosAlt(airportStmt, towerPos, "tower_");
       extend(bounding, towerPos);
@@ -1074,6 +1073,7 @@ bool SimConnectWriter::writeNdbToDatabase(const QList<NdbFacility>& ndbs, int fi
   {
     if(aborted)
       return true;
+    float magvar = magDecReader->getMagVar(ndb.longitude, ndb.latitude);
 
     ndbStmt->bindValue(":ndb_id", ++ndbId);
     ndbStmt->bindValue(":file_id", fileId);
@@ -1083,7 +1083,7 @@ bool SimConnectWriter::writeNdbToDatabase(const QList<NdbFacility>& ndbs, int fi
     ndbStmt->bindValue(":frequency", ndb.frequency / 10);
     ndbStmt->bindValue(":range", meterToNm(ndb.range));
     ndbStmt->bindValue(":type", enumToStr(bgl::Ndb::ndbTypeToStr, static_cast<atools::fs::bgl::nav::NdbType>(ndb.type)));
-    ndbStmt->bindValue(":mag_var", bgl::converter::adjustMagvar(ndb.magvar));
+    ndbStmt->bindValue(":mag_var", magvar);
     bindPosAlt(ndbStmt, ndb.longitude, ndb.latitude, ndb.altitude);
     ndbStmt->exec();
 
@@ -1094,7 +1094,7 @@ bool SimConnectWriter::writeNdbToDatabase(const QList<NdbFacility>& ndbs, int fi
     waypointStmt->bindValue(":nav_id", ndbId);
     waypointStmt->bindValue(":ident", ndb.icao);
     waypointStmt->bindValue(":region", ndb.region);
-    waypointStmt->bindValue(":mag_var", bgl::converter::adjustMagvar(ndb.magvar));
+    waypointStmt->bindValue(":mag_var", magvar);
     waypointStmt->bindValue(":artificial", 1); // Indicates hidden shadow
     waypointStmt->bindValue(":type", enumToStr(bgl::Waypoint::waypointTypeToStr, bgl::nav::NDB));
     waypointStmt->bindValue(":num_victor_airway", 0);
@@ -1123,7 +1123,7 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
     if(lsTypeValid(static_cast<LsCategory>(vorIls.lsCategory)) && vorIls.localizerWidth > 0.f)
     {
       // Write ILS ==========================================================================================
-      float magvar = bgl::converter::adjustMagvar(vorIls.magvar);
+      float magvar = magDecReader->getMagVar(vorIls.vorLongitude, vorIls.vorLatitude);
       float heading = atools::geo::normalizeCourse(vorIls.localizer + bgl::converter::adjustMagvar(vorIls.magvar));
 
       ilsStmt->bindValue(":ils_id", ++vorId);
@@ -1205,9 +1205,10 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
       if(vorIls.isTacan)
         vorStmt->bindValue(":channel", util::tacanChannelForFrequency(vorIls.frequency / 10000));
 
+      float magvar = bgl::converter::adjustMagvar(vorIls.magvar);
       vorStmt->bindValue(":frequency", vorIls.frequency / 1000);
       vorStmt->bindValue(":range", roundToInt(meterToNm(vorIls.navRange)));
-      vorStmt->bindValue(":mag_var", bgl::converter::adjustMagvar(vorIls.magvar));
+      vorStmt->bindValue(":mag_var", magvar);
       vorStmt->bindValue(":dme_only", !vorIls.isNav && !vorIls.isTacan && vorIls.isDme);
       if(vorIls.isDme)
         bindPosAlt(vorStmt, vorIls.dmeLongitude, vorIls.dmeLatitude, vorIls.dmeAltitude, "dme_");
@@ -1223,7 +1224,7 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
       waypointStmt->bindValue(":nav_id", vorId);
       waypointStmt->bindValue(":ident", vorIls.icao);
       waypointStmt->bindValue(":region", vorIls.region);
-      waypointStmt->bindValue(":mag_var", bgl::converter::adjustMagvar(vorIls.magvar));
+      waypointStmt->bindValue(":mag_var", magvar);
       waypointStmt->bindValue(":artificial", 1); // Indicates hidden shadow
       waypointStmt->bindValue(":type", enumToStr(bgl::Waypoint::waypointTypeToStr, bgl::nav::VOR));
       waypointStmt->bindValue(":num_victor_airway", 0);
@@ -1255,13 +1256,14 @@ bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned lo
 
     const WaypointFacility& waypointFacility = waypoint.getWaypointFacility();
     bgl::nav::WaypointType type = static_cast<bgl::nav::WaypointType>(waypointFacility.type);
+    float magvar = magDecReader->getMagVar(waypointFacility.longitude, waypointFacility.latitude);
 
     waypointStmt->bindValue(":waypoint_id", ++waypointId);
     waypointStmt->bindValue(":file_id", fileId);
     waypointStmt->bindNullInt(":nav_id"); // Filled later in script update_wp_ids.sql
     waypointStmt->bindValue(":ident", waypointFacility.icao);
     waypointStmt->bindValue(":region", waypointFacility.region);
-    waypointStmt->bindValue(":mag_var", bgl::converter::adjustMagvar(waypointFacility.magvar));
+    waypointStmt->bindValue(":mag_var", magvar);
 
     if((type == bgl::nav::VOR || type == bgl::nav::NDB) /* && (waypoint.getNumVictorAirway() > 0 || waypoint.getNumJetAirway() > 0)*/)
       waypointStmt->bindValue(":artificial", 1); // Indicates hidden shadow

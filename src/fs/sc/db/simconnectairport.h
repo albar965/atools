@@ -100,7 +100,7 @@ struct AirportFacility
   // LATITUDE FLOAT64
   // LONGITUDE FLOAT64
   // ALTITUDE FLOAT64
-  // MAGVAR FLOAT32
+  // (MAGVAR FLOAT32)
   // (NAME CHAR[32])
   // NAME64 STRING64
   // ICAO STRING8
@@ -115,7 +115,6 @@ struct AirportFacility
   double latitude;
   double longitude;
   double altitude;
-  float magvar;
   char name[64];
   double towerLatitude;
   double towerLongitude;

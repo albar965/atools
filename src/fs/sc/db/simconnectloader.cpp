@@ -355,7 +355,7 @@ void SimConnectLoaderPrivate::addNavFacilityDefinition()
   // Waypoint and route  =======================================================
   defId(FACILITY_DATA_WAYPOINT_DEFINITION_ID);
   open("WAYPOINT").
-  add("LATITUDE").add("LONGITUDE").add("TYPE").add("MAGVAR").add("ICAO").add("REGION").
+  add("LATITUDE").add("LONGITUDE").add("TYPE").add("ICAO").add("REGION").
   open("ROUTE").
   add("NAME").add("TYPE").add("NEXT_ICAO").add("NEXT_REGION").add("NEXT_TYPE").add("NEXT_ALTITUDE").
   add("PREV_ICAO").add("PREV_REGION").add("PREV_TYPE").add("PREV_ALTITUDE").
@@ -366,7 +366,7 @@ void SimConnectLoaderPrivate::addNavFacilityDefinition()
   defId(FACILITY_DATA_NDB_DEFINITION_ID);
   open("NDB").
   add("LATITUDE").add("LONGITUDE").add("ALTITUDE").
-  add("FREQUENCY").add("TYPE").add("RANGE").add("MAGVAR").add("ICAO").add("REGION").add("NAME").
+  add("FREQUENCY").add("TYPE").add("RANGE").add("ICAO").add("REGION").add("NAME").
   close("NDB");
 
   // VOR and ILS  =======================================================
@@ -398,7 +398,7 @@ void SimConnectLoaderPrivate::addAirportBaseFacilityDefinition()
   // Loaded second
   defId(FACILITY_DATA_AIRPORT_BASE_DEFINITION_ID).
   open("AIRPORT").
-  add("ICAO").add("REGION").add("LATITUDE").add("LONGITUDE").add("ALTITUDE").add("MAGVAR").add("NAME64").
+  add("ICAO").add("REGION").add("LATITUDE").add("LONGITUDE").add("ALTITUDE").add("NAME64").
   add("TOWER_LATITUDE").add("TOWER_LONGITUDE").add("TOWER_ALTITUDE").
   add("TRANSITION_ALTITUDE").add("TRANSITION_LEVEL").
   close("AIRPORT");
