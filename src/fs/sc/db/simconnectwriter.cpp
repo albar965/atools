@@ -1120,7 +1120,7 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
       return true;
 
     // Type is not reliable - have to use other methods to detect ILS
-    if(vorIls.localizerWidth > 0.f)
+    if(vorIls.isIls())
     {
       // Write ILS ==========================================================================================
       float magvar = magDecReader->getMagVar(vorIls.vorLongitude, vorIls.vorLatitude);

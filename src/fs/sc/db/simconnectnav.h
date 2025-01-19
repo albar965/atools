@@ -185,6 +185,12 @@ struct VorFacility
   float glideSlope;
   char name[64];
   qint32 lsCategory;
+
+  bool isIls() const
+  {
+    return localizerWidth > 0.f;
+  }
+
 };
 
 #pragma pack(pop)

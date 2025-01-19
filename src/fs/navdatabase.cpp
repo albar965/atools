@@ -1245,10 +1245,11 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
           metadataWriter.writeFile(QString(), "Airports", sceneryId, fileId);
 
           simconnectLoader->setProgressCallback([progress](const QString& message, bool incProgress, int airportsLoaded,
-                                                           int waypointsLoaded, int vorLoaded, int ndbLoaded)->bool {
+                                                           int waypointsLoaded, int vorLoaded, int ilsLoaded, int ndbLoaded)->bool {
                 progress->setNumAirports(airportsLoaded);
                 progress->setNumWaypoints(waypointsLoaded);
                 progress->setNumVors(vorLoaded);
+                progress->setNumIls(ilsLoaded);
                 progress->setNumNdbs(ndbLoaded);
 
                 if(incProgress)

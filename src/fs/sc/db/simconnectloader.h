@@ -42,7 +42,7 @@ class SimConnectLoaderPrivate;
 /* Message, incProgress = true to increment progress, otherwise "still alive" message. Numbers are
  * loaded features so far.  */
 typedef std::function<bool (const QString& message, bool incProgress, int airportsLoaded,
-                            int waypointsLoaded, int vorLoaded, int ndbLoaded)> SimConnectLoaderProgressCallback;
+                            int waypointsLoaded, int vorLoaded, int ilsLoaded, int ndbLoaded)> SimConnectLoaderProgressCallback;
 
 /*
  * Fetches airports, runways, starts, parking taxiways, all procedures and navaids via

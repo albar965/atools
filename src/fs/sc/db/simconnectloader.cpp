@@ -324,7 +324,7 @@ public:
        aborted = false;
 
   // Currently loaded but not written yet features
-  int airportsLoaded = 0, waypointsLoaded = 0, vorLoaded = 0, ndbLoaded = 0;
+  int airportsLoaded = 0, waypointsLoaded = 0, vorLoaded = 0, ilsLoaded = 0, ndbLoaded = 0;
 
   int facilitiesFetchedBatch = 0, // Counter to detect end of batch
       batchSize = 2000, fileId = 0, numException = 0;
@@ -1101,7 +1101,7 @@ void SimConnectLoaderPrivate::clear()
   vorFacilities.clear();
   requests.clear();
   currentFacilityDefinition = FACILITY_DATA_NONE_DEFINITION_ID;
-  airportsLoaded = waypointsLoaded = vorLoaded = ndbLoaded = 0;
+  airportsLoaded = waypointsLoaded = vorLoaded = ilsLoaded = ndbLoaded = 0;
 }
 
 bool SimConnectLoaderPrivate::callProgress(const QString& message, bool incProgress)
@@ -1123,7 +1123,7 @@ bool SimConnectLoaderPrivate::callProgress(const QString& message, bool incProgr
       if(message.isEmpty())
         dots = SimConnectLoader::tr(" ") % SimConnectLoader::tr(".").repeated((progressCounter++) % 10);
 
-      aborted = progressCallback(lastMessage % dots, incProgress, airportsLoaded, waypointsLoaded, vorLoaded, ndbLoaded);
+      aborted = progressCallback(lastMessage % dots, incProgress, airportsLoaded, waypointsLoaded, vorLoaded, ilsLoaded, ndbLoaded);
     }
   }
   return aborted;
@@ -1215,7 +1215,11 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
         {
           const VorFacility *vorFacility = static_cast<const VorFacility *>(facilityData);
           vorFacilities.append(*vorFacility);
-          vorLoaded++;
+
+          if(vorFacility->isIls())
+            ilsLoaded++;
+          else
+            vorLoaded++;
         }
         // ==============================================================================
         // Airport top level ==============================================================

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,11 @@ bool ProgressHandler::reportOther(const QString& otherAction, int current, bool 
   info.newSceneryArea = false;
   info.newOther = true;
 
+#ifdef DEBUG_INFORMATION
+  if(current != -1)
+    qDebug() << Q_FUNC_INFO << "=P=== Current reportOther" << info.current << "of" << info.total << otherAction;
+#endif
+
   if(silent)
     return false;
   else
@@ -67,6 +72,10 @@ bool ProgressHandler::reportOtherInc(const QString& otherAction, int increment)
   info.newFile = false;
   info.newSceneryArea = false;
   info.newOther = true;
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "=P=== Current reportOtherInc" << info.current << "of" << info.total << otherAction;
+#endif
 
   return callHandler();
 }
@@ -91,6 +100,10 @@ bool ProgressHandler::reportBglFile(const QString& bglFilepath)
   info.newSceneryArea = false;
   info.newOther = false;
 
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "=P=== Current reportBglFile" << info.current << "of" << info.total << bglFilepath;
+#endif
+
   return callHandler();
 }
 
@@ -101,7 +114,7 @@ bool ProgressHandler::reportFinish()
   info.newSceneryArea = false;
   info.newOther = false;
 
-  qDebug() << Q_FUNC_INFO << "info.current" << info.current;
+  qDebug() << Q_FUNC_INFO << "=P=== Current reportFinish" << info.current << "of" << info.total;
 
   return callHandler();
 }
@@ -134,6 +147,10 @@ bool ProgressHandler::reportSceneryArea(const scenery::SceneryArea *sceneryArea)
   info.newFile = false;
   info.newSceneryArea = true;
   info.newOther = false;
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "=P=== Current reportSceneryArea" << info.current << "of" << info.total;
+#endif
 
   return callHandler();
 }
