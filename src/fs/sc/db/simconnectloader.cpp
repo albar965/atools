@@ -281,7 +281,7 @@ public:
   // consumed when loading navaids
   FacilityIdList navaidIds;
 
-  // Avoid duplicate insert into navaidIds list
+  // Avoid duplicate insert into navaidIds list. This set is filled but not consumed while loading.
   FacilityIdSet navaidIdSet;
 
   // All aiports to fetch - filled by loadAirports()
@@ -662,8 +662,6 @@ bool SimConnectLoaderPrivate::loadAirports()
 
 bool SimConnectLoaderPrivate::loadNavaids()
 {
-  addNavaid("OEJ", "LO", 'V');
-
   // Consume navaidIds and insert navaids found on routes into the list for further fetching
   // Breadth-first search through network
   aborted = callProgress(SimConnectLoader::tr("Loading waypoints, VOR, ILS, NDB and airways"));
@@ -679,19 +677,20 @@ bool SimConnectLoaderPrivate::loadNavaids()
 
 bool SimConnectLoaderPrivate::loadDisconnectedNavaids()
 {
-  aborted = callProgress(SimConnectLoader::tr("Loading disconnected facilities"));
-
-  // Clear and then fill navaidIds
+  // Clear and then fill navaidIds and navaidIdSet avoiding duplicates
   if(!aborted)
-    disconnectedNavaids("VNW");
+    disconnectedNavaids("VNW" /*"VNW"*/);
+
+  qDebug() << Q_FUNC_INFO << "Number of disconnected to fetch" << navaidIds.size();
 
   if(!aborted)
-    aborted = callProgress(SimConnectLoader::tr("Loading waypoints, VOR, ILS and NDB"));
+    aborted = callProgress(SimConnectLoader::tr("Loading disconnected waypoints, VOR, ILS and NDB"));
 
+  // Request but do not fetch routes
   aborted = requestNavaids(false /* fetchRoutes */);
   if(!aborted)
   {
-    aborted = callProgress(SimConnectLoader::tr("Writing waypoints and airways to database"));
+    aborted = callProgress(SimConnectLoader::tr("Writing disconnected waypoints, VOR, ILS and NDB to database"));
     aborted = writeNavaidsToDatabase();
   }
   return aborted;
@@ -1061,10 +1060,13 @@ void SimConnectLoaderPrivate::disconnectedNavaids(const QString& typeFilter)
     // )
     // ;'>navaids.csv
 
+    // Clear facilities but not the indexes of loaded navaids navaidIdSet and navaidIdsRequested to avoid loading duplicates
     ndbFacilities.clear();
     vorFacilities.clear();
     waypointFacilities.clear();
     navaidIds.clear();
+
+    // File contains all navaids from previous simulator versions
     QFile file(":/atools/resources/navdata/navaids.csv.gz");
     if(file.open(QIODevice::ReadOnly))
     {
@@ -1078,8 +1080,18 @@ void SimConnectLoaderPrivate::disconnectedNavaids(const QString& typeFilter)
         if(!row.at(1).isEmpty())
         {
           QChar type = row.at(2).at(0);
-          if((typeFilter.isEmpty() || typeFilter.contains(type)))
-            addNavaid(FacilityId(row.at(0), row.at(1), type));
+          if(typeFilter.isEmpty() || typeFilter.contains(type))
+          {
+            QString ident = row.at(0);
+
+            // 57N30, 5730E or 57S30
+            if(type != 'W' ||
+               (ident.size() == 5 &&
+                (ident.count('N') == 1 || ident.count('E') == 1 || ident.count('W') == 1 || ident.count('S') == 1) &&
+                ident.at(0).isDigit() && ident.at(1).isDigit() &&
+                ((ident.at(3).isDigit() && ident.at(4).isDigit()) || (ident.at(2).isDigit() && ident.at(3).isDigit()))))
+              addNavaid(FacilityId(ident, row.at(1), type));
+          }
         }
       }
     }
@@ -1753,7 +1765,7 @@ int SimConnectLoader::getNumSteps() const
   // SimConnect reportOtherInc "Writing waypoints and airways to database"
   // SimConnect reportOtherInc "Writing VOR and ILS to database"
   // SimConnect reportOtherInc "Writing NDB to database"
-  return 14; // With disconnected disabled otherwise 17
+  return 16; // With disconnected enabled otherwise 14
 #else
   return 0;
 #endif
