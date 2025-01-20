@@ -407,7 +407,18 @@ struct LegFacility
   qint32 isFaf;
   qint32 isMap;
   float requiredNavigationPerformance;
+
+  bool operator!=(const LegFacility& other) const
+  {
+    return !(*this == other);
+  }
+
+  /* Ignores runway legs. Otherwise deep compare. */
+  bool operator==(const LegFacility& leg) const;
+
 };
+
+uint qHash(const LegFacility& leg);
 
 /* STAR. Child member of the AIRPORT entry point, and is itself and
  * entry point for RUNWAY_TRANSITION, ENROUTE_TRANSITION, and APPROACH_LEG.
@@ -551,7 +562,7 @@ public:
   {
   }
 
-  Runway(const RunwayFacility& runwayFacility)
+  explicit Runway(const RunwayFacility& runwayFacility)
     : runway(runwayFacility)
   {
   }
@@ -603,7 +614,7 @@ public:
   {
   }
 
-  ApproachTransition(const ApproachTransitionFacility& transitionFacility)
+  explicit ApproachTransition(const ApproachTransitionFacility& transitionFacility)
     : transition(transitionFacility)
   {
   }
@@ -633,7 +644,7 @@ public:
   {
   }
 
-  Approach(const ApproachFacility& approachFacility)
+  explicit Approach(const ApproachFacility& approachFacility)
     : approach(approachFacility)
   {
   }
@@ -675,7 +686,7 @@ public:
   {
   }
 
-  RunwayTransition(const RunwayTransitionFacility& transitionFacility)
+  explicit RunwayTransition(const RunwayTransitionFacility& transitionFacility)
     : transition(transitionFacility)
   {
   }
@@ -685,17 +696,44 @@ public:
     return transition;
   }
 
+  RunwayTransitionFacility& getTransitionFacility()
+  {
+    return transition;
+  }
+
   const QVector<LegFacility>& getLegFacilities() const
   {
     return legs;
   }
 
+  bool operator!=(const RunwayTransition& other) const
+  {
+    return !(*this == other);
+  }
+
+  /* Ignores runway legs. Otherwise deep compare including legs. */
+  bool operator==(const RunwayTransition& other) const;
+
+  const QString& getRunwayGroup() const
+  {
+    return runwayGroup;
+  }
+
+  void setRunwayGroup(const QString& value)
+  {
+    runwayGroup = value;
+  }
+
 private:
   friend class SimConnectLoaderPrivate;
 
+  QString runwayGroup;
   RunwayTransitionFacility transition;
   QVector<LegFacility> legs;
 };
+
+/* Ignores runway legs. Otherwise hashes legs too. */
+uint qHash(const RunwayTransition& trans);
 
 // =============================================
 class EnrouteTransition
@@ -705,7 +743,7 @@ public:
   {
   }
 
-  EnrouteTransition(const EnrouteTransitionFacility& transitionFacility)
+  explicit EnrouteTransition(const EnrouteTransitionFacility& transitionFacility)
     : transition(transitionFacility)
   {
   }
@@ -735,7 +773,7 @@ public:
   {
   }
 
-  Arrival(const ArrivalFacility& approachFacility)
+  explicit Arrival(const ArrivalFacility& approachFacility)
     : arrival(approachFacility)
   {
   }
@@ -760,6 +798,11 @@ public:
     return enrouteTransitions;
   }
 
+  void setRunwayTransitions(const QVector<RunwayTransition>& value)
+  {
+    runwayTransitions = value;
+  }
+
 private:
   friend class SimConnectLoaderPrivate;
 
@@ -777,7 +820,7 @@ public:
   {
   }
 
-  Departure(const DepartureFacility& departureFacility)
+  explicit Departure(const DepartureFacility& departureFacility)
     : departure(departureFacility)
   {
   }
@@ -802,6 +845,11 @@ public:
     return enrouteTransitions;
   }
 
+  void setRunwayTransitions(const QVector<RunwayTransition>& value)
+  {
+    runwayTransitions = value;
+  }
+
 private:
   friend class SimConnectLoaderPrivate;
 
@@ -820,7 +868,7 @@ public:
   {
   }
 
-  Airport(const AirportFacilityNum& airportFacility)
+  explicit Airport(const AirportFacilityNum& airportFacility)
     : airportNum(airportFacility)
   {
   }
@@ -887,6 +935,16 @@ public:
   const QVector<Arrival>& getArrivals() const
   {
     return arrivals;
+  }
+
+  QVector<Arrival>& getArrivals()
+  {
+    return arrivals;
+  }
+
+  QVector<Departure>& getDepartures()
+  {
+    return departures;
   }
 
   const QVector<Departure>& getDepartures() const
@@ -1048,6 +1106,12 @@ enum Surface
 
 /* Maps to simplified default surface types */
 QVariant surfaceToDb(Surface surface);
+
+QDebug operator<<(QDebug out, const LegFacility& obj);
+QDebug operator<<(QDebug out, const RunwayTransition& obj);
+QDebug operator<<(QDebug out, const EnrouteTransition& obj);
+QDebug operator<<(QDebug out, const Arrival& obj);
+QDebug operator<<(QDebug out, const Departure& obj);
 
 } // namespace db
 } // namespace sc

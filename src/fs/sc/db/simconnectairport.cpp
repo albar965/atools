@@ -20,6 +20,7 @@
 #include "atools.h"
 #include "fs/bgl/ap/com.h"
 #include "fs/bgl/ap/parking.h"
+#include "fs/bgl/converter.h"
 
 #include <QVariant>
 
@@ -384,6 +385,124 @@ QVariant surfaceToDb(Surface surface)
       return "UNKNOWN";
   }
   return "UNKNOWN";
+}
+
+uint qHash(const LegFacility& leg)
+{
+  return leg.type ^
+         // Ignore runways
+         (leg.fixType == 'R' ? 98519 : qHash(QLatin1String(leg.fixIcao))) ^
+         qHash(QLatin1String(leg.fixRegion)) ^ (leg.fixType << 2) ^
+         (leg.flyOver << 4) ^
+         (leg.distanceMinute << 8) ^
+         (leg.trueDegree << 10) ^
+         (leg.turnDirection << 12) ^
+         qHash(QLatin1String(leg.originIcao)) ^
+         qHash(QLatin1String(leg.originRegion)) ^
+         (leg.originType << 14) ^
+         atools::roundToInt(leg.theta * 1000.f) ^
+         atools::roundToInt(leg.rho * 1000.f) ^
+         atools::roundToInt(leg.course * 1000.f) ^
+         atools::roundToInt(leg.routeDistance * 1000.f) ^
+         (leg.approachAltDesc << 16) ^
+         atools::roundToInt(leg.altitude1 * 1000.f) ^
+         atools::roundToInt(leg.altitude2 * 1000.f) ^
+         atools::roundToInt(leg.speedLimit * 1000.f) ^
+         atools::roundToInt(leg.verticalAngle * 1000.f) ^
+         qHash(QLatin1String(leg.arcCenterFixIcao)) ^
+         qHash(QLatin1String(leg.arcCenterFixRegion)) ^
+         (leg.arcCenterFixType << 18);
+}
+
+bool LegFacility::operator==(const LegFacility& leg) const
+{
+  return type == leg.type &&
+         // Ignore runways
+         (leg.fixType == 'R' || strcmp(fixIcao, leg.fixIcao) == 0) &&
+         strcmp(fixRegion, leg.fixRegion) == 0 && fixType == leg.fixType &&
+         flyOver == leg.flyOver &&
+         distanceMinute == leg.distanceMinute &&
+         trueDegree == leg.trueDegree &&
+         turnDirection == leg.turnDirection &&
+         strcmp(originIcao, leg.originIcao) == 0 &&
+         strcmp(originRegion, leg.originRegion) == 0 &&
+         originType == leg.originType &&
+         atools::almostEqual(theta, leg.theta) &&
+         atools::almostEqual(rho, leg.rho) &&
+         atools::almostEqual(course, leg.course) &&
+         atools::almostEqual(routeDistance, leg.routeDistance) &&
+         approachAltDesc == leg.approachAltDesc &&
+         atools::almostEqual(altitude1, leg.altitude1) &&
+         atools::almostEqual(altitude2, leg.altitude2) &&
+         atools::almostEqual(speedLimit, leg.speedLimit) &&
+         atools::almostEqual(verticalAngle, leg.verticalAngle) &&
+         strcmp(arcCenterFixIcao, leg.arcCenterFixIcao) == 0 &&
+         strcmp(arcCenterFixRegion, leg.arcCenterFixRegion) == 0 &&
+         arcCenterFixType == leg.arcCenterFixType;
+}
+
+uint qHash(const RunwayTransition& trans)
+{
+  return qHash(trans.getLegFacilities()) ^
+         (trans.getTransitionFacility().runwayDesignator << 8) ^ (trans.getTransitionFacility().runwayNumber << 16);
+}
+
+bool RunwayTransition::operator==(const RunwayTransition& other) const
+{
+  return transition.runwayDesignator == other.transition.runwayDesignator &&
+         transition.runwayNumber == other.transition.runwayNumber &&
+         getLegFacilities() == other.getLegFacilities();
+}
+
+QDebug operator<<(QDebug out, const LegFacility& obj)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace() << "[" << obj.fixIcao << "/" << obj.fixRegion << "/" << QChar(obj.fixType) << "]";
+  return out;
+}
+
+QDebug operator<<(QDebug out, const RunwayTransition& obj)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace() << "RunwayTransition["
+                          << "runway " << bgl::converter::runwayToStr(obj.getTransitionFacility().runwayNumber,
+                                              obj.getTransitionFacility().runwayDesignator)
+                          << ", runway group " << obj.getRunwayGroup()
+                          << ", legs " << obj.getLegFacilities()
+                          << "]";
+  return out;
+}
+
+QDebug operator<<(QDebug out, const EnrouteTransition& obj)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace() << "EnrouteTransition["
+                          << "name " << obj.getTransitionFacility().name
+                          << ", legs " << obj.getLegFacilities()
+                          << "]";
+  return out;
+}
+
+QDebug operator<<(QDebug out, const Arrival& obj)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace() << "Arrival["
+                          << "name " << obj.getArrivalFacility().name
+                          << ", runway trans " << obj.getRunwayTransitions()
+                          << ", appr " << obj.getApproachLegFacilities()
+                          << ", enroute " << obj.getEnrouteTransitions() << "]";
+  return out;
+}
+
+QDebug operator<<(QDebug out, const Departure& obj)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace() << "Departure["
+                          << "name " << obj.getDepartureFacility().name
+                          << ", runway trans " << obj.getRunwayTransitions()
+                          << ", appr " << obj.getApproachLegFacilities()
+                          << ", enroute " << obj.getEnrouteTransitions() << "]";
+  return out;
 }
 
 } // namespace db

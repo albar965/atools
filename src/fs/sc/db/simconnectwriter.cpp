@@ -160,6 +160,159 @@ bool SimConnectWriter::callProgressUpdate()
   return callProgress(QString(), false /* incProgress */);
 }
 
+QVector<RunwayTransition> SimConnectWriter::groupProcedures(const QVector<RunwayTransition>& runwayTransitions,
+                                                            const QHash<int, QVector<const Runway *> > runwaysByNumber,
+                                                            int airportNumRunwayEnds) const
+{
+  // KSEA {{ISBRG1/NESOE/34C}, {ISBRG1/CUSBU/16L}, {ISBRG1/DODVE/16R}}
+  // KSEA {{MONTN2/PEAKK/16C, MONTN2/PEAKK/16L, MONTN2/PEAKK/16R}, {MONTN2/NEZUG/34C, MONTN2/NEZUG/34L, MONTN2/NEZUG/34R}}
+  // EDDL {{BIKM1A/DUS/05L, BIKM1A/DUS/05R}, {BIKM1A/DUS/23L, BIKM1A/DUS/23R}}
+  QVector<RunwayTransition> resultTransitions;
+
+  // Detect "ALL" =======================================================================
+  // Make unique hash by leg information only as key ignoring runways completely
+  // Value is related list of transition pointers
+  QHash<RunwayTransition, QVector<const RunwayTransition *> > transitionByName;
+  for(const RunwayTransition& runwayTransPtr : runwayTransitions)
+  {
+    // Reset runway and designator to exclude in hashing and compare
+    RunwayTransition runwayTransKey(runwayTransPtr);
+    runwayTransKey.getTransitionFacility().runwayNumber = 0;
+    runwayTransKey.getTransitionFacility().runwayDesignator = 0;
+
+    if(transitionByName.contains(runwayTransKey))
+      transitionByName[runwayTransKey].append(&runwayTransPtr);
+    else
+      transitionByName.insert(runwayTransKey, {&runwayTransPtr});
+  }
+
+  // List of remaining transtitions after removing ALL
+  QVector<const RunwayTransition *> runwayTransitionsFiltered;
+  for(auto it = transitionByName.begin(); it != transitionByName.end(); ++it)
+  {
+    // EDDL BIKM1A/DUS -> {{BIKM1A/DUS/05L, BIKM1A/DUS/05R}, {BIKM1A/DUS/23L, BIKM1A/DUS/23R}}
+    QVector<const RunwayTransition *> transitionPtrs = transitionByName.value(it.key());
+
+    // Number of referenced runways is equal to airport runways - set to "ALL"
+    if(transitionPtrs.size() == airportNumRunwayEnds)
+    {
+      // If the set is the same size as number of airport runway ends it covers all
+      // Add a modified copy to the result
+      RunwayTransition resultTransition(*transitionPtrs.constFirst());
+      resultTransition.setRunwayGroup("ALL");
+      resultTransition.getTransitionFacility().runwayNumber = -1;
+      resultTransition.getTransitionFacility().runwayDesignator = -1;
+      resultTransitions.append(resultTransition);
+
+      if(verbose)
+      {
+        qDebug() << Q_FUNC_INFO << "Convertingto ALL";
+        for(const RunwayTransition *runwayTransPtr : transitionPtrs)
+          qDebug() << Q_FUNC_INFO << *runwayTransPtr;
+      }
+    }
+    else
+    {
+      // Add pointers to list for futher processing if runway list is not "ALL"
+      for(const RunwayTransition *runwayTransition : transitionPtrs)
+        runwayTransitionsFiltered.append(runwayTransition);
+    }
+  }
+
+  // Detect parallel runways =======================================================================
+  // Make unique hash by leg information and runway number as key ignoring runways completely
+  // Value is related list of transition pointers
+  QHash<RunwayTransition, QVector<const RunwayTransition *> > transitionByNameAndRwNum;
+  for(const RunwayTransition *runwayTransPtr : runwayTransitionsFiltered)
+  {
+    // Reset designator to exclude in hashing and compare
+    RunwayTransition runwayTransKey(*runwayTransPtr);
+    runwayTransKey.getTransitionFacility().runwayDesignator = 0;
+    if(transitionByNameAndRwNum.contains(runwayTransKey))
+      transitionByNameAndRwNum[runwayTransKey].append(runwayTransPtr);
+    else
+      transitionByNameAndRwNum.insert(runwayTransKey, {runwayTransPtr});
+  }
+
+  for(auto it = transitionByNameAndRwNum.begin(); it != transitionByNameAndRwNum.end(); ++it)
+  {
+    // KSEA MONTN2/PEAKK/16 -> {MONTN2/PEAKK/16C, MONTN2/PEAKK/16L, MONTN2/PEAKK/16R}
+    QVector<const RunwayTransition *> transitionPtrs = transitionByNameAndRwNum.value(it.key());
+    if(transitionPtrs.size() == 1)
+    {
+      // References only a single runway - add copy to result
+      resultTransitions.append(*transitionPtrs.constFirst());
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << "Copying" << *transitionPtrs.constFirst();
+    }
+    else if(!transitionPtrs.isEmpty())
+    {
+      // More than one runway in the group which is grouped by runway number without designator
+      const RunwayTransition *firstTrans = transitionPtrs.constFirst();
+      int parallelRunwaysSize = runwaysByNumber.value(firstTrans->getTransitionFacility().runwayNumber).size();
+      if(parallelRunwaysSize == transitionPtrs.size())
+      {
+        // GROUP - add first transition with group code
+        RunwayTransition resultTransition(*firstTrans);
+
+        resultTransition.getTransitionFacility().runwayDesignator = -1;
+        resultTransition.setRunwayGroup(
+          "RW" % util::runwayNamePrefixZero(bgl::converter::runwayToStr(resultTransition.getTransitionFacility().runwayNumber, 0)) % 'B');
+        resultTransitions.append(resultTransition);
+
+        if(verbose)
+        {
+          qDebug() << Q_FUNC_INFO << "Converting to" << resultTransition.getRunwayGroup();
+          for(const RunwayTransition *runwayTransPtr : runwayTransitionsFiltered)
+            qDebug() << Q_FUNC_INFO << *runwayTransPtr;
+        }
+      }
+      else
+      {
+        for(const RunwayTransition *transition : transitionPtrs)
+          resultTransitions.append(*transition);
+      }
+    }
+  }
+
+  return resultTransitions;
+}
+
+void SimConnectWriter::groupProcedures(Airport& airport) const
+{
+  // Runways grouped by number
+  // runwayNumber, runways
+  QHash<int, QVector<const Runway *> > runwaysByNumber;
+  for(const Runway& runway : airport.getRunways())
+  {
+    if(runwaysByNumber.contains(runway.getFacility().primaryNumber))
+      runwaysByNumber[runway.getFacility().primaryNumber].append(&runway);
+    else
+      runwaysByNumber.insert(runway.getFacility().primaryNumber, {&runway});
+
+    if(runwaysByNumber.contains(runway.getFacility().secondaryNumber))
+      runwaysByNumber[runway.getFacility().secondaryNumber].append(&runway);
+    else
+      runwaysByNumber.insert(runway.getFacility().secondaryNumber, {&runway});
+  }
+
+  int airportNumRunwayEnds = airport.getRunways().size() * 2;
+
+  for(Arrival& arrival : airport.getArrivals())
+  {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "============ Arrival" << arrival.getArrivalFacility().name;
+    arrival.setRunwayTransitions(groupProcedures(arrival.getRunwayTransitions(), runwaysByNumber, airportNumRunwayEnds));
+  }
+
+  for(Departure& departure : airport.getDepartures())
+  {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "============ Departure" << departure.getDepartureFacility().name;
+    departure.setRunwayTransitions(groupProcedures(departure.getRunwayTransitions(), runwaysByNumber, airportNumRunwayEnds));
+  }
+}
+
 bool SimConnectWriter::callProgress(const QString& message, bool incProgress)
 {
   bool aborted = false;
@@ -335,11 +488,12 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
   {
     // Consume airport facility
     auto it = airports.constBegin();
-    const Airport airport = *it;
+    Airport airport = *it;
     QString airportIdent = airport.getIcao(), airportRegion = airport.getRegion();
     const AirportFacility& airportFacility = airport.getAirportFacility();
-
     airports.erase(it);
+
+    groupProcedures(airport);
 
     try
     {
@@ -680,19 +834,30 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         approachStmt->bindValue(":airport_id", airportId);
 
         // Look for runway ends in index  =======================
-        QString runwayName = bgl::converter::runwayToStr(approachFacility.runwayNumber, approachFacility.runwayDesignator);
-        int endId = runwayIndex.getRunwayEndId(airportIdent, runwayName,
-                                               "SimConnect - approach " % QString(approach.getApproachFacility().fafIcao));
+        QString runwayName;
+        int endId = 0;
+        if(approachFacility.runwayNumber > 0)
+        {
+          QString runwayName = bgl::converter::runwayToStr(approachFacility.runwayNumber, approachFacility.runwayDesignator);
+          endId = runwayIndex.getRunwayEndId(airportIdent, runwayName,
+                                             "SimConnect - approach " % QString(approach.getApproachFacility().fafIcao));
+        }
+
         if(endId > 0)
           approachStmt->bindValue(":runway_end_id", endId);
         else
           approachStmt->bindNullInt(":runway_end_id");
+
+        if(!runwayName.isEmpty() && runwayName != "RW00")
+          approachStmt->bindValue(":runway_name", runwayName);
+        else
+          approachStmt->bindNullStr(":runway_name");
+
         // Build ARINC name
         approachStmt->bindValue(":arinc_name",
                                 bgl::ap::arincNameAppr(static_cast<bgl::ap::ApproachType>(approachFacility.type), runwayName,
                                                        static_cast<char>(approachFacility.suffix), false));
         approachStmt->bindValue(":airport_ident", airportIdent);
-        approachStmt->bindValue(":runway_name", runwayName);
         approachStmt->bindValue(":type", enumToStr(bgl::ap::approachTypeToStr, static_cast<bgl::ap::ApproachType>(approachFacility.type)));
         if(approachFacility.suffix > '0')
           approachStmt->bindValue(":suffix", QChar(approachFacility.suffix));
@@ -752,10 +917,10 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         // multi-runway definitions like "23B" or "ALL"
         for(const RunwayTransition& runwayTransition : arrival.getRunwayTransitions())
         {
-          const RunwayTransitionFacility& transitionFacility = runwayTransition.getTransitionFacility();
           approachStmt->bindValue(":approach_id", ++approachId);
           approachStmt->bindValue(":airport_id", airportId);
-          bindRunway(approachStmt, runwayIndex, airportIdent, transitionFacility.runwayNumber, transitionFacility.runwayDesignator,
+
+          bindRunway(approachStmt, runwayIndex, airportIdent, runwayTransition,
                      "SimConnect - arrival " % QString(arrival.getArrivalFacility().name));
           approachStmt->bindValue(":airport_ident", airportIdent);
           approachStmt->bindValue(":type", "GPS");
@@ -817,10 +982,9 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
       {
         for(const RunwayTransition& runwayTransition : departure.getRunwayTransitions())
         {
-          const RunwayTransitionFacility& transitionFacility = runwayTransition.getTransitionFacility();
           approachStmt->bindValue(":approach_id", ++approachId);
           approachStmt->bindValue(":airport_id", airportId);
-          bindRunway(approachStmt, runwayIndex, airportIdent, transitionFacility.runwayNumber, transitionFacility.runwayDesignator,
+          bindRunway(approachStmt, runwayIndex, airportIdent, runwayTransition,
                      "SimConnect - departure " % QString(departure.getDepartureFacility().name));
           approachStmt->bindValue(":airport_ident", airportIdent);
           approachStmt->bindValue(":type", "GPS");
@@ -1335,23 +1499,33 @@ bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned lo
 }
 
 void SimConnectWriter::bindRunway(atools::sql::SqlQuery *query, const atools::fs::db::RunwayIndex& runwayIndex, const QString& airportIcao,
-                                  int runwayNumber, int runwayDesignator, const QString& sourceObject) const
+                                  const RunwayTransition& runwayTransition, const QString& sourceObject) const
 {
-  // Get runway name and end id from index
-  QString runwayName = bgl::converter::runwayToStr(runwayNumber, runwayDesignator);
-  int endId = runwayIndex.getRunwayEndId(airportIcao, runwayName, sourceObject);
-
-  if(endId > 0)
-    query->bindValue(":runway_end_id", endId);
+  if(!runwayTransition.getRunwayGroup().isEmpty())
+  {
+    approachStmt->bindValue(":arinc_name", runwayTransition.getRunwayGroup());
+    approachStmt->bindNullStr(":runway_name");
+    approachStmt->bindNullInt(":runway_end_id");
+  }
   else
-    query->bindNullInt(":runway_end_id");
+  {
+    // Get runway name and end id from index
+    const RunwayTransitionFacility& transitionFacility = runwayTransition.getTransitionFacility();
+    QString runwayName = bgl::converter::runwayToStr(transitionFacility.runwayNumber, transitionFacility.runwayDesignator);
+    int endId = runwayIndex.getRunwayEndId(airportIcao, runwayName, sourceObject);
 
-  if(!runwayName.isEmpty())
-    query->bindValue(":arinc_name", QString("RW") + runwayName);
-  else
-    query->bindNullInt(":arinc_name");
+    if(endId > 0)
+      query->bindValue(":runway_end_id", endId);
+    else
+      query->bindNullInt(":runway_end_id");
 
-  query->bindValue(":runway_name", runwayName);
+    if(!runwayName.isEmpty())
+      query->bindValue(":arinc_name", QString("RW") + runwayName);
+    else
+      query->bindNullInt(":arinc_name");
+
+    query->bindValue(":runway_name", runwayName);
+  }
 }
 
 void SimConnectWriter::bindVasi(atools::sql::SqlQuery *query, const Runway& runway, bool primary) const

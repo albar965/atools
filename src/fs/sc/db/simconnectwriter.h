@@ -49,6 +49,8 @@ class RunwayIndex;
 namespace sc {
 namespace db {
 
+class RunwayTransition;
+
 class IcaoId;
 class RunwayId;
 class FacilityId;
@@ -140,13 +142,17 @@ private:
 
   /* Bind runway end ID, ARINC name and runway name to a procedure */
   void bindRunway(atools::sql::SqlQuery *query, const atools::fs::db::RunwayIndex& runwayIndex, const QString& airportIcao,
-                  int runwayNumber, int runwayDesignator, const QString& sourceObject) const;
+                  const RunwayTransition& runwayTransition, const QString& sourceObject) const;
 
   /* Set all bound values for all queries to null */
   void clearAllBoundValues();
 
   bool callProgress(const QString& message, bool incProgress = true);
   bool callProgressUpdate();
+
+  void groupProcedures(Airport& airport) const;
+  QVector<RunwayTransition> groupProcedures(const QVector<RunwayTransition>& runwayTransitions,
+                                            const QHash<int, QVector<const Runway*> > runwaysByNumber, int airportNumRunwayEnds) const;
 
   atools::sql::SqlDatabase& db;
   bool verbose = false;

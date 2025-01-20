@@ -1520,12 +1520,12 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
                   if(legsParentType == SIMCONNECT_FACILITY_DATA_ARRIVAL)
                   {
                     if(!currentAirport->arrivals.isEmpty())
-                      currentAirport->arrivals.last().runwayTransitions.append(*transition);
+                      currentAirport->arrivals.last().runwayTransitions.append(RunwayTransition(*transition));
                   }
                   else if(legsParentType == SIMCONNECT_FACILITY_DATA_DEPARTURE)
                   {
                     if(!currentAirport->departures.isEmpty())
-                      currentAirport->departures.last().runwayTransitions.append(*transition);
+                      currentAirport->departures.last().runwayTransitions.append(RunwayTransition(*transition));
                   }
                   else
                     qWarning() << Q_FUNC_INFO << "Wrong parent type for runway trans" << recvFacilityData->UserRequestId;
@@ -1542,14 +1542,14 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
                   if(legsParentType == SIMCONNECT_FACILITY_DATA_ARRIVAL)
                   {
                     if(!currentAirport->arrivals.isEmpty())
-                      currentAirport->arrivals.last().enrouteTransitions.append(*transition);
+                      currentAirport->arrivals.last().enrouteTransitions.append(EnrouteTransition(*transition));
                     else
                       qWarning() << Q_FUNC_INFO << "Arrivals for enroute trans empty" << recvFacilityData->UserRequestId;
                   }
                   else if(legsParentType == SIMCONNECT_FACILITY_DATA_DEPARTURE)
                   {
                     if(!currentAirport->departures.isEmpty())
-                      currentAirport->departures.last().enrouteTransitions.append(*transition);
+                      currentAirport->departures.last().enrouteTransitions.append(EnrouteTransition(*transition));
                     else
                       qWarning() << Q_FUNC_INFO << "Departures for enroute trans empty" << recvFacilityData->UserRequestId;
                   }
