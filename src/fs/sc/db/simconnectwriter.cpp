@@ -595,16 +595,16 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         // Primary threshold // Primary blastpad // Primary overrun
         // Secondary threshold // Secondary blastpad // Secondary overrun
         if(runway.getPavementFacilities().size() != 6)
-          throw Exception(tr("Wrong pavements size %1 in airport %2").arg(runway.getPavementFacilities().size()).arg(airportIdent));
+          throw Exception(QString("Wrong pavements size %1 in airport %2").arg(runway.getPavementFacilities().size()).arg(airportIdent));
 
         // Primary approach lights // Secondary approach lights
         if(runway.getApproachLightFacilities().size() != 2)
-          throw Exception(tr("Wrong approach lights size %1 in airport %2").arg(runway.getApproachLightFacilities().size()).arg(
-                            airportIdent));
+          throw Exception(QString("Wrong approach lights size %1 in airport %2").
+                          arg(runway.getApproachLightFacilities().size()).arg(airportIdent));
 
         // Primary left vasi // Primary right vasi // Secondary left vasi // Secondary right vasi
         if(runway.getVasiFacilities().size() != 4)
-          throw Exception(tr("Wrong VASI lights size %1 in airport %2").arg(runway.getVasiFacilities().size()).arg(airportIdent));
+          throw Exception(QString("Wrong VASI lights size %1 in airport %2").arg(runway.getVasiFacilities().size()).arg(airportIdent));
 
         // Runway ===========================================================================================
         const RunwayFacility& runwayFacility = runway.getFacility();

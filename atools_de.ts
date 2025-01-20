@@ -1166,7 +1166,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>Updating approaches</source>
-        <translation>Aktualisiere Prozeduren</translation>
+        <translation>Aktualisiere Verfahren</translation>
     </message>
     <message>
         <source>Updating Airports</source>
@@ -1270,7 +1270,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>Creating waypoints for procedures</source>
-        <translation>Erstelle Wegpunkte für Prozeduren</translation>
+        <translation>Erstelle Wegpunkte für Verfahren</translation>
     </message>
     <message>
         <source>Updating Navids in Waypoint</source>
@@ -1342,7 +1342,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>SimConnect Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>SimConnect Flugplätze</translation>
     </message>
 </context>
 <context>
@@ -1917,122 +1917,106 @@ Nachtzeit: %5</translation>
     <name>SimConnectLoader</name>
     <message>
         <source>Loading airport count</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Flugplatzzähler</translation>
     </message>
     <message>
         <source>Loading airport facility numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Anzahl der Flugplatzeinrichtungen</translation>
     </message>
     <message>
         <source>Loading airport base information</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Basisinformationen für Fluplätze</translation>
     </message>
     <message>
         <source>Loading airport COM</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Fluplatzfrequenzen</translation>
     </message>
     <message>
         <source>Loading airport helipads</source>
-        <translation type="unfinished"></translation>
+        <translation>Laden Helikopterlandeplätze</translation>
     </message>
     <message>
         <source>Loading airport runways</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Flugplatz-Runways</translation>
     </message>
     <message>
         <source>Loading airport start positions</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Flugplatz-Startposititionen</translation>
     </message>
     <message>
         <source>Loading airport procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Flugplatzverfahren</translation>
     </message>
     <message>
         <source>Loading airport taxiways and parking</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Flugplatzrollbahnen und Parkpositionen</translation>
     </message>
     <message>
         <source>Loading waypoints, VOR, ILS, NDB and airways</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Loading disconnected facilities</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Writing waypoints and airways to database</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Wegpunkte, VOR, ILS, NDB und Luftstraßen</translation>
     </message>
     <message>
         <source>Too many errors reading airport data. Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu viele Lesefehler beim Laden der Flugplatzdaten. Stoppe.</translation>
     </message>
     <message>
         <source>Too many errors reading navaid data. Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu viele Lesefehler beim Laden der Navigationshilfen. Stoppe.</translation>
     </message>
     <message>
         <source> </source>
-        <translation type="unfinished"></translation>
+        <translation> </translation>
     </message>
     <message>
         <source>.</source>
-        <translation type="unfinished">.</translation>
+        <translation>.</translation>
     </message>
     <message>
-        <source>Loading waypoints, VOR, ILS and NDB</source>
-        <translation type="unfinished"></translation>
+        <source>Loading disconnected waypoints, VOR, ILS and NDB</source>
+        <translation>Lade nicht verbundene Wegpunkte, VOR, ILS, NDB und Luftstraßen</translation>
+    </message>
+    <message>
+        <source>Writing disconnected waypoints, VOR, ILS and NDB to database</source>
+        <translation>Schreibe nicht verbundene Wegpunkte, VOR, ILS und NDB in die Datenbank</translation>
     </message>
 </context>
 <context>
     <name>SimConnectWriter</name>
     <message>
         <source> </source>
-        <translation type="unfinished"></translation>
+        <translation> </translation>
     </message>
     <message>
         <source>.</source>
-        <translation type="unfinished">.</translation>
+        <translation>.</translation>
     </message>
     <message>
         <source>Writing airport facilities to database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Wrong pavements size %1 in airport %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Wrong approach lights size %1 in airport %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Wrong VASI lights size %1 in airport %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibe Flugplatzeinrichtungen in die Datenbank</translation>
     </message>
     <message>
         <source>Caught exception writing airport %1. Error: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Schreiben des Flugplatzes %1. Fehler: %2</translation>
     </message>
     <message>
         <source>Caught unknown exception writing airport %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Fehler beim Schreiben des Flugplatzes %1.</translation>
     </message>
     <message>
         <source>Too many errors writing airport data. Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu viele Fehler beim Schreiben der Flugplatzdaten. Stoppe.</translation>
     </message>
     <message>
         <source>Writing NDB to database</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibe NDB in die Datenbank</translation>
     </message>
     <message>
         <source>Writing VOR and ILS to database</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibe VOR und ILS in die Datenbank</translation>
     </message>
     <message>
         <source>Writing waypoints and airways to database</source>
-        <translation type="unfinished"></translation>
+        <translation>Schreibe Wegpunkte und Luftstraßen in die Datenbank</translation>
     </message>
 </context>
 <context>
