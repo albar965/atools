@@ -1290,7 +1290,7 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
       float magvar = magDecReader->getMagVar(vorIls.vorLongitude, vorIls.vorLatitude);
       float heading = atools::geo::normalizeCourse(vorIls.localizer + bgl::converter::adjustMagvar(vorIls.magvar));
 
-      ilsStmt->bindValue(":ils_id", ++vorId);
+      ilsStmt->bindValue(":ils_id", ++ilsId);
       ilsStmt->bindValue(":ident", vorIls.icao);
       ilsStmt->bindValue(":name", vorIls.name);
       ilsStmt->bindValue(":region", vorIls.region);
