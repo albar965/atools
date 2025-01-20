@@ -1823,12 +1823,20 @@ void SimConnectLoader::setProgressCallback(const SimConnectLoaderProgressCallbac
 
 void SimConnectLoader::setAirportFetchDelay(int value)
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   p->airportFetchDelay = value;
+#else
+  Q_UNUSED(value)
+#endif
 }
 
 void SimConnectLoader::setNavaidFetchDelay(int value)
 {
+#if !defined(SIMCONNECT_BUILD_WIN32)
   p->navaidFetchDelay = value;
+#else
+  Q_UNUSED(value)
+#endif
 }
 
 } // namespace db
