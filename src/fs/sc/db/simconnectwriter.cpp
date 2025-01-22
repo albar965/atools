@@ -50,15 +50,22 @@ using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 using atools::geo::Rect;
 using atools::geo::Pos;
-using atools::geo::meterToFeet;
-using atools::geo::meterToNm;
-using atools::geo::nmToMeter;
 using atools::fs::bgl::util::enumToStr;
 
 // Do not extend bounding rectangle beyond this distance from center point
 const static float MAX_DISTANCE_TO_BOUNDING_NM = 20.f;
 
 const static int UPDATE_RATE_MS = 2000;
+
+float mToNm(float meter)
+{
+  return atools::geo::meterToNm(meter);
+}
+
+float mToFt(float meter, int precision = 0)
+{
+  return atools::roundToPrecision(atools::geo::meterToFeet(meter), precision);
+}
 
 // Binding inline helper functions ===================================================
 inline bool valid(const geo::Pos& pos)
@@ -87,7 +94,7 @@ inline void bindPosAlt(atools::sql::SqlQuery *query, const atools::geo::Pos& pos
   bindPos(query, pos, prefix);
 
   if(valid(pos))
-    query->bindValue(":" % prefix % "altitude", meterToFeet(pos.getAltitude()));
+    query->bindValue(":" % prefix % "altitude", atools::geo::meterToFeet(pos.getAltitude()));
   else
     query->bindNullFloat(":" % prefix % "altitude");
 }
@@ -129,14 +136,14 @@ inline atools::geo::Pos calcPosFromBias(const atools::geo::Pos& airportPos, floa
   // Calculate offset position from bias in meter
   atools::geo::PosD pos(airportPos);
   pos.setLonX(pos.endpoint(biasXMeter, 90.).getLonX()); // Do precise calculation
-  pos.setLatY(pos.getLatY() + meterToNm(static_cast<double>(biasYMeter)) / 60.); // 1 deg minute = 1 NM
+  pos.setLatY(pos.getLatY() + atools::geo::meterToNm(static_cast<double>(biasYMeter)) / 60.); // 1 deg minute = 1 NM
   return pos.asPos();
 }
 
 void extend(atools::geo::Rect& rect, const atools::geo::Pos& pos)
 {
   if(pos.isValid() && !pos.isNull() &&
-     (!rect.isValid() || pos.distanceMeterTo(rect.getCenter()) < nmToMeter(MAX_DISTANCE_TO_BOUNDING_NM)))
+     (!rect.isValid() || pos.distanceMeterTo(rect.getCenter()) < atools::geo::nmToMeter(MAX_DISTANCE_TO_BOUNDING_NM)))
     rect.extend(pos);
 }
 
@@ -549,8 +556,8 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
       if(longestIndex >= 0)
       {
         const RunwayFacility& runway = airport.getRunways().at(longestIndex).getFacility();
-        airportStmt->bindValue(":longest_runway_length", meterToFeet(runway.length));
-        airportStmt->bindValue(":longest_runway_width", meterToFeet(runway.width));
+        airportStmt->bindValue(":longest_runway_length", mToFt(runway.length));
+        airportStmt->bindValue(":longest_runway_width", mToFt(runway.width));
         airportStmt->bindValue(":longest_runway_heading", runway.heading);
         airportStmt->bindValue(":longest_runway_surface", surfaceToDb(static_cast<Surface>(runway.surface)));
       }
@@ -583,8 +590,8 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
       bindPosAlt(airportStmt, towerPos, "tower_");
       extend(bounding, towerPos);
 
-      airportStmt->bindValue(":transition_altitude", meterToFeet(airportFacility.transitionAltitude));
-      airportStmt->bindValue(":transition_level", meterToFeet(airportFacility.transitionLevel));
+      airportStmt->bindValue(":transition_altitude", mToFt(airportFacility.transitionAltitude));
+      airportStmt->bindValue(":transition_level", mToFt(airportFacility.transitionLevel));
       bindPosAlt(airportStmt, airportPos);
 
       // Runways ===========================================================================================
@@ -623,10 +630,10 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         runwayStmt->bindValue(":primary_end_id", primaryEndId);
         runwayStmt->bindValue(":secondary_end_id", secondaryEndId);
         runwayStmt->bindValue(":surface", surfaceToDb(static_cast<Surface>(runwayFacility.surface)));
-        runwayStmt->bindValue(":length", meterToFeet(runwayFacility.length));
-        runwayStmt->bindValue(":width", meterToFeet(runwayFacility.width));
+        runwayStmt->bindValue(":length", mToFt(runwayFacility.length));
+        runwayStmt->bindValue(":width", mToFt(runwayFacility.width));
         runwayStmt->bindValue(":heading", runwayFacility.heading);
-        runwayStmt->bindValue(":pattern_altitude", atools::roundToInt(meterToFeet(runwayFacility.patternAltitude)));
+        runwayStmt->bindValue(":pattern_altitude", atools::roundToInt(mToFt(runwayFacility.patternAltitude)));
         runwayStmt->bindValue(":marking_flags", 0);
 
         // Look for lighted runway taxipaths which overlap with this primary or secondary runway number =========
@@ -679,9 +686,9 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         QString runwayName = bgl::converter::runwayToStr(runwayFacility.primaryNumber, runwayFacility.primaryDesignator);
         runwayEndStmt->bindValue(":name", runwayName);
         runwayEndStmt->bindValue(":end_type", "P");
-        runwayEndStmt->bindValue(":offset_threshold", meterToFeet(pavements.at(PRIMARY_THRESHOLD).length));
-        runwayEndStmt->bindValue(":blast_pad", meterToFeet(pavements.at(PRIMARY_BLASTPAD).length));
-        runwayEndStmt->bindValue(":overrun", meterToFeet(pavements.at(PRIMARY_OVERRUN).length));
+        runwayEndStmt->bindValue(":offset_threshold", mToFt(pavements.at(PRIMARY_THRESHOLD).length));
+        runwayEndStmt->bindValue(":blast_pad", mToFt(pavements.at(PRIMARY_BLASTPAD).length));
+        runwayEndStmt->bindValue(":overrun", mToFt(pavements.at(PRIMARY_OVERRUN).length));
         bindVasi(runwayEndStmt, runway, true /* primary */);
         runwayEndStmt->bindValue(":has_closed_markings", 0);
         runwayEndStmt->bindValue(":has_stol_markings", 0);
@@ -710,9 +717,9 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         runwayName = bgl::converter::runwayToStr(runwayFacility.secondaryNumber, runwayFacility.secondaryDesignator);
         runwayEndStmt->bindValue(":name", runwayName);
         runwayEndStmt->bindValue(":end_type", "S");
-        runwayEndStmt->bindValue(":offset_threshold", meterToFeet(pavements.at(SECONDARY_THRESHOLD).length));
-        runwayEndStmt->bindValue(":blast_pad", meterToFeet(pavements.at(SECONDARY_BLASTPAD).length));
-        runwayEndStmt->bindValue(":overrun", meterToFeet(pavements.at(SECONDARY_OVERRUN).length));
+        runwayEndStmt->bindValue(":offset_threshold", mToFt(pavements.at(SECONDARY_THRESHOLD).length));
+        runwayEndStmt->bindValue(":blast_pad", mToFt(pavements.at(SECONDARY_BLASTPAD).length));
+        runwayEndStmt->bindValue(":overrun", mToFt(pavements.at(SECONDARY_OVERRUN).length));
         bindVasi(runwayEndStmt, runway, false /* primary */);
         runwayEndStmt->bindValue(":has_closed_markings", 0);
         runwayEndStmt->bindValue(":has_stol_markings", 0);
@@ -818,8 +825,8 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
           helipadStmt->bindValue(":surface", surfaceToDb(static_cast<Surface>(helipad.surface)));
           helipadStmt->bindValue(":type", enumToStr(bgl::Helipad::helipadTypeToStr, static_cast<bgl::helipad::HelipadType>(helipad.type)));
 
-          helipadStmt->bindValue(":length", meterToFeet(helipad.length));
-          helipadStmt->bindValue(":width", meterToFeet(helipad.width));
+          helipadStmt->bindValue(":length", mToFt(helipad.length));
+          helipadStmt->bindValue(":width", mToFt(helipad.width));
           helipadStmt->bindValue(":heading", helipad.heading);
           helipadStmt->bindValue(":is_transparent", 0);
           helipadStmt->bindValue(":is_closed", 0);
@@ -873,8 +880,8 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         approachStmt->bindValue(":fix_type", QChar(approachFacility.fafType));
         approachStmt->bindValue(":fix_ident", approachFacility.fafIcao);
         approachStmt->bindValue(":fix_region", approachFacility.fafRegion);
-        approachStmt->bindValue(":altitude", meterToFeet(approachFacility.fafAltitude));
-        approachStmt->bindValue(":missed_altitude", meterToFeet(approachFacility.missedAltitude));
+        approachStmt->bindValue(":altitude", mToFt(approachFacility.fafAltitude));
+        approachStmt->bindValue(":missed_altitude", mToFt(approachFacility.missedAltitude));
 
         // Approach Transitions ==============================
         for(const ApproachTransition& transition : approach.getApproachTransitions())
@@ -888,11 +895,11 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
           transitionStmt->bindValue(":fix_type", QChar(transitionFacility.iafType));
           transitionStmt->bindValue(":fix_ident", transitionFacility.iafIcao);
           transitionStmt->bindValue(":fix_region", transitionFacility.iafRegion);
-          transitionStmt->bindValue(":altitude", meterToFeet(transitionFacility.iafAltitude));
+          transitionStmt->bindValue(":altitude", mToFt(transitionFacility.iafAltitude));
           transitionStmt->bindValue(":dme_ident", transitionFacility.dmeArcIcao);
           transitionStmt->bindValue(":dme_region", transitionFacility.dmeArcRegion);
           transitionStmt->bindValue(":dme_radial", transitionFacility.dmeArcRadial);
-          transitionStmt->bindValue(":dme_distance", meterToNm(transitionFacility.dmeArcDistance));
+          transitionStmt->bindValue(":dme_distance", mToNm(transitionFacility.dmeArcDistance));
 
           // Transition legs ==============================
           for(const LegFacility& leg : transition.getApproachTransitionLegFacilities())
@@ -1077,7 +1084,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
           parkingStmt->bindValue(":number", parking.number);
           parkingStmt->bindValue(":suffix", enumToStr(bgl::Parking::parkingSuffixToStr,
                                                       static_cast<bgl::ap::ParkingNameSuffix>(parking.suffix)));
-          parkingStmt->bindValue(":radius", meterToFeet(parking.radius));
+          parkingStmt->bindValue(":radius", mToFt(parking.radius));
           parkingStmt->bindValue(":heading", parking.heading);
           parkingStmt->bindValue(":has_jetway", jetwayIndexes.contains(std::make_pair(parking.name, parking.suffix)));
 
@@ -1125,7 +1132,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
           taxiPathStmt->bindValue(":taxi_path_id", ++taxiPathId);
           taxiPathStmt->bindValue(":airport_id", airportId);
           taxiPathStmt->bindValue(":type", enumToStr(bgl::TaxiPath::pathTypeToString, static_cast<bgl::taxipath::Type>(path.type)));
-          taxiPathStmt->bindValue(":width", meterToFeet(path.width));
+          taxiPathStmt->bindValue(":width", mToFt(path.width));
           taxiPathStmt->bindValue(":surface", surfaceToDb(TAXIPATH));
 
           // Bind name if index is valid
@@ -1250,7 +1257,7 @@ bool SimConnectWriter::writeNdbToDatabase(const QList<NdbFacility>& ndbs, int fi
     ndbStmt->bindValue(":name", ndb.name);
     ndbStmt->bindValue(":region", ndb.region);
     ndbStmt->bindValue(":frequency", ndb.frequency / 10);
-    ndbStmt->bindValue(":range", meterToNm(ndb.range));
+    ndbStmt->bindValue(":range", mToNm(ndb.range));
     ndbStmt->bindValue(":type", enumToStr(bgl::Ndb::ndbTypeToStr, static_cast<atools::fs::bgl::nav::NdbType>(ndb.type)));
     ndbStmt->bindValue(":mag_var", magvar);
     bindPosAlt(ndbStmt, ndb.longitude, ndb.latitude, ndb.altitude);
@@ -1301,7 +1308,7 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
       ilsStmt->bindValue(":region", vorIls.region);
       ilsStmt->bindValue(":type", lsTypeToDb(static_cast<LsCategory>(vorIls.lsCategory)));
       ilsStmt->bindValue(":frequency", vorIls.frequency / 1000);
-      ilsStmt->bindValue(":range", roundToInt(meterToNm(vorIls.navRange)));
+      ilsStmt->bindValue(":range", roundToInt(mToNm(vorIls.navRange)));
       ilsStmt->bindValue(":mag_var", magvar);
       ilsStmt->bindValue(":has_backcourse", vorIls.hasBackCourse);
 
@@ -1309,7 +1316,7 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
       if(vorIls.isDme)
       {
         bindPosAlt(ilsStmt, vorIls.dmeLongitude, vorIls.dmeLatitude, vorIls.dmeAltitude, "dme_");
-        ilsStmt->bindValue(":dme_range", roundToInt(meterToNm(vorIls.navRange)));
+        ilsStmt->bindValue(":dme_range", roundToInt(mToNm(vorIls.navRange)));
       }
       else
       {
@@ -1321,7 +1328,7 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
       if(vorIls.hasGlideSlope)
       {
         bindPosAlt(ilsStmt, vorIls.gsLongitude, vorIls.gsLatitude, vorIls.gsAltitude, "gs_");
-        ilsStmt->bindValue(":gs_range", roundToInt(meterToNm(vorIls.navRange)));
+        ilsStmt->bindValue(":gs_range", roundToInt(mToNm(vorIls.navRange)));
         ilsStmt->bindValue(":gs_pitch", vorIls.glideSlope);
       }
       else
@@ -1376,7 +1383,7 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
 
       float magvar = bgl::converter::adjustMagvar(vorIls.magvar);
       vorStmt->bindValue(":frequency", vorIls.frequency / 1000);
-      vorStmt->bindValue(":range", roundToInt(meterToNm(vorIls.navRange)));
+      vorStmt->bindValue(":range", roundToInt(mToNm(vorIls.navRange)));
       vorStmt->bindValue(":mag_var", magvar);
       vorStmt->bindValue(":dme_only", !vorIls.isNav && !vorIls.isTacan && vorIls.isDme);
       if(vorIls.isDme)
@@ -1466,7 +1473,7 @@ bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned lo
         tmpAirwayPointStmt->bindValue(":next_type", waypointTypeToRouteDb(route.nextType));
         tmpAirwayPointStmt->bindValue(":next_ident", route.nextIcao);
         tmpAirwayPointStmt->bindValue(":next_region", route.nextRegion);
-        tmpAirwayPointStmt->bindValue(":next_minimum_altitude", meterToFeet(route.nextAltitude));
+        tmpAirwayPointStmt->bindValue(":next_minimum_altitude", mToFt(route.nextAltitude));
       }
       else
       {
@@ -1484,7 +1491,7 @@ bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned lo
         tmpAirwayPointStmt->bindValue(":previous_type", waypointTypeToRouteDb(route.prevType));
         tmpAirwayPointStmt->bindValue(":previous_ident", route.prevIcao);
         tmpAirwayPointStmt->bindValue(":previous_region", route.prevRegion);
-        tmpAirwayPointStmt->bindValue(":previous_minimum_altitude", meterToFeet(route.prevAltitude));
+        tmpAirwayPointStmt->bindValue(":previous_minimum_altitude", mToFt(route.prevAltitude));
       }
       else
       {
@@ -1621,7 +1628,7 @@ void SimConnectWriter::writeLeg(atools::sql::SqlQuery *query, const LegFacility&
                                                 static_cast<bgl::leg::AltDescriptor>(leg.approachAltDesc)));
   query->bindValue(":turn_direction", enumToStr(bgl::ApproachLeg::turnDirToString,
                                                 static_cast<bgl::leg::TurnDirection>(leg.turnDirection)));
-  query->bindValue(":rnp", meterToNm(leg.requiredNavigationPerformance));
+  query->bindValue(":rnp", mToNm(leg.requiredNavigationPerformance));
   query->bindValue(":fix_type", QChar(leg.fixType));
   query->bindValue(":fix_ident", leg.fixIcao);
   query->bindValue(":fix_region", leg.fixRegion);
@@ -1652,15 +1659,15 @@ void SimConnectWriter::writeLeg(atools::sql::SqlQuery *query, const LegFacility&
   }
   else
   {
-    query->bindValue(":distance", meterToNm(leg.routeDistance));
+    query->bindValue(":distance", mToNm(leg.routeDistance));
     query->bindNullFloat(":time");
   }
 
   query->bindValue(":theta", leg.theta);
-  query->bindValue(":rho", meterToNm(leg.rho));
+  query->bindValue(":rho", mToNm(leg.rho));
 
-  query->bindValue(":altitude1", meterToFeet(leg.altitude1));
-  query->bindValue(":altitude2", meterToFeet(leg.altitude2));
+  query->bindValue(":altitude1", mToFt(leg.altitude1));
+  query->bindValue(":altitude2", mToFt(leg.altitude2));
 
   query->bindValue(":speed_limit_type", enumToStr(bgl::ApproachLeg::speedDescriptorToString, bgl::leg::AT_OR_BELOW));
 
