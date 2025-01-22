@@ -18,6 +18,8 @@
 #ifndef ATOOLS_SIMCONNECTIDFACILITIES_H
 #define ATOOLS_SIMCONNECTIDFACILITIES_H
 
+#include "geo/pos.h"
+
 #include <QVector>
 #include <QDebug>
 
@@ -51,6 +53,11 @@ public:
   bool operator<(const IcaoId& other) const
   {
     return strcmp(ident, other.ident) < 0;
+  }
+
+  bool operator!=(const IcaoId& other) const
+  {
+    return !(*this == other);
   }
 
   bool operator==(const IcaoId& other) const
@@ -102,11 +109,23 @@ typedef QSet<IcaoId> IcaoIdSet;
 
 QDebug operator<<(QDebug out, const atools::fs::sc::db::IcaoId& obj);
 
+/* Type of FacilityId */
+enum IdType : char
+{
+  ID_NONE = '\0',
+  ID_WAYPOINT = 'W',
+  ID_VORILS = 'V',
+  ID_NDB = 'N',
+  ID_AIPORT = 'A',
+  ID_RUNWAY = 'R'
+};
+
 /* =============================================================================================
  * Simple efficient id string combining ICAO/ident, region and type which can be hashed,
  * compared and printed to qDebug.
  * Sort order is by ident, region and type.
  * Maximum of 9 characters for ICAO/ident and region plus terminating zero.
+ * Strings are copied on construction.
  */
 class FacilityId
 {
@@ -116,16 +135,37 @@ public:
     ident[0] = region[0] = '\0';
   }
 
-  explicit FacilityId(const QString& identParam, const QString& regionParam = QString(), QChar typeParam = '\0')
-    : type(typeParam.toLatin1())
+  explicit FacilityId(const QString& identParam, const QString& regionParam = QString(), QChar typeParam = ID_NONE,
+                      float lonXParam = atools::geo::Pos::INVALID_VALUE, float latYParam = atools::geo::Pos::INVALID_VALUE)
+    : type(static_cast<IdType>(typeParam.toLatin1())), lonX(lonXParam), latY(latYParam)
   {
     init(identParam.toLatin1().constData(), regionParam.toLatin1().constData());
   }
 
-  explicit FacilityId(const char *identParam, const char *regionParam = nullptr, char typeParam = '\0')
-    : type(typeParam)
+  explicit FacilityId(const char *identParam, const char *regionParam = nullptr, IdType typeParam = ID_NONE,
+                      float lonXParam = atools::geo::Pos::INVALID_VALUE, float latYParam = atools::geo::Pos::INVALID_VALUE)
+    : type(typeParam), lonX(lonXParam), latY(latYParam)
   {
     init(identParam, regionParam);
+  }
+
+  explicit FacilityId(const QString& identParam, const QString& regionParam, QChar typeParam, const atools::geo::Pos& pos)
+    : type(static_cast<IdType>(typeParam.toLatin1())), lonX(pos.getLonX()), latY(pos.getLatY())
+  {
+    init(identParam.toLatin1().constData(), regionParam.toLatin1().constData());
+  }
+
+  explicit FacilityId(const char *identParam, const char *regionParam, IdType typeParam, const atools::geo::Pos& pos)
+    : type(typeParam), lonX(pos.getLonX()), latY(pos.getLatY())
+  {
+    init(identParam, regionParam);
+  }
+
+  FacilityId noRegion() const
+  {
+    FacilityId id(*this);
+    id.region[0] = '\0';
+    return id;
   }
 
   bool operator<(const FacilityId& other) const
@@ -141,6 +181,11 @@ public:
       return strcmp(ident, other.ident) < 0;
   }
 
+  bool operator!=(const FacilityId& other) const
+  {
+    return !(*this == other);
+  }
+
   bool operator==(const FacilityId& other) const
   {
     return strcmp(ident, other.ident) == 0 && strcmp(region, other.region) == 0 && type == other.type;
@@ -151,7 +196,7 @@ public:
     return strlen(ident) > 0;
   }
 
-  char getType() const
+  IdType getType() const
   {
     return type;
   }
@@ -181,6 +226,21 @@ public:
     return ident;
   }
 
+  atools::geo::Pos getPos() const
+  {
+    return atools::geo::Pos(lonX, latY);
+  }
+
+  float getLonX() const
+  {
+    return lonX;
+  }
+
+  float getLatY() const
+  {
+    return latY;
+  }
+
 private:
   friend uint qHash(const FacilityId& str);
 
@@ -204,8 +264,9 @@ private:
   }
 
   const static int SIZE = 10;
-  char type = '\0';
+  IdType type = ID_NONE;
   char ident[SIZE], region[SIZE];
+  float lonX, latY;
 };
 
 inline uint qHash(const FacilityId& id)
@@ -296,5 +357,8 @@ private:
 } // namespace sc
 } // namespace fs
 } // namespace atools
+
+Q_DECLARE_TYPEINFO(atools::fs::sc::db::FacilityId, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(atools::fs::sc::db::IcaoId, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_SIMCONNECTIDFACILITIES_H

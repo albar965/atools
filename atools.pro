@@ -1019,6 +1019,10 @@ SOURCES += \
 RESOURCES += \
   atools.qrc
 
+!isEmpty(ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024) {
+  RESOURCES += navdata.qrc
+}
+
 OTHER_FILES += \
   resources/sql/fs/db/README.txt \
   *.ts \

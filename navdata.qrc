@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/atools">
+        <file>resources/navdata/navaids.csv.gz</file>
+    </qresource>
+</RCC>
