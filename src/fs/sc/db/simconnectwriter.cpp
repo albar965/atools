@@ -758,9 +758,12 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
             if(endId > 0)
               startStmt->bindValue(":runway_end_id", endId);
             else
-              startStmt->bindNullStr(":runway_end_id");
+              startStmt->bindNullInt(":runway_end_id");
 
-            startStmt->bindValue(":runway_name", runwayName);
+            if(!runwayName.isEmpty() && runwayName != "RW00" && runwayName != "00")
+              startStmt->bindValue(":runway_name", runwayName);
+            else
+              startStmt->bindNullStr(":runway_name");
           }
           else
             startStmt->bindNullStr(":runway_name");
@@ -840,7 +843,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         int endId = 0;
         if(approachFacility.runwayNumber > 0)
         {
-          QString runwayName = bgl::converter::runwayToStr(approachFacility.runwayNumber, approachFacility.runwayDesignator);
+          runwayName = bgl::converter::runwayToStr(approachFacility.runwayNumber, approachFacility.runwayDesignator);
           endId = runwayIndex.getRunwayEndId(airportIdent, runwayName,
                                              "SimConnect - approach " % QString(approach.getApproachFacility().fafIcao));
         }
@@ -850,7 +853,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         else
           approachStmt->bindNullInt(":runway_end_id");
 
-        if(!runwayName.isEmpty() && runwayName != "RW00")
+        if(!runwayName.isEmpty() && runwayName != "RW00" && runwayName != "00")
           approachStmt->bindValue(":runway_name", runwayName);
         else
           approachStmt->bindNullStr(":runway_name");
@@ -1521,12 +1524,17 @@ void SimConnectWriter::bindRunway(atools::sql::SqlQuery *query, const atools::fs
     else
       query->bindNullInt(":runway_end_id");
 
-    if(!runwayName.isEmpty())
+    if(!runwayName.isEmpty() && runwayName != "RW00" && runwayName != "00")
+    {
       query->bindValue(":arinc_name", QString("RW") + runwayName);
+      query->bindValue(":runway_name", runwayName);
+    }
     else
+    {
       query->bindNullInt(":arinc_name");
+      query->bindNullStr(":runway_name");
+    }
 
-    query->bindValue(":runway_name", runwayName);
   }
 }
 
