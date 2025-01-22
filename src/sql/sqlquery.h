@@ -18,6 +18,7 @@
 #ifndef ATOOLS_SQL_SQLQUERY_H
 #define ATOOLS_SQL_SQLQUERY_H
 
+#include "atools.h"
 #include "sql/sqltypes.h"
 
 #include <QDateTime>
@@ -86,12 +87,12 @@ public:
 
   QChar valueChar(const QString& name) const
   {
-    return value(name).toChar();
+    return atools::strToChar(value(name).toString());
   }
 
   QChar valueChar(int i) const
   {
-    return value(i).toChar();
+    return atools::strToChar(value(i).toString());
   }
 
   int valueInt(int i) const
