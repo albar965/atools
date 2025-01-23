@@ -134,6 +134,9 @@ public:
   /* Path to community folder for MSFS. Default. */
   static QString getMsfsCommunityPath();
 
+  /* Path to community folder for MSFS. Default. */
+  static QString getMsfs24CommunityPath();
+
   /* Path to community folder for changed base where base is like
    * .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Community .
    * Empty if path not valid. */

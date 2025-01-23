@@ -188,6 +188,9 @@ void NavDatabase::createSimConnectLoader()
       throw Exception("DLL name not set for MSFS 2024");
 
     simconnectLoader = new atools::fs::sc::db::SimConnectLoader(activationContext, libraryName, *db, options->isVerbose());
+    simconnectLoader->setBatchSize(options->getSimConnectBatchSize());
+    simconnectLoader->setAirportFetchDelay(options->getSimConnectAirportFetchDelay());
+    simconnectLoader->setNavaidFetchDelay(options->getSimConnectNavaidFetchDelay());
   }
 #endif
 }
@@ -621,17 +624,30 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     readSceneryConfigIncludePathsFsxP3dMsfs(sceneryCfg);
     total = countMsfsSteps(&progress, sceneryCfg);
 
-    // Check for Navigraph packages to report back to caller
-    for(const SceneryArea& area : qAsConst(sceneryCfg.getAreas()))
+    if(sim == FsPaths::MSFS)
     {
-      if(area.isMsfsNavigraphNavdata())
+      // Check for Navigraph packages to report back to caller
+      for(const SceneryArea& area : qAsConst(sceneryCfg.getAreas()))
       {
-        if(options->isIncludedGui(area.getLocalPath()))
+        if(area.isMsfsNavigraphNavdata())
         {
-          result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
-          break;
+          if(options->isIncludedGui(area.getLocalPath()))
+          {
+            result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
+            break;
+          }
         }
       }
+    }
+    else // MSFS_2024
+    {
+      // ...\Microsoft.Limitless_8wekyb3d8bbwe\LocalCache\Packages\Community\navigraph-nav-base\layout.json
+      // ...\Microsoft.Limitless_8wekyb3d8bbwe\LocalCache\Packages\Community\navigraph-nav-jepp\layout.json
+      if(atools::checkFile(Q_FUNC_INFO, FsPaths::getMsfsCommunityPath() % atools::SEP %
+                           "navigraph-nav-base" % atools::SEP % "layout.json") &&
+         atools::checkFile(Q_FUNC_INFO, FsPaths::getMsfsCommunityPath() % atools::SEP %
+                           "navigraph-nav-jepp" % atools::SEP % "layout.json"))
+        result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
     }
   }
   else // FSX and P3D
@@ -861,7 +877,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   // Update the metadata in the database
   atools::fs::db::DatabaseMeta databaseMetadata(db);
 
-  if(sim == FsPaths::MSFS && result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
+  if((sim == FsPaths::MSFS || sim == FsPaths::MSFS_2024) && result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
     databaseMetadata.addProperty(atools::fs::db::PROPERTYNAME_MSFS_NAVIGRAPH_FOUND);
 
   if(!xpDataCompiler.isNull())

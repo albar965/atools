@@ -474,6 +474,36 @@ public:
     return airportIcaoFiltersInc;
   }
 
+  int getSimConnectAirportFetchDelay() const
+  {
+    return simConnectAirportFetchDelay;
+  }
+
+  void setSimConnectAirportFetchDelay(int value)
+  {
+    simConnectAirportFetchDelay = value;
+  }
+
+  int getSimConnectNavaidFetchDelay() const
+  {
+    return simConnectNavaidFetchDelay;
+  }
+
+  void setSimConnectNavaidFetchDelay(int value)
+  {
+    simConnectNavaidFetchDelay = value;
+  }
+
+  int getSimConnectBatchSize() const
+  {
+    return simConnectBatchSize;
+  }
+
+  void setSimConnectBatchSize(int value)
+  {
+    simConnectBatchSize = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::NavDatabaseOptions& opts);
 
@@ -520,6 +550,8 @@ private:
 
   ProgressCallbackType progressCallback;
   bool callDefaultCallback = true;
+
+  int simConnectAirportFetchDelay = 100, simConnectNavaidFetchDelay = 50, simConnectBatchSize = 2000;
 
   atools::fs::FsPaths::SimulatorType simulatorType = atools::fs::FsPaths::FSX;
 };

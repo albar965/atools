@@ -255,8 +255,11 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
   setFlag(type::ANALYZE_DATABASE, settings.value("Options/AnalyzeDatabase", true).toBool());
   setFlag(type::DROP_INDEXES, settings.value("Options/DropAllIndexes", false).toBool());
 
-  addToHighPriorityFiltersInc(settings.value("Filter/IncludeHighPriorityFilter").toStringList());
+  setSimConnectAirportFetchDelay(settings.value("Options/SimConnectAirportFetchDelay", 100).toInt());
+  setSimConnectNavaidFetchDelay(settings.value("Options/SimConnectNavaidFetchDelay", 50).toInt());
+  setSimConnectBatchSize(settings.value("Options/SimConnectBatchSize", 2000).toInt());
 
+  addToHighPriorityFiltersInc(settings.value("Filter/IncludeHighPriorityFilter").toStringList());
   addToFilenameFilterInclude(settings.value("Filter/IncludeFilenames").toStringList());
   addToFilenameFilterExclude(settings.value("Filter/ExcludeFilenames").toStringList());
   addToPathFilterInclude(settings.value("Filter/IncludePathFilter").toStringList());
@@ -366,6 +369,9 @@ QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
   out.nospace().noquote() << "NavDatabaseOptions[flags " << opts.flags;
 
   out << ", language \"" << opts.language << "\"";
+  out << ", SimConnectAirportFetchDelay \"" << opts.simConnectAirportFetchDelay << "\"";
+  out << ", SimConnectNavaidFetchDelay \"" << opts.simConnectNavaidFetchDelay << "\"";
+  out << ", SimConnectBatchSize \"" << opts.simConnectBatchSize << "\"";
   out << ", sceneryFile \"" << opts.sceneryFile << "\"";
   out << ", basepath \"" << opts.basepath << "\"";
   out << ", msfsCommunityPath \"" << opts.msfsCommunityPath << "\"";
