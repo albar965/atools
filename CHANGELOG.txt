@@ -4,6 +4,30 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
+# Version 4.0.14.beta2
+
+## MSFS 2024 Scenery Library #1198
+
+* Fixed invalid runway references in ILS. As result ILS or localizers used in the flight plan were
+  not shown in the elevation profile or the map.
+* Now combining procedures having the same runway transitions. Runway transitions are now collapsed
+  to parallel runways (e.g. 16L, 16R) or `All`.
+* Now adding navaids not connected to procedures or airways to MSFS 2024 loading process. These are
+  required to build Oceanic tracks or off-airways routes, for example.
+* Now correcting odd altitude values by rounding. This affected procedure altitude restrictions,
+  for example.
+* Corrected counting of ILS when loading scenery library.
+* Fixed ILS detection. Previously some or all ILS were wrongly read as VOR stations.
+* Now calculating magnetic declination for all facilies except VOR using the World Magnetic Model
+  instead of the partially wrong MSFS 2024 values.
+* Fixed detection of military airports. Added new keywords for military names in other languages.
+
+## Other
+
+* Updated German translation.
+
+===============================================================================
+
 # Version 4.0.14.beta1
 
 ## MSFS 2024 Scenery Library #1198

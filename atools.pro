@@ -209,6 +209,7 @@ message(QT_INSTALL_PLUGINS: $$[QT_INSTALL_PLUGINS])
 message(QT_INSTALL_TRANSLATIONS: $$[QT_INSTALL_TRANSLATIONS])
 message(CONFIG: $$CONFIG)
 message(QT: $$QT)
+!isEmpty(ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024) { message(navdata.qrc: Included) } else { message(navdata.qrc: Not Included) }
 message(-----------------------------------)
 }
 
