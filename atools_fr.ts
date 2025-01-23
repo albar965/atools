@@ -1360,27 +1360,27 @@ Période nocturne : %5</translation>
         <translation type="vanished">Le répertoire n&apos;existe pas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="673"/>
+        <location filename="src/fs/navdatabase.cpp" line="689"/>
         <source>Navigraph</source>
         <translation>Navigraph</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="687"/>
+        <location filename="src/fs/navdatabase.cpp" line="703"/>
         <source>X-Plane</source>
         <translation>X-Plane</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="800"/>
+        <location filename="src/fs/navdatabase.cpp" line="816"/>
         <source>Updating Airports</source>
         <translation>Mise à jour des aéroports</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="837"/>
+        <location filename="src/fs/navdatabase.cpp" line="853"/>
         <source>Creating indexes for airport</source>
         <translation type="unfinished">Création d&apos;index pour les aéroports</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="842"/>
+        <location filename="src/fs/navdatabase.cpp" line="858"/>
         <source>Clean up runways</source>
         <translation>Nettoyage des pistes</translation>
     </message>
@@ -1389,53 +1389,53 @@ Période nocturne : %5</translation>
         <translation type="obsolete">Création d&apos;index pour l&apos;itinéraire</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="892"/>
+        <location filename="src/fs/navdatabase.cpp" line="908"/>
         <source>Creating Database preparation Script</source>
         <translation>Création d&apos;un script de préparation de base de données</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="916"/>
+        <location filename="src/fs/navdatabase.cpp" line="932"/>
         <source>Dropping All Indexes</source>
         <translation>Abandonner tous les indexes</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="923"/>
+        <location filename="src/fs/navdatabase.cpp" line="939"/>
         <source>Vacuum Database</source>
         <translation>Base de données vide</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="931"/>
+        <location filename="src/fs/navdatabase.cpp" line="947"/>
         <source>Analyze Database</source>
         <translation>Analyser la base de données</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="990"/>
-        <location filename="src/fs/navdatabase.cpp" line="1020"/>
-        <location filename="src/fs/navdatabase.cpp" line="1124"/>
-        <location filename="src/fs/navdatabase.cpp" line="1342"/>
+        <location filename="src/fs/navdatabase.cpp" line="1006"/>
+        <location filename="src/fs/navdatabase.cpp" line="1036"/>
+        <location filename="src/fs/navdatabase.cpp" line="1140"/>
+        <location filename="src/fs/navdatabase.cpp" line="1358"/>
         <source>Creating boundary indexes</source>
         <translation type="unfinished">Création d&apos;index des limites</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1004"/>
+        <location filename="src/fs/navdatabase.cpp" line="1020"/>
         <source>Creating waypoints for procedures</source>
         <translation type="unfinished">Création de waypoints pour les procédures</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1026"/>
+        <location filename="src/fs/navdatabase.cpp" line="1042"/>
         <source>Updating Navids in Waypoint</source>
         <translation type="unfinished">Mise à jour des Navids dans le Waypoint</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1147"/>
+        <location filename="src/fs/navdatabase.cpp" line="1163"/>
         <source>Preparing Airways</source>
         <translation>Préparation des voies aériennes</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="987"/>
-        <location filename="src/fs/navdatabase.cpp" line="1015"/>
-        <location filename="src/fs/navdatabase.cpp" line="1121"/>
-        <location filename="src/fs/navdatabase.cpp" line="1339"/>
+        <location filename="src/fs/navdatabase.cpp" line="1003"/>
+        <location filename="src/fs/navdatabase.cpp" line="1031"/>
+        <location filename="src/fs/navdatabase.cpp" line="1137"/>
+        <location filename="src/fs/navdatabase.cpp" line="1355"/>
         <source>Creating indexes</source>
         <translation>Création d&apos;index</translation>
     </message>
@@ -1445,9 +1445,9 @@ Période nocturne : %5</translation>
         <translation type="unfinished">Nettoyage de la base de données</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="996"/>
-        <location filename="src/fs/navdatabase.cpp" line="1137"/>
-        <location filename="src/fs/navdatabase.cpp" line="1358"/>
+        <location filename="src/fs/navdatabase.cpp" line="1012"/>
+        <location filename="src/fs/navdatabase.cpp" line="1153"/>
+        <location filename="src/fs/navdatabase.cpp" line="1374"/>
         <source>Clean up</source>
         <translation>Nettoyage</translation>
     </message>
@@ -1456,54 +1456,54 @@ Période nocturne : %5</translation>
         <translation type="vanished">Création des voies aériennes</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="209"/>
+        <location filename="src/fs/navdatabase.cpp" line="212"/>
         <source>&quot;%1&quot; does not contain any scenery areas</source>
         <translation type="unfinished">&quot;%1&quot; ne contient aucune zone de paysage</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="219"/>
+        <location filename="src/fs/navdatabase.cpp" line="222"/>
         <source>Unknown exception while reading file</source>
         <translation type="unfinished">Exception inconnue lors de la lecture du dossier</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="773"/>
+        <location filename="src/fs/navdatabase.cpp" line="789"/>
         <source>Merging VOR and TACAN to VORTAC</source>
         <translation>Fusion VOR et TACAN en VORTAC</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="778"/>
+        <location filename="src/fs/navdatabase.cpp" line="794"/>
         <source>Updating waypoints</source>
         <translation>Mise à jour des waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="784"/>
+        <location filename="src/fs/navdatabase.cpp" line="800"/>
         <source>Updating Navaids</source>
         <translation type="unfinished">Mise à jour des Navaids</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="791"/>
+        <location filename="src/fs/navdatabase.cpp" line="807"/>
         <source>Cleaning up waypoints</source>
         <translation type="unfinished">Cleaning up waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="796"/>
+        <location filename="src/fs/navdatabase.cpp" line="812"/>
         <source>Updating approaches</source>
         <translation>Actualisation des approches</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="805"/>
-        <location filename="src/fs/navdatabase.cpp" line="810"/>
-        <location filename="src/fs/navdatabase.cpp" line="817"/>
+        <location filename="src/fs/navdatabase.cpp" line="821"/>
+        <location filename="src/fs/navdatabase.cpp" line="826"/>
+        <location filename="src/fs/navdatabase.cpp" line="833"/>
         <source>Updating ILS</source>
         <translation>Actualisation des ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="822"/>
+        <location filename="src/fs/navdatabase.cpp" line="838"/>
         <source>Updating ILS Count</source>
         <translation>Mise à jour du nombre d&apos;ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="826"/>
+        <location filename="src/fs/navdatabase.cpp" line="842"/>
         <source>Collecting navaids for search</source>
         <translation>Collecte de navaids pour la recherche</translation>
     </message>
@@ -1512,7 +1512,7 @@ Période nocturne : %5</translation>
         <translation type="vanished">Remplissage des tables de routage</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="846"/>
+        <location filename="src/fs/navdatabase.cpp" line="862"/>
         <source>Creating indexes for search</source>
         <oldsource>Creating route edges for VOR and NDB</oldsource>
         <translation type="unfinished">Création des limites d&apos;itinéraire pour VOR et NDB</translation>
@@ -1522,7 +1522,7 @@ Période nocturne : %5</translation>
         <translation type="vanished">Création de waypoints de limite d&apos;itinéraire</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="831"/>
+        <location filename="src/fs/navdatabase.cpp" line="847"/>
         <source>Calculating airport rating</source>
         <translation type="unfinished">Calcul de la classification des aéroports</translation>
     </message>
@@ -1531,37 +1531,37 @@ Période nocturne : %5</translation>
         <translation type="obsolete">Création de tables d&apos;aéroports de taille moyenne et grande</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="851"/>
+        <location filename="src/fs/navdatabase.cpp" line="867"/>
         <source>Loading translations</source>
         <translation type="unfinished">Chargement des traductions</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1366"/>
+        <location filename="src/fs/navdatabase.cpp" line="1382"/>
         <source>Basic Validation</source>
         <translation>Validation de base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1474"/>
+        <location filename="src/fs/navdatabase.cpp" line="1490"/>
         <source>Creating table statistics</source>
         <translation>Création de statistiques de table</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1480"/>
+        <location filename="src/fs/navdatabase.cpp" line="1496"/>
         <source>Creating report on values</source>
         <translation>Création d&apos;un rapport sur les valeurs</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1486"/>
+        <location filename="src/fs/navdatabase.cpp" line="1502"/>
         <source>Creating report on duplicates</source>
         <translation>Création d&apos;un rapport sur les doublons</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1524"/>
+        <location filename="src/fs/navdatabase.cpp" line="1540"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Création d&apos;un rapport sur les doublons de coordonnées</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1638"/>
+        <location filename="src/fs/navdatabase.cpp" line="1654"/>
         <source>Base</source>
         <translation type="unfinished">Base</translation>
     </message>
@@ -1570,39 +1570,39 @@ Période nocturne : %5</translation>
         <translation type="obsolete">Aéroports de base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1649"/>
+        <location filename="src/fs/navdatabase.cpp" line="1665"/>
         <source>Generic Airports</source>
         <translation type="unfinished">Aéroports génériques</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1666"/>
+        <location filename="src/fs/navdatabase.cpp" line="1682"/>
         <source>SimConnect Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1677"/>
+        <location filename="src/fs/navdatabase.cpp" line="1693"/>
         <source>Base Navigation</source>
         <translation type="unfinished">Navigation de base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1726"/>
-        <location filename="src/fs/navdatabase.cpp" line="1776"/>
+        <location filename="src/fs/navdatabase.cpp" line="1742"/>
+        <location filename="src/fs/navdatabase.cpp" line="1792"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation type="unfinished">L&apos;add-on crypté &quot;%1&quot; a été trouvé. Le module complémentaire peut ne pas s&apos;afficher correctement.</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1771"/>
+        <location filename="src/fs/navdatabase.cpp" line="1787"/>
         <source>Community</source>
         <translation type="unfinished">Communauté</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1898"/>
-        <location filename="src/fs/navdatabase.cpp" line="1909"/>
+        <location filename="src/fs/navdatabase.cpp" line="1914"/>
+        <location filename="src/fs/navdatabase.cpp" line="1925"/>
         <source>Custom scenery path %1</source>
         <translation type="unfinished">Chemin d&apos;accès personnalisé à la scène %1</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="2194"/>
+        <location filename="src/fs/navdatabase.cpp" line="2210"/>
         <source>Counting files for %1 ...</source>
         <translation type="unfinished">Comptage des fichiers pour %1 ...</translation>
     </message>
