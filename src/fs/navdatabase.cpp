@@ -1286,7 +1286,10 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
             aborted = simconnectLoader->loadNavaids(fileId);
 
           if(!aborted)
-            aborted = simconnectLoader->loadDisconnectedNavaids(fileId);
+            aborted = simconnectLoader->loadDisconnectedNavaids20(fileId);
+
+          // if(!aborted)
+          //   aborted = simconnectLoader->loadDisconnectedNavaids24(fileId);
 
           // Takes too long to run - disabled for now
           // aborted = simconnectLoader->loadDisconnectedNavaids(fileId);

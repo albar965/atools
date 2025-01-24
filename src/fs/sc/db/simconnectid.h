@@ -149,6 +149,14 @@ public:
     init(identParam, regionParam);
   }
 
+  /* Used to create id for facility structures */
+  explicit FacilityId(const char *identParam, const char *regionParam, IdType typeParam,
+                      double lonXParam, double latYParam)
+    : type(typeParam), lonX(static_cast<float>(lonXParam)), latY(static_cast<float>(latYParam))
+  {
+    init(identParam, regionParam);
+  }
+
   explicit FacilityId(const QString& identParam, const QString& regionParam, QChar typeParam, const atools::geo::Pos& pos)
     : type(static_cast<IdType>(typeParam.toLatin1())), lonX(pos.getLonX()), latY(pos.getLatY())
   {

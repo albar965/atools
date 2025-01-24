@@ -416,7 +416,7 @@ void SimConnectWriter::initQueries()
                                                          "previous_maximum_altitude"}));
 }
 
-atools::fs::sc::db::FacilityIdSet SimConnectWriter::getNavaidIds()
+const atools::fs::sc::db::FacilityIdSet SimConnectWriter::getNavaidIds()
 {
   enum {IDENT, TYPE, LONX, LATY};
 

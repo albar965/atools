@@ -88,8 +88,12 @@ public:
   bool loadNavaids(int fileId);
 
   /* Load VOR and NDB which are not connected to procedures or airways. Requires previous call to loadNavaids() to
-   * avoid loading duplicates. */
-  bool loadDisconnectedNavaids(int fileId);
+   * avoid loading duplicates. Based on MSFS 2020 data. */
+  bool loadDisconnectedNavaids20(int fileId);
+
+  /* Load VOR and NDB which are not connected to procedures or airways. Requires previous call to loadNavaids() to
+   * avoid loading duplicates. Based on MSFS 2024 data from loadDisconnectedNavaids() above. */
+  bool loadDisconnectedNavaids24(int fileId);
 
   /* Progress callback returned true */
   bool isAborted() const;
@@ -114,8 +118,8 @@ public:
   void setProgressCallback(const SimConnectLoaderProgressCallback& callback);
 
   /* Delay in milliseconds between CallDispatch calls */
-  void setAirportFetchDelay(int value);
-  void setNavaidFetchDelay(int value);
+  void setAirportFetchDelay(int delayMs);
+  void setNavaidFetchDelay(int delayMs);
 
 private:
   // Hides implementation details from the header

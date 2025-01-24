@@ -102,7 +102,7 @@ public:
   bool writeNdbToDatabase(const QList<atools::fs::sc::db::NdbFacility>& ndbs, int fileId);
 
   /* Get full list of navaid ids from the database tables waypoint, ils, vor and ndb. */
-  atools::fs::sc::db::FacilityIdSet getNavaidIds();
+  const atools::fs::sc::db::FacilityIdSet getNavaidIds();
 
   /* Create and prepare all database queries. Call before any write*ToDatabase() */
   void initQueries();
