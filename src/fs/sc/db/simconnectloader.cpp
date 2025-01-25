@@ -1979,7 +1979,7 @@ void SimConnectLoader::setAirportFetchDelay(int delayMs)
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->airportFetchDelay = static_cast<unsigned long>(delayMs);
 #else
-  Q_UNUSED(value)
+  Q_UNUSED(delayMs)
 #endif
 }
 
@@ -1988,7 +1988,7 @@ void SimConnectLoader::setNavaidFetchDelay(int delayMs)
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->navaidFetchDelay = static_cast<unsigned long>(delayMs);
 #else
-  Q_UNUSED(value)
+  Q_UNUSED(delayMs)
 #endif
 }
 
