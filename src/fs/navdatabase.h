@@ -225,7 +225,7 @@ private:
   const atools::fs::NavDatabaseOptions *options = nullptr;
   bool aborted = false;
   QString gitRevision;
-
+  atools::fs::ResultFlags result = atools::fs::COMPILE_NONE;
 };
 
 } // namespace fs

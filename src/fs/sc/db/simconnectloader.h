@@ -92,8 +92,9 @@ public:
   bool loadDisconnectedNavaids20(int fileId);
 
   /* Load VOR and NDB which are not connected to procedures or airways. Requires previous call to loadNavaids() to
-   * avoid loading duplicates. Based on MSFS 2024 data from loadDisconnectedNavaids() above. */
-  bool loadDisconnectedNavaids24(int fileId);
+   * avoid loading duplicates. Based on MSFS 2024 data from loadDisconnectedNavaids() above.
+   * Only progress calls are sent if skipLoading is true. */
+  bool loadDisconnectedNavaids24(int fileId, bool skipLoading);
 
   /* Progress callback returned true */
   bool isAborted() const;
@@ -101,6 +102,9 @@ public:
   /* Set batch size that is used to fetch facilities.
    * The program reads until the batch size is exceeded and then calls the dispatch function until done. */
   void setBatchSize(int value);
+
+  /* Set to true for the slow initial load based on 2020 navaids */
+  void setLoad20(bool value);
 
   /* Process failed and loading is probably incomplete if errors are returned. */
   const QStringList& getErrors() const;

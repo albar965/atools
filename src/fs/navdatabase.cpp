@@ -590,7 +590,7 @@ int NavDatabase::countMsSimSteps()
 
 atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfigCodec)
 {
-  atools::fs::ResultFlags result = atools::fs::COMPILE_NONE;
+  result = atools::fs::COMPILE_NONE;
   SceneryCfg sceneryCfg(sceneryConfigCodec);
 
   QElapsedTimer timer;
@@ -634,21 +634,28 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
           if(options->isIncludedGui(area.getLocalPath()))
           {
             result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
+            qDebug() << Q_FUNC_INFO << "Found Navigraph navdata update in" << area;
             break;
           }
         }
       }
     }
-    else // MSFS_2024
+    else if(sim == FsPaths::MSFS_2024)
     {
       // ...\Microsoft.Limitless_8wekyb3d8bbwe\LocalCache\Packages\Community\navigraph-nav-base\layout.json
       // ...\Microsoft.Limitless_8wekyb3d8bbwe\LocalCache\Packages\Community\navigraph-nav-jepp\layout.json
-      if(atools::checkFile(Q_FUNC_INFO, FsPaths::getMsfsCommunityPath() % atools::SEP %
+      if(atools::checkFile(Q_FUNC_INFO, FsPaths::getMsfs24CommunityPath() % atools::SEP %
                            "navigraph-nav-base" % atools::SEP % "layout.json") &&
-         atools::checkFile(Q_FUNC_INFO, FsPaths::getMsfsCommunityPath() % atools::SEP %
+         atools::checkFile(Q_FUNC_INFO, FsPaths::getMsfs24CommunityPath() % atools::SEP %
                            "navigraph-nav-jepp" % atools::SEP % "layout.json"))
+      {
         result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
+        qDebug() << Q_FUNC_INFO << "Found Navigraph navdata update in" << FsPaths::getMsfsCommunityPath();
+      }
     }
+
+    if(!result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
+      qDebug() << Q_FUNC_INFO << "Found Navigraph navdata update not found";
   }
   else // FSX and P3D
   {
@@ -878,7 +885,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   atools::fs::db::DatabaseMeta databaseMetadata(db);
 
   if((sim == FsPaths::MSFS || sim == FsPaths::MSFS_2024) && result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
-    databaseMetadata.addProperty(atools::fs::db::PROPERTYNAME_MSFS_NAVIGRAPH_FOUND);
+    databaseMetadata.addProperty(atools::fs::db::PROPERTYNAME_MSFS_NAVIGRAPH_FOUND, "true");
 
   if(!xpDataCompiler.isNull())
     databaseMetadata.setAiracCycle(xpDataCompiler->getAiracCycle());
@@ -1279,20 +1286,23 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
                   return progress->reportOtherMsg(message);
               });
 
+          // Only for inital load and export of 2020 navaids using loadDisconnectedNavaids20()
+          // simconnectLoader->setLoad20(true);
+
           if(!aborted)
             aborted = simconnectLoader->loadAirports(fileId);
 
           if(!aborted)
             aborted = simconnectLoader->loadNavaids(fileId);
 
-          if(!aborted)
-            aborted = simconnectLoader->loadDisconnectedNavaids20(fileId);
-
           // if(!aborted)
-          //   aborted = simconnectLoader->loadDisconnectedNavaids24(fileId);
+          // aborted = simconnectLoader->loadDisconnectedNavaids20(fileId);
 
-          // Takes too long to run - disabled for now
-          // aborted = simconnectLoader->loadDisconnectedNavaids(fileId);
+          if(!aborted)
+            aborted = simconnectLoader->loadDisconnectedNavaids24(fileId, result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
+
+          // Only for inital load and export of 2020 navaids using loadDisconnectedNavaids20()
+          // aborted = simconnectLoader->loadDisconnectedNavaids20(fileId);
 
           simconnectLoader->finishLoading();
 
