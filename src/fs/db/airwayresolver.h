@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,11 @@
 #include <QCoreApplication>
 
 namespace atools {
+namespace geo {
+class Pos;
+}
 namespace fs {
-
 class ProgressHandler;
-
 namespace db {
 
 /*
@@ -59,13 +60,13 @@ public:
   void assignWaypointIds();
 
   /* Maximum length before creating a new fragment in meter */
-  void setMaxAirwaySegmentLengthNm(int value)
+  void setMaxAirwaySegmentLengthNm(float value)
   {
     maxAirwaySegmentLengthNm = value;
   }
 
 private:
-  int maxAirwaySegmentLengthNm = 8000;
+  float maxAirwaySegmentLengthNm = 0.f;
 
   typedef std::pair<QString, QVariant> TypeRowValue;
   typedef QVector<TypeRowValue> TypeRowValueVector;
@@ -78,8 +79,16 @@ private:
 
   void buildAirway(const QString& airwayName, QSet<atools::fs::db::AirwayResolver::AirwaySegment>& airway,
                    QVector<Fragment>& fragments);
+
+  /* Remove empty segments and segments that are contained by another */
   void cleanFragments(QVector<Fragment>& fragments);
+
+  /* Save airways to table airway */
   void saveAirway(QSet<AirwaySegment>& airway, const QString& currentAirway);
+
+  /* Fetch navaid id and position. Takes the nearest in case of disambiguities */
+  void fetchNavaid(int& id, atools::geo::Pos& pos, sql::SqlQuery& tmpAirwayPointQuery, sql::SqlQuery& tmpWaypointQuery,
+                   const QString& prefix, const atools::geo::Pos& lastPos);
 
   atools::fs::ProgressHandler& progressHandler;
   int curAirwayId, numAirways;

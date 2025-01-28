@@ -210,7 +210,7 @@ drop table if exists tmp_waypoint;
 create table tmp_waypoint
 (
   waypoint_id integer primary key,
-  type varchar(15) not null,
+  type varchar(15) not null, -- V = VOR, N = NDB, O = other/waypoint
   ident varchar(5) not null,
   region varchar(2) not null,
   lonx double not null,

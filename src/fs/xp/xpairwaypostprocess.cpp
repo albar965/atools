@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -184,7 +184,7 @@ bool XpAirwayPostProcess::postProcessEarthAirway()
 {
   SqlQuery airwayTempQuery("select name, type, direction, minimum_altitude, maximum_altitude, "
                            "previous_type, previous_ident, previous_region, "
-                           "next_type, next_ident, next_region from airway_temp order by name, type", db);
+                           "next_type, next_ident, next_region from airway_temp order by name", db);
 
   SqlQuery insertTmpAirwayPoint(db);
   insertTmpAirwayPoint.prepare(SqlUtil(db).buildInsertStatement("tmp_airway_point", QString(),
@@ -208,8 +208,8 @@ bool XpAirwayPostProcess::postProcessEarthAirway()
       currentAirwayType = airwayType;
     }
 
-    // Need to use type as selection criteria too
-    if((currentAirway != airway || currentAirwayType != airwayType) && !segments.isEmpty())
+    // Test if airway has changed ======================================
+    if(currentAirway != airway && !segments.isEmpty())
     {
       // Airway name or type has changed - order and write all its segments
       writeSegments(segments, insertTmpAirwayPoint, currentAirway, currentAirwayType);

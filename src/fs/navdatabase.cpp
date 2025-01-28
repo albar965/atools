@@ -782,7 +782,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
 
     if(sim != FsPaths::NAVIGRAPH && !FsPaths::isAnyXplane(sim))
       // Drop large segments only for the borked data of FSX/P3D/MSFS - default is 8000 nm
-      resolver.setMaxAirwaySegmentLengthNm(800);
+      resolver.setMaxAirwaySegmentLengthNm(800.f);
 
     resolver.assignWaypointIds();
 
@@ -1163,7 +1163,7 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
 
   if(options->isIncludedNavDbObject(atools::fs::type::AIRWAY))
   {
-    // In resources or Custom Data - mandatory
+    // In resources or Custom Data - mandatory - fills table airway_temp_id
     if((aborted = xpDataCompiler->compileEarthAirway()))
       return true;
 
