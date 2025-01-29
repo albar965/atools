@@ -1458,7 +1458,6 @@ bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned lo
       bgl::nav::AirwayType airwayType = static_cast<bgl::nav::AirwayType>(route.type);
 
       tmpAirwayPointStmt->bindValue(":airway_point_id", ++tmpAirwayPointId);
-      tmpAirwayPointStmt->bindValue(":waypoint_id", waypointId);
       tmpAirwayPointStmt->bindValue(":name", route.name);
       tmpAirwayPointStmt->bindValue(":type", enumToStr(bgl::AirwaySegment::airwayTypeToStr, airwayType));
       tmpAirwayPointStmt->bindValue(":mid_type", enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr,

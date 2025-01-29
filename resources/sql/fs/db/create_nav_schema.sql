@@ -228,7 +228,6 @@ drop table if exists tmp_airway_point;
 create table tmp_airway_point
 (
   airway_point_id integer primary key,
-  waypoint_id integer,
   name varchar(50) not null,        -- Airway name
   type varchar(15),                 -- see enum atools::fs::bgl::nav::AirwayType
   mid_type varchar(15),             -- See enum atools::fs::bgl::nav::AirwayWaypointType
@@ -250,7 +249,6 @@ create table tmp_airway_point
   previous_maximum_altitude integer -- "
 );
 
-create index if not exists idx_tmp_airway_point_waypoint_id on tmp_airway_point(waypoint_id);
 create index if not exists idx_tmp_airway_point_waypoint_name on tmp_airway_point(name);
 create index if not exists idx_tmp_airway_point_waypoint_mid_type on tmp_airway_point(mid_type);
 create index if not exists idx_tmp_airway_point_waypoint_mid_ident on tmp_airway_point(mid_ident);

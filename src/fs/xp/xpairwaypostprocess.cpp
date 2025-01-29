@@ -188,8 +188,7 @@ bool XpAirwayPostProcess::postProcessEarthAirway()
 
   SqlQuery insertTmpAirwayPoint(db);
   insertTmpAirwayPoint.prepare(SqlUtil(db).buildInsertStatement("tmp_airway_point", QString(),
-                                                                {"airway_point_id", "waypoint_id", "next_airport_ident",
-                                                                 "previous_airport_ident"}));
+                                                                {"airway_point_id", "next_airport_ident", "previous_airport_ident"}));
 
   QString currentAirway;
   AirwayType currentAirwayType = NONE;
