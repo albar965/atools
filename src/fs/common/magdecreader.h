@@ -72,8 +72,9 @@ public:
   /* East values are positive while West values are negative.
    * Throws exception if object is not valid.
    */
-  float getMagVar(float longitudeX, float latitudeY) const;
   float getMagVar(const atools::geo::Pos& pos) const;
+  float getMagVar(float longitudeX, float latitudeY) const;
+  float getMagVar(double longitudeX, double latitudeY) const;
 
   const QDate& getReferenceDate() const
   {

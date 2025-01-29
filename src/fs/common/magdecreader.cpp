@@ -223,6 +223,11 @@ float MagDecReader::getMagVar(float longitudeX, float latitudeY) const
   return getMagVar(Pos(longitudeX, latitudeY));
 }
 
+float MagDecReader::getMagVar(double longitudeX, double latitudeY) const
+{
+  return getMagVar(Pos(longitudeX, latitudeY));
+}
+
 QByteArray MagDecReader::writeToBytes() const
 {
   if(!isValid())

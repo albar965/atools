@@ -214,14 +214,14 @@ QVector<RunwayTransition> SimConnectWriter::groupProcedures(const QVector<Runway
       if(verbose)
       {
         qDebug() << Q_FUNC_INFO << "Convertingto ALL";
-        for(const RunwayTransition *runwayTransPtr : transitionPtrs)
+        for(const RunwayTransition *runwayTransPtr : qAsConst(transitionPtrs))
           qDebug() << Q_FUNC_INFO << *runwayTransPtr;
       }
     }
     else
     {
       // Add pointers to list for futher processing if runway list is not "ALL"
-      for(const RunwayTransition *runwayTransition : transitionPtrs)
+      for(const RunwayTransition *runwayTransition : qAsConst(transitionPtrs))
         runwayTransitionsFiltered.append(runwayTransition);
     }
   }
@@ -276,7 +276,7 @@ QVector<RunwayTransition> SimConnectWriter::groupProcedures(const QVector<Runway
       }
       else
       {
-        for(const RunwayTransition *transition : transitionPtrs)
+        for(const RunwayTransition *transition : qAsConst(transitionPtrs))
           resultTransitions.append(*transition);
       }
     }
@@ -923,7 +923,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
 
       // STAR / Arrivals ===========================================================================================
       // Legs are saved in flying order from transition entry to STAR exit
-      for(const Arrival& arrival : airport.getArrivals())
+      for(const Arrival& arrival : qAsConst(airport.getArrivals()))
       {
         // Currently duplicate the full procedure for each runway transition instead of aggregating into
         // multi-runway definitions like "23B" or "ALL"
@@ -990,7 +990,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
 
       // SID / Departures ===========================================================================================
       // Legs are saved in flying order from STAR entry/runway to transition exit
-      for(const Departure& departure : airport.getDepartures())
+      for(const Departure& departure : qAsConst(airport.getDepartures()))
       {
         for(const RunwayTransition& runwayTransition : departure.getRunwayTransitions())
         {
@@ -1339,12 +1339,12 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
       }
 
       // Get runway for localizer ==================================
-      RunwayId runwayId = ilsToRunwayMap.value(FacilityId(vorIls.icao, vorIls.region));
-      if(runwayId.isValid())
+      RunwayId locRunwayId = ilsToRunwayMap.value(FacilityId(vorIls.icao, vorIls.region));
+      if(locRunwayId.isValid())
       {
-        ilsStmt->bindValue(":loc_runway_end_id", runwayId.getRunwayEndId());
-        ilsStmt->bindValue(":loc_airport_ident", runwayId.getAirportIdent());
-        ilsStmt->bindValue(":loc_runway_name", runwayId.getRunway());
+        ilsStmt->bindValue(":loc_runway_end_id", locRunwayId.getRunwayEndId());
+        ilsStmt->bindValue(":loc_airport_ident", locRunwayId.getAirportIdent());
+        ilsStmt->bindValue(":loc_runway_name", locRunwayId.getRunway());
       }
       else
       {
@@ -1469,7 +1469,7 @@ bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned lo
       if(strlen(route.nextIcao) > 0)
       {
         tmpAirwayPointStmt->bindValue(":next_direction", "N");
-        tmpAirwayPointStmt->bindValue(":next_type", waypointTypeToRouteDb(route.nextType));
+        tmpAirwayPointStmt->bindValue(":next_type", waypointTypeToRouteDb(static_cast<char>(route.nextType)));
         tmpAirwayPointStmt->bindValue(":next_ident", route.nextIcao);
         tmpAirwayPointStmt->bindValue(":next_region", route.nextRegion);
         tmpAirwayPointStmt->bindValue(":next_minimum_altitude", mToFt(route.nextAltitude));
@@ -1487,7 +1487,7 @@ bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned lo
       if(strlen(route.prevIcao) > 0)
       {
         tmpAirwayPointStmt->bindValue(":previous_direction", "N");
-        tmpAirwayPointStmt->bindValue(":previous_type", waypointTypeToRouteDb(route.prevType));
+        tmpAirwayPointStmt->bindValue(":previous_type", waypointTypeToRouteDb(static_cast<char>(route.prevType)));
         tmpAirwayPointStmt->bindValue(":previous_ident", route.prevIcao);
         tmpAirwayPointStmt->bindValue(":previous_region", route.prevRegion);
         tmpAirwayPointStmt->bindValue(":previous_minimum_altitude", mToFt(route.prevAltitude));

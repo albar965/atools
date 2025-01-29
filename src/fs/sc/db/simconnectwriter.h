@@ -183,7 +183,7 @@ private:
   QString lastMessage; // Repeat last message when calling  callProgressUpdate()
 
   // Used to send progress reports not too often
-  quint32 progressTimerElapsed = 0L;
+  qint64 progressTimerElapsed = 0L;
   QElapsedTimer timer;
 };
 
