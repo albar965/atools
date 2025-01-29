@@ -137,7 +137,7 @@ bool AirwayResolver::run(int numReportSteps)
   // Get all tmp_airway_point rows and join previous and next waypoints to the result by ident and region
   // Result is ordered by airway name
   SqlQuery tmpAirwayPointQuery(db);
-  tmpAirwayPointQuery.exec("select * from tmp_airway_point order by name");
+  tmpAirwayPointQuery.exec("select * from tmp_airway_point order by name"); // where name = 'Y655'
   atools::geo::Pos lastPosition;
   float longestAirwaySegmentMeter = 0.f;
   while(tmpAirwayPointQuery.next())
@@ -166,7 +166,7 @@ bool AirwayResolver::run(int numReportSteps)
       lastPosition = Pos();
     }
 
-    int midWpId, prevWpId, nextWpId;
+    int midWpId = -1, prevWpId = -1, nextWpId = -1;
     Pos midWpPos, prevWpPos, nextWpPos;
     fetchNavaid(prevWpId, prevWpPos, tmpAirwayPointQuery, tmpWaypointQuery, "previous_", lastPosition);
     if(prevWpPos.isValidRange())
@@ -180,20 +180,17 @@ bool AirwayResolver::run(int numReportSteps)
     if(nextWpPos.isValidRange())
       lastPosition = nextWpPos;
 
-    int prevMinAlt = tmpAirwayPointQuery.value("previous_minimum_altitude").toInt();
-    int prevMaxAlt = tmpAirwayPointQuery.value("previous_maximum_altitude").toInt();
-    char prevDir = atools::strToChar(tmpAirwayPointQuery.value("previous_direction").toString());
-
-    int nextMinAlt = tmpAirwayPointQuery.value("next_minimum_altitude").toInt();
-    int nextMaxAlt = tmpAirwayPointQuery.value("next_maximum_altitude").toInt();
-    char nextDir = atools::strToChar(tmpAirwayPointQuery.value("next_direction").toString());
-
     if(prevWpId != -1)
     {
       // Previous waypoint found - add segment
       float midPrevDist = midWpPos.distanceMeterTo(prevWpPos);
       if(maxAirwaySegmentLengthNm <= 1.f || midPrevDist < atools::geo::nmToMeter(maxAirwaySegmentLengthNm))
+      {
+        int prevMinAlt = tmpAirwayPointQuery.value("previous_minimum_altitude").toInt();
+        int prevMaxAlt = tmpAirwayPointQuery.value("previous_maximum_altitude").toInt();
+        char prevDir = atools::strToChar(tmpAirwayPointQuery.value("previous_direction").toString());
         airway.insert(AirwaySegment(prevWpId, midWpId, prevDir, prevMinAlt, prevMaxAlt, awType, prevWpPos, midWpPos));
+      }
 
       longestAirwaySegmentMeter = std::max(longestAirwaySegmentMeter, midPrevDist);
     }
@@ -203,7 +200,12 @@ bool AirwayResolver::run(int numReportSteps)
       // Next waypoint found - add segment
       float midNextDist = midWpPos.distanceMeterTo(nextWpPos);
       if(maxAirwaySegmentLengthNm <= 1.f || midNextDist < atools::geo::nmToMeter(maxAirwaySegmentLengthNm))
+      {
+        int nextMinAlt = tmpAirwayPointQuery.value("next_minimum_altitude").toInt();
+        int nextMaxAlt = tmpAirwayPointQuery.value("next_maximum_altitude").toInt();
+        char nextDir = atools::strToChar(tmpAirwayPointQuery.value("next_direction").toString());
         airway.insert(AirwaySegment(midWpId, nextWpId, nextDir, nextMinAlt, nextMaxAlt, awType, midWpPos, nextWpPos));
+      }
 
       longestAirwaySegmentMeter = std::max(longestAirwaySegmentMeter, midNextDist);
     }

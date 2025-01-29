@@ -264,12 +264,12 @@ create index if not exists idx_tmp_airway_point_waypoint_next_region on tmp_airw
 
 -- **************************************************
 
-drop table if exists airway_temp;
+drop table if exists tmp_airway;
 
 -- Airway segment as read from the X-Plane earth_awy.dat file- this is a temp table and will be dropped later
-create table airway_temp
+create table tmp_airway
 (
-  airway_temp_id integer primary key,
+  tmp_airway_id integer primary key,
   name varchar(50) not null,
   type integer,
   direction varchar(1),

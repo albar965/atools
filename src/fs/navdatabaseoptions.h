@@ -131,7 +131,10 @@ enum OptionFlag : quint32
   DROP_INDEXES = 1 << 14,
 
   /* Remove all indexes */
-  AIRPORT_VALIDATION = 1 << 15
+  AIRPORT_VALIDATION = 1 << 15,
+
+  /* Remove temporary tables */
+  DROP_TEMP_TABLES = 1 << 16,
 };
 
 ATOOLS_DECLARE_FLAGS_32(OptionFlags, atools::fs::type::OptionFlag)
@@ -380,6 +383,11 @@ public:
   bool isDropIndexes() const
   {
     return flags.testFlag(type::DROP_INDEXES);
+  }
+
+  bool isDropTempTables() const
+  {
+    return flags.testFlag(type::DROP_TEMP_TABLES);
   }
 
   bool isBasicValidation() const

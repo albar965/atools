@@ -866,7 +866,9 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
       return result;
   }
 
-  if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
+  if((aborted = runScripts(&progress,
+                           {"fs/db/finish_schema.sql", options->isDropTempTables() ? "fs/db/finish_schema_drop_temp.sql" : ""},
+                           tr("Creating indexes for search"))))
     return result;
 
   if(sim == FsPaths::MSFS)
@@ -1163,7 +1165,7 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
 
   if(options->isIncludedNavDbObject(atools::fs::type::AIRWAY))
   {
-    // In resources or Custom Data - mandatory - fills table airway_temp_id
+    // In resources or Custom Data - mandatory - fills table tmp_airway
     if((aborted = xpDataCompiler->compileEarthAirway()))
       return true;
 
@@ -1373,18 +1375,18 @@ bool NavDatabase::loadFsxP3dMsfsPost(ProgressHandler *progress)
 
   if(options->isDeduplicate())
   {
-    QStringList scripts;
-    scripts.append("fs/db/delete_duplicate_navaids.sql");
+    QStringList deduplicateScripts;
+    deduplicateScripts.append("fs/db/delete_duplicate_navaids.sql");
 
     if(options->getSimulatorType() == FsPaths::MSFS_2024 || options->getSimulatorType() == FsPaths::MSFS)
-      scripts.append("fs/db/delete_duplicate_navaids_msfs.sql");
+      deduplicateScripts.append("fs/db/delete_duplicate_navaids_msfs.sql");
 
     if(options->getSimulatorType() != FsPaths::MSFS_2024)
       // De-duplicate ILS from add-ons - MSFS 2024 does not provide add-on ILS
-      scripts.append("fs/db/delete_duplicate_ils_fsx.sql");
+      deduplicateScripts.append("fs/db/delete_duplicate_ils_fsx.sql");
 
     // Delete duplicates before any foreign keys ids are assigned
-    if((aborted = runScripts(progress, scripts, tr("Clean up"))))
+    if((aborted = runScripts(progress, deduplicateScripts, tr("Clean up"))))
       return true;
   }
   return false;
@@ -1570,8 +1572,11 @@ bool NavDatabase::runScripts(ProgressHandler *progress, const QStringList& scrip
 
   for(const QString& scriptFile : scriptFiles)
   {
-    script.executeScript(":/atools/resources/sql/" % scriptFile);
-    db->commit();
+    if(!scriptFile.isEmpty())
+    {
+      script.executeScript(":/atools/resources/sql/" % scriptFile);
+      db->commit();
+    }
   }
 
   return false;

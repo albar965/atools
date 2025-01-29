@@ -184,7 +184,7 @@ bool XpAirwayPostProcess::postProcessEarthAirway()
 {
   SqlQuery airwayTempQuery("select name, type, direction, minimum_altitude, maximum_altitude, "
                            "previous_type, previous_ident, previous_region, "
-                           "next_type, next_ident, next_region from airway_temp order by name", db);
+                           "next_type, next_ident, next_region from tmp_airway order by name", db); // where name = 'Y655'
 
   SqlQuery insertTmpAirwayPoint(db);
   insertTmpAirwayPoint.prepare(SqlUtil(db).buildInsertStatement("tmp_airway_point", QString(),
@@ -260,8 +260,8 @@ void XpAirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery
   QSet<AirwaySegment> finishedSegments;
 
 #ifdef DEBUG_INFORMATION_LOAD_XP_AIRWAYS
-  qDebug() << "BYNEXT" << segsByNext;
-  qDebug() << "BYPREV" << segsByPrev;
+  qDebug() << Q_FUNC_INFO << "BYNEXT" << segsByNext;
+  qDebug() << Q_FUNC_INFO << "BYPREV" << segsByPrev;
 #endif
 
   // Iterate over all segments of this airway
@@ -322,9 +322,9 @@ void XpAirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery
     }
 
 #ifdef DEBUG_INFORMATION_LOAD_XP_AIRWAYS
-    qDebug() << "-------";
-    qDebug() << "SORTED" << sortedSegments;
-    qDebug() << "-------";
+    qDebug() << Q_FUNC_INFO << "-------";
+    qDebug() << Q_FUNC_INFO << "SORTED" << sortedSegments;
+    qDebug() << Q_FUNC_INFO << "-------";
 #endif
 
     // Write the from/via/to triplets now
@@ -337,17 +337,14 @@ void XpAirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery
 
       // Write in order 1 -> 2 -> 3
 #ifdef DEBUG_INFORMATION_LOAD_XP_AIRWAYS
-      qDebug() << "1 -> 2 -> 3 ###################################################";
-      qDebug() << name << prev12 << mid23;
+      qDebug() << Q_FUNC_INFO << "1 -> 2 -> 3 ###################################################";
+      qDebug() << Q_FUNC_INFO << name << prev12 << mid23;
 #endif
-
-      if(i == 0) // Avoid overlapping/duplicates
-        writeSegment(insertTmpAirwayPoint, name, type, prev12, mid23);
 
       // Write in order 2 -> 3 -> 4
 #ifdef DEBUG_INFORMATION_LOAD_XP_AIRWAYS
-      qDebug() << "2 -> 3 -> 4 ######";
-      qDebug() << name << mid23 << next34;
+      qDebug() << Q_FUNC_INFO << "2 -> 3 -> 4 ######";
+      qDebug() << Q_FUNC_INFO << name << mid23 << next34;
 #endif
 
       writeSegment(insertTmpAirwayPoint, name, type, mid23, next34);
@@ -359,6 +356,12 @@ void XpAirwayPostProcess::writeSegment(SqlQuery& insertTmpAirwayPoint, const QSt
                                        const AirwaySegment& prevSeg, const AirwaySegment& nextSeg)
 {
   insertTmpAirwayPoint.clearBoundValues();
+
+  if(prevSeg.next.ident.isEmpty())
+    qWarning() << Q_FUNC_INFO << "Airway" << name << "Empty mid ident";
+
+  if(nextSeg.next.ident.isEmpty() && prevSeg.prev.ident.isEmpty())
+    qWarning() << Q_FUNC_INFO << "Airway" << name << "Empty prev and next ident";
 
   insertTmpAirwayPoint.bindValue(":name", name);
   insertTmpAirwayPoint.bindValue(":type", convertAirwayType(type));

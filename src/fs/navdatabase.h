@@ -192,6 +192,8 @@ private:
 
   /* Run and report SQL script */
   bool runScript(atools::fs::ProgressHandler *progress, const QString& scriptFile, const QString& message);
+
+  /* Run more than one SQL script but report only once */
   bool runScripts(ProgressHandler *progress, const QStringList& scriptFiles, const QString& message);
 
   void createPreparationScript();

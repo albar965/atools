@@ -254,6 +254,7 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
   setFlag(type::VACUUM_DATABASE, settings.value("Options/VacuumDatabase", true).toBool());
   setFlag(type::ANALYZE_DATABASE, settings.value("Options/AnalyzeDatabase", true).toBool());
   setFlag(type::DROP_INDEXES, settings.value("Options/DropAllIndexes", false).toBool());
+  setFlag(type::DROP_TEMP_TABLES, settings.value("Options/DropTempTables", true).toBool());
 
   setSimConnectAirportFetchDelay(settings.value("Options/SimConnectAirportFetchDelay", 100).toInt());
   setSimConnectNavaidFetchDelay(settings.value("Options/SimConnectNavaidFetchDelay", 50).toInt());

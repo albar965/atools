@@ -16,23 +16,16 @@
 -- ****************************************************************************/
 
 -- *************************************************************
--- Drop all tables used for navigation aids
+-- Create application indexes after all post processes
 -- *************************************************************
 
--- Order is important to avoid fk conflicts
-
--- drop nav
-drop table if exists airway;
+-- Drop temporary tables
+drop table if exists tmp_airway;
 drop table if exists tmp_airway_point;
 drop table if exists tmp_waypoint;
-drop table if exists tmp_airway;
-drop table if exists tmp_waypoint;
+drop table if exists tmp_waypoint_ap;
 drop table if exists tmp_waypoint_dfd;
-drop table if exists ils;
-drop table if exists marker;
-drop table if exists ndb;
-drop table if exists vor;
-drop table if exists waypoint;
-drop table if exists boundary;
-drop table if exists mora_grid;
-
+drop table if exists tmp_ndb_ap;
+drop table if exists tmp_vor_ap;
+drop table if exists tmp_holding;
+drop table if exists tmp_ap_num_ils;

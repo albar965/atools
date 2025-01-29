@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+-- Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,18 +18,6 @@
 -- *************************************************************
 -- Create application indexes after all post processes
 -- *************************************************************
-
--- Drop temporary tables
-drop table if exists airway_temp;
-drop table if exists tmp_airway_point;
-drop table if exists tmp_waypoint;
-drop table if exists tmp_waypoint_ap;
-drop table if exists tmp_waypoint_dfd;
-drop table if exists tmp_ndb_ap;
-drop table if exists tmp_vor_ap;
-drop table if exists tmp_holding;
-drop table if exists tmp_ap_num_ils;
-
 
 -- Create indexes which are used in searches
 create index if not exists idx_ils_ident on ils(ident);

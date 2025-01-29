@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ void XpAirwayReader::read(const QStringList& line, const XpReaderContext& contex
   for(const QString& name : nameList)
   {
     // Split dash separated airway list
-    insertAirwayQuery->bindValue(":airway_temp_id", ++curAirwayId);
+    insertAirwayQuery->bindValue(":tmp_airway_id", ++curAirwayId);
     insertAirwayQuery->bindValue(":name", name);
     insertAirwayQuery->bindValue(":type", at(line, TYPE).toInt());
     insertAirwayQuery->bindValue(":direction", at(line, DIRECTION));
@@ -103,7 +103,7 @@ void XpAirwayReader::initQueries()
   SqlUtil util(&db);
 
   insertAirwayQuery = new SqlQuery(db);
-  insertAirwayQuery->prepare(util.buildInsertStatement("airway_temp"));
+  insertAirwayQuery->prepare(util.buildInsertStatement("tmp_airway"));
 }
 
 void XpAirwayReader::deInitQueries()
