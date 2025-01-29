@@ -312,9 +312,9 @@ public:
   QHash<IcaoId, Airport> airportFacilities;
 
   // Waypoint and airway/route facilities
-  QMap<unsigned long, atools::fs::sc::db::Waypoint> waypointFacilities; // Key is pFacilityData->UserRequestId
-  QList<NdbFacility> ndbFacilities;
-  QList<VorFacility> vorFacilities;
+  QList<atools::fs::sc::db::Waypoint> waypointFacilities;
+  QList<atools::fs::sc::db::NdbFacility> ndbFacilities;
+  QList<atools::fs::sc::db::VorFacility> vorFacilities;
 
   // Maps sendId to FacilityId to allow more details when printing error messages in SimConnect exceptions
   QHash<unsigned long, FacilityId> requests;
@@ -1312,7 +1312,7 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
         {
           // Waypoint with or without route
           const WaypointFacility *waypointFacility = static_cast<const WaypointFacility *>(facilityData);
-          waypointFacilities.insert(recvFacilityData->UserRequestId, Waypoint(*waypointFacility));
+          waypointFacilities.append(Waypoint(*waypointFacility));
 
           // Save key without region for disambiguation when loading disconnected ids
           if(checkFacilityIdentPosHash)
@@ -1324,18 +1324,14 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
         {
           const RouteFacility *routeFacility = static_cast<const RouteFacility *>(facilityData);
 
-          Waypoint *waypoint = nullptr;
-          if(waypointFacilities.contains(recvFacilityData->UserRequestId))
-            waypoint = &waypointFacilities[recvFacilityData->UserRequestId];
-
           // Enqueue waypoints to fetch details - ids are only added if not already done
           addNavaid(routeFacility->prevIcao, routeFacility->prevRegion, routeFacility->prevType);
           addNavaid(routeFacility->nextIcao, routeFacility->nextRegion, routeFacility->nextType);
 
-          if(waypoint != nullptr)
-            waypoint->routes.append(*routeFacility);
+          if(!waypointFacilities.isEmpty())
+            waypointFacilities.last().routes.append(*routeFacility);
           else
-            qWarning() << Q_FUNC_INFO << "Waypoint for" << recvFacilityData->UserRequestId << "not found";
+            qWarning() << Q_FUNC_INFO << "waypointFacilities empty";
         }
         else if(facilityDataType == SIMCONNECT_FACILITY_DATA_NDB)
         {

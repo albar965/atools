@@ -91,7 +91,7 @@ public:
 
   /* Writes all waypoints and airways to the database and commits after finishing. The map key is not used.
    * fileId is used to fill db.file_id field for all navaids. */
-  bool writeWaypointsAndAirwaysToDatabase(const QMap<unsigned long, atools::fs::sc::db::Waypoint>& waypoints, int fileId);
+  bool writeWaypointsAndAirwaysToDatabase(const QList<atools::fs::sc::db::Waypoint>& waypoints, int fileId);
 
   /* Writes all VOR and ILS to the database and commits after finishing. The map key is not used.
    * fileId is used to fill db.file_id field for all navaids. */
@@ -152,7 +152,7 @@ private:
 
   void groupProcedures(Airport& airport) const;
   QVector<RunwayTransition> groupProcedures(const QVector<RunwayTransition>& runwayTransitions,
-                                            const QHash<int, QVector<const Runway*> > runwaysByNumber, int airportNumRunwayEnds) const;
+                                            const QHash<int, QVector<const Runway *> > runwaysByNumber, int airportNumRunwayEnds) const;
 
   atools::sql::SqlDatabase& db;
   bool verbose = false;

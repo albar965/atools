@@ -1413,7 +1413,7 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
   return aborted;
 }
 
-bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QMap<unsigned long, Waypoint>& waypoints, int fileId)
+bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QList<atools::fs::sc::db::Waypoint>& waypoints, int fileId)
 {
   atools::sql::SqlTransaction transaction(db);
 
