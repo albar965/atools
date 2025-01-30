@@ -1251,7 +1251,7 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
   scenery::MaterialLib materialLib(options);
   for(const SceneryArea& area : areas)
   {
-    if((area.isActive() || options->isReadInactive()) && options->isIncludedLocalPath(area.getLocalPath()))
+    if(area.isActive() || options->isReadInactive())
     {
       if((aborted = progress->reportSceneryArea(&area)))
         return true;
@@ -1300,7 +1300,7 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
           // if(!aborted)
           // aborted = simconnectLoader->loadDisconnectedNavaids20(fileId);
 
-          if(!aborted)
+          if(!aborted && options->getSimConnectLoadDisconnected())
             aborted = simconnectLoader->loadDisconnectedNavaids24(fileId, result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
 
           // Only for inital load and export of 2020 navaids using loadDisconnectedNavaids20()
@@ -1314,7 +1314,7 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
         else
           throw Exception("SimConnectLoader is null.");
       }
-      else
+      else if(options->isIncludedLocalPath(area.getLocalPath()))
       {
         NavDatabaseErrors::SceneryErrors err = NavDatabaseErrors::SceneryErrors();
         fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);

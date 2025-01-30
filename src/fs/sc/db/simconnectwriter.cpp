@@ -414,6 +414,7 @@ void SimConnectWriter::initQueries()
   tmpAirwayPointStmt->prepare(util.buildInsertStatement("tmp_airway_point", QString(),
                                                         {"next_airport_ident", "previous_airport_ident", "next_maximum_altitude",
                                                          "previous_maximum_altitude"}));
+  waypointsWritten.clear();
 }
 
 const atools::fs::sc::db::FacilityIdSet SimConnectWriter::getNavaidIds()
@@ -478,6 +479,7 @@ void SimConnectWriter::deInitQueries()
   ATOOLS_DELETE(ndbStmt);
   ATOOLS_DELETE(ilsStmt);
   ATOOLS_DELETE(tmpAirwayPointStmt);
+  waypointsWritten.clear();
 }
 
 bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId, atools::fs::sc::db::Airport>& airports, int fileId)
@@ -1263,20 +1265,26 @@ bool SimConnectWriter::writeNdbToDatabase(const QList<NdbFacility>& ndbs, int fi
     bindPosAlt(ndbStmt, ndb.longitude, ndb.latitude, ndb.altitude);
     ndbStmt->exec();
 
-    // Create a shadow waypoint for this NDB which can be used to connect airways - will be hidden in the GUI
-    // Counts are updated in update_wp_ids.sql
-    waypointStmt->bindValue(":waypoint_id", ++waypointId);
-    waypointStmt->bindValue(":file_id", fileId);
-    waypointStmt->bindValue(":nav_id", ndbId);
-    waypointStmt->bindValue(":ident", ndb.icao);
-    waypointStmt->bindValue(":region", ndb.region);
-    waypointStmt->bindValue(":mag_var", magvar);
-    waypointStmt->bindValue(":artificial", 1); // Indicates hidden shadow
-    waypointStmt->bindValue(":type", enumToStr(bgl::Waypoint::waypointTypeToStr, bgl::nav::NDB));
-    waypointStmt->bindValue(":num_victor_airway", 0);
-    waypointStmt->bindValue(":num_jet_airway", 0);
-    bindPos(waypointStmt, ndb.longitude, ndb.latitude);
-    waypointStmt->exec();
+    FacilityId id(ndb.icao, ndb.region, ID_WAYPOINT);
+    if(!waypointsWritten.contains(id))
+    {
+      waypointsWritten.insert(id);
+
+      // Create a shadow waypoint for this NDB which can be used to connect airways - will be hidden in the GUI
+      // Counts are updated in update_wp_ids.sql
+      waypointStmt->bindValue(":waypoint_id", ++waypointId);
+      waypointStmt->bindValue(":file_id", fileId);
+      waypointStmt->bindValue(":nav_id", ndbId);
+      waypointStmt->bindValue(":ident", ndb.icao);
+      waypointStmt->bindValue(":region", ndb.region);
+      waypointStmt->bindValue(":mag_var", magvar);
+      waypointStmt->bindValue(":artificial", 1); // Indicates hidden shadow
+      waypointStmt->bindValue(":type", enumToStr(bgl::Waypoint::waypointTypeToStr, bgl::nav::NDB));
+      waypointStmt->bindValue(":num_victor_airway", 0);
+      waypointStmt->bindValue(":num_jet_airway", 0);
+      bindPos(waypointStmt, ndb.longitude, ndb.latitude);
+      waypointStmt->exec();
+    }
   }
 
   transaction.commit();
@@ -1393,20 +1401,26 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
       bindPosAlt(vorStmt, vorIls.vorLongitude, vorIls.vorLatitude, vorIls.vorAltitude);
       vorStmt->exec();
 
-      // Create a shadow waypoint for this VOR which can be used to connect airways - will be hidden in the GUI
-      // Counts are updated in update_wp_ids.sql
-      waypointStmt->bindValue(":waypoint_id", ++waypointId);
-      waypointStmt->bindValue(":file_id", fileId);
-      waypointStmt->bindValue(":nav_id", vorId);
-      waypointStmt->bindValue(":ident", vorIls.icao);
-      waypointStmt->bindValue(":region", vorIls.region);
-      waypointStmt->bindValue(":mag_var", magvar);
-      waypointStmt->bindValue(":artificial", 1); // Indicates hidden shadow
-      waypointStmt->bindValue(":type", enumToStr(bgl::Waypoint::waypointTypeToStr, bgl::nav::VOR));
-      waypointStmt->bindValue(":num_victor_airway", 0);
-      waypointStmt->bindValue(":num_jet_airway", 0);
-      bindPos(waypointStmt, vorIls.vorLongitude, vorIls.vorLatitude);
-      waypointStmt->exec();
+      FacilityId id(vorIls.icao, vorIls.region, ID_WAYPOINT);
+      if(!waypointsWritten.contains(id))
+      {
+        waypointsWritten.insert(id);
+
+        // Create a shadow waypoint for this VOR which can be used to connect airways - will be hidden in the GUI
+        // Counts are updated in update_wp_ids.sql
+        waypointStmt->bindValue(":waypoint_id", ++waypointId);
+        waypointStmt->bindValue(":file_id", fileId);
+        waypointStmt->bindValue(":nav_id", vorId);
+        waypointStmt->bindValue(":ident", vorIls.icao);
+        waypointStmt->bindValue(":region", vorIls.region);
+        waypointStmt->bindValue(":mag_var", magvar);
+        waypointStmt->bindValue(":artificial", 1); // Indicates hidden shadow
+        waypointStmt->bindValue(":type", enumToStr(bgl::Waypoint::waypointTypeToStr, bgl::nav::VOR));
+        waypointStmt->bindValue(":num_victor_airway", 0);
+        waypointStmt->bindValue(":num_jet_airway", 0);
+        bindPos(waypointStmt, vorIls.vorLongitude, vorIls.vorLatitude);
+        waypointStmt->exec();
+      }
     }
   }
   transaction.commit();
@@ -1434,23 +1448,29 @@ bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QList<atools::fs
     bgl::nav::WaypointType type = static_cast<bgl::nav::WaypointType>(waypointFacility.type);
     float magvar = magDecReader->getMagVar(waypointFacility.longitude, waypointFacility.latitude);
 
-    waypointStmt->bindValue(":waypoint_id", ++waypointId);
-    waypointStmt->bindValue(":file_id", fileId);
-    waypointStmt->bindNullInt(":nav_id"); // Filled later in script update_wp_ids.sql
-    waypointStmt->bindValue(":ident", waypointFacility.icao);
-    waypointStmt->bindValue(":region", waypointFacility.region);
-    waypointStmt->bindValue(":mag_var", magvar);
+    FacilityId id(waypointFacility.icao, waypointFacility.region, ID_WAYPOINT);
+    if(!waypointsWritten.contains(id))
+    {
+      waypointsWritten.insert(id);
 
-    if((type == bgl::nav::VOR || type == bgl::nav::NDB) /* && (waypoint.getNumVictorAirway() > 0 || waypoint.getNumJetAirway() > 0)*/)
-      waypointStmt->bindValue(":artificial", 1); // Indicates hidden shadow
-    else
-      waypointStmt->bindNullInt(":artificial");
+      waypointStmt->bindValue(":waypoint_id", ++waypointId);
+      waypointStmt->bindValue(":file_id", fileId);
+      waypointStmt->bindNullInt(":nav_id"); // Filled later in script update_wp_ids.sql
+      waypointStmt->bindValue(":ident", waypointFacility.icao);
+      waypointStmt->bindValue(":region", waypointFacility.region);
+      waypointStmt->bindValue(":mag_var", magvar);
 
-    waypointStmt->bindValue(":type", enumToStr(bgl::Waypoint::waypointTypeToStr, type));
-    waypointStmt->bindValue(":num_victor_airway", waypoint.getNumVictorAirway());
-    waypointStmt->bindValue(":num_jet_airway", waypoint.getNumJetAirway());
-    bindPos(waypointStmt, waypointFacility.longitude, waypointFacility.latitude);
-    waypointStmt->exec();
+      if(type == bgl::nav::VOR || type == bgl::nav::NDB)
+        waypointStmt->bindValue(":artificial", 1); // Indicates hidden shadow
+      else
+        waypointStmt->bindNullInt(":artificial");
+
+      waypointStmt->bindValue(":type", enumToStr(bgl::Waypoint::waypointTypeToStr, type));
+      waypointStmt->bindValue(":num_victor_airway", waypoint.getNumVictorAirway());
+      waypointStmt->bindValue(":num_jet_airway", waypoint.getNumJetAirway());
+      bindPos(waypointStmt, waypointFacility.longitude, waypointFacility.latitude);
+      waypointStmt->exec();
+    }
 
     // Save routes to temporary table which are resolved later to keys ================================
     for(const RouteFacility& route : waypoint.getRouteFacilities())
@@ -1540,7 +1560,6 @@ void SimConnectWriter::bindRunway(atools::sql::SqlQuery *query, const atools::fs
       query->bindNullInt(":arinc_name");
       query->bindNullStr(":runway_name");
     }
-
   }
 }
 

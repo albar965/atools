@@ -512,6 +512,16 @@ public:
     simConnectBatchSize = value;
   }
 
+  bool getSimConnectLoadDisconnected() const
+  {
+    return simConnectLoadDisconnected;
+  }
+
+  void setSimConnectLoadDisconnected(bool value)
+  {
+    simConnectLoadDisconnected = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::NavDatabaseOptions& opts);
 
@@ -560,6 +570,7 @@ private:
   bool callDefaultCallback = true;
 
   int simConnectAirportFetchDelay = 100, simConnectNavaidFetchDelay = 50, simConnectBatchSize = 2000;
+  bool simConnectLoadDisconnected = true;
 
   atools::fs::FsPaths::SimulatorType simulatorType = atools::fs::FsPaths::FSX;
 };

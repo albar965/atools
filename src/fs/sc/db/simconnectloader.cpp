@@ -1325,8 +1325,16 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
           const RouteFacility *routeFacility = static_cast<const RouteFacility *>(facilityData);
 
           // Enqueue waypoints to fetch details - ids are only added if not already done
+          // This also schedules VOR and NDB which do not deliver routes
           addNavaid(routeFacility->prevIcao, routeFacility->prevRegion, routeFacility->prevType);
           addNavaid(routeFacility->nextIcao, routeFacility->nextRegion, routeFacility->nextType);
+
+          // Schedule to fetch shadow waypoints for this if NDB or VOR since only these come with airway routes
+          if(routeFacility->prevType != ID_WAYPOINT)
+            addNavaid(routeFacility->prevIcao, routeFacility->prevRegion, ID_WAYPOINT);
+
+          if(routeFacility->nextType != ID_WAYPOINT)
+            addNavaid(routeFacility->nextIcao, routeFacility->nextRegion, ID_WAYPOINT);
 
           if(!waypointFacilities.isEmpty())
             waypointFacilities.last().routes.append(*routeFacility);
@@ -1342,6 +1350,9 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
           if(checkFacilityIdentPosHash)
             addFacilityIdLoaded(FacilityId(ndbFacility->icao, ndbFacility->region, ID_NDB,
                                            ndbFacility->longitude, ndbFacility->latitude));
+
+          // Schedule to fetch shadow waypoints for this NDB since only these come with airway routes
+          addNavaid(ndbFacility->icao, ndbFacility->region, ID_WAYPOINT);
           ndbLoaded++;
         }
         else if(facilityDataType == SIMCONNECT_FACILITY_DATA_VOR)
@@ -1357,7 +1368,11 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
           if(vorFacility->isIls())
             ilsLoaded++;
           else
+          {
+            // Schedule to fetch shadow waypoints for this VOR since only these come with airway routes
+            addNavaid(vorFacility->icao, vorFacility->region, ID_WAYPOINT);
             vorLoaded++;
+          }
         }
         // ==============================================================================
         // Airport top level ==============================================================

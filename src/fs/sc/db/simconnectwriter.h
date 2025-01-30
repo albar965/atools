@@ -18,6 +18,8 @@
 #ifndef ATOOLS_SIMCONNECTWRITER_H
 #define ATOOLS_SIMCONNECTWRITER_H
 
+#include "fs/sc/db/simconnectid.h"
+
 #include <QMap>
 #include <QCoreApplication>
 #include <QHash>
@@ -154,6 +156,8 @@ private:
   QVector<RunwayTransition> groupProcedures(const QVector<RunwayTransition>& runwayTransitions,
                                             const QHash<int, QVector<const Runway *> > runwaysByNumber, int airportNumRunwayEnds) const;
 
+  // All waypoint ids already stored in the database
+  atools::fs::sc::db::FacilityIdSet waypointsWritten;
   atools::sql::SqlDatabase& db;
   bool verbose = false;
 
