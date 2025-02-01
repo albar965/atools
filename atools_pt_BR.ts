@@ -2398,37 +2398,37 @@ Tempo Noturno: %5</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="494"/>
+        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="496"/>
         <source>Writing airport facilities to database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1218"/>
+        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1220"/>
         <source>Caught exception writing airport %1. Error: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1225"/>
+        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1227"/>
         <source>Caught unknown exception writing airport %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1233"/>
+        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1235"/>
         <source>Too many errors writing airport data. Stopping.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1246"/>
+        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1248"/>
         <source>Writing NDB to database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1291"/>
+        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1299"/>
         <source>Writing VOR and ILS to database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1426"/>
+        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1440"/>
         <source>Writing waypoints and airways to database</source>
         <translation type="unfinished"></translation>
     </message>
