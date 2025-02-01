@@ -138,8 +138,8 @@ public:
   // Traverse airway network and write navaids loaded from above
   bool loadNavaids();
 
-  bool loadDisconnectedNavaids20();
-  bool loadDisconnectedNavaids24(bool skipLoading);
+  bool loadDisconnectedNavaidsFile();
+  bool loadDisconnectedNavaids(bool skipLoading);
 
   // Add all facility definitions for airports and their children
   // The definitions have to match the structs in fs/sc/db/simconnectairport.h
@@ -173,8 +173,8 @@ public:
   void addNavaid(const FacilityId& id)
   {
     // Skip runways, airports, already loaded ids and ids already in request
-    if(id.isValid() && id.getType() != ID_RUNWAY && id.getType() != ID_AIPORT &&
-       !navaidIdsRequested.contains(id) && !navaidIdSet.contains(id) && !facilityIdLoaded(id))
+    if(id.isValid() && id.getType() != ID_RUNWAY && id.getType() != ID_AIPORT && !navaidIdsRequested.contains(id) &&
+       !navaidIdSet.contains(id))
     {
       if(verbose)
         qDebug() << Q_FUNC_INFO << "Adding navaid" << id;
@@ -237,10 +237,10 @@ public:
   // Traverses the route network and keeps adding waypoints until done
   bool requestNavaids(bool fetchRoutes);
 
-  // Read navaids not connected to the airway network or procedures
-  void fetchDisconnectedNavaids20(const QString& typeFilter);
+  // Read navaids not connected to the airway network or procedures. Region is ignored.
+  void fetchDisconnectedNavaidsFile(const QString& typeFilter);
 
-  void fetchDisconnectedNavaids24(const QString& typeFilter);
+  void fetchDisconnectedNavaidsResource(const QString& typeFilter);
 
   // Free all memory
   void clear();
@@ -262,15 +262,6 @@ public:
 
   // SimConnect dispatch method
   void dispatchProcedure(SIMCONNECT_RECV *pData);
-
-  // Used by the loading of disconnected ids to compare navaids based on coordinates/vicinity without the unreliable region code
-  void addFacilityIdLoaded(const FacilityId& id)
-  {
-    if(checkFacilityIdentPosHash && !facilityIdLoaded(id))
-      facilityIdentPosHash.insert(id.noRegion(), id);
-  }
-
-  bool facilityIdLoaded(const FacilityId& id);
 
   // ========================================================================
 
@@ -294,10 +285,6 @@ public:
 
   // Avoid duplicate insert into navaidIds list. This set is filled but not consumed while loading.
   FacilityIdSet navaidIdSet;
-
-  // Used to weed out facilities having an invalid region (ignored) but same ident and type at the same position
-  QMultiHash<FacilityId, FacilityId> facilityIdentPosHash;
-  bool checkFacilityIdentPosHash = false;
 
   // All aiports to fetch - filled by loadAirports()
   IcaoIdVector airportIds;
@@ -690,11 +677,11 @@ bool SimConnectLoaderPrivate::loadNavaids()
   return aborted;
 }
 
-bool SimConnectLoaderPrivate::loadDisconnectedNavaids24(bool skipLoading)
+bool SimConnectLoaderPrivate::loadDisconnectedNavaids(bool skipLoading)
 {
   // Clear and then fill navaidIds and navaidIdSet avoiding duplicates
   if(!aborted && !skipLoading)
-    fetchDisconnectedNavaids24(QString()); // Load VOR, NDB and waypoints if not loaded previously
+    fetchDisconnectedNavaidsResource(QString()); // Load VOR, NDB and waypoints if not loaded previously
 
   qDebug() << Q_FUNC_INFO << "Number of disconnected to fetch" << navaidIds.size();
 
@@ -713,11 +700,11 @@ bool SimConnectLoaderPrivate::loadDisconnectedNavaids24(bool skipLoading)
   return aborted;
 }
 
-bool SimConnectLoaderPrivate::loadDisconnectedNavaids20()
+bool SimConnectLoaderPrivate::loadDisconnectedNavaidsFile()
 {
   // Clear and then fill navaidIds and navaidIdSet avoiding duplicates
   if(!aborted)
-    fetchDisconnectedNavaids20(QString()); // Load VOR, NDB and waypoints if not loaded previously
+    fetchDisconnectedNavaidsFile(QString()); // Load VOR, NDB and waypoints if not loaded previously
 
   qDebug() << Q_FUNC_INFO << "Number of disconnected to fetch" << navaidIds.size();
 
@@ -1081,7 +1068,7 @@ bool SimConnectLoaderPrivate::requestNavaids(bool fetchRoutes)
   return aborted;
 }
 
-void SimConnectLoaderPrivate::fetchDisconnectedNavaids24(const QString& typeFilter)
+void SimConnectLoaderPrivate::fetchDisconnectedNavaidsResource(const QString& typeFilter)
 {
 #if 0
   /* *INDENT-OFF* */
@@ -1106,7 +1093,6 @@ sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs24.sqlite \
     vorFacilities.clear();
     waypointFacilities.clear();
     navaidIds.clear();
-    facilityIdentPosHash.clear();
 
     // File contains all navaids from previous simulator versions - regions are omitted since they are useless
     QFile file(":/atools/resources/navdata/navaids24.csv.gz");
@@ -1135,7 +1121,7 @@ sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs24.sqlite \
   }
 }
 
-void SimConnectLoaderPrivate::fetchDisconnectedNavaids20(const QString& typeFilter)
+void SimConnectLoaderPrivate::fetchDisconnectedNavaidsFile(const QString& typeFilter)
 {
   // Query to generate navaids.csv.gz
 #if 0
@@ -1161,11 +1147,6 @@ sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs.sqlite \
     vorFacilities.clear();
     waypointFacilities.clear();
     navaidIds.clear();
-
-    // Put the facilities already saved in the database into a multihash with the id minus region as key
-    // and the complete without region but plus position as values
-    for(const FacilityId& id : writer->getNavaidIds())
-      addFacilityIdLoaded(id);
 
     // File contains all navaids from previous simulator versions - regions are omitted since they are useless
     QFile file(atools::settings::Settings::getPath() % atools::SEP % "navaids.csv.gz");
@@ -1196,24 +1177,6 @@ sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs.sqlite \
   }
 }
 
-bool SimConnectLoaderPrivate::facilityIdLoaded(const FacilityId& id)
-{
-  if(checkFacilityIdentPosHash && !facilityIdentPosHash.isEmpty())
-  {
-    // Create key without region
-    FacilityId idNoRegion = id.noRegion();
-
-    // Iterate over all same keys having values with different regions and/or coordinates
-    for(auto it = facilityIdentPosHash.find(idNoRegion); it != facilityIdentPosHash.end() && it.key() == idNoRegion; ++it)
-    {
-      // Ignore facilites of the same ident type at the same location
-      if(it->getPos().almostEqual(id.getPos(), atools::geo::Pos::POS_EPSILON_10NM))
-        return true;
-    }
-  }
-  return false;
-}
-
 void SimConnectLoaderPrivate::clear()
 {
   errors.clear();
@@ -1226,7 +1189,6 @@ void SimConnectLoaderPrivate::clear()
   ndbFacilities.clear();
   vorFacilities.clear();
   requests.clear();
-  facilityIdentPosHash.clear();
   currentFacilityDefinition = FACILITY_DATA_NONE_DEFINITION_ID;
   airportsLoaded = waypointsLoaded = vorLoaded = ilsLoaded = ndbLoaded = 0;
 }
@@ -1313,11 +1275,6 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
           // Waypoint with or without route
           const WaypointFacility *waypointFacility = static_cast<const WaypointFacility *>(facilityData);
           waypointFacilities.append(Waypoint(*waypointFacility));
-
-          // Save key without region for disambiguation when loading disconnected ids
-          if(checkFacilityIdentPosHash)
-            addFacilityIdLoaded(FacilityId(waypointFacility->icao, waypointFacility->region, ID_WAYPOINT,
-                                           waypointFacility->longitude, waypointFacility->latitude));
           waypointsLoaded++;
         }
         else if(facilityDataType == SIMCONNECT_FACILITY_DATA_ROUTE)
@@ -1346,11 +1303,6 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
           const NdbFacility *ndbFacility = static_cast<const NdbFacility *>(facilityData);
           ndbFacilities.append(*ndbFacility);
 
-          // Save key without region for disambiguation when loading disconnected ids
-          if(checkFacilityIdentPosHash)
-            addFacilityIdLoaded(FacilityId(ndbFacility->icao, ndbFacility->region, ID_NDB,
-                                           ndbFacility->longitude, ndbFacility->latitude));
-
           // Schedule to fetch shadow waypoints for this NDB since only these come with airway routes
           addNavaid(ndbFacility->icao, ndbFacility->region, ID_WAYPOINT);
           ndbLoaded++;
@@ -1359,11 +1311,6 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
         {
           const VorFacility *vorFacility = static_cast<const VorFacility *>(facilityData);
           vorFacilities.append(*vorFacility);
-
-          // Save key without region for disambiguation when loading disconnected ids
-          if(checkFacilityIdentPosHash)
-            addFacilityIdLoaded(FacilityId(vorFacility->icao, vorFacility->region, ID_VORILS,
-                                           vorFacility->vorLongitude, vorFacility->vorLatitude));
 
           if(vorFacility->isIls())
             ilsLoaded++;
@@ -1834,22 +1781,22 @@ bool SimConnectLoader::loadNavaids(int fileId)
 #endif
 }
 
-bool SimConnectLoader::loadDisconnectedNavaids20(int fileId)
+bool SimConnectLoader::loadDisconnectedNavaidsFile(int fileId)
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->fileId = fileId;
-  return p->loadDisconnectedNavaids20();
+  return p->loadDisconnectedNavaidsFile();
 #else
   Q_UNUSED(fileId)
   return false;
 #endif
 }
 
-bool SimConnectLoader::loadDisconnectedNavaids24(int fileId, bool skipLoading)
+bool SimConnectLoader::loadDisconnectedNavaids(int fileId, bool skipLoading)
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->fileId = fileId;
-  return p->loadDisconnectedNavaids24(skipLoading);
+  return p->loadDisconnectedNavaids(skipLoading);
 #else
   Q_UNUSED(fileId)
   return false;
@@ -1939,15 +1886,6 @@ void SimConnectLoader::setBatchSize(int value)
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->batchSize = value;
-#else
-  Q_UNUSED(value)
-#endif
-}
-
-void SimConnectLoader::setLoad20(bool value)
-{
-#if !defined(SIMCONNECT_BUILD_WIN32)
-  p->checkFacilityIdentPosHash = value;
 #else
   Q_UNUSED(value)
 #endif

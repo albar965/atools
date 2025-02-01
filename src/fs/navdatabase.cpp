@@ -1301,10 +1301,11 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
           // aborted = simconnectLoader->loadDisconnectedNavaids20(fileId);
 
           if(!aborted && options->getSimConnectLoadDisconnected())
-            aborted = simconnectLoader->loadDisconnectedNavaids24(fileId, result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
+            aborted = simconnectLoader->loadDisconnectedNavaids(fileId, result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
 
-          // Only for inital load and export of 2020 navaids using loadDisconnectedNavaids20()
-          // aborted = simconnectLoader->loadDisconnectedNavaids20(fileId);
+          if(!aborted && options->getSimConnectLoadDisconnectedFile())
+            // Only for inital load and export of 2020 navaids using loadDisconnectedNavaids20()
+            aborted = simconnectLoader->loadDisconnectedNavaidsFile(fileId);
 
           simconnectLoader->finishLoading();
 
