@@ -642,20 +642,24 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     }
     else if(sim == FsPaths::MSFS_2024)
     {
-      // ...\Microsoft.Limitless_8wekyb3d8bbwe\LocalCache\Packages\Community\navigraph-nav-base\layout.json
-      // ...\Microsoft.Limitless_8wekyb3d8bbwe\LocalCache\Packages\Community\navigraph-nav-jepp\layout.json
-      if(atools::checkFile(Q_FUNC_INFO, FsPaths::getMsfs24CommunityPath() % atools::SEP %
-                           "navigraph-nav-base" % atools::SEP % "layout.json") &&
-         atools::checkFile(Q_FUNC_INFO, FsPaths::getMsfs24CommunityPath() % atools::SEP %
-                           "navigraph-nav-jepp" % atools::SEP % "layout.json"))
+      // ...\Packages\Microsoft.Limitless_8wekyb3d8bbwe\LocalCache\Packages\Community\!!!navigraph-nav-base\layout.json
+      // ...\Packages\Microsoft.Limitless_8wekyb3d8bbwe\LocalCache\Packages\Community\}}}navigraph-nav-jepp\layout.json
+      const QDir dirCommunity(FsPaths::getMsfs24CommunityPath(), "*navigraph-nav-*",
+                              QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+
+      for(const QFileInfo& info : dirCommunity.entryInfoList())
+      {
+        if(atools::checkFile(Q_FUNC_INFO, info.filePath() % atools::SEP % "layout.json"))
       {
         result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
-        qDebug() << Q_FUNC_INFO << "Found Navigraph navdata update in" << FsPaths::getMsfsCommunityPath();
+          qDebug() << Q_FUNC_INFO << "Found Navigraph navdata update in" << info.filePath();
+          break;
+        }
       }
     }
 
     if(!result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
-      qDebug() << Q_FUNC_INFO << "Found Navigraph navdata update not found";
+      qDebug() << Q_FUNC_INFO << "Navigraph navdata update not found";
   }
   else // FSX and P3D
   {
