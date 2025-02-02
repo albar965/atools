@@ -240,10 +240,10 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
       // FSX ==========
       // App Name Microsoft Flight Simulator X App Version 10.0 App Build  62615.0 Version  10.0 Build  62615.0
 
-      // MSFS ==========
+      // MSFS 2020 ==========
       // SimConnectHandler App Name KittyHawk App Version 11.0 App Build 282174.999 Version 11.0 Build 62651.3
 
-      // MSFS ==========
+      // MSFS 2024 ==========
       // SimConnectHandler App Name SunRise App Version 12.1 App Build 282174.999 Version 12.1 Build 0.0
 
       // Print some useful simconnect interface data to log ====================
@@ -916,9 +916,9 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     QSet<unsigned long> objectIds;
     for(int i = 0; i < p->simDataAircraftList.size(); i++)
     {
-      unsigned long oid = p->simDataAircraftObjectIds.at(i);
+      unsigned long objectId = p->simDataAircraftObjectIds.at(i);
       // Avoid duplicates
-      if(!objectIds.contains(oid))
+      if(!objectIds.contains(objectId))
       {
         const SimDataAircraft& simDataAircraft = p->simDataAircraftList.at(i);
 
@@ -933,10 +933,19 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
         // FSX and P3D
         aiAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0);
 #endif
-        aiAircraft.objectId = static_cast<unsigned int>(oid);
+        aiAircraft.objectId = static_cast<unsigned int>(objectId);
 
-        // Add only aircraft, helicopters and ships
-        if(aiAircraft.isAnyFlying() || aiAircraft.isAnyBoat())
+        if(p->openData.dwApplicationVersionMajor == 12)
+        {
+          // App Name SunRise App Version 12.1 App Build 282174.999 Version 12.1 Build 0.0
+          // Add only aircraft, helicopters and ships in MSFS 2024 to
+          // avoid ground traffic which is wrongly delivered by the sim despite using the requests
+          // SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT, SIMCONNECT_SIMOBJECT_TYPE_BOAT and SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER
+          if(aiAircraft.isAnyFlying() || aiAircraft.isAnyBoat())
+            data.aiAircraft.append(aiAircraft);
+        }
+        else
+          // Add all traffic for other simulators
           data.aiAircraft.append(aiAircraft);
 
         objectIds.insert(aiAircraft.objectId);
