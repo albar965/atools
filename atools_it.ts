@@ -1638,7 +1638,7 @@ Ore Notturne: %5</translation>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1705"/>
         <source>SimConnect Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>Aeroporti SimConnect</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1716"/>
@@ -2374,84 +2374,84 @@ Ore Notturne: %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="577"/>
         <source>Loading airport count</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento del numero dell&apos;aeroporto</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="584"/>
         <source>Loading airport facility numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento del numero delle strutture aeroportuali</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="604"/>
         <source>Loading airport base information</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento delle informazioni sulla base dell&apos;aeroporto</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="624"/>
         <source>Loading airport COM</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento COM dell&apos;aeroporto</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="629"/>
         <source>Loading airport helipads</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento di eliporti aeroportuali</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="635"/>
         <source>Loading airport runways</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento delle piste dell&apos;aeroporto</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="641"/>
         <source>Loading airport start positions</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento delle posizioni di partenza dell&apos;aeroporto</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="647"/>
         <source>Loading airport procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento delle procedure dell&apos;aeroporto</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="652"/>
         <source>Loading airport taxiways and parking</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento delle vie di rullaggio e del parcheggio dell&apos;aeroporto</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="669"/>
         <source>Loading waypoints, VOR, ILS, NDB and airways</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento puntirotta, VOR, ILS, NDB e aerovie</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="689"/>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="712"/>
         <source>Loading disconnected waypoints, VOR, ILS and NDB</source>
-        <translation type="unfinished"></translation>
+        <translation>Caricamento puntirotta, VOR, ILS, NDB scollegati</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="696"/>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="718"/>
         <source>Writing disconnected waypoints, VOR, ILS and NDB to database</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrittura nel database dei puntirotta, VOR, ILS, NDB scollegati</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="959"/>
         <source>Too many errors reading airport data. Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Troppi errori nella lettura dei dati aeroportuali. Arresto.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="1051"/>
         <source>Too many errors reading navaid data. Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Troppi errori nella lettura dei dati di navigazione. Arresto.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="1213"/>
         <source> </source>
-        <translation type="unfinished"></translation>
+        <translation> </translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="1213"/>
         <source>.</source>
-        <translation type="unfinished">.</translation>
+        <translation>.</translation>
     </message>
 </context>
 <context>
@@ -2459,47 +2459,47 @@ Ore Notturne: %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="341"/>
         <source> </source>
-        <translation type="unfinished"></translation>
+        <translation> </translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="341"/>
         <source>.</source>
-        <translation type="unfinished">.</translation>
+        <translation>.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="496"/>
         <source>Writing airport facilities to database</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrittura nel database delle strutture aeroportuali</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1220"/>
         <source>Caught exception writing airport %1. Error: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Eccezione rilevata nella scrittura dell&apos;aeroporto %1. Errore: %2</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1227"/>
         <source>Caught unknown exception writing airport %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rilevata un&apos;eccezione sconosciuta nella scrittura dell&apos;aeroporto %1.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1235"/>
         <source>Too many errors writing airport data. Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Troppi errori nella scrittura dei dati aeroportuali. Arresto.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1248"/>
         <source>Writing NDB to database</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrittura nel database degli NDB</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1299"/>
         <source>Writing VOR and ILS to database</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrittura nel database dei VOR e ILS</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1440"/>
         <source>Writing waypoints and airways to database</source>
-        <translation type="unfinished"></translation>
+        <translation>Scrittura nel database dei puntirotta e aerovie</translation>
     </message>
 </context>
 <context>
