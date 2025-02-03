@@ -190,7 +190,7 @@ public:
   void dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData);
 
   /* Static method will pass call to object which is passed in pContext. */
-  static void CALLBACK dispatchCallback(SIMCONNECT_RECV *pData, DWORD cbData, void *pContext);
+  static void CALLBACK dispatchFunction(SIMCONNECT_RECV *pData, DWORD cbData, void *pContext);
 
   /* Defines the data to fetch. Called after receiving open event */
   void fillDataDefinition();
@@ -204,8 +204,8 @@ public:
   SimData simData;
   unsigned long simDataObjectId;
 
-  QVector<SimDataAircraft> simDataAircraftList;
-  QVector<unsigned long> simDataAircraftObjectIds;
+  // All aircraft fetched by dispatch method
+  QHash<unsigned long, SimDataAircraft> simDataAircraftMap;
 
   sc::State state = sc::STATEOK;
   bool dataDefined = false; // fillDataDefinition called
@@ -223,6 +223,12 @@ public:
   QString aircraftFilePath; // Clean path to aircraft.cfg file in MSFS
 #endif
 };
+
+void CALLBACK SimConnectHandlerPrivate::dispatchFunction(SIMCONNECT_RECV *pData, DWORD cbData, void *pContext)
+{
+  SimConnectHandlerPrivate *handlerClass = static_cast<SimConnectHandlerPrivate *>(pContext);
+  handlerClass->dispatchProcedure(pData, cbData);
+}
 
 void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData)
 {
@@ -312,57 +318,8 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
 
         if(pObjData->dwRequestID == DATA_REQUEST_ID_USER_AIRCRAFT)
         {
-          if(verbose)
-            qDebug() << "DATA_REQUEST_ID_USER_AIRCRAFT"
-                     << "pObjData->dwDefineCount" << pObjData->dwDefineCount
-                     << "pObjData->dwDefineID" << pObjData->dwDefineID
-                     << "pObjData->dwID" << pObjData->dwID
-                     << "pObjData->dwObjectID" << pObjData->dwObjectID
-                     << "pObjData->dwRequestID" << pObjData->dwRequestID
-                     << "pObjData->dwentrynumber" << pObjData->dwentrynumber
-                     << "pObjData->dwoutof" << pObjData->dwoutof;
-
           DWORD objectID = pObjData->dwObjectID;
           SimData *simDataPtr = reinterpret_cast<SimData *>(&pObjData->dwData);
-
-          if(verbose)
-            qDebug() << "ObjectID" << objectID
-                     << "Title" << simDataPtr->aircraft.aircraftTitle
-                     << "atcType" << simDataPtr->aircraft.aircraftAtcType
-                     << "atcModel" << simDataPtr->aircraft.aircraftAtcModel
-                     << "atcId" << simDataPtr->aircraft.aircraftAtcId
-                     << "atcAirline" << simDataPtr->aircraft.aircraftAtcAirline
-                     << "atcFlightNumber" << simDataPtr->aircraft.aircraftAtcFlightNumber
-                     << "category" << simDataPtr->aircraft.category
-                     << "userSim" << simDataPtr->aircraft.userSim
-                     << "modelRadius" << simDataPtr->aircraft.modelRadius
-                     << "wingSpan" << simDataPtr->aircraft.wingSpan
-                     << "aiFrom" << simDataPtr->aircraft.aiFrom
-                     << "aiTo" << simDataPtr->aircraft.aiTo
-                     << "numEngines" << simDataPtr->aircraft.numEngines
-                     << "engineType" << simDataPtr->aircraft.engineType
-                     << "Lat" << simDataPtr->aircraft.latitudeDeg
-                     << "Lon" << simDataPtr->aircraft.longitudeDeg
-                     << "Alt" << simDataPtr->aircraft.altitudeFt
-                     << "ias" << simDataPtr->aircraft.airspeedIndicatedKts
-                     << "gs" << simDataPtr->aircraft.groundVelocityKts
-                     << "vs" << simDataPtr->aircraft.verticalSpeedFps
-                     << "course " << simDataPtr->aircraft.planeHeadingMagneticDeg
-                     << "M" << simDataPtr->aircraft.planeHeadingTrueDeg << "T"
-                     << "track " << simDataPtr->planeTrackMagneticDeg
-                     << "M" << simDataPtr->planeTrackTrueDeg << "T"
-                     << "wind" << simDataPtr->ambientWindDirectionDegT
-                     << "/" << simDataPtr->ambientWindVelocityKts
-                     << "magvar" << simDataPtr->magVarDeg
-                     << "local time" << simDataPtr->localTimeSeconds
-                     << "local year" << simDataPtr->localYear
-                     << "local month" << simDataPtr->localMonth
-                     << "local day" << simDataPtr->localDay
-                     << "zulu time" << simDataPtr->zuluTimeSeconds
-                     << "zulu year" << simDataPtr->zuluYear
-                     << "zulu month" << simDataPtr->zuluMonth
-                     << "zulu day" << simDataPtr->zuluDay
-            ;
           simData = *simDataPtr;
           simDataObjectId = objectID;
           userDataFetched = true;
@@ -371,16 +328,6 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                 pObjData->dwRequestID == DATA_REQUEST_ID_AI_HELICOPTER ||
                 pObjData->dwRequestID == DATA_REQUEST_ID_AI_BOAT)
         {
-          if(verbose)
-            qDebug() << "DATA_REQUEST_ID_AI_AIRCRAFT/HELICOPTER/BOAT"
-                     << "pObjData->dwDefineCount" << pObjData->dwDefineCount
-                     << "pObjData->dwDefineID" << pObjData->dwDefineID
-                     << "pObjData->dw ID" << pObjData->dwID
-                     << "pObjData->dwObjectID" << pObjData->dwObjectID
-                     << "pObjData->dwRequestID" << pObjData->dwRequestID
-                     << "pObjData->dwentrynumber" << pObjData->dwentrynumber
-                     << "pObjData->dwoutof" << pObjData->dwoutof;
-
           if(pObjData->dwObjectID > 0)
           {
             DWORD objectID = pObjData->dwObjectID;
@@ -391,34 +338,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                                          sizeof(simDataAircraftPtr->aircraftTitle),
                                          NULL))) // security check
             {
-              if(verbose)
-                qDebug() << "ObjectID" << objectID
-                         << "Title" << simDataAircraftPtr->aircraftTitle
-                         << "atcType" << simDataAircraftPtr->aircraftAtcType
-                         << "atcModel" << simDataAircraftPtr->aircraftAtcModel
-                         << "atcId" << simDataAircraftPtr->aircraftAtcId
-                         << "atcAirline" << simDataAircraftPtr->aircraftAtcAirline
-                         << "atcFlightNumber" << simDataAircraftPtr->aircraftAtcFlightNumber
-                         << "category" << simDataAircraftPtr->category
-                         << "userSim" << simDataAircraftPtr->userSim
-                         << "modelRadius" << simDataAircraftPtr->modelRadius
-                         << "wingSpan" << simDataAircraftPtr->wingSpan
-                         << "aiFrom" << simDataAircraftPtr->aiFrom
-                         << "aiTo" << simDataAircraftPtr->aiTo
-                         << "numEngines" << simDataAircraftPtr->numEngines
-                         << "engineType" << simDataAircraftPtr->engineType
-                         << "Lat" << simDataAircraftPtr->latitudeDeg
-                         << "Lon" << simDataAircraftPtr->longitudeDeg
-                         << "Alt" << simDataAircraftPtr->altitudeFt
-                         << "ias" << simDataAircraftPtr->airspeedIndicatedKts
-                         << "gs" << simDataAircraftPtr->groundVelocityKts
-                         << "vs" << simDataAircraftPtr->verticalSpeedFps
-                         << "course " << simDataAircraftPtr->planeHeadingMagneticDeg << "M"
-                         << simDataAircraftPtr->planeHeadingTrueDeg << "T"
-                ;
-
-              simDataAircraftList.append(*simDataAircraftPtr);
-              simDataAircraftObjectIds.append(objectID);
+              simDataAircraftMap.insert(objectID, *simDataAircraftPtr);
               aiDataFetched = true;
             }
           }
@@ -461,12 +381,6 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
   }
   if(verbose)
     qDebug() << "DispatchProcedure finished";
-}
-
-void CALLBACK SimConnectHandlerPrivate::dispatchCallback(SIMCONNECT_RECV *pData, DWORD cbData, void *pContext)
-{
-  SimConnectHandlerPrivate *handlerClass = static_cast<SimConnectHandlerPrivate *>(pContext);
-  handlerClass->dispatchProcedure(pData, cbData);
 }
 
 void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& simDataAircraft, SimConnectAircraft& aircraft)
@@ -568,7 +482,7 @@ bool SimConnectHandlerPrivate::callDispatch(bool& dataFetched, const QString& me
     if(paused)
       break;
 
-    HRESULT hr = api->CallDispatch(dispatchCallback, this);
+    HRESULT hr = api->CallDispatch(dispatchFunction, this);
 
     if(hr != S_OK)
     {
@@ -863,8 +777,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     return false;
 
   // === Get AI aircraft =======================================================
-  p->simDataAircraftList.clear();
-  p->simDataAircraftObjectIds.clear();
+  p->simDataAircraftMap.clear();
   p->simDataObjectId = 0;
 
 #if defined(SIMCONNECT_BUILD_WIN64)
@@ -912,45 +825,37 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
     p->state = sc::STATEOK;
 
-    // Get AI aircraft =======================================================================
-    QSet<unsigned long> objectIds;
-    for(int i = 0; i < p->simDataAircraftList.size(); i++)
+    // Get AI aircraft from hash =======================================================================
+    for(auto it = p->simDataAircraftMap.constBegin(); it != p->simDataAircraftMap.constEnd(); ++it)
     {
-      unsigned long objectId = p->simDataAircraftObjectIds.at(i);
-      // Avoid duplicates
-      if(!objectIds.contains(objectId))
-      {
-        const SimDataAircraft& simDataAircraft = p->simDataAircraftList.at(i);
+      const SimDataAircraft& simDataAircraft = it.value();
 
-        atools::fs::sc::SimConnectAircraft aiAircraft;
-        p->copyToSimConnectAircraft(simDataAircraft, aiAircraft);
+      atools::fs::sc::SimConnectAircraft aiAircraft;
+      p->copyToSimConnectAircraft(simDataAircraft, aiAircraft);
 
 #if defined(SIMCONNECT_BUILD_WIN64)
-        // MSFS ground flag is is unreliable for AI - try to detect by speed at least, AGL is not available for this
-        aiAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0 ||
-                                 (aiAircraft.verticalSpeedFeetPerMin < 0.01f && simDataAircraft.groundVelocityKts < 30.f));
+      // MSFS ground flag is is unreliable for AI - try to detect by speed at least, AGL is not available for this
+      aiAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0 ||
+                               (aiAircraft.verticalSpeedFeetPerMin < 0.01f && simDataAircraft.groundVelocityKts < 30.f));
 #else
-        // FSX and P3D
-        aiAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0);
+      // FSX and P3D
+      aiAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0);
 #endif
-        aiAircraft.objectId = static_cast<unsigned int>(objectId);
+      aiAircraft.objectId = static_cast<unsigned int>(it.key());
 
-        if(p->openData.dwApplicationVersionMajor == 12)
-        {
-          // App Name SunRise App Version 12.1 App Build 282174.999 Version 12.1 Build 0.0
-          // Add only aircraft, helicopters and ships in MSFS 2024 to
-          // avoid ground traffic which is wrongly delivered by the sim despite using the requests
-          // SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT, SIMCONNECT_SIMOBJECT_TYPE_BOAT and SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER
-          if(aiAircraft.isAnyFlying() || aiAircraft.isAnyBoat())
-            data.aiAircraft.append(aiAircraft);
-        }
-        else
-          // Add all traffic for other simulators
+      if(p->openData.dwApplicationVersionMajor == 12)
+      {
+        // App Name SunRise App Version 12.1 App Build 282174.999 Version 12.1 Build 0.0
+        // Add only aircraft, helicopters and ships in MSFS 2024 to
+        // avoid ground traffic which is wrongly delivered by the sim despite using the requests
+        // SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT, SIMCONNECT_SIMOBJECT_TYPE_BOAT and SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER
+        if(aiAircraft.isAnyFlying() || aiAircraft.isAnyBoat())
           data.aiAircraft.append(aiAircraft);
-
-        objectIds.insert(aiAircraft.objectId);
       }
-    }
+      else
+        // Add all traffic for other simulators
+        data.aiAircraft.append(aiAircraft);
+    } // for(auto it = p->simDataAircraftMap.constBegin(); it != p->simDataAircraftMap.constEnd(); ++it)
 
     // Get user aircraft =======================================================================
     if(p->userDataFetched)
@@ -1017,7 +922,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       QTime zuluTime = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(p->simData.zuluTimeSeconds * 1000.f));
       QDateTime zuluDateTime(zuluDate, zuluTime, Qt::UTC);
       data.userAircraft.zuluDateTime = zuluDateTime;
-    }
+    } // if(p->userDataFetched)
     else
       data.userAircraft.position = atools::geo::Pos();
   } // if(p->state == sc::STATEOK)
