@@ -104,6 +104,19 @@ static const QVector<QRegularExpression> REGEXP_MIL({
         QRegularExpression(QLatin1String("\\bROYAL MARINES\\b")),
       });
 
+QString capAirportName(const QString& str)
+{
+  // Force acronyms in airports to upper case
+  const static QSet<QString> FORCE_UPPER({
+          "AAC", "AAF", "AB", "AS", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CFB", "CGS", "DGAC",
+          "FAA", "FBO", "GTS", "HSC", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK",
+          "NOLF", "NRC", "NRC", "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RLA", "RNAS",
+          "USFS", "CGAS", "TV", "NVC", "USAF",
+          "I", "II", "III", "IV", "V", "VI"});
+
+  return atools::capString(str, FORCE_UPPER).replace("-O-", "-o-").replace("-N-", "-n-").replace("-A-", "-a-").trimmed();
+}
+
 /* from https://en.wikipedia.org/wiki/List_of_aircraft_type_designators */
 static const QHash<QString, QString> NAME_CODE_MAP({
         {"A3ST", "Airbus A300-600ST"},
@@ -515,19 +528,6 @@ QString capNavString(const QString& str)
           "I", "II", "III", "IV", "V", "VI", "NM"});
 
   return atools::capString(str, FORCE_UPPER).trimmed();
-}
-
-QString capAirportName(const QString& str)
-{
-  // Force acronyms in airports to upper case
-  const static QSet<QString> FORCE_UPPER({
-          "AAC", "AAF", "AB", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CFB", "CGS", "DGAC",
-          "FAA", "FBO", "GTS", "HSC", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK",
-          "NOLF", "NRC", "NRC", "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RLA", "RNAS",
-          "USFS", "CGAS", "TV", "NVC", "USAF",
-          "I", "II", "III", "IV", "V", "VI"});
-
-  return atools::capString(str, FORCE_UPPER).replace("-O-", "-o-").replace("-N-", "-n-").replace("-A-", "-a-").trimmed();
 }
 
 QString adjustFsxUserWpName(QString name, int length)
