@@ -87,8 +87,8 @@ public:
    * to traverse airway network. */
   bool loadNavaids(int fileId);
 
-  /* Load VOR and NDB which are not connected to procedures or airways. Requires previous call to loadNavaids() to
-   * avoid loading duplicates. Based on data in file .../ABarthel/navaids.csv.gz. */
+  /* Load waypints, VOR and NDB which are not connected to procedures or airways. Requires previous call to loadNavaids() to
+   * avoid loading duplicates. Based on idents in file .../ABarthel/navaids.csv.gz. */
   bool loadDisconnectedNavaidsFile(int fileId);
 
   /* Load VOR and NDB which are not connected to procedures or airways. Requires previous call to loadNavaids() to

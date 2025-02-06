@@ -103,9 +103,6 @@ public:
    * fileId is used to fill db.file_id field for all navaids. */
   bool writeNdbToDatabase(const QList<atools::fs::sc::db::NdbFacility>& ndbs, int fileId);
 
-  /* Get full list of navaid ids from the database tables waypoint, ils, vor and ndb. */
-  const atools::fs::sc::db::FacilityIdSet getNavaidIds();
-
   /* Create and prepare all database queries. Call before any write*ToDatabase() */
   void initQueries();
 

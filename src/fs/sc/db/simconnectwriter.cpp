@@ -417,25 +417,6 @@ void SimConnectWriter::initQueries()
   waypointsWritten.clear();
 }
 
-const atools::fs::sc::db::FacilityIdSet SimConnectWriter::getNavaidIds()
-{
-  enum {IDENT, TYPE, LONX, LATY};
-
-  FacilityIdSet ids;
-  SqlQuery query("select distinct ident, type, lonx, laty from ( "
-                 "select ident, region, 'V' as type, lonx, laty from vor "
-                 "union "
-                 "select ident, region, 'N' as type, lonx, laty from ndb "
-                 "union "
-                 "select ident, region, 'V' as type, lonx, laty from ils "
-                 "union "
-                 "select ident, region, 'W' as type, lonx, laty from waypoint)", db);
-  query.exec();
-  while(query.next())
-    ids.insert(FacilityId(query.valueStr(IDENT), QString(), query.valueChar(TYPE), query.valueFloat(LONX), query.valueFloat(LATY)));
-  return ids;
-}
-
 void SimConnectWriter::clearAllBoundValues()
 {
   // Clear all values in case of exception to avoid using old values

@@ -157,10 +157,9 @@ public:
   void addNavFacilityDefinition();
 
   // Add navaid to be loaded later in loadNavaids()
-  void addNavaid(const char *icao, const char *region, qint32 type,
-                 float lonX = atools::geo::Pos::INVALID_VALUE, float latY = atools::geo::Pos::INVALID_VALUE)
+  void addNavaid(const char *icao, const char *region, qint32 type)
   {
-    addNavaid(FacilityId(icao, region, static_cast<char>(type), lonX, latY));
+    addNavaid(FacilityId(icao, region, static_cast<char>(type)));
   }
 
   void addNavaidsForLeg(const LegFacility *leg)
@@ -238,7 +237,7 @@ public:
   bool requestNavaids(bool fetchRoutes);
 
   // Read navaids not connected to the airway network or procedures. Region is ignored.
-  void fetchDisconnectedNavaidsFile(const QString& typeFilter);
+  void fetchDisconnectedNavaidsFile();
 
   void fetchDisconnectedNavaidsResource(const QString& typeFilter);
 
@@ -691,6 +690,7 @@ bool SimConnectLoaderPrivate::loadDisconnectedNavaids(bool skipLoading)
   // Request but do not fetch routes
   if(!skipLoading)
     aborted = requestNavaids(false /* fetchRoutes */);
+
   if(!aborted)
   {
     aborted = callProgress(SimConnectLoader::tr("Writing disconnected waypoints, VOR, ILS and NDB to database"));
@@ -704,7 +704,7 @@ bool SimConnectLoaderPrivate::loadDisconnectedNavaidsFile()
 {
   // Clear and then fill navaidIds and navaidIdSet avoiding duplicates
   if(!aborted)
-    fetchDisconnectedNavaidsFile(QString()); // Load VOR, NDB and waypoints if not loaded previously
+    fetchDisconnectedNavaidsFile(); // Load VOR, NDB and waypoints if not loaded previously
 
   qDebug() << Q_FUNC_INFO << "Number of disconnected to fetch" << navaidIds.size();
 
@@ -1070,21 +1070,18 @@ bool SimConnectLoaderPrivate::requestNavaids(bool fetchRoutes)
 
 void SimConnectLoaderPrivate::fetchDisconnectedNavaidsResource(const QString& typeFilter)
 {
-#if 0
   /* *INDENT-OFF* */
+  /*
 sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs24.sqlite \
-  "select ident, region, type from ( \
-  select ident, region, 'V' as type from vor \
-  union \
-  select ident, region, 'N' as type from ndb \
-  union \
-  select ident, region, 'V' as type from ils \
-  union select ident, region, 'W' as type from waypoint where artificial is null) \
-  order by ident, region;" > $APROJECTS/atools/resources/navdata/navaids24.csv && \
-    gzip $APROJECTS/atools/resources/navdata/navaids24.csv && \
-    ls -lh $APROJECTS/atools/resources/navdata/navaids24.csv.gz
+"select ident, region, type from (select ident, region, 'V' as type from vor union \
+select ident, region, 'N' as type from ndb  union \
+select ident, region, 'V' as type from ils  union \
+select ident, region, 'W' as type from waypoint where artificial is null) \
+order by ident, region;" > $APROJECTS/atools/resources/navdata/navaids24.csv && \
+gzip -f $APROJECTS/atools/resources/navdata/navaids24.csv && \
+ls -lh $APROJECTS/atools/resources/navdata/navaids24.csv.gz
+  */
   /* *INDENT-ON* */
-#endif
 
   if(!aborted)
   {
@@ -1121,24 +1118,18 @@ sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs24.sqlite \
   }
 }
 
-void SimConnectLoaderPrivate::fetchDisconnectedNavaidsFile(const QString& typeFilter)
+void SimConnectLoaderPrivate::fetchDisconnectedNavaidsFile()
 {
   // Query to generate navaids.csv.gz
-#if 0
   /* *INDENT-OFF* */
+  /*
 sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs.sqlite \
-  "select ident, type, format('%.4f', lonx) as lonx, format('%.4f', laty) as laty from ( \
-  select ident, 'V' as type, lonx, laty from vor \
-  union \
-  select ident, 'N' as type, lonx, laty from ndb \
-  union \
-  select i.ident, 'V' as type, i.lonx, i.laty from ils i join airport a on i.loc_airport_ident = a.ident \
-  union select ident, 'W' as type, lonx, laty from waypoint ) \
-  order by ident;" > $APROJECTS/atools/resources/navdata/navaids.csv && \
-    gzip $APROJECTS/atools/resources/navdata/navaids.csv && \
-    ls -lh $APROJECTS/atools/resources/navdata/navaids.csv.gz
+"select ident from (select ident from vor union select ident from ndb union select ident from ils union select ident from waypoint) \
+order by ident;" > ~/.config/ABarthel/navaids.csv && \
+gzip -f ~/.config/ABarthel/navaids.csv && \
+ls -lh ~/.config/ABarthel/navaids.csv.gz
+  */
   /* *INDENT-ON* */
-#endif
 
   if(!aborted)
   {
@@ -1155,7 +1146,7 @@ sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs.sqlite \
       QTextStream stream(atools::zip::gzipDecompress(file.readAll()), QIODevice::ReadOnly);
 
       // CSV columns
-      enum {IDENT, TYPE, LONX, LATY};
+      enum {IDENT};
 
       atools::util::CsvFileReader csvReader;
       csvReader.readCsvFile(stream);
@@ -1164,11 +1155,10 @@ sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs.sqlite \
       {
         if(!row.at(IDENT).isEmpty())
         {
-          QChar type = atools::strToChar(row.at(TYPE));
-          if(typeFilter.isEmpty() || typeFilter.contains(type))
-            // Add coordinates to allow deduplication by ident, type and coordinate
-            // Use null region to to disambiguation in minimal list
-            addNavaid(FacilityId(row.at(IDENT), nullptr, type, row.at(LONX).toFloat(), row.at(LATY).toFloat()));
+          // Use null region and all types to do disambiguation in minimal list
+          addNavaid(FacilityId(row.at(IDENT), nullptr, ID_WAYPOINT));
+          addNavaid(FacilityId(row.at(IDENT), nullptr, ID_VORILS));
+          addNavaid(FacilityId(row.at(IDENT), nullptr, ID_NDB));
         }
       }
     }
@@ -1704,8 +1694,7 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
             qDebug() << Q_FUNC_INFO << "Minimal list" << i << facility.icao.Ident << facility.icao.Region << facility.icao.Type;
 
           // Add coordinates to allow deduplication by ident, type and coordinate
-          addNavaid(facility.icao.Ident, facility.icao.Region, facility.icao.Type,
-                    static_cast<float>(facility.lla.Longitude), static_cast<float>(facility.lla.Latitude));
+          addNavaid(facility.icao.Ident, facility.icao.Region, facility.icao.Type);
         }
 
         facilitiesFetchedBatch++;

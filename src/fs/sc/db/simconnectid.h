@@ -135,36 +135,14 @@ public:
     ident[0] = region[0] = '\0';
   }
 
-  explicit FacilityId(const QString& identParam, const QString& regionParam = QString(), QChar typeParam = ID_NONE,
-                      float lonXParam = atools::geo::Pos::INVALID_VALUE, float latYParam = atools::geo::Pos::INVALID_VALUE)
-    : type(static_cast<IdType>(typeParam.toLatin1())), lonX(lonXParam), latY(latYParam)
+  explicit FacilityId(const QString& identParam, const QString& regionParam = QString(), QChar typeParam = ID_NONE)
+    : type(static_cast<IdType>(typeParam.toLatin1()))
   {
     init(identParam.toLatin1().constData(), regionParam.toLatin1().constData());
   }
 
-  explicit FacilityId(const char *identParam, const char *regionParam = nullptr, IdType typeParam = ID_NONE,
-                      float lonXParam = atools::geo::Pos::INVALID_VALUE, float latYParam = atools::geo::Pos::INVALID_VALUE)
-    : type(typeParam), lonX(lonXParam), latY(latYParam)
-  {
-    init(identParam, regionParam);
-  }
-
-  /* Used to create id for facility structures */
-  explicit FacilityId(const char *identParam, const char *regionParam, IdType typeParam,
-                      double lonXParam, double latYParam)
-    : type(typeParam), lonX(static_cast<float>(lonXParam)), latY(static_cast<float>(latYParam))
-  {
-    init(identParam, regionParam);
-  }
-
-  explicit FacilityId(const QString& identParam, const QString& regionParam, QChar typeParam, const atools::geo::Pos& pos)
-    : type(static_cast<IdType>(typeParam.toLatin1())), lonX(pos.getLonX()), latY(pos.getLatY())
-  {
-    init(identParam.toLatin1().constData(), regionParam.toLatin1().constData());
-  }
-
-  explicit FacilityId(const char *identParam, const char *regionParam, IdType typeParam, const atools::geo::Pos& pos)
-    : type(typeParam), lonX(pos.getLonX()), latY(pos.getLatY())
+  explicit FacilityId(const char *identParam, const char *regionParam = nullptr, IdType typeParam = ID_NONE)
+    : type(typeParam)
   {
     init(identParam, regionParam);
   }
@@ -234,21 +212,6 @@ public:
     return ident;
   }
 
-  atools::geo::Pos getPos() const
-  {
-    return atools::geo::Pos(lonX, latY);
-  }
-
-  float getLonX() const
-  {
-    return lonX;
-  }
-
-  float getLatY() const
-  {
-    return latY;
-  }
-
 private:
   friend uint qHash(const FacilityId& str);
 
@@ -274,7 +237,6 @@ private:
   const static int SIZE = 10;
   IdType type = ID_NONE;
   char ident[SIZE], region[SIZE];
-  float lonX, latY;
 };
 
 inline uint qHash(const FacilityId& id)
