@@ -32,7 +32,6 @@ using atools::fs::bgl::AirwaySegment;
 void AirwaySegmentWriter::writeObject(const AirwaySegment *type)
 {
   bind(":airway_point_id", getNextId());
-  bindNullInt(":waypoint_id");
   bind(":name", type->getAirwayName());
   bind(":type", AirwaySegment::airwayTypeToStr(type->getAirwayType()));
 
