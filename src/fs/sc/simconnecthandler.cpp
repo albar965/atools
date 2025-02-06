@@ -399,6 +399,14 @@ void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& s
   aircraft.airplaneFlightnumber = simDataAircraft.aircraftAtcFlightNumber;
   aircraft.fromIdent = simDataAircraft.aiFrom;
   aircraft.toIdent = simDataAircraft.aiTo;
+#ifdef DEBUG_INFORMATION_AIRCRAFT_TYPE
+  qDebug() << Q_FUNC_INFO << "aircraft.airplaneTitle" << aircraft.airplaneTitle;
+  qDebug() << Q_FUNC_INFO << "aircraft.airplaneModel" << aircraft.airplaneModel;
+  qDebug() << Q_FUNC_INFO << "aircraft.airplaneReg" << aircraft.airplaneReg;
+  qDebug() << Q_FUNC_INFO << "aircraft.airplaneType" << aircraft.airplaneType;
+  qDebug() << Q_FUNC_INFO << "aircraft.airplaneAirline" << aircraft.airplaneAirline;
+  qDebug() << Q_FUNC_INFO << "aircraft.airplaneFlightnumber" << aircraft.airplaneFlightnumber;
+#endif
 
 #if defined(SIMCONNECT_BUILD_WIN64)
   // Add aircraft.cfg location as additional property for MSFS

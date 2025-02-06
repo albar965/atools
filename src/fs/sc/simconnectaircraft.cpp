@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,11 @@
 *****************************************************************************/
 
 #include "fs/sc/simconnectaircraft.h"
+#include "atools.h"
 
 #include <QDebug>
 #include <QDataStream>
+#include <QRegularExpression>
 
 namespace atools {
 namespace fs {
@@ -162,12 +164,35 @@ bool SimConnectAircraft::nameValid(const QString& name) const
 
 void SimConnectAircraft::cleanAircraftNames()
 {
+  const static QRegularExpression ATC_NAME_REGEXP("ATCCOM\\.AT?C[_ ]+NAME[_ ]+([A-Z0-9]+)\\.0\\.(text|txt)",
+                                                  QRegularExpression::CaseInsensitiveOption);
+  const static QRegularExpression ATC_MODEL_REGEXP("ATCCOM\\.AT?C[_ ]+MODEL[_ ]+([A-Z0-9]+)\\.0\\.(text|txt)",
+                                                   QRegularExpression::CaseInsensitiveOption);
+  // MSFS 2024
+  // aircraft.airplaneTitle "C172SP G1000 Passengers"
+  // aircraft.airplaneModel "ATCCOM.AC_MODEL C172.0.text"
+  // aircraft.airplaneReg "D-FKHU"
+  // aircraft.airplaneType "ATCCOM.ATC_NAME CESSNA.0.text"
+  // aircraft.airplaneAirline ""
+  // aircraft.airplaneFlightnumber ""
+
+  QString type = atools::capString(ATC_NAME_REGEXP.match(airplaneType).captured(1));
+  if(!type.isEmpty())
+    airplaneType = type;
+
   if(!nameValid(airplaneType))
     airplaneType.clear();
+
   if(!nameValid(airplaneAirline))
     airplaneAirline.clear();
+
   if(!nameValid(airplaneTitle))
     airplaneTitle.clear();
+
+  QString model = ATC_MODEL_REGEXP.match(airplaneModel).captured(1);
+  if(!model.isEmpty())
+    airplaneModel = model;
+
   if(!nameValid(airplaneModel))
     airplaneModel.clear();
 }
