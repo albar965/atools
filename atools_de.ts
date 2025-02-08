@@ -1933,7 +1933,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>Loading airport helipads</source>
-        <translation>Laden Helikopterlandeplätze</translation>
+        <translation>Lade Helikopterlandeplätze</translation>
     </message>
     <message>
         <source>Loading airport runways</source>
