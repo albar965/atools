@@ -4,6 +4,27 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
+# Version 4.0.14
+
+## Changes from 4.0.14.beta2 to 4.0.14
+
+* Changed to stable version 4.0.14 to have version number in sync with Little Navmap.
+* Now applying filter for MSFS 2024 ground vehicles only for this simulator to avoid issues where
+  ship traffic is delivered with the wrong category in other simulators.
+* Adapted detection of Navigraph update to new folder names and made it more tolerant. #1198
+* Fixed issue with missing airways in MSFS 2024. #1198
+* Fixed issues where airways were not built correctly reading X-Plane data.
+  Examples which did not read:
+  `ZBAA IDKEX B339 ASILA A575 INTIK Y655 AROGU A575 KD A308 ML A300 RUBOR T448 SOPUS USSS`,
+  `ZUCK PINAB W80 WFX W179 OMBON B330 GOBIN W66 NUKTI B215 HAM W99 AGOXA ZWWW` and
+  `ZUCK UNRIX W180 BONSA W91 IDSID W30 MEBNA ZPPP` #1219
+* Fixed issue when building airways from X-Plane navdata. Example: The wrong NDB BM/UH far
+  away was selected to build the airway A800. #1237
+* Updated Brazilian Portuguese translation by Ricardo.
+* Updated Italian translation by Flavio.
+
+===============================================================================
+
 # Version 4.0.14.beta2
 
 ## MSFS 2024 Scenery Library #1198
