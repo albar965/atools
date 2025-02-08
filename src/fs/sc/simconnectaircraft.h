@@ -23,6 +23,7 @@
 #include "util/props.h"
 
 #include <QString>
+#include <cmath>
 
 class QIODevice;
 
@@ -178,6 +179,11 @@ public:
     position = value;
   }
 
+  void setActualAltitude(float altFt)
+  {
+    position.setAltitude(altFt);
+  }
+
   float getHeadingDegTrue() const
   {
     return headingTrueDeg;
@@ -209,7 +215,7 @@ public:
     return indicatedAltitudeFt;
   }
 
-  /* Real altitude independent of baro setting */
+  /* Real altitude in ft independent of baro setting */
   float getActualAltitudeFt() const
   {
     return position.getAltitude();
@@ -375,10 +381,16 @@ public:
     return position.isValid();
   }
 
-  /* true if not empty default initialized object and not still at pos 0/0 */
+  /* true if not empty default initialized object and not still at pos 0/0.
+   * Also check for broken altitude values as delivered by MSFS 2024. */
   bool isFullyValid() const
   {
-    return isValid() && !(groundSpeedKts < 5.0f && position.almostEqual(atools::geo::Pos(0.f, 0.f), 1.f));
+    return isValid() && !(groundSpeedKts < 5.0f && position.almostEqual(atools::geo::Pos(0.f, 0.f), 0.1f)) && isActualAltitudeFullyValid();
+  }
+
+  bool isActualAltitudeFullyValid() const
+  {
+    return !std::isnan(position.getAltitude()) && position.getAltitude() > -2000.f && position.getAltitude() < 200000.f;
   }
 
   /* Compares only registration, type and others */
@@ -474,7 +486,7 @@ private:
   QString airplaneTitle, airplaneType, airplaneModel, airplaneReg, airplaneRegKey,
           airplaneAirline, airplaneFlightnumber, fromIdent, toIdent;
 
-  // Altitude field in pos is actual altitude
+  // Contains real altitude in ft independent of baro setting
   atools::geo::Pos position;
 
   float headingTrueDeg = 0.f, headingMagDeg = 0.f, groundSpeedKts = 0.f, indicatedAltitudeFt = 0.f,
