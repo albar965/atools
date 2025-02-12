@@ -1577,7 +1577,7 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1705"/>
         <source>SimConnect Airports</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aéroports SimConnect</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1716"/>
@@ -2307,79 +2307,79 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="576"/>
         <source>Loading airport count</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargement du décompte des aéroports</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="583"/>
         <source>Loading airport facility numbers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargement des numéros des installations aéroportuaires</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="603"/>
         <source>Loading airport base information</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargement des informations sur la base aéroportuaire</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="623"/>
         <source>Loading airport COM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargement des aéroports COM</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="628"/>
         <source>Loading airport helipads</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargement des héliports d&apos;aéroports</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="634"/>
         <source>Loading airport runways</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargement des pistes d&apos;aéroport</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="640"/>
         <source>Loading airport start positions</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargement des positions de départ d&apos;aéroport</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="646"/>
         <source>Loading airport procedures</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargement des procédures d&apos;aéroport</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="651"/>
         <source>Loading airport taxiways and parking</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargement des voies de circulation et des parkings des aéroports</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="668"/>
         <source>Loading waypoints, VOR, ILS, NDB and airways</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargement des waypoints, VOR, ILS, NDB et airways</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="688"/>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="712"/>
         <source>Loading disconnected waypoints, VOR, ILS and NDB</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Chargement des waypoints déconnectés, VOR, ILS et NDB</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="696"/>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="718"/>
         <source>Writing disconnected waypoints, VOR, ILS and NDB to database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enregistrement dans la base de données des waypoints, VOR, ILS et NDB déconnectés</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="959"/>
         <source>Too many errors reading airport data. Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trop d&apos;erreurs dans la lecture des données de l&apos;aéroport. Arrêt.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="1051"/>
         <source>Too many errors reading navaid data. Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trop d&apos;erreurs dans la lecture des navaid data. Arrêt.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="1203"/>
         <source> </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> </translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="1203"/>
@@ -2392,7 +2392,7 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="341"/>
         <source> </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> </translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="341"/>
@@ -2402,37 +2402,37 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="477"/>
         <source>Writing airport facilities to database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Inscription des installations aéroports dans la base de données</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1201"/>
         <source>Caught exception writing airport %1. Error: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Une exception a été détectée lors de l&apos;écriture de l&apos;aéroport %1. Erreur : %2</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1208"/>
         <source>Caught unknown exception writing airport %1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Une exception inconnue a été détectée lors de l&apos;écriture de l&apos;aéroport %1.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1216"/>
         <source>Too many errors writing airport data. Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Trop d&apos;erreurs dans l&apos;écriture des données de l&apos;aéroport. Arrêt.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1229"/>
         <source>Writing NDB to database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Écriture de la BDN dans la base de données</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1280"/>
         <source>Writing VOR and ILS to database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enregistrement des VOR et ILS dans la base de données</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1421"/>
         <source>Writing waypoints and airways to database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enregistrement des Waypoints et des Airways dans la base de données</translation>
     </message>
 </context>
 <context>
