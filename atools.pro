@@ -112,6 +112,10 @@ isEmpty(DEPLOY_BASE) : DEPLOY_BASE=$$PWD/../deploy
 INCLUDEPATH += $$PWD/src
 QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wno-unknown-warning-option
 
+unix {
+  isEmpty(GIT_PATH) : GIT_PATH=git
+}
+
 win32 {
   contains(QT_ARCH, i386) {
     # FSX or P3D
