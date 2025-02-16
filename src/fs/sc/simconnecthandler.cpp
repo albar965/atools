@@ -218,6 +218,9 @@ public:
   bool simRunning = true, simPaused = false, verbose = false, simConnectLoaded = false,
        userDataFetched = false, aiDataFetched = false, weatherDataFetched = false, paused = false;
 
+  // Log new aircraft categories only once
+  QSet<QString> categoriesLogged;
+
 #if defined(SIMCONNECT_BUILD_WIN64)
   QDateTime lastSystemRequestTime; // Do not request for every fetch
   QString aircraftFilePath; // Clean path to aircraft.cfg file in MSFS
@@ -399,14 +402,15 @@ void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& s
   aircraft.airplaneFlightnumber = simDataAircraft.aircraftAtcFlightNumber;
   aircraft.fromIdent = simDataAircraft.aiFrom;
   aircraft.toIdent = simDataAircraft.aiTo;
-#ifdef DEBUG_INFORMATION_AIRCRAFT_TYPE
-  qDebug() << Q_FUNC_INFO << "aircraft.airplaneTitle" << aircraft.airplaneTitle;
-  qDebug() << Q_FUNC_INFO << "aircraft.airplaneModel" << aircraft.airplaneModel;
-  qDebug() << Q_FUNC_INFO << "aircraft.airplaneReg" << aircraft.airplaneReg;
-  qDebug() << Q_FUNC_INFO << "aircraft.airplaneType" << aircraft.airplaneType;
-  qDebug() << Q_FUNC_INFO << "aircraft.airplaneAirline" << aircraft.airplaneAirline;
-  qDebug() << Q_FUNC_INFO << "aircraft.airplaneFlightnumber" << aircraft.airplaneFlightnumber;
-#endif
+
+  if(verbose)
+    qDebug() << Q_FUNC_INFO
+             << "airplaneTitle" << aircraft.airplaneTitle
+             << "airplaneModel" << aircraft.airplaneModel
+             << "airplaneReg" << aircraft.airplaneReg
+             << "airplaneType" << aircraft.airplaneType
+             << "airplaneAirline" << aircraft.airplaneAirline
+             << "airplaneFlightnumber" << aircraft.airplaneFlightnumber;
 
 #if defined(SIMCONNECT_BUILD_WIN64)
   // Add aircraft.cfg location as additional property for MSFS
@@ -414,20 +418,20 @@ void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& s
     aircraft.properties.addProp(atools::util::Prop(atools::fs::sc::PROP_AIRCRAFT_CFG, aircraftFilePath));
 #endif
 
-  QString cat = QString(simDataAircraft.category).toLower().trimmed();
-  if(cat == "airplane")
+  QString categoryStr = QString(simDataAircraft.category).toLower().trimmed();
+  if(categoryStr == "airplane")
     aircraft.category = AIRPLANE;
-  else if(cat == "helicopter")
+  else if(categoryStr == "helicopter")
     aircraft.category = HELICOPTER;
-  else if(cat == "boat")
+  else if(categoryStr == "boat")
     aircraft.category = BOAT;
-  else if(cat == "groundvehicle")
+  else if(categoryStr == "groundvehicle")
     aircraft.category = GROUNDVEHICLE;
-  else if(cat == "controltower")
+  else if(categoryStr == "controltower")
     aircraft.category = CONTROLTOWER;
-  else if(cat == "simpleobject")
+  else if(categoryStr == "simpleobject")
     aircraft.category = SIMPLEOBJECT;
-  else if(cat == "viewer")
+  else if(categoryStr == "viewer")
     aircraft.category = VIEWER;
 
   aircraft.wingSpanFt = static_cast<quint16>(simDataAircraft.wingSpan);
@@ -764,6 +768,7 @@ bool SimConnectHandler::connect()
     p->api->RequestSystemState(EVENT_AIRCRAFT_LOADED, "AircraftLoaded");
 
     p->state = sc::STATEOK;
+    p->categoriesLogged.clear();
 
     return true;
   }
@@ -851,18 +856,26 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 #endif
       aiAircraft.objectId = static_cast<unsigned int>(it.key());
 
-      if(p->openData.dwApplicationVersionMajor == 12)
-      {
-        // App Name SunRise App Version 12.1 App Build 282174.999 Version 12.1 Build 0.0
-        // Add only aircraft, helicopters and ships in MSFS 2024 to
-        // avoid ground traffic which is wrongly delivered by the sim despite using the requests
-        // SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT, SIMCONNECT_SIMOBJECT_TYPE_BOAT and SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER
-        if(aiAircraft.isAnyFlying() || aiAircraft.isAnyBoat())
-          data.aiAircraft.append(aiAircraft);
-      }
-      else
-        // Add all traffic for other simulators
+      // Add only aircraft, helicopters and ships in MSFS 2020 and 2024 to
+      // avoid ground traffic which is wrongly delivered by the sim despite using the requests
+      // SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT, SIMCONNECT_SIMOBJECT_TYPE_BOAT and SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER
+      if(aiAircraft.isAnyFlying() || aiAircraft.isAnyBoat())
         data.aiAircraft.append(aiAircraft);
+
+      if(!p->categoriesLogged.contains(simDataAircraft.category))
+      {
+        qInfo() << Q_FUNC_INFO << "Found new AI vehicle category" << simDataAircraft.category
+                << "isOnGround" << aiAircraft.isOnGround()
+                << "airplaneTitle" << aiAircraft.airplaneTitle
+                << "airplaneModel" << aiAircraft.airplaneModel
+                << "airplaneReg" << aiAircraft.airplaneReg
+                << "airplaneType" << aiAircraft.airplaneType
+                << "airplaneAirline" << aiAircraft.airplaneAirline
+                << "airplaneFlightnumber" << aiAircraft.airplaneFlightnumber;
+
+        p->categoriesLogged.insert(simDataAircraft.category);
+      }
+
     } // for(auto it = p->simDataAircraftMap.constBegin(); it != p->simDataAircraftMap.constEnd(); ++it)
 
     // Get user aircraft =======================================================================
