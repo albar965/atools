@@ -909,7 +909,7 @@ Tempo Noturno: %5</translation>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="190"/>
         <source>No significant weather</source>
-        <translation>Tempo insiginificante</translation>
+        <translation>Nenhum clima significante</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="157"/>
