@@ -433,6 +433,8 @@ void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& s
     aircraft.category = SIMPLEOBJECT;
   else if(categoryStr == "viewer")
     aircraft.category = VIEWER;
+  else
+    aircraft.category = UNKNOWN;
 
   aircraft.wingSpanFt = static_cast<quint16>(simDataAircraft.wingSpan);
   aircraft.modelRadiusFt = static_cast<quint16>(simDataAircraft.modelRadius);
@@ -803,7 +805,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
   HRESULT hr = 0;
 
-  if(options & FETCH_AI_AIRCRAFT)
+  if(options.testFlag(FETCH_AI_AIRCRAFT))
   {
     hr = p->api->RequestDataOnSimObjectType(DATA_REQUEST_ID_AI_AIRCRAFT, DATA_DEFINITION_AI_AIRCRAFT,
                                             static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT);
@@ -816,7 +818,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       return false;
   }
 
-  if(options & FETCH_AI_BOAT)
+  if(options.testFlag(FETCH_AI_BOAT))
   {
     hr = p->api->RequestDataOnSimObjectType(DATA_REQUEST_ID_AI_BOAT, DATA_DEFINITION_AI_BOAT,
                                             static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_BOAT);
@@ -859,12 +861,14 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       // Add only aircraft, helicopters and ships in MSFS 2020 and 2024 to
       // avoid ground traffic which is wrongly delivered by the sim despite using the requests
       // SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT, SIMCONNECT_SIMOBJECT_TYPE_BOAT and SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER
-      if(aiAircraft.isAnyFlying() || aiAircraft.isAnyBoat())
-        data.aiAircraft.append(aiAircraft);
+      // if(p->openData.dwApplicationVersionMajor != 12 || aiAircraft.isAnyFlying() || aiAircraft.isAnyBoat())
+      // if(aiAircraft.isAnyFlying() || aiAircraft.isAnyBoat())
+      data.aiAircraft.append(aiAircraft);
 
       if(!p->categoriesLogged.contains(simDataAircraft.category))
       {
-        qInfo() << Q_FUNC_INFO << "Found new AI vehicle category" << simDataAircraft.category
+        qInfo() << Q_FUNC_INFO << "Found new AI vehicle category" << QString(simDataAircraft.category)
+                << "category" << aiAircraft.getCategory()
                 << "isOnGround" << aiAircraft.isOnGround()
                 << "airplaneTitle" << aiAircraft.airplaneTitle
                 << "airplaneModel" << aiAircraft.airplaneModel

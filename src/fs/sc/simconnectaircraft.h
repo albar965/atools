@@ -231,11 +231,6 @@ public:
     return machSpeed;
   }
 
-  bool isHelicopter() const
-  {
-    return category == HELICOPTER || engineType == HELO_TURBINE;
-  }
-
   AircraftFlags getFlags() const
   {
     return flags;
@@ -254,7 +249,7 @@ public:
       flags &= ~value;
   }
 
-  Category getCategory() const
+  atools::fs::sc::Category getCategory() const
   {
     return category;
   }
@@ -267,6 +262,11 @@ public:
   bool isAnyFlying() const
   {
     return category == AIRPLANE || category == HELICOPTER;
+  }
+
+  bool isHelicopter() const
+  {
+    return category == HELICOPTER || engineType == HELO_TURBINE;
   }
 
   EngineType getEngineType() const
@@ -502,7 +502,7 @@ private:
   DataFlags dataFlags = atools::fs::sc::NO_FLAGS;
   AircraftFlags flags = atools::fs::sc::NONE;
 
-  Category category;
+  Category category = atools::fs::sc::UNKNOWN;
   EngineType engineType = atools::fs::sc::UNSUPPORTED;
   quint8 numberOfEngines = 0;
   bool debug = false;
