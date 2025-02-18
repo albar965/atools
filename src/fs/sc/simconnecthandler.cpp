@@ -375,6 +375,10 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
         qDebug() << "SIMCONNECT_RECV_ID_QUIT";
       simRunning = false;
       state = sc::DISCONNECTED;
+      openData.dwApplicationVersionMajor = openData.dwApplicationVersionMinor =
+        openData.dwApplicationBuildMajor = openData.dwApplicationBuildMinor =
+          openData.dwSimConnectVersionMajor = openData.dwSimConnectVersionMinor =
+            openData.dwSimConnectBuildMajor = openData.dwSimConnectBuildMinor = 0;
       break;
 
     default:
@@ -434,7 +438,12 @@ void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& s
   else if(categoryStr == "viewer")
     aircraft.category = VIEWER;
   else
+  {
     aircraft.category = UNKNOWN;
+
+    // Append unknown category string
+    aircraft.airplaneTitle.append(QString(" [CAT \"%1\"]").arg(QString(simDataAircraft.category)));
+  }
 
   aircraft.wingSpanFt = static_cast<quint16>(simDataAircraft.wingSpan);
   aircraft.modelRadiusFt = static_cast<quint16>(simDataAircraft.modelRadius);
@@ -910,6 +919,12 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       if(p->simData.ambientIsInCloud > 0)
         data.userAircraft.flags |= atools::fs::sc::IN_CLOUD;
 
+      // Set simulator flags depending on openData structure
+      if(p->openData.dwApplicationVersionMajor == 11)
+        data.userAircraft.flags |= atools::fs::sc::SIM_MSFS_2020;
+      else if(p->openData.dwApplicationVersionMajor == 12)
+        data.userAircraft.flags |= atools::fs::sc::SIM_MSFS_2024;
+
       data.userAircraft.ambientTemperatureCelsius = p->simData.ambientTemperatureC;
       data.userAircraft.totalAirTemperatureCelsius = p->simData.totalAirTemperatureC;
       data.userAircraft.ambientVisibilityMeter = p->simData.ambientVisibilityMeter;
@@ -1072,6 +1087,26 @@ const WeatherRequest& SimConnectHandler::getWeatherRequest() const
 QString SimConnectHandler::getName() const
 {
   return QLatin1String("SimConnect");
+}
+
+int SimConnectHandler::getApplicationVersionMajor() const
+{
+  return static_cast<int>(p->openData.dwApplicationVersionMajor);
+}
+
+int SimConnectHandler::getApplicationVersionMinor() const
+{
+  return static_cast<int>(p->openData.dwApplicationVersionMinor);
+}
+
+int SimConnectHandler::getSimConnectVersionMajor() const
+{
+  return static_cast<int>(p->openData.dwSimConnectVersionMajor);
+}
+
+int SimConnectHandler::getSimConnectVersionMinor() const
+{
+  return static_cast<int>(p->openData.dwSimConnectVersionMinor);
 }
 
 bool SimConnectHandler::checkSimConnect() const

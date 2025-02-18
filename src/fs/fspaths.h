@@ -161,6 +161,9 @@ public:
 
   /* Any Microsoft / SimConnect simulators */
   static bool isAnyMs(atools::fs::FsPaths::SimulatorType type);
+  static bool isAnyP3d(SimulatorType type);
+  static bool isAnyFsx(SimulatorType type);
+  static bool isAnyMsfs(SimulatorType type);
 
   /* Long names like Microsoft Flight Simulator X */
   static QString typeToDisplayName(atools::fs::FsPaths::SimulatorType type);

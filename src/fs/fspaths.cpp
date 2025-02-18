@@ -41,21 +41,33 @@ static QHash<atools::fs::FsPaths::SimulatorType, QString> filesPathMap;
 static QHash<atools::fs::FsPaths::SimulatorType, QString> sceneryFilepathMap;
 
 /* All supported simulators. Order in this vector defines order of detection. */
-static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
-    {
+static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES({
       FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::P3D_V6,
       FsPaths::XPLANE_11, FsPaths::XPLANE_12, FsPaths::MSFS, FsPaths::MSFS_2024
     });
 
 /* All supported MS simulators using SimConnect on Windows */
-static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_MS(
-    {
+static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_MS({
       FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::P3D_V6, FsPaths::MSFS, FsPaths::MSFS_2024
     });
 
+/* All supported MSFS simulators using SimConnect on Windows */
+static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_MSFS({
+      FsPaths::MSFS, FsPaths::MSFS_2024
+    });
+
+/* All supported FSX simulators using SimConnect on Windows */
+static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_FSX({
+      FsPaths::FSX, FsPaths::FSX_SE
+    });
+
+/* All supported P3D simulators using SimConnect on Windows */
+static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_P3D({
+      FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::P3D_V6
+    });
+
 /* All supported X-Plane simulators using Xpconnect */
-static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_XP(
-    {
+static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_XP({
       FsPaths::XPLANE_11, FsPaths::XPLANE_12
     });
 
@@ -627,6 +639,21 @@ bool FsPaths::hasXplane12Simulator()
 bool FsPaths::isAnyMs(SimulatorType type)
 {
   return ALL_SIMULATOR_TYPES_MS.contains(type);
+}
+
+bool FsPaths::isAnyP3d(SimulatorType type)
+{
+  return ALL_SIMULATOR_TYPES_P3D.contains(type);
+}
+
+bool FsPaths::isAnyFsx(SimulatorType type)
+{
+  return ALL_SIMULATOR_TYPES_FSX.contains(type);
+}
+
+bool FsPaths::isAnyMsfs(SimulatorType type)
+{
+  return ALL_SIMULATOR_TYPES_MSFS.contains(type);
 }
 
 bool FsPaths::isAnyXplane(SimulatorType type)

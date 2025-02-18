@@ -83,6 +83,12 @@ public:
 
   virtual QString getName() const override;
 
+  /* Version from open. Zero if not valid or not open */
+  int getApplicationVersionMajor() const;
+  int getApplicationVersionMinor() const;
+  int getSimConnectVersionMajor() const;
+  int getSimConnectVersionMinor() const;
+
 private:
   // Used to all the windows and SimConnect stuff out of the header files
   SimConnectHandlerPrivate *p = nullptr;

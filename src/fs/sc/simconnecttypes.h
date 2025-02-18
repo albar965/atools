@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ enum Option
 Q_DECLARE_FLAGS(Options, Option)
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Options)
 
+/* Passes various indications with the user aircraft */
 enum AircraftFlag : quint16
 {
   NONE = 0x0000,
@@ -60,11 +61,12 @@ enum AircraftFlag : quint16
   IN_SNOW = 0x0008,
   IS_USER = 0x0010,
 
-  /* Indicated source simulator for all aircraft */
-  SIM_FSX_P3D = 0x0020,
-  SIM_XPLANE11 = 0x0040,
-  SIM_XPLANE12 = 0x1000,
-  SIM_MSFS = 0x0800,
+  /* Indicated source simulator for all aircraft. Only valid after first aircraft received */
+  SIM_FSX_P3D = 0x0020, // Not used
+  SIM_XPLANE11 = 0x0040, // Set in Xpconnect
+  SIM_XPLANE12 = 0x1000, // Set in Xpconnect
+  SIM_MSFS_2020 = 0x0800, // Set in SimConnectHandler
+  SIM_MSFS_2024 = 0x2000, // Set in SimConnectHandler
 
   /* Simulator is in pause mode */
   SIM_PAUSED = 0x0080,
@@ -78,9 +80,9 @@ enum AircraftFlag : quint16
   /* A simulator aircraft also recognized as online network aircraft.
    * This simulator aircraft is a shadow of an online network aircraft (by matching callsign to reg or position/altitude).
    * Set in OnlinedataController::updateAircraftShadowState() in the client (LNM) */
-  SIM_ONLINE_SHADOW = 0x0400
+  SIM_ONLINE_SHADOW = 0x0400,
 
-                      // Next is 0x2000
+  // Next is 0x4000
 };
 
 ATOOLS_DECLARE_FLAGS_16(AircraftFlags, AircraftFlag)
