@@ -392,10 +392,14 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
 
 void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& simDataAircraft, SimConnectAircraft& aircraft)
 {
+  // Set simulator flags depending on openData structure and build
 #if defined(SIMCONNECT_BUILD_WIN32)
   aircraft.flags = atools::fs::sc::SIM_FSX_P3D;
-#elif defined(SIMCONNECT_BUILD_WIN64)
-  aircraft.flags = atools::fs::sc::SIM_MSFS;
+#else
+  if(openData.dwApplicationVersionMajor == 11)
+    aircraft.flags = atools::fs::sc::SIM_MSFS_2020;
+  else if(openData.dwApplicationVersionMajor == 12)
+    aircraft.flags = atools::fs::sc::SIM_MSFS_2024;
 #endif
 
   aircraft.airplaneTitle = simDataAircraft.aircraftTitle;
@@ -918,12 +922,6 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
       if(p->simData.ambientIsInCloud > 0)
         data.userAircraft.flags |= atools::fs::sc::IN_CLOUD;
-
-      // Set simulator flags depending on openData structure
-      if(p->openData.dwApplicationVersionMajor == 11)
-        data.userAircraft.flags |= atools::fs::sc::SIM_MSFS_2020;
-      else if(p->openData.dwApplicationVersionMajor == 12)
-        data.userAircraft.flags |= atools::fs::sc::SIM_MSFS_2024;
 
       data.userAircraft.ambientTemperatureCelsius = p->simData.ambientTemperatureC;
       data.userAircraft.totalAirTemperatureCelsius = p->simData.totalAirTemperatureC;
