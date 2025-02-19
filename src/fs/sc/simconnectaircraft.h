@@ -497,7 +497,7 @@ private:
   qint16 transponderCode = -1; // TCAS number - convert to octal system to get real number, 0o7777 = 4095
   // -1 = not available
 
-  quint32 objectId = 0L;
+  quint32 objectId = 0;
 
   DataFlags dataFlags = atools::fs::sc::NO_FLAGS;
   AircraftFlags flags = atools::fs::sc::NONE;
