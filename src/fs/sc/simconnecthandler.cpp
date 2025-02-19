@@ -890,7 +890,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
                                (aircraftAi.verticalSpeedFeetPerMin < 0.01f && simDataAircraftAi.groundVelocityKts < 30.f));
 #else
       // FSX and P3D
-      aiAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraft.isSimOnGround > 0);
+      aircraftAi.flags.setFlag(atools::fs::sc::ON_GROUND, simDataAircraftAi.isSimOnGround > 0);
 #endif
       aircraftAi.objectId = simData.first;
 
