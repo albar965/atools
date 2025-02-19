@@ -4,6 +4,18 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
+# Version 4.0.15.rc1
+
+* Changed fetching of user and AI from SimConnect. Now stopping call dispatch after enough AI was
+  fetched by number. More logging if verbose Dropped usage of unique objectID and using list now.
+* Now setting simulator flags for MSFS sims in user aircraft.
+* Removed aircraft filter.
+* Attemped fix for wrong AI vehicle categories. Now using filter for all simulators and logging new
+  categories found.
+* Updated Brazilian Portuguese translation by Ricardo.
+
+===============================================================================
+
 # Version 4.0.14
 
 ## Changes from 4.0.14.beta2 to 4.0.14
