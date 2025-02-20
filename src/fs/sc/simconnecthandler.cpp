@@ -354,14 +354,9 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                 pObjData->dwDefineID == DATA_DEFINITION_AI_BOAT)
         {
           // AI aircraft definition ============================================================================
-          if(pObjData->dwObjectID > 0)
-          {
             const SimDataAircraft *simDataAircraftPtr = reinterpret_cast<const SimDataAircraft *>(&pObjData->dwData);
-
-            if(simDataAircraftPtr->userSim == 0 && // Do not add user aircraft to list
-               SUCCEEDED(StringCbLengthA(&simDataAircraftPtr->aircraftTitle[0], sizeof(simDataAircraftPtr->aircraftTitle), NULL)))
+          StringCbLengthA(&simDataAircraftPtr->aircraftTitle[0], sizeof(simDataAircraftPtr->aircraftTitle), NULL);
               simDataAiAircraftList.append(std::make_pair(pObjData->dwObjectID, *simDataAircraftPtr));
-          }
 
           if(static_cast<unsigned long>(simDataAiAircraftList.size()) >= pObjData->dwoutof - 1)
             aiDataFetched = true;
@@ -881,6 +876,15 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     for(const std::pair<quint32, SimDataAircraft>& simData : qAsConst(p->simDataAiAircraftList))
     {
       const SimDataAircraft& simDataAircraftAi = simData.second;
+
+      QString category(simDataAircraftAi.category);
+      if(simDataAircraftAi.userSim == 1 ||
+         category.compare("GroundVehicle", Qt::CaseInsensitive) == 0 ||
+         category.compare("ControlTower", Qt::CaseInsensitive) == 0 ||
+         category.compare("SimpleObject", Qt::CaseInsensitive) == 0 ||
+         category.compare("Viewer", Qt::CaseInsensitive) == 0)
+        continue;
+
       atools::fs::sc::SimConnectAircraft aircraftAi;
       p->copyToSimConnectAircraft(simDataAircraftAi, aircraftAi);
 
