@@ -34,6 +34,7 @@
 #include <QCoreApplication>
 #include <QStringBuilder>
 #include <QDir>
+#include <QRegularExpression>
 
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 
@@ -219,6 +220,9 @@ public:
   /* AI aircraft structures fetched and object IDs */
   QVector<std::pair<quint32, SimDataAircraft> > simDataAiAircraftList;
 
+  /* Separate counter for fetched AI since not all are added to simDataAiAircraftList */
+  unsigned long numAiFetched = 0;
+
   sc::State state = sc::STATEOK;
 
   atools::fs::sc::WeatherRequest weatherRequest;
@@ -248,6 +252,8 @@ void CALLBACK SimConnectHandlerPrivate::dispatchFunction(SIMCONNECT_RECV *pData,
 
 void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData)
 {
+  const static QRegularExpression VALID_CATEGORY("^[A-Za-z0-9 \\-_]{2,}$");
+
   Q_UNUSED(cbData)
 
   if(verbose)
@@ -341,24 +347,55 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                    << "dwObjectID" << pObjData->dwObjectID
                    << "dwentrynumber" << pObjData->dwentrynumber
                    << "dwoutof" << pObjData->dwoutof
-                   << "simDataAircraftList.size" << simDataAiAircraftList.size();
+                   << "simDataAircraftList.size" << simDataAiAircraftList.size()
+                   << "numAiFetched" << numAiFetched;
 
         if(pObjData->dwDefineID == DATA_DEFINITION_USER_AIRCRAFT)
         {
           // User aircraft definition ============================================================================
-          simDataUser = *reinterpret_cast<const SimData *>(&pObjData->dwData);
-          simDataUserObjectId = static_cast<quint32>(pObjData->dwObjectID);
+          const SimData *simDataPtr = reinterpret_cast<const SimData *>(&pObjData->dwData);
+
+          // Need to do some validation since MSFS returns garbled values at startup
+          if(simDataPtr != nullptr &&
+             SUCCEEDED(StringCbLengthA(&simDataPtr->aircraft.aircraftTitle[0], sizeof(simDataPtr->aircraft.aircraftTitle), NULL)) &&
+             SUCCEEDED(StringCbLengthA(&simDataPtr->aircraft.category[0], sizeof(simDataPtr->aircraft.category), NULL)))
+          {
+            if(VALID_CATEGORY.match(QString(simDataPtr->aircraft.category)).hasMatch())
+            {
+              simDataUser = *simDataPtr;
+              simDataUserObjectId = static_cast<quint32>(pObjData->dwObjectID);
+            }
+          }
           userAircraftFetched = true;
         }
         else if(pObjData->dwDefineID == DATA_DEFINITION_AI_AIRCRAFT || pObjData->dwDefineID == DATA_DEFINITION_AI_HELICOPTER ||
                 pObjData->dwDefineID == DATA_DEFINITION_AI_BOAT)
         {
           // AI aircraft definition ============================================================================
-            const SimDataAircraft *simDataAircraftPtr = reinterpret_cast<const SimDataAircraft *>(&pObjData->dwData);
-          StringCbLengthA(&simDataAircraftPtr->aircraftTitle[0], sizeof(simDataAircraftPtr->aircraftTitle), NULL);
-              simDataAiAircraftList.append(std::make_pair(pObjData->dwObjectID, *simDataAircraftPtr));
+          const SimDataAircraft *simDataAircraftPtr = reinterpret_cast<const SimDataAircraft *>(&pObjData->dwData);
 
-          if(static_cast<unsigned long>(simDataAiAircraftList.size()) >= pObjData->dwoutof - 1)
+          // Need to do some validation since MSFS returns garbled values at startup
+          if(simDataAircraftPtr != nullptr && simDataAircraftPtr->userSim == 0 &&
+             SUCCEEDED(StringCbLengthA(&simDataAircraftPtr->aircraftTitle[0], sizeof(simDataAircraftPtr->aircraftTitle), NULL)) &&
+             SUCCEEDED(StringCbLengthA(&simDataAircraftPtr->category[0], sizeof(simDataAircraftPtr->category), NULL)))
+          {
+            QString category(simDataAircraftPtr->category);
+            if(VALID_CATEGORY.match(category).hasMatch())
+            {
+              // Exclude known unwanted values to catch unknown
+              if(category.compare("GroundVehicle", Qt::CaseInsensitive) != 0 &&
+                 category.compare("ControlTower", Qt::CaseInsensitive) != 0 &&
+                 category.compare("SimpleObject", Qt::CaseInsensitive) != 0 &&
+                 category.compare("Viewer", Qt::CaseInsensitive) != 0)
+                // (category.compare("Airplane", Qt::CaseInsensitive) == 0 ||
+                // category.compare("Helicopter", Qt::CaseInsensitive) == 0 ||
+                // category.compare("Boat", Qt::CaseInsensitive) == 0)
+                simDataAiAircraftList.append(std::make_pair(pObjData->dwObjectID, *simDataAircraftPtr));
+            }
+          }
+
+          numAiFetched++;
+          if(numAiFetched >= pObjData->dwoutof - 1)
             aiDataFetched = true;
         }
 
@@ -821,6 +858,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
   // === Get AI aircraft =======================================================
   p->simDataAiAircraftList.clear();
+  p->numAiFetched = 0;
 
 #if !defined(SIMCONNECT_BUILD_WIN32)
   if(!p->lastSystemRequestTime.isValid() || p->lastSystemRequestTime.msecsTo(QDateTime::currentDateTime()) > 1000)
@@ -876,15 +914,6 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     for(const std::pair<quint32, SimDataAircraft>& simData : qAsConst(p->simDataAiAircraftList))
     {
       const SimDataAircraft& simDataAircraftAi = simData.second;
-
-      QString category(simDataAircraftAi.category);
-      if(simDataAircraftAi.userSim == 1 ||
-         category.compare("GroundVehicle", Qt::CaseInsensitive) == 0 ||
-         category.compare("ControlTower", Qt::CaseInsensitive) == 0 ||
-         category.compare("SimpleObject", Qt::CaseInsensitive) == 0 ||
-         category.compare("Viewer", Qt::CaseInsensitive) == 0)
-        continue;
-
       atools::fs::sc::SimConnectAircraft aircraftAi;
       p->copyToSimConnectAircraft(simDataAircraftAi, aircraftAi);
 
