@@ -407,7 +407,8 @@ void DataReaderThread::run()
         {
           qWarning() << "Failed terminally - restart needed";
           failedTerminally = true;
-          emit postLogMessage(tr("Too many errors reading from simulator. Disconnected. "
+          emit postLogMessage(tr("Too many errors reading from simulator. Disconnected.\n"
+                                 "The simulator has probably crashed.\n\n"
                                  "Restart %1 to try again.").
                               arg(QCoreApplication::applicationName()), false, true);
           break;

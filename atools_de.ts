@@ -2631,7 +2631,7 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
-        <translation>Zu viele Fehler beim Lesen vom Simulator. Verbindung getrennt. %1 für weitere Versuche neu starten.</translation>
+        <translation type="vanished">Zu viele Fehler beim Lesen vom Simulator. Verbindung getrennt. %1 für weitere Versuche neu starten.</translation>
     </message>
     <message>
         <source>Your installed version of Little Xpconnect is not compatible with this version of %2.</source>
@@ -2640,6 +2640,16 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <message>
         <source>Install the latest version of Little Xpconnect.</source>
         <translation>Bitte die neueste Version von Little Xpconnect installieren.</translation>
+    </message>
+    <message>
+        <source>Too many errors reading from simulator. Disconnected.
+The simulator has probably crashed.
+
+Restart %1 to try again.</source>
+        <translation>Zu viele Fehler beim Lesen vom Simulator. Verbindung unterbrochen.
+Der Simulator ist wahrscheinlich abgestürzt.
+
+Starten Sie %1 neu, um es erneut zu versuchen.</translation>
     </message>
 </context>
 <context>

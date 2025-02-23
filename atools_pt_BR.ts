@@ -3066,18 +3066,18 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
 <context>
     <name>atools::fs::sc::DataReaderThread</name>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="540"/>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="583"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="541"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="584"/>
         <source>Cannot open &quot;%1&quot;.</source>
         <translation>Não foi possível abrir &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="573"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="574"/>
         <source>Cannot open &quot;%1&quot;. File is too small.</source>
         <translation>Não foi possível abrir &quot;%1&quot;. Arquivo é muito pequeno.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="555"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="556"/>
         <source>Cannot open &quot;%1&quot;. Is not a replay file - wrong magic number.</source>
         <translation>Não foi possível abrir &quot;%1&quot;. Não é um arquivo de repetição -número mágico errado.</translation>
     </message>
@@ -3088,21 +3088,25 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="410"/>
-        <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
-        <translation>Muitos erros de leitura do simulador. Desconectado. Reinicie %1 para tentar novamente.</translation>
+        <source>Too many errors reading from simulator. Disconnected.
+The simulator has probably crashed.
+
+Restart %1 to try again.</source>
+        <oldsource>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</oldsource>
+        <translation type="unfinished">Muitos erros de leitura do simulador. Desconectado. Reinicie %1 para tentar novamente.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="436"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="437"/>
         <source>Your installed version of Little Xpconnect is not compatible with this version of %2.</source>
         <translation>Sua versão instalada do Little Xpconnect não é compatível com esta versão de %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="439"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="440"/>
         <source>Install the latest version of Little Xpconnect.</source>
         <translation>Instale a versão mais recente do Little Xpconnect.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="562"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="563"/>
         <source>Cannot open &quot;%1&quot;. Wrong version.</source>
         <translation>Não é possível abrir &quot;%1&quot;. Versão errada.</translation>
     </message>
@@ -3131,7 +3135,7 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <translation type="vanished">Muitos erros de leitura do simulador. Desconectado. Reinicie &lt;i&gt;%1&lt;/i&gt; para tentar novamente.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="429"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="430"/>
         <source>Error reading from simulator: %1. Disconnected. Restart &lt;i&gt;%2&lt;/i&gt; to try again.</source>
         <translation>Erro ao ler do simulador:%1. Desconectado. Reinicie &lt;i&gt;%2&lt;/i&gt; para tentar novamente.</translation>
     </message>
@@ -3144,12 +3148,12 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <translation type="vanished">Instale a versão mais recente do &lt;i&gt;Little Xpconnect&lt;/i&gt;.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="567"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="568"/>
         <source>Replaying from &quot;%1&quot;.</source>
         <translation>Repitindo de &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="589"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="590"/>
         <source>Saving replay to &quot;%1&quot;.</source>
         <translation>Salvando a repetição para &quot;%1&quot;.</translation>
     </message>

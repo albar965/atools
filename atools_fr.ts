@@ -3097,11 +3097,15 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="410"/>
-        <source>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</source>
+        <source>Too many errors reading from simulator. Disconnected.
+The simulator has probably crashed.
+
+Restart %1 to try again.</source>
+        <oldsource>Too many errors reading from simulator. Disconnected. Restart %1 to try again.</oldsource>
         <translation type="unfinished">Trop d&apos;erreurs dans la lecture du simulateur. Déconnecté. Redémarrez %1 pour réessayer.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="429"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="430"/>
         <source>Error reading from simulator: %1. Disconnected. Restart &lt;i&gt;%2&lt;/i&gt; to try again.</source>
         <translation type="unfinished">Erreur de lecture du simulateur: %1. Déconnecté. Redémarrer &lt;i&gt;%2&lt;/i&gt; pour réessayer.</translation>
     </message>
@@ -3114,43 +3118,43 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
         <translation type="obsolete">Installez la dernière version de &lt;i&gt;Little Xpconnect&lt;/i&gt;.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="436"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="437"/>
         <source>Your installed version of Little Xpconnect is not compatible with this version of %2.</source>
         <translation type="unfinished">Votre version installée de Little Xpconnect n&apos;est pas compatible avec cette version de %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="439"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="440"/>
         <source>Install the latest version of Little Xpconnect.</source>
         <translation type="unfinished">Installez la dernière version de Little Xpconnect.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="540"/>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="583"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="541"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="584"/>
         <source>Cannot open &quot;%1&quot;.</source>
         <translation>Impossible d&apos;ouvrir &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="555"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="556"/>
         <source>Cannot open &quot;%1&quot;. Is not a replay file - wrong magic number.</source>
         <translation>Impossible d&apos;ouvrir &quot;%1&quot;. N&apos;est pas un fichier de relecture - mauvais numéro magique.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="562"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="563"/>
         <source>Cannot open &quot;%1&quot;. Wrong version.</source>
         <translation>Impossible d&apos;ouvrir &quot;%1&quot;. Mauvaise version.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="567"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="568"/>
         <source>Replaying from &quot;%1&quot;.</source>
         <translation>Rejouer à partir de &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="573"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="574"/>
         <source>Cannot open &quot;%1&quot;. File is too small.</source>
         <translation>Impossible d&apos;ouvrir &quot;%1&quot;. Le fichier est trop petit.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="589"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="590"/>
         <source>Saving replay to &quot;%1&quot;.</source>
         <translation>Enregistrer la relecture à &quot;%1&quot;.</translation>
     </message>
