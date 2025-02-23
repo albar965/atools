@@ -51,10 +51,10 @@ enum EventIds : DWORD
 
 enum DataRequestId : SIMCONNECT_DATA_REQUEST_ID
 {
-  DATA_REQUEST_ID_USER_AIRCRAFT = 100000,
-  DATA_REQUEST_ID_AI_AIRCRAFT = 200000,
-  DATA_REQUEST_ID_AI_HELICOPTER = 300000,
-  DATA_REQUEST_ID_AI_BOAT = 400000,
+  DATA_REQUEST_ID_USER_AIRCRAFT = 100,
+  DATA_REQUEST_ID_AI_AIRCRAFT = 200,
+  DATA_REQUEST_ID_AI_HELICOPTER = 300,
+  DATA_REQUEST_ID_AI_BOAT = 400,
 
   // No weather requests in 64-bit version which uses only MSFS
 #if defined(SIMCONNECT_BUILD_WIN32)
@@ -236,8 +236,6 @@ public:
   // Log new aircraft categories only once
   QSet<QString> categoriesLogged;
 
-  unsigned long requestNumber = 0L;
-
 #if !defined(SIMCONNECT_BUILD_WIN32)
   QDateTime lastSystemRequestTime; // Do not request for every fetch
   QString aircraftFilePath; // Clean path to aircraft.cfg file in MSFS
@@ -350,7 +348,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                    << "simDataAircraftList.size" << simDataAiAircraftList.size()
                    << "numAiFetched" << numAiFetched;
 
-        if(pObjData->dwDefineID == DATA_DEFINITION_USER_AIRCRAFT)
+        if(pObjData->dwRequestID == DATA_REQUEST_ID_USER_AIRCRAFT)
         {
           // User aircraft definition ============================================================================
           const SimData *simDataPtr = reinterpret_cast<const SimData *>(&pObjData->dwData);
@@ -368,8 +366,8 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
           }
           userAircraftFetched = true;
         }
-        else if(pObjData->dwDefineID == DATA_DEFINITION_AI_AIRCRAFT || pObjData->dwDefineID == DATA_DEFINITION_AI_HELICOPTER ||
-                pObjData->dwDefineID == DATA_DEFINITION_AI_BOAT)
+        else if(pObjData->dwRequestID == DATA_REQUEST_ID_AI_AIRCRAFT || pObjData->dwRequestID == DATA_REQUEST_ID_AI_HELICOPTER ||
+                pObjData->dwRequestID == DATA_REQUEST_ID_AI_BOAT)
         {
           // AI aircraft definition ============================================================================
           const SimDataAircraft *simDataAircraftPtr = reinterpret_cast<const SimDataAircraft *>(&pObjData->dwData);
@@ -556,7 +554,7 @@ bool SimConnectHandlerPrivate::callDispatch(bool& dataFetched, const QString& me
 
   int dispatchCycles = 0;
   dataFetched = false;
-  do
+  while(!dataFetched && dispatchCycles < 50 && simconnectException == SIMCONNECT_EXCEPTION_NONE)
   {
     if(paused)
       break;
@@ -578,7 +576,7 @@ bool SimConnectHandlerPrivate::callDispatch(bool& dataFetched, const QString& me
 
     QThread::msleep(5);
     dispatchCycles++;
-  } while(!dataFetched && dispatchCycles < 50 && simconnectException == SIMCONNECT_EXCEPTION_NONE);
+  }
 
   if(verbose)
     qDebug() << Q_FUNC_INFO << "call dispatch leave" << message << "cycles" << dispatchCycles;
@@ -856,7 +854,6 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   if(p->paused)
     return false;
 
-  // === Get AI aircraft =======================================================
   p->simDataAiAircraftList.clear();
   p->numAiFetched = 0;
 
@@ -872,36 +869,38 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
   if(options.testFlag(FETCH_AI_AIRCRAFT))
   {
-    p->requestNumber++;
-    hr = p->api->RequestDataOnSimObjectType(DATA_REQUEST_ID_AI_AIRCRAFT + p->requestNumber, DATA_DEFINITION_AI_AIRCRAFT,
+    // === Get AI aircraft =======================================================
+    hr = p->api->RequestDataOnSimObjectType(DATA_REQUEST_ID_AI_AIRCRAFT, DATA_DEFINITION_AI_AIRCRAFT,
                                             static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT);
     if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_AIRCRAFT"))
       return false;
 
-    p->requestNumber++;
-    hr = p->api->RequestDataOnSimObjectType(DATA_REQUEST_ID_AI_HELICOPTER + p->requestNumber, DATA_DEFINITION_AI_HELICOPTER,
+    p->callDispatch(p->aiDataFetched, "DATA_REQUEST_ID_AI_AIRCRAFT");
+
+    // === Get AI helicopter =======================================================
+    hr = p->api->RequestDataOnSimObjectType(DATA_REQUEST_ID_AI_HELICOPTER, DATA_DEFINITION_AI_HELICOPTER,
                                             static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER);
     if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_HELICOPTER"))
       return false;
+
+    p->callDispatch(p->aiDataFetched, "DATA_REQUEST_ID_AI_HELICOPTER");
   }
 
   if(options.testFlag(FETCH_AI_BOAT))
   {
-    p->requestNumber++;
-    hr = p->api->RequestDataOnSimObjectType(DATA_REQUEST_ID_AI_BOAT + p->requestNumber, DATA_DEFINITION_AI_BOAT,
+    // === Get AI boats =======================================================
+    hr = p->api->RequestDataOnSimObjectType(DATA_REQUEST_ID_AI_BOAT, DATA_DEFINITION_AI_BOAT,
                                             static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_BOAT);
     if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_BOAT"))
       return false;
-  }
 
-  if(options.testFlag(FETCH_AI_AIRCRAFT) || options.testFlag(FETCH_AI_BOAT))
-    p->callDispatch(p->aiDataFetched, "DATA_REQUEST_ID_AI_HELICOPTER, DATA_REQUEST_ID_AI_BOAT and DATA_REQUEST_ID_AI_AIRCRAFT");
+    p->callDispatch(p->aiDataFetched, "DATA_REQUEST_ID_AI_BOAT");
+  }
 
   if(p->state == sc::STATEOK)
   {
     // === Get user aircraft =======================================================
-    p->requestNumber++;
-    hr = p->api->RequestDataOnSimObjectType(DATA_REQUEST_ID_USER_AIRCRAFT + p->requestNumber, DATA_DEFINITION_USER_AIRCRAFT, 0,
+    hr = p->api->RequestDataOnSimObjectType(DATA_REQUEST_ID_USER_AIRCRAFT, DATA_DEFINITION_USER_AIRCRAFT, 0,
                                             SIMCONNECT_SIMOBJECT_TYPE_USER);
     if(!p->checkCall(hr, "DATA_REQUEST_ID_USER_AIRCRAFT"))
       return false;
