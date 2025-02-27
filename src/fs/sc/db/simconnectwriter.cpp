@@ -466,7 +466,7 @@ void SimConnectWriter::deInitQueries()
 bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId, atools::fs::sc::db::Airport>& airports, int fileId)
 {
   ilsToRunwayMap.clear();
-
+  errors.clear();
   atools::sql::SqlTransaction transaction(db);
 
   if(!airports.isEmpty())
@@ -1225,6 +1225,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
 bool SimConnectWriter::writeNdbToDatabase(const QList<NdbFacility>& ndbs, int fileId)
 {
   atools::sql::SqlTransaction transaction(db);
+  errors.clear();
 
   bool aborted = callProgress(tr("Writing NDB to database"));
 
@@ -1276,6 +1277,7 @@ bool SimConnectWriter::writeNdbToDatabase(const QList<NdbFacility>& ndbs, int fi
 bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, int fileId)
 {
   atools::sql::SqlTransaction transaction(db);
+  errors.clear();
 
   bool aborted = callProgress(tr("Writing VOR and ILS to database"));
 
@@ -1411,6 +1413,7 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
 bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QList<atools::fs::sc::db::Waypoint>& waypoints, int fileId)
 {
   atools::sql::SqlTransaction transaction(db);
+  errors.clear();
 
   if(!waypoints.isEmpty())
     qDebug() << Q_FUNC_INFO << "Batch size" << waypoints.size() << "from"

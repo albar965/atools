@@ -19,12 +19,12 @@
 
 #include "atools.h"
 
+#include "exception.h"
 #include "fs/sc/db/simconnectairport.h"
 #include "fs/sc/db/simconnectid.h"
 #include "fs/sc/db/simconnectnav.h"
 #include "fs/sc/db/simconnectwriter.h"
 #include "fs/sc/simconnectapi.h"
-#include "geo/pos.h"
 #include "settings/settings.h"
 #include "util/csvfilereader.h"
 #include "zip/gzip.h"
@@ -118,7 +118,7 @@ public:
     // Create API and bind DLL functions
     api = new SimConnectApi;
     if(!api->bindFunctions(activationContext, libraryName))
-      errors.append("Error binding functions.");
+      throw atools::Exception("Error binding functions.");
     else
       writer = new SimConnectWriter(sqlDb, verbose);
   }
@@ -209,11 +209,7 @@ public:
     HRESULT hr = api->AddToFacilityDefinition(dataDefinitionId, name);
 
     if(hr != S_OK)
-    {
-      QString err = QString("Error adding facility definition \"%1\"").arg(name);
-      qWarning() << Q_FUNC_INFO << err;
-      errors.append(err);
-    }
+      atools::Exception(QString("Error adding facility definition \"%1\"").arg(name));
     return *this;
   }
 
@@ -331,7 +327,6 @@ public:
       batchSize = 2000, fileId = 0, numException = 0;
 
   unsigned long airportFetchDelay = 50, navaidFetchDelay = 50;
-  const int MAX_ERRORS = 1000;
 };
 
 // ====================================================================================================================
@@ -656,6 +651,7 @@ bool SimConnectLoaderPrivate::loadAirports()
   {
     // Write all into the database - consumes records from airportFacilities
     aborted = writer->writeAirportsToDatabase(airportFacilities, fileId);
+    errors.append(writer->getErrors());
     airportFacilities.clear();
   }
   return aborted;
@@ -769,10 +765,7 @@ bool SimConnectLoaderPrivate::requestFacilityData(SIMCONNECT_DATA_DEFINITION_ID 
 {
   HRESULT hr = api->RequestFacilityData(defineId, requestId, id.getIdent());
   if(hr != S_OK)
-  {
-    errors.append("Error in RequestFacilityData");
-    return false;
-  }
+    throw atools::Exception("Error in RequestFacilityData");
 
   // Store sendId for later reference if catching SIMCONNECT_RECV_ID_EXCEPTION
   unsigned long sendId = 0;
@@ -796,10 +789,7 @@ bool SimConnectLoaderPrivate::requestFacilityData(SIMCONNECT_DATA_DEFINITION_ID 
     hr = api->RequestFacilityData(defineId, requestId, id.getIdent());
 
   if(hr != S_OK)
-  {
-    errors.append("Error in RequestFacilityData");
-    return false;
-  }
+    throw atools::Exception("Error in RequestFacilityData");
 
   // Store sendId for later reference if catching SIMCONNECT_RECV_ID_EXCEPTION
   unsigned long sendId = 0;
@@ -827,10 +817,7 @@ bool SimConnectLoaderPrivate::requestAirportList()
       qDebug() << Q_FUNC_INFO << "SimConnect_CallDispatch";
     api->CallDispatch(dispatchFunction, this);
     if(hr != S_OK)
-    {
-      errors.append("Error in CallDispatch");
-      return false;
-    }
+      throw atools::Exception("Error in CallDispatch");
   }
 
   // Filter airport idents if requested =============================
@@ -926,10 +913,7 @@ bool SimConnectLoaderPrivate::requestAirports(FacilityDataDefinitionId definitio
     {
       // Request a list of airport details (SIMCONNECT_RECV_ID_FACILITY_DATA -> SIMCONNECT_FACILITY_DATA_AIRPORT ...)
       if(!requestFacilityData(currentFacilityDefinition, FACILITY_DATA_AIRPORT_REQUEST_ID + static_cast<unsigned int>(i), id))
-      {
-        errors.append("Error in RequestFacilityData for airports");
-        return false;
-      }
+        throw atools::Exception("Error in RequestFacilityData for airports");
 
       requested++;
     }
@@ -949,16 +933,8 @@ bool SimConnectLoaderPrivate::requestAirports(FacilityDataDefinitionId definitio
 
         hr = api->CallDispatch(dispatchFunction, this);
         if(hr != S_OK)
-        {
-          errors.append("Error in CallDispatch for airports");
-          return false;
-        }
+          throw atools::Exception("Error in CallDispatch for airports");
 
-        if(errors.size() > MAX_ERRORS)
-        {
-          errors.append(SimConnectLoader::tr("Too many errors reading airport data. Stopping."));
-          return false;
-        }
         QThread::msleep(airportFetchDelay);
       }
       requested = 0;
@@ -1018,10 +994,7 @@ bool SimConnectLoaderPrivate::requestNavaids(bool fetchRoutes)
     }
 
     if(!requestFacilityData(currentFacilityDefinition, requestId, id))
-    {
-      errors.append("Error in RequestFacilityData for navaids");
-      return false;
-    }
+      throw atools::Exception("Error in RequestFacilityData for navaids");
 
     navaidIdsRequested.insert(id);
     requested++;
@@ -1041,16 +1014,8 @@ bool SimConnectLoaderPrivate::requestNavaids(bool fetchRoutes)
 
         HRESULT hr = api->CallDispatch(dispatchFunction, this);
         if(hr != S_OK)
-        {
-          errors.append("Error in CallDispatch for navaids");
-          return false;
-        }
+          throw atools::Exception("Error in CallDispatch for navaids");
 
-        if(errors.size() > MAX_ERRORS)
-        {
-          errors.append(SimConnectLoader::tr("Too many errors reading navaid data. Stopping."));
-          return false;
-        }
         QThread::msleep(navaidFetchDelay);
       }
       requested = 0;

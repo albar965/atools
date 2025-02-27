@@ -115,11 +115,6 @@ public:
     return errors;
   }
 
-  void clearErrors()
-  {
-    errors.clear();
-  }
-
   /* Progress callback called before writing a batch to the database. Return true to abort loading. */
   void setProgressCallback(const SimConnectWriterProgressCallback& callback)
   {

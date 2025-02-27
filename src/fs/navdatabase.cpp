@@ -650,8 +650,8 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
       for(const QFileInfo& info : dirCommunity.entryInfoList())
       {
         if(atools::checkFile(Q_FUNC_INFO, info.filePath() % atools::SEP % "layout.json"))
-      {
-        result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
+        {
+          result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
           qDebug() << Q_FUNC_INFO << "Found Navigraph navdata update in" << info.filePath();
           break;
         }
@@ -1265,6 +1265,7 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
       {
         if(simconnectLoader != nullptr)
         {
+          // Prepare ======================================
           simconnectLoader->prepareLoading(true /* loadFacilityDefinitions */, true /* initSqlQueries */);
           int fileId = fsDataWriter->getNextFileId();
           int sceneryId = fsDataWriter->getNextSceneryId();
@@ -1292,25 +1293,28 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
                   return progress->reportOtherMsg(message);
               });
 
-          // Only for inital load and export of 2020 navaids using loadDisconnectedNavaids20()
-          // simconnectLoader->setLoad20(true);
-
+          // Load airports ======================================
           if(!aborted)
             aborted = simconnectLoader->loadAirports(fileId);
 
+          // Load navaids connected to procedures and airways ======================================
           if(!aborted)
             aborted = simconnectLoader->loadNavaids(fileId);
 
-          // if(!aborted)
-          // aborted = simconnectLoader->loadDisconnectedNavaids20(fileId);
-
+          // Load navaids not connected to procedures or airways ======================================
           if(!aborted && options->getSimConnectLoadDisconnected())
             aborted = simconnectLoader->loadDisconnectedNavaids(fileId, result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
 
+          // Initial loading of MSFS 2020 navaids not connected to procedures or airways ======================================
           if(!aborted && options->getSimConnectLoadDisconnectedFile())
             // Only for inital load and export of 2020 navaids using loadDisconnectedNavaids20()
             aborted = simconnectLoader->loadDisconnectedNavaidsFile(fileId);
 
+          // Copy errors like caught exceptions when writing
+          if(errors != nullptr)
+            errors->sceneryErrors.append(NavDatabaseErrors::SceneryErrors(area, simconnectLoader->getErrors(), false));
+
+          // Also clears errors
           simconnectLoader->finishLoading();
 
           if((aborted = simconnectLoader->isAborted()))
