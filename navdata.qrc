@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/atools">
         <file>resources/navdata/navaids24.csv.gz</file>
+        <file>resources/navdata/navaids_msfs2024_extra.csv</file>
     </qresource>
 </RCC>

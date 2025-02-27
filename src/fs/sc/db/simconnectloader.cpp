@@ -237,6 +237,8 @@ public:
 
   void fetchDisconnectedNavaidsResource(const QString& typeFilter);
 
+  void readNavaidsFromFile(QTextStream& stream, const QString& typeFilter);
+
   // Free all memory
   void clear();
 
@@ -1060,27 +1062,43 @@ ls -lh $APROJECTS/atools/resources/navdata/navaids24.csv.gz
     QFile file(":/atools/resources/navdata/navaids24.csv.gz");
     if(file.open(QIODevice::ReadOnly))
     {
+      qDebug() << Q_FUNC_INFO << "Reading" << file.fileName();
       QTextStream stream(atools::zip::gzipDecompress(file.readAll()), QIODevice::ReadOnly);
-
-      // CSV columns
-      enum {IDENT, REGION, TYPE};
-
-      atools::util::CsvFileReader csvReader;
-      csvReader.readCsvFile(stream);
-
-      for(const QStringList& row : csvReader.getValues())
-      {
-        if(!row.at(IDENT).isEmpty())
-        {
-          QChar type = atools::strToChar(row.at(TYPE));
-          if(typeFilter.isEmpty() || typeFilter.contains(type))
-            addNavaid(FacilityId(row.at(IDENT), row.at(REGION), type));
-        }
-      }
+      readNavaidsFromFile(stream, typeFilter);
     }
     else
       qWarning() << Q_FUNC_INFO << "Cannot open" << file.fileName() << "error" << file.errorString();
+
+    QFile fileExtra(atools::settings::Settings::getOverloadedPath(":/atools/resources/navdata/navaids_msfs2024_extra.csv"));
+    if(fileExtra.open(QIODevice::ReadOnly))
+    {
+      qDebug() << Q_FUNC_INFO << "Reading" << fileExtra.fileName();
+      QTextStream stream(fileExtra.readAll(), QIODevice::ReadOnly);
+      readNavaidsFromFile(stream, typeFilter);
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Cannot open" << fileExtra.fileName() << "error" << fileExtra.errorString();
   }
+}
+
+void SimConnectLoaderPrivate::readNavaidsFromFile(QTextStream& stream, const QString& typeFilter)
+{
+  // CSV columns
+  enum {IDENT, REGION, TYPE};
+
+  atools::util::CsvFileReader csvReader;
+  csvReader.readCsvFile(stream);
+
+  for(const QStringList& row : csvReader.getValues())
+  {
+    if(!row.at(IDENT).isEmpty() && row.size() == 3)
+    {
+      QChar type = atools::strToChar(row.at(TYPE));
+      if(typeFilter.isEmpty() || typeFilter.contains(type))
+        addNavaid(FacilityId(row.at(IDENT), row.at(REGION), type));
+    }
+  }
+
 }
 
 void SimConnectLoaderPrivate::fetchDisconnectedNavaidsFile()
