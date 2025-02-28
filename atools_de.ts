@@ -1957,11 +1957,11 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>Too many errors reading airport data. Stopping.</source>
-        <translation>Zu viele Lesefehler beim Laden der Flugplatzdaten. Stoppe.</translation>
+        <translation type="vanished">Zu viele Lesefehler beim Laden der Flugplatzdaten. Stoppe.</translation>
     </message>
     <message>
         <source>Too many errors reading navaid data. Stopping.</source>
-        <translation>Zu viele Lesefehler beim Laden der Navigationshilfen. Stoppe.</translation>
+        <translation type="vanished">Zu viele Lesefehler beim Laden der Navigationshilfen. Stoppe.</translation>
     </message>
     <message>
         <source> </source>

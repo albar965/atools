@@ -496,7 +496,7 @@ void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& s
   {
     aircraft.category = UNKNOWN;
 
-    // Append unknown category string
+    // Append unknown category string - category needs to be valid for MSFS and FSX
     aircraft.airplaneTitle.append(QString(" [CAT \"%1\"]").arg(QString(simDataAircraft.category)));
   }
 
