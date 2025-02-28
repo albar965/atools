@@ -1058,26 +1058,47 @@ ls -lh $APROJECTS/atools/resources/navdata/navaids24.csv.gz
     waypointFacilities.clear();
     navaidIds.clear();
 
-    // File contains all navaids from previous simulator versions - regions are omitted since they are useless
+    // Load stock navdata from MSFS 2024 extract =========================================================
+    // File contains all navaids from previous simulator versions
     QFile file(":/atools/resources/navdata/navaids24.csv.gz");
     if(file.open(QIODevice::ReadOnly))
     {
       qDebug() << Q_FUNC_INFO << "Reading" << file.fileName();
       QTextStream stream(atools::zip::gzipDecompress(file.readAll()), QIODevice::ReadOnly);
       readNavaidsFromFile(stream, typeFilter);
+      file.close();
     }
     else
       qWarning() << Q_FUNC_INFO << "Cannot open" << file.fileName() << "error" << file.errorString();
 
-    QFile fileExtra(atools::settings::Settings::getOverloadedPath(":/atools/resources/navdata/navaids_msfs2024_extra.csv"));
+    // Load additional navdata from included file =========================================================
+    QFile fileExtra(":/atools/resources/navdata/navaids_msfs2024_extra.csv");
     if(fileExtra.open(QIODevice::ReadOnly))
     {
       qDebug() << Q_FUNC_INFO << "Reading" << fileExtra.fileName();
       QTextStream stream(fileExtra.readAll(), QIODevice::ReadOnly);
       readNavaidsFromFile(stream, typeFilter);
+      fileExtra.close();
     }
     else
       qWarning() << Q_FUNC_INFO << "Cannot open" << fileExtra.fileName() << "error" << fileExtra.errorString();
+
+    // Load additional navdata from user file in settings path =========================================================
+    QString fileExtraUserStr(atools::settings::Settings::getPath() % atools::SEP % "navaids_msfs2024_extra.csv");
+
+    if(atools::checkFile(Q_FUNC_INFO, fileExtraUserStr, false /* warn */))
+    {
+      QFile fileExtraUser(fileExtraUserStr);
+      if(fileExtraUser.open(QIODevice::ReadOnly))
+      {
+        qDebug() << Q_FUNC_INFO << "Reading" << fileExtraUser.fileName();
+        QTextStream stream(fileExtraUser.readAll(), QIODevice::ReadOnly);
+        readNavaidsFromFile(stream, typeFilter);
+        fileExtraUser.close();
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "Cannot open" << fileExtraUser.fileName() << "error" << fileExtraUser.errorString();
+    }
   }
 }
 
