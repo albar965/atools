@@ -1547,6 +1547,7 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1720"/>
         <source>Base Navigation</source>
+        <translatorcomment>基地导航？</translatorcomment>
         <translation type="unfinished">基地导航</translation>
     </message>
     <message>
@@ -2230,13 +2231,14 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <location filename="src/gui/widgetutil.cpp" line="171"/>
         <source> (changed)</source>
         <comment>Indication for search menu button items</comment>
-        <translation type="unfinished"></translation>
+        <translation> (已改变)</translation>
     </message>
     <message>
         <location filename="src/gui/widgetutil.cpp" line="172"/>
         <source> (changed, not used)</source>
         <comment>Indication for search menu button items</comment>
-        <translation type="unfinished"></translation>
+        <translatorcomment>触发过一次，步骤: 2.8.12 -&gt; 3.0.15rc1后在机场搜索表格选项卡的名称后显示 &quot;名称(changed, not used)&quot;</translatorcomment>
+        <translation> (已改变，弃用)</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="483"/>
