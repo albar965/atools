@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -158,7 +158,7 @@ private:
   float maxDistanceToleranceMeter = 100.f;
 
   int numInterpolation = 8;
-  float maxDistanceInterpolationNm = 200.f;
+  float maxDistanceInterpolationNm = 600.f;
 
   bool verbose = false;
   atools::fs::weather::MetarFormat format = atools::fs::weather::UNKNOWN;
