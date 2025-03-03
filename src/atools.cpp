@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1093,27 +1093,30 @@ QString normalizeStr(QString str)
   QString retval;
   const QString norm = str.normalized(QString::NormalizationForm_KD);
 
-  for(QChar c : norm)
+  for(QChar character : norm)
   {
     // Remove diacritics
-    if(c.category() != QChar::Mark_NonSpacing)
+    if(character.category() != QChar::Mark_NonSpacing)
     {
-      if(c == '?')
+      if(character == '&')
+        // Ampersand
+        retval.append(QObject::tr(" and ", "Used to replace character \"&\" in file names, etc."));
+      else if(character == '?')
         // Native question mark - keep
-        retval.append(c);
+        retval.append(character);
       else
       {
         // Convert ot latin
-        c = c.toLatin1();
+        character = character.toLatin1();
 
         // Add only if latin conversion did not produce garbage
-        if(c != '?' && c.isPrint() && c.unicode() < 126)
-          retval.append(c);
+        if(character != '?' && character.isPrint() && character.unicode() < 126)
+          retval.append(character);
       }
     }
   }
 
-  return retval;
+  return retval.simplified();
 }
 
 QDateTime correctDate(int day, int hour, int minute)

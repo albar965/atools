@@ -2169,8 +2169,8 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     if(!parking.isEmpty())
       writer.writeTextElement("DeparturePosition", parking);
 
-    writer.writeTextElement("DepartureName", plan.departNameOrIdent());
-    writer.writeTextElement("DestinationName", plan.destNameOrIdent());
+    writer.writeTextElement("DepartureName", atools::normalizeStr(plan.departNameOrIdent()));
+    writer.writeTextElement("DestinationName", atools::normalizeStr(plan.destNameOrIdent()));
   }
 
   // Write app version exactly since add-ons can blow up on this
