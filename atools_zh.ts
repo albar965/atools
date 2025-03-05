@@ -1694,6 +1694,12 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation>文件“%1”是空的。</translation>
     </message>
     <message>
+        <location filename="src/atools.cpp" line="1103"/>
+        <source> and </source>
+        <comment>Used to replace character &quot;&amp;&quot; in file names, etc.</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="29"/>
         <source>ATC</source>
         <translation>空中交通管制</translation>

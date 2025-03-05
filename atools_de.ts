@@ -1905,6 +1905,11 @@ Nachtzeit: %5</translation>
         <source>Version %5 (revision %6)</source>
         <translation>Version %5 (Revision %6)</translation>
     </message>
+    <message>
+        <source> and </source>
+        <comment>Used to replace character &quot;&amp;&quot; in file names, etc.</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>

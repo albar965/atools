@@ -1840,6 +1840,12 @@ Tempo Noturno: %5</translation>
         <translation>Arquivo &quot;%1&quot; está vazio.</translation>
     </message>
     <message>
+        <location filename="src/atools.cpp" line="1103"/>
+        <source> and </source>
+        <comment>Used to replace character &quot;&amp;&quot; in file names, etc.</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Cannot open runways.xml file &quot;%1&quot;. Reason: %2.</source>
         <translation type="vanished">Não foi possível abrir o arquivo runways.xml &quot;%1&quot;. Razão: %2.</translation>
     </message>

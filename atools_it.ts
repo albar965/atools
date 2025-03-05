@@ -1847,6 +1847,12 @@ Ore Notturne: %5</translation>
         <translation>Il File &quot;%1&quot; è vuoto.</translation>
     </message>
     <message>
+        <location filename="src/atools.cpp" line="1103"/>
+        <source> and </source>
+        <comment>Used to replace character &quot;&amp;&quot; in file names, etc.</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="29"/>
         <source>ATC</source>
         <translation>ATC controllore traffico aereo</translation>

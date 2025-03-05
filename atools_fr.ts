@@ -1780,6 +1780,12 @@ Période nocturne : %5</translation>
         <translation type="unfinished">Le fichier &quot;%1&quot; est vide.</translation>
     </message>
     <message>
+        <location filename="src/atools.cpp" line="1103"/>
+        <source> and </source>
+        <comment>Used to replace character &quot;&amp;&quot; in file names, etc.</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="29"/>
         <source>ATC</source>
         <translation>ATC</translation>
@@ -2307,7 +2313,7 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="573"/>
         <source>Loading airport count</source>
-        <translation type="unfinished">Chargement du décompte des aéroports</translation>
+        <translation type="unfinished">Chargement du comptage des aéroports</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="580"/>
@@ -2327,7 +2333,7 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="625"/>
         <source>Loading airport helipads</source>
-        <translation type="unfinished">Chargement des héliports d&apos;aéroports</translation>
+        <translation type="unfinished">Chargement des héliports des aéroports</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="631"/>
@@ -2337,7 +2343,7 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="637"/>
         <source>Loading airport start positions</source>
-        <translation type="unfinished">Chargement des positions de départ d&apos;aéroport</translation>
+        <translation type="unfinished">Chargement des positions de départ des aéroports</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="643"/>
@@ -2347,12 +2353,12 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="648"/>
         <source>Loading airport taxiways and parking</source>
-        <translation type="unfinished">Chargement des voies de circulation et des parkings des aéroports</translation>
+        <translation type="unfinished">Chargement des taxiways et des parkings des aéroports</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="666"/>
         <source>Loading waypoints, VOR, ILS, NDB and airways</source>
-        <translation type="unfinished">Chargement des waypoints, VOR, ILS, NDB et airways</translation>
+        <translation type="unfinished">Chargement des waypoints, VOR, ILS, NDB et voies aériennes</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="686"/>
@@ -2372,7 +2378,7 @@ Période nocturne : %5</translation>
     </message>
     <message>
         <source>Too many errors reading navaid data. Stopping.</source>
-        <translation type="obsolete">Trop d&apos;erreurs dans la lecture des navaid data. Arrêt.</translation>
+        <translation type="obsolete">Trop d&apos;erreurs dans la lecture des navaids. Arrêt.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectloader.cpp" line="1207"/>
@@ -2400,7 +2406,7 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="477"/>
         <source>Writing airport facilities to database</source>
-        <translation type="unfinished">Inscription des installations aéroports dans la base de données</translation>
+        <translation type="unfinished">Inscription des installations aéroportuaires dans la base de données</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1201"/>
@@ -2420,7 +2426,7 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1230"/>
         <source>Writing NDB to database</source>
-        <translation type="unfinished">Écriture de la BDN dans la base de données</translation>
+        <translation type="unfinished">Enregistrement de la BDN dans la base de données</translation>
     </message>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1282"/>
@@ -2430,7 +2436,7 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1424"/>
         <source>Writing waypoints and airways to database</source>
-        <translation type="unfinished">Enregistrement des Waypoints et des Airways dans la base de données</translation>
+        <translation type="unfinished">Enregistrement des waypoints et des voies aériennes dans la base de données</translation>
     </message>
 </context>
 <context>
