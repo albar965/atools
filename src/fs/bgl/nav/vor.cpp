@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,37 +34,63 @@ using Qt::hex;
 using Qt::dec;
 #endif
 
-enum VorFlags
+enum VorFlags : quint8
 {
   FLAGS_DME_ONLY = 1 << 0, // if 0 then DME only, otherwise 1 for ILS
-  FLAGS_BC = 1 << 1, // backcourse (0 = false, 1 = true)
-  FLAGS_GS = 1 << 2, // glideslope present
-  FLAGS_DME = 1 << 3, // DME present
-  FLAGS_NAV = 1 << 4, // NAV true
-  FLAGS_TACAN_MSFS = 1 << 1 /* 2020 and 2024 */
+  FLAGS_MSFS_TACAN_VORTAC_MSFS = 1 << 1,
+  FLAGS_MSFS_NAV = 1 << 4, // NAV true
 };
 
 Vor::Vor(const NavDatabaseOptions *options, BinaryStream *stream)
   : NavBase(options, stream)
 {
   type = static_cast<nav::IlsVorType>(stream->readUByte());
-  int flags = stream->readUByte();
-  tacan = flags & FLAGS_TACAN_MSFS;
-  dmeOnly = (flags & FLAGS_DME_ONLY) == 0 && !tacan;
-  // hasDme = (flags & FLAGS_DME) == FLAGS_DME;
-  // hasNav = (flags & FLAGS_NAV) == FLAGS_NAV;
 
-  // Flag fields found in MSFS 2024
-  // "TCN" "ZZ" 0x33 0b110011 0x0 dmeOnly false dummy 0x0
-  // "VDM" "ZZ" 0x31 0b110001 0x0 dmeOnly false dummy 0x0
-  // "VOR" "ZZ" 0x1  0b000001 0x0 dmeOnly false dummy 0x0
-  // "DME" "ZZ" 0x10 0b010000 0x0 dmeOnly true dummy 0x0
+  int flags = stream->readUByte();
+  dmeOnly = tacan = vortac = false;
+  if(options->getSimulatorType() == atools::fs::FsPaths::MSFS)
+  {
+    // TACAN  "LDK" 0b010010 0x12
+    // VORTAC "RQZ" 0b110011 0x33
+    // VORDME "GAD" 0b110001 0x31
+    // VOR    "MTR" 0b000001 0x01
+    // DME    "DCU" 0b010000 0x10
+
+    if(flags & FLAGS_MSFS_TACAN_VORTAC_MSFS)
+    {
+      if((flags & FLAGS_DME_ONLY) == 0)
+        tacan = true;
+      else
+        vortac = true;
+    }
+    else
+      dmeOnly = (flags & FLAGS_DME_ONLY) == 0;
+  }
+  else
+    dmeOnly = (flags & FLAGS_DME_ONLY) == 0;
 
   position = BglPosition(stream, true, 1000.f);
   frequency = stream->readInt() / 1000;
   range = stream->readFloat();
   magVar = converter::adjustMagvar(stream->readFloat());
   ident = id == rec::ILS_VOR_MSFS2024 ? converter::intToIcaoLong(stream->readULong()) : converter::intToIcao(stream->readUInt());
+
+#ifdef DEBUG_DUMP_NAVAID_FLAGS
+  if(ident == "RQZ")
+    qDebug().nospace() << Q_FUNC_INFO << " VORTAC " << ident << " 0b" << bin << flags << hex << " 0x" << flags;
+
+  if(ident == "LDK")
+    qDebug().nospace() << Q_FUNC_INFO << " TACAN " << ident << " 0b" << bin << flags << hex << " 0x" << flags;
+
+  if(ident == "DCU")
+    qDebug().nospace() << Q_FUNC_INFO << " DME " << ident << " 0b" << bin << flags << hex << " 0x" << flags;
+
+  if(ident == "GAD")
+    qDebug().nospace() << Q_FUNC_INFO << " VORDME " << ident << " 0b" << bin << flags << hex << " 0x" << flags;
+
+  if(ident == "MTR")
+    qDebug().nospace() << Q_FUNC_INFO << " VOR " << ident << " 0b" << bin << flags << hex << " 0x" << flags << position.getPos();
+#endif
 
   unsigned int regionFlags = stream->readUInt();
   region = converter::intToIcao(regionFlags & 0x7ff, true);

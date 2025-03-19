@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -65,17 +65,23 @@ public:
     return type;
   }
 
-  /* true if MSFS 2024 TACAN */
+  /* true if MSFS TACAN */
   bool isTacan() const
   {
     return tacan;
+  }
+
+  /* true if MSFS VORTAC */
+  bool isVortac() const
+  {
+    return vortac;
   }
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Vor& record);
 
   atools::fs::bgl::nav::IlsVorType type;
-  bool dmeOnly, tacan;
+  bool dmeOnly, tacan, vortac;
   atools::fs::bgl::Dme *dme = nullptr;
 };
 

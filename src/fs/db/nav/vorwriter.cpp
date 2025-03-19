@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,9 @@ void VorWriter::writeObject(const Vor *type)
   bind(":name", type->getName());
   bind(":region", type->getRegion());
 
-  if(type->isTacan()) // Only MFSF 2024 - P3D uses TacanWriter
+  if(type->isVortac()) // Only MSFS - P3D uses TacanWriter
+    bind(":type", QString("VT%1").arg(bgl::IlsVor::ilsVorTypeToStr(type->getType())));
+  else if(type->isTacan()) // Only MFSF - P3D uses TacanWriter
     bind(":type", "TC");
   else
     bind(":type", bgl::IlsVor::ilsVorTypeToStr(type->getType()));
@@ -60,8 +62,12 @@ void VorWriter::writeObject(const Vor *type)
   bindNullInt(":airport_id");
 
   bind(":frequency", type->getFrequency());
-  if(type->isTacan()) // Only MFSF 2024
+
+  if(type->isTacan() || type->isVortac()) // Only MFSF 2024
     bind(":channel", util::tacanChannelForFrequency(type->getFrequency() / 10));
+  else
+    bindNullString(":channel");
+
   bind(":range", roundToInt(meterToNm(type->getRange())));
 
   if(type->isDmeOnly())

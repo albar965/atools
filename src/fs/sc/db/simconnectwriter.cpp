@@ -1371,6 +1371,8 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
       // Write channel for TACAN and VORTAC
       if(vorIls.isTacan)
         vorStmt->bindValue(":channel", util::tacanChannelForFrequency(vorIls.frequency / 10000));
+      else
+        vorStmt->bindNullStr(":channel");
 
       float magvar = bgl::converter::adjustMagvar(vorIls.magvar);
       vorStmt->bindValue(":frequency", vorIls.frequency / 1000);
