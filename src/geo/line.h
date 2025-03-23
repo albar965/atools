@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define ATOOLS_GEO_LINE_H
 
 #include "geo/pos.h"
+#include "geo/calculations.h"
 
 #include <QDebug>
 
@@ -209,7 +210,10 @@ public:
   /*
    * @return true if line is a single point
    */
-  bool isPoint(float epsilonDegree = std::numeric_limits<float>::epsilon()) const;
+  bool isPoint(float epsilonDegree = std::numeric_limits<float>::epsilon()) const
+  {
+    return isValid() && pos1.almostEqual(pos2, epsilonDegree);
+  }
 
   const atools::geo::Pos& getPos2() const
   {
@@ -222,15 +226,27 @@ public:
   }
 
   /* true if longitude values cross the anti-meridian independent of direction but unreliable for large rectangles. */
-  bool crossesAntiMeridian() const;
+  bool crossesAntiMeridian() const
+  {
+    return atools::geo::crossesAntiMeridian(pos1, pos2);
+  }
 
   /* Returns two lines if it crosses. Otherwise a copy of this or empty list if invalid. */
-  const QList<Line> splitAtAntiMeridian(bool *crossed = nullptr) const;
+  const QList<Line> splitAtAntiMeridian(bool *crossed = nullptr) const
+  {
+    return atools::geo::splitAtAntiMeridian(pos1, pos2, crossed);
+  }
 
   /* true if heading of "from" to "to" is towards west or east. */
-  bool isWestCourse() const;
+  bool isWestCourse() const
+  {
+    return atools::geo::isWestCourse(pos1.getLonX(), pos2.getLonX());
+  }
 
-  bool isEastCourse() const;
+  bool isEastCourse() const
+  {
+    return atools::geo::isEastCourse(pos1.getLonX(), pos2.getLonX());
+  }
 
   float getInitialBearing()
   {

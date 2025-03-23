@@ -203,7 +203,7 @@ public:
 
   /* Returns a line with additional points added at the anti-meridian if it crosses.
    * Otherwise a copy of this or empty list if invalid. */
-  atools::geo::LineString splitAtAntiMeridian(bool *crossed = nullptr) const;
+  const atools::geo::LineString splitAtAntiMeridian(bool *crossed = nullptr) const;
 
   /* Returns a list of lines split at the anti-meridian if it crosses. List size is > 1 if crossed. */
   const QVector<atools::geo::LineString> splitAtAntiMeridianList() const;

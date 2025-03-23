@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -771,6 +771,55 @@ bool isEastCourse(float lonx1, float lonx2)
     return lonx2 < 0.f ? (lonx1 < lonx2 + 360.f) : (lonx1 + 360.f < lonx2);
   else
     return lonx1 < lonx2;
+}
+
+bool crossesAntiMeridian(const Pos& pos1, const Pos& pos2)
+{
+  return atools::geo::crossesAntiMeridian(pos1.getLonX(), pos2.getLonX());
+}
+
+const QList<Line> splitAtAntiMeridian(const Pos& pos1, const Pos& pos2, bool *crossed)
+{
+  if(crossed != nullptr)
+    *crossed = false;
+
+  if(pos1.isValid() && pos2.isValid())
+  {
+    if(crossesAntiMeridian(pos1, pos2))
+    {
+      if(crossed != nullptr)
+        *crossed = true;
+
+      // Check for intersection with anti-meridian
+      // Radial (endless from pos1) is sufficient here since crossing is already confirmed
+      Pos p = Pos::intersectingRadials(pos1, pos1.angleDegTo(pos2), Pos(180.f, 90.f), 180.f);
+
+      if(p.isValid())
+      {
+        // Avoid 170 -> -180 and -170 -> 180 situation
+        float boundary = pos1.getLonX() > 0.f && pos2.getLonX() < 0.f ? 180.f : -180.f;
+
+        // Return split line
+        return QList<Line>({Line(pos1.getLonX(), pos1.getLatY(), boundary, p.getLatY()),
+                            Line(-boundary, p.getLatY(), pos2.getLonX(), pos2.getLatY())});
+      }
+      // Result is invalid most likely because of points being close to anti-meridian - build line pair manually
+      else if(atools::almostEqual(pos1.getLonX(), 180.f, 0.01f) && atools::almostEqual(pos2.getLonX(), -180.f, 0.01f))
+        // East to west
+        return QList<Line>({Line(pos1.getLonX(), pos1.getLatY(), 180.f, pos1.getLatY()),
+                            Line(-180.f, pos2.getLatY(), pos2.getLonX(), pos2.getLatY())});
+      else if(atools::almostEqual(pos1.getLonX(), -180.f, 0.01f) && atools::almostEqual(pos2.getLonX(), 180.f, 0.01f))
+        // West to easts
+        return QList<Line>({Line(pos1.getLonX(), pos1.getLatY(), -180.f, pos1.getLatY()),
+                            Line(180.f, pos2.getLatY(), pos2.getLonX(), pos2.getLatY())});
+    }
+
+    // Return a copy of this
+    return QList<Line>({Line(pos1, pos2)});
+  }
+  else
+    // Invalid - return empty
+    return QList<Line>();
 }
 
 } // namespace geo

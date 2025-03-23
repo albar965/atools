@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -304,7 +304,7 @@ bool LineString::crossesAntiMeridian() const
   return false;
 }
 
-LineString LineString::splitAtAntiMeridian(bool *crossed) const
+const LineString LineString::splitAtAntiMeridian(bool *crossed) const
 {
   if(crossed != nullptr)
     *crossed = false;
@@ -319,8 +319,8 @@ LineString LineString::splitAtAntiMeridian(bool *crossed) const
   {
     for(int i = 0; i < correctedSize; i++)
     {
-      QList<Line> splitLines =
-        Line(at(atools::wrapIndex(i, correctedSize)), at(atools::wrapIndex(i + 1, correctedSize))).splitAtAntiMeridian();
+      const QList<Line> splitLines = atools::geo::splitAtAntiMeridian(at(atools::wrapIndex(i, correctedSize)),
+                                                                      at(atools::wrapIndex(i + 1, correctedSize)));
       if(splitLines.size() == 2)
       {
         // Crossing confirmed
@@ -356,8 +356,8 @@ const QVector<LineString> LineString::splitAtAntiMeridianList() const
     LineString split;
     for(int i = 0; i < correctedSize; i++)
     {
-      QList<Line> splitLines =
-        Line(at(atools::wrapIndex(i, correctedSize)), at(atools::wrapIndex(i + 1, correctedSize))).splitAtAntiMeridian();
+      const QList<Line> splitLines = atools::geo::splitAtAntiMeridian(at(atools::wrapIndex(i, correctedSize)),
+                                                                      at(atools::wrapIndex(i + 1, correctedSize)));
       if(splitLines.size() == 2)
       {
         // Add split line segments
