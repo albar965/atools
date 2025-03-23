@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -282,7 +282,7 @@ private:
    *    View creation now disabled.
    *
    *
-   * VERSION_NUMBER_TODO=
+   * VERSION_NUMBER_TODO update database version
    */
   static const int DB_VERSION_MINOR = 29;
 
@@ -290,7 +290,7 @@ private:
   static const int DB_VERSION_MINOR_OUTDATED = 24;
 
   /* Version of included AIRAC cycle.
-   * VERSION_NUMBER_TODO= */
+   * VERSION_NUMBER_TODO update included cycle */
   static const int DB_INCLUDED_NAVDATA_CYCLE = 1801;
 
   /* Update the last loaded timestamp in the database and set it to now */
