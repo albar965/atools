@@ -215,7 +215,9 @@ public:
 
   /* User aircraft structure fetched and object ID */
   SimData simDataUser;
-  quint32 simDataUserObjectId;
+
+  /* -1 for aircraft fetched but filtered out */
+  qint64 simDataUserObjectId = -1L;
 
   /* AI aircraft structures fetched and object IDs */
   QVector<std::pair<quint32, SimDataAircraft> > simDataAiAircraftList;
@@ -350,16 +352,20 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
           const SimData *simDataPtr = reinterpret_cast<const SimData *>(&pObjData->dwData);
 
           // Need to do some validation since MSFS returns garbled values at startup
+          // Also filter out MSFS junk user aircraft appearing before opening menu
           if(simDataPtr != nullptr &&
              SUCCEEDED(StringCbLengthA(&simDataPtr->aircraft.aircraftTitle[0], sizeof(simDataPtr->aircraft.aircraftTitle), NULL)) &&
-             SUCCEEDED(StringCbLengthA(&simDataPtr->aircraft.category[0], sizeof(simDataPtr->aircraft.category), NULL)))
+             SUCCEEDED(StringCbLengthA(&simDataPtr->aircraft.category[0], sizeof(simDataPtr->aircraft.category), NULL)) &&
+             simDataPtr->aircraft.indicatedAltitudeFt > -2000.f &&
+             VALID_CATEGORY.match(QString(simDataPtr->aircraft.category)).hasMatch())
           {
-            if(VALID_CATEGORY.match(QString(simDataPtr->aircraft.category)).hasMatch())
-            {
-              simDataUser = *simDataPtr;
-              simDataUserObjectId = static_cast<quint32>(pObjData->dwObjectID);
-            }
+            simDataUser = *simDataPtr;
+            simDataUserObjectId = static_cast<qint64>(pObjData->dwObjectID);
           }
+          else
+            // Indicate that aircraft was fetched but filtered out
+            simDataUserObjectId = -1L;
+
           userAircraftFetched = true;
         }
         else if(pObjData->dwRequestID == DATA_REQUEST_ID_AI_AIRCRAFT || pObjData->dwRequestID == DATA_REQUEST_ID_AI_HELICOPTER ||
@@ -951,7 +957,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     } // for(auto it = p->simDataAircraftMap.constBegin(); it != p->simDataAircraftMap.constEnd(); ++it)
 
     // Get user aircraft =======================================================================
-    if(p->userAircraftFetched)
+    if(p->userAircraftFetched && p->simDataUserObjectId != -1L)
     {
       // Copy base data
       p->copyToSimConnectAircraft(p->simDataUser.aircraft, data.userAircraft);
@@ -959,7 +965,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       data.userAircraft.flags.setFlag(atools::fs::sc::ON_GROUND, p->simDataUser.aircraft.isSimOnGround > 0);
 
       // Copy additional user aircraft data
-      data.userAircraft.objectId = p->simDataUserObjectId;
+      data.userAircraft.objectId = static_cast<quint32>(p->simDataUserObjectId);
 
       data.userAircraft.groundAltitudeFt = p->simDataUser.groundAltitudeFt;
 
@@ -1019,7 +1025,9 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       data.userAircraft.zuluDateTime = zuluDateTime;
     } // if(p->userDataFetched)
     else
+      // Set to invalid
       data.userAircraft.position = atools::geo::Pos();
+
   } // if(p->state == sc::STATEOK)
 
   if(!p->simRunning || p->simPaused || !p->userAircraftFetched)
