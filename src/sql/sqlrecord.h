@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -246,8 +246,8 @@ public:
 
   void remove(const QStringList& names);
 
-  QStringList fieldNames() const;
-  QVariantList values() const;
+  const QStringList fieldNames() const;
+  const QVariantList values() const;
 
   const QString& getQueryString() const
   {

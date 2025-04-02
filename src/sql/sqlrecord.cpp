@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -232,7 +232,7 @@ void SqlRecord::remove(const QStringList& names)
     remove(name);
 }
 
-QStringList SqlRecord::fieldNames() const
+const QStringList SqlRecord::fieldNames() const
 {
   QStringList fieldList;
 
@@ -241,7 +241,7 @@ QStringList SqlRecord::fieldNames() const
   return fieldList;
 }
 
-QVariantList SqlRecord::values() const
+const QVariantList SqlRecord::values() const
 {
   QVariantList valueList;
 
