@@ -26,16 +26,121 @@ namespace atools {
 namespace fs {
 
 /*
+ * One error message referring to a file and optional line number.
+ */
+class SceneryFileError
+{
+public:
+  SceneryFileError(const QString& filepathParam, const QString& errorMessageParam, int lineNumParam = 0)
+    : filepath(filepathParam), errorMessage(errorMessageParam), lineNum(lineNumParam)
+  {
+  }
+
+  const QString& getFilepath() const
+  {
+    return filepath;
+  }
+
+  const QString& getErrorMessage() const
+  {
+    return errorMessage;
+  }
+
+  int getLineNum() const
+  {
+    return lineNum;
+  }
+
+private:
+  QString filepath, errorMessage;
+  int lineNum;
+};
+
+/*
+ * Scenery errors and file errors for a scenery area.
+ */
+class SceneryErrors
+{
+public:
+  SceneryErrors()
+  {
+  }
+
+  SceneryErrors(const scenery::SceneryArea& area, const QString& message, const QList<SceneryFileError>& errors)
+    : scenery(area), sceneryErrorsMessages({message}), fileErrors(errors)
+  {
+  }
+
+  SceneryErrors(const scenery::SceneryArea& area, const QStringList& errors, bool isWarning)
+    : scenery(area), sceneryErrorsMessages(errors), warning(isWarning)
+  {
+  }
+
+  SceneryErrors(const scenery::SceneryArea& area, const QString& message, bool isWarning)
+    : scenery(area), sceneryErrorsMessages({message}), warning(isWarning)
+  {
+  }
+
+  bool hasFileOrSceneryErrors() const
+  {
+    return !fileErrors.isEmpty() || !sceneryErrorsMessages.isEmpty();
+  }
+
+  const atools::fs::scenery::SceneryArea& getScenery() const
+  {
+    return scenery;
+  }
+
+  const QStringList& getSceneryErrorsMessages() const
+  {
+    return sceneryErrorsMessages;
+  }
+
+  bool isWarning() const
+  {
+    return warning;
+  }
+
+  const QList<atools::fs::SceneryFileError>& getFileErrors() const
+  {
+    return fileErrors;
+  }
+
+  void appendFileError(const atools::fs::SceneryFileError& fileError)
+  {
+    fileErrors.append(fileError);
+  }
+
+  void appendSceneryErrorMessage(const QString& message)
+  {
+    sceneryErrorsMessages.append(message);
+  }
+
+  void appendSceneryErrorMessages(const QStringList& messages)
+  {
+    sceneryErrorsMessages.append(messages);
+  }
+
+  void setSceneryArea(const atools::fs::scenery::SceneryArea& newScenery)
+  {
+    scenery = newScenery;
+  }
+
+private:
+  friend class NavDatabaseErrors;
+
+  atools::fs::scenery::SceneryArea scenery;
+  QStringList sceneryErrorsMessages;
+  bool warning = false;
+  QList<atools::fs::SceneryFileError> fileErrors;
+};
+
+/*
  * This class collects exception messages for each file and scenery database entry.
  */
 class NavDatabaseErrors
 {
 public:
-  NavDatabaseErrors()
-  {
-
-  }
-
   /* Get total number of errors across all scenery areas */
   int getTotal() const;
   int getTotalErrors() const;
@@ -44,41 +149,23 @@ public:
   /* Initialize with a single area */
   void init(const scenery::SceneryArea& area);
 
-  struct SceneryFileError
+  void appendSceneryErrors(const atools::fs::SceneryErrors& errors)
   {
-    QString filepath, errorMessage;
-    int lineNum;
-  };
+    sceneryErrors.append(errors);
+  }
 
-  struct SceneryErrors
+  const QList<atools::fs::SceneryErrors>& getSceneryErrors() const
   {
-    SceneryErrors()
-    {
-    }
+    return sceneryErrors;
+  }
 
-    SceneryErrors(const scenery::SceneryArea& area, const QString& message, const QList<NavDatabaseErrors::SceneryFileError>& errors)
-      : scenery(area), sceneryErrorsMessages({message}), fileErrors(errors)
-    {
-    }
+  QList<atools::fs::SceneryErrors>& getSceneryErrors()
+  {
+    return sceneryErrors;
+  }
 
-    SceneryErrors(const scenery::SceneryArea& area, const QStringList& errors, bool isWarning)
-      : scenery(area), sceneryErrorsMessages(errors), warning(isWarning)
-    {
-    }
-
-    SceneryErrors(const scenery::SceneryArea& area, const QString& message, bool isWarning)
-      : scenery(area), sceneryErrorsMessages({message}), warning(isWarning)
-    {
-    }
-
-    atools::fs::scenery::SceneryArea scenery;
-    QStringList sceneryErrorsMessages;
-    bool warning = false;
-    QList<atools::fs::NavDatabaseErrors::SceneryFileError> fileErrors;
-  };
-
-  QList<atools::fs::NavDatabaseErrors::SceneryErrors> sceneryErrors;
-
+private:
+  QList<atools::fs::SceneryErrors> sceneryErrors;
 };
 
 } // namespace fs

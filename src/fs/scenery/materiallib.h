@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 namespace atools {
 namespace fs {
 
+class SceneryErrors;
+class ProgressHandler;
 class NavDatabaseOptions;
 
 namespace scenery {
@@ -34,7 +36,7 @@ namespace scenery {
 class MaterialLib
 {
 public:
-  MaterialLib(const atools::fs::NavDatabaseOptions *opts);
+  MaterialLib(const atools::fs::NavDatabaseOptions *opts, atools::fs::ProgressHandler *progress, atools::fs::SceneryErrors *errors);
 
   /* Read a material library from a community package by looking into the layout.json file
    *  @param basePath Path containing the layout file. */
@@ -63,7 +65,10 @@ public:
 
 private:
   QHash<QUuid, QString> surfaceMap;
+
   const atools::fs::NavDatabaseOptions *options = nullptr;
+  atools::fs::ProgressHandler *progressHandler = nullptr;
+  atools::fs::SceneryErrors *sceneryErrors = nullptr;
 };
 
 } // namespace scenery

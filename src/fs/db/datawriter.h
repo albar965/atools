@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -251,7 +251,7 @@ public:
   /*
    * Set the error list that will be filled whenever exceptions occur
    */
-  void setSceneryErrors(atools::fs::NavDatabaseErrors::SceneryErrors *errors)
+  void setSceneryErrors(atools::fs::SceneryErrors *errors)
   {
     sceneryErrors = errors;
   }
@@ -303,7 +303,7 @@ private:
 
   atools::sql::SqlDatabase& db;
   atools::fs::ProgressHandler *progressHandler = nullptr;
-  atools::fs::NavDatabaseErrors::SceneryErrors *sceneryErrors = nullptr;
+  atools::fs::SceneryErrors *sceneryErrors = nullptr;
 
   atools::fs::db::BglFileWriter *bglFileWriter = nullptr;
   atools::fs::db::SceneryAreaWriter *sceneryAreaWriter = nullptr;

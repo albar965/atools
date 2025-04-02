@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -139,19 +139,19 @@ void XpReader::err(const QString& msg)
 
   if(errors != nullptr)
   {
-    if(!errors->sceneryErrors.isEmpty())
+    if(!errors->getSceneryErrors().isEmpty())
     {
-      atools::fs::NavDatabaseErrors::SceneryFileError err;
+      QString message, filepath;
+
       if(ctx != nullptr)
       {
-        err.errorMessage = ctx->messagePrefix() + " " + msg;
-        err.filepath = ctx->filePath;
+        message = ctx->messagePrefix() + " " + msg;
+        filepath = ctx->filePath;
       }
       else
-        err.errorMessage = msg;
-      err.lineNum = 0;
+        message = msg;
 
-      errors->sceneryErrors.first().fileErrors.append(err);
+      errors->getSceneryErrors().first().appendFileError(SceneryFileError(filepath, message));
     }
   }
 }

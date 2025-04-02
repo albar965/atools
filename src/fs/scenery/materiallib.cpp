@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,10 @@
 #include "fs/scenery/materiallib.h"
 
 #include "atools.h"
+#include "exception.h"
+#include "fs/navdatabaseerrors.h"
 #include "fs/navdatabaseoptions.h"
+#include "fs/progresshandler.h"
 #include "fs/scenery/layoutjson.h"
 #include "util/xmlstream.h"
 
@@ -32,8 +35,8 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
-MaterialLib::MaterialLib(const NavDatabaseOptions *opts)
-  : options(opts)
+MaterialLib::MaterialLib(const NavDatabaseOptions *opts, ProgressHandler *progress, SceneryErrors *errors)
+  : options(opts), progressHandler(progress), sceneryErrors(errors)
 {
 
 }
@@ -43,21 +46,84 @@ void MaterialLib::readCommunity(const QString& basePath)
   LayoutJson layout;
   layout.read(basePath + atools::SEP + "layout.json");
   for(const QString& str : layout.getMaterialPaths())
-    read(basePath + atools::SEP + str);
+  {
+    QString filepath = basePath + atools::SEP + str;
+
+    try
+    {
+      read(filepath);
+    }
+    catch(atools::Exception& e)
+    {
+      qCritical() << "Caught exception reading" << filepath << ":" << e.what();
+      progressHandler->reportError();
+      if(sceneryErrors != nullptr)
+        sceneryErrors->appendFileError(SceneryFileError(filepath, QString(e.what())));
+    }
+    catch(...)
+    {
+      qCritical() << "Caught unknown exception reading" << filepath;
+      progressHandler->reportError();
+      if(sceneryErrors != nullptr)
+        sceneryErrors->appendFileError(SceneryFileError(filepath, QString()));
+    }
+  }
 }
 
 void MaterialLib::readOfficial(const QString& basePath)
 {
   LayoutJson layout;
-
   layout.read(basePath + atools::SEP + "asobo-material-lib" + atools::SEP + "layout.json");
+
   for(const QString& str : layout.getMaterialPaths())
-    read(basePath + atools::SEP + "asobo-material-lib" + atools::SEP + str);
+  {
+    QString filepath = basePath + atools::SEP + "asobo-material-lib" + atools::SEP + str;
+
+    try
+    {
+      read(filepath);
+    }
+    catch(atools::Exception& e)
+    {
+      qCritical() << "Caught exception reading" << filepath << ":" << e.what();
+      progressHandler->reportError();
+      if(sceneryErrors != nullptr)
+        sceneryErrors->appendFileError(SceneryFileError(filepath, QString(e.what())));
+    }
+    catch(...)
+    {
+      qCritical() << "Caught unknown exception reading" << filepath;
+      progressHandler->reportError();
+      if(sceneryErrors != nullptr)
+        sceneryErrors->appendFileError(SceneryFileError(filepath, QString()));
+    }
+  }
 
   layout.clear();
   layout.read(basePath + atools::SEP + "fs-base-material-lib" + atools::SEP + "layout.json");
+
   for(const QString& str : layout.getMaterialPaths())
-    read(basePath + atools::SEP + "fs-base-material-lib" + atools::SEP + str);
+  {
+    QString filepath = basePath + atools::SEP + "fs-base-material-lib" + atools::SEP + str;
+    try
+    {
+      read(filepath);
+    }
+    catch(atools::Exception& e)
+    {
+      qCritical() << "Caught exception reading" << filepath << ":" << e.what();
+      progressHandler->reportError();
+      if(sceneryErrors != nullptr)
+        sceneryErrors->appendFileError(SceneryFileError(filepath, QString(e.what())));
+    }
+    catch(...)
+    {
+      qCritical() << "Caught unknown exception reading" << filepath;
+      progressHandler->reportError();
+      if(sceneryErrors != nullptr)
+        sceneryErrors->appendFileError(SceneryFileError(filepath, QString()));
+    }
+  }
 }
 
 /*

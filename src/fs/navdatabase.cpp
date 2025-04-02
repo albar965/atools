@@ -755,9 +755,13 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
       fsDataWriter->setLanguageIndex(languageIndex.data());
 
       // Load the two official material libraries ================================
-      materialLib.reset(new scenery::MaterialLib(options));
+      SceneryErrors materialLibErrors;
+      materialLib.reset(new scenery::MaterialLib(options, &progress, &materialLibErrors));
       materialLib->readOfficial(packageBase);
       fsDataWriter->setMaterialLib(materialLib.data());
+
+      if(materialLibErrors.hasFileOrSceneryErrors() && errors != nullptr)
+        errors->appendSceneryErrors(materialLibErrors);
     }
 
     // Load all community and official scenery/BGL files  =====================================
@@ -1205,11 +1209,11 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
                              const SceneryCfg& cfg)
 {
   // Prepare structure for error collection
-  NavDatabaseErrors::SceneryErrors err;
-  fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
+  SceneryErrors sceneryErrors;
+  fsDataWriter->setSceneryErrors(errors != nullptr ? &sceneryErrors : nullptr);
   fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getBasepath(), "Scenery", "Base", "Scenery", "magdec.bgl"}));
-  if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
-    errors->sceneryErrors.append(err);
+  if(sceneryErrors.hasFileOrSceneryErrors() && errors != nullptr)
+    errors->appendSceneryErrors(sceneryErrors);
 
   qInfo() << Q_FUNC_INFO << "Scenery configuration ================================================";
   qInfo() << cfg;
@@ -1225,8 +1229,8 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
 bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWriter, const SceneryCfg& cfg)
 {
   // Prepare structure for error collection
-  NavDatabaseErrors::SceneryErrors err;
-  fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
+  SceneryErrors sceneryErrors;
+  fsDataWriter->setSceneryErrors(errors != nullptr ? &sceneryErrors : nullptr);
 
   // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
   // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/fs-base/scenery/Base/scenery/magdec.bgl
@@ -1235,8 +1239,8 @@ bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWrit
   else
     fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getMsfsOfficialPath(), "fs-base", "scenery", "Base", "scenery", "magdec.bgl"}));
 
-  if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
-    errors->sceneryErrors.append(err);
+  if(sceneryErrors.hasFileOrSceneryErrors() && errors != nullptr)
+    errors->appendSceneryErrors(sceneryErrors);
 
   qInfo() << Q_FUNC_INFO << "Content.xml ================================================";
   qInfo() << cfg;
@@ -1252,7 +1256,9 @@ bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWrit
 bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWriter *fsDataWriter,
                                           const QList<atools::fs::scenery::SceneryArea>& areas)
 {
-  scenery::MaterialLib materialLib(options);
+  SceneryErrors materialLibErrors;
+  scenery::MaterialLib materialLib(options, progress, &materialLibErrors);
+
   for(const SceneryArea& area : areas)
   {
     if(area.isActive() || options->isReadInactive())
@@ -1312,7 +1318,7 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
 
           // Copy errors like caught exceptions when writing
           if(errors != nullptr)
-            errors->sceneryErrors.append(NavDatabaseErrors::SceneryErrors(area, simconnectLoader->getErrors(), false));
+            errors->appendSceneryErrors(SceneryErrors(area, simconnectLoader->getErrors(), false));
 
           // Also clears errors
           simconnectLoader->finishLoading();
@@ -1325,8 +1331,8 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
       }
       else if(options->isIncludedLocalPath(area.getLocalPath()))
       {
-        NavDatabaseErrors::SceneryErrors err = NavDatabaseErrors::SceneryErrors();
-        fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
+        SceneryErrors sceneryError = SceneryErrors();
+        fsDataWriter->setSceneryErrors(errors != nullptr ? &sceneryError : nullptr);
 
         QFileInfo fileinfo(area.getLocalPath());
         if(!fileinfo.isAbsolute())
@@ -1352,10 +1358,10 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
         // write the contents to the database
         fsDataWriter->writeSceneryArea(area);
 
-        if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
+        if(sceneryError.hasFileOrSceneryErrors() && errors != nullptr)
         {
-          err.scenery = area;
-          errors->sceneryErrors.append(err);
+          sceneryError.setSceneryArea(area);
+          errors->appendSceneryErrors(sceneryError);
         }
 
         fsDataWriter->setMaterialLibScenery(nullptr);
@@ -1366,6 +1372,10 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
     }
   }
   db->commit();
+
+  if(materialLibErrors.hasFileOrSceneryErrors() && errors != nullptr)
+    errors->appendSceneryErrors(materialLibErrors);
+
   return false;
 }
 
@@ -1765,9 +1775,9 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
         SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), baseName, atools::canonicalFilePath(fileinfo));
         if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
-          errors->sceneryErrors.append(
-            NavDatabaseErrors::SceneryErrors(addonArea, tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
-                                             true /* isWarning */));
+          errors->appendSceneryErrors(
+            SceneryErrors(addonArea, tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
+                          true /* isWarning */));
 
         if(!layout.getBglPaths().isEmpty())
         {
@@ -1814,10 +1824,9 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
           SceneryArea addonArea(contentXml.getPriority(name, LAYER_NUM_DEFAULT), tr("Community"), atools::canonicalFilePath(fileinfo));
           addonArea.setCommunity(true);
           if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
-            errors->sceneryErrors.append(
-              NavDatabaseErrors::SceneryErrors(addonArea,
-                                               tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
-                                               true /* isWarning */));
+            errors->appendSceneryErrors(SceneryErrors(addonArea,
+                                                      tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name),
+                                                      true /* isWarning */));
 
           if(!layout.getBglPaths().isEmpty())
           {

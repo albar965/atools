@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ namespace fs {
 int NavDatabaseErrors::getTotal() const
 {
   int total = 0;
-  for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr :  sceneryErrors)
+  for(const atools::fs::SceneryErrors& scErr :  sceneryErrors)
     total += scErr.fileErrors.size() + scErr.sceneryErrorsMessages.size();
   return total;
 }
@@ -31,7 +31,7 @@ int NavDatabaseErrors::getTotal() const
 int NavDatabaseErrors::getTotalErrors() const
 {
   int total = 0;
-  for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr :  sceneryErrors)
+  for(const atools::fs::SceneryErrors& scErr :  sceneryErrors)
   {
     if(!scErr.warning)
       total += scErr.fileErrors.size() + scErr.sceneryErrorsMessages.size();
@@ -42,7 +42,7 @@ int NavDatabaseErrors::getTotalErrors() const
 int NavDatabaseErrors::getTotalWarnings() const
 {
   int total = 0;
-  for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr :  sceneryErrors)
+  for(const atools::fs::SceneryErrors & scErr :  sceneryErrors)
   {
     if(scErr.warning)
       total += scErr.fileErrors.size() + scErr.sceneryErrorsMessages.size();
@@ -52,8 +52,8 @@ int NavDatabaseErrors::getTotalWarnings() const
 
 void NavDatabaseErrors::init(const atools::fs::scenery::SceneryArea& area)
 {
-  NavDatabaseErrors::SceneryErrors err;
-  err.scenery = area;
+  SceneryErrors err;
+  err.setSceneryArea(area);
   sceneryErrors.append(err);
 }
 

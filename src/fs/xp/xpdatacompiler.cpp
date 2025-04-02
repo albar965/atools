@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -570,7 +570,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpRea
     if(errors != nullptr)
     {
       progress->reportError();
-      errors->sceneryErrors.first().fileErrors.append({fileinfo.filePath(), e.what(), lineNum});
+      errors->getSceneryErrors().first().appendFileError(SceneryFileError(fileinfo.filePath(), e.what(), lineNum));
       qWarning() << Q_FUNC_INFO << "Error in file" << fileinfo.filePath() << "line" << lineNum << ":" << e.what();
     }
     else
@@ -1025,7 +1025,7 @@ QVector<SceneryPack> XpDataCompiler::loadFilepathsFromSceneryPacks(const NavData
         if(progressHandler != nullptr)
           progressHandler->reportError();
         if(navdatabaseErrors != nullptr)
-          navdatabaseErrors->sceneryErrors.first().fileErrors.append({pack.filepath, pack.errorText, pack.errorLine});
+          navdatabaseErrors->getSceneryErrors().first().appendFileError(SceneryFileError(pack.filepath, pack.errorText, pack.errorLine));
       }
 
       qWarning() << Q_FUNC_INFO << "Error in file" << pack.filepath << "line" << pack.errorLine << ":" << pack.errorText;
@@ -1046,7 +1046,7 @@ void XpDataCompiler::updateAiracCycleFromHeader(const QString& header, const QSt
       progress->reportError();
       qWarning() << Q_FUNC_INFO << "Error in file" << filepath << "line" << lineNum
                  << ": AIRAC cycle in file is empty.";
-      errors->sceneryErrors.first().fileErrors.append({filepath, tr("AIRAC cycle in file is empty."), lineNum});
+      errors->getSceneryErrors().first().appendFileError(SceneryFileError(filepath, tr("AIRAC cycle in file is empty."), lineNum));
     }
     else if(airacCycle.isEmpty())
       airacCycle = c;
@@ -1057,14 +1057,14 @@ void XpDataCompiler::updateAiracCycleFromHeader(const QString& header, const QSt
       QString msg = tr("Found different AIRAC cycles across navdata files. "
                        "%1 and %2").arg(airacCycle).arg(c);
       qWarning() << Q_FUNC_INFO << "Error in file" << filepath << "line" << lineNum << ": " << msg;
-      errors->sceneryErrors.first().fileErrors.append({filepath, msg, lineNum});
+      errors->getSceneryErrors().first().appendFileError(SceneryFileError(filepath, msg, lineNum));
     }
   }
   else
   {
     qWarning() << Q_FUNC_INFO << "Error in file" << filepath << "line" << lineNum << ": AIRAC cycle not found in file.";
     progress->reportError();
-    errors->sceneryErrors.first().fileErrors.append({filepath, tr("AIRAC cycle not found in file."), lineNum});
+    errors->getSceneryErrors().first().appendFileError(SceneryFileError(filepath, tr("AIRAC cycle not found in file."), lineNum));
   }
 }
 

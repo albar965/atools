@@ -240,7 +240,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
   resolver.getFiles(area, &filepaths, &filenames);
 
   if(sceneryErrors != nullptr)
-    sceneryErrors->sceneryErrorsMessages.append(resolver.getErrorMessages());
+    sceneryErrors->appendSceneryErrorMessages(resolver.getErrorMessages());
   progressHandler->reportErrors(resolver.getErrorMessages().size());
 
   if(!filepaths.empty())
@@ -365,14 +365,14 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
         qCritical() << "Caught exception reading" << currentBglFilePath << ":" << e.what();
         progressHandler->reportError();
         if(sceneryErrors != nullptr)
-          sceneryErrors->fileErrors.append({currentBglFilePath, QString(e.what()), 0});
+          sceneryErrors->appendFileError(SceneryFileError(currentBglFilePath, QString(e.what())));
       }
       catch(...)
       {
         qCritical() << "Caught unknown exception reading" << currentBglFilePath;
         progressHandler->reportError();
         if(sceneryErrors != nullptr)
-          sceneryErrors->fileErrors.append({currentBglFilePath, QString(), 0});
+          sceneryErrors->appendFileError(SceneryFileError(currentBglFilePath, QString()));
       }
     }
     db.commit();
@@ -413,14 +413,14 @@ void DataWriter::readMagDeclBgl(const QString& fileScenery, bool forceWmm)
         qCritical() << "Caught exception reading" << file << ":" << e.what();
         progressHandler->reportError();
         if(sceneryErrors != nullptr)
-          sceneryErrors->fileErrors.append({file, QString(e.what()), 0});
+          sceneryErrors->appendFileError(SceneryFileError(file, QString(e.what())));
       }
       catch(...)
       {
         qCritical() << "Caught unknown exception reading" << file;
         progressHandler->reportError();
         if(sceneryErrors != nullptr)
-          sceneryErrors->fileErrors.append({file, tr("Cannot read file. Falling back to world magnetic model."), 0});
+          sceneryErrors->appendFileError(SceneryFileError(file, tr("Cannot read file. Falling back to world magnetic model.")));
       }
 
       if(magDecReader->isValid())
@@ -433,14 +433,14 @@ void DataWriter::readMagDeclBgl(const QString& fileScenery, bool forceWmm)
       {
         progressHandler->reportError();
         if(sceneryErrors != nullptr)
-          sceneryErrors->fileErrors.append({file, tr("File not valid. Falling back to world magnetic model."), 0});
+          sceneryErrors->appendFileError(SceneryFileError(file, tr("File not valid. Falling back to world magnetic model.")));
       }
     }
     else
     {
       progressHandler->reportError();
       if(sceneryErrors != nullptr)
-        sceneryErrors->fileErrors.append({"magdec.bgl", tr("File not found. Falling back to world magnetic model."), 0});
+        sceneryErrors->appendFileError(SceneryFileError("magdec.bgl", tr("File not found. Falling back to world magnetic model.")));
     }
   }
 
