@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -85,11 +85,16 @@ public:
     return sceneryLocalPath;
   }
 
+  bool hasPrevRunways() const
+  {
+    return prevHasRunways;
+  }
+
 private:
   int executeStatement(sql::SqlQuery *stmt, const QString& what);
   void fetchIds(sql::SqlQuery *stmt, QList<int>& ids, const QString& what);
 
-  void removeRunways();
+  void removePrevRunways();
   void removePrevAirport();
 
   QString updateAptFeatureStmt(const QString& table);

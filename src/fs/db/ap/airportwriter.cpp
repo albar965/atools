@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -97,6 +97,15 @@ void AirportWriter::writeObject(const Airport *type)
   }
 
   DataWriter& dw = getDataWriter();
+  BglFileWriter *bglFileWriter = dw.getBglFileWriter();
+
+  // qDebug() << Q_FUNC_INFO << "===============================================================================";
+  // qDebug() << Q_FUNC_INFO << bglFileWriter->getCurrentFilepath();
+  // qDebug() << Q_FUNC_INFO << *type;
+  // qDebug() << Q_FUNC_INFO << type->getRunways();
+  // qDebug() << Q_FUNC_INFO << type->getDeleteAirports();
+  // qDebug() << Q_FUNC_INFO << "===============================================================================";
+
   const SceneryAreaWriter *sceneryAreaWriter = dw.getSceneryAreaWriter();
   const scenery::SceneryArea& currentArea = sceneryAreaWriter->getCurrentArea();
   const NavDatabaseOptions& options = getOptions();
@@ -109,7 +118,6 @@ void AirportWriter::writeObject(const Airport *type)
   if(ident.isEmpty())
     throw atools::Exception("Found airport without ident");
 
-  BglFileWriter *bglFileWriter = dw.getBglFileWriter();
   if(msfsNavdata)
   {
     // =========================================================================
@@ -354,9 +362,14 @@ void AirportWriter::writeObject(const Airport *type)
     currentIdent = ident;
     currentPos = type->getPos();
 
-    // Write all subrecords now since the airport id is not available - this keeps the foreign keys valid
-    RunwayWriter *rwWriter = dw.getRunwayWriter();
-    rwWriter->write(type->getRunways());
+    // Write all subrecords now since the airport id is not available - this keeps the foreign keys valid =============
+
+    // Write runways but not for Navigraph updates
+    if(!currentArea.isMsfsNavigraphNavdata() || !deleteProcessor.hasPrevRunways())
+    {
+      RunwayWriter *rwWriter = dw.getRunwayWriter();
+      rwWriter->write(type->getRunways());
+    }
 
     ComWriter *comWriter = dw.getAirportComWriter();
     comWriter->write(type->getComs());
