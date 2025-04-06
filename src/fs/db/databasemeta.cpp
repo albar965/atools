@@ -276,7 +276,8 @@ QDebug operator<<(QDebug out, const DatabaseMeta& meta)
 
   out.noquote().nospace()
     << "===================================" << endl
-    << "DatabaseMeta " << meta.db->getName() << meta.db->databaseName() << endl
+    << "DatabaseMeta name " << meta.db->getName() << endl
+    << "databaseName " << meta.db->databaseName() << endl
     << "Airac Cycle " << meta.airacCycle << endl
     << "Compiler Version " << meta.compilerVersion << endl
     << "Data Source " << meta.dataSource << endl
@@ -286,7 +287,7 @@ QDebug operator<<(QDebug out, const DatabaseMeta& meta)
     << "Valid Through " << meta.validThrough << endl
     << "valid " << meta.valid << " sidStar " << meta.sidStar << " routeType " << meta.routeType << " data " << meta.data
     << " schema " << meta.schema << " script " << meta.script << " boundary " << meta.boundary
-    << " Properties " << meta.properties;
+    << " properties " << meta.properties;
   return out;
 }
 
