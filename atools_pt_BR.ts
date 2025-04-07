@@ -1304,35 +1304,35 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">Criando índices para rota</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="880"/>
+        <location filename="src/fs/navdatabase.cpp" line="884"/>
         <source>Loading translations</source>
         <translation>Carregando traduções</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="960"/>
+        <location filename="src/fs/navdatabase.cpp" line="964"/>
         <source>Analyze Database</source>
         <translation>Analizando Banco de Dados</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1019"/>
-        <location filename="src/fs/navdatabase.cpp" line="1049"/>
-        <location filename="src/fs/navdatabase.cpp" line="1153"/>
-        <location filename="src/fs/navdatabase.cpp" line="1382"/>
+        <location filename="src/fs/navdatabase.cpp" line="1023"/>
+        <location filename="src/fs/navdatabase.cpp" line="1053"/>
+        <location filename="src/fs/navdatabase.cpp" line="1157"/>
+        <location filename="src/fs/navdatabase.cpp" line="1392"/>
         <source>Creating boundary indexes</source>
         <translation>Criando índices de limite</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1033"/>
+        <location filename="src/fs/navdatabase.cpp" line="1037"/>
         <source>Creating waypoints for procedures</source>
         <translation>Criando waypoints para procedimentos</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1055"/>
+        <location filename="src/fs/navdatabase.cpp" line="1059"/>
         <source>Updating Navids in Waypoint</source>
         <translation>Atualizando Navaids nos Waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1406"/>
+        <location filename="src/fs/navdatabase.cpp" line="1416"/>
         <source>Basic Validation</source>
         <translation>Validação Básica</translation>
     </message>
@@ -1341,56 +1341,56 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">Aeroportos Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1692"/>
+        <location filename="src/fs/navdatabase.cpp" line="1702"/>
         <source>Generic Airports</source>
         <translation>Aeroportos Genéricos</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1709"/>
+        <location filename="src/fs/navdatabase.cpp" line="1719"/>
         <source>SimConnect Airports</source>
         <translation>Aeroportos SimConnect</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1720"/>
+        <location filename="src/fs/navdatabase.cpp" line="1730"/>
         <source>Base Navigation</source>
         <translation>Navegação Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1769"/>
-        <location filename="src/fs/navdatabase.cpp" line="1819"/>
+        <location filename="src/fs/navdatabase.cpp" line="1779"/>
+        <location filename="src/fs/navdatabase.cpp" line="1828"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation>Complemento criptografado &quot;%1&quot; encontrado. O complemento pode não aparecer corretamente.</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1814"/>
+        <location filename="src/fs/navdatabase.cpp" line="1824"/>
         <source>Community</source>
         <translation>Comunidade</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1941"/>
-        <location filename="src/fs/navdatabase.cpp" line="1952"/>
+        <location filename="src/fs/navdatabase.cpp" line="1950"/>
+        <location filename="src/fs/navdatabase.cpp" line="1961"/>
         <source>Custom scenery path %1</source>
         <translation>Caminho personalizado do cenário: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="2237"/>
+        <location filename="src/fs/navdatabase.cpp" line="2246"/>
         <source>Counting files for %1 ...</source>
         <translation>Contando arquivos para %1 ...</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1025"/>
-        <location filename="src/fs/navdatabase.cpp" line="1166"/>
-        <location filename="src/fs/navdatabase.cpp" line="1398"/>
+        <location filename="src/fs/navdatabase.cpp" line="1029"/>
+        <location filename="src/fs/navdatabase.cpp" line="1170"/>
+        <location filename="src/fs/navdatabase.cpp" line="1408"/>
         <source>Clean up</source>
         <translation>Limpando</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="869"/>
+        <location filename="src/fs/navdatabase.cpp" line="873"/>
         <source>Clean up runways</source>
         <translation>Limpar pistas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="853"/>
+        <location filename="src/fs/navdatabase.cpp" line="857"/>
         <source>Collecting navaids for search</source>
         <translation>Coletando navaids para pesquisa</translation>
     </message>
@@ -1415,17 +1415,17 @@ Tempo Noturno: %5</translation>
         <translation>Exceção desconhecida ao ler o arquivo</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="811"/>
+        <location filename="src/fs/navdatabase.cpp" line="815"/>
         <source>Updating Navaids</source>
         <translation>Atualizando Navaids</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="818"/>
+        <location filename="src/fs/navdatabase.cpp" line="822"/>
         <source>Cleaning up waypoints</source>
         <translation>Limpando waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="858"/>
+        <location filename="src/fs/navdatabase.cpp" line="862"/>
         <source>Calculating airport rating</source>
         <translation>Calculando a classificação do aeroporto</translation>
     </message>
@@ -1434,12 +1434,12 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">Criando tabelas de aeroportos médios e grandes</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="921"/>
+        <location filename="src/fs/navdatabase.cpp" line="925"/>
         <source>Creating Database preparation Script</source>
         <translation>Criando Script de preparação do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1681"/>
+        <location filename="src/fs/navdatabase.cpp" line="1691"/>
         <source>Base</source>
         <translation></translation>
     </message>
@@ -1448,35 +1448,35 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">Criando airways</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1016"/>
-        <location filename="src/fs/navdatabase.cpp" line="1044"/>
-        <location filename="src/fs/navdatabase.cpp" line="1150"/>
-        <location filename="src/fs/navdatabase.cpp" line="1379"/>
+        <location filename="src/fs/navdatabase.cpp" line="1020"/>
+        <location filename="src/fs/navdatabase.cpp" line="1048"/>
+        <location filename="src/fs/navdatabase.cpp" line="1154"/>
+        <location filename="src/fs/navdatabase.cpp" line="1389"/>
         <source>Creating indexes</source>
         <translation>Criando índices</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="864"/>
+        <location filename="src/fs/navdatabase.cpp" line="868"/>
         <source>Creating indexes for airport</source>
         <translation>Criando índices para o aeroporto</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="875"/>
+        <location filename="src/fs/navdatabase.cpp" line="879"/>
         <source>Creating indexes for search</source>
         <translation>Criando índices para fazer a procura</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1564"/>
+        <location filename="src/fs/navdatabase.cpp" line="1574"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Criando relatório em coordenadas duplicadas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1526"/>
+        <location filename="src/fs/navdatabase.cpp" line="1536"/>
         <source>Creating report on duplicates</source>
         <translation>Criando relatório em duplicata</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1520"/>
+        <location filename="src/fs/navdatabase.cpp" line="1530"/>
         <source>Creating report on values</source>
         <translation>Criando relatório em valores</translation>
     </message>
@@ -1485,7 +1485,7 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">Criando pontas de rotas waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1514"/>
+        <location filename="src/fs/navdatabase.cpp" line="1524"/>
         <source>Creating table statistics</source>
         <translation>Criando tabela de estatísticas</translation>
     </message>
@@ -1502,7 +1502,7 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">Não contém o diretório do &quot;Scenery&quot;</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="945"/>
+        <location filename="src/fs/navdatabase.cpp" line="949"/>
         <source>Dropping All Indexes</source>
         <translation>Retirando todos os índices</translation>
     </message>
@@ -1523,7 +1523,7 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">Não é o diretório</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="800"/>
+        <location filename="src/fs/navdatabase.cpp" line="804"/>
         <source>Merging VOR and TACAN to VORTAC</source>
         <translation>Fundindo VOR e TACAN para VORTAC</translation>
     </message>
@@ -1537,7 +1537,7 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">Preenchendo tabelas de rotas</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1176"/>
+        <location filename="src/fs/navdatabase.cpp" line="1180"/>
         <source>Preparing Airways</source>
         <translation>Preparando Airways</translation>
     </message>
@@ -1570,34 +1570,34 @@ Tempo Noturno: %5</translation>
         <translation type="vanished">Removendo visualização</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="827"/>
+        <location filename="src/fs/navdatabase.cpp" line="831"/>
         <source>Updating Airports</source>
         <translation>Atualizando Aeroportos</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="832"/>
-        <location filename="src/fs/navdatabase.cpp" line="837"/>
-        <location filename="src/fs/navdatabase.cpp" line="844"/>
+        <location filename="src/fs/navdatabase.cpp" line="836"/>
+        <location filename="src/fs/navdatabase.cpp" line="841"/>
+        <location filename="src/fs/navdatabase.cpp" line="848"/>
         <source>Updating ILS</source>
         <translation>Atualizando ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="849"/>
+        <location filename="src/fs/navdatabase.cpp" line="853"/>
         <source>Updating ILS Count</source>
         <translation>Atualizando contagem do ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="823"/>
+        <location filename="src/fs/navdatabase.cpp" line="827"/>
         <source>Updating approaches</source>
         <translation>Atualizando aproximações</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="805"/>
+        <location filename="src/fs/navdatabase.cpp" line="809"/>
         <source>Updating waypoints</source>
         <translation>Atualizando waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="952"/>
+        <location filename="src/fs/navdatabase.cpp" line="956"/>
         <source>Vacuum Database</source>
         <translation>Banco de Dados de Vácuo</translation>
     </message>
@@ -2432,7 +2432,7 @@ Tempo Noturno: %5</translation>
         <translation>Gravando VOR e ILS no banco de dados</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1424"/>
+        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1426"/>
         <source>Writing waypoints and airways to database</source>
         <translation>Gravando waypoints e aerovias no banco de dados</translation>
     </message>
@@ -3614,84 +3614,84 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="545"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="546"/>
         <source>preUndoBulkInsert() not called</source>
         <translation>preUndoBulkInsert() não chamado</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="649"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="650"/>
         <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
         <translation>Tentativa de modificar a tabela &quot;%1&quot; ignorando a função de desfazer ativa.</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="759"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="765"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="760"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="766"/>
         <source>&amp;%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="759"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="760"/>
         <source>&amp;Undo %1</source>
         <translation>&amp;Desfazer %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="765"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="766"/>
         <source>&amp;Redo %1</source>
         <translation>&amp;Refazer %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="851"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="852"/>
         <source>no %1</source>
         <translation>não %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="853"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="854"/>
         <source>one %1</source>
         <translation>um %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="855"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="856"/>
         <source>two %1</source>
         <translation>dois %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="857"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="858"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="859"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="860"/>
         <source>Undo</source>
         <translation>Desfazer</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="859"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="860"/>
         <source>Redo</source>
         <translation>Refazer</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="864"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="865"/>
         <source>Invalid undo action</source>
         <translation>Ação de desfazer inválida</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="868"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="869"/>
         <source>%1 adding of %2</source>
         <translation>%1 adição de %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="872"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="873"/>
         <source>%1 editing of %2</source>
         <translation>%1 edição de %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="876"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="877"/>
         <source>%1 deleting of %2</source>
         <translation>%1 deletando de %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="915"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="927"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="916"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="928"/>
         <source>Table undo_current is empty.</source>
         <translation>A tabela undo_current está vazia.</translation>
     </message>

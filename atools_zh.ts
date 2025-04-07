@@ -1357,49 +1357,49 @@ Night time: %5</source>
         <translation>读取文件时发生了未知异常</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="800"/>
+        <location filename="src/fs/navdatabase.cpp" line="804"/>
         <source>Merging VOR and TACAN to VORTAC</source>
         <translation>合并 VOR 及 TACAN 到 VORTAC</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="805"/>
+        <location filename="src/fs/navdatabase.cpp" line="809"/>
         <source>Updating waypoints</source>
         <translation>正在更新航路点</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="811"/>
+        <location filename="src/fs/navdatabase.cpp" line="815"/>
         <source>Updating Navaids</source>
         <translation>正在更新导航台</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="818"/>
+        <location filename="src/fs/navdatabase.cpp" line="822"/>
         <source>Cleaning up waypoints</source>
         <translation>正在清理航路点</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="823"/>
+        <location filename="src/fs/navdatabase.cpp" line="827"/>
         <source>Updating approaches</source>
         <translation>正在更新进近</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="827"/>
+        <location filename="src/fs/navdatabase.cpp" line="831"/>
         <source>Updating Airports</source>
         <translation>正在更新机场</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="832"/>
-        <location filename="src/fs/navdatabase.cpp" line="837"/>
-        <location filename="src/fs/navdatabase.cpp" line="844"/>
+        <location filename="src/fs/navdatabase.cpp" line="836"/>
+        <location filename="src/fs/navdatabase.cpp" line="841"/>
+        <location filename="src/fs/navdatabase.cpp" line="848"/>
         <source>Updating ILS</source>
         <translation>正在更新 ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="849"/>
+        <location filename="src/fs/navdatabase.cpp" line="853"/>
         <source>Updating ILS Count</source>
         <translation>正在更新 ILS 的数量</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="853"/>
+        <location filename="src/fs/navdatabase.cpp" line="857"/>
         <source>Collecting navaids for search</source>
         <translation>正在收集助航设备以供搜索</translation>
     </message>
@@ -1416,117 +1416,117 @@ Night time: %5</source>
         <translation type="vanished">正在创建航路边缘航路点</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="858"/>
+        <location filename="src/fs/navdatabase.cpp" line="862"/>
         <source>Calculating airport rating</source>
         <translation>计算机场评分</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="864"/>
+        <location filename="src/fs/navdatabase.cpp" line="868"/>
         <source>Creating indexes for airport</source>
         <translation>正在创建机场索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="869"/>
+        <location filename="src/fs/navdatabase.cpp" line="873"/>
         <source>Clean up runways</source>
         <translation>清理跑道</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="875"/>
+        <location filename="src/fs/navdatabase.cpp" line="879"/>
         <source>Creating indexes for search</source>
         <translation>正在创建索引以供搜索</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="880"/>
+        <location filename="src/fs/navdatabase.cpp" line="884"/>
         <source>Loading translations</source>
         <translation>载入翻译</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="921"/>
+        <location filename="src/fs/navdatabase.cpp" line="925"/>
         <source>Creating Database preparation Script</source>
         <translation>正在创建数据库准备脚本</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="945"/>
+        <location filename="src/fs/navdatabase.cpp" line="949"/>
         <source>Dropping All Indexes</source>
         <translation>正在丢弃所有索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="952"/>
+        <location filename="src/fs/navdatabase.cpp" line="956"/>
         <source>Vacuum Database</source>
         <translatorcomment>???: 疑似空数据库
 Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation>整理数据库</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="960"/>
+        <location filename="src/fs/navdatabase.cpp" line="964"/>
         <source>Analyze Database</source>
         <translation>分析数据库</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1016"/>
-        <location filename="src/fs/navdatabase.cpp" line="1044"/>
-        <location filename="src/fs/navdatabase.cpp" line="1150"/>
-        <location filename="src/fs/navdatabase.cpp" line="1379"/>
+        <location filename="src/fs/navdatabase.cpp" line="1020"/>
+        <location filename="src/fs/navdatabase.cpp" line="1048"/>
+        <location filename="src/fs/navdatabase.cpp" line="1154"/>
+        <location filename="src/fs/navdatabase.cpp" line="1389"/>
         <source>Creating indexes</source>
         <translation>正在创建索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1019"/>
-        <location filename="src/fs/navdatabase.cpp" line="1049"/>
-        <location filename="src/fs/navdatabase.cpp" line="1153"/>
-        <location filename="src/fs/navdatabase.cpp" line="1382"/>
+        <location filename="src/fs/navdatabase.cpp" line="1023"/>
+        <location filename="src/fs/navdatabase.cpp" line="1053"/>
+        <location filename="src/fs/navdatabase.cpp" line="1157"/>
+        <location filename="src/fs/navdatabase.cpp" line="1392"/>
         <source>Creating boundary indexes</source>
         <translation>正在创建边界索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1025"/>
-        <location filename="src/fs/navdatabase.cpp" line="1166"/>
-        <location filename="src/fs/navdatabase.cpp" line="1398"/>
+        <location filename="src/fs/navdatabase.cpp" line="1029"/>
+        <location filename="src/fs/navdatabase.cpp" line="1170"/>
+        <location filename="src/fs/navdatabase.cpp" line="1408"/>
         <source>Clean up</source>
         <translation>清理</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1033"/>
+        <location filename="src/fs/navdatabase.cpp" line="1037"/>
         <source>Creating waypoints for procedures</source>
         <translation>正在为程序创建航路点</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1055"/>
+        <location filename="src/fs/navdatabase.cpp" line="1059"/>
         <source>Updating Navids in Waypoint</source>
         <translation>正在更新航路点中的助航设备</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1176"/>
+        <location filename="src/fs/navdatabase.cpp" line="1180"/>
         <source>Preparing Airways</source>
         <translation>正在准备航路</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1406"/>
+        <location filename="src/fs/navdatabase.cpp" line="1416"/>
         <source>Basic Validation</source>
         <translation>基础验证</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1514"/>
+        <location filename="src/fs/navdatabase.cpp" line="1524"/>
         <source>Creating table statistics</source>
         <translation>正在创建表格统计</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1520"/>
+        <location filename="src/fs/navdatabase.cpp" line="1530"/>
         <source>Creating report on values</source>
         <translation>正在创建数值的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1526"/>
+        <location filename="src/fs/navdatabase.cpp" line="1536"/>
         <source>Creating report on duplicates</source>
         <translation>正在创建重复项的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1564"/>
+        <location filename="src/fs/navdatabase.cpp" line="1574"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>正在创建重复坐标的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1681"/>
+        <location filename="src/fs/navdatabase.cpp" line="1691"/>
         <source>Base</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1535,40 +1535,40 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation type="vanished">基地机场</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1692"/>
+        <location filename="src/fs/navdatabase.cpp" line="1702"/>
         <source>Generic Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1709"/>
+        <location filename="src/fs/navdatabase.cpp" line="1719"/>
         <source>SimConnect Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1720"/>
+        <location filename="src/fs/navdatabase.cpp" line="1730"/>
         <source>Base Navigation</source>
         <translatorcomment>基地导航？</translatorcomment>
         <translation type="unfinished">基地导航</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1769"/>
-        <location filename="src/fs/navdatabase.cpp" line="1819"/>
+        <location filename="src/fs/navdatabase.cpp" line="1779"/>
+        <location filename="src/fs/navdatabase.cpp" line="1828"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1814"/>
+        <location filename="src/fs/navdatabase.cpp" line="1824"/>
         <source>Community</source>
         <translation>社区</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1941"/>
-        <location filename="src/fs/navdatabase.cpp" line="1952"/>
+        <location filename="src/fs/navdatabase.cpp" line="1950"/>
+        <location filename="src/fs/navdatabase.cpp" line="1961"/>
         <source>Custom scenery path %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="2237"/>
+        <location filename="src/fs/navdatabase.cpp" line="2246"/>
         <source>Counting files for %1 ...</source>
         <translation>正在为 %1 计数文件...</translation>
     </message>
@@ -2386,7 +2386,7 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation>将VOR和ILS 写入数据库</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1424"/>
+        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1426"/>
         <source>Writing waypoints and airways to database</source>
         <translation>将航点和航路写入数据库</translation>
     </message>
@@ -3474,85 +3474,85 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="545"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="546"/>
         <source>preUndoBulkInsert() not called</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="649"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="650"/>
         <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="759"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="765"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="760"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="766"/>
         <source>&amp;%1</source>
         <translation>&amp;%1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="759"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="760"/>
         <source>&amp;Undo %1</source>
         <translation>撤销(&amp;U) %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="765"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="766"/>
         <source>&amp;Redo %1</source>
         <translation>重做(&amp;R) %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="851"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="852"/>
         <source>no %1</source>
         <translation>无 %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="853"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="854"/>
         <source>one %1</source>
         <translatorcomment>就是菜单里面记录表、用户航点操作那里的翻译。</translatorcomment>
         <translation>1个 %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="855"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="856"/>
         <source>two %1</source>
         <translation>2个 %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="857"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="858"/>
         <source>%1 %2</source>
         <translation>%1个 %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="859"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="860"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="859"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="860"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="864"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="865"/>
         <source>Invalid undo action</source>
         <translation>无效的撤销动作</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="868"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="869"/>
         <source>%1 adding of %2</source>
         <translation>%1 添加 %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="872"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="873"/>
         <source>%1 editing of %2</source>
         <translation>%1 编辑 %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="876"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="877"/>
         <source>%1 deleting of %2</source>
         <translation>%1 删除 %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="915"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="927"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="916"/>
+        <location filename="src/sql/datamanagerbase.cpp" line="928"/>
         <source>Table undo_current is empty.</source>
         <translation type="unfinished"></translation>
     </message>

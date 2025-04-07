@@ -1908,7 +1908,7 @@ Nachtzeit: %5</translation>
     <message>
         <source> and </source>
         <comment>Used to replace character &quot;&amp;&quot; in file names, etc.</comment>
-        <translation type="unfinished"></translation>
+        <translation> und </translation>
     </message>
 </context>
 <context>
