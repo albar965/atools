@@ -295,7 +295,7 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
     int wptNum = -1;
 
     QTextStream stream(&flpFile);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
     stream.setAutoDetectUnicode(true);
     while(!stream.atEnd())
     {
@@ -460,7 +460,7 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
   if(flpFile.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&flpFile);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
     stream.setAutoDetectUnicode(true);
 
     stream.readLine(); // I

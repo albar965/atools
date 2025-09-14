@@ -82,7 +82,7 @@ Header::~Header()
 QString Header::getCreationTimestampString() const
 {
   QDateTime dt;
-  dt.setTime_t(static_cast<uint>(creationTimestamp));
+  dt.setSecsSinceEpoch(static_cast<uint>(creationTimestamp));
   return dt.toString(Qt::ISODate);
 }
 

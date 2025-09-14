@@ -174,7 +174,7 @@ void MagDecReader::writeToTable(sql::SqlDatabase& db) const
   query.prepare("insert into magdecl (magdecl_id, reference_time, mag_var) values(:id, :time, :magvar)");
 
   query.bindValue(":id", 1);
-  query.bindValue(":time", QDateTime(getReferenceDate()).toTime_t());
+  query.bindValue(":time", QDateTime(getReferenceDate(),QTime(0,0)).toSecsSinceEpoch());
   query.bindValue(":magvar", writeToBytes());
   query.exec();
 }
@@ -192,7 +192,7 @@ bool MagDecReader::readFromTable(sql::SqlDatabase& db)
       readFromBytes(bytes);
 
       QDateTime timestamp;
-      timestamp.setTime_t(query.value("reference_time").toUInt());
+      timestamp.setSecsSinceEpoch(query.value("reference_time").toUInt());
       referenceDate = timestamp.date();
 
       qInfo() << Q_FUNC_INFO << db.databaseName() << "Reference date" << referenceDate;

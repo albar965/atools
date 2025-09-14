@@ -120,7 +120,7 @@ public:
   /* Navdata cycle year and cycle number as int (e.g. 2201 to 2213) - Not for FSX/P3D */
   int getAiracCycleInt() const
   {
-    return airacCycle.leftRef(2).toInt() * 100 + airacCycle.rightRef(2).toInt();
+    return airacCycle.left(2).toInt() * 100 + airacCycle.right(2).toInt();
   }
 
   /* Included old navdata cycle */

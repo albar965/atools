@@ -233,7 +233,7 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
       atools::util::CsvReader reader(separator, escape, true /* trim */);
 
       QTextStream stream(&file);
-      stream.setCodec("UTF-8");
+      stream.setEncoding(QStringConverter::Utf8);
 
       int lineNum = 1;
       while(!stream.atEnd())
@@ -292,9 +292,9 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
         QString altStr = at(values, csv::ALT).trimmed();
         float alt = 0.f;
         if(altStr.endsWith("f"))
-          alt = altStr.leftRef(altStr.size() - 1).toFloat();
+          alt = altStr.left(altStr.size() - 1).toFloat();
         else if(altStr.endsWith("m"))
-          alt = atools::geo::meterToFeet(altStr.leftRef(altStr.size() - 1).toFloat());
+          alt = atools::geo::meterToFeet(altStr.left(altStr.size() - 1).toFloat());
         else
           alt = altStr.toFloat();
 
@@ -346,7 +346,7 @@ int UserdataManager::importXplane(const QString& filepath)
     QDateTime now = QDateTime::currentDateTime();
 
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     QString line = stream.readLine().simplified();
     if(line != "I" && line != "A")
@@ -449,7 +449,7 @@ int UserdataManager::importGarmin(const QString& filepath)
     QDateTime now = QDateTime::currentDateTime();
 
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     int lineNum = 1;
     while(!stream.atEnd())
@@ -499,7 +499,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
   if(file.open((flags & APPEND ? QIODevice::Append : QIODevice::WriteOnly) | QIODevice::Text))
   {
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     SqlExport sqlExport;
     sqlExport.setSeparatorChar(separator);
@@ -574,10 +574,10 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
       if(inFile.open(QIODevice::ReadOnly | QIODevice::Text))
       {
         QTextStream tempOutStream(&tempOutFile);
-        tempOutStream.setCodec("UTF-8");
+        tempOutStream.setEncoding(QStringConverter::Utf8);
 
         QTextStream inStream(&inFile);
-        inStream.setCodec("UTF-8");
+        inStream.setEncoding(QStringConverter::Utf8);
 
         // Copy contents exept the trailing 99 new file always has a trailing EOL
         while(!inStream.atEnd())
@@ -609,7 +609,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
   if(file.open((flags & APPEND ? QIODevice::Append : QIODevice::WriteOnly) | QIODevice::Text))
   {
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     // I
     // 1100 Version - data cycle 1804, build 20180421, metadata FixXP1100. Created by Little Navmap Version 1.9.1.develop (revision 47ef66a) on 2018 04 21T13:25:52
@@ -698,7 +698,7 @@ int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& i
   if(file.open((flags & APPEND ? QIODevice::Append : QIODevice::WriteOnly) | QIODevice::Text))
   {
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     if(!endsWithEol && (flags & APPEND))
       stream << endl;

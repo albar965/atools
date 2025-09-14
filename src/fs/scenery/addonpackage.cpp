@@ -44,18 +44,18 @@ AddOnPackage::AddOnPackage(const QString& file)
 
       if(xmlReader.readNextStartElement())
       {
-        if(xmlReader.name() == "SimBase.Document")
+          if(xmlReader.name() == QStringLiteral("SimBase.Document"))
         {
           while(xmlReader.readNextStartElement())
           {
             if(xmlReader.error() != QXmlStreamReader::NoError)
               throw Exception("Error reading \"" + filename + "\": " + xmlReader.errorString());
 
-            if(xmlReader.name() == "AddOn.Name")
+            if(xmlReader.name() == QStringLiteral("AddOn.Name"))
               name = xmlReader.readElementText();
-            else if(xmlReader.name() == "AddOn.Description")
+            else if(xmlReader.name() == QStringLiteral("AddOn.Description"))
               description = xmlReader.readElementText();
-            else if(xmlReader.name() == "AddOn.Component")
+            else if(xmlReader.name() == QStringLiteral("AddOn.Component"))
             {
               AddOnComponent component(xmlReader);
               if(component.getCategory() == "Scenery")

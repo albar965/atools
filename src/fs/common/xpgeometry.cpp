@@ -16,8 +16,10 @@
 *****************************************************************************/
 
 #include "fs/common/xpgeometry.h"
+#include "qdebug.h"
 
 #include <QDataStream>
+#include <QIODevice>
 
 using atools::geo::Pos;
 

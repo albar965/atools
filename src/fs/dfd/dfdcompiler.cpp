@@ -453,7 +453,7 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
     QString rname = rwident.mid(2);
 
     // Get pure number: 11
-    int rnum = rname.midRef(0, 2).toInt();
+    int rnum = rname.mid(0, 2).toInt();
 
     // Get designator: R
     // Calculate opposed name

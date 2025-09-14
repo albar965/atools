@@ -29,6 +29,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTextCodec>
+#include <QIODevice>
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
@@ -210,7 +211,7 @@ void WhazzupTextParser::readTransceivers(const QString& file)
       else
         transceiver.frequency.insert(frequency);
       transceiver.pos = Pos(transceiverObj.value("lonDeg"), transceiverObj.value("latDeg"));
-      transceiverMap.insertMulti(callsign, transceiver);
+      transceiverMap.insert(callsign, transceiver);
     } // for(QJsonValue transceiverVal : transObj.value("transceivers").toArray())
   } // for(QJsonValue transVal : doc.array())
 }
@@ -1096,10 +1097,10 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
     QString alt = at(line, c::ALTITUDE, error).trimmed();
     if(alt.startsWith("FL"))
       // Convert flight level FL to altitude
-      insertQuery->bindValue(":altitude", alt.midRef(2).toInt() * 100);
+      insertQuery->bindValue(":altitude", alt.mid(2).toInt() * 100);
     else if(alt.startsWith("F"))
       // Convert flight level with prefix "F" to altitude
-      insertQuery->bindValue(":altitude", alt.midRef(1).toInt() * 100);
+      insertQuery->bindValue(":altitude", alt.mid(1).toInt() * 100);
     else
       insertQuery->bindValue(":altitude", alt.toInt());
 

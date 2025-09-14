@@ -135,7 +135,7 @@ public:
     ident[0] = region[0] = '\0';
   }
 
-  explicit FacilityId(const QString& identParam, const QString& regionParam = QString(), QChar typeParam = ID_NONE)
+  explicit FacilityId(const QString& identParam, const QString& regionParam = QString(), QChar typeParam = QChar(ID_NONE))
     : type(static_cast<IdType>(typeParam.toLatin1()))
   {
     init(identParam.toLatin1().constData(), regionParam.toLatin1().constData());

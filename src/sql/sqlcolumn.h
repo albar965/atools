@@ -54,7 +54,7 @@ public:
   QString getSelectStmt() const;
 
   /* Get statement for this column list like 'column_name_1 as "Column Title 1", column_name_2 as "Column Title 2"' */
-  static QString getColumnList(const QList<atools::sql::SqlColumn>& columns);
+  //static QString getColumnList(const QList<atools::sql::SqlColumn>& columns);
   static QString getColumnList(const QVector<atools::sql::SqlColumn>& columns);
 
   int getId() const

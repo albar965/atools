@@ -23,7 +23,7 @@
 
 #include <QStringList>
 
-class QStringList;
+//class QStringList;
 
 namespace atools {
 namespace geo {

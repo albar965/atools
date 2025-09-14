@@ -59,7 +59,7 @@ VERSION_NUMBER=4.1.0.develop
 
 QT += sql xml core network
 
-versionAtLeast(QT_VERSION, 6.0.0): QT += core5compat
+versionAtLeast(QT_VERSION, 6.5.3): QT += core5compat
 CONFIG += build_all c++14 staticlib
 CONFIG -= gui debug_and_release debug_and_release_target
 

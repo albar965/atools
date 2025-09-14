@@ -542,8 +542,8 @@ QMap<QString, QVariant> SqlQuery::boundPlaceholderAndValueMap() const
 
 QVariantList SqlQuery::boundValues() const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-  QVariantList retval = query.boundValues();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 3)
+  QVariantList values = query.boundValues();
 
 #else
   QVariantList values = query.boundValues().values();

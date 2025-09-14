@@ -20,7 +20,7 @@
 #include <QDateTime>
 #include <QTextStream>
 #include <QDebug>
-
+#include <QIODevice>
 namespace atools {
 namespace fs {
 namespace online {
