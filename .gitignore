@@ -17,6 +17,7 @@
 *.so
 *.sqlite
 *~
+*.user
 .DS_Store
 .directory
 .qmake.stash
