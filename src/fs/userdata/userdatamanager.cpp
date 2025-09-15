@@ -744,7 +744,7 @@ int UserdataManager::exportBgl(const QString& filepath, const QVector<int>& ids)
   if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QXmlStreamWriter writer(&xmlFile);
-    writer.setCodec("UTF-8");
+    //writer.setCodec("UTF-8");
     writer.setAutoFormatting(true);
     writer.setAutoFormattingIndent(4);
     writer.writeStartDocument("1.0");

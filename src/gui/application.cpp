@@ -286,12 +286,12 @@ void Application::buildCrashReport(const QString& crashReportFile, const QString
   for(const QString& str : filenames)
   {
     QFile file(str);
-    if(atools::checkFile(Q_FUNC_INFO, file))
+    if(atools::checkFile(Q_FUNC_INFO, file.fileName()))
     {
       // Get plain name from file - QFile returns full path
       zipWriter.addFile(QFileInfo(file.fileName()).fileName(), &file);
       if(zipWriter.status() != zip::ZipWriter::NoError)
-        qWarning() << Q_FUNC_INFO << "Error adding" << file << "to" << crashReportFile << "status" << zipWriter.status();
+        qWarning() << Q_FUNC_INFO << "Error adding" << file.fileName() << "to" << crashReportFile << "status" << zipWriter.status();
     }
   }
 

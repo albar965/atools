@@ -1074,7 +1074,7 @@ int DfdCompiler::airspaceAlt(const QString& altStr)
   else
   {
     if(altStr.startsWith("FL"))
-      return altStr.midRef(2).toInt() * 100;
+      return altStr.mid(2).toInt() * 100;
     else
       return altStr.toInt();
   }
@@ -1155,7 +1155,7 @@ void DfdCompiler::finishAirspace()
         else if(!rollover)
         {
           // Create an arc =============================
-          bool clockwise = curSegment.via.isEmpty() ? true : curSegment.via.at(0) == "R";
+          bool clockwise = curSegment.via.isEmpty() ? true : curSegment.via.at(0) == QStringLiteral("R");
           LineString arc(curSegment.center, curSegment.pos, nextPos, clockwise, CIRCLE_SEGMENTS);
 
           if(!arc.isEmpty())

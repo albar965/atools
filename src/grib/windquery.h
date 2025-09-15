@@ -120,7 +120,7 @@ public:
 
   bool hasWindData() const
   {
-    return !windLayers.isEmpty();
+    return !windLayers.empty();
   }
 
   /* Samples per degree for wind interpolation along lines and line strings */
@@ -223,7 +223,7 @@ private:
   bool verbose = false;
 
   /* Maps rounded altitude to wind layer data. Sorted by altitude. */
-  QMap<int, WindAltLayer> windLayers;
+  std::map<int, WindAltLayer> windLayers;
   QDateTime analyisTime;
 
   QString weatherPath; // Folder or file depending on simulator

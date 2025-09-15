@@ -1058,27 +1058,27 @@ void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<Fl
       FlightplanEntry entry;
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "Name")
+          if(reader.name() == QStringLiteral("Name"))
           entry.setName(reader.readElementText());
-        else if(reader.name() == "Ident")
+        else if(reader.name() == QStringLiteral("Ident"))
           entry.setIdent(reader.readElementText());
-        else if(reader.name() == "Region")
+        else if(reader.name() == QStringLiteral("Region"))
           entry.setRegion(reader.readElementText());
-        else if(reader.name() == "Name")
+        else if(reader.name() == QStringLiteral("Name"))
           entry.setName(reader.readElementText());
-        else if(reader.name() == "Airway")
+        else if(reader.name() == QStringLiteral("Airway"))
           entry.setAirway(reader.readElementText());
-        else if(reader.name() == "Track")
+        else if(reader.name() == QStringLiteral("Track"))
         {
           // NAT or PACOTS track
           entry.setAirway(reader.readElementText());
           entry.setFlag(atools::fs::pln::entry::TRACK);
         }
-        else if(reader.name() == "Type")
+        else if(reader.name() == QStringLiteral("Type"))
           entry.setWaypointTypeFromLnm(reader.readElementText());
-        else if(reader.name() == "Comment")
+        else if(reader.name() == QStringLiteral("Comment"))
           entry.setComment(reader.readElementText());
-        else if(reader.name() == "Pos")
+        else if(reader.name() == QStringLiteral("Pos"))
           entry.setPosition(readPosLnm(xmlStream));
         else
           xmlStream.skipCurrentElement(true /* warn */);
@@ -1135,61 +1135,61 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
   while(xmlStream.readNextStartElement())
   {
     // Read data from header =========================================
-    if(reader.name() == "Header")
+      if(reader.name() == QStringLiteral("Header"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "CreationDate" || reader.name() == "FileVersion" || reader.name() == "ProgramName" ||
-           reader.name() == "ProgramVersion" || reader.name() == "Documentation")
+        if(reader.name() == QStringLiteral("CreationDate") || reader.name() == QStringLiteral("FileVersion") || reader.name() == QStringLiteral("ProgramName") ||
+              reader.name() == QStringLiteral("ProgramVersion") || reader.name() == QStringLiteral("Documentation"))
         {
           // Skip these elements without warning
           xmlStream.skipCurrentElement();
           continue;
         }
 
-        if(reader.name() == "FlightplanType")
+        if(reader.name() == QStringLiteral("FlightplanType"))
           plan.flightplanType = Flightplan::stringFlightplanType(reader.readElementText());
-        else if(reader.name() == "CruisingAltF")
+        else if(reader.name() == QStringLiteral("CruisingAltF"))
           plan.cruiseAltitudeFt = reader.readElementText().toFloat(); // Always prefer more accurate value
-        else if(reader.name() == "CruisingAlt")
+        else if(reader.name() == QStringLiteral("CruisingAlt"))
         {
           if(atools::almostEqual(plan.cruiseAltitudeFt, 0.f))
             plan.cruiseAltitudeFt = reader.readElementText().toInt(); // Fall back to old integer representation
         }
-        else if(reader.name() == "Comment")
+        else if(reader.name() == QStringLiteral("Comment"))
           plan.comment = reader.readElementText();
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
     }
     // Simulator and navdata type and cycle =========================================
-    else if(reader.name() == "SimData")
+      else if(reader.name() == QStringLiteral("SimData"))
     {
       insertPropertyIf(plan, SIMDATA_CYCLE, reader.attributes().value("Cycle").toString());
       insertPropertyIf(plan, SIMDATA, reader.readElementText());
     }
-    else if(reader.name() == "NavData")
+    else if(reader.name() == QStringLiteral("NavData"))
     {
       insertPropertyIf(plan, NAVDATA_CYCLE, reader.attributes().value("Cycle").toString());
       insertPropertyIf(plan, NAVDATA, reader.readElementText());
     }
     // Used aircraft performance =========================================
-    else if(reader.name() == "AircraftPerformance")
+    else if(reader.name() == QStringLiteral("AircraftPerformance"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "FilePath")
+        if(reader.name() == QStringLiteral("FilePath"))
           insertPropertyIf(plan, AIRCRAFT_PERF_FILE, reader.readElementText());
-        else if(reader.name() == "Type")
+        else if(reader.name() == QStringLiteral("Type"))
           insertPropertyIf(plan, AIRCRAFT_PERF_TYPE, reader.readElementText());
-        else if(reader.name() == "Name")
+        else if(reader.name() == QStringLiteral("Name"))
           insertPropertyIf(plan, AIRCRAFT_PERF_NAME, reader.readElementText());
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
     }
     // Alternate airports list =========================================
-    else if(reader.name() == "Alternates")
+    else if(reader.name() == QStringLiteral("Alternates"))
     {
       readWaypointsLnm(xmlStream, alternates, "Alternate");
       for(FlightplanEntry& entry : alternates)
@@ -1199,17 +1199,17 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
       }
     }
     // Departure position (gate, etc.) =========================================
-    else if(reader.name() == "Departure")
+    else if(reader.name() == QStringLiteral("Departure"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "Start")
+        if(reader.name() == QStringLiteral("Start"))
           plan.departureParkingName = reader.readElementText();
-        else if(reader.name() == "Pos")
+        else if(reader.name() == QStringLiteral("Pos"))
           plan.departureParkingPos = readPosLnm(xmlStream);
-        else if(reader.name() == "Type")
+        else if(reader.name() == QStringLiteral("Type"))
           plan.setDepartureParkingType(reader.readElementText());
-        else if(reader.name() == "Heading")
+        else if(reader.name() == QStringLiteral("Heading"))
         {
           bool ok;
           plan.departureParkingHeading = reader.readElementText().toFloat(&ok);
@@ -1221,67 +1221,67 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
       }
     }
     // Procedures =========================================
-    else if(reader.name() == "Procedures")
+    else if(reader.name() == QStringLiteral("Procedures"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "SID")
+        if(reader.name() == QStringLiteral("SID"))
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "Name")
+            if(reader.name() == QStringLiteral("Name"))
               insertPropertyIf(plan, SID, reader.readElementText());
-            else if(reader.name() == "Runway")
+            else if(reader.name() == QStringLiteral("Runway"))
               insertPropertyIf(plan, SID_RW, reader.readElementText());
-            else if(reader.name() == "Transition")
+            else if(reader.name() == QStringLiteral("Transition"))
               insertPropertyIf(plan, SID_TRANS, reader.readElementText());
-            else if(reader.name() == "Type")
+            else if(reader.name() == QStringLiteral("Type"))
               insertPropertyIf(plan, SID_TYPE, reader.readElementText());
-            else if(reader.name() == "CustomDistance")
+            else if(reader.name() == QStringLiteral("CustomDistance"))
               insertPropertyIf(plan, DEPARTURE_CUSTOM_DISTANCE, reader.readElementText());
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
         }
-        else if(reader.name() == "STAR")
+        else if(reader.name() == QStringLiteral("STAR"))
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "Name")
+            if(reader.name() == QStringLiteral("Name"))
               insertPropertyIf(plan, STAR, reader.readElementText());
-            else if(reader.name() == "Runway")
+            else if(reader.name() == QStringLiteral("Runway"))
               insertPropertyIf(plan, STAR_RW, reader.readElementText());
-            else if(reader.name() == "Transition")
+            else if(reader.name() == QStringLiteral("Transition"))
               insertPropertyIf(plan, STAR_TRANS, reader.readElementText());
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
         }
-        else if(reader.name() == "Approach")
+        else if(reader.name() == QStringLiteral("Approach"))
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "Name")
+            if(reader.name() == QStringLiteral("Name"))
               insertPropertyIf(plan, APPROACH, reader.readElementText());
-            else if(reader.name() == "ARINC")
+            else if(reader.name() ==  QStringLiteral("ARINC"))
               insertPropertyIf(plan, APPROACH_ARINC, reader.readElementText());
-            else if(reader.name() == "Runway")
+            else if(reader.name() == QStringLiteral("Runway"))
               insertPropertyIf(plan, APPROACH_RW, reader.readElementText());
-            else if(reader.name() == "Type")
+            else if(reader.name() == QStringLiteral("Type"))
               insertPropertyIf(plan, APPROACH_TYPE, reader.readElementText());
-            else if(reader.name() == "Suffix")
+            else if(reader.name() == QStringLiteral("Suffix"))
               insertPropertyIf(plan, APPROACH_SUFFIX, reader.readElementText());
             // Transition ========================================
-            else if(reader.name() == "Transition")
+            else if(reader.name() == QStringLiteral("Transition"))
               insertPropertyIf(plan, TRANSITION, reader.readElementText());
-            else if(reader.name() == "TransitionType")
+            else if(reader.name() == QStringLiteral("TransitionType"))
               insertPropertyIf(plan, TRANSITION_TYPE, reader.readElementText());
             // Custom approach data ========================================
-            else if(reader.name() == "CustomDistance")
+            else if(reader.name() == QStringLiteral("CustomDistance"))
               insertPropertyIf(plan, APPROACH_CUSTOM_DISTANCE, reader.readElementText());
-            else if(reader.name() == "CustomAltitude")
+            else if(reader.name() == QStringLiteral("CustomAltitude"))
               insertPropertyIf(plan, APPROACH_CUSTOM_ALTITUDE, reader.readElementText());
-            else if(reader.name() == "CustomOffsetAngle")
+            else if(reader.name() == QStringLiteral("CustomOffsetAngle"))
               insertPropertyIf(plan, APPROACH_CUSTOM_OFFSET, reader.readElementText());
             else
               xmlStream.skipCurrentElement(true /* warn */);
@@ -1291,7 +1291,7 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
           xmlStream.skipCurrentElement(true /* warn */);
       }
     }
-    else if(reader.name() == "Waypoints")
+    else if(reader.name() == QStringLiteral("Waypoints"))
       readWaypointsLnm(xmlStream, waypoints, "Waypoint");
     else
       xmlStream.skipCurrentElement(true /* warn */);
@@ -1398,25 +1398,30 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
 
     while(xmlStream.readNextStartElement())
     {
-      QStringRef name = reader.name();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        QStringRef name = reader.name();
+#else
+        QStringView name = reader.name();
+#endif
+
       // if(name == "Title")
       // plan.title = reader.readElementText();
       // else
-      if(name == "FPType")
+        if(name == QStringLiteral("FPType"))
         plan.flightplanType = Flightplan::stringFlightplanType(reader.readElementText());
-      else if(name == "CruisingAlt")
+      else if(name == QStringLiteral("CruisingAlt"))
         plan.cruiseAltitudeFt = reader.readElementText().toFloat();
-      else if(name == "DepartureID")
+      else if(name == QStringLiteral("DepartureID"))
         plan.departureIdent = reader.readElementText();
-      else if(name == "DepartureLLA")
+      else if(name == QStringLiteral("DepartureLLA"))
       {
         QString departPosTxt = reader.readElementText();
         if(!departPosTxt.isEmpty())
           plan.departureParkingPos = geo::Pos(departPosTxt);
       }
-      else if(name == "DestinationID")
+      else if(name == QStringLiteral("DestinationID"))
         plan.destinationIdent = reader.readElementText();
-      else if(name == "DestinationLLA")
+      else if(name == QStringLiteral("DestinationLLA"))
       {
         QString destPosTxt = reader.readElementText();
         if(!destPosTxt.isEmpty())
@@ -1424,18 +1429,18 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       }
       // else if(name == "Descr")
       // plan.description = reader.readElementText();
-      else if(name == "DeparturePosition")
+      else if(name == QStringLiteral("DeparturePosition"))
         plan.departureParkingName = reader.readElementText();
-      else if(name == "DepartureName")
+      else if(name == QStringLiteral("DepartureName"))
         plan.departureName = reader.readElementText();
-      else if(name == "DestinationName")
+      else if(name == QStringLiteral("DestinationName"))
         plan.destinationName = reader.readElementText();
-      else if(name == "AppVersion")
+      else if(name == QStringLiteral("AppVersion"))
         readAppVersionPln(appVersionMajor, appVersionBuild, xmlStream);
-      else if(name == "ATCWaypoint")
+      else if(name == QStringLiteral("ATCWaypoint"))
         // Read list of flight plan en-route waypoints ========================================================
         readWaypointPln(plan, xmlStream);
-      else if(name == "DepartureDetails")
+      else if(name == QStringLiteral("DepartureDetails"))
       {
         // MSFS 2024 SID ===========================
         // <DepartureDetails>
@@ -1445,20 +1450,25 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
         // </DepartureDetails>
         while(xmlStream.readNextStartElement())
         {
-          QStringRef sidName = reader.name();
-          if(sidName == "RunwayNumberFP")
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                QStringRef sidName = reader.name();
+        #else
+            QStringView sidName = reader.name();
+        #endif
+
+          if(sidName == QStringLiteral("RunwayNumberFP"))
             sidRunway = reader.readElementText();
-          else if(sidName == "RunwayDesignatorFP")
+          else if(sidName == QStringLiteral("RunwayDesignatorFP"))
             sidRunwayDesignator = reader.readElementText();
-          else if(sidName == "DepartureFP")
+          else if(sidName == QStringLiteral("DepartureFP"))
             sid = reader.readElementText();
-          else if(sidName == "TransitionFP")
+          else if(sidName == QStringLiteral("TransitionFP"))
             sidTrans = reader.readElementText();
           else
             xmlStream.skipCurrentElement();
         }
       }
-      else if(name == "ArrivalDetails")
+      else if(name == QStringLiteral("ArrivalDetails"))
       {
         // MSFS 2024 STAR ===========================
         // <ArrivalDetails>
@@ -1468,20 +1478,25 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
         // </ArrivalDetails>
         while(xmlStream.readNextStartElement())
         {
-          QStringRef starName = reader.name();
-          if(starName == "RunwayNumberFP")
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QStringRef starName = reader.name();
+#else
+            QStringView starName = reader.name();
+#endif
+
+            if(starName == QStringLiteral("RunwayNumberFP"))
             starRunway = reader.readElementText();
-          else if(starName == "RunwayDesignatorFP")
+          else if(starName == QStringLiteral("RunwayDesignatorFP"))
             starRunwayDesignator = reader.readElementText();
-          else if(starName == "ArrivalFP")
+          else if(starName == QStringLiteral("ArrivalFP"))
             star = reader.readElementText();
-          else if(starName == "TransitionFP")
+          else if(starName == QStringLiteral("TransitionFP"))
             starTrans = reader.readElementText();
           else
             xmlStream.skipCurrentElement();
         }
       }
-      else if(name == "ApproachDetails")
+      else if(name == QStringLiteral("ApproachDetails"))
       {
         // MSFS 2024 approach ===========================
         // <ApproachDetails>
@@ -1491,16 +1506,21 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
         // </ApproachDetails>
         while(xmlStream.readNextStartElement())
         {
-          QStringRef apprName = reader.name();
-          if(apprName == "ApproachTypeFP")
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QStringRef name = reader.name();
+#else
+            QStringView apprName = reader.name();
+#endif
+
+            if(apprName == QStringLiteral("ApproachTypeFP"))
             approach = reader.readElementText();
-          else if(apprName == "SuffixFP")
+          else if(apprName == QStringLiteral("SuffixFP"))
             approachSuffix = reader.readElementText();
-          else if(apprName == "RunwayNumberFP")
+          else if(apprName == QStringLiteral("RunwayNumberFP"))
             approachRunway = reader.readElementText();
-          else if(apprName == "RunwayDesignatorFP")
+          else if(apprName == QStringLiteral("RunwayDesignatorFP"))
             approachRunwayDesignator = reader.readElementText();
-          else if(apprName == "TransitionFP")
+          else if(apprName == QStringLiteral("TransitionFP"))
             approachTransition = reader.readElementText();
           else
             xmlStream.skipCurrentElement();
@@ -1673,77 +1693,102 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
 
     while(xmlStream.readNextStartElement())
     {
-      QStringRef name = reader.name();
-      if(name == "version")
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        QStringRef name = reader.name();
+#else
+        QStringView name = reader.name();
+#endif
+
+        if(name == QStringLiteral("version"))
       {
         // Skip these elements without warning
         xmlStream.skipCurrentElement();
         continue;
       }
 
-      if(name == "departure")
+      if(name == QStringLiteral("departure"))
       {
         // Read sub elements for departure =====================================
         while(xmlStream.readNextStartElement())
         {
-          QStringRef depname = reader.name();
-          if(depname == "airport")
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QStringRef depname = reader.name();
+        #else
+            QStringView depname = reader.name();
+        #endif
+
+          if(depname == QStringLiteral("airport"))
             departureIcao = reader.readElementText();
-          else if(depname == "runway")
+          else if(depname == QStringLiteral("runway"))
             departureRunway = reader.readElementText();
-          else if(depname == "sid")
+          else if(depname == QStringLiteral("sid"))
             sid = reader.readElementText();
-          else if(depname == "transition")
+          else if(depname == QStringLiteral("transition"))
             sidTransition = reader.readElementText();
           else
             reader.skipCurrentElement();
         }
       }
-      else if(name == "destination")
+      else if(name == QStringLiteral("destination"))
       {
         // Read sub elements for destination =====================================
         while(xmlStream.readNextStartElement())
         {
-          QStringRef destname = reader.name();
-          if(destname == "airport")
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QStringRef destname = reader.name();
+#else
+            QStringView destname = reader.name();
+#endif
+
+            if(destname == QStringLiteral("airport"))
             destinationIcao = reader.readElementText();
-          else if(destname == "runway")
+          else if(destname == QStringLiteral("runway"))
             destinationRunway = reader.readElementText();
-          else if(destname == "star")
+          else if(destname == QStringLiteral("star"))
             star = reader.readElementText();
-          else if(destname == "transition")
+          else if(destname == QStringLiteral("transition"))
             starTransition = reader.readElementText();
           else
             reader.skipCurrentElement();
         }
       }
-      else if(name == "route")
+      else if(name == QStringLiteral("route"))
       {
         // Read wp elements for route =====================================
         while(xmlStream.readNextStartElement())
         {
           FlightplanEntry entry;
 
-          QStringRef destname = reader.name();
-          if(destname == "wp")
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QStringRef destname = reader.name();
+        #else
+            QStringView destname = reader.name();
+        #endif
+
+            if(destname == QStringLiteral("wp"))
           {
             QString wptype, wpicao, wpident, wplon, wplat, wpalt;
 
             while(xmlStream.readNextStartElement())
             {
-              QStringRef wpname = reader.name();
+                #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                    QStringRef wpname = reader.name();
+                #else
+                    QStringView wpname = reader.name();
+                #endif
 
-              if(wpname == "type")
+
+                    if(wpname == QStringLiteral("type"))
                 wptype = reader.readElementText();
-              else if(wpname == "icao")
+              else if(wpname == QStringLiteral("icao"))
                 wpicao = reader.readElementText();
-              else if(wpname == "ident")
+              else if(wpname == QStringLiteral("ident"))
                 wpident = reader.readElementText();
-              else if(wpname == "lon")
+              else if(wpname == QStringLiteral("lon"))
                 wplon = reader.readElementText();
-              else if(wpname == "lat")
+              else if(wpname == QStringLiteral("lat"))
                 wplat = reader.readElementText();
-              else if(wpname == "altitude-ft")
+              else if(wpname == QStringLiteral("altitude-ft"))
                 wpalt = reader.readElementText();
               else
                 reader.skipCurrentElement();
@@ -1904,7 +1949,11 @@ void FlightplanIO::saveLnm(const Flightplan& plan, const QString& filename) cons
 
 void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan) const
 {
-  writer.setCodec("UTF-8");
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    writer.setCodec("UTF-8");
+#endif
+
+
   writer.setAutoFormatting(true);
   writer.setAutoFormattingIndent(2);
 
@@ -2097,7 +2146,10 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   // Write XML to string first ===================
   QString xmlString;
   QXmlStreamWriter writer(&xmlString);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   writer.setCodec("UTF-8");
+#endif
+
   writer.setAutoFormatting(true);
   writer.setAutoFormattingIndent(4);
 
@@ -2388,7 +2440,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&xmlFile);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
     stream.setGenerateByteOrderMark(true);
     stream << xmlString.toUtf8();
     xmlFile.close();
@@ -2477,7 +2529,10 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
   if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QXmlStreamWriter writer(&xmlFile);
-    writer.setCodec("UTF-8");
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+      writer.setCodec("UTF-8");
+#endif
+
     writer.setAutoFormatting(true);
     writer.setAutoFormattingIndent(2);
 
@@ -2735,7 +2790,7 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
   if(flpFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&flpFile);
-    stream.setCodec("UTF-8");
+      stream.setEncoding(QStringConverter::Utf8);
 
     Flightplan pln(plan);
     pln = pln.compressedAirways();
@@ -2903,7 +2958,7 @@ void FlightplanIO::saveFeelthereFpl(const atools::fs::pln::Flightplan& plan, con
   if(flpFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&flpFile);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
     stream.setRealNumberPrecision(8);
 
     stream << "; " << programFileInfo() << endl;
@@ -2971,7 +3026,7 @@ void FlightplanIO::saveLeveldRte(const atools::fs::pln::Flightplan& plan, const 
   if(rteFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&rteFile);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
     stream.setRealNumberPrecision(8);
 
     stream << "H," << plan.departureIdent << "," << plan.destinationIdent << ", ," << endl;
@@ -3036,7 +3091,7 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& filename, con
   if(efbFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&efbFile);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
     stream.setRealNumberPrecision(8);
 
     stream << "[AivlaSoft EFB Route - www.aivlasoft.com]" << endl;
@@ -3136,7 +3191,7 @@ void FlightplanIO::saveQwRte(const Flightplan& plan, const QString& filename) co
   if(rteFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&rteFile);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
     stream.setRealNumberPrecision(8);
 
     stream << "[FlightPlan]" << endl;
@@ -3204,7 +3259,7 @@ void FlightplanIO::saveMdr(const Flightplan& plan, const QString& filename) cons
   if(mdrFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&mdrFile);
-    stream.setCodec("UTF-8");
+      stream.setEncoding(QStringConverter::Utf8);
 
     stream << plan.departureIdent << endl;
     stream << plan.destinationIdent << endl;
@@ -3271,7 +3326,10 @@ void FlightplanIO::saveTfdi(const Flightplan& plan, const QString& filename, con
   {
     // Write XML to string first ===================
     QXmlStreamWriter writer(&xmlFile);
-    writer.setCodec("UTF-8");
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        writer.setCodec("UTF-8");
+    #endif
+
     writer.setAutoFormatting(true);
     writer.setAutoFormattingIndent(4);
 
@@ -3373,7 +3431,7 @@ void FlightplanIO::saveIfly(const Flightplan& plan, const QString& filename) con
   if(routeFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&routeFile);
-    stream.setCodec("UTF-8");
+      stream.setEncoding(QStringConverter::Utf8);
     stream.setRealNumberPrecision(8);
 
     stream << "[RTE]" << endl;
@@ -3522,7 +3580,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
   {
     int numEntries = numEntriesSave(plan);
     QTextStream stream(&fmsFile);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     if(!iniBuildsFormat)
       // OS
@@ -3736,7 +3794,7 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
   {
     QString rteString;
     QTextStream stream(&rteString);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     stream << tr("PMDG RTE Created by %1 Version %2 (revision %3) on %4 ").
       arg(QCoreApplication::applicationName()).
@@ -3930,7 +3988,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename) 
   {
     QString textString;
     QTextStream stream(&textString);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     // YSSY,
     // YMML,
@@ -4040,7 +4098,7 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename) c
   if(fltplanFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&fltplanFile);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     // [flightplan]
     // title=EDDH to LIRF
@@ -4121,7 +4179,10 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
   if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QXmlStreamWriter writer(&xmlFile);
-    writer.setCodec("utf-8");
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+      writer.setCodec("UTF-8");
+#endif
+
     writer.setAutoFormatting(true);
     writer.setAutoFormattingIndent(2);
 
@@ -4311,7 +4372,7 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
   if(gfpFile.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&gfpFile);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
     stream.setAutoDetectUnicode(true);
 
     // Read line and remove header
@@ -4468,12 +4529,12 @@ void FlightplanIO::loadGarminFplInternal(atools::fs::pln::Flightplan& plan, atoo
   xmlStream.readUntilElement("flight-plan");
   while(xmlStream.readNextStartElement())
   {
-    if(reader.name() == "waypoint-table")
+      if(reader.name() == QStringLiteral("waypoint-table"))
     {
       // Fill waypoint hash map =========================================================
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "waypoint")
+        if(reader.name() == QStringLiteral("waypoint"))
         {
           FlightplanEntry entry;
           QString type;
@@ -4490,19 +4551,19 @@ void FlightplanIO::loadGarminFplInternal(atools::fs::pln::Flightplan& plan, atoo
             // .   <elevation>173.4312</elevation>
             // . </waypoint>
 
-            if(reader.name() == "identifier")
+            if(reader.name() == QStringLiteral("identifier"))
               entry.setIdent(reader.readElementText());
-            else if(reader.name() == "type")
+            else if(reader.name() == QStringLiteral("type"))
               type = reader.readElementText();
-            else if(reader.name() == "country-code")
+            else if(reader.name() == QStringLiteral("country-code"))
               entry.setRegion(reader.readElementText());
-            else if(reader.name() == "lat")
+            else if(reader.name() == QStringLiteral("lat"))
               pos.setLatY(reader.readElementText().toFloat());
-            else if(reader.name() == "lon")
+            else if(reader.name() == QStringLiteral("lon"))
               pos.setLonX(reader.readElementText().toFloat());
-            else if(reader.name() == "comment")
+            else if(reader.name() == QStringLiteral("comment"))
               entry.setComment(reader.readElementText());
-            else if(reader.name() == "elevation")
+            else if(reader.name() == QStringLiteral("elevation"))
               pos.setAltitude(reader.readElementText().toFloat());
             else
               xmlStream.skipCurrentElement(false /* warn */);
@@ -4521,12 +4582,12 @@ void FlightplanIO::loadGarminFplInternal(atools::fs::pln::Flightplan& plan, atoo
           xmlStream.skipCurrentElement(false /* warn */);
       }
     }
-    else if(reader.name() == "route")
+      else if(reader.name() == QStringLiteral("route"))
     {
       while(xmlStream.readNextStartElement())
       {
         // Read route points =========================================================
-        if(reader.name() == "route-point")
+        if(reader.name() == QStringLiteral("route-point"))
         {
           // . <route-point>
           // .   <waypoint-identifier>CYYZ</waypoint-identifier>
@@ -4537,11 +4598,11 @@ void FlightplanIO::loadGarminFplInternal(atools::fs::pln::Flightplan& plan, atoo
           QString ident, type, region;
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "waypoint-identifier")
+              if(reader.name() == QStringLiteral("waypoint-identifier"))
               ident = reader.readElementText();
-            else if(reader.name() == "waypoint-type")
+              else if(reader.name() == QStringLiteral("waypoint-type"))
               type = reader.readElementText();
-            else if(reader.name() == "waypoint-country-code")
+            else if(reader.name() == QStringLiteral("waypoint-country-code"))
               region = reader.readElementText();
             else
               xmlStream.skipCurrentElement(false /* warn */);
@@ -4701,10 +4762,15 @@ void FlightplanIO::readAppVersionPln(int& appVersionMajor, int& appVersionBuild,
 {
   while(xmlStream.readNextStartElement())
   {
-    QStringRef aName = xmlStream.getReader().name();
-    if(aName == "AppVersionMajor")
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+      QStringRef aName = reader.name();
+#else
+      QStringView aName = xmlStream.getReader().name();
+#endif
+
+      if(aName == QStringLiteral("AppVersionMajor"))
       appVersionMajor = xmlStream.getReader().readElementText().toInt();
-    else if(aName == "xmlStream")
+    else if(aName == QStringLiteral("xmlStream"))
       appVersionBuild = xmlStream.getReader().readElementText().toInt();
     else
       xmlStream.skipCurrentElement();
@@ -4760,12 +4826,17 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
     {
       while(xmlStream.readNextStartElement())
       {
-        QStringRef iName = reader.name();
-        if(iName == "ICAORegion")
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+          QStringRef iName = reader.name();
+        #else
+          QStringView iName = reader.name();
+        #endif
+
+          if(iName == QStringLiteral("ICAORegion"))
           entry.setRegion(reader.readElementText());
-        else if(iName == "ICAOIdent")
+        else if(iName == QStringLiteral("ICAOIdent"))
           entry.setIdent(reader.readElementText());
-        else if(iName == "ICAOAirport") // MSFS
+        else if(iName == QStringLiteral("ICAOAirport")) // MSFS
           entry.setAirport(reader.readElementText());
         else
           reader.skipCurrentElement();
