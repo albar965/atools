@@ -1,5 +1,6 @@
 #*#
 *.BIN
+*.user
 *.a
 *.bak
 *.bin
