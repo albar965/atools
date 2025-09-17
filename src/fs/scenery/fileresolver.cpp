@@ -129,7 +129,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
 #endif
                 pathList.append(sceneryArea.filePath().split(SEPREGEXP));
                 pathList.append(path.split(SEPREGEXP));
-                bglFiles.append(atools::buildPathNoCase(pathList));
+                bglFiles.append(QFileInfo(atools::buildPathNoCase(pathList)));
               }
             }
             else if(options.getSimulatorType() == atools::fs::FsPaths::MSFS_2024)

@@ -23,6 +23,7 @@
 #include "exception.h"
 
 #include <QDataStream>
+#include <QIODevice>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;

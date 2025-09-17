@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "util/crashhandler.h"
+#include <unistd.h>
 
 #ifndef DISABLE_CRASHHANDLER
 

@@ -243,8 +243,13 @@ void FsPaths::loadAllPaths()
 
 void FsPaths::intitialize()
 {
-  qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
-  environment = QProcessEnvironment::systemEnvironment();
+// #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+//     qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
+// #else
+
+//     QMetaType::registerStreamOperators<atools::fs::FsPaths::SimulatorType>();
+// #endif
+    environment = QProcessEnvironment::systemEnvironment();
 }
 
 QString FsPaths::getBasePath(FsPaths::SimulatorType type)
@@ -1070,7 +1075,7 @@ QString FsPaths::msfsBasePath(const QString& userCfgOptFile, SimulatorType type)
   if(fileCfgOpt.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream stream(&fileCfgOpt);
-    stream.setCodec("UTF-8");
+    //stream.setCodec("UTF-8");
 
     while(!stream.atEnd())
     {
@@ -1135,7 +1140,7 @@ QString FsPaths::xplaneBasePath(const QString& installationFile)
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
+    //stream.setCodec("UTF-8");
 
     while(!stream.atEnd())
     {

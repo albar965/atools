@@ -202,7 +202,7 @@ private:
 
 } /* namespace fs */
 } /* namespace atools */
-
+Q_DECLARE_METATYPE(atools::fs::FsPaths::SimulatorType)
 QDataStream& operator<<(QDataStream& out, const atools::fs::FsPaths::SimulatorType& obj);
 QDataStream& operator>>(QDataStream& in, atools::fs::FsPaths::SimulatorType& obj);
 

@@ -421,7 +421,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpRea
 {
   QFile file;
   QTextStream stream;
-  stream.setCodec("UTF-8");
+  stream.setEncoding(QStringConverter::Utf8);
   bool aborted = false;
 
   QString progressMsg = tr("Reading: %1").arg(atools::nativeCleanPath(filepath));
@@ -599,12 +599,13 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
     {
       // Try to detect code using the BOM for airspaces only - use ANSI as fallback
       stream.setDevice(&filepath);
-      stream.setCodec(atools::codecForFile(filepath, QTextCodec::codecForName("Windows-1252")));
+
+      //stream.setEncoding(QStringConverter::Wi);
     }
     else
     {
       stream.setDevice(&filepath);
-      stream.setCodec("UTF-8");
+      stream.setEncoding(QStringConverter::Utf8);
     }
     stream.setAutoDetectUnicode(true);
 
@@ -659,7 +660,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
 
       if(lines == 0)
       {
-        qWarning() << Q_FUNC_INFO << "Empty file" << filepath;
+        qWarning() << Q_FUNC_INFO << "Empty file" << filepath.fileName();
         retval = false;
       }
 
@@ -767,7 +768,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
     // Read entries recursively for user added folder ===================
     QQueue<QFileInfo> queue;
     // Add intial path
-    queue.enqueue(path);
+    queue.enqueue(QFileInfo(path));
 
     while(!queue.isEmpty())
     {
@@ -1093,7 +1094,7 @@ QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts, const QStr
   if(filename.isEmpty())
   {
     // No filename given - determine default path
-    if(includeFile(opts, customPath) &&
+    if(includeFile(opts, QFileInfo(customPath)) &&
        checkFile(Q_FUNC_INFO, buildPathNoCase({customPath, "earth_fix.dat"})) &&
        checkFile(Q_FUNC_INFO, buildPathNoCase({customPath, "earth_awy.dat"})) &&
        checkFile(Q_FUNC_INFO, buildPathNoCase({customPath, "earth_nav.dat"})))
@@ -1111,7 +1112,7 @@ QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts, const QStr
   else
   {
     // Determine path for given file - return full filepath
-    if(includeFile(opts, customPath) && checkFile(Q_FUNC_INFO, buildPathNoCase({customPath, filename})))
+      if(includeFile(opts,QFileInfo(customPath)) && checkFile(Q_FUNC_INFO, buildPathNoCase({customPath, filename})))
       basePath = customPath + atools::SEP + filename;
     else if(checkFile(Q_FUNC_INFO, buildPathNoCase({defaultPath, filename})))
       basePath = defaultPath + atools::SEP + filename;

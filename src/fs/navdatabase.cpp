@@ -631,7 +631,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
       {
         if(area.isMsfsNavigraphNavdata())
         {
-          if(options->isIncludedGui(area.getLocalPath()))
+              if(options->isIncludedGui(QFileInfo(area.getLocalPath())))
           {
             result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
             qDebug() << Q_FUNC_INFO << "Found Navigraph navdata update in" << area;
@@ -735,15 +735,15 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     {
       QString packageBase = options->getMsfsOfficialPath();
       // Load the language index for lookup for airport names and more - first from fs-base
-      QFileInfo langFile = buildPathNoCase({packageBase, "fs-base", options->getLanguage() % ".locPak"});
+      QFileInfo langFile (buildPathNoCase({packageBase, "fs-base", options->getLanguage() % ".locPak"}));
       if(!atools::checkFile(Q_FUNC_INFO, langFile, true /* warn */))
-        langFile = buildPathNoCase({packageBase, "fs-base", "en-US.locPak"});
+        langFile = QFileInfo(buildPathNoCase({packageBase, "fs-base", "en-US.locPak"}));
 
       QFileInfo langFileGeneric;
       // Load the language index for lookup for airport names from fs-base-genericairports
-      langFileGeneric = buildPathNoCase({packageBase, "fs-base-genericairports", options->getLanguage() % ".locPak"});
+      langFileGeneric = QFileInfo(buildPathNoCase({packageBase, "fs-base-genericairports", options->getLanguage() % ".locPak"}));
       if(!atools::checkFile(Q_FUNC_INFO, langFileGeneric, true /* warn */))
-        langFileGeneric = buildPathNoCase({packageBase, "fs-base-genericairports", "en-US.locPak"});
+        langFileGeneric = QFileInfo(buildPathNoCase({packageBase, "fs-base-genericairports", "en-US.locPak"}));
 
       // Load translation file in current language for airport names ====================================
       languageIndex.reset(new scenery::LanguageJson());
@@ -1908,7 +1908,7 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
     // Read entries recursively for user added folder ===================
     QQueue<QFileInfo> queue;
     // Add intial path
-    queue.enqueue(dirs.at(i));
+    queue.enqueue(QFileInfo(dirs.at(i)));
 
     QFileInfoList entries(QDir(dirs.at(i)).entryInfoList(filters));
     while(!queue.isEmpty())

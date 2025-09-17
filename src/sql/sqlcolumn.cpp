@@ -23,19 +23,19 @@
 namespace atools {
 namespace sql {
 
-QString SqlColumn::getColumnList(const QList<SqlColumn>& columns)
-{
-  QStringList selectStmt;
-  for(const SqlColumn& col : columns)
-    selectStmt.append(col.getSelectStmt());
+// QString SqlColumn::getColumnList(const QList<SqlColumn>& columns)
+// {
+//   QStringList selectStmt;
+//   for(const SqlColumn& col : columns)
+//     selectStmt.append(col.getSelectStmt());
 
-  return selectStmt.join(", ");
-}
+//   return selectStmt.join(", ");
+// }
 
-QString SqlColumn::getSelectStmt() const
-{
-  return getName() % " as \"" % getDisplayName() % "\"";
-}
+// QString SqlColumn::getSelectStmt() const
+// {
+//   return getName() % " as \"" % getDisplayName() % "\"";
+// }
 
 QString SqlColumn::getColumnList(const QVector<SqlColumn>& columns)
 {

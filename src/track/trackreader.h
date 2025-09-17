@@ -21,8 +21,8 @@
 #include "track/tracktypes.h"
 
 #include <QCoreApplication>
-
-class QStringList;
+#include <QStringList>
+//class QStringList;
 class QTextStream;
 
 namespace atools {

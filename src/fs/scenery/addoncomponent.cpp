@@ -33,13 +33,13 @@ AddOnComponent::AddOnComponent(QXmlStreamReader& xml)
 {
   while(xml.readNextStartElement())
   {
-    if(xml.name() == "Category")
+        if(xml.name() == QStringLiteral("Category"))
       category = xml.readElementText();
-    else if(xml.name() == "Path")
+        else if(xml.name() == QStringLiteral("Path"))
       path = xml.readElementText();
-    else if(xml.name() == "Name")
+        else if(xml.name() == QStringLiteral("Name"))
       name = xml.readElementText();
-    else if(xml.name() == "Layer")
+        else if(xml.name() == QStringLiteral("Layer"))
       layer = xml.readElementText().toInt();
     else
       xml.skipCurrentElement();

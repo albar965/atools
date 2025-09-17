@@ -22,6 +22,7 @@
 #include "fs/bgl/bglposition.h"
 
 #include <QDataStream>
+#include <QIODevice>
 
 namespace atools {
 namespace sql {

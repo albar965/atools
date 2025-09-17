@@ -18,6 +18,7 @@
 #include "fs/common/binarygeometry.h"
 
 #include <QDataStream>
+#include <QIODevice>
 
 namespace atools {
 namespace fs {

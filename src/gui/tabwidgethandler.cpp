@@ -59,7 +59,7 @@ TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QList<QWidg
   // Container widget and layout for tool button and additional widgets
   QWidget *widget = new QWidget(tabWidget);
   QHBoxLayout *layout = new QHBoxLayout(widget);
-  layout->setMargin(0);
+  layout->setContentsMargins(0,0,0,0);
   layout->setSpacing(2);
 
   // Add additional

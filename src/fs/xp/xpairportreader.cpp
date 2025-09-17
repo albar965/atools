@@ -1146,7 +1146,7 @@ float XpAirportReader::transitionAltOrLevel(const QString& str)
 
   if(levelStr.startsWith("FL", Qt::CaseInsensitive))
     // FL118 or FL 060
-    level = levelStr.midRef(2).toFloat() * 100.f;
+    level = levelStr.mid(2).toFloat() * 100.f;
   else if(levelStr.endsWith("m", Qt::CaseInsensitive) || levelStr.endsWith("meter", Qt::CaseInsensitive))
   {
     if(levelStr.endsWith("m", Qt::CaseInsensitive))

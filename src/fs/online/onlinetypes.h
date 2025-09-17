@@ -22,9 +22,9 @@
 
 #include <functional>
 #include <QVector>
-
+#include <QStringList>
 class QString;
-class QStringList;
+
 
 namespace atools {
 namespace geo {
