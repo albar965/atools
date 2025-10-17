@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,12 @@ class HttpDownloader;
 namespace track {
 
 /*
- * Downloads HTML pages asynchronously from various services for NAT and PACOTS and fills a list
+ * Downloads HTML pages asynchronously from various services for NAT fills a list
  * of Track objects.
  *
  * Default URLs are:
  * NAT: https://notams.aim.faa.gov/nat.html
- * PACOTS: https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do
- *         Uses POST with parameters "queryType=pacificTracks&actionType=advancedNOTAMFunctions"
+ * PACOTS: The DINS Query page is no longer publicly available.
  */
 class TrackDownloader :
   public QObject
