@@ -118,7 +118,7 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_SH
     }
   );
 
-static QString msfsOfficialPath, msfsCommunityPath, msfsSimPath, msfs24SimPath, msfs24CommunityPath, msfs24StreamedPackagesPath;
+static QString msfsOfficialPath, msfsCommunityPath, msfsSimPath, msfs24SimPath, msfs24CommunityPath, msfs24LocalStatePath;
 
 /* Platform: FSX, FSX XPack, FSX Gold */
 const QLatin1String FSX_REGISTRY_PATH("HKEY_CURRENT_USER\\Software\\Microsoft");
@@ -520,16 +520,17 @@ QString FsPaths::initBasePath(SimulatorType type)
     if(!fsPath.isEmpty())
     {
       // C:\Users\USERNAME\AppData\Local\Packages\Microsoft.Limitless_8wekyb3d8bbwe\LocalState\StreamedPackages
-      msfs24StreamedPackagesPath = msfs24SimPath % SEP % "LocalState" % SEP % "StreamedPackages";
-      checkDir(Q_FUNC_INFO, msfs24StreamedPackagesPath);
+      // StreamedPackages were removed later
+      msfs24LocalStatePath = msfs24SimPath % SEP % "LocalState";
+      checkDir(Q_FUNC_INFO, msfs24LocalStatePath);
 
       msfs24CommunityPath = fsPath % SEP % "Community";
       qInfo() << Q_FUNC_INFO << "Found MSFS 2024 community path" << msfs24CommunityPath;
 
-      qInfo() << Q_FUNC_INFO << "Found MSFS 2024 Streamed Packages Path" << msfs24StreamedPackagesPath;
+      qInfo() << Q_FUNC_INFO << "Found MSFS 2024 LocalState Path" << msfs24LocalStatePath;
     }
 
-    fsPath = msfs24StreamedPackagesPath;
+    fsPath = msfs24LocalStatePath;
   }
   else
   {
