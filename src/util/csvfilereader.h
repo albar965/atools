@@ -42,6 +42,7 @@ public:
   /* Read a CSV stream considering escape characters and double escape characters.
    * Content can be fetched after reading by getValues() */
   void readCsvFile(QTextStream& stream);
+  void readCsvFile(const QString& filename);
 
   /* Get values after calling readCsvFile */
   const QVector<QStringList>& getValues() const

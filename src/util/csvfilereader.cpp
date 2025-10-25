@@ -20,6 +20,8 @@
 #include "atools.h"
 #include "util/csvreader.h"
 
+#include <QFile>
+
 namespace atools {
 namespace util {
 
@@ -55,6 +57,23 @@ void CsvFileReader::readCsvFile(QTextStream& stream)
 
     values.append(reader->getValues());
   }
+}
+
+void CsvFileReader::readCsvFile(const QString& filename)
+{
+  QFile file(filename);
+
+  if(file.open(QIODevice::ReadOnly))
+  {
+    QTextStream stream(&file);
+    stream.setCodec("UTF-8");
+    stream.setAutoDetectUnicode(true);
+
+    readCsvFile(stream);
+    file.close();
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Cannot open" << filename << "error" << file.errorString();
 }
 
 } // namespace util
