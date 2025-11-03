@@ -4,6 +4,13 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
+# Version 4.0.18
+
+* Removed PACOTS tracks. albar965/littlenavmap#1298
+* Removed wrong check for gone path `StreamedPackages` when reading MSFS 2024 data.
+
+===============================================================================
+
 # Version 4.0.17
 
 * Fixed issue where all VORTAC were loaded as TACAN in MSFS 2020 resulting in wrong bearings and
