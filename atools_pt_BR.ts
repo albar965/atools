@@ -1843,7 +1843,7 @@ Tempo Noturno: %5</translation>
         <location filename="src/atools.cpp" line="1103"/>
         <source> and </source>
         <comment>Used to replace character &quot;&amp;&quot; in file names, etc.</comment>
-        <translation type="unfinished"></translation>
+        <translation> e </translation>
     </message>
     <message>
         <source>Cannot open runways.xml file &quot;%1&quot;. Reason: %2.</source>
@@ -2097,7 +2097,7 @@ Tempo Noturno: %5</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="75"/>
-        <location filename="src/track/tracktypes.cpp" line="54"/>
+        <location filename="src/track/tracktypes.cpp" line="53"/>
         <source>Unknown</source>
         <translation>Desconhecido</translation>
     </message>
@@ -2265,12 +2265,12 @@ Tempo Noturno: %5</translation>
         <translation>Arquivo não existe</translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="57"/>
+        <location filename="src/track/tracktypes.cpp" line="56"/>
         <source>NAT</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="60"/>
+        <location filename="src/track/tracktypes.cpp" line="59"/>
         <source>PACOTS</source>
         <translation></translation>
     </message>
