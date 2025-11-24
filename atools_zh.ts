@@ -1760,7 +1760,7 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="75"/>
-        <location filename="src/track/tracktypes.cpp" line="54"/>
+        <location filename="src/track/tracktypes.cpp" line="53"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
@@ -2220,12 +2220,12 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation>&lt;b&gt;发生了一个致命错误。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;点击 OK 以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="57"/>
+        <location filename="src/track/tracktypes.cpp" line="56"/>
         <source>NAT</source>
         <translation>NAT</translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="60"/>
+        <location filename="src/track/tracktypes.cpp" line="59"/>
         <source>PACOTS</source>
         <translation>PACOTS</translation>
     </message>
