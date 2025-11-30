@@ -2051,7 +2051,7 @@ Période nocturne : %5</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="75"/>
-        <location filename="src/track/tracktypes.cpp" line="54"/>
+        <location filename="src/track/tracktypes.cpp" line="53"/>
         <source>Unknown</source>
         <translation>Inconnu</translation>
     </message>
@@ -2269,12 +2269,12 @@ Période nocturne : %5</translation>
         <translation type="unfinished">Le fichier n&apos;existe pas</translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="57"/>
+        <location filename="src/track/tracktypes.cpp" line="56"/>
         <source>NAT</source>
         <translation type="unfinished">NAT</translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="60"/>
+        <location filename="src/track/tracktypes.cpp" line="59"/>
         <source>PACOTS</source>
         <translation type="unfinished">PACOTS</translation>
     </message>
