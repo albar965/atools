@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -246,7 +246,7 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
       line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH_M), positions);
 
       Pos lastDropped;
-      for(const Pos& pos : qAsConst(positions))
+      for(const Pos& pos : std::as_const(positions))
       {
         float elevation = getElevation(pos, sampleRadiusMeter);
 

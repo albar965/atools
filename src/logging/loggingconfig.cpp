@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelMap& ch
     closeStreams(channels, it.value());
 }
 
-void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelVector& channelVector)
+void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelList& channelVector)
 {
   for(Channel *channel : channelVector)
   {
@@ -138,7 +138,7 @@ QStringList LoggingConfig::getLogFiles(bool includeBackups) const
   collectFileNames(filenames, emptyStreamsCat);
 
   QStringList filenameList;
-  for(const QString& filename : qAsConst(filenames))
+  for(const QString& filename : std::as_const(filenames))
   {
     if(QFile::exists(filename))
       filenameList.append(filename);
@@ -155,13 +155,7 @@ QStringList LoggingConfig::getLogFiles(bool includeBackups) const
 
   std::sort(filenameList.begin(), filenameList.end());
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
   return filenameList;
-
-#else
-  return filenames.toList();
-
-#endif
 }
 
 void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap) const
@@ -170,7 +164,7 @@ void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelMap&
     collectFileNames(filenames, {it.value()});
 }
 
-void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelVector& channelVector) const
+void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelList& channelVector) const
 {
   for(const Channel *channel : channelVector)
   {
@@ -210,15 +204,12 @@ void LoggingConfig::checkStreamSize(Channel *channel)
       channel->file = file;
       channel->stream->setDevice(channel->file);
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-      channel->stream->setCodec("UTF-8");
-#endif
       channel->stream->setLocale(QLocale::C);
     }
   }
 }
 
-ChannelVector& LoggingConfig::getStream(QtMsgType type)
+ChannelList& LoggingConfig::getStream(QtMsgType type)
 {
   switch(type)
   {
@@ -263,9 +254,9 @@ ChannelMap& LoggingConfig::getCatStream(QtMsgType type)
 }
 
 void LoggingConfig::addDefaultChannels(const QStringList& channelsForLevel, const QHash<QString, Channel *>& channelMap,
-                                       ChannelVector& channelList)
+                                       ChannelList& channelList)
 {
-  for(const QString& name : qAsConst(channelsForLevel))
+  for(const QString& name : std::as_const(channelsForLevel))
   {
     if(channelMap.contains(name))
       channelList.append(channelMap.value(name));
@@ -275,7 +266,7 @@ void LoggingConfig::addDefaultChannels(const QStringList& channelsForLevel, cons
 void LoggingConfig::addCatChannels(const QString& category, const QStringList& channelsForLevel,
                                    const QHash<QString, Channel *>& channelMap, ChannelMap& streamList)
 {
-  for(const QString& name : qAsConst(channelsForLevel))
+  for(const QString& name : std::as_const(channelsForLevel))
   {
     if(channelMap.contains(name))
     {
@@ -283,7 +274,7 @@ void LoggingConfig::addCatChannels(const QString& category, const QStringList& c
         streamList[category].append(channelMap.value(name));
       else
       {
-        ChannelVector catstr;
+        ChannelList catstr;
         catstr.append(channelMap.value(name));
         streamList.insert(category, catstr);
       }
@@ -360,18 +351,12 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>&
     {
       QTextStream *io = new QTextStream(stdout);
       // Most terminals can deal with utf-8
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-      io->setCodec("UTF-8");
-#endif
       channelMap.insert(key, new Channel({io, nullptr}));
     }
     else if(channelName == "stderr")
     {
       QTextStream *err = new QTextStream(stderr);
       // Most terminals can deal with utf-8
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-      err->setCodec("UTF-8");
-#endif
       channelMap.insert(key, new Channel({err, nullptr}));
     }
     else
@@ -404,9 +389,6 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>&
       if(file->open(fileOpenMode))
       {
         QTextStream *stream = new QTextStream(file);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        stream->setCodec("UTF-8");
-#endif
         stream->setLocale(QLocale::C);
         channelMap.insert(key, new Channel({stream, file}));
       }
@@ -422,11 +404,7 @@ void LoggingConfig::readLevels(QSettings *settings, QHash<QString, Channel *>& c
   for(const QString& levelName : keys)
   {
     // Split the "level.channel" string
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QStringList levelList = levelName.split('.', Qt::SkipEmptyParts);
-#else
-    QStringList levelList = levelName.split('.', QString::SkipEmptyParts);
-#endif
     QString level = levelList.at(0);
 
     // Use default if category is not given

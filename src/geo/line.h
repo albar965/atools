@@ -288,7 +288,7 @@ private:
 /* Invalid line */
 const atools::geo::Line EMPTY_LINE;
 
-inline uint qHash(const atools::geo::Line& line)
+inline size_t qHash(const atools::geo::Line& line)
 {
   return qHash(line.getPos1()) ^ qHash(line.getPos2());
 }

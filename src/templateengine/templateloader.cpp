@@ -25,16 +25,12 @@ TemplateLoader::TemplateLoader(QHash<QString, QVariant> settings, QObject *paren
     templatePath = QFileInfo(QCoreApplication::applicationDirPath(), templatePath).absoluteFilePath();
   }
   fileNameSuffix = settings.value("suffix", ".tpl").toString();
-  QString encoding = settings.value("encoding").toString();
-  if(encoding.isEmpty())
-  {
-    textCodec = QTextCodec::codecForLocale();
-  }
-  else
-  {
-    textCodec = QTextCodec::codecForName(encoding.toLocal8Bit());
-  }
-  qDebug("TemplateLoader: path=%s, codec=%s", qPrintable(templatePath), textCodec->name().constData());
+  qDebug("TemplateLoader: path=%s", qPrintable(templatePath));
+}
+
+TemplateLoader::~TemplateLoader()
+{
+
 }
 
 QString TemplateLoader::tryFile(QString localizedName)
@@ -45,7 +41,7 @@ QString TemplateLoader::tryFile(QString localizedName)
   if(file.exists())
   {
     file.open(QIODevice::ReadOnly);
-    QString document = textCodec->toUnicode(file.readAll());
+    QString document = file.readAll();
     file.close();
     if(file.error())
     {
@@ -64,11 +60,8 @@ Template TemplateLoader::getTemplate(QString templateName, QString locales)
 {
   QSet<QString> tried; // used to suppress duplicate attempts
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
   QStringList locs = locales.split(',', Qt::SkipEmptyParts);
-#else
-  QStringList locs = locales.split(',', QString::SkipEmptyParts);
-#endif
+
   // Search for exact match
   foreach(QString loc, locs)
   {

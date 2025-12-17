@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ AbstractIniReader::~AbstractIniReader()
 
 void AbstractIniReader::handleComment()
 {
-  for(const QString& comment : qAsConst(commentCharacters))
+  for(const QString& comment : std::as_const(commentCharacters))
   {
     int c = currentLine.indexOf(comment);
     if(c >= 0)
@@ -117,13 +117,6 @@ void AbstractIniReader::read(const QString& iniFilename)
   if(sceneryCfgFile.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream sceneryCfg(&sceneryCfgFile);
-
-    if(!codec.isEmpty())
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-      sceneryCfg.setEncoding(QStringConverter::encodingForName(codec.toLatin1().constData()).value_or(QStringConverter::Utf8));
-#else
-      sceneryCfg.setCodec(codec.toLatin1().constData());
-#endif
 
     onStartDocument(filepath);
 

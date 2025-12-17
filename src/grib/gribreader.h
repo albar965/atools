@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include "grib/gribcommon.h"
 
-#include <QVector>
+#include <QList>
 #include <QCoreApplication>
 
 namespace atools {
@@ -50,7 +50,7 @@ public:
   void clear();
 
   /* Get decoded datasets for read file */
-  const atools::grib::GribDatasetVector& getDatasets() const
+  const atools::grib::GribDatasetList& getDatasets() const
   {
     return datasets;
   }
@@ -60,7 +60,7 @@ public:
   static bool validateGribData(QByteArray bytes);
 
 private:
-  atools::grib::GribDatasetVector datasets;
+  atools::grib::GribDatasetList datasets;
   bool verbose = false;
 };
 

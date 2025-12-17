@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,13 +35,13 @@ using atools::geo::Point3D;
 using atools::charAt;
 
 // Calculate hash for airway name for quick comparison in routing algorithm
-inline quint32 airwayHash(const QString& name)
+inline size_t airwayHash(const QString& name)
 {
   return qHash(name) + 1; // Avoid null
 }
 
 // Calculate hash for track name and type for quick comparison in routing algorithm
-inline quint32 trackHash(const QString& name, const QString& type)
+inline size_t trackHash(const QString& name, const QString& type)
 {
   return (qHash(name) ^ (qHash(type) << 8) ^ 0x55555555) + 1; // Avoid null and add pattern to difference for airway
 }
@@ -101,7 +101,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
     nodeIdIndexMap.reserve(300000);
 
     // List of created nodes
-    QVector<Node> nodeVector;
+    QList<Node> nodeVector;
     nodeVector.reserve(300000);
 
     // Column order is important in the queries
@@ -392,7 +392,7 @@ void RouteNetworkLoader::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap, boo
   } // while(query.next())
 }
 
-void RouteNetworkLoader::readNodesAirway(QVector<Node>& nodes, QHash<int, int>& nodeIdIndexMap,
+void RouteNetworkLoader::readNodesAirway(QList<Node>& nodes, QHash<int, int>& nodeIdIndexMap,
                                          const QString& queryStr, bool vor, bool ndb,
                                          bool track, bool filterProc)
 {

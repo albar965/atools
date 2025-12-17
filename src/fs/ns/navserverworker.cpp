@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -167,7 +167,7 @@ void NavServerWorker::postSimConnectData(atools::fs::sc::SimConnectData dataPack
     qWarning() << "NavServerWorker Reply to client not flushed";
 
   if(options & VERBOSE)
-    qDebug() << "NavServerWorker written" << written << "flush" << flush << "id" << dataPacket.getPacketId();
+    qDebug() << "NavServerWorker written" << written << "id" << dataPacket.getPacketId();
 
   inPost = false;
 }

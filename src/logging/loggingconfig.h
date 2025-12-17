@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "logging/loggingtypes.h"
 
 #include <QIODevice>
-#include <QVector>
+#include <QList>
 
 class QFile;
 class QTextStream;
@@ -62,13 +62,13 @@ private:
   }
 
   /* get all default streams for the given level */
-  ChannelVector& getStream(QtMsgType type);
+  ChannelList& getStream(QtMsgType type);
 
   /* get all categorized streams for the given level */
   ChannelMap& getCatStream(QtMsgType type);
 
   void addDefaultChannels(const QStringList& channelsForLevel, const QHash<QString, Channel *>& channelMap,
-                          ChannelVector& channelList);
+                          ChannelList& channelList);
 
   void addCatChannels(const QString& category, const QStringList& channelsForLevel,
                       const QHash<QString, Channel *>& channelMap, ChannelMap& streamList);
@@ -100,10 +100,10 @@ private:
 
   void closeStreams(QSet<Channel *>& channels, const ChannelMap& channelMap);
 
-  void closeStreams(QSet<Channel *>& channels, const ChannelVector& channelVector);
+  void closeStreams(QSet<Channel *>& channels, const ChannelList& channelVector);
 
   /* Collects all log files names into set */
-  void collectFileNames(QSet<QString>& filenames, const ChannelVector& channelVector) const;
+  void collectFileNames(QSet<QString>& filenames, const ChannelList& channelVector) const;
   void collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap) const;
 
   /* Check if file size exceeds limit. Rolls files, creates a new one and replaces device in text stream */
@@ -127,7 +127,7 @@ private:
 
   // Streams for default logging category one for each message type
   // Channel objects can be shared between lists
-  ChannelVector debugStreams, infoStreams, warningStreams, criticalStreams, fatalStreams, emptyStreams;
+  ChannelList debugStreams, infoStreams, warningStreams, criticalStreams, fatalStreams, emptyStreams;
 
   // Streams for all other categories in a hash-list where the key is the category name.
   // One container for each message type

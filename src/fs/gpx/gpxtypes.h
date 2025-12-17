@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,8 +42,8 @@ struct TrailPoint
   qint64 timestampMs;
 };
 
-typedef QVector<atools::fs::gpx::TrailPoint> TrailPoints;
-typedef QVector<atools::fs::gpx::TrailPoints> Trails;
+typedef QList<atools::fs::gpx::TrailPoint> TrailPoints;
+typedef QList<atools::fs::gpx::TrailPoints> Trails;
 
 /* Flight plan geometry, waypoint names and trail geometry for a logbook entry */
 class GpxData

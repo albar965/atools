@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ void GribDownloader::startDownloadInternal()
 
   // Collect surface parameters ======================
   QString levelStr;
-  for(int surface : qAsConst(surfaces))
+  for(int surface : std::as_const(surfaces))
   {
     if(surface > 0)
       levelStr.append(QString("lev_%1_mb=on&").arg(surface));
@@ -102,7 +102,7 @@ void GribDownloader::startDownloadInternal()
 
   // Collect data parmeters ======================
   QString parameterStr;
-  for(const QString& parameter : qAsConst(parameters))
+  for(const QString& parameter : std::as_const(parameters))
     parameterStr.append(QString("var_%1=on&").arg(parameter));
 
   // URL ===============================

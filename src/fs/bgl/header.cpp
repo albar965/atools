@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,10 +26,8 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::hex;
 using Qt::dec;
-#endif
 
 using atools::io::BinaryStream;
 
@@ -82,7 +80,7 @@ Header::~Header()
 QString Header::getCreationTimestampString() const
 {
   QDateTime dt;
-  dt.setTime_t(static_cast<uint>(creationTimestamp));
+  dt.setSecsSinceEpoch(static_cast<uint>(creationTimestamp));
   return dt.toString(Qt::ISODate);
 }
 

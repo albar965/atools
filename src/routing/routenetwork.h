@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ public:
   }
 
   /* Get nodes vector. The index parameter can be used to access nodes fast.*/
-  const QVector<atools::routing::Node>& getNodes() const
+  const QList<atools::routing::Node>& getNodes() const
   {
     return nodeIndex;
   }
@@ -167,12 +167,12 @@ public:
   }
 
   /* Altitude levels as assigned to NAT tracks. trackId is database track.track_id. */
-  const QVector<quint16> getAltitudeLevelsEast(int trackId) const
+  const QList<quint16> getAltitudeLevelsEast(int trackId) const
   {
     return altLevelsEast.value(trackId);
   }
 
-  QVector<quint16> getAltitudeLevelsWest(int trackId) const
+  QList<quint16> getAltitudeLevelsWest(int trackId) const
   {
     return altLevelsWest.value(trackId);
   }
@@ -225,7 +225,7 @@ private:
   atools::geo::SpatialIndex<Node> nodeIndex;
 
   /* Map database track.track_id to altitude levels if existing */
-  QHash<int, QVector<quint16> > altLevelsEast, altLevelsWest;
+  QHash<int, QList<quint16> > altLevelsEast, altLevelsWest;
 
   atools::routing::DataSource source = atools::routing::SOURCE_NONE;
 };

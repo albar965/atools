@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -241,7 +241,7 @@ void DfdCompiler::writeRunways()
 
 void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& apt)
 {
-  QVector<std::pair<SqlRecord, SqlRecord> > runwaypairs;
+  QList<std::pair<SqlRecord, SqlRecord> > runwaypairs;
 
   // area_code
   // icao_code
@@ -268,7 +268,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
   Rect airportRect = airportRectMap.value(apt);
 
   // Iterate over all runways / end pairs
-  for(const std::pair<SqlRecord, SqlRecord>& runwaypair : qAsConst(runwaypairs))
+  for(const std::pair<SqlRecord, SqlRecord>& runwaypair : std::as_const(runwaypairs))
   {
     const SqlRecord& primaryRec = runwaypair.first;
     const SqlRecord& secondaryRec = runwaypair.second;
@@ -435,7 +435,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& 
   airportUpdateQuery->exec();
 }
 
-void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwaypairs, const SqlRecordList& runways)
+void DfdCompiler::pairRunways(QList<std::pair<SqlRecord, SqlRecord> >& runwaypairs, const SqlRecordList& runways)
 {
   // Go through the list of runways and find matching runway ends like 9R / 27L
   QSet<QString> found;
@@ -453,7 +453,7 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
     QString rname = rwident.mid(2);
 
     // Get pure number: 11
-    int rnum = rname.midRef(0, 2).toInt();
+    int rnum = rname.mid(0, 2).toInt();
 
     // Get designator: R
     // Calculate opposed name
@@ -1074,7 +1074,7 @@ int DfdCompiler::airspaceAlt(const QString& altStr)
   else
   {
     if(altStr.startsWith("FL"))
-      return altStr.midRef(2).toInt() * 100;
+      return altStr.mid(2).toInt() * 100;
     else
       return altStr.toInt();
   }
@@ -1155,7 +1155,7 @@ void DfdCompiler::finishAirspace()
         else if(!rollover)
         {
           // Create an arc =============================
-          bool clockwise = curSegment.via.isEmpty() ? true : curSegment.via.at(0) == "R";
+          bool clockwise = curSegment.via.isEmpty() ? true : curSegment.via.at(0) == QStringLiteral("R");
           LineString arc(curSegment.center, curSegment.pos, nextPos, clockwise, CIRCLE_SEGMENTS);
 
           if(!arc.isEmpty())

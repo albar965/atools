@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,11 @@
 
 #include <QFileDevice>
 #include <QDebug>
-#include <QTextCodec>
 #include <QXmlStreamReader>
+
+#ifdef QT_CORE5COMPAT_LIB
+#include <QtCore5Compat/QTextCodec>
+#endif
 
 namespace atools {
 namespace util {
@@ -30,29 +33,8 @@ namespace util {
 XmlStream::XmlStream(QIODevice *device, const QString& filenameParam)
   : filename(filenameParam)
 {
-  QTextCodec *codec = atools::codecForFile(*device);
-
-  if(codec != nullptr)
-  {
-    // Load the file into a text file to avoid BOM / xml encoding mismatches
-    QTextStream stream(device);
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    stream.setEncoding(QStringConverter::encodingForName(codec->name().constData()).value_or(QStringConverter::Utf8));
-#else
-    stream.setCodec(codec);
-#endif
-
-    QString str = stream.readAll();
-
-    // The reader ignores the XML encoding header when reading from a string
-    reader = new QXmlStreamReader(str);
-  }
-  else
-  {
-    // Let the stream reader detect the encoding in the PI
-    reader = new QXmlStreamReader(device);
-  }
+  // Let the stream reader detect the encoding in the PI
+  reader = new QXmlStreamReader(device);
 }
 
 XmlStream::XmlStream(const QByteArray& data, const QString& filenameParam)

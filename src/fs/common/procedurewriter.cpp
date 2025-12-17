@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -411,7 +411,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
       Procedure& appr = approaches.first();
 
       // Collect flags from legs
-      for(const SqlRecord& legRec : qAsConst(appr.legRecords))
+      for(const SqlRecord& legRec : std::as_const(appr.legRecords))
       {
         if(legRec.valueFloat(":vertical_angle", 0.f) < 0.1f)
           appr.record.setValue(":has_vertical_angle", 1);
@@ -456,7 +456,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
     else
     {
       int numCommon = 0;
-      for(const Procedure& appr : qAsConst(approaches))
+      for(const Procedure& appr : std::as_const(approaches))
       {
         if(appr.isCommonRoute)
           numCommon++;
@@ -501,7 +501,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
       }
 
       // Write all procedures - get a copy of the object since it is modified
-      for(Procedure appr : qAsConst(approaches))
+      for(Procedure appr : std::as_const(approaches))
       {
         assignApproachIds(appr);
         // qDebug() << appr.legRecords;
@@ -665,7 +665,7 @@ void ProcedureWriter::writeApproachLeg(const ProcedureInput& line)
 
   if(waypointDescr.size() > 3)
   {
-    if(waypointDescr.at(3) == "F" && curRowCode == rc::APPROACH)
+    if(waypointDescr.at(3) == QChar('F') && curRowCode == rc::APPROACH)
     {
       NavIdInfo fafInfo = navaidTypeFix(line);
       // FAF - use this one to set the approach name
@@ -674,7 +674,7 @@ void ProcedureWriter::writeApproachLeg(const ProcedureInput& line)
       approaches.last().record.setValue(":fix_region", fafInfo.region);
     }
 
-    if(waypointDescr.at(3) != " " && curRowCode == rc::APPROACH)
+    if(waypointDescr.at(3) != QChar(' ') && curRowCode == rc::APPROACH)
       rec.setValue(":approach_fix_type", waypointDescr.at(3));
   }
 
@@ -945,7 +945,7 @@ float ProcedureWriter::altitudeFromStr(const QString& altStr)
 {
   if(altStr.startsWith("FL"))
     // Simplify - turn flight levelt to feet
-    return altStr.midRef(2).toFloat() * 100.f;
+    return altStr.mid(2).toFloat() * 100.f;
   else
     return altStr.toFloat();
 }

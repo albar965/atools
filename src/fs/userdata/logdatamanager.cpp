@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,9 +37,7 @@ namespace atools {
 namespace fs {
 namespace userdata {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
-#endif
 
 using atools::geo::Pos;
 using atools::sql::SqlUtil;
@@ -179,9 +177,6 @@ int LogdataManager::importCsv(const QString& filepath)
     atools::util::CsvReader reader;
 
     QTextStream stream(&file);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    stream.setCodec("UTF-8");
-#endif
 
     int lineNum = 1;
     while(!stream.atEnd())
@@ -390,9 +385,6 @@ int LogdataManager::importXplane(const QString& filepath,
     QString filename = QFileInfo(filepath).fileName();
 
     QTextStream stream(&file);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    stream.setCodec("UTF-8");
-#endif
     int lineNum = 1;
     while(!stream.atEnd())
     {
@@ -511,7 +503,7 @@ int LogdataManager::importXplane(const QString& filepath,
 
 }
 
-int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, bool exportPlan, bool exportPerf, bool exportGpx,
+int LogdataManager::exportCsv(const QString& filepath, const QList<int>& ids, bool exportPlan, bool exportPerf, bool exportGpx,
                               bool header, bool append)
 {
   bool endsWithEol = atools::fileEndsWithEol(filepath);
@@ -534,9 +526,6 @@ int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, 
     QueryWrapper query(util.buildSelectStatement(tableName, columns), db, ids, idColumnName);
 
     QTextStream stream(&file);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    stream.setCodec("UTF-8");
-#endif
     stream.setRealNumberNotation(QTextStream::FixedNotation);
 
     if(!endsWithEol && append)
@@ -654,7 +643,7 @@ void LogdataManager::postCleanup()
 }
 
 QString LogdataManager::getCleanupPreview(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance,
-                                          const QVector<SqlColumn>& columns)
+                                          const QList<SqlColumn>& columns)
 {
   return "select " % SqlColumn::getColumnList(columns) % " from " % tableName % " where " %
          cleanupWhere(departureAndDestEqual, departureOrDestEmpty, minFlownDistance);
@@ -783,7 +772,7 @@ void LogdataManager::getFlightStatsAircraft(int& numTypes, int& numRegistrations
   }
 }
 
-void LogdataManager::getFlightStatsSimulator(QVector<std::pair<int, QString> >& numSimulators)
+void LogdataManager::getFlightStatsSimulator(QList<std::pair<int, QString> >& numSimulators)
 {
   SqlQuery query("select count(1), simulator from " % tableName % " group by simulator order by count(1) desc", db);
   query.exec();

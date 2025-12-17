@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include <QCoreApplication>
 #include <QHash>
-#include <QVector>
+#include <QList>
 
 namespace atools {
 namespace fs {
@@ -91,7 +91,7 @@ public:
   static bool exists(const QString& basePath, QStringList& errors, QString& filepath);
 
   /* Get list of entries from file after calling read */
-  const QVector<SceneryPack>& getEntries() const;
+  const QList<SceneryPack>& getEntries() const;
 
   /* Get an entry by absolute path. Returns null if it does not exist or path does not exist */
   const SceneryPack *getEntryByPath(const QString& filepath) const;
@@ -102,7 +102,7 @@ public:
   }
 
 private:
-  QVector<SceneryPack> entries;
+  QList<SceneryPack> entries;
 
   /* Absolute path to index in entry list */
   QHash<QString, int> index;

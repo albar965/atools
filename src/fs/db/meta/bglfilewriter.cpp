@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ void BglFileWriter::writeObject(const BglFile *type)
   bind(":bgl_file_id", getNextId());
   bind(":scenery_area_id", getDataWriter().getSceneryAreaWriter()->getCurrentId());
   bind(":bgl_create_time", static_cast<int>(type->getHeader().getCreationTimestamp()));
-  bind(":file_modification_time", static_cast<int>(fi.lastModified().toTime_t()));
+  bind(":file_modification_time", static_cast<int>(fi.lastModified().toSecsSinceEpoch()));
   bind(":filepath", atools::nativeCleanPath(currentFilepath));
   bind(":filename", atools::nativeCleanPath(currentFilename));
   bind(":size", type->getFilesize());

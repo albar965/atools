@@ -59,7 +59,7 @@ VERSION_NUMBER=4.1.0.develop
 
 QT += sql xml core network
 
-CONFIG += build_all c++17 staticlib
+CONFIG += build_all c++17 staticlib qt
 CONFIG -= gui debug_and_release debug_and_release_target
 
 TARGET = atools
@@ -92,10 +92,14 @@ ATOOLS_NO_GRIB=$$(ATOOLS_NO_GRIB)
 ATOOLS_NO_WMM=$$(ATOOLS_NO_WMM)
 ATOOLS_NO_NAVSERVER=$$(ATOOLS_NO_NAVSERVER)
 ATOOLS_NO_CRASHHANDLER=$$(ATOOLS_NO_CRASHHANDLER)
+ATOOLS_NO_QT5COMPAT=$$(ATOOLS_NO_QT5COMPAT)
 
 !isEqual(ATOOLS_NO_GUI, "true"): QT += svg widgets
 isEqual(ATOOLS_NO_GUI, "true"): QT -= gui
 !isEqual(ATOOLS_NO_GUI, "true"): CONFIG += svg widgets
+
+# https://doc.qt.io/qt-6.5/qtcore5-index.html - needed for QTextCodec
+!isEqual(ATOOLS_NO_QT5COMPAT, "true"): QT += core5compat
 
 # =======================================================================
 # Fill defaults for unset
@@ -149,6 +153,8 @@ else {
   DEFINES += DISABLE_CRASHHANDLER
 }
 
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x050F00
+
 isEmpty(GIT_PATH) {
   GIT_REVISION=UNKNOWN
   GIT_REVISION_FULL=UNKNOWN
@@ -199,6 +205,7 @@ message(ATOOLS_NO_GRIB: $$ATOOLS_NO_GRIB)
 message(ATOOLS_NO_WMM: $$ATOOLS_NO_WMM)
 message(ATOOLS_NO_NAVSERVER: $$ATOOLS_NO_NAVSERVER)
 message(ATOOLS_NO_CRASHHANDLER: $$ATOOLS_NO_CRASHHANDLER)
+message(ATOOLS_NO_QT5COMPAT: $$ATOOLS_NO_QT5COMPAT)
 message(SIMCONNECT_PATH_WIN32: $$SIMCONNECT_PATH_WIN32)
 message(ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2020: $$ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2020)
 message(ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024: $$ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024)

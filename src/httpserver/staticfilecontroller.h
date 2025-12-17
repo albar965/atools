@@ -60,6 +60,7 @@ public:
    *  @param parent Parent object
    */
   StaticFileController(const QHash<QString, QVariant>& settings, QObject *parent = nullptr);
+  virtual ~StaticFileController() override;
 
   /** Generates the response */
   void service(HttpRequest& request, HttpResponse& response);

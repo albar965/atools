@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ bool PolygonLineDistance::isLineInsideRect(const QLineF& line, const QRectF& rec
   return rect.contains(line.p1()) && rect.contains(line.p2());
 }
 
-PolygonLineDistances PolygonLineDistance::createPolyLines(const QVector<QLineF>& lines, const QRectF& screenRect, int size,
+PolygonLineDistances PolygonLineDistance::createPolyLines(const QList<QLineF>& lines, const QRectF& screenRect, int size,
                                                           bool checkIntersect)
 {
   // Collect relative angles for later calculation of standard deviation
@@ -154,7 +154,7 @@ PolygonLineDistances PolygonLineDistance::getLongPolygonLines(const QPolygonF& p
     return distLines;
 
   // Create list of lines
-  QVector<QLineF> lines;
+  QList<QLineF> lines;
   for(int i = 0; i < size; i++)
     lines.append(QLineF(polygon.at(atools::wrapIndex(i, size)), polygon.at(atools::wrapIndex(i + 1, size))));
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 #include <QDateTime>
 #include <QObject>
-#include <QVector>
+#include <QList>
 
 namespace atools {
 
@@ -48,7 +48,7 @@ class GribDownloader :
 
 public:
   explicit GribDownloader(QObject *parent, bool logVerbose);
-  ~GribDownloader() override;
+  virtual ~GribDownloader() override;
 
   GribDownloader(const GribDownloader& other) = delete;
   GribDownloader& operator=(const GribDownloader& other) = delete;
@@ -63,12 +63,12 @@ public:
 
   /* Positive values are mbar/hpa and negative values as altitude AGL. See web interface for valid values:
    *  https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl */
-  const QVector<int>& getSurfaces() const
+  const QList<int>& getSurfaces() const
   {
     return surfaces;
   }
 
-  void setSurfaces(const QVector<int>& value)
+  void setSurfaces(const QList<int>& value)
   {
     surfaces = value;
   }
@@ -92,7 +92,7 @@ public:
   }
 
   /* Get downloaded and decoded datasets after gribDownloadFinished signal. Valid until next download. */
-  const atools::grib::GribDatasetVector& getDatasets() const
+  const atools::grib::GribDatasetList& getDatasets() const
   {
     return datasets;
   }
@@ -108,7 +108,7 @@ public:
 
 signals:
   /* Sent if download finished successfully */
-  void gribDownloadFinished(const atools::grib::GribDatasetVector& datasets, QString downloadUrl);
+  void gribDownloadFinished(const atools::grib::GribDatasetList& datasets, QString downloadUrl);
 
   /* Sent if download failed for a reason */
   void gribDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
@@ -128,11 +128,11 @@ private:
   /* Redownload every UPDATE_PERIOD seconds */
   static const int UPDATE_PERIOD = 1800;
 
-  atools::grib::GribDatasetVector datasets;
+  atools::grib::GribDatasetList datasets;
 
   atools::util::HttpDownloader *downloader = nullptr;
 
-  QVector<int> surfaces;
+  QList<int> surfaces;
   QStringList parameters;
   QDateTime datetime;
 

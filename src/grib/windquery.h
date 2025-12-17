@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,15 @@
 #ifndef ATOOLS_GRIB_WINDQUERY_H
 #define ATOOLS_GRIB_WINDQUERY_H
 
+#include "geo/calculations.h"
 #include "grib/gribcommon.h"
 #include "grib/windtypes.h"
 #include "fs/weather/weathertypes.h"
 
 #include <QObject>
+#include <QMap>
 
 class QObject;
-
 namespace atools {
 namespace util {
 class FileSystemWatcher;
@@ -45,6 +46,7 @@ struct WindRect;
 struct GridRect;
 struct WindData;
 struct WindAltLayer;
+struct WindQueryPrivate;
 
 /*
  * Takes care for downloading/reading and decoding of GRIB2 wind files. Provides a query API to calculate and interpolate
@@ -118,10 +120,7 @@ public:
   Wind getWindAverageForLine(const atools::geo::Line& line) const;
   Wind getWindAverageForLineString(const atools::geo::LineString& linestring) const;
 
-  bool hasWindData() const
-  {
-    return !windLayers.isEmpty();
-  }
+  bool hasWindData() const;
 
   /* Samples per degree for wind interpolation along lines and line strings */
   void setSamplesPerDegree(int value)
@@ -173,9 +172,9 @@ private:
   WindData interpolateRect(const WindRect& windRect, const geo::Rect& rect, const geo::Pos& pos) const;
 
   /* Convert data from U/V components to speed/heading */
-  void convertDataset(const atools::grib::GribDatasetVector& datasets);
+  void convertDataset(const atools::grib::GribDatasetList& datasets);
 
-  void gribDownloadFinished(const atools::grib::GribDatasetVector& datasets, QString downloadUrl);
+  void gribDownloadFinished(const atools::grib::GribDatasetList& datasets, QString downloadUrl);
   void gribDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
 
   /* Called from FileSystemWatcher */
@@ -205,7 +204,7 @@ private:
    *  . surface 200, type 100, param type 2, alt round 38000, alt calc 38637.1
    *  . surface 150, type 100, param type 2, alt round 44000, alt calc 44326.9
    */
-  const QVector<int> SURFACES = {-80, 150, 200, 250, 300, 450, 700, 850, 925};
+  const QList<int> SURFACES = {-80, 150, 200, 250, 300, 450, 700, 850, 925};
 
   /* Parameters to download from NOAA - U/V wind component.
    *  Add "TMP" for temperature */
@@ -222,8 +221,9 @@ private:
 
   bool verbose = false;
 
-  /* Maps rounded altitude to wind layer data. Sorted by altitude. */
-  QMap<int, WindAltLayer> windLayers;
+  /* Hides wind map and internal structures */
+  WindQueryPrivate *p;
+
   QDateTime analyisTime;
 
   QString weatherPath; // Folder or file depending on simulator

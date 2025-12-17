@@ -20,7 +20,7 @@
 
 #include <QSqlRecord>
 #include <QVariant>
-#include <QVector>
+#include <QList>
 
 class QSqlRecord;
 

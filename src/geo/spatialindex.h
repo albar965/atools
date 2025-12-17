@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include "geo/point3d.h"
 
-#include <QVector>
+#include <QList>
 #include <functional>
 
 namespace atools {
@@ -50,8 +50,8 @@ class SpatialIndexPrivate
   ~SpatialIndexPrivate();
 
   int nearestPoint(const atools::geo::Pos& pos) const;
-  void nearestPoints(QVector<int>& indexes, const atools::geo::Pos& pos, int number) const;
-  void pointsInRadius(QVector<int>& indexes, const atools::geo::Pos& origin, float radiusMaxMeter,
+  void nearestPoints(QList<int>& indexes, const atools::geo::Pos& pos, int number) const;
+  void pointsInRadius(QList<int>& indexes, const atools::geo::Pos& origin, float radiusMaxMeter,
                       const RadiusCallbackType& callback) const;
   void set(const Point3D& point, int index);
   void buildIndex();
@@ -78,7 +78,7 @@ class SpatialIndexPrivate
  */
 template<typename T>
 class SpatialIndex :
-  public QVector<T>
+  public QList<T>
 {
 public:
   SpatialIndex()
@@ -106,9 +106,9 @@ public:
   }
 
   /* Get number nearest objects or indexes from the vector. */
-  void getNearest(QVector<T>& objects, const atools::geo::Pos& pos, int number) const;
+  void getNearest(QList<T>& objects, const atools::geo::Pos& pos, int number) const;
 
-  void getNearestIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, int number) const
+  void getNearestIndexes(QList<int>& indexes, const atools::geo::Pos& pos, int number) const
   {
     p->nearestPoints(indexes, pos, number);
   }
@@ -116,16 +116,16 @@ public:
   /* Get all nearest objects or indexes from the vector fulfilling criteria.
    *  radiusMeter: Maximum distance from position. Measured using squared distance and therefore not accurate.
    */
-  void getRadius(QVector<T>& objects, const atools::geo::Pos& pos, float radiusMeter, const RadiusCallbackType& callback) const;
+  void getRadius(QList<T>& objects, const atools::geo::Pos& pos, float radiusMeter, const RadiusCallbackType& callback) const;
 
-  void getRadiusIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, float radiusMaxMeter, const RadiusCallbackType& callback) const
+  void getRadiusIndexes(QList<int>& indexes, const atools::geo::Pos& pos, float radiusMaxMeter, const RadiusCallbackType& callback) const
   {
     p->pointsInRadius(indexes, pos, radiusMaxMeter, callback);
   }
 
-  void getRadius(QVector<T>& objects, const atools::geo::Pos& pos, float radiusMeter) const;
+  void getRadius(QList<T>& objects, const atools::geo::Pos& pos, float radiusMeter) const;
 
-  void getRadiusIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, float radiusMaxMeter) const
+  void getRadiusIndexes(QList<int>& indexes, const atools::geo::Pos& pos, float radiusMaxMeter) const
   {
     p->pointsInRadius(indexes, pos, radiusMaxMeter, RadiusCallbackType());
   }
@@ -134,7 +134,7 @@ public:
   void updateIndex();
 
   /* Get points converted to 3D euclidian space from base vector.
-   * Size is the same as in the underlying parent QVector. */
+   * Size is the same as in the underlying parent QList. */
   const Point3D *getPoints3D() const
   {
     return p->points3D();
@@ -148,15 +148,15 @@ public:
   /* Clears vector and updates index to clear it */
   void clearIndex()
   {
-    QVector<T>::clear();
+    QList<T>::clear();
     updateIndex();
   }
 
 private:
-  using QVector<T>::clear;
+  using QList<T>::clear;
 
   /* Copy objects from base vector to result set. */
-  void copyData(QVector<T>& objects, QVector<int>& indexes) const
+  void copyData(QList<T>& objects, QList<int>& indexes) const
   {
     for(int idx : indexes)
       objects.append(this->at(idx));
@@ -184,25 +184,25 @@ void SpatialIndex<T>::getNearest(T& obj, const Pos& pos) const
 }
 
 template<typename T>
-void SpatialIndex<T>::getNearest(QVector<T>& objects, const Pos& pos, int number) const
+void SpatialIndex<T>::getNearest(QList<T>& objects, const Pos& pos, int number) const
 {
-  QVector<int> indexes;
+  QList<int> indexes;
   p->nearestPoints(indexes, pos, number);
   copyData(objects, indexes);
 }
 
 template<typename T>
-void SpatialIndex<T>::getRadius(QVector<T>& objects, const Pos& pos, float radiusMaxMeter, const RadiusCallbackType& callback) const
+void SpatialIndex<T>::getRadius(QList<T>& objects, const Pos& pos, float radiusMaxMeter, const RadiusCallbackType& callback) const
 {
-  QVector<int> indexes;
+  QList<int> indexes;
   p->pointsInRadius(indexes, pos, radiusMaxMeter, callback);
   copyData(objects, indexes);
 }
 
 template<typename T>
-void SpatialIndex<T>::getRadius(QVector<T>& objects, const Pos& pos, float radiusMaxMeter) const
+void SpatialIndex<T>::getRadius(QList<T>& objects, const Pos& pos, float radiusMaxMeter) const
 {
-  QVector<int> indexes;
+  QList<int> indexes;
   p->pointsInRadius(indexes, pos, radiusMaxMeter, RadiusCallbackType());
   copyData(objects, indexes);
 }
@@ -210,10 +210,10 @@ void SpatialIndex<T>::getRadius(QVector<T>& objects, const Pos& pos, float radiu
 template<typename T>
 void SpatialIndex<T>::updateIndex()
 {
-  p->reserve(QVector<T>::size());
+  p->reserve(QList<T>::size());
 
-  for(int i = 0; i < QVector<T>::size(); i++)
-    p->set(QVector<T>::at(i).getPosition().toCartesian(), i);
+  for(int i = 0; i < QList<T>::size(); i++)
+    p->set(QList<T>::at(i).getPosition().toCartesian(), i);
 
   p->buildIndex();
 }

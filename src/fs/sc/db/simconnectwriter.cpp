@@ -167,19 +167,19 @@ bool SimConnectWriter::callProgressUpdate()
   return callProgress(QString(), false /* incProgress */);
 }
 
-QVector<RunwayTransition> SimConnectWriter::groupProcedures(const QVector<RunwayTransition>& runwayTransitions,
-                                                            const QHash<int, QVector<const Runway *> > runwaysByNumber,
-                                                            int airportNumRunwayEnds) const
+QList<RunwayTransition> SimConnectWriter::groupProcedures(const QList<RunwayTransition>& runwayTransitions,
+                                                          const QHash<int, QList<const Runway *> > runwaysByNumber,
+                                                          int airportNumRunwayEnds) const
 {
   // KSEA {{ISBRG1/NESOE/34C}, {ISBRG1/CUSBU/16L}, {ISBRG1/DODVE/16R}}
   // KSEA {{MONTN2/PEAKK/16C, MONTN2/PEAKK/16L, MONTN2/PEAKK/16R}, {MONTN2/NEZUG/34C, MONTN2/NEZUG/34L, MONTN2/NEZUG/34R}}
   // EDDL {{BIKM1A/DUS/05L, BIKM1A/DUS/05R}, {BIKM1A/DUS/23L, BIKM1A/DUS/23R}}
-  QVector<RunwayTransition> resultTransitions;
+  QList<RunwayTransition> resultTransitions;
 
   // Detect "ALL" =======================================================================
   // Make unique hash by leg information only as key ignoring runways completely
   // Value is related list of transition pointers
-  QHash<RunwayTransition, QVector<const RunwayTransition *> > transitionByName;
+  QHash<RunwayTransition, QList<const RunwayTransition *> > transitionByName;
   for(const RunwayTransition& runwayTransPtr : runwayTransitions)
   {
     // Reset runway and designator to exclude in hashing and compare
@@ -194,11 +194,11 @@ QVector<RunwayTransition> SimConnectWriter::groupProcedures(const QVector<Runway
   }
 
   // List of remaining transtitions after removing ALL
-  QVector<const RunwayTransition *> runwayTransitionsFiltered;
+  QList<const RunwayTransition *> runwayTransitionsFiltered;
   for(auto it = transitionByName.begin(); it != transitionByName.end(); ++it)
   {
     // EDDL BIKM1A/DUS -> {{BIKM1A/DUS/05L, BIKM1A/DUS/05R}, {BIKM1A/DUS/23L, BIKM1A/DUS/23R}}
-    QVector<const RunwayTransition *> transitionPtrs = transitionByName.value(it.key());
+    QList<const RunwayTransition *> transitionPtrs = transitionByName.value(it.key());
 
     // Number of referenced runways is equal to airport runways - set to "ALL"
     if(transitionPtrs.size() == airportNumRunwayEnds)
@@ -214,14 +214,14 @@ QVector<RunwayTransition> SimConnectWriter::groupProcedures(const QVector<Runway
       if(verbose)
       {
         qDebug() << Q_FUNC_INFO << "Convertingto ALL";
-        for(const RunwayTransition *runwayTransPtr : qAsConst(transitionPtrs))
+        for(const RunwayTransition *runwayTransPtr : std::as_const(transitionPtrs))
           qDebug() << Q_FUNC_INFO << *runwayTransPtr;
       }
     }
     else
     {
       // Add pointers to list for futher processing if runway list is not "ALL"
-      for(const RunwayTransition *runwayTransition : qAsConst(transitionPtrs))
+      for(const RunwayTransition *runwayTransition : std::as_const(transitionPtrs))
         runwayTransitionsFiltered.append(runwayTransition);
     }
   }
@@ -229,7 +229,7 @@ QVector<RunwayTransition> SimConnectWriter::groupProcedures(const QVector<Runway
   // Detect parallel runways =======================================================================
   // Make unique hash by leg information and runway number as key ignoring runways completely
   // Value is related list of transition pointers
-  QHash<RunwayTransition, QVector<const RunwayTransition *> > transitionByNameAndRwNum;
+  QHash<RunwayTransition, QList<const RunwayTransition *> > transitionByNameAndRwNum;
   for(const RunwayTransition *runwayTransPtr : runwayTransitionsFiltered)
   {
     // Reset designator to exclude in hashing and compare
@@ -244,7 +244,7 @@ QVector<RunwayTransition> SimConnectWriter::groupProcedures(const QVector<Runway
   for(auto it = transitionByNameAndRwNum.begin(); it != transitionByNameAndRwNum.end(); ++it)
   {
     // KSEA MONTN2/PEAKK/16 -> {MONTN2/PEAKK/16C, MONTN2/PEAKK/16L, MONTN2/PEAKK/16R}
-    QVector<const RunwayTransition *> transitionPtrs = transitionByNameAndRwNum.value(it.key());
+    QList<const RunwayTransition *> transitionPtrs = transitionByNameAndRwNum.value(it.key());
     if(transitionPtrs.size() == 1)
     {
       // References only a single runway - add copy to result
@@ -276,7 +276,7 @@ QVector<RunwayTransition> SimConnectWriter::groupProcedures(const QVector<Runway
       }
       else
       {
-        for(const RunwayTransition *transition : qAsConst(transitionPtrs))
+        for(const RunwayTransition *transition : std::as_const(transitionPtrs))
           resultTransitions.append(*transition);
       }
     }
@@ -289,7 +289,7 @@ void SimConnectWriter::groupProcedures(Airport& airport) const
 {
   // Runways grouped by number
   // runwayNumber, runways
-  QHash<int, QVector<const Runway *> > runwaysByNumber;
+  QHash<int, QList<const Runway *> > runwaysByNumber;
   for(const Runway& runway : airport.getRunways())
   {
     if(runwaysByNumber.contains(runway.getFacility().primaryNumber))
@@ -728,7 +728,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
 
       // Starts ===========================================================================================
       // Maps position and index for helipad to start relation
-      QVector<std::pair<Pos, int> > startIndex;
+      QList<std::pair<Pos, int> > startIndex;
       for(const StartFacility& start : airport.getStartFacilities())
       {
         Pos startPos(start.longitude, start.latitude, start.altitude);
@@ -906,7 +906,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
 
       // STAR / Arrivals ===========================================================================================
       // Legs are saved in flying order from transition entry to STAR exit
-      for(const Arrival& arrival : qAsConst(airport.getArrivals()))
+      for(const Arrival& arrival : std::as_const(airport.getArrivals()))
       {
         // Currently duplicate the full procedure for each runway transition instead of aggregating into
         // multi-runway definitions like "23B" or "ALL"
@@ -973,7 +973,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
 
       // SID / Departures ===========================================================================================
       // Legs are saved in flying order from STAR entry/runway to transition exit
-      for(const Departure& departure : qAsConst(airport.getDepartures()))
+      for(const Departure& departure : std::as_const(airport.getDepartures()))
       {
         for(const RunwayTransition& runwayTransition : departure.getRunwayTransitions())
         {

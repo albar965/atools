@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -249,8 +249,8 @@ private:
 
   /* Temporary storage before writing to database keeps one approach/SID/STAR and respective transitions
    *  before writing  */
-  QVector<Procedure> approaches;
-  QVector<Procedure> transitions;
+  QList<Procedure> approaches;
+  QList<Procedure> transitions;
 
   rc::RowCode curRowCode;
   int curSeqNo = std::numeric_limits<int>::max();

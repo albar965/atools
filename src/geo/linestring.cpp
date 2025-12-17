@@ -56,7 +56,7 @@ LineString::LineString(const Pos& origin, const Pos& start, const Pos& end, bool
   if(atools::almostNotEqual(startAngle, endAngle))
   {
     float step = 360.f / static_cast<float>(numSegments);
-    QVector<float> angles;
+    QList<float> angles;
     if(clockwise)
     {
       // Clockwise - turn right
@@ -344,9 +344,9 @@ const LineString LineString::splitAtAntiMeridian(bool *crossed) const
   return linestring;
 }
 
-const QVector<LineString> LineString::splitAtAntiMeridianList() const
+const QList<LineString> LineString::splitAtAntiMeridianList() const
 {
-  QVector<LineString> splits;
+  QList<LineString> splits;
   int correctedSize = size();
   if(isClosed())
     correctedSize--;

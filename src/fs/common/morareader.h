@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include <limits>
 
 #include <QString>
-#include <QVector>
+#include <QList>
 
 namespace atools {
 namespace geo {
@@ -59,7 +59,7 @@ public:
   bool readFromTable(sql::SqlDatabase *sqlDbNav, sql::SqlDatabase *sqlDbSim);
 
   /* Writes values to table "mora_grid". Object has to be valid. Copies data to this instance. */
-  void writeToTable(const QVector<quint16>& datagrid, int columns, int rows, int fileId);
+  void writeToTable(const QList<quint16>& datagrid, int columns, int rows, int fileId);
 
   /* True if table is present in schema and has one row */
   bool isDataAvailable();
@@ -75,7 +75,7 @@ public:
 
   /* Fill table and commit */
   void fillDbFromQuery(atools::sql::SqlQuery *moraQuery, int fileId);
-  void fillDbFromFile(const QVector<QStringList>& lines, int fileId);
+  void fillDbFromFile(const QList<QStringList>& lines, int fileId);
 
   /* Returns minimum off route altitude at position in feet * 100, UNKNOWN, ERROR or OCEAN.
    * Throws exception if object is not valid.
@@ -88,7 +88,7 @@ public:
   int getMoraFt(int lonx, int laty) const;
 
   /* Print world map to log */
-  void debugPrint(const QVector<quint16>& grid);
+  void debugPrint(const QList<quint16>& grid);
 
   /* Close all queryies and clears data */
   void preDatabaseLoad();
@@ -116,7 +116,7 @@ private:
 
   atools::sql::SqlDatabase *db;
   bool dataAvailable = false, navdata = false;
-  QVector<quint16> datagrid;
+  QList<quint16> datagrid;
   int lonxColums = 0, latyRows = 0;
 
   const static quint32 MAGIC_NUMBER_DATA = 0xA5B44CDB;

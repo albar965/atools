@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ struct Channel
   QFile *file = nullptr; /* Null if this channel is stdout or stderr */
 };
 
-typedef  QVector<Channel *> ChannelVector;
-typedef  QHash<QString, ChannelVector> ChannelMap;
+typedef  QList<Channel *> ChannelList;
+typedef  QHash<QString, ChannelList> ChannelMap;
 
 } // namespace internal
 } // namespace logging

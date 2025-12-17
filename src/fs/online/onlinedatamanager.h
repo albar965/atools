@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ public:
   atools::sql::SqlRecordList getClientRecordsByCallsign(const QString& callsign);
 
   /* Fill the map with callsign as key and position as value. Used for online/simulator deduplication. */
-  QVector<atools::fs::online::OnlineAircraft> getClientCallsignAndPosMap();
+  QList<atools::fs::online::OnlineAircraft> getClientCallsignAndPosMap();
 
   /* Number of client aircraft in client table */
   int getNumClients() const;

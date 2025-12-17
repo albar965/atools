@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ namespace atools {
 
 namespace gui {
 
-QVector<QTranslator *> Translator::translators;
+QList<QTranslator *> Translator::translators;
 bool Translator::loaded = false;
 
 void Translator::load(const QString& language)
@@ -97,7 +97,7 @@ void Translator::unload()
 {
   if(loaded)
   {
-    for(QTranslator *trans : translators)
+    for(QTranslator *trans : std::as_const(translators))
       QCoreApplication::removeTranslator(trans);
 
     qDeleteAll(translators);
@@ -108,10 +108,10 @@ void Translator::unload()
     qWarning() << "Translator::unload called more than once";
 }
 
-QVector<QLocale> Translator::findTranslationFiles()
+QList<QLocale> Translator::findTranslationFiles()
 {
   // Get files from current application path (macOS)
-  QVector<QLocale> retval = findTranslationFilesInternal(QString());
+  QList<QLocale> retval = findTranslationFilesInternal(QString());
 
   // Get files from translations folder (Linux and Windows)
   retval.append(findTranslationFilesInternal("translations"));
@@ -142,7 +142,7 @@ QVector<QLocale> Translator::findTranslationFiles()
   return retval;
 }
 
-QVector<QLocale> Translator::findTranslationFilesInternal(const QString& path)
+QList<QLocale> Translator::findTranslationFilesInternal(const QString& path)
 {
   static const QString APP_NAME = QFileInfo(QCoreApplication::applicationFilePath()).baseName();
   static const QString FILTER = QString("%1_*.qm").arg(APP_NAME);
@@ -154,7 +154,7 @@ QVector<QLocale> Translator::findTranslationFilesInternal(const QString& path)
   dir.setFilter(QDir::Files | QDir::Hidden);
   dir.setNameFilters({FILTER});
 
-  QVector<QLocale> retval;
+  QList<QLocale> retval;
   for(const QFileInfo& fi : dir.entryInfoList())
   {
     atools::checkFile(Q_FUNC_INFO, fi, true /* warn */);

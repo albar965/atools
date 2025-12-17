@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,11 +32,9 @@ namespace atools {
 namespace fs {
 namespace sc {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::hex;
 using Qt::dec;
 using Qt::endl;
-#endif
 
 void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& dataPacket)
 {
@@ -72,9 +70,6 @@ void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& d
     if(file.open(QIODevice::WriteOnly))
     {
       QTextStream stream(&file);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-      stream.setCodec("UTF-8");
-#endif
 
       // GENERAL header =====================================================================
       stream << "!GENERAL:" << endl;
@@ -83,12 +78,12 @@ void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& d
       stream << "UPDATE = " << QDateTime::currentDateTimeUtc().toString("yyyyMMddhhmmss") << endl; // 2018 0322 170014
       stream << "ATIS ALLOW MIN = 5" << endl;
 
-      const QVector<atools::fs::sc::SimConnectAircraft>& aircraft = dataPacket.getAiAircraftConst();
+      const QList<atools::fs::sc::SimConnectAircraft>& aircraft = dataPacket.getAiAircraftConst();
       atools::fs::sc::SimConnectUserAircraft user = dataPacket.getUserAircraftConst();
       user.setFlag(atools::fs::sc::IS_USER);
 
       // All aircraft including user
-      QVector<atools::fs::sc::SimConnectAircraft> aircraftFiltered;
+      QList<atools::fs::sc::SimConnectAircraft> aircraftFiltered;
 
 #ifdef DEBUG_CREATE_WHAZZUP_TEST
       // Change all aircraft registrations
@@ -347,7 +342,7 @@ void DataReaderThread::run()
           loadReplayFile->seek(REPLAY_FILE_DATA_START_OFFSET);
 
         // Remove boat and ship traffic depending on settings for testing purposes
-        QVector<SimConnectAircraft>& aiAircraft = data.getAiAircraft();
+        QList<SimConnectAircraft>& aiAircraft = data.getAiAircraft();
         if(!(opts & atools::fs::sc::FETCH_AI_AIRCRAFT))
           aiAircraft.erase(std::remove_if(aiAircraft.begin(), aiAircraft.end(), [] (const SimConnectAircraft& aircraft)->bool {
                   return !aircraft.isUser() && !aircraft.isAnyBoat();

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -286,12 +286,12 @@ void Application::buildCrashReport(const QString& crashReportFile, const QString
   for(const QString& str : filenames)
   {
     QFile file(str);
-    if(atools::checkFile(Q_FUNC_INFO, file))
+    if(atools::checkFile(Q_FUNC_INFO, file.fileName()))
     {
       // Get plain name from file - QFile returns full path
       zipWriter.addFile(QFileInfo(file.fileName()).fileName(), &file);
       if(zipWriter.status() != zip::ZipWriter::NoError)
-        qWarning() << Q_FUNC_INFO << "Error adding" << file << "to" << crashReportFile << "status" << zipWriter.status();
+        qWarning() << Q_FUNC_INFO << "Error adding" << file.fileName() << "to" << crashReportFile << "status" << zipWriter.status();
     }
   }
 
@@ -353,11 +353,7 @@ QString Application::generalErrorMessage()
 
 void Application::setTooltipsDisabled(const QList<QObject *>& exceptions)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
   tooltipExceptions = QSet<QObject *>(exceptions.begin(), exceptions.end());
-#else
-  tooltipExceptions = exceptions.toSet();
-#endif
   tooltipsDisabled = true;
 }
 
@@ -425,7 +421,7 @@ QString Application::getEmailHtml()
   QString mailStr(tr("<b>Contact:</b><br/>"));
 
   QStringList emails;
-  for(const QString& mail : qAsConst(emailAddresses))
+  for(const QString& mail : std::as_const(emailAddresses))
     emails.append(QString("<a href=\"mailto:%1\">%1</a>").arg(mail));
   mailStr.append(emails.join(" or "));
   return mailStr;
@@ -445,7 +441,7 @@ QString Application::getReportPathHtml()
   std::sort(names.begin(), names.end());
 
   QString fileStr;
-  for(const QString& header : qAsConst(names))
+  for(const QString& header : std::as_const(names))
   {
     fileStr.append(tr("<b>%1</b><br/>").arg(header));
     const QStringList paths = reportFiles.value(header);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ void SqlScript::executeScript(QTextStream& script)
   parseSqlScript(script, statements);
 
   SqlQuery query(db);
-  for(const ScriptCmd& cmd : qAsConst(statements))
+  for(const ScriptCmd& cmd : std::as_const(statements))
   {
     if(verbose)
       qDebug().nospace() << cmd.lineNumber << ": " << QString(cmd.sql).replace('\n', ' ');
@@ -140,7 +140,7 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
       // so substitute the line end with a space
       currentStatement += " ";
 
-    for(QChar currentChar : qAsConst(line))
+    for(QChar currentChar : std::as_const(line))
     {
       if(currentChar == '-')
       {

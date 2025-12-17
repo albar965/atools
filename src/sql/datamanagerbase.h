@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "sql/sqlquery.h"
 
 #include <QCoreApplication>
-#include <QVector>
+#include <QList>
 
 class QAction;
 
@@ -143,7 +143,7 @@ public:
   /* Get records with content for ids */
   bool hasRecord(int id) const;
   atools::sql::SqlRecord getRecord(int id) const;
-  void getRecords(QVector<atools::sql::SqlRecord>& records, const QSet<int>& ids) const;
+  void getRecords(QList<atools::sql::SqlRecord>& records, const QSet<int>& ids) const;
 
   /* Get values with content for ids and one column */
   QVariant getValue(int id, const QString& colName) const;
@@ -267,7 +267,7 @@ protected:
   struct QueryWrapper
   {
     /* Returns records in order of id vector */
-    QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase *sqlDb, const QVector<int>& idVector, const QString& idColName)
+    QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase *sqlDb, const QList<int>& idVector, const QString& idColName)
       : query(sqlDb), ids(idVector), hasIds(!ids.isEmpty())
     {
       query.prepare(queryStr + (hasIds ? " where " + idColName + " = :id" : QString()));
@@ -302,7 +302,7 @@ protected:
     atools::sql::SqlQuery query;
 
 private:
-    QVector<int> ids;
+    QList<int> ids;
     bool hasIds = false;
   };
 

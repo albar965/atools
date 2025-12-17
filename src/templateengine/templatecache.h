@@ -59,6 +59,7 @@ public:
    *  @param parent Parent object
    */
   TemplateCache(const QHash<QString, QVariant>& settings, QObject *parent = nullptr);
+  virtual ~TemplateCache() override;
 
 protected:
   /**

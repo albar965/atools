@@ -22,8 +22,7 @@
 #include <QDebug>
 #include <QLocale>
 #include <QRegularExpression>
-#include <QVector>
-#include <QTextCodec>
+#include <QList>
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QStandardPaths>
@@ -72,23 +71,6 @@ QString gitRevision()
   return GIT_REVISION_ATOOLS;
 }
 
-QTextCodec *codecForFile(QIODevice& file, QTextCodec *defaultCodec)
-{
-  QTextCodec *codec = nullptr;
-  file.seek(0);
-
-  // Load a part of the file and detect the BOM/codec
-  const qint64 PROBE_SIZE = 128;
-  char *buffer = new char[PROBE_SIZE];
-  qint64 bytesRead = file.read(buffer, PROBE_SIZE);
-  if(bytesRead > 0)
-    codec = QTextCodec::codecForUtfText(QByteArray(buffer, static_cast<int>(bytesRead)), defaultCodec);
-  delete[] buffer;
-
-  file.seek(0);
-  return codec;
-}
-
 QStringList probeFile(const QString& file, int numLinesRead)
 {
   QFile testFile(file);
@@ -97,9 +79,6 @@ QStringList probeFile(const QString& file, int numLinesRead)
   if(testFile.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&testFile);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    stream.setCodec("UTF-8");
-#endif
     stream.setAutoDetectUnicode(true);
 
     int numLines = 0, numLinesTotal = 0;
@@ -310,7 +289,7 @@ QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& 
                   const QString& lineSeparator)
 {
   // Convert long list of items to blocks
-  QVector<QStringList> blocks;
+  QList<QStringList> blocks;
   blocks.append(QStringList());
 
   for(const QString& str : texts)
@@ -438,7 +417,7 @@ QString elidedText(const QFontMetricsF& metrics, QString text, Qt::TextElideMode
 bool inFont(const QFontMetrics& metrics, const QString& str)
 {
   // Need to use ucs4 since QChar is only ushort
-  const QVector<uint> ucs4Str = str.toUcs4();
+  const QList<uint> ucs4Str = str.toUcs4();
   for(uint ucs4 : ucs4Str)
   {
     if(!metrics.inFontUcs4(ucs4))
@@ -624,7 +603,7 @@ QString tempDir()
   return QStandardPaths::standardLocations(QStandardPaths::TempLocation).value(0);
 }
 
-QStringList floatVectorToStrList(const QVector<float>& vector)
+QStringList floatVectorToStrList(const QList<float>& vector)
 {
   QStringList retval;
   for(float value : vector)
@@ -632,11 +611,11 @@ QStringList floatVectorToStrList(const QVector<float>& vector)
   return retval;
 }
 
-QVector<float> strListToFloatVector(const QStringList& strings, bool *ok)
+QList<float> strListToFloatVector(const QStringList& strings, bool *ok)
 {
   if(ok != nullptr)
     *ok = true;
-  QVector<float> retval;
+  QList<float> retval;
   for(const QString& str : strings)
   {
     bool localOk;
@@ -825,7 +804,7 @@ QString buildPathNoCase(const QStringList& paths)
         bool found = false;
         entries = dir.entryList();
 
-        for(const QString& str : qAsConst(entries))
+        for(const QString& str : std::as_const(entries))
         {
           if(str.compare(path, Qt::CaseInsensitive) == 0)
           {

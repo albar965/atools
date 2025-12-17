@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,7 @@ using atools::sql::SqlRecord;
 using atools::sql::SqlTransaction;
 using atools::sql::SqlColumn;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
-#endif
 
 /* Default visibility. Waypoint is shown on the map at a view distance below this value  */
 const static double VISIBLE_FROM_DEFAULT_NM = 250.;
@@ -163,7 +161,7 @@ int UserdataManager::cleanupUserdata(const QStringList& duplicateColumns, bool d
 }
 
 QString UserdataManager::getCleanupPreview(const QStringList& duplicateColumns, bool duplicateCoordinates, bool empty,
-                                           const QVector<sql::SqlColumn>& columns)
+                                           const QList<sql::SqlColumn>& columns)
 {
   return "select " % SqlColumn::getColumnList(columns) % " from " % tableName % " where " % idColumnName %
          " in (" % cleanupWhere(duplicateColumns, duplicateCoordinates, empty) % ")";
@@ -233,7 +231,6 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
       atools::util::CsvReader reader(separator, escape, true /* trim */);
 
       QTextStream stream(&file);
-      stream.setCodec("UTF-8");
 
       int lineNum = 1;
       while(!stream.atEnd())
@@ -292,9 +289,9 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
         QString altStr = at(values, csv::ALT).trimmed();
         float alt = 0.f;
         if(altStr.endsWith("f"))
-          alt = altStr.leftRef(altStr.size() - 1).toFloat();
+          alt = altStr.left(altStr.size() - 1).toFloat();
         else if(altStr.endsWith("m"))
-          alt = atools::geo::meterToFeet(altStr.leftRef(altStr.size() - 1).toFloat());
+          alt = atools::geo::meterToFeet(altStr.left(altStr.size() - 1).toFloat());
         else
           alt = altStr.toFloat();
 
@@ -346,7 +343,6 @@ int UserdataManager::importXplane(const QString& filepath)
     QDateTime now = QDateTime::currentDateTime();
 
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
 
     QString line = stream.readLine().simplified();
     if(line != "I" && line != "A")
@@ -449,7 +445,6 @@ int UserdataManager::importGarmin(const QString& filepath)
     QDateTime now = QDateTime::currentDateTime();
 
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
 
     int lineNum = 1;
     while(!stream.atEnd())
@@ -488,7 +483,7 @@ int UserdataManager::importGarmin(const QString& filepath)
   return numImported;
 }
 
-int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags, QChar separator,
+int UserdataManager::exportCsv(const QString& filepath, const QList<int>& ids, atools::fs::userdata::Flags flags, QChar separator,
                                QChar escape) const
 {
   // VRP,  1NM NORTH SALERNO TOWN, 1NSAL, 40.6964,            14.785,         0,0, IT, FROM SOR VOR: 069° 22NM
@@ -499,7 +494,6 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
   if(file.open((flags & APPEND ? QIODevice::Append : QIODevice::WriteOnly) | QIODevice::Text))
   {
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
 
     SqlExport sqlExport;
     sqlExport.setSeparatorChar(separator);
@@ -560,7 +554,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
   return numExported;
 }
 
-int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags, bool xp12)
+int UserdataManager::exportXplane(const QString& filepath, const QList<int>& ids, atools::fs::userdata::Flags flags, bool xp12)
 {
   if(flags & APPEND)
   {
@@ -574,10 +568,8 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
       if(inFile.open(QIODevice::ReadOnly | QIODevice::Text))
       {
         QTextStream tempOutStream(&tempOutFile);
-        tempOutStream.setCodec("UTF-8");
 
         QTextStream inStream(&inFile);
-        inStream.setCodec("UTF-8");
 
         // Copy contents exept the trailing 99 new file always has a trailing EOL
         while(!inStream.atEnd())
@@ -609,7 +601,6 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
   if(file.open((flags & APPEND ? QIODevice::Append : QIODevice::WriteOnly) | QIODevice::Text))
   {
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
 
     // I
     // 1100 Version - data cycle 1804, build 20180421, metadata FixXP1100. Created by Little Navmap Version 1.9.1.develop (revision 47ef66a) on 2018 04 21T13:25:52
@@ -686,7 +677,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
   return numExported;
 }
 
-int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags)
+int UserdataManager::exportGarmin(const QString& filepath, const QList<int>& ids, atools::fs::userdata::Flags flags)
 {
   static const QRegularExpression ADJUST_NAME_REGEXP("[^A-Z0-9 /]");
 
@@ -698,7 +689,6 @@ int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& i
   if(file.open((flags & APPEND ? QIODevice::Append : QIODevice::WriteOnly) | QIODevice::Text))
   {
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
 
     if(!endsWithEol && (flags & APPEND))
       stream << endl;
@@ -730,7 +720,7 @@ int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& i
   return numExported;
 }
 
-int UserdataManager::exportBgl(const QString& filepath, const QVector<int>& ids)
+int UserdataManager::exportBgl(const QString& filepath, const QList<int>& ids)
 {
   // <?xml version="1.0"?>
   // <FSData version="9.0" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation="bglcomp.xsd" >
@@ -744,7 +734,6 @@ int UserdataManager::exportBgl(const QString& filepath, const QVector<int>& ids)
   if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QXmlStreamWriter writer(&xmlFile);
-    writer.setCodec("UTF-8");
     writer.setAutoFormatting(true);
     writer.setAutoFormattingIndent(4);
     writer.writeStartDocument("1.0");

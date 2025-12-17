@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,11 +38,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::hex;
 using Qt::dec;
 using Qt::endl;
-#endif
 
 struct ParkingKey
 {
@@ -60,7 +58,7 @@ bool operator!=(const ParkingKey& k1, const ParkingKey& k2)
   return !operator==(k1, k2);
 }
 
-inline uint qHash(const ParkingKey& pair)
+inline size_t qHash(const ParkingKey& pair)
 {
   return static_cast<unsigned int>(pair.number) ^ static_cast<unsigned int>(pair.name);
 }
@@ -447,7 +445,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
     qWarning() << Q_FUNC_INFO << "Found more than one delete record in" << getObjectName();
 
   // Print warnings for any invalid procedure legs =========================
-  for(const Approach& app : qAsConst(approaches))
+  for(const Approach& app : std::as_const(approaches))
   {
     for(const ApproachLeg& leg: app.getLegs())
     {
@@ -472,7 +470,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
     }
   }
 
-  for(const SidStar& sidStar : qAsConst(sidsAndStars))
+  for(const SidStar& sidStar : std::as_const(sidsAndStars))
   {
     for(const ApproachLeg& leg: sidStar.getCommonRouteLegs())
     {
@@ -589,7 +587,7 @@ void Airport::updateSummaryFields()
     points.append(towerPosition.getPos());
   }
 
-  for(const Runway& rw : qAsConst(runways))
+  for(const Runway& rw : std::as_const(runways))
   {
     // Count runway types
     if(rw.getEdgeLight() != rw::NO_LIGHT)
@@ -640,7 +638,7 @@ void Airport::updateSummaryFields()
     airportClosed = !runways.isEmpty() && numRunwayFullClosed == runways.size();
 
     // ... except if there are open helipads
-    for(const Helipad& pad : qAsConst(helipads))
+    for(const Helipad& pad : std::as_const(helipads))
     {
       if(!pad.isClosed())
       {
@@ -650,7 +648,7 @@ void Airport::updateSummaryFields()
     }
   }
 
-  for(const Parking& parking : qAsConst(parkings))
+  for(const Parking& parking : std::as_const(parkings))
   {
     reportFarCoordinate(parking.getPosition().getPos(), "parking");
     points.append(parking.getPosition().getPos());
@@ -688,7 +686,7 @@ void Airport::updateSummaryFields()
       numParkingMilitaryCombat++;
   }
 
-  for(const Apron& a : qAsConst(aprons))
+  for(const Apron& a : std::as_const(aprons))
   {
     // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
@@ -698,7 +696,7 @@ void Airport::updateSummaryFields()
     }
   }
 
-  for(const Apron2& a : qAsConst(aprons2))
+  for(const Apron2& a : std::as_const(aprons2))
   {
     // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
@@ -708,19 +706,19 @@ void Airport::updateSummaryFields()
     }
   }
 
-  for(const Start& s : qAsConst(starts))
+  for(const Start& s : std::as_const(starts))
   {
     reportFarCoordinate(s.getPosition().getPos(), "start");
     points.append(s.getPosition().getPos());
   }
 
-  for(const Helipad& h : qAsConst(helipads))
+  for(const Helipad& h : std::as_const(helipads))
   {
     reportFarCoordinate(h.getPosition().getPos(), "helipad");
     points.append(h.getPosition().getPos());
   }
 
-  for(const TaxiPath& p : qAsConst(taxipaths))
+  for(const TaxiPath& p : std::as_const(taxipaths))
   {
     reportFarCoordinate(p.getStartPoint().getPosition().getPos(), "taxipath start");
     points.append(p.getStartPoint().getPosition().getPos());
@@ -761,7 +759,7 @@ void Airport::updateHelipads()
   for(Helipad& helipad : helipads)
   {
     int startIdx = 1;
-    for(const Start& start : qAsConst(starts))
+    for(const Start& start : std::as_const(starts))
     {
       if(start.getPosition().getPos().almostEqual(helipad.getPosition().getPos(), atools::geo::Pos::POS_EPSILON_5M))
         helipad.setStartIndex(startIdx);

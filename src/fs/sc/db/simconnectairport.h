@@ -19,7 +19,7 @@
 #define ATOOLS_SIMCONNECTAIRPORTFACILITIES_H
 
 #include <QVarLengthArray>
-#include <QVector>
+#include <QList>
 
 class QVariant;
 namespace atools {
@@ -418,7 +418,7 @@ struct LegFacility
 
 };
 
-uint qHash(const LegFacility& leg);
+size_t qHash(const LegFacility& leg);
 
 /* STAR. Child member of the AIRPORT entry point, and is itself and
  * entry point for RUNWAY_TRANSITION, ENROUTE_TRANSITION, and APPROACH_LEG.
@@ -624,7 +624,7 @@ public:
     return transition;
   }
 
-  const QVector<LegFacility>& getApproachTransitionLegFacilities() const
+  const QList<LegFacility>& getApproachTransitionLegFacilities() const
   {
     return transitionLegs;
   }
@@ -633,7 +633,7 @@ private:
   friend class SimConnectLoaderPrivate;
 
   ApproachTransitionFacility transition;
-  QVector<LegFacility> transitionLegs;
+  QList<LegFacility> transitionLegs;
 };
 
 // =============================================
@@ -654,17 +654,17 @@ public:
     return approach;
   }
 
-  const QVector<ApproachTransition>& getApproachTransitions() const
+  const QList<ApproachTransition>& getApproachTransitions() const
   {
     return approachTransitions;
   }
 
-  const QVector<LegFacility>& getFinalApproachLegFacilities() const
+  const QList<LegFacility>& getFinalApproachLegFacilities() const
   {
     return finalApproachLegs;
   }
 
-  const QVector<LegFacility>& getMissedApproachLegFacilities() const
+  const QList<LegFacility>& getMissedApproachLegFacilities() const
   {
     return missedApproachLegs;
   }
@@ -673,9 +673,9 @@ private:
   friend class SimConnectLoaderPrivate;
 
   ApproachFacility approach;
-  QVector<ApproachTransition> approachTransitions;
-  QVector<LegFacility> finalApproachLegs;
-  QVector<LegFacility> missedApproachLegs;
+  QList<ApproachTransition> approachTransitions;
+  QList<LegFacility> finalApproachLegs;
+  QList<LegFacility> missedApproachLegs;
 };
 
 // =============================================
@@ -701,7 +701,7 @@ public:
     return transition;
   }
 
-  const QVector<LegFacility>& getLegFacilities() const
+  const QList<LegFacility>& getLegFacilities() const
   {
     return legs;
   }
@@ -729,11 +729,11 @@ private:
 
   QString runwayGroup;
   RunwayTransitionFacility transition;
-  QVector<LegFacility> legs;
+  QList<LegFacility> legs;
 };
 
 /* Ignores runway legs. Otherwise hashes legs too. */
-uint qHash(const RunwayTransition& trans);
+size_t qHash(const RunwayTransition& trans);
 
 // =============================================
 class EnrouteTransition
@@ -753,7 +753,7 @@ public:
     return transition;
   }
 
-  const QVector<LegFacility>& getLegFacilities() const
+  const QList<LegFacility>& getLegFacilities() const
   {
     return legs;
   }
@@ -762,7 +762,7 @@ private:
   friend class SimConnectLoaderPrivate;
 
   EnrouteTransitionFacility transition;
-  QVector<LegFacility> legs;
+  QList<LegFacility> legs;
 };
 
 // STAR =============================================
@@ -783,22 +783,22 @@ public:
     return arrival;
   }
 
-  const QVector<LegFacility>& getApproachLegFacilities() const
+  const QList<LegFacility>& getApproachLegFacilities() const
   {
     return approachLegs;
   }
 
-  const QVector<RunwayTransition>& getRunwayTransitions() const
+  const QList<RunwayTransition>& getRunwayTransitions() const
   {
     return runwayTransitions;
   }
 
-  const QVector<EnrouteTransition>& getEnrouteTransitions() const
+  const QList<EnrouteTransition>& getEnrouteTransitions() const
   {
     return enrouteTransitions;
   }
 
-  void setRunwayTransitions(const QVector<RunwayTransition>& value)
+  void setRunwayTransitions(const QList<RunwayTransition>& value)
   {
     runwayTransitions = value;
   }
@@ -807,9 +807,9 @@ private:
   friend class SimConnectLoaderPrivate;
 
   ArrivalFacility arrival;
-  QVector<LegFacility> approachLegs;
-  QVector<RunwayTransition> runwayTransitions;
-  QVector<EnrouteTransition> enrouteTransitions;
+  QList<LegFacility> approachLegs;
+  QList<RunwayTransition> runwayTransitions;
+  QList<EnrouteTransition> enrouteTransitions;
 };
 
 // SID =============================================
@@ -830,22 +830,22 @@ public:
     return departure;
   }
 
-  const QVector<LegFacility>& getApproachLegFacilities() const
+  const QList<LegFacility>& getApproachLegFacilities() const
   {
     return approachLegs;
   }
 
-  const QVector<RunwayTransition>& getRunwayTransitions() const
+  const QList<RunwayTransition>& getRunwayTransitions() const
   {
     return runwayTransitions;
   }
 
-  const QVector<EnrouteTransition>& getEnrouteTransitions() const
+  const QList<EnrouteTransition>& getEnrouteTransitions() const
   {
     return enrouteTransitions;
   }
 
-  void setRunwayTransitions(const QVector<RunwayTransition>& value)
+  void setRunwayTransitions(const QList<RunwayTransition>& value)
   {
     runwayTransitions = value;
   }
@@ -854,9 +854,9 @@ private:
   friend class SimConnectLoaderPrivate;
 
   DepartureFacility departure;
-  QVector<LegFacility> approachLegs;
-  QVector<RunwayTransition> runwayTransitions;
-  QVector<EnrouteTransition> enrouteTransitions;
+  QList<LegFacility> approachLegs;
+  QList<RunwayTransition> runwayTransitions;
+  QList<EnrouteTransition> enrouteTransitions;
 };
 
 // =============================================
@@ -907,72 +907,72 @@ public:
     return airportNum;
   }
 
-  const QVector<Runway>& getRunways() const
+  const QList<Runway>& getRunways() const
   {
     return runways;
   }
 
-  const QVector<StartFacility>& getStartFacilities() const
+  const QList<StartFacility>& getStartFacilities() const
   {
     return starts;
   }
 
-  const QVector<FrequencyFacility>& getFrequencyFacilities() const
+  const QList<FrequencyFacility>& getFrequencyFacilities() const
   {
     return frequencies;
   }
 
-  const QVector<HelipadFacility>& getHelipadFacilities() const
+  const QList<HelipadFacility>& getHelipadFacilities() const
   {
     return helipads;
   }
 
-  const QVector<Approach>& getApproaches() const
+  const QList<Approach>& getApproaches() const
   {
     return approaches;
   }
 
-  const QVector<Arrival>& getArrivals() const
+  const QList<Arrival>& getArrivals() const
   {
     return arrivals;
   }
 
-  QVector<Arrival>& getArrivals()
+  QList<Arrival>& getArrivals()
   {
     return arrivals;
   }
 
-  QVector<Departure>& getDepartures()
+  QList<Departure>& getDepartures()
   {
     return departures;
   }
 
-  const QVector<Departure>& getDepartures() const
+  const QList<Departure>& getDepartures() const
   {
     return departures;
   }
 
-  const QVector<TaxiParkingFacility>& getTaxiParkingFacilities() const
+  const QList<TaxiParkingFacility>& getTaxiParkingFacilities() const
   {
     return taxiParkings;
   }
 
-  const QVector<TaxiPointFacility>& getTaxiPointFacilities() const
+  const QList<TaxiPointFacility>& getTaxiPointFacilities() const
   {
     return taxiPoints;
   }
 
-  const QVector<TaxiPathFacility>& getTaxiPathFacilities() const
+  const QList<TaxiPathFacility>& getTaxiPathFacilities() const
   {
     return taxiPaths;
   }
 
-  const QVector<TaxiNameFacility>& getTaxiNameFacilities() const
+  const QList<TaxiNameFacility>& getTaxiNameFacilities() const
   {
     return taxiNames;
   }
 
-  const QVector<JetwayFacility>& getJetwayFacilities() const
+  const QList<JetwayFacility>& getJetwayFacilities() const
   {
     return jetways;
   }
@@ -1014,22 +1014,22 @@ private:
   AirportFacility airport;
 
   /* Airport facilities */
-  QVector<Runway> runways;
-  QVector<StartFacility> starts;
-  QVector<FrequencyFacility> frequencies;
-  QVector<HelipadFacility> helipads;
+  QList<Runway> runways;
+  QList<StartFacility> starts;
+  QList<FrequencyFacility> frequencies;
+  QList<HelipadFacility> helipads;
 
   /* Procedures */
-  QVector<Approach> approaches;
-  QVector<Arrival> arrivals;
-  QVector<Departure> departures;
+  QList<Approach> approaches;
+  QList<Arrival> arrivals;
+  QList<Departure> departures;
 
   /* Taxi structure */
-  QVector<TaxiParkingFacility> taxiParkings;
-  QVector<TaxiPointFacility> taxiPoints;
-  QVector<TaxiPathFacility> taxiPaths;
-  QVector<TaxiNameFacility> taxiNames;
-  QVector<JetwayFacility> jetways;
+  QList<TaxiParkingFacility> taxiParkings;
+  QList<TaxiPointFacility> taxiPoints;
+  QList<TaxiPathFacility> taxiPaths;
+  QList<TaxiNameFacility> taxiNames;
+  QList<JetwayFacility> jetways;
 };
 
 /* VASI facility indexes in the order as they are sent from SimConnect

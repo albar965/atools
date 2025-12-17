@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@
 #include "geo/pos.h"
 
 #include <functional>
-#include <QVector>
-
+#include <QList>
+#include <QStringList>
 class QString;
-class QStringList;
+
 
 namespace atools {
 namespace geo {
@@ -197,7 +197,7 @@ atools::fs::online::fac::FacilityType textToFacilityType(QString value);
 /* Untranslated names*/
 QString facilityTypeTextSettings(fac::FacilityType type);
 
-const QVector<atools::fs::online::fac::FacilityType>& allFacilityTypes();
+const QList<atools::fs::online::fac::FacilityType>& allFacilityTypes();
 
 QString admRatingText(int rating);
 QString admRatingText(atools::fs::online::adm::AdministrativeRating rating);

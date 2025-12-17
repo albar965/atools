@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
 #include "track/tracktypes.h"
 
 #include <QCoreApplication>
+#include <QStringList>
 
-class QStringList;
 class QTextStream;
 
 namespace atools {
@@ -56,14 +56,14 @@ public:
   }
 
   /* Get list of tracks after reading. */
-  const atools::track::TrackVectorType& getTracks() const
+  const atools::track::TrackListType& getTracks() const
   {
     return tracks;
   }
 
   /* Removes invalid tracks, reports as warning and returns removed number. */
   int removeInvalid();
-  static int removeInvalid(atools::track::TrackVectorType& trackVector);
+  static int removeInvalid(atools::track::TrackListType& trackVector);
 
 private:
   /* Read all lines from stream into a list. Lines are simplified and empty ones are dropped. */
@@ -92,7 +92,7 @@ private:
   /* Extract the PACOTS flex tracks into the track vector. */
   void extractPacotsTracksFlex(const QStringList& text);
 
-  atools::track::TrackVectorType tracks;
+  atools::track::TrackListType tracks;
 
 };
 

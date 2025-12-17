@@ -1,5 +1,6 @@
 #*#
 *.BIN
+*.user
 *.a
 *.bak
 *.bin
@@ -17,6 +18,7 @@
 *.so
 *.sqlite
 *~
+*.user
 .DS_Store
 .directory
 .qmake.stash
@@ -29,3 +31,4 @@
 /debug/
 /deploy/
 /release/
+/build/

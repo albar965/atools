@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -121,8 +121,6 @@ public:
 
   /* Clear all entries and reset current index */
   void clear();
-
-  static void registerMetaTypes();
 
 signals:
   /* Emitted when the history changes

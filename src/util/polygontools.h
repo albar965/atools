@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define ATOOLS_UTIL_POLYGONTOOLS_H
 
 #include <QLineF>
-#include <QVector>
+#include <QList>
 
 class QPolygonF;
 class QPointF;
@@ -43,7 +43,7 @@ Orientation getPolygonOrientation(const QPolygonF& polygon);
 
 /* List of polygon lines sorted by length */
 class PolygonLineDistance;
-typedef QVector<PolygonLineDistance> PolygonLineDistances;
+typedef QList<PolygonLineDistance> PolygonLineDistances;
 
 /*
  * Class defining one or more polygon segments in 2D screen space which were found visible.
@@ -122,7 +122,7 @@ private:
   static bool isLineIntersectingRect(const QLineF& line, const QRectF& rect);
 
   /* Create a list of polygon lines without combining them. Not visible lines are invalid */
-  static PolygonLineDistances createPolyLines(const QVector<QLineF>& lines, const QRectF& screenRect, int size, bool checkIntersect);
+  static PolygonLineDistances createPolyLines(const QList<QLineF>& lines, const QRectF& screenRect, int size, bool checkIntersect);
 
   PolygonLineDistance(const QLineF& lineParam, double lengthParam, double angleParam, int indexFromParam, int indexToParam)
     : length(lengthParam), angle(angleParam), indexFrom(indexFromParam), indexTo(indexToParam), line(lineParam), direction(DIR_UNKNOWN)

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,9 +39,6 @@ FileOperations::FileOperations(bool verboseParam)
   allDefaultPaths.append(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation));
   allDefaultPaths.append(QStandardPaths::standardLocations(QStandardPaths::TempLocation));
   allDefaultPaths.append(QStandardPaths::standardLocations(QStandardPaths::HomeLocation));
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  allDefaultPaths.append(QStandardPaths::standardLocations(QStandardPaths::DataLocation));
-#endif
   allDefaultPaths.append(QStandardPaths::standardLocations(QStandardPaths::CacheLocation));
   allDefaultPaths.append(QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation));
   allDefaultPaths.append(QStandardPaths::standardLocations(QStandardPaths::RuntimeLocation));
@@ -124,11 +121,7 @@ void FileOperations::copyDirectoryInternal(const QString& from, const QString& t
     QFileInfo toPath(to % QDir::separator() % fromPath.fileName());
 
     // Cannot check for exists since broken symbolic links are reported as not existing
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    if(overwrite && (toPath.isFile() || toPath.isSymLink()))
-#else
     if(overwrite && (toPath.isFile() || toPath.isSymbolicLink() || toPath.isJunction() || toPath.isShortcut()))
-#endif
     {
       // Remove existing file or link for overwrite ====================================
       if(verbose)
@@ -140,11 +133,7 @@ void FileOperations::copyDirectoryInternal(const QString& from, const QString& t
 
     if(!hasErrors())
     {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-      if(fromPath.isSymLink())
-#else
       if(fromPath.isSymbolicLink())
-#endif
       {
         // Create a symbolic link - needs relative links ======================================================
         QString relativeLinkTarget = QDir(fromPath.absolutePath()).relativeFilePath(atools::linkTarget(fromPath));
@@ -227,7 +216,6 @@ void FileOperations::removeDirectory(const QString& directory, bool keepDirs, bo
 
 void FileOperations::removeDirectoryToTrash(const QString& directory)
 {
-#if QT_VERSION > QT_VERSION_CHECK(5, 15, 0)
   filesProcessed = 0;
   errors.clear();
 
@@ -249,9 +237,6 @@ void FileOperations::removeDirectoryToTrash(const QString& directory)
         qDebug() << Q_FUNC_INFO << directory << "moved to" << trashName;
     }
   }
-#else
-  errors.append(tr("Trash not supported by Qt library."));
-#endif
 
   if(hasErrors())
     qWarning().noquote().nospace() << Q_FUNC_INFO << "Errors: " << errors;
@@ -271,11 +256,7 @@ void FileOperations::removeDirectoryInternal(const QString& directory, bool keep
     {
       QString absFilePath = fileinfo.absoluteFilePath();
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-      if(fileinfo.isDir() && !fileinfo.isSymLink())
-#else
       if(fileinfo.isDir() && !fileinfo.isSymbolicLink())
-#endif
       {
         // Recurse but not into symbolic links
         removeDirectoryInternal(absFilePath, keepDirs, hidden, system);
@@ -288,11 +269,7 @@ void FileOperations::removeDirectoryInternal(const QString& directory, bool keep
             errors.append(tr("Cannot remove directory \"%1\".").arg(absFilePath));
         }
       }
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-      else if(fileinfo.isFile() || fileinfo.isSymLink())
-#else
       else if(fileinfo.isFile() || fileinfo.isSymbolicLink() || fileinfo.isJunction() || fileinfo.isShortcut())
-#endif
       {
         if(verbose)
           qDebug() << Q_FUNC_INFO << "remove file" << absFilePath;

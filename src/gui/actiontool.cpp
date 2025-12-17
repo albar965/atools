@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ void ActionTool::setText(QAction *action, bool enabled, const QString& arg, cons
 
 void ActionTool::finishTexts(const QString& objectText)
 {
-  for(QAction *action : qAsConst(stateSaver->actions))
+  for(QAction *action : std::as_const(stateSaver->actions))
   {
     if(action->text().contains("%1"))
       action->setText(action->text().arg(action->isEnabled() ? objectText : QString()));
@@ -64,13 +64,13 @@ void ActionTool::finishTexts(const QString& objectText)
 
 void ActionTool::enableAll()
 {
-  for(QAction *action : qAsConst(stateSaver->actions))
+  for(QAction *action : std::as_const(stateSaver->actions))
     action->setEnabled(true);
 }
 
 void ActionTool::disableAll()
 {
-  for(QAction *action : qAsConst(stateSaver->actions))
+  for(QAction *action : std::as_const(stateSaver->actions))
     action->setDisabled(true);
 
 }

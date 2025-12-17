@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ public:
   void addSector(float bearingDeg, float altitudeFt);
 
   /* Add sectors from a vector with bearing/altitude pairs */
-  void addSectors(const QVector<float>& bearingDegAltitudeFt);
+  void addSectors(const QList<float>& bearingDegAltitudeFt);
 
   /* Calculate circle/arc geomentry, label points and bearing endpoints */
   void calculate(const atools::geo::Pos& center, float radiusNm, float magvar, bool trueBearing);
@@ -71,13 +71,13 @@ public:
   bool isFullCircle() const;
 
   /* Bearings in true degree - same size as altitudes */
-  const QVector<float>& getBearings() const
+  const QList<float>& getBearings() const
   {
     return bearings;
   }
 
   /* Altitudes in feet - same size as bearings */
-  const QVector<float>& getAltitudes() const
+  const QList<float>& getAltitudes() const
   {
     return altitudes;
   }
@@ -108,7 +108,7 @@ public:
 
 private:
   int geometryPoints = 90;
-  QVector<float> bearings, altitudes;
+  QList<float> bearings, altitudes;
   atools::geo::LineString geometry, labelPositions, bearingEndPositions;
 };
 

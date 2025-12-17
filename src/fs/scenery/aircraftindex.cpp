@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -123,9 +123,6 @@ const AircraftIndex::AircraftProperties& AircraftIndex::fetchProperties(const QS
       if(file.open(QIODevice::ReadOnly))
       {
         QTextStream stream(&file);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        stream.setCodec("UTF-8");
-#endif
         stream.setAutoDetectUnicode(true);
         bool generalSection = false;
         QString icaoTypeDesignator, icaoModel;

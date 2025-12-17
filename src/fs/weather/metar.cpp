@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ namespace weather {
 
 const Metar Metar::EMPTY;
 
-Metar::Metar(const QString& requestIdentParam, const geo::Pos& posParam, const MetarPtrVector& metars)
+Metar::Metar(const QString& requestIdentParam, const geo::Pos& posParam, const MetarPtrList& metars)
   : requestIdent(requestIdentParam), requestPos(posParam), timestamp(QDateTime::currentDateTimeUtc())
 {
   if(!metars.isEmpty())
@@ -41,8 +41,8 @@ Metar::Metar(const QString& requestIdentParam, const geo::Pos& posParam, const M
     if(metars.constFirst()->getRequestPos().distanceMeterTo(posParam) > minInterpolationDistMeter)
     {
       // Collect distances and METARs
-      QVector<float> distancesMeter;
-      MetarParserVector parsedMetars;
+      QList<float> distancesMeter;
+      MetarParserList parsedMetars;
       for(const Metar *metar : metars)
       {
         distancesMeter.append(metar->getRequestPos().distanceMeterTo(posParam));
@@ -132,7 +132,7 @@ const MetarParser& Metar::getMetarParser(MetarType type) const
 QString Metar::cleanMetar(const QString& metar)
 {
   const static QRegularExpression CLOUD_EXTENSION("(CI|CS|CC|AS|AC|SC|NS|ST|CU|CB)...[FRA][NOLMHS]([VLMHD])([NRFHS])(\\d\\d\\d)[NTLMS]");
-  const static QVector<QString> CLOUD_DENSITIES({"CLR", "FEW", "FEW", "SCT", "SCT", "BKN", "BKN", "BKN", "OVC"});
+  const static QList<QString> CLOUD_DENSITIES({"CLR", "FEW", "FEW", "SCT", "SCT", "BKN", "BKN", "BKN", "OVC"});
   const static QRegularExpression WIND("^(\\d{3}|VRB)\\d{1,3}(G\\d{2,3})?(KT|KMH|MPS)$");
   const static QRegularExpression VARIABLE_WIND("^\\d{3}V\\d{3}$");
   const static QRegularExpression LONG_VISIBILITY("^(\\d{3})(SM|KM)$");

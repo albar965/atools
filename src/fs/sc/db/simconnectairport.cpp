@@ -387,7 +387,7 @@ QVariant surfaceToDb(Surface surface)
   return "UNKNOWN";
 }
 
-uint qHash(const LegFacility& leg)
+size_t qHash(const LegFacility& leg)
 {
   return leg.type ^
          // Ignore runways
@@ -441,7 +441,7 @@ bool LegFacility::operator==(const LegFacility& leg) const
          arcCenterFixType == leg.arcCenterFixType;
 }
 
-uint qHash(const RunwayTransition& trans)
+size_t qHash(const RunwayTransition& trans)
 {
   return qHash(trans.getLegFacilities()) ^
          (trans.getTransitionFacility().runwayDesignator << 8) ^ (trans.getTransitionFacility().runwayNumber << 16);

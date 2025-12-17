@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ private:
   void readNodesRadio(const QString& queryStr, bool vor);
 
   /* Read waypoints and airways into index */
-  void readNodesAirway(QVector<Node>& nodes, QHash<int, int>& nodeIdIndexMap, const QString& queryStr,
+  void readNodesAirway(QList<Node>& nodes, QHash<int, int>& nodeIdIndexMap, const QString& queryStr,
                        bool vor, bool ndb, bool track, bool filterProc);
 
   /* Read edges from tables airway or track.

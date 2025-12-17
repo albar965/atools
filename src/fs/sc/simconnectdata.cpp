@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -199,7 +199,7 @@ SimConnectData SimConnectData::buildDebugMovingAircraft(const geo::Pos& pos, con
                                                         float vertSpeed, float tas, float fuelflow, float totalFuel, float ice,
                                                         float flightplanAlt, float magVar, bool jetFuel, bool helicopter)
 {
-  static QVector<float> lastHdgs;
+  static QList<float> lastHdgs;
   static atools::util::MovingAverage averageU(5), averageV(5);
   lastHdgs.fill(0.f, 10);
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ TreeDialog::TreeDialog(QWidget *parent, const QString& title, const QString& des
 {
   ui->setupUi(this);
   setWindowTitle(title);
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   setWindowModality(Qt::ApplicationModal);
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(ui->treeWidget);
@@ -88,7 +88,7 @@ TreeDialog::~TreeDialog()
   delete ui;
 }
 
-void TreeDialog::dataChanged(const QModelIndex& topLeft, const QModelIndex&, const QVector<int>& roles)
+void TreeDialog::dataChanged(const QModelIndex& topLeft, const QModelIndex&, const QList<int>& roles)
 {
   // Only check state changes
   if(roles.contains(Qt::CheckStateRole) && topLeft.isValid())
@@ -261,7 +261,7 @@ void TreeDialog::restoreState(bool restoreCheckState, bool restoreExpandState)
 
   if(restoreExpandState)
   {
-    const QVector<int> expandedIndexes = atools::strListToNumVector<int>(
+    const QList<int> expandedIndexes = atools::strListToNumVector<int>(
       atools::settings::Settings::instance().valueStrList(settingsPrefix + "TreeWidgetExpandedStates"));
 
     QTreeWidgetItem *root = ui->treeWidget->invisibleRootItem();

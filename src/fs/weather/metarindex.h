@@ -22,7 +22,7 @@
 
 #include <functional>
 
-#include <QVector>
+#include <QList>
 
 class QTextStream;
 
@@ -152,7 +152,7 @@ private:
 
   /* Index containing all stations which could be resolved to a coordinate. */
   atools::geo::SpatialIndex<PosIndex> *spatialIndex = nullptr, *spatialIndexInterpolated = nullptr;
-  QVector<atools::fs::weather::Metar> metarVector, metarInterpolatedVector;
+  QList<atools::fs::weather::Metar> metarVector, metarInterpolatedVector;
 
   int maxInterpolatedCacheSize = 40000;
   float maxDistanceToleranceMeter = 100.f;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -336,7 +336,7 @@ private:
         { \
           return f2 | f1; \
         } \
-        inline uint qHash(const FlagsParam& flags) \
+        inline size_t qHash(const FlagsParam& flags) \
         { \
           return ::qHash(flags.asFlagType()); \
         } \

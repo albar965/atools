@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define ATOOLS_GRIBCOMMON_H
 
 #include <QDateTime>
-#include <QVector>
+#include <QList>
 
 namespace atools {
 namespace grib {
@@ -77,7 +77,7 @@ public:
    *  i direction - west to east along a parallel or left to right along an x-axis.
    *  j direction - south to north along a meridian, or bottom to top along a y-axis.
    */
-  const QVector<float>& getData() const
+  const QList<float>& getData() const
   {
     return data;
   }
@@ -111,10 +111,10 @@ private:
   atools::grib::SurfaceType surfaceType;
 
   QDateTime datetime;
-  QVector<float> data;
+  QList<float> data;
 };
 
-typedef  QVector<GribDataset> GribDatasetVector;
+typedef  QList<GribDataset> GribDatasetList;
 
 } // namespace grib
 } // namespace atools

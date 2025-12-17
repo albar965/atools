@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -202,7 +202,7 @@ struct Node
                             subtype /* VOR, VORDME, NDB, ... for airway network if type is one of WAYPOINT_* */;
   atools::routing::NodeConnection con; /* Flags indicating all connected airways and tracks */
 
-  QVector<Edge> edges; /* Attached outgoing edges on airway only.
+  QList<Edge> edges; /* Attached outgoing edges on airway only.
                         * Do not use this since edges are already filtered by the RouteNetwork. */
 
   /* Default unitialized */
@@ -293,15 +293,15 @@ struct Node
 
 };
 
-inline uint qHash(const atools::routing::Node& node)
+inline size_t qHash(const atools::routing::Node& node)
 {
   return static_cast<uint>(node.index);
 }
 
 struct Result
 {
-  QVector<int> nodes;
-  QVector<Edge> edges;
+  QList<int> nodes;
+  QList<Edge> edges;
 
   void clear()
   {

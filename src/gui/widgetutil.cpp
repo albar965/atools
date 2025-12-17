@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -197,9 +197,9 @@ void changeWidgetColor(QWidget *widget, QColor backgroundColor)
 #endif
 }
 
-const QVector<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionModel)
+const QList<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionModel)
 {
-  QVector<int> indexes;
+  QList<int> indexes;
   if(selectionModel != nullptr)
   {
     // Create list in reverse order so that deleting can start at the bottom of the list

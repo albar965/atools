@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,12 @@
 #include "geo/rect.h"
 #include "geo/calculations.h"
 #include "fs/util/coordinates.h"
-#include "fs/common/binarygeometry.h"
 #include "exception.h"
 #include "sql/sqlutil.h"
 #include "sql/sqlquery.h"
 
 #include <QFile>
 #include <QRegularExpression>
-#include <QTextCodec>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;

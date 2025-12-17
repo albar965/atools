@@ -21,8 +21,6 @@
 #include <QMap>
 #include <QCoreApplication>
 
-class QRegExp;
-
 namespace atools {
 
 namespace win {
@@ -113,7 +111,7 @@ public:
 
   /* Set airport idents to load detailed information from. This overrides idents in loadAirports().
    * Globbing with * and ? is used. */
-  void setAirportIdents(const QList<QRegExp>& airportIcaoFiltersInc);
+  void setAirportIdents(const QList<QRegularExpression>& airportIcaoFiltersInc);
 
   /* Progress callback called before writing a batch to the database. Return true to abort loading. */
   void setProgressCallback(const SimConnectLoaderProgressCallback& callback);

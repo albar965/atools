@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::userdata::Flags)
 class UserdataManager :
   public atools::sql::DataManagerBase
 {
-  Q_DECLARE_TR_FUNCTIONS(LogdataManager)
+  Q_OBJECT
 
 public:
   UserdataManager(atools::sql::SqlDatabase *sqlDb);
@@ -67,21 +67,21 @@ public:
   /* Import and export from a predefined CSV format */
   int importCsv(const QStringList& filepaths, atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,
                 QChar separator = ',', QChar escape = '"');
-  int exportCsv(const QString& filepath, const QVector<int>& ids = QVector<int>(),
+  int exportCsv(const QString& filepath, const QList<int>& ids = QList<int>(),
                 atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,
                 QChar separator = ',', QChar escape = '"') const;
 
   /* Import and export user_fix.dat file from X-Plane. Export adds name field and uses first tag as airport field */
   int importXplane(const QString& filepath);
-  int exportXplane(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags, bool xp12);
+  int exportXplane(const QString& filepath, const QList<int>& ids, atools::fs::userdata::Flags flags, bool xp12);
 
   /* Import and export Garmin GTN user waypoint database */
   int importGarmin(const QString& filepath);
-  int exportGarmin(const QString& filepath, const QVector<int>& ids = QVector<int>(),
+  int exportGarmin(const QString& filepath, const QList<int>& ids = QList<int>(),
                    atools::fs::userdata::Flags flags = atools::fs::userdata::NONE);
 
   /* Export waypoints into a XML file for BGL compilation */
-  int exportBgl(const QString& filepath, const QVector<int>& ids);
+  int exportBgl(const QString& filepath, const QList<int>& ids);
 
   /* Do any schema updates if needed */
   virtual void updateSchema() override;
@@ -107,7 +107,7 @@ public:
   /* Get a SQL query string which can be used to show a preview of the affected rows for cleanupUserdata().
    * columns have to exist in the table. */
   QString getCleanupPreview(const QStringList& duplicateColumns, bool duplicateCoordinates, bool empty,
-                            const QVector<atools::sql::SqlColumn>& columns);
+                            const QList<atools::sql::SqlColumn>& columns);
 
 private:
   /* Returns a union query returning the ids to delete */

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "exception.h"
 
 #include <QDataStream>
+#include <QIODevice>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -139,7 +140,7 @@ void MoraReader::fillDbFromQuery(sql::SqlQuery *moraQuery, int fileId)
   // ...
   // mora30             text (3) );
 
-  QVector<QStringList> lines;
+  QList<QStringList> lines;
   moraQuery->exec();
 
   // The Grid MORA Table will contain records describing the MORA for each Latitude and Longitude block.
@@ -159,7 +160,7 @@ void MoraReader::fillDbFromQuery(sql::SqlQuery *moraQuery, int fileId)
   fillDbFromFile(lines, fileId);
 }
 
-void MoraReader::fillDbFromFile(const QVector<QStringList>& lines, int fileId)
+void MoraReader::fillDbFromFile(const QList<QStringList>& lines, int fileId)
 {
   if(db == nullptr)
   {
@@ -168,7 +169,7 @@ void MoraReader::fillDbFromFile(const QVector<QStringList>& lines, int fileId)
   }
 
   quint16 initialValue = MoraReader::OCEAN;
-  QVector<quint16> grid(360 * 180, initialValue);
+  QList<quint16> grid(360 * 180, initialValue);
 
   int carryover = 0;
   int lastpos = -1;
@@ -230,7 +231,7 @@ void MoraReader::fillDbFromFile(const QVector<QStringList>& lines, int fileId)
   db->commit();
 }
 
-void MoraReader::debugPrint(const QVector<quint16>& grid)
+void MoraReader::debugPrint(const QList<quint16>& grid)
 {
   QString text;
   for(int laty = 90; laty > -90; laty--)
@@ -270,7 +271,7 @@ void MoraReader::postDatabaseLoad()
   readFromTable();
 }
 
-void MoraReader::writeToTable(const QVector<quint16>& grid, int columns, int rows, int fileId)
+void MoraReader::writeToTable(const QList<quint16>& grid, int columns, int rows, int fileId)
 {
   clear();
 
@@ -297,7 +298,7 @@ void MoraReader::writeToTable(const QVector<quint16>& grid, int columns, int row
   out << MAGIC_NUMBER_DATA << DATA_VERSION;
 
   // Write data as 16 bit values
-  for(quint16 value : datagrid)
+  for(quint16 value : std::as_const(datagrid))
     out << value;
 
   // mora_grid_id integer primary key,

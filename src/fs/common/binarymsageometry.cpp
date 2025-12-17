@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ void BinaryMsaGeometry::addSector(float bearingDeg, float altitudeFt)
   altitudes.append(altitudeFt);
 }
 
-void BinaryMsaGeometry::addSectors(const QVector<float>& bearingDegAltitudeFt)
+void BinaryMsaGeometry::addSectors(const QList<float>& bearingDegAltitudeFt)
 {
   for(int i = 0; i < bearingDegAltitudeFt.size(); i += 2)
     addSector(bearingDegAltitudeFt.at(i), bearingDegAltitudeFt.at(i + 1));
@@ -134,7 +134,7 @@ QByteArray BinaryMsaGeometry::writeToByteArray() const
   out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
   out << static_cast<quint16>(geometry.size());
-  for(const atools::geo::Pos& pos : qAsConst(geometry))
+  for(const atools::geo::Pos& pos : std::as_const(geometry))
     out << pos.getLonX() << pos.getLatY();
 
   out << static_cast<quint8>(bearings.size());

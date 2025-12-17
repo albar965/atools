@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ public:
     return userAircraft;
   }
 
-  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraftConst() const
+  const QList<atools::fs::sc::SimConnectAircraft>& getAiAircraftConst() const
   {
     return aiAircraft;
   }
@@ -108,7 +108,7 @@ public:
     return userAircraft;
   }
 
-  QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft()
+  QList<atools::fs::sc::SimConnectAircraft>& getAiAircraft()
   {
     return aiAircraft;
   }
@@ -123,7 +123,7 @@ public:
   atools::fs::sc::SimConnectAircraft *getAiAircraftById(int id);
   const atools::fs::sc::SimConnectAircraft *getAiAircraftConstById(int id) const;
 
-  const atools::fs::weather::MetarVector& getMetars() const
+  const atools::fs::weather::MetarList& getMetars() const
   {
     return metars;
   }
@@ -159,12 +159,12 @@ private:
   quint32 magicNumber = 0, packetSize = 0, version = 0;
 
   atools::fs::sc::SimConnectUserAircraft userAircraft;
-  QVector<atools::fs::sc::SimConnectAircraft> aiAircraft;
+  QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
 
   // Maps objectId to index in vector aiAircraft - not transferred
   QHash<int, int> aiAircraftIndex;
 
-  atools::fs::weather::MetarVector metars;
+  atools::fs::weather::MetarList metars;
 };
 
 const static atools::fs::sc::SimConnectData EMPTY_SIMCONNECT_DATA;

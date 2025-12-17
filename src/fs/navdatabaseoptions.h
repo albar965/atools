@@ -24,7 +24,7 @@
 #include <functional>
 
 #include <QSet>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QMap>
 #include <QStringList>
 #include <QFileInfo>
@@ -477,7 +477,7 @@ public:
   void setLanguage(const QString& lang);
 
   /* Get raw filter for SimConnect interface to limit reading of airports to selection. */
-  const QList<QRegExp>& getAirportIcaoFiltersInc() const
+  const QList<QRegularExpression>& getAirportIcaoFiltersInc() const
   {
     return airportIcaoFiltersInc;
   }
@@ -548,9 +548,10 @@ private:
 
   void addToHighPriorityFiltersInc(const QStringList& filters);
 
-  void addToFilterList(const QStringList& filters, QList<QRegExp>& filterList);
-  void addToFilter(const QString& filter, QList<QRegExp>& filterList);
-  bool includeObject(const QString& string, const QList<QRegExp>& filterListInc, const QList<QRegExp>& filterListExcl) const;
+  void addToFilterList(const QStringList& filters, QList<QRegularExpression>& filterList);
+  void addToFilter(const QString& filter, QList<QRegularExpression>& filterList);
+  bool includeObject(const QString& string, const QList<QRegularExpression>& filterListInc,
+                     const QList<QRegularExpression>& filterListExcl) const;
 
   void addToBglObjectFilter(const QStringList& filters, QSet<atools::fs::type::NavDbObjectType>& filterList);
 
@@ -559,19 +560,19 @@ private:
   QStringList fromNativeSeparatorList(const QStringList& paths) const;
   QString createDirFilter(const QString& path);
 
-  bool includedGui(const QFileInfo& path, const QList<QRegExp>& fileExclude, const QList<QRegExp>& dirExclude) const;
+  bool includedGui(const QFileInfo& path, const QList<QRegularExpression>& fileExclude, const QList<QRegularExpression>& dirExclude) const;
 
   QString sceneryFile, basepath, msfsCommunityPath, msfsOfficialPath, sourceDatabase, language = "en-US";
 
   atools::fs::type::OptionFlags flags;
 
   QMap<QString, int> basicValidationTables;
-  QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
-                 fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,
-                 highPriorityFiltersInc;
+  QList<QRegularExpression> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
+                            fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,
+                            highPriorityFiltersInc;
 
   /* Elements set from GUI. Not loaded from config file */
-  QList<QRegExp> dirExcludesGui, fileExcludesGui, dirAddonExcludesGui, fileAddonExcludesGui;
+  QList<QRegularExpression> dirExcludesGui, fileExcludesGui, dirAddonExcludesGui, fileAddonExcludesGui;
   QStringList dirIncludesGui;
 
   QSet<atools::fs::type::NavDbObjectType> navDbObjectTypeFiltersInc, navDbObjectTypeFiltersExcl;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ Q_REQUIRED_RESULT inline bool checkValue(const QString& message, TYPE value, TYP
 
 /* Check value if it matches one of the expected and return false if not */
 template<typename TYPE>
-Q_REQUIRED_RESULT bool checkValue(const QString& message, TYPE value, const QVector<TYPE>& expected)
+Q_REQUIRED_RESULT bool checkValue(const QString& message, TYPE value, const QList<TYPE>& expected)
 {
   if(!expected.contains(value))
   {
@@ -484,7 +484,7 @@ void GribReader::readData(const QByteArray& data)
   if(verbose)
   {
     qDebug() << Q_FUNC_INFO << "Datasets ============================================================";
-    for(const GribDataset& dataset : qAsConst(datasets))
+    for(const GribDataset& dataset : std::as_const(datasets))
       qDebug() << dataset;
   }
 }

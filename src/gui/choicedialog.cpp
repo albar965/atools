@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,8 @@ ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString&
 {
   ui->setupUi(this);
   setWindowTitle(title);
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   ui->labelChoiceDescription->setVisible(!description.isEmpty());
@@ -188,7 +189,7 @@ void ChoiceDialog::restoreState()
   updateButtonBoxState();
 
   // Send signal for all check boxes and radio buttons manually since state might not have changed
-  for(QWidget *widget: qAsConst(index))
+  for(QWidget *widget: std::as_const(index))
   {
     const QAbstractButton *button = dynamic_cast<const QAbstractButton *>(widget);
     if(button != nullptr)
@@ -211,7 +212,7 @@ void ChoiceDialog::updateButtonBoxState()
   if(!required.isEmpty())
   {
     bool found = false;
-    for(int i : qAsConst(required))
+    for(int i : std::as_const(required))
     {
       const QAbstractButton *button = getButtonInt(i);
       if(button != nullptr && button->isChecked())

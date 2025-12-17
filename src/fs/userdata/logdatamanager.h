@@ -42,7 +42,7 @@ namespace userdata {
 class LogdataManager :
   public atools::sql::DataManagerBase
 {
-  Q_DECLARE_TR_FUNCTIONS(LogdataManager)
+  Q_OBJECT
 
 public:
   LogdataManager(atools::sql::SqlDatabase *sqlDb);
@@ -52,7 +52,7 @@ public:
   int importCsv(const QString& filepath);
 
   /* Import and export from a custom CSV format which covers all fields in the logbook table. */
-  int exportCsv(const QString& filepath, const QVector<int>& ids, bool exportPlan, bool exportPerf,
+  int exportCsv(const QString& filepath, const QList<int>& ids, bool exportPlan, bool exportPerf,
                 bool exportGpx, bool header, bool append);
 
   /* Import X-Plane logbook. Needs a function fetchAirport
@@ -77,7 +77,7 @@ public:
   /* Get a SQL select query string which can be used to show a preview of the affected rows for cleanupLogEntries().
    * columns have to exist in the table. */
   QString getCleanupPreview(bool departureAndDestEqual, bool departureOrDestEmpty, float minFlownDistance,
-                            const QVector<atools::sql::SqlColumn>& columns);
+                            const QList<atools::sql::SqlColumn>& columns);
 
   /* true if any of the files/BLOBs is present (length > 0) for the dataset */
   bool hasRouteAttached(int id);
@@ -99,7 +99,7 @@ public:
   void getFlightStatsAircraft(int& numTypes, int& numRegistrations, int& numNames, int& numSimulators);
 
   /* Simulator to number of logbook entries */
-  void getFlightStatsSimulator(QVector<std::pair<int, QString> >& numSimulators);
+  void getFlightStatsSimulator(QList<std::pair<int, QString> >& numSimulators);
 
   /* Fills null fields with empty strings to avoid issue when searching */
   static void fixEmptyFields(atools::sql::SqlRecord& rec);

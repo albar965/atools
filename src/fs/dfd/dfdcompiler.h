@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ private:
   void writeRunwaysForAirport(atools::sql::SqlRecordList& runways, const QString& apt);
 
   /* Match opposing runway ends */
-  void pairRunways(QVector<std::pair<atools::sql::SqlRecord, atools::sql::SqlRecord> >& runwaypairs,
+  void pairRunways(QList<std::pair<atools::sql::SqlRecord, atools::sql::SqlRecord> >& runwaypairs,
                    const sql::SqlRecordList& runways);
 
   /* Fill input structure for ProcedureWriter */
@@ -185,7 +185,7 @@ private:
                                     const QString& column);
 
   /* Airspace segments containing information */
-  QVector<AirspaceSegment> airspaceSegments;
+  QList<AirspaceSegment> airspaceSegments;
 
   /* Maps concatenated FIR and UIR airspace key columns to boundary_id in database */
   QHash<QString, int> airspaceIdentIdMap;

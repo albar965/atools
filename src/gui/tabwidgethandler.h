@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define ATOOLS_TABWIDGETHANDLER_H
 
 #include <QObject>
-#include <QVector>
+#include <QList>
 
 class QTabWidget;
 class QToolButton;
@@ -48,7 +48,8 @@ class TabWidgetHandler :
 
 public:
   /* Creates corner button and all/none/reset actions */
-  explicit TabWidgetHandler(QTabWidget *tabWidgetParam, const QList<QWidget*>& additionalWidgets, const QIcon& icon, const QString& toolButtonTooltip);
+  explicit TabWidgetHandler(QTabWidget *tabWidgetParam, const QList<QWidget *>& additionalWidgets,
+                            const QIcon& icon, const QString& toolButtonTooltip);
   virtual ~TabWidgetHandler() override;
 
   TabWidgetHandler(const TabWidgetHandler& other) = delete;
@@ -57,7 +58,7 @@ public:
   /* Creates the menu entries for the tool button and the context menu. tabIdsParam contains the ids for
    * each tab and has to correspond to the actual tabs contained by the tab widget.
    * tabIdsParam.size() has to be equal to tabWidgetParam->count() set in the constructor */
-  void init(const QVector<int>& tabIdsParam, const QString& settingsPrefixParam);
+  void init(const QList<int>& tabIdsParam, const QString& settingsPrefixParam);
 
   /* Save or restore open/close and order of tabs. Call init before. */
   void saveState() const;
@@ -139,7 +140,7 @@ private:
   int idForWidget(QWidget *widget) const;
 
   /* Get a list of tabs that are not part of the widget - i.e. currently closed */
-  const QVector<int> missingTabIds() const;
+  const QList<int> missingTabIds() const;
 
   /* Add tab at the end or at index */
   int addTab(int id);
@@ -159,7 +160,7 @@ private:
     {
     }
 
-    Tab(QWidget *tabParam, const QString& titleParam, const QString& tooltipParam, QAction *actionParam)
+    Tab(QWidget * tabParam, const QString& titleParam, const QString& tooltipParam, QAction * actionParam)
       : widget(tabParam), title(titleParam), tooltip(tooltipParam), action(actionParam)
     {
     }
@@ -176,7 +177,7 @@ private:
   };
 
   /* Contains all (also closed) tabs. Index corresponds to tab id as given in tabIdsParam */
-  QVector<Tab> tabs;
+  QList<Tab> tabs;
 
   /* Various action to restore, close or reset all tabs */
   QAction *actionOpenAll = nullptr, *actionCloseExcept = nullptr, *actionResetLayout = nullptr,

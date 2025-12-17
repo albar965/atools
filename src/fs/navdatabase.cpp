@@ -52,9 +52,7 @@
 namespace atools {
 namespace fs {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
-#endif
 
 // Number of progress steps besides scenery areas
 // Database report steps
@@ -627,11 +625,11 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     if(sim == FsPaths::MSFS)
     {
       // Check for Navigraph packages to report back to caller
-      for(const SceneryArea& area : qAsConst(sceneryCfg.getAreas()))
+      for(const SceneryArea& area : std::as_const(sceneryCfg.getAreas()))
       {
         if(area.isMsfsNavigraphNavdata())
         {
-          if(options->isIncludedGui(area.getLocalPath()))
+          if(options->isIncludedGui(QFileInfo(area.getLocalPath())))
           {
             result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
             qDebug() << Q_FUNC_INFO << "Found Navigraph navdata update in" << area;
@@ -735,15 +733,15 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     {
       QString packageBase = options->getMsfsOfficialPath();
       // Load the language index for lookup for airport names and more - first from fs-base
-      QFileInfo langFile = buildPathNoCase({packageBase, "fs-base", options->getLanguage() % ".locPak"});
+      QFileInfo langFile(buildPathNoCase({packageBase, "fs-base", options->getLanguage() % ".locPak"}));
       if(!atools::checkFile(Q_FUNC_INFO, langFile, true /* warn */))
-        langFile = buildPathNoCase({packageBase, "fs-base", "en-US.locPak"});
+        langFile = QFileInfo(buildPathNoCase({packageBase, "fs-base", "en-US.locPak"}));
 
       QFileInfo langFileGeneric;
       // Load the language index for lookup for airport names from fs-base-genericairports
-      langFileGeneric = buildPathNoCase({packageBase, "fs-base-genericairports", options->getLanguage() % ".locPak"});
+      langFileGeneric = QFileInfo(buildPathNoCase({packageBase, "fs-base-genericairports", options->getLanguage() % ".locPak"}));
       if(!atools::checkFile(Q_FUNC_INFO, langFileGeneric, true /* warn */))
-        langFileGeneric = buildPathNoCase({packageBase, "fs-base-genericairports", "en-US.locPak"});
+        langFileGeneric = QFileInfo(buildPathNoCase({packageBase, "fs-base-genericairports", "en-US.locPak"}));
 
       // Load translation file in current language for airport names ====================================
       languageIndex.reset(new scenery::LanguageJson());
@@ -1504,7 +1502,7 @@ void NavDatabase::dropAllIndexes()
       stmts.append("drop index if exists " % indexQuery.valueStr("name"));
   }
 
-  for(const QString& stmt : qAsConst(stmts))
+  for(const QString& stmt : std::as_const(stmts))
     db->exec(stmt);
   db->commit();
 }
@@ -1908,7 +1906,7 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
     // Read entries recursively for user added folder ===================
     QQueue<QFileInfo> queue;
     // Add intial path
-    queue.enqueue(dirs.at(i));
+    queue.enqueue(QFileInfo(dirs.at(i)));
 
     QFileInfoList entries(QDir(dirs.at(i)).entryInfoList(filters));
     while(!queue.isEmpty())
@@ -1941,7 +1939,7 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
     bool added = false;
 
     // Get all folders in the directory where each one is an add-on
-    for(const QFileInfo& addonDir : qAsConst(entries))
+    for(const QFileInfo& addonDir : std::as_const(entries))
     {
       // The MSFS add-on dir needs two JSON files to be valid
       bool msfsFiles = QDir(addonDir.canonicalFilePath()).entryList({"layout.json", "manifest.json"}, QDir::Files, QDir::Name).size() == 2;
@@ -2060,12 +2058,12 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
     // Use this to weed out duplicates to the add-on.xml files
     QSet<QString> addonFilePaths;
     // Set layer later to these
-    QVector<AddOnComponent> noLayerComponents;
+    QList<AddOnComponent> noLayerComponents;
     QStringList noLayerPaths;
     QStringList addonDiscoveryPaths;
     QSet<QString> inactiveAddOnPaths;
 
-    for(const QString& addonsCfg : qAsConst(addonsCfgFiles))
+    for(const QString& addonsCfg : std::as_const(addonsCfgFiles))
     {
       if(QFileInfo::exists(addonsCfg))
       {
@@ -2079,7 +2077,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
             addonDiscoveryPaths.append(QFileInfo(entry.path).canonicalFilePath());
         }
 
-        for(const AddOnCfgEntry& entry : qAsConst(addonConfigProgramData.getEntries()))
+        for(const AddOnCfgEntry& entry : std::as_const(addonConfigProgramData.getEntries()))
         {
           if(entry.active || readInactive)
             readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));
@@ -2093,16 +2091,16 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
     // Add both path alternatives since documentation is not clear
     // Mentioned in the SDK on "Add-on Packages" -> "Distributing an Add-on Package"
     // Mentioned in the SDK on "Add-on Instructions for Developers" -> "Add-on Directory Structure"
-    addonDiscoveryPaths.prepend(documents % SEP % QString("Prepar3D v%1 Files").arg(simNum) %
-                                SEP % QLatin1String("add-ons"));
+    addonDiscoveryPaths.prepend(documents % SEP % QStringLiteral("Prepar3D v%1 Files").arg(simNum) %
+                                SEP % QStringLiteral("add-ons"));
 
-    addonDiscoveryPaths.prepend(documents % SEP % QString("Prepar3D v%1 Add-ons").arg(simNum));
+    addonDiscoveryPaths.prepend(documents % SEP % QStringLiteral("Prepar3D v%1 Add-ons").arg(simNum));
 
     qInfo() << Q_FUNC_INFO << "Discovery paths" << addonDiscoveryPaths;
 
     // ====================================================================================
     // Read add-on.xml files from the discovery paths
-    for(const QString& addonPath : qAsConst(addonDiscoveryPaths))
+    for(const QString& addonPath : std::as_const(addonDiscoveryPaths))
     {
       QDir addonDir(addonPath);
       if(addonDir.exists())
@@ -2128,7 +2126,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
     // Calculate maximum layer and area number
     int lastLayer = std::numeric_limits<int>::min();
     int lastArea = std::numeric_limits<int>::min();
-    for(const SceneryArea& area : qAsConst(cfg.getAreas()))
+    for(const SceneryArea& area : std::as_const(cfg.getAreas()))
     {
       lastArea = std::max(lastArea, area.getAreaNumber());
       lastLayer = std::max(lastLayer, area.getLayer());
@@ -2154,11 +2152,11 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
 
 QFileInfo NavDatabase::buildAddonFile(const QFileInfo& addonEntry)
 {
-  return QFileInfo(addonEntry.canonicalFilePath() % SEP % QLatin1String("add-on.xml"));
+  return QFileInfo(addonEntry.canonicalFilePath() % SEP % QStringLiteral("add-on.xml"));
 }
 
 void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::SceneryCfg& cfg,
-                                      QVector<AddOnComponent>& noLayerComponents, QStringList& noLayerPaths,
+                                      QList<AddOnComponent>& noLayerComponents, QStringList& noLayerPaths,
                                       QSet<QString>& addonPaths, const QFileInfo& addonEntry)
 {
   QFileInfo addonFile = buildAddonFile(addonEntry);
@@ -2218,7 +2216,7 @@ void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::Scenery
 void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util,
                                              const QStringList& tables)
 {
-  for(const QString& table : qAsConst(tables))
+  for(const QString& table : std::as_const(tables))
   {
     out << "==================================================================" << endl;
     util.reportRangeViolations(out, table, {table % "_id", "ident"}, "lonx", -180.f, 180.f);

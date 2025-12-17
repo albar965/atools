@@ -20,7 +20,7 @@
 
 #include "geo/pos.h"
 
-#include <QVector>
+#include <QList>
 #include <QDebug>
 
 namespace atools {
@@ -81,7 +81,7 @@ public:
   }
 
 private:
-  friend uint qHash(const IcaoId& str);
+  friend size_t qHash(const IcaoId& str);
 
   void init(const char *identParam)
   {
@@ -98,13 +98,12 @@ private:
   char ident[SIZE];
 };
 
-inline uint qHash(const IcaoId& id)
+inline size_t qHash(const IcaoId& id)
 {
   return qHash(QLatin1String(id.ident));
 }
 
 typedef QList<IcaoId> IcaoIdList;
-typedef QVector<IcaoId> IcaoIdVector;
 typedef QSet<IcaoId> IcaoIdSet;
 
 QDebug operator<<(QDebug out, const atools::fs::sc::db::IcaoId& obj);
@@ -135,7 +134,7 @@ public:
     ident[0] = region[0] = '\0';
   }
 
-  explicit FacilityId(const QString& identParam, const QString& regionParam = QString(), QChar typeParam = ID_NONE)
+  explicit FacilityId(const QString& identParam, const QString& regionParam = QString(), QChar typeParam = QChar(ID_NONE))
     : type(static_cast<IdType>(typeParam.toLatin1()))
   {
     init(identParam.toLatin1().constData(), regionParam.toLatin1().constData());
@@ -213,7 +212,7 @@ public:
   }
 
 private:
-  friend uint qHash(const FacilityId& str);
+  friend size_t qHash(const FacilityId& str);
 
   void init(const char *identParam, const char *regionParam)
   {
@@ -239,12 +238,11 @@ private:
   char ident[SIZE], region[SIZE];
 };
 
-inline uint qHash(const FacilityId& id)
+inline size_t qHash(const FacilityId& id)
 {
   return qHash(QLatin1String(id.ident)) ^ qHash(QLatin1String(id.region)) ^ static_cast<int>(id.type);
 }
 
-typedef QVector<FacilityId> FacilityIdVector;
 typedef QList<FacilityId> FacilityIdList;
 typedef QSet<FacilityId> FacilityIdSet;
 

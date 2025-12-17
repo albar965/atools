@@ -62,7 +62,7 @@ static const QStringList CONTAINS_MIL({
 
 // Look for military designator words - if an airport name matches
 // one of these patterns it will be designated as "military"
-static const QVector<QRegularExpression> REGEXP_MIL({
+static const QList<QRegularExpression> REGEXP_MIL({
         QRegularExpression(QLatin1String("(\\[M\\]|\\[MIL\\])")), // X-Plane special
         QRegularExpression(QLatin1String("\\bAAC\\b")),
         QRegularExpression(QLatin1String("\\bAAF\\b")),

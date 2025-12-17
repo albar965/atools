@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -546,12 +546,12 @@ const atools::fs::weather::Metar& MetarIndex::getMetar(const QString& station, a
         }
 
         // Interpolate all nearest ======================
-        QVector<PosIndex> posIndexes;
+        QList<PosIndex> posIndexes;
         spatialIndex->getNearest(posIndexes, pos, numInterpolation);
 
         // Collect positions ====================
-        atools::fs::weather::MetarPtrVector metars;
-        for(const PosIndex& posIndex : qAsConst(posIndexes))
+        atools::fs::weather::MetarPtrList metars;
+        for(const PosIndex& posIndex : std::as_const(posIndexes))
           metars.append(&metarVector.at(posIndex.index));
 
         // Sort by distance to request point ====================

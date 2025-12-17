@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose)
   connect(natDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::natDownloadFailed);
   connect(natDownloader, &HttpDownloader::downloadSslErrors, this, &TrackDownloader::trackDownloadSslErrors);
   downloaders.insert(NAT, natDownloader);
-  trackList.insert(NAT, atools::track::TrackVectorType());
+  trackList.insert(NAT, atools::track::TrackListType());
 
   // Initialize PACOTS downloader ============================================================
   HttpDownloader *pacotsDownloader = new HttpDownloader(parent, verbose);
@@ -75,7 +75,7 @@ TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose)
   connect(pacotsDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::pacotsDownloadFailed);
   connect(pacotsDownloader, &HttpDownloader::downloadSslErrors, this, &TrackDownloader::trackDownloadSslErrors);
   downloaders.insert(PACOTS, pacotsDownloader);
-  trackList.insert(PACOTS, atools::track::TrackVectorType());
+  trackList.insert(PACOTS, atools::track::TrackListType());
 }
 
 TrackDownloader::~TrackDownloader()
@@ -164,7 +164,7 @@ void TrackDownloader::setUrl(TrackType type, const QString& url, const QStringLi
 
 void TrackDownloader::startAllDownloads()
 {
-  for(HttpDownloader *downloader : qAsConst(downloaders))
+  for(HttpDownloader *downloader : std::as_const(downloaders))
     downloader->startDownload();
 }
 
@@ -175,11 +175,11 @@ void TrackDownloader::startDownload(TrackType type)
 
 void TrackDownloader::cancelAllDownloads()
 {
-  for(HttpDownloader *downloader : qAsConst(downloaders))
+  for(HttpDownloader *downloader : std::as_const(downloaders))
     downloader->cancelDownload();
 }
 
-const atools::track::TrackVectorType& TrackDownloader::getTracks(TrackType type)
+const atools::track::TrackListType& TrackDownloader::getTracks(TrackType type)
 {
   return trackList[type];
 }
@@ -193,7 +193,7 @@ void TrackDownloader::clearTracks()
 bool TrackDownloader::hasAnyTracks()
 {
   int num = 0;
-  for(const TrackVectorType& tracks : qAsConst(trackList))
+  for(const TrackListType& tracks : std::as_const(trackList))
     num += tracks.size();
   return num > 0;
 }
@@ -213,7 +213,7 @@ int TrackDownloader::removeInvalid()
 
 void TrackDownloader::setIgnoreSslErrors(bool value)
 {
-  for(HttpDownloader *downloader : qAsConst(downloaders))
+  for(HttpDownloader *downloader : std::as_const(downloaders))
     downloader->setIgnoreSslErrors(value);
 }
 

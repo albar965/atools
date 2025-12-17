@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 #include "fs/common/binarygeometry.h"
 
 #include <QDataStream>
+#include <QIODevice>
 
 namespace atools {
 namespace fs {
@@ -59,7 +60,7 @@ QByteArray BinaryGeometry::writeToByteArray() const
   out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
   out << static_cast<quint32>(geometry.size());
-  for(const atools::geo::Pos& pos : qAsConst(geometry))
+  for(const atools::geo::Pos& pos : std::as_const(geometry))
     out << pos.getLonX() << pos.getLatY();
   return bytes;
 }

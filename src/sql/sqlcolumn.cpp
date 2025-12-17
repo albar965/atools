@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,15 +22,6 @@
 
 namespace atools {
 namespace sql {
-
-QString SqlColumn::getColumnList(const QList<SqlColumn>& columns)
-{
-  QStringList selectStmt;
-  for(const SqlColumn& col : columns)
-    selectStmt.append(col.getSelectStmt());
-
-  return selectStmt.join(", ");
-}
 
 QString SqlColumn::getSelectStmt() const
 {

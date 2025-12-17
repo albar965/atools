@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ extern "C" {
 #include <QDataStream>
 #include <QDir>
 #include <QFile>
-#include <QVector>
+#include <QList>
 
 #include <cstring>
 
@@ -45,7 +45,7 @@ namespace atools {
 namespace wmm {
 
 /* Copy of MAG_Grid function with simplifications also avoiding the need to write the output to a file */
-QVector<float> MAG_GridInternal(int year, int month,
+QList<float> MAG_GridInternal(int year, int month,
                                 MAGtype_MagneticModel *magneticModel,
                                 MAGtype_Geoid *Geoid, MAGtype_Ellipsoid ellipsoid);
 
@@ -111,12 +111,12 @@ void MagDecTool::init(int year, int month)
   if(!MAG_SetDefaults(&ellipsoid, &geoid))
     throw atools::Exception(tr("Error in MAG_SetDefaults."));
 
-  QVector<float> geoidBuffer = readGeoidBuffer();
+  QList<float> geoidBuffer = readGeoidBuffer();
   geoid.GeoidHeightBuffer = geoidBuffer.data();
   geoid.Geoid_Initialized = 1;
 
   // Calculate declination grid
-  QVector<float> declinations = MAG_GridInternal(year, month, magneticModel, &geoid, ellipsoid);
+  QList<float> declinations = MAG_GridInternal(year, month, magneticModel, &geoid, ellipsoid);
   if(declinations.isEmpty())
     throw atools::Exception(tr("Error in MAG_GridInternal."));
 
@@ -192,9 +192,9 @@ void MagDecTool::clear()
   magdecGrid = nullptr;
 }
 
-QVector<float> MagDecTool::readGeoidBuffer()
+QList<float> MagDecTool::readGeoidBuffer()
 {
-  QVector<float> retval;
+  QList<float> retval;
   QFile file(":/atools/resources/wmm/EGM9615.buf");
   if(file.open(QIODevice::ReadOnly))
   {
@@ -215,7 +215,7 @@ QVector<float> MagDecTool::readGeoidBuffer()
   return retval;
 }
 
-QVector<float> MAG_GridInternal(int year, int month, MAGtype_MagneticModel *magneticModel,
+QList<float> MAG_GridInternal(int year, int month, MAGtype_MagneticModel *magneticModel,
                                 MAGtype_Geoid *geoid, MAGtype_Ellipsoid ellipsoid)
 {
   // Boundary always covers whole world
@@ -254,7 +254,7 @@ QVector<float> MAG_GridInternal(int year, int month, MAGtype_MagneticModel *magn
   legendreFunction = MAG_AllocateLegendreFunctionMemory(numTerms); // For storing the ALF functions
   sphericalVariables = MAG_AllocateSphVarMemory(magneticModel->nMax);
 
-  QVector<float> retval;
+  QList<float> retval;
   retval.reserve(360 * 181);
 
   b = minimum.phi;

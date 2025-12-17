@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -330,7 +330,7 @@ public:
   QString toShortString() const;
 
   /* Pointer to alternates are valid until flight plan is modified */
-  const QVector<const FlightplanEntry *> getAlternates() const;
+  const QList<const FlightplanEntry *> getAlternates() const;
 
   /* Clear out all entries with no save, alternate or procedure = true */
   void removeIsNoSaveEntries()

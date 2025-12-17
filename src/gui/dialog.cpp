@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -133,11 +133,7 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
 QString Dialog::openDirectoryDialog(const QString& title, const QString& settingsPrefix, const QString& path)
 {
   QFileDialog dlg(parent);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
   dlg.setFileMode(QFileDialog::Directory);
-#else
-  dlg.setFileMode(QFileDialog::DirectoryOnly);
-#endif
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
   return fileDialog(dlg, title, QString(), settingsPrefix, QString(), path, QString(), false /* autonumber */).at(0);
 }
@@ -246,7 +242,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     if(!settingsKey.isEmpty() && !checkBoxMessage.isEmpty())
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setDefaultButton(dialogDefaultButton);
-    msg.setWindowFlags(msg.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
     msg.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
 

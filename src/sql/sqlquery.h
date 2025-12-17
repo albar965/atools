@@ -245,8 +245,8 @@ public:
     return queryString;
   }
 
-  void bindValues(const QVector<std::pair<QString, QVariant> >& bindValues);
-  void bindValues(const QVector<std::pair<int, QVariant> >& bindValues);
+  void bindValues(const QList<std::pair<QString, QVariant> >& bindValues);
+  void bindValues(const QList<std::pair<int, QVariant> >& bindValues);
 
   /* Extract named bindings prefixed with colon ":placeholder" and unnamed bindings as question mark "?".
    * Throws exception if named and unamed are mixed. */

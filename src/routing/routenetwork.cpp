@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -266,7 +266,7 @@ int RouteNetwork::searchNearest(Result& result, const Node& origin,
   atools::geo::RadiusCallbackType callbackFunc = [&callbackObj](float dist, int index) -> bool {
                                                    return callbackObj.callback(dist, index);
                                                  };
-  QVector<int> indexes;
+  QList<int> indexes;
   nodeIndex.getRadiusIndexes(indexes, origin.pos, maxDistanceMeter, callbackFunc);
 
   result.nodes.reserve(indexes.size());
@@ -275,7 +275,7 @@ int RouteNetwork::searchNearest(Result& result, const Node& origin,
   // Copy node indexes and edges to result ======================
   int numFound = 0;
   Point3D originPoint = nodeToCartesian(origin);
-  for(int idx : qAsConst(indexes))
+  for(int idx : std::as_const(indexes))
   {
     if(matchNode(nodeIndex.at(idx)))
     {

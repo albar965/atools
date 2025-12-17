@@ -97,7 +97,7 @@ int TrackReader::removeInvalid()
   return TrackReader::removeInvalid(tracks);
 }
 
-int TrackReader::removeInvalid(TrackVectorType& trackVector)
+int TrackReader::removeInvalid(TrackListType& trackVector)
 {
   auto it = std::remove_if(trackVector.begin(), trackVector.end(), [](const Track& track) -> bool {
         bool valid = track.isFullyValid();
@@ -146,7 +146,7 @@ void TrackReader::extractPacotsTracksFlex(const QStringList& lines)
   // 21:00 2020. CREATED: 06 MAR 18:43 2020
   // </PRE>
 
-  atools::track::TrackVectorType temp;
+  atools::track::TrackListType temp;
   bool inRecord = false, inRemark = false;
   QString remark;
   QDateTime from, to;
@@ -256,7 +256,7 @@ void TrackReader::extractTracks(const QStringList& lines, const QRegularExpressi
 
   int numAfterStart = 0;
   bool inRecord = false;
-  atools::track::TrackVectorType temp;
+  atools::track::TrackListType temp;
   for(const QString& line : lines)
   {
     // Match and extract name =======================================
@@ -349,7 +349,7 @@ void TrackReader::extractNatTracks(const QStringList& lines)
   QDateTime from, to;
   int year = QDateTime::currentDateTimeUtc().date().year();
 
-  atools::track::TrackVectorType temp;
+  atools::track::TrackListType temp;
   for(const QString& line : lines)
   {
     // Get name and list of waypoints ============================================

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -214,9 +214,6 @@ public:
   /* Closes all widgets and removes them from the list afterwards */
   void closeAllDialogWidgets();
 
-  /* Calls qRegisterMetaTypeStreamOperators for needed classes. */
-  static void registerMetaTypes();
-
 private:
   /* One dock view was toggled by the accompanied action */
   void dockViewToggled();
@@ -256,10 +253,10 @@ private:
   DockEventFilter *dockEventFilter;
 
   /* Backup of allowed areas used when calling setDockingAllowed() */
-  QVector<Qt::DockWidgetAreas> allowedAreas;
+  QList<Qt::DockWidgetAreas> allowedAreas;
 
   /* Backup of features used when calling setMovingAllowed() */
-  QVector<QDockWidget::DockWidgetFeatures> features;
+  QList<QDockWidget::DockWidgetFeatures> features;
 
   /* Saved state of main window including dock widgets and toolbars */
   MainWindowState *normalState, *fullscreenState;
@@ -268,6 +265,33 @@ private:
 
   static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x2D6A9C2F;
   static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 2;
+};
+
+// ===================================================================================
+class DockEventFilter :
+  public QObject
+{
+  Q_OBJECT
+
+public:
+  DockEventFilter(QMainWindow *mainWindowParam)
+    : mainWindow(mainWindowParam)
+  {
+
+  }
+
+  virtual ~DockEventFilter() override
+  {
+
+  }
+
+  bool autoRaiseWindow = false, autoRaiseMainWindow = false;
+
+private:
+  virtual bool eventFilter(QObject *object, QEvent *event) override;
+
+  QMainWindow *mainWindow;
+
 };
 
 } // namespace gui

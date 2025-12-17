@@ -5,6 +5,7 @@
 
 #include "template.h"
 #include <QFileInfo>
+#include <QStringEncoder>
 
 using namespace stefanfrings;
 
@@ -15,7 +16,7 @@ Template::Template(const QString source, const QString sourceName)
   this->warnings = false;
 }
 
-Template::Template(QFile& file, const QTextCodec *textCodec)
+Template::Template(QFile& file, const QStringConverter::Encoding encoding)
 {
   this->warnings = false;
   sourceName = QFileInfo(file.fileName()).baseName();
@@ -31,7 +32,7 @@ Template::Template(QFile& file, const QTextCodec *textCodec)
   }
   else
   {
-    append(textCodec->toUnicode(data));
+    append(QStringEncoder(encoding).encode(data));
   }
 }
 

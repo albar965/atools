@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,9 +36,6 @@ public:
   }
 
   template<typename TYPE> SignalBlocker(QList<TYPE *> objectList);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  template<typename TYPE> SignalBlocker(QVector<TYPE *> objectList);
-#endif
 
   template<typename TYPE>
   SignalBlocker(TYPE *object)
@@ -53,10 +50,6 @@ public:
   template<typename TYPE>
   void add(QList<TYPE *> objectList);
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  template<typename TYPE>
-  void add(QVector<TYPE *> objectList);
-#endif
 private:
   QList<QObject *> objects;
 };
@@ -66,14 +59,6 @@ SignalBlocker::SignalBlocker(QList<TYPE *> objectList)
 {
   add(objectList);
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template<typename TYPE>
-SignalBlocker::SignalBlocker(QVector<TYPE *> objectList)
-{
-  add(objectList);
-}
-#endif
 
 template<typename TYPE>
 void SignalBlocker::add(QList<TYPE *> objectList)
@@ -87,21 +72,6 @@ void SignalBlocker::add(QList<TYPE *> objectList)
     }
   }
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template<typename TYPE>
-void SignalBlocker::add(QVector<TYPE *> objectList)
-{
-  for(TYPE *object : objectList)
-  {
-    if(object != nullptr)
-    {
-      objects.append(object);
-      object->blockSignals(true);
-    }
-  }
-}
-#endif
 
 } // namespace gui
 } // namespace atools

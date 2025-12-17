@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -175,7 +175,6 @@ void AircraftPerf::saveXml(const QString& filename) const
 
 void AircraftPerf::saveXmlInternal(QXmlStreamWriter& writer) const
 {
-  writer.setCodec("UTF-8");
   writer.setAutoFormatting(true);
   writer.setAutoFormattingIndent(2);
 
@@ -286,103 +285,103 @@ void AircraftPerf::loadXmlInternal(atools::util::XmlStream& xmlStream)
   while(xmlStream.readNextStartElement())
   {
     // Read data from header =========================================
-    if(reader.name() == "Header")
+    if(reader.name() == QStringLiteral("Header"))
     {
       // Skip header without warning
       xmlStream.skipCurrentElement();
       continue;
     }
-    else if(reader.name() == "Options")
+    else if(reader.name() == QStringLiteral("Options"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "Name")
+        if(reader.name() == QStringLiteral("Name"))
           name = reader.readElementText();
-        else if(reader.name() == "AircraftType")
+        else if(reader.name() == QStringLiteral("AircraftType"))
           type = reader.readElementText();
-        else if(reader.name() == "Simulator")
+        else if(reader.name() == QStringLiteral("Simulator"))
           simulator = reader.readElementText();
-        else if(reader.name() == "Description")
+        else if(reader.name() == QStringLiteral("Description"))
           description = reader.readElementText();
-        else if(reader.name() == "FuelAsVolume")
+        else if(reader.name() == QStringLiteral("FuelAsVolume"))
           volume = reader.readElementText().toInt();
-        else if(reader.name() == "JetFuel")
+        else if(reader.name() == QStringLiteral("JetFuel"))
           jetFuel = reader.readElementText().toInt();
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
     }
-    else if(reader.name() == "Perf")
+    else if(reader.name() == QStringLiteral("Perf"))
     {
       // Performance =======================================================
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "Alternate")
+        if(reader.name() == QStringLiteral("Alternate"))
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "FuelFlowLbsGalPerHour")
+            if(reader.name() == QStringLiteral("FuelFlowLbsGalPerHour"))
               alternateFuelFlow = reader.readElementText().toFloat();
-            else if(reader.name() == "SpeedKtsTAS")
+            else if(reader.name() == QStringLiteral("SpeedKtsTAS"))
               alternateSpeed = reader.readElementText().toFloat();
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
         }
-        else if(reader.name() == "Climb")
+        else if(reader.name() == QStringLiteral("Climb"))
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "FuelFlowLbsGalPerHour")
+            if(reader.name() == QStringLiteral("FuelFlowLbsGalPerHour"))
               climbFuelFlow = reader.readElementText().toFloat();
-            else if(reader.name() == "SpeedKtsTAS")
+            else if(reader.name() == QStringLiteral("SpeedKtsTAS"))
               climbSpeed = reader.readElementText().toFloat();
-            else if(reader.name() == "VertSpeedFtPerMin")
+            else if(reader.name() == QStringLiteral("VertSpeedFtPerMin"))
               climbVertSpeed = reader.readElementText().toFloat();
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
         }
-        else if(reader.name() == "Cruise")
+        else if(reader.name() == QStringLiteral("Cruise"))
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "FuelFlowLbsGalPerHour")
+            if(reader.name() == QStringLiteral("FuelFlowLbsGalPerHour"))
               cruiseFuelFlow = reader.readElementText().toFloat();
-            else if(reader.name() == "SpeedKtsTAS")
+            else if(reader.name() == QStringLiteral("SpeedKtsTAS"))
               cruiseSpeed = reader.readElementText().toFloat();
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
         }
-        else if(reader.name() == "Descent")
+        else if(reader.name() == QStringLiteral("Descent"))
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "FuelFlowLbsGalPerHour")
+            if(reader.name() == QStringLiteral("FuelFlowLbsGalPerHour"))
               descentFuelFlow = reader.readElementText().toFloat();
-            else if(reader.name() == "SpeedKtsTAS")
+            else if(reader.name() == QStringLiteral("SpeedKtsTAS"))
               descentSpeed = reader.readElementText().toFloat();
-            else if(reader.name() == "VertSpeedFtPerMin")
+            else if(reader.name() == QStringLiteral("VertSpeedFtPerMin"))
               descentVertSpeed = reader.readElementText().toFloat();
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
         }
         // Performance general ============================
-        else if(reader.name() == "ContingencyFuelPercent")
+        else if(reader.name() == QStringLiteral("ContingencyFuelPercent"))
           contingencyFuel = reader.readElementText().toFloat();
-        else if(reader.name() == "ExtraFuelLbsGal")
+        else if(reader.name() == QStringLiteral("ExtraFuelLbsGal"))
           extraFuel = reader.readElementText().toFloat();
-        else if(reader.name() == "MinRunwayLengthFt")
+        else if(reader.name() == QStringLiteral("MinRunwayLengthFt"))
           minRunwayLength = reader.readElementText().toFloat();
-        else if(reader.name() == "ReserveFuelLbsGal")
+        else if(reader.name() == QStringLiteral("ReserveFuelLbsGal"))
           reserveFuel = reader.readElementText().toFloat();
-        else if(reader.name() == "RunwayType")
+        else if(reader.name() == QStringLiteral("RunwayType"))
           runwayType = runwayTypeFromStr(reader.readElementText());
-        else if(reader.name() == "TaxiFuelLbsGal")
+        else if(reader.name() == QStringLiteral("TaxiFuelLbsGal"))
           taxiFuel = reader.readElementText().toFloat();
-        else if(reader.name() == "UsableFuelLbsGal")
+        else if(reader.name() == QStringLiteral("UsableFuelLbsGal"))
           usableFuel = reader.readElementText().toFloat();
         else
           xmlStream.skipCurrentElement(true /* warn */);
@@ -394,7 +393,6 @@ void AircraftPerf::loadXmlInternal(atools::util::XmlStream& xmlStream)
 void AircraftPerf::loadIniInternal(const QString& filename)
 {
   QSettings settings(filename, QSettings::IniFormat);
-  settings.setIniCodec("UTF-8");
   readFromSettings(settings);
 
   if(settings.status() != QSettings::NoError)
@@ -407,7 +405,6 @@ void AircraftPerf::saveIni(const QString& filename)
     QFile::remove(filename);
 
   QSettings settings(filename, QSettings::IniFormat);
-  settings.setIniCodec("UTF-8");
   writeToSettings(settings);
   settings.sync();
 

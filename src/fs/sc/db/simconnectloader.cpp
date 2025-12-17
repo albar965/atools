@@ -34,7 +34,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QThread>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QFile>
 
 namespace atools {
@@ -284,10 +284,10 @@ public:
   FacilityIdSet navaidIdSet;
 
   // All aiports to fetch - filled by loadAirports()
-  IcaoIdVector airportIds;
+  IcaoIdList airportIds;
 
   // Used to select airport ident to load if not empty
-  QList<QRegExp> airportIcaoFiltersInc;
+  QList<QRegularExpression> airportIcaoFiltersInc;
 
   // SimConnect DLL bindings
   atools::fs::sc::SimConnectApi *api;
@@ -593,7 +593,7 @@ bool SimConnectLoaderPrivate::loadAirports()
     airportFacilities.remove(id);
 
   airportIds.clear();
-  for(const Airport& id : qAsConst(airportFacilities))
+  for(const Airport& id : std::as_const(airportFacilities))
     airportIds.append(IcaoId(id.getAirportFacilityNum().icao));
 
   // Fill airportFacilities with base information
@@ -613,7 +613,7 @@ bool SimConnectLoaderPrivate::loadAirports()
     airportFacilities.remove(id);
 
   airportIds.clear();
-  for(const Airport& id : qAsConst(airportFacilities))
+  for(const Airport& id : std::as_const(airportFacilities))
     airportIds.append(IcaoId(id.getAirportFacilityNum().icao));
 
   // Fetch COM and fill into the respective airport facility structure in the hash airportFacilities
@@ -827,9 +827,9 @@ bool SimConnectLoaderPrivate::requestAirportList()
   {
     airportIds.erase(std::remove_if(airportIds.begin(), airportIds.end(), [ = ](const IcaoId& id) -> bool {
               bool foundMatch = false;
-              for(const QRegExp& regexp : qAsConst(airportIcaoFiltersInc))
+              for(const QRegularExpression& regexp : std::as_const(airportIcaoFiltersInc))
               {
-                if(regexp.exactMatch(id.getIdentStr()))
+                if(regexp.match(id.getIdentStr()).hasMatch())
                 {
                   foundMatch = true;
                   break;
@@ -1160,9 +1160,9 @@ ls -lh ~/.config/ABarthel/navaids.csv.gz
         if(!row.at(IDENT).isEmpty())
         {
           // Use null region and all types to do disambiguation in minimal list
-          addNavaid(FacilityId(row.at(IDENT), nullptr, ID_WAYPOINT));
-          addNavaid(FacilityId(row.at(IDENT), nullptr, ID_VORILS));
-          addNavaid(FacilityId(row.at(IDENT), nullptr, ID_NDB));
+          addNavaid(FacilityId(row.at(IDENT), nullptr, QChar(ID_WAYPOINT)));
+          addNavaid(FacilityId(row.at(IDENT), nullptr, QChar(ID_VORILS)));
+          addNavaid(FacilityId(row.at(IDENT), nullptr, QChar(ID_NDB)));
         }
       }
     }
@@ -1894,7 +1894,7 @@ const QStringList& SimConnectLoader::getErrors() const
 #endif
 }
 
-void SimConnectLoader::setAirportIdents(const QList<QRegExp>& airportIcaoFiltersInc)
+void SimConnectLoader::setAirportIdents(const QList<QRegularExpression>& airportIcaoFiltersInc)
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->airportIcaoFiltersInc = airportIcaoFiltersInc;

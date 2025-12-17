@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -198,8 +198,8 @@ void MapPosHistory::restoreState(const QString& filename)
         if(version == FILE_VERSION)
           in >> currentIndex >> entries;
         else
-          qWarning() << "Cannot read history" << historyFile.fileName() << ". Invalid version number:" <<
-            version;
+          qWarning() << "Cannot read history" << historyFile.fileName() << ". Invalid version number:"
+                     << version;
       }
       else
         qWarning() << "Cannot read history" << historyFile.fileName() << ". Invalid magic number:" << magic;
@@ -225,14 +225,6 @@ void MapPosHistory::clear()
 {
   entries.clear();
   currentIndex = -1;
-}
-
-void MapPosHistory::registerMetaTypes()
-{
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
-  qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
-#endif
 }
 
 } // namespace gui

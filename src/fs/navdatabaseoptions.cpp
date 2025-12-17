@@ -28,7 +28,7 @@
 namespace atools {
 namespace fs {
 
-const static QList<QRegExp> EMPTY_REGEXP_LIST;
+const static QList<QRegularExpression> EMPTY_REGEXP_LIST;
 
 void NavDatabaseOptions::setLanguage(const QString& lang)
 {
@@ -99,7 +99,8 @@ bool NavDatabaseOptions::isAddonGui(const QFileInfo& filepath) const
   return includedGui(filepath, dirAddonExcludesGui, fileAddonExcludesGui);
 }
 
-bool NavDatabaseOptions::includedGui(const QFileInfo& path, const QList<QRegExp>& fileExclude, const QList<QRegExp>& dirExclude) const
+bool NavDatabaseOptions::includedGui(const QFileInfo& path, const QList<QRegularExpression>& fileExclude,
+                                     const QList<QRegularExpression>& dirExclude) const
 {
   if(fileExclude.isEmpty() && dirExclude.isEmpty())
     return true;
@@ -289,16 +290,16 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
   settings.endGroup();
 }
 
-bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegExp>& filterListInc,
-                                       const QList<QRegExp>& filterListExcl) const
+bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegularExpression>& filterListInc,
+                                       const QList<QRegularExpression>& filterListExcl) const
 {
   if(filterListInc.isEmpty() && filterListExcl.isEmpty())
     return true;
 
   bool excludeMatched = false;
-  for(const QRegExp& iter : filterListExcl)
+  for(const QRegularExpression& iter : filterListExcl)
   {
-    if(iter.exactMatch(string))
+    if(iter.match(string).hasMatch())
     {
       excludeMatched = true;
       break;
@@ -311,9 +312,9 @@ bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegEx
   else
   {
     bool includeMatched = false;
-    for(const QRegExp& iter : filterListInc)
+    for(const QRegularExpression& iter : filterListInc)
     {
-      if(iter.exactMatch(string))
+      if(iter.match(string).hasMatch())
       {
         includeMatched = true;
         break;
@@ -328,16 +329,16 @@ bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegEx
   }
 }
 
-void NavDatabaseOptions::addToFilterList(const QStringList& filters, QList<QRegExp>& filterList)
+void NavDatabaseOptions::addToFilterList(const QStringList& filters, QList<QRegularExpression>& filterList)
 {
   for(const QString& filter : filters)
     addToFilter(filter, filterList);
 }
 
-void NavDatabaseOptions::addToFilter(const QString& filter, QList<QRegExp>& filterList)
+void NavDatabaseOptions::addToFilter(const QString& filter, QList<QRegularExpression>& filterList)
 {
   if(!filter.isEmpty())
-    filterList.append(QRegExp(filter.trimmed(), Qt::CaseInsensitive, QRegExp::Wildcard));
+    filterList.append(QRegularExpression::fromWildcard(filter.trimmed()));
 }
 
 QString NavDatabaseOptions::adaptDir(const QString& filepath) const
@@ -358,10 +359,10 @@ QStringList NavDatabaseOptions::fromNativeSeparatorList(const QStringList& paths
   return retval;
 }
 
-QString patternStr(const QList<QRegExp>& list)
+QString patternStr(const QList<QRegularExpression>& list)
 {
   QStringList retval;
-  for(const QRegExp& regexp : list)
+  for(const QRegularExpression& regexp : list)
     retval.append(regexp.pattern());
   return retval.join(", ");
 }

@@ -7,9 +7,8 @@
 #define TEMPLATE_H
 
 #include <QString>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QIODevice>
-#include <QTextCodec>
 #include <QFile>
 #include <QString>
 #include "templateglobal.h"
@@ -109,7 +108,7 @@ public:
    *  @see TemplateLoader
    *  @see TemplateCache
    */
-  Template(QFile& file, const QTextCodec *textCodec);
+  Template(QFile& file, const QStringConverter::Encoding encoding);
 
   /**
    *  Replace a variable by the given value.

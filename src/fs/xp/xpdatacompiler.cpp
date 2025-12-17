@@ -48,7 +48,6 @@
 #include <QElapsedTimer>
 #include <QRegularExpression>
 #include <QStandardPaths>
-#include <QTextCodec>
 #include <QQueue>
 
 using atools::sql::SqlQuery;
@@ -318,7 +317,7 @@ bool XpDataCompiler::compileCifp()
   int rowsPerStep = static_cast<int>(std::ceil(static_cast<float>(cifpFiles.size()) / static_cast<float>(NUM_REPORT_STEPS_CIFP)));
   int row = 0, steps = 0;
 
-  for(const QString& file : qAsConst(cifpFiles))
+  for(const QString& file : std::as_const(cifpFiles))
   {
     if(options.isIncludedFilename(file))
     {
@@ -421,7 +420,6 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpRea
 {
   QFile file;
   QTextStream stream;
-  stream.setCodec("UTF-8");
   bool aborted = false;
 
   QString progressMsg = tr("Reading: %1").arg(atools::nativeCleanPath(filepath));
@@ -595,18 +593,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
 
   if(filepath.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    if(flags & READ_AIRSPACE)
-    {
-      // Try to detect code using the BOM for airspaces only - use ANSI as fallback
-      stream.setDevice(&filepath);
-      stream.setCodec(atools::codecForFile(filepath, QTextCodec::codecForName("Windows-1252")));
-    }
-    else
-    {
-      stream.setDevice(&filepath);
-      stream.setCodec("UTF-8");
-    }
-    stream.setAutoDetectUnicode(true);
+    stream.setDevice(&filepath);
 
     if(!(flags & READ_CIFP) && !(flags & READ_AIRSPACE))
     {
@@ -659,7 +646,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
 
       if(lines == 0)
       {
-        qWarning() << Q_FUNC_INFO << "Empty file" << filepath;
+        qWarning() << Q_FUNC_INFO << "Empty file" << filepath.fileName();
         retval = false;
       }
 
@@ -729,7 +716,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
                                                   atools::fs::ProgressHandler *progressHandler, bool verbose, bool userInclude)
 {
   QHash<QString, int> pathToPackIndex;
-  QVector<SceneryPack> packs;
+  QList<SceneryPack> packs;
   if(!userInclude)
   {
     // Read only apt.dat from scenery_packs.ini - Global Airports are excluded and read separately, disabled are included
@@ -738,7 +725,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
     if(verbose)
     {
       qDebug() << Q_FUNC_INFO << "scenery_packs.ini";
-      for(const SceneryPack& pack : qAsConst(packs))
+      for(const SceneryPack& pack : std::as_const(packs))
         qDebug() << pack;
     }
 
@@ -767,7 +754,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
     // Read entries recursively for user added folder ===================
     QQueue<QFileInfo> queue;
     // Add intial path
-    queue.enqueue(path);
+    queue.enqueue(QFileInfo(path));
 
     while(!queue.isEmpty())
     {
@@ -787,7 +774,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
 #endif
   }
 
-  for(QFileInfo fileinfo : qAsConst(entries))
+  for(QFileInfo fileinfo : std::as_const(entries))
   {
     QString name = fileinfo.fileName();
     fileinfo.setFile(atools::canonicalFilePath(fileinfo));
@@ -869,7 +856,7 @@ QStringList XpDataCompiler::findFiles(const NavDatabaseOptions& opts, const QStr
     // Read all default entries
     QDir defaultDir(buildPathNoCase({opts.getBasepath(), "Resources", "default data", subdir}));
     QFileInfoList defaultEntries = defaultDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
-    for(const QFileInfo& fileInfo : qAsConst(defaultEntries))
+    for(const QFileInfo& fileInfo : std::as_const(defaultEntries))
     {
       if(includeFile(opts, fileInfo))
         // Use upper case file name as key in hash to make unique
@@ -884,7 +871,7 @@ QStringList XpDataCompiler::findFiles(const NavDatabaseOptions& opts, const QStr
     // Simply read all found filess in the scenery directories
     QDir customDir(buildPathNoCase({opts.getBasepath(), "Custom Data", subdir}));
     QFileInfoList customEntries = customDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
-    for(const QFileInfo& fileInfo : qAsConst(customEntries))
+    for(const QFileInfo& fileInfo : std::as_const(customEntries))
     {
       if(includeFile(opts, fileInfo))
         // Use upper case file name as key in hash to make unique
@@ -992,12 +979,12 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
   return reportCount;
 }
 
-QVector<SceneryPack> XpDataCompiler::loadFilepathsFromSceneryPacks(const NavDatabaseOptions& opts,
-                                                                   ProgressHandler *progressHandler,
-                                                                   NavDatabaseErrors *navdatabaseErrors)
+QList<SceneryPack> XpDataCompiler::loadFilepathsFromSceneryPacks(const NavDatabaseOptions& opts,
+                                                                 ProgressHandler *progressHandler,
+                                                                 NavDatabaseErrors *navdatabaseErrors)
 {
   qDebug() << Q_FUNC_INFO << "Reading scenery_packs.ini";
-  QVector<SceneryPack> entryMap;
+  QList<SceneryPack> entryMap;
 
   // Read X-Plane 11/Custom Scenery/scenery_packs.ini
   SceneryPacks sceneryPacks;
@@ -1093,7 +1080,7 @@ QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts, const QStr
   if(filename.isEmpty())
   {
     // No filename given - determine default path
-    if(includeFile(opts, customPath) &&
+    if(includeFile(opts, QFileInfo(customPath)) &&
        checkFile(Q_FUNC_INFO, buildPathNoCase({customPath, "earth_fix.dat"})) &&
        checkFile(Q_FUNC_INFO, buildPathNoCase({customPath, "earth_awy.dat"})) &&
        checkFile(Q_FUNC_INFO, buildPathNoCase({customPath, "earth_nav.dat"})))
@@ -1111,7 +1098,7 @@ QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts, const QStr
   else
   {
     // Determine path for given file - return full filepath
-    if(includeFile(opts, customPath) && checkFile(Q_FUNC_INFO, buildPathNoCase({customPath, filename})))
+    if(includeFile(opts, QFileInfo(customPath)) && checkFile(Q_FUNC_INFO, buildPathNoCase({customPath, filename})))
       basePath = customPath + atools::SEP + filename;
     else if(checkFile(Q_FUNC_INFO, buildPathNoCase({defaultPath, filename})))
       basePath = defaultPath + atools::SEP + filename;

@@ -145,8 +145,8 @@ private:
   bool callProgressUpdate();
 
   void groupProcedures(Airport& airport) const;
-  QVector<RunwayTransition> groupProcedures(const QVector<RunwayTransition>& runwayTransitions,
-                                            const QHash<int, QVector<const Runway *> > runwaysByNumber, int airportNumRunwayEnds) const;
+  QList<RunwayTransition> groupProcedures(const QList<RunwayTransition>& runwayTransitions,
+                                            const QHash<int, QList<const Runway *> > runwaysByNumber, int airportNumRunwayEnds) const;
 
   // All waypoint ids already stored in the database
   atools::fs::sc::db::FacilityIdSet waypointsWritten;

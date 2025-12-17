@@ -18,12 +18,7 @@
 
 namespace stefanfrings {
 
-/** Alias type definition, for compatibility to different Qt versions */
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 typedef qintptr tSocketDescriptor;
-#else
-typedef int tSocketDescriptor;
-#endif
 
 /** Alias for QSslConfiguration if OpenSSL is not supported */
 #ifdef QT_NO_SSL

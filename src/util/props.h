@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define ATOOLS_PROPS_H
 
 #include <QMultiHash>
-#include <QVector>
+#include <QList>
 #include <QDataStream>
 
 class QVariant;
@@ -267,13 +267,14 @@ private:
   void setTypeForString();
 
   template<typename TYPE>
-  static void readIntType(QDataStream & in, Prop & prop);
+  static void readIntType(QDataStream& in, Prop& prop);
+
   template<typename TYPE>
-  static void readBytesType(QDataStream & in, Prop & prop);
+  static void readBytesType(QDataStream& in, Prop& prop);
 
   friend QDataStream& operator<<(QDataStream& out, const atools::util::Prop& prop);
   friend QDataStream& operator>>(QDataStream& in, atools::util::Prop& prop);
-  friend uint qHash(const atools::util::Prop& prop);
+  friend size_t qHash(const atools::util::Prop& prop);
   friend QDebug operator<<(QDebug out, const atools::util::Prop& prop);
 
   /* Hash key as passed in by user in constructors */
@@ -321,14 +322,6 @@ public:
     addProps(props);
   }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  Props(const QVector<atools::util::Prop>& props)
-  {
-    addProps(props);
-  }
-
-#endif
-
   atools::util::Prop getProp(int key) const
   {
     return value(key);
@@ -350,15 +343,6 @@ public:
       insert(prop.getKey(), prop);
   }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  void addProps(const QVector<atools::util::Prop>& props)
-  {
-    for(const atools::util::Prop& prop:props)
-      insert(prop.getKey(), prop);
-  }
-
-#endif
-
 private:
   friend QDataStream& operator<<(QDataStream& out, const atools::util::Props& props);
   friend QDataStream& operator>>(QDataStream& in, atools::util::Props& props);
@@ -367,8 +351,8 @@ private:
   const static int MAX_PROPS_SIZE = std::numeric_limits<propsSizeType>::max();
 };
 
-uint qHash(const atools::util::Prop& prop);
-uint qHash(const atools::util::Props& props);
+size_t qHash(const atools::util::Prop& prop);
+size_t qHash(const atools::util::Props& props);
 
 template<typename TYPE>
 void Prop::readIntType(QDataStream& in, Prop& prop)

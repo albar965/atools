@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define ATOOLS_FS_SIMCONNECTHANDLER_H
 
 #include <QtGlobal>
-#include <QVector>
+#include <QList>
 
 #include "fs/sc/simconnecttypes.h"
 #include "fs/sc/connecthandler.h"

@@ -20,7 +20,7 @@
 
 #include "util/flags.h"
 
-#include <QVector>
+#include <QList>
 #include <QObject>
 #include <QDateTime>
 

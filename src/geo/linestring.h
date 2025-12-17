@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "geo/pos.h"
 #include "geo/rect.h"
 
-#include <QVector>
+#include <QList>
 
 namespace atools {
 namespace geo {
@@ -206,7 +206,7 @@ public:
   const atools::geo::LineString splitAtAntiMeridian(bool *crossed = nullptr) const;
 
   /* Returns a list of lines split at the anti-meridian if it crosses. List size is > 1 if crossed. */
-  const QVector<atools::geo::LineString> splitAtAntiMeridianList() const;
+  const QList<atools::geo::LineString> splitAtAntiMeridianList() const;
 
   /* Normalize all positions to -180 < lonx < 180 and -90 < laty < 90 and return reference */
   atools::geo::LineString& normalize();

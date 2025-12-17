@@ -316,7 +316,7 @@ private:
 };
 
 template<int SIZE>
-inline uint qHash(const atools::util::Str<SIZE>& str)
+inline size_t qHash(const atools::util::Str<SIZE>& str)
 {
   int retval = 0;
   for(int i = 0; i < SIZE && str.getStr()[i] != '\0'; i++)
@@ -326,19 +326,19 @@ inline uint qHash(const atools::util::Str<SIZE>& str)
 }
 
 template<int SIZE>
-inline uint qHash(const atools::util::StrTriple<SIZE>& str)
+inline size_t qHash(const atools::util::StrTriple<SIZE>& str)
 {
   return qHash(str.getFirst()) ^ qHash(str.getSecond()) ^ qHash(str.getThird());
 }
 
 template<int SIZE>
-inline uint qHash(const atools::util::StrQuad<SIZE>& str)
+inline size_t qHash(const atools::util::StrQuad<SIZE>& str)
 {
   return qHash(str.getFirst()) ^ qHash(str.getSecond()) ^ qHash(str.getThird()) ^ qHash(str.getFourth());
 }
 
 template<int SIZE>
-inline uint qHash(const atools::util::StrPair<SIZE>& str)
+inline size_t qHash(const atools::util::StrPair<SIZE>& str)
 {
   return qHash(str.getFirst()) ^ qHash(str.getSecond());
 }

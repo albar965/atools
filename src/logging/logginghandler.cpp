@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "logging/logginghandler.h"
+#include "atools.h"
 #include "logging/loggingconfig.h"
 
 #include <QDebug>
@@ -29,10 +30,8 @@ namespace logging {
 using internal::LoggingConfig;
 using internal::Channel;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
 using Qt::flush;
-#endif
 
 LoggingHandler *LoggingHandler::instance = nullptr;
 LoggingHandler::LogFunctionType LoggingHandler::logFunc;
@@ -57,14 +56,10 @@ LoggingHandler::LoggingHandler(const QString& logConfiguration,
 
 LoggingHandler::~LoggingHandler()
 {
-  qInstallMessageHandler(oldMessageHandler);
-  QLoggingCategory::installFilter(oldCategoryFilter);
-  delete logConfig;
+  qInfo() << Q_FUNC_INFO;
 }
 
-void LoggingHandler::initialize(const QString& logConfiguration,
-                                const QString& logDirectory,
-                                const QString& logFilePrefix)
+void LoggingHandler::initialize(const QString& logConfiguration, const QString& logDirectory, const QString& logFilePrefix)
 {
   if(instance == nullptr)
     instance = new LoggingHandler(logConfiguration, logDirectory, logFilePrefix);
@@ -102,15 +97,6 @@ QString LoggingHandler::prefix()
          QCoreApplication::applicationName().replace(" ", "_").toLower();
 }
 
-void LoggingHandler::shutdown()
-{
-  if(instance != nullptr)
-  {
-    delete instance;
-    instance = nullptr;
-  }
-}
-
 const QStringList LoggingHandler::getLogFiles(bool includeBackups)
 {
   if(instance != nullptr)
@@ -120,7 +106,7 @@ const QStringList LoggingHandler::getLogFiles(bool includeBackups)
 }
 
 void LoggingHandler::logToCatChannels(internal::ChannelMap& streamListCat,
-                                      internal::ChannelVector& streamList, const QString& message, const QString& category)
+                                      internal::ChannelList& streamList, const QString& message, const QString& category)
 {
   QMutexLocker locker(&instance->mutex);
 
@@ -134,7 +120,7 @@ void LoggingHandler::logToCatChannels(internal::ChannelMap& streamListCat,
   }
   else if(streamListCat.contains(category))
   {
-    for(Channel *channel : qAsConst(streamListCat[category]))
+    for(Channel *channel : std::as_const(streamListCat[category]))
     {
       (*channel->stream) << message << endl << flush;
       instance->logConfig->checkStreamSize(channel);

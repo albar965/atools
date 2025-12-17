@@ -55,14 +55,14 @@ public:
   WriterBase(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter, const QString& tablename,
              const QString& sqlParam = QString());
 
-  typedef QList<const TYPE *> TypePtrVector;
-  typedef QList<TYPE> TypeVector;
+  typedef QList<const TYPE *> TypePtrList;
+  typedef QList<TYPE> TypeList;
 
   /* convenience methods for writing references, pointers and lists of TYPE */
   void writeOne(const TYPE& t);
   void writeOne(const TYPE *t);
-  void write(const TypePtrVector& types);
-  void write(const TypeVector& types);
+  void write(const TypePtrList& types);
+  void write(const TypeList& types);
 
   /*
    * @return current unchanged database id for this writer
@@ -127,14 +127,14 @@ void WriterBase<TYPE>::writeOne(const TYPE& t)
 }
 
 template<typename TYPE>
-void WriterBase<TYPE>::write(const TypePtrVector& types)
+void WriterBase<TYPE>::write(const TypePtrList& types)
 {
   for(const TYPE *type : types)
     writeOne(type);
 }
 
 template<typename TYPE>
-void WriterBase<TYPE>::write(const TypeVector& types)
+void WriterBase<TYPE>::write(const TypeList& types)
 {
   for(const TYPE& type : types)
     writeOne(type);

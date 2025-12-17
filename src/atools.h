@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -81,19 +81,6 @@ bool contains(const TYPE& str, const std::initializer_list<TYPE>& list)
   return false;
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template<typename TYPE>
-bool contains(const TYPE& str, const QVector<TYPE>& list)
-{
-  for(const TYPE& val : list)
-    if(val == str)
-      return true;
-
-  return false;
-}
-
-#endif
-
 template<typename TYPE>
 bool contains(const TYPE& str, const QList<TYPE>& list)
 {
@@ -141,7 +128,7 @@ void convertList(QList<TYPE1>& dest, const QList<TYPE2>& src)
 }
 
 template<typename TYPE1, typename TYPE2>
-void convertVector(QVector<TYPE1>& dest, const QVector<TYPE2>& src)
+void convertVector(QList<TYPE1>& dest, const QList<TYPE2>& src)
 {
   for(TYPE2 type : src)
     dest.append(type);
@@ -158,20 +145,6 @@ void insertInto(QList<TYPE>& list, int index, const TYPE& type)
   else
     list.insert(index, type);
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template<typename TYPE>
-void insertInto(QVector<TYPE>& list, int index, const TYPE& type)
-{
-  if(index < 0)
-    list.prepend(type);
-  else if(index > list.size())
-    list.append(type);
-  else
-    list.insert(index, type);
-}
-
-#endif
 
 /* Read whole file into a string */
 QString strFromFile(const QString& filename);
@@ -246,11 +219,6 @@ QString buildPathNoCase(const QStringList& paths);
 /* Simply concatenates all paths parts with the QDir::separator() */
 QString buildPath(const QStringList& paths);
 
-/* Read a part of the file and find out the text codec if it has a BOM.
- * File has to be open for reading.
- * Do not delete the returned pointer. */
-QTextCodec *codecForFile(QIODevice& file, QTextCodec *defaultCodec = nullptr);
-
 /* Get the first numLinesRead lines of a file converted to lowercase to check type.
  *  Returns a list with always numLinesRead strings.
  *  Empty lines are removed and line length is limited to 80 characters.
@@ -273,15 +241,6 @@ constexpr bool inRange(const QList<TYPE>& list, int index)
 {
   return index >= 0 && index < list.size();
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template<typename TYPE>
-constexpr bool inRange(const QVector<TYPE>& list, int index)
-{
-  return index >= 0 && index < list.size();
-}
-
-#endif
 
 template<typename TYPE>
 constexpr bool inRange(TYPE minValue, TYPE maxValue, TYPE value)
@@ -323,19 +282,6 @@ const TYPE& at(const QList<TYPE>& list, int index, const TYPE& defaultType = TYP
   return defaultType;
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template<typename TYPE>
-const TYPE& at(const QVector<TYPE>& list, int index, const TYPE& defaultType = TYPE())
-{
-  if(inRange(list, index))
-    return list.at(index);
-  else
-    qWarning() << "index out of bounds:" << index << "list size" << list.size();
-  return defaultType;
-}
-
-#endif
-
 template<typename TYPE>
 const TYPE& at(const QList<TYPE>& list, int index, const QString& msg, const TYPE& defaultType = TYPE())
 {
@@ -346,41 +292,12 @@ const TYPE& at(const QList<TYPE>& list, int index, const QString& msg, const TYP
   return defaultType;
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template<typename TYPE>
-const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const TYPE& defaultType = TYPE())
-{
-  if(inRange(list, index))
-    return list.at(index);
-  else
-    qWarning() << "index out of bounds:" << index << "list size" << list.size() << "message" << msg;
-  return defaultType;
-}
-
-#endif
-
 /* For rolling lists. Valid for negative and overflowing indexes.
  * rollIndex(5, 6) -> 1 and rollIndex(5, -1) -> 4 */
 inline int rollIndex(int size, int index)
 {
   return index < 0 ? (((index % size) + size) % size) : (index % size);
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-/* Functions roll over to first position on overflow */
-template<typename TYPE>
-const TYPE& atRollConst(const QVector<TYPE>& list, int index)
-{
-  return list.at(rollIndex(list.size(), index));
-}
-
-template<typename TYPE>
-TYPE& atRoll(QVector<TYPE>& list, int index)
-{
-  return list[rollIndex(list.size(), index)];
-}
-
-#endif
 
 template<typename TYPE>
 const TYPE& atRollConst(const QList<TYPE>& list, int index)
@@ -414,21 +331,6 @@ inline const TYPE *constFirstPtrOrNull(const QList<TYPE>& list)
   return list.isEmpty() ? nullptr : &list.constFirst();
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template<typename TYPE>
-inline TYPE *firstPtrOrNull(QVector<TYPE>& list)
-{
-  return list.isEmpty() ? nullptr : &list.first();
-}
-
-template<typename TYPE>
-inline const TYPE *constFirstPtrOrNull(const QVector<TYPE>& list)
-{
-  return list.isEmpty() ? nullptr : &list.constFirst();
-}
-
-#endif
-
 template<typename TYPE>
 inline TYPE firstOrEmpty(const QList<TYPE>& list)
 {
@@ -440,21 +342,6 @@ inline const TYPE constFirstOrEmpty(const QList<TYPE>& list)
 {
   return list.isEmpty() ? TYPE() : list.constFirst();
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-template<typename TYPE>
-inline TYPE firstOrEmpty(const QVector<TYPE>& list)
-{
-  return list.isEmpty() ? TYPE() : list.first();
-}
-
-template<typename TYPE>
-inline const TYPE constFirstOrEmpty(const QVector<TYPE>& list)
-{
-  return list.isEmpty() ? TYPE() : list.constFirst();
-}
-
-#endif
 
 static const int MAX_FILENAME_CHARS = 150;
 
@@ -772,7 +659,7 @@ inline int wrapIndex(int index, int size)
  *
  * TYPE is converted to int */
 template<typename TYPE>
-QStringList numVectorToStrList(const QVector<TYPE>& vector)
+QStringList numVectorToStrList(const QList<TYPE>& vector)
 {
   QStringList retval;
   for(int value : vector)
@@ -781,11 +668,11 @@ QStringList numVectorToStrList(const QVector<TYPE>& vector)
 }
 
 template<typename TYPE>
-QVector<TYPE> strListToNumVector(const QStringList& strings, bool *ok = nullptr)
+QList<TYPE> strListToNumVector(const QStringList& strings, bool *ok = nullptr)
 {
   if(ok != nullptr)
     *ok = true;
-  QVector<TYPE> retval;
+  QList<TYPE> retval;
   for(const QString& str : strings)
   {
     bool localOk;
@@ -827,9 +714,9 @@ QSet<TYPE> strListToNumSet(const QStringList& strings, bool *ok = nullptr)
   return retval;
 }
 
-QStringList floatVectorToStrList(const QVector<float>& vector);
+QStringList floatVectorToStrList(const QList<float>& vector);
 
-QVector<float> strListToFloatVector(const QStringList& strings, bool *ok = nullptr);
+QList<float> strListToFloatVector(const QStringList& strings, bool *ok = nullptr);
 QStringList floatSetToStrList(const QSet<float>& set);
 
 QSet<float> strListToFloatSet(const QStringList& strings, bool *ok = nullptr);

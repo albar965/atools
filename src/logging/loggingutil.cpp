@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include <QDir>
-#include <QTextCodec>
 
 namespace atools {
 namespace logging {
@@ -44,7 +43,8 @@ void LoggingUtil::logSystemInformation()
   for(const QString& file : LoggingHandler::getLogFiles(true /* includeBackups */))
     qInfo() << "Log file" << i++ << file;
 
-  qInfo() << "Default text codec" << QTextCodec::codecForLocale()->name();
+  qInfo() << "Default text encoding" << QStringConverter::nameForEncoding(QStringConverter::System);
+
   qInfo() << "Locale BCP47 name" << QLocale::system().bcp47Name();
   qInfo() << "Locale name" << QLocale::system().name();
   qInfo() << "Locale decimal point" << QLocale::system().decimalPoint();
@@ -61,15 +61,7 @@ void LoggingUtil::logSystemInformation()
 
   qInfo() << "Qt version" << QT_VERSION_STR;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
   qInfo() << "Product name" << QSysInfo::prettyProductName();
-#else
-  if(QSysInfo::windowsVersion() != QSysInfo::WV_None)
-    qInfo() << "Windows version" << QSysInfo::windowsVersion();
-
-  if(QSysInfo::macVersion() != QSysInfo::MV_None)
-    qInfo() << "Mac version" << QSysInfo::macVersion();
-#endif
 }
 
 void LoggingUtil::logStandardPaths()
@@ -83,9 +75,6 @@ void LoggingUtil::logStandardPaths()
   qInfo() << "PicturesLocation" << QStandardPaths::standardLocations(QStandardPaths::PicturesLocation);
   qInfo() << "TempLocation" << QStandardPaths::standardLocations(QStandardPaths::TempLocation);
   qInfo() << "HomeLocation" << QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  qInfo() << "DataLocation" << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
-#endif
   qInfo() << "CacheLocation" << QStandardPaths::standardLocations(QStandardPaths::CacheLocation);
   qInfo() << "GenericDataLocation" << QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
   qInfo() << "RuntimeLocation" << QStandardPaths::standardLocations(QStandardPaths::RuntimeLocation);

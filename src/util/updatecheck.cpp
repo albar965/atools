@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -61,12 +61,7 @@ void UpdateCheck::checkForUpdates(const QString& versionsAlreadChecked, bool not
   {
     // Connect signals for this request
     connect(reply, &QNetworkReply::finished, this, &UpdateCheck::httpFinished);
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     connect(reply, &QNetworkReply::errorOccurred, this, &UpdateCheck::httpError);
-#else
-    connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this, &UpdateCheck::httpError);
-#endif
   }
 }
 
@@ -212,11 +207,7 @@ void UpdateCheck::endRequest()
   if(reply != nullptr)
   {
     disconnect(reply, &QNetworkReply::finished, this, &UpdateCheck::httpFinished);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     disconnect(reply, &QNetworkReply::errorOccurred, this, &UpdateCheck::httpError);
-#else
-    disconnect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), this, &UpdateCheck::httpError);
-#endif
     reply->abort();
     reply->deleteLater();
     reply = nullptr;

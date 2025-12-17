@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 #include "fs/common/xpgeometry.h"
 
 #include <QDataStream>
+#include <QIODevice>
 
 using atools::geo::Pos;
 
@@ -88,11 +89,11 @@ QByteArray XpGeometry::writeToByteArray()
   out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
   out << static_cast<quint32>(geometry.boundary.size());
-  for(const Node& node : qAsConst(geometry.boundary))
+  for(const Node& node : std::as_const(geometry.boundary))
     writeNode(out, node);
 
   out << static_cast<quint16>(geometry.holes.size());
-  for(const Boundary& hole : qAsConst(geometry.holes))
+  for(const Boundary& hole : std::as_const(geometry.holes))
   {
     out << static_cast<quint32>(hole.size());
     for(const Node& node : hole)

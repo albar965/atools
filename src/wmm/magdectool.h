@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ private:
   }
 
   // Read EGM9615.buf - only needed for grid creating
-  QVector<float> readGeoidBuffer();
+  QList<float> readGeoidBuffer();
 
   // latY (-90 to 90), lonX (-180 to 179)
   // -90.00 -180.00, -90.00 -179.00 ... 90.00 178.00, 90.00 179.00

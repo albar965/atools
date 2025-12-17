@@ -7,7 +7,6 @@
 #define TEMPLATELOADER_H
 
 #include <QString>
-#include <QTextCodec>
 #include <QMutex>
 #include "templateglobal.h"
 #include "template.h"
@@ -49,6 +48,7 @@ public:
    *  @param parent parent object
    */
   TemplateLoader(QHash<QString, QVariant> settings, QObject *parent = nullptr);
+  virtual ~TemplateLoader() override;
 
   /**
    *  Get a template for a given locale.
@@ -74,9 +74,6 @@ protected:
 
   /** Suffix to the filenames */
   QString fileNameSuffix;
-
-  /** Codec for decoding the files */
-  QTextCodec *textCodec;
 };
 
 } // end of namespace

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -646,7 +646,7 @@ void XpAirportReader::bindVasi(const QStringList& line, const atools::fs::xp::Xp
     atools::geo::LineDistance curResult, nearestResult;
     QString closestRunwayName;
     // Find nearest runway by distance where VASI is along line
-    for(const RunwayGeometry& rg: qAsConst(runwayGeometry))
+    for(const RunwayGeometry& rg: std::as_const(runwayGeometry))
     {
       // Calculate distance from VASI to runway
       rg.runway.distanceMeterToLine(vasiPos, curResult);
@@ -1146,7 +1146,7 @@ float XpAirportReader::transitionAltOrLevel(const QString& str)
 
   if(levelStr.startsWith("FL", Qt::CaseInsensitive))
     // FL118 or FL 060
-    level = levelStr.midRef(2).toFloat() * 100.f;
+    level = levelStr.mid(2).toFloat() * 100.f;
   else if(levelStr.endsWith("m", Qt::CaseInsensitive) || levelStr.endsWith("meter", Qt::CaseInsensitive))
   {
     if(levelStr.endsWith("m", Qt::CaseInsensitive))
@@ -1604,7 +1604,7 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
 
     // Determine longest runway ==============================
     const RunwayDimension *longestRunway = nullptr;
-    for(const RunwayDimension& runway : qAsConst(runwayDimensions))
+    for(const RunwayDimension& runway : std::as_const(runwayDimensions))
     {
       if((longestRunway == nullptr || runway.length > longestRunway->length) && // First iteration or is longer
          (runway.surface != WATER || (numSoftRunway == 0 && numHardRunway == 0))) // No water - if water count only of airport is water only
@@ -1709,7 +1709,7 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
     Pos center = airportPos.isValid() ? airportPos : airportRect.getCenter();
 
     airportIndex->addAirportId(airportIdent, airportIcao, airportFaa, airportLocal, curAirportId, center);
-    for(const RunwayEnds& rw : qAsConst(runwayEnds))
+    for(const RunwayEnds& rw : std::as_const(runwayEnds))
     {
       airportIndex->addRunwayEnd(curAirportId, rw.primaryName, rw.primaryEndId, rw.primaryPos);
       airportIndex->addRunwayEnd(curAirportId, rw.secondaryName, rw.secondaryEndId, rw.secondaryPos);

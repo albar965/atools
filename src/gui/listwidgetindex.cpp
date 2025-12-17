@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ private:
   QObject *object;
 };
 
-inline uint qHash(const atools::gui::ListWidgetIndexEntry& entry)
+inline size_t qHash(const atools::gui::ListWidgetIndexEntry& entry)
 {
   return static_cast<unsigned int>(entry.getStackedWidgetIndex()) ^ qHash(entry.getObject());
 }
@@ -170,7 +170,7 @@ void ListWidgetIndex::find(QString text)
     // Set current page to first in list and remember current page index =================================
     if(!foundStackedWidgetIndexes.isEmpty())
     {
-      QVector<int> indexes(foundStackedWidgetIndexes.constBegin(), foundStackedWidgetIndexes.constEnd());
+      QList<int> indexes(foundStackedWidgetIndexes.constBegin(), foundStackedWidgetIndexes.constEnd());
       std::sort(indexes.begin(), indexes.end());
 
       if(lastCurrentRow == -1)

@@ -27,9 +27,7 @@
 namespace atools {
 namespace sql {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
-#endif
 
 QVariant SqlRecord::value(int i) const
 {

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define ATOOLS_BINARYUTIL_H
 
 #include <QDataStream>
-#include <QVector>
+#include <QList>
 #include <QIODevice>
 
 namespace atools {
@@ -28,7 +28,7 @@ namespace io {
 /* Read vector with numeric types from byte array.
  * Array of values of TYPE is prefixed with size SIZETYPE. */
 template<typename TYPE, typename SIZETYPE>
-QVector<TYPE> readVector(QByteArray bytes)
+QList<TYPE> readVector(QByteArray bytes)
 {
   QDataStream out(&bytes, QIODevice::ReadOnly);
   out.setVersion(QDataStream::Qt_5_5);
@@ -39,7 +39,7 @@ QVector<TYPE> readVector(QByteArray bytes)
   out >> num;
 
   // Read values
-  QVector<TYPE> vector;
+  QList<TYPE> vector;
   for(SIZETYPE i = 0; i < num; i++)
   {
     TYPE value;
@@ -55,7 +55,7 @@ QVector<TYPE> readVector(QByteArray bytes)
  * Size is limited by max of SIZETYPE.
  * Values are sorted before writing. */
 template<typename TYPE, typename SIZETYPE>
-QByteArray writeVector(QVector<TYPE> vector)
+QByteArray writeVector(QList<TYPE> vector)
 {
   QByteArray bytes;
   QDataStream out(&bytes, QIODevice::WriteOnly);

@@ -69,19 +69,19 @@ private:
   float maxAirwaySegmentLengthNm = 0.f;
 
   typedef std::pair<QString, QVariant> TypeRowValue;
-  typedef QVector<TypeRowValue> TypeRowValueVector;
+  typedef QList<TypeRowValue> TypeRowValueList;
 
   struct Fragment
   {
     QSet<int> waypoints;
-    QVector<TypeRowValueVector> boundValues;
+    QList<TypeRowValueList> boundValues;
   };
 
   void buildAirway(const QString& airwayName, QSet<atools::fs::db::AirwayResolver::AirwaySegment>& airway,
-                   QVector<Fragment>& fragments);
+                   QList<Fragment>& fragments);
 
   /* Remove empty segments and segments that are contained by another */
-  void cleanFragments(QVector<Fragment>& fragments);
+  void cleanFragments(QList<Fragment>& fragments);
 
   /* Save airways to table airway */
   void saveAirway(QSet<AirwaySegment>& airway, const QString& currentAirway);

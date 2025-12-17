@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define LNM_SQLQUERYDIALOG_H
 
 #include <QDialog>
+#include <QSqlQueryModel>
 
 class QAbstractButton;
 
@@ -38,7 +39,7 @@ class SqlQueryModel;
 class ItemViewZoomHandler;
 
 /* Callback to modify value display or alignment. Only Qt::TextAlignmentRole and Qt::DisplayRole  */
-typedef std::function<QVariant(int column, const QVariant& data, Qt::ItemDataRole role)> SqlQueryDialogDataFunc;
+typedef std::function<QVariant (int column, const QVariant& data, Qt::ItemDataRole role)> SqlQueryDialogDataFunc;
 
 /*
  * Dialog class which allows to show the result of a SQL query in a table view. No editing.
@@ -60,7 +61,7 @@ public:
   /* Initializes query and prepares dialog to show. Uses given columns and column headers.
    * Shows nothing if query result count is zero. Dialog shows a close button and returns rejected in this case.
    * Call this before exec(). Dialog can only be used once. */
-  void initQuery(atools::sql::SqlDatabase *db, const QString& queryString, const QVector<atools::sql::SqlColumn>& columns,
+  void initQuery(atools::sql::SqlDatabase *db, const QString& queryString, const QList<atools::sql::SqlColumn>& columns,
                  const SqlQueryDialogDataFunc& dataFunc = nullptr);
 
   /* For atools::gui::HelpHandler::openHelpUrlWeb() */
@@ -85,6 +86,27 @@ private:
   QString helpBaseUrl, settingsPrefix, helpOnlineUrl, helpLanguageOnline;
 
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+};
+
+/* Simple query model used to modify data values and alignment by callback */
+class SqlQueryModel :
+  public QSqlQueryModel
+{
+  Q_OBJECT
+
+public:
+  explicit SqlQueryModel(QObject *parent)
+    : QSqlQueryModel(parent)
+  {
+  }
+
+  virtual ~SqlQueryModel() override;
+
+  SqlQueryDialogDataFunc dataFunc;
+
+private:
+  virtual QVariant data(const QModelIndex& index, int role) const override;
+
 };
 
 } // namespace gui

@@ -19,7 +19,7 @@
 #define ATOOLS_TRACKTYPES_H
 
 #include <QDateTime>
-#include <QVector>
+#include <QList>
 
 namespace atools {
 namespace track {
@@ -32,7 +32,7 @@ enum TrackType : char
   PACOTS = 'P'
 };
 
-static const QVector<TrackType> ALL_TRACK_TYPES = {NAT/*, PACOTS*/};
+static const QList<TrackType> ALL_TRACK_TYPES = {NAT /*, PACOTS*/};
 
 QString typeToString(atools::track::TrackType type);
 
@@ -66,7 +66,7 @@ struct Track
   QStringList route;
 
   /* Eastern or western flight levels. Only for NAT. */
-  QVector<quint16> eastLevels, westLevels;
+  QList<quint16> eastLevels, westLevels;
 
   /* Validity period. All dates in UTC. */
   QDateTime validFrom, validTo;
@@ -92,9 +92,9 @@ struct Track
 
 };
 
-typedef QVector<atools::track::Track> TrackVectorType;
+typedef QList<atools::track::Track> TrackListType;
 
-inline uint qHash(atools::track::TrackType type)
+inline size_t qHash(atools::track::TrackType type)
 {
   return static_cast<uint>(type);
 }

@@ -129,7 +129,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
 #endif
                 pathList.append(sceneryArea.filePath().split(SEPREGEXP));
                 pathList.append(path.split(SEPREGEXP));
-                bglFiles.append(atools::buildPathNoCase(pathList));
+                bglFiles.append(QFileInfo(atools::buildPathNoCase(pathList)));
               }
             }
             else if(options.getSimulatorType() == atools::fs::FsPaths::MSFS_2024)
@@ -137,7 +137,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
               QDir sceneryAreaDirObj(scenery.absoluteFilePath());
               QFileInfoList dirs = sceneryAreaDirObj.entryInfoList(QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot,
                                                                    QDir::Name | QDir::IgnoreCase);
-              for(const QFileInfo& dir : qAsConst(dirs))
+              for(const QFileInfo& dir : std::as_const(dirs))
               {
                 QDir dirObj(dir.absoluteFilePath());
                 bglFiles.append(dirObj.entryInfoList({"*.bgl"},
@@ -156,7 +156,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
             }
 
             // Get all BGL files
-            for(const QFileInfo& bglFile : qAsConst(bglFiles))
+            for(const QFileInfo& bglFile : std::as_const(bglFiles))
             {
               if(bglFile.isFile() && bglFile.isReadable())
               {

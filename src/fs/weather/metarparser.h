@@ -27,7 +27,7 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <QVector>
+#include <QList>
 
 namespace atools {
 namespace fs {
@@ -273,7 +273,7 @@ private:
 // ============================================================================
 // ============================================================================
 class MetarParser;
-typedef QVector<MetarParser> MetarParserVector;
+typedef QList<MetarParser> MetarParserList;
 
 class MetarParser
 {
@@ -356,8 +356,8 @@ public:
   /* Interpolates weather between list "metars" and returns result.
    * Interpolates, wind, flight rules, visibility and pressure but not clouds.
    * metars has to be ordered by distance to origin. */
-  static atools::fs::weather::MetarParser merge(const atools::fs::weather::MetarParserVector& metars,
-                                                const QVector<float>& distancesMeter);
+  static atools::fs::weather::MetarParser merge(const atools::fs::weather::MetarParserList& metars,
+                                                const QList<float>& distancesMeter);
 
   enum FlightRules
   {
@@ -553,11 +553,7 @@ public:
 
   const QList<MetarCloud> getClouds() const
   {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     return QList<MetarCloud>(_clouds.begin(), _clouds.end());
-#else
-    return QVector<MetarCloud>::fromStdVector(_clouds).toList();
-#endif
   }
 
   const QHash<QString, MetarRunway> getRunways() const;
@@ -566,11 +562,7 @@ public:
 
   const QList<Weather> getWeather2() const
   {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     return QList<Weather>(_weather2.begin(), _weather2.end());
-#else
-    return QVector<Weather>::fromStdVector(_weather2).toList();
-#endif
   }
 
   QString getRemark() const
@@ -653,7 +645,7 @@ private:
 
   int scanNumber(char **str, int *num, int min, int max = 0);
   bool scanBoundary(char **str);
-  const struct Token *scanToken(char **str, const QVector<Token>& list);
+  const struct Token *scanToken(char **str, const QList<Token>& list);
   void normalizeData();
 
   /* Calculate flight rules (IFR, VFR, etc.), max and lowest ceiling*/

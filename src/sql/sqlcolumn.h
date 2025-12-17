@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ public:
 
   /* Get statement for this column list like 'column_name_1 as "Column Title 1", column_name_2 as "Column Title 2"' */
   static QString getColumnList(const QList<atools::sql::SqlColumn>& columns);
-  static QString getColumnList(const QVector<atools::sql::SqlColumn>& columns);
 
   int getId() const
   {

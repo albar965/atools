@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include <QDateTime>
 #include <QSet>
 #include <QTimer>
-#include <QVector>
+#include <QList>
 
 class QFileSystemWatcher;
 
@@ -118,7 +118,7 @@ private:
   friend QDebug operator<<(QDebug out, const PathInfo& record);
 
   // All watched files and their parent directory
-  QVector<PathInfo> paths;
+  QList<PathInfo> paths;
 
   // Indexes into above paths for pathUpdatedDelayed() filled by pathChanged() if changed
   QSet<int> changedPathIndexes;

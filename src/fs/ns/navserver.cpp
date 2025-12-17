@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
     bool ipv6;
   };
 
-  QVector<Host> hosts;
+  QList<Host> hosts;
 
   // Listen on all network interfaces =================================
   bool retval = listen(QHostAddress::Any, static_cast<quint16>(port));
@@ -149,7 +149,7 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
 
         // Addresses
         int num = 1;
-        for(const Host& host : qAsConst(hosts))
+        for(const Host& host : std::as_const(hosts))
         {
           html.clear();
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,15 @@
 namespace atools {
 namespace gui {
 
-GridDelegate::GridDelegate(QObject *parent) :
-  QStyledItemDelegate(parent)
+GridDelegate::GridDelegate(QObject *parent)
+  : QStyledItemDelegate(parent)
 {
   styleChanged();
+}
+
+GridDelegate::~GridDelegate()
+{
+
 }
 
 void GridDelegate::styleChanged()

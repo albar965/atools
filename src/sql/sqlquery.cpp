@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -272,11 +272,7 @@ void SqlQuery::clearBoundValues()
     // Use position for "?"
     int pos = 0;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     for(const QVariant& value : query.boundValues())
-#else
-    for(const QVariant& value : query.boundValues().values())
-#endif
     {
       if(value.isValid() && !value.isNull())
         query.bindValue(pos, QVariant(value.type()));
@@ -286,7 +282,7 @@ void SqlQuery::clearBoundValues()
   else
   {
     // Use name for ":placeholder"
-    for(const QString& placeholder : qAsConst(placeholderSet))
+    for(const QString& placeholder : std::as_const(placeholderSet))
     {
       QVariant val = query.boundValue(placeholder);
       if(val.isValid() && !val.isNull())
@@ -323,11 +319,7 @@ void SqlQuery::prepare(const QString& queryStr)
   // Extract named or positional bindings
   placeholderList = extractPlaceholders(queryString, positionalPlaceholders);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
   placeholderSet = QSet<QString>(placeholderList.begin(), placeholderList.end());
-#else
-  placeholderSet = placeholderList.toSet();
-#endif
 }
 
 void SqlQuery::bindValue(const QString& placeholder, const QVariant& val, QSql::ParamType type)
@@ -342,13 +334,13 @@ void SqlQuery::bindValue(int pos, const QVariant& val, QSql::ParamType type)
   query.bindValue(pos, val, type);
 }
 
-void SqlQuery::bindValues(const QVector<std::pair<QString, QVariant> >& bindValues)
+void SqlQuery::bindValues(const QList<std::pair<QString, QVariant> >& bindValues)
 {
   for(const std::pair<QString, QVariant>& bind : bindValues)
     bindValue(bind.first, bind.second);
 }
 
-void SqlQuery::bindValues(const QVector<std::pair<int, QVariant> >& bindValues)
+void SqlQuery::bindValues(const QList<std::pair<int, QVariant> >& bindValues)
 {
   for(const std::pair<int, QVariant>& bind : bindValues)
     bindValue(bind.first, bind.second);
@@ -523,11 +515,7 @@ QMap<QString, QVariant> SqlQuery::boundPlaceholderAndValueMap() const
   {
     // Use position for "?"
     int i = 0;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     for(const QVariant& value : query.boundValues())
-#else
-    for(const QVariant& value : query.boundValues().values())
-#endif
       placeholderMap.insert(QString::number(i++), value);
   }
   else
@@ -542,14 +530,7 @@ QMap<QString, QVariant> SqlQuery::boundPlaceholderAndValueMap() const
 
 QVariantList SqlQuery::boundValues() const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-  QVariantList retval = query.boundValues();
-
-#else
-  QVariantList values = query.boundValues().values();
-
-#endif
-
+  QVariantList values = query.boundValues();
   checkValues(Q_FUNC_INFO, values);
 
   return values;

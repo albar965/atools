@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -248,7 +248,7 @@ int RouteFinder::calculateEdgeCost(const atools::routing::Node& currentNode,
   return static_cast<int>(costs);
 }
 
-void RouteFinder::extractLegs(QVector<RouteLeg>& routeLegs, float& distanceMeter) const
+void RouteFinder::extractLegs(QList<RouteLeg>& routeLegs, float& distanceMeter) const
 {
   distanceMeter = 0.f;
   routeLegs.clear();

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -78,6 +78,8 @@ public:
    * Loads the logging configuration and prepares all log files to be stored in
    * the given directory.
    *
+   * The instance is not deleted on exit to avoid crashes with late log messages.
+   *
    * @param logConfiguration Path of the log configuration file. See above.
    * @param logDirectory Where the log files should be stored.
    * @param logFilePrefix Prefix all log file names with this string
@@ -97,11 +99,7 @@ public:
    */
   static void initializeForTemp(const QString& logConfiguration);
 
-  /*
-   * Flush and close all logging streams/files. After this call the default Qt
-   * logging will be used again.
-   */
-  static void shutdown();
+  virtual ~LoggingHandler() override;
 
   /*
    * @return A list of log files using absolute path
@@ -138,12 +136,11 @@ private:
   friend class LoggingGuiAbortHandler;
 
   LoggingHandler(const QString& logConfiguration, const QString& logDirectory, const QString& logFilePrefix);
-  virtual ~LoggingHandler() override;
 
   LoggingHandler(const LoggingHandler& other) = delete;
   LoggingHandler& operator=(const LoggingHandler& other) = delete;
 
-  void logToCatChannels(atools::logging::internal::ChannelMap& streamListCat, atools::logging::internal::ChannelVector& streamList,
+  void logToCatChannels(atools::logging::internal::ChannelMap& streamListCat, atools::logging::internal::ChannelList& streamList,
                         const QString& message, const QString& category = QString());
 
   void checkAbortType(QtMsgType type, const QMessageLogContext& context, const QString& msg);

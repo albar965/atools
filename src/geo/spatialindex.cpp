@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -111,12 +111,12 @@ int SpatialIndexPrivate::nearestPoint(const Pos& pos) const
   return num == 1 ? static_cast<int>(resultIndex) : -1;
 }
 
-void SpatialIndexPrivate::nearestPoints(QVector<int>& indexes, const Pos& pos, int number) const
+void SpatialIndexPrivate::nearestPoints(QList<int>& indexes, const Pos& pos, int number) const
 {
   float pt[3];
   pos.toCartesian(pt[0], pt[1], pt[2]);
 
-  QVector<float> resultSqDist(number);
+  QList<float> resultSqDist(number);
   indexes.clear();
   indexes.fill(0, number);
   size_t numFound = p->index.knnSearch(pt, static_cast<size_t>(number), indexes.data(), resultSqDist.data());
@@ -133,7 +133,7 @@ struct IndexEntry
 class RadiusResults
 {
 public:
-  RadiusResults(QVector<IndexEntry>& resultParam, float radiusMaxParam, const RadiusCallbackType& radiusCallback)
+  RadiusResults(QList<IndexEntry>& resultParam, float radiusMaxParam, const RadiusCallbackType& radiusCallback)
     : radiusMax(radiusMaxParam), result(resultParam), callback(radiusCallback)
   {
   }
@@ -169,18 +169,18 @@ public:
 
 private:
   float radiusMax;
-  QVector<IndexEntry>& result;
+  QList<IndexEntry>& result;
   RadiusCallbackType callback;
 };
 
-void SpatialIndexPrivate::pointsInRadius(QVector<int>& indexes, const Pos& origin, float radiusMaxMeter,
+void SpatialIndexPrivate::pointsInRadius(QList<int>& indexes, const Pos& origin, float radiusMaxMeter,
                                          const RadiusCallbackType& callback) const
 {
   float originPtArr[3];
   origin.toCartesian(originPtArr[0], originPtArr[1], originPtArr[2]);
   Point3D originPt(originPtArr[0], originPtArr[1], originPtArr[2]);
 
-  QVector<IndexEntry> indicesDists;
+  QList<IndexEntry> indicesDists;
   indicesDists.reserve(100000);
   RadiusResults resultCallback(indicesDists, radiusMaxMeter, callback);
 

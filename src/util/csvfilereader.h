@@ -19,7 +19,7 @@
 #define ATOOLS_UTIL_CSVFILEREADER_H
 
 #include <QStringList>
-#include <QVector>
+#include <QList>
 
 class QTextStream;
 
@@ -45,7 +45,7 @@ public:
   void readCsvFile(const QString& filename);
 
   /* Get values after calling readCsvFile */
-  const QVector<QStringList>& getValues() const
+  const QList<QStringList>& getValues() const
   {
     return values;
   }
@@ -58,7 +58,7 @@ public:
 
 private:
   /* List of row and column values */
-  QVector<QStringList> values;
+  QList<QStringList> values;
   atools::util::CsvReader *reader = nullptr;
 };
 

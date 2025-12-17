@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -40,9 +40,7 @@ namespace atools {
 namespace fs {
 namespace gpx {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
-#endif
 
 GpxIO::GpxIO()
 {
@@ -138,9 +136,6 @@ void GpxIO::saveGpx(const QString& filename, const atools::fs::gpx::GpxData& gpx
 
 void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::GpxData& gpxData)
 {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-  writer.setCodec("UTF-8");
-#endif
   writer.setAutoFormatting(true);
   writer.setAutoFormattingIndent(2);
 

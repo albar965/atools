@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,7 @@ namespace atools {
 namespace fs {
 namespace pln {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
-#endif
 
 using atools::geo::Pos;
 
@@ -347,9 +345,9 @@ QString Flightplan::toShortString() const
   return str.join(' ');
 }
 
-const QVector<const FlightplanEntry *> Flightplan::getAlternates() const
+const QList<const FlightplanEntry *> Flightplan::getAlternates() const
 {
-  QVector<const FlightplanEntry *> alternates;
+  QList<const FlightplanEntry *> alternates;
 
   for(const FlightplanEntry& entry : *this)
   {

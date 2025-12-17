@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,11 @@ FileHistoryHandler::FileHistoryHandler(QObject *parent, const QString& settingsN
 {
   connect(recentMenu, &QMenu::triggered, this, &FileHistoryHandler::itemTriggered);
   recentMenuList->setToolTipsVisible(true);
+}
+
+FileHistoryHandler::~FileHistoryHandler()
+{
+
 }
 
 void FileHistoryHandler::saveState() const
@@ -128,7 +133,7 @@ void FileHistoryHandler::updateMenu()
   recentMenu->clear();
 
   int i = 1;
-  for(const QString& filepath : qAsConst(filePaths))
+  for(const QString& filepath : std::as_const(filePaths))
   {
     QString fname = QFileInfo(filepath).fileName();
     // Add number for selection

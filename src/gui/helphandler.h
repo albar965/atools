@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ class HelpHandler
 
 public:
   explicit HelpHandler(QWidget *parent, const QString& aboutMessage, const QString& gitRevision);
+  virtual ~HelpHandler() override;
 
   /*
    * Get a help file where the ${LANG} variable in filepath will replaced with the

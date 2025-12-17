@@ -43,8 +43,6 @@ class LineString;
 class Pos;
 class Rect;
 
-void registerMetaTypes();
-
 template<typename TYPE>
 inline TYPE atan2Deg(TYPE y, TYPE x);
 

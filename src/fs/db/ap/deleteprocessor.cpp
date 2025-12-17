@@ -462,7 +462,7 @@ void DeleteProcessor::removePrevRunways()
   // Delete runway first due to foreign key from rw -> rw end
   bindAndExecute(deleteRunwayStmt, "runways deleted");
 
-  for(int it : qAsConst(runwayEndIds))
+  for(int it : std::as_const(runwayEndIds))
   {
     // Remove runway
     deleteRunwayEndStmt->bindValue(":endId", it);

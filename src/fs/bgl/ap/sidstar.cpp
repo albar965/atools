@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::hex;
 using Qt::dec;
 using Qt::endl;
-#endif
 
 using atools::io::BinaryStream;
 
@@ -206,16 +204,16 @@ bool SidStar::isValid() const
   // Need at least one leg
   bool valid = commonRouteLegs.size() + runwayTransitionLegs.size() + enrouteTransitions.size() > 0;
 
-  for(const ApproachLeg& leg: qAsConst(commonRouteLegs))
+  for(const ApproachLeg& leg: std::as_const(commonRouteLegs))
     valid &= leg.isValid();
 
-  for(const QList<atools::fs::bgl::ApproachLeg>& legs : qAsConst(enrouteTransitions))
+  for(const QList<atools::fs::bgl::ApproachLeg>& legs : std::as_const(enrouteTransitions))
   {
     for(const ApproachLeg& leg: legs)
       valid &= leg.isValid();
   }
 
-  for(const QList<atools::fs::bgl::ApproachLeg>& legs : qAsConst(runwayTransitionLegs))
+  for(const QList<atools::fs::bgl::ApproachLeg>& legs : std::as_const(runwayTransitionLegs))
   {
     for(const ApproachLeg& leg: legs)
       valid &= leg.isValid();

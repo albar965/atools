@@ -220,12 +220,12 @@ public:
   qint64 simDataUserObjectId = -1L;
 
   /* AI aircraft structures fetched and object IDs */
-  QVector<std::pair<quint32, SimDataAircraft> > simDataAiAircraftList;
+  QList<std::pair<quint32, SimDataAircraft> > simDataAiAircraftList;
 
   sc::State state = sc::STATEOK;
 
   atools::fs::sc::WeatherRequest weatherRequest;
-  QVector<QString> fetchedMetars;
+  QList<QString> fetchedMetars;
   SIMCONNECT_EXCEPTION simconnectException;
   SIMCONNECT_RECV_OPEN openData;
 
@@ -916,7 +916,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     p->state = sc::STATEOK;
 
     // Copy all AI aircraft =======================================================================
-    for(const std::pair<quint32, SimDataAircraft>& simData : qAsConst(p->simDataAiAircraftList))
+    for(const std::pair<quint32, SimDataAircraft>& simData : std::as_const(p->simDataAiAircraftList))
     {
       const SimDataAircraft& simDataAircraftAi = simData.second;
       atools::fs::sc::SimConnectAircraft aircraftAi;
@@ -1149,7 +1149,7 @@ const WeatherRequest& SimConnectHandler::getWeatherRequest() const
 
 QString SimConnectHandler::getName() const
 {
-  return QLatin1String("SimConnect");
+  return QString("SimConnect");
 }
 
 int SimConnectHandler::getApplicationVersionMajor() const

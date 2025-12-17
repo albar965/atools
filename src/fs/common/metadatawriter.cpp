@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,9 @@ void MetadataWriter::writeFile(const QString& filepath, const QString& comment, 
   QFileInfo fileinfo(filepath);
 
   insertFileQuery->bindValue(":bgl_file_id", curFileId);
-  insertFileQuery->bindValue(":file_modification_time", fileinfo.lastModified().toTime_t());
+  insertFileQuery->bindValue(":file_modification_time", fileinfo.lastModified().toSecsSinceEpoch());
   insertFileQuery->bindValue(":scenery_area_id", curSceneryId);
-  insertFileQuery->bindValue(":bgl_create_time", fileinfo.lastModified().toTime_t());
+  insertFileQuery->bindValue(":bgl_create_time", fileinfo.lastModified().toSecsSinceEpoch());
   insertFileQuery->bindValue(":filepath", fileinfo.filePath());
   insertFileQuery->bindValue(":filename", fileinfo.fileName());
   insertFileQuery->bindValue(":size", fileinfo.size());

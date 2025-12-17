@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -282,7 +282,7 @@ private:
   static bool includeFile(const atools::fs::NavDatabaseOptions& opts, const QFileInfo& fileinfo);
 
   /* Read X-Plane 11/Custom Scenery/scenery_packs.ini Returns all airports including disabled but excluding "Global Airports" */
-  static QVector<atools::fs::xp::SceneryPack> loadFilepathsFromSceneryPacks(const NavDatabaseOptions& opts,
+  static QList<atools::fs::xp::SceneryPack> loadFilepathsFromSceneryPacks(const NavDatabaseOptions& opts,
                                                                             atools::fs::ProgressHandler *progressHandler,
                                                                             atools::fs::NavDatabaseErrors *navdatabaseErrors);
 

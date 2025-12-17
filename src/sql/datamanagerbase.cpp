@@ -80,7 +80,7 @@ void DataManagerBase::createSchema(bool verboseLogging)
   SqlTransaction transaction(db);
   SqlScript script(db, verboseLogging);
 
-  for(const QString& createScript : qAsConst(createScripts))
+  for(const QString& createScript : std::as_const(createScripts))
     script.executeScript(createScript);
 
   if(!createUndoScript.isEmpty())
@@ -390,7 +390,7 @@ QVariant DataManagerBase::getValue(int id, const QString& colName) const
   return values.isEmpty() ? QVariant() : values.constFirst();
 }
 
-void DataManagerBase::getRecords(QVector<SqlRecord>& records, const QSet<int>& ids) const
+void DataManagerBase::getRecords(QList<SqlRecord>& records, const QSet<int>& ids) const
 {
   for(int id : ids)
   {
@@ -405,7 +405,7 @@ void DataManagerBase::getRecords(QVector<SqlRecord>& records, const QSet<int>& i
 
 SqlRecord DataManagerBase::getRecord(int id) const
 {
-  QVector<SqlRecord> recs;
+  QList<SqlRecord> recs;
   getRecords(recs, {id});
 
   // Nothing found

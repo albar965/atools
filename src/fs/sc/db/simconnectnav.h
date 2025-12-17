@@ -18,7 +18,7 @@
 #ifndef ATOOLS_SIMCONNECTNAVFACILITIES_H
 #define ATOOLS_SIMCONNECTNAVFACILITIES_H
 
-#include <QVector>
+#include <QList>
 #include <QDebug>
 
 namespace atools {
@@ -218,7 +218,7 @@ public:
     return waypoint;
   }
 
-  const QVector<RouteFacility>& getRouteFacilities() const
+  const QList<RouteFacility>& getRouteFacilities() const
   {
     return routes;
   }
@@ -231,7 +231,7 @@ private:
   friend class SimConnectLoaderPrivate;
 
   WaypointFacility waypoint;
-  QVector<RouteFacility> routes;
+  QList<RouteFacility> routes;
 };
 
 /* VOR type which differs slightly from the definition in the BGL files */

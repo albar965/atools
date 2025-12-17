@@ -200,7 +200,7 @@ private:
   void dropAllIndexes();
 
   void readAddOnComponents(int& areaNum, atools::fs::scenery::SceneryCfg& cfg,
-                           QVector<scenery::AddOnComponent>& noLayerComponents,
+                           QList<scenery::AddOnComponent>& noLayerComponents,
                            QStringList& noLayerPaths, QSet<QString>& addonPaths, const QFileInfo& addonEntry);
   QFileInfo buildAddonFile(const QFileInfo& addonEntry);
 

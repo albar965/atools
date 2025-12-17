@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -135,14 +135,14 @@ void XpCifpReader::read(const QStringList& line, const XpReaderContext& context)
     if(expChar == '0')
       procInput.rnp = rnpStr.toFloat() / 10.f;
     else
-      procInput.rnp = rnpStr.leftRef(2).toFloat() * std::pow(10.f, -static_cast<float>(expChar - '0'));
+      procInput.rnp = rnpStr.left(2).toFloat() * std::pow(10.f, -static_cast<float>(expChar - '0'));
   }
 
   procInput.rteHoldTime = procInput.rteHoldDist = 0.f;
   QString distTime = at(line, RTE_DIST_HOLD_DIST_TIME).trimmed();
   if(distTime.startsWith("T"))
     // time minutes/10
-    procInput.rteHoldTime = distTime.midRef(1).toFloat() / 10.f;
+    procInput.rteHoldTime = distTime.mid(1).toFloat() / 10.f;
   else
     // distance nm/10
     procInput.rteHoldDist = distTime.toFloat() / 10.f;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #ifndef ATOOLS_GUI_TRANSLATOR_H
 #define ATOOLS_GUI_TRANSLATOR_H
 
-#include <QVector>
+#include <QList>
 
 class QTranslator;
 class QLocale;
@@ -59,7 +59,7 @@ public:
   /* Find all translation files in the given path and return the related locale objects.
    * The locale "en" is always added. Looks at executable working directory and "translations".
    *  Files are detected by file pattern "applicationbasename_XX_YY.qm" where "_YY" (region/country) is optional. */
-  static QVector<QLocale> findTranslationFiles();
+  static QList<QLocale> findTranslationFiles();
 
 private:
   Translator()
@@ -69,9 +69,9 @@ private:
 
   static bool loadAndInstall(const QString& name, const QString& dir, const QString& language);
   static bool loadApp(const QString& appBaseName, const QString& appPath, const QString& language);
-  static QVector<QLocale> findTranslationFilesInternal(const QString& path);
+  static QList<QLocale> findTranslationFilesInternal(const QString& path);
 
-  static QVector<QTranslator *> translators;
+  static QList<QTranslator *> translators;
   static bool loaded;
 
 };

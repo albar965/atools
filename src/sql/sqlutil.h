@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ public:
   void reportDuplicates(QDebug& out, const QString& table, const QString& idColumn,
                         const QStringList& identityColumns) const;
 
-  int bindAndExec(const QString& sql, QVector<std::pair<QString, QVariant> > params);
+  int bindAndExec(const QString& sql, QList<std::pair<QString, QVariant> > params);
   int bindAndExec(const QString& sql, const QString& bind, const QVariant& value);
 
   /* Creates an insert statement including all columns for the given table. */
@@ -78,7 +78,7 @@ public:
   bool hasTableAndRows(const QString& tablename) const;
 
   /* Return first database in the list having table and rows. null if no one has. */
-  static atools::sql::SqlDatabase *getDbWithTableAndRows(const QString& tablename, QVector<atools::sql::SqlDatabase *> databases);
+  static atools::sql::SqlDatabase *getDbWithTableAndRows(const QString& tablename, QList<atools::sql::SqlDatabase *> databases);
   static atools::sql::SqlDatabase *getDbWithTableAndRows(const QString& tablename, atools::sql::SqlDatabase *db1,
                                                          atools::sql::SqlDatabase *db2);
 

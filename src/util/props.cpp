@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2021 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@ namespace util {
 
 using namespace atools::util::ptinternal;
 
-uint qHash(const atools::util::Prop& prop)
+size_t qHash(const atools::util::Prop& prop)
 {
-  uint hash = 43;
+  size_t hash = 43;
   switch(prop.type)
   {
     case BOOL:
@@ -63,16 +63,16 @@ uint qHash(const atools::util::Prop& prop)
       break;
   }
 
-  return static_cast<uint>(::qHash(prop.key) ^ hash);
+  return ::qHash(prop.key) ^ hash;
 }
 
-uint qHash(const atools::util::Props& props)
+size_t qHash(const atools::util::Props& props)
 {
-  uint retval = 43;
+  size_t retval = 43;
   for(auto it = props.constBegin(); it != props.constEnd(); ++it)
     retval ^= qHash(it.value());
 
-  return static_cast<uint>(retval);
+  return retval;
 }
 
 QDataStream& operator<<(QDataStream& out, const Prop& prop)

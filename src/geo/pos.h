@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -385,7 +385,7 @@ private:
 /* Invalid position */
 const atools::geo::Pos EMPTY_POS;
 
-inline uint qHash(const atools::geo::Pos& pos)
+inline size_t qHash(const atools::geo::Pos& pos)
 {
   return static_cast<unsigned int>(pos.getLonX()) ^ static_cast<unsigned int>(pos.getLatY());
 }

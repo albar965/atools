@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,7 @@
 namespace atools {
 namespace sql {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
-#endif
 
 SqlUtil::SqlUtil(const SqlDatabase *sqlDb)
   : db(sqlDb)
@@ -142,7 +140,7 @@ bool SqlUtil::hasTableAndRows(const QString& tablename) const
   return false;
 }
 
-SqlDatabase *SqlUtil::getDbWithTableAndRows(const QString& tablename, QVector<SqlDatabase *> databases)
+SqlDatabase *SqlUtil::getDbWithTableAndRows(const QString& tablename, QList<SqlDatabase *> databases)
 {
   for(SqlDatabase *database : databases)
   {
@@ -481,7 +479,7 @@ int SqlUtil::bindAndExec(const QString& sql, const QString& bind, const QVariant
   return bindAndExec(sql, {std::make_pair(bind, value)});
 }
 
-int SqlUtil::bindAndExec(const QString& sql, QVector<std::pair<QString, QVariant> > params)
+int SqlUtil::bindAndExec(const QString& sql, QList<std::pair<QString, QVariant> > params)
 {
   SqlQuery query(db);
   query.prepare(sql);

@@ -62,9 +62,7 @@
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #pragma GCC diagnostic ignored "-Wshorten-64-to-32"
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
-#endif
 
 using std::string;
 using std::map;
@@ -134,11 +132,11 @@ namespace weather {
 const MetarParser MetarParser::EMPTY;
 const QLatin1String MetarParser::NO_IDENT("XXXX");
 
-static QVector<Token> description;
-static QVector<Token> phenomenon;
-static QVector<Token> special;
-static QVector<Token> colors;
-static QVector<Token> cloud_types;
+static QList<Token> description;
+static QList<Token> phenomenon;
+static QList<Token> special;
+static QList<Token> colors;
+static QList<Token> cloud_types;
 
 static QStringList runway_deposit;
 static QStringList runway_deposit_extent;
@@ -339,7 +337,7 @@ inline double lambda(double distance)
 /* Merge values using Inverse distance weighting
  * https://de.wikipedia.org/wiki/Inverse_Distanzwichtung (German) */
 template<typename TYPE>
-TYPE mergeField(const MetarParserVector& metars, const QVector<float>& distancesMeter, TYPE (*fieldAccessor)(const MetarParser& parser))
+TYPE mergeField(const MetarParserList& metars, const QList<float>& distancesMeter, TYPE (*fieldAccessor)(const MetarParser& parser))
 {
   // Calculate normalization factor by summarizing lambda for valid values
   double normFactor = 0.;
@@ -367,8 +365,8 @@ TYPE mergeField(const MetarParserVector& metars, const QVector<float>& distances
   return TYPE(sum * normFactor);
 }
 
-atools::fs::weather::MetarParser MetarParser::merge(const atools::fs::weather::MetarParserVector& metars,
-                                                    const QVector<float>& distancesMeter)
+atools::fs::weather::MetarParser MetarParser::merge(const atools::fs::weather::MetarParserList& metars,
+                                                    const QList<float>& distancesMeter)
 {
   MetarParser retval;
   retval.resetParsed();
@@ -1997,7 +1995,7 @@ int MetarParser::scanNumber(char **src, int *num, int min, int max)
 }
 
 // find longest match of str in list
-const struct Token *MetarParser::scanToken(char **str, const QVector<Token>& list)
+const struct Token *MetarParser::scanToken(char **str, const QList<Token>& list)
 {
   const struct Token *longest = nullptr;
   int maxlen = 0;

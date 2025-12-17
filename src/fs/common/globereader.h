@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define ATOOLS_DTM_GLOBEREADER_H
 
 #include <QFile>
-#include <QVector>
+#include <QList>
 
 class DtmTest;
 class QFileInfo;
@@ -100,9 +100,9 @@ private:
   float elevationMax(const atools::geo::Pos& pos, float sampleRadiusMeter);
 
   QString dataDir;
-  QVector<QString> dataFilenames;
-  QVector<QFile *> dataFiles;
-  QVector<QDataStream *> dataStreams;
+  QList<QString> dataFilenames;
+  QList<QFile *> dataFiles;
+  QList<QDataStream *> dataStreams;
 
   bool valid = false;
 };

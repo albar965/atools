@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,22 +32,10 @@
 namespace atools {
 namespace gui {
 
-/* Simple query model used to modify data values and alignment by callback */
-class SqlQueryModel :
-  public QSqlQueryModel
+SqlQueryModel::~SqlQueryModel()
 {
-public:
-  explicit SqlQueryModel(QObject *parent)
-    : QSqlQueryModel(parent)
-  {
-  }
 
-  SqlQueryDialogDataFunc dataFunc;
-
-private:
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-
-};
+}
 
 QVariant SqlQueryModel::data(const QModelIndex& index, int role) const
 {
@@ -67,7 +55,7 @@ SqlQueryDialog::SqlQueryDialog(QWidget *parent, const QString& title, const QStr
   ui->setupUi(this);
 
   setWindowTitle(title);
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   setWindowModality(Qt::ApplicationModal);
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableView);
@@ -103,7 +91,7 @@ SqlQueryDialog::~SqlQueryDialog()
   delete ui;
 }
 
-void SqlQueryDialog::initQuery(atools::sql::SqlDatabase *db, const QString& queryString, const QVector<sql::SqlColumn>& columns,
+void SqlQueryDialog::initQuery(atools::sql::SqlDatabase *db, const QString& queryString, const QList<sql::SqlColumn>& columns,
                                const SqlQueryDialogDataFunc& dataFunc)
 {
   // Build query model based on SQL string - view is parent which deletes model

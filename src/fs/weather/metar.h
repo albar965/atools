@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ namespace fs {
 namespace weather {
 
 class Metar;
-typedef QVector<Metar> MetarVector;
-typedef QVector<const Metar *> MetarPtrVector;
+typedef QList<Metar> MetarList;
+typedef QList<const Metar *> MetarPtrList;
 
 /*
  * Collects METAR information for station, nearest and interpolated values.
@@ -44,7 +44,7 @@ public:
   }
 
   /* Interpolates weather between list "metars". Interpolates, wind, flight rules, visibility and pressure but not clouds. */
-  Metar(const QString& requestIdentParam, const atools::geo::Pos& posParam, const MetarPtrVector& metars);
+  Metar(const QString& requestIdentParam, const atools::geo::Pos& posParam, const MetarPtrList& metars);
 
   /* METAR using given time */
   Metar(const QString& requestIdentParam, const atools::geo::Pos& posParam, const QDateTime& timestampParam, const QString& metarString)

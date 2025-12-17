@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ namespace gui {
 
 SignalBlocker::~SignalBlocker()
 {
-  for(QObject *object : objects)
+  for(QObject *object : std::as_const(objects))
   {
     if(object != nullptr)
       object->blockSignals(false);

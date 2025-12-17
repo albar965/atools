@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -161,13 +161,13 @@ private:
   const atools::sql::SqlRecord runwayEndRecord;
 
   /* Keep runway information to ease assigning of VASI to a runway end */
-  QVector<atools::fs::xp::RunwayGeometry> runwayGeometry;
+  QList<atools::fs::xp::RunwayGeometry> runwayGeometry;
 
   /* Keep runway ends until ICAO code is determined */
-  QVector<atools::fs::xp::RunwayEnds> runwayEnds;
+  QList<atools::fs::xp::RunwayEnds> runwayEnds;
 
   /* Collect runways to determine longest ============================================================== */
-  QVector<atools::fs::xp::RunwayDimension> runwayDimensions;
+  QList<atools::fs::xp::RunwayDimension> runwayDimensions;
 
   float airportAltitude = 0.f;
   AirportRowCode airportRowCode = NO_ROWCODE;

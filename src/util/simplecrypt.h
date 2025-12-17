@@ -31,7 +31,7 @@
 #include "util/flags.h"
 
 #include <QString>
-#include <QVector>
+#include <QList>
 
 namespace atools {
 namespace util {
@@ -255,7 +255,7 @@ private:
   void splitKey();
 
   quint64 m_key;
-  QVector<char> m_keyParts;
+  QList<char> m_keyParts;
   CompressionMode m_compressionMode;
   IntegrityProtectionMode m_protectionMode;
   Error m_lastError;

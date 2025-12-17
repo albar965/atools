@@ -78,7 +78,7 @@ struct AirwayResolver::AirwaySegment
   atools::geo::Pos fromPos, toPos;
 };
 
-uint qHash(const AirwayResolver::AirwaySegment& segment)
+size_t qHash(const AirwayResolver::AirwaySegment& segment)
 {
   return static_cast<unsigned int>(segment.fromWaypointId) ^ static_cast<unsigned int>(segment.toWaypointId);
 }
@@ -244,7 +244,7 @@ void AirwayResolver::fetchNavaid(int& id, atools::geo::Pos& pos, atools::sql::Sq
   tmpWaypointQuery.bindValue(BIND_TYPE, tmpAirwayPointQuery.valueStr(prefix % "type"));
   tmpWaypointQuery.exec();
 
-  QVector<std::pair<int, Pos> > wpList;
+  QList<std::pair<int, Pos> > wpList;
   while(tmpWaypointQuery.next())
     wpList.append(std::make_pair(tmpWaypointQuery.valueInt(WAYPOINT_ID),
                                  Pos(tmpWaypointQuery.valueFloat(LONX), tmpWaypointQuery.valueFloat(LATY))));
@@ -271,15 +271,15 @@ void AirwayResolver::saveAirway(QSet<AirwaySegment>& airway, const QString& curr
   if(!airway.empty())
   {
     // Build airway fragments
-    QVector<Fragment> fragments;
+    QList<Fragment> fragments;
     buildAirway(currentAirway, airway, fragments);
 
     // Remove all fragments that are contained by others
     cleanFragments(fragments);
 
-    for(const Fragment& fragment : qAsConst(fragments))
+    for(const Fragment& fragment : std::as_const(fragments))
     {
-      for(const TypeRowValueVector& bindRow : fragment.boundValues)
+      for(const TypeRowValueList& bindRow : fragment.boundValues)
       {
         airwayInsertStmt.bindValues(bindRow);
         airwayInsertStmt.exec();
@@ -290,7 +290,7 @@ void AirwayResolver::saveAirway(QSet<AirwaySegment>& airway, const QString& curr
   }
 }
 
-void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>& airway, QVector<Fragment>& fragments)
+void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>& airway, QList<Fragment>& fragments)
 {
   // Queue of waypoints that will get waypoints in order prependend and appendend
   QQueue<AirwaySegment> newAirway;
@@ -301,7 +301,7 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
   QHash<int, AirwaySegment> segsByToWpId;
 
   // Fill the index
-  for(const AirwaySegment& segment : qAsConst(airway))
+  for(const AirwaySegment& segment : std::as_const(airway))
   {
     segsByFromWpId[segment.fromWaypointId] = segment;
     segsByToWpId[segment.toWaypointId] = segment;
@@ -361,7 +361,7 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
     int seqNo = 1;
     Fragment fragment;
 
-    for(const AirwaySegment& newSegment : qAsConst(newAirway))
+    for(const AirwaySegment& newSegment : std::as_const(newAirway))
     {
       last = newSegment;
 
@@ -372,7 +372,7 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
       Rect bounding(newSegment.fromPos);
       bounding.extend(newSegment.toPos);
 
-      TypeRowValueVector row;
+      TypeRowValueList row;
 
       row.append(std::make_pair(":airway_id", curAirwayId));
       row.append(std::make_pair(":airway_name", airwayName));
@@ -410,7 +410,7 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
   }
 }
 
-void AirwayResolver::cleanFragments(QVector<Fragment>& fragments)
+void AirwayResolver::cleanFragments(QList<Fragment>& fragments)
 {
   // Erase empty segments
   fragments.erase(std::remove_if(fragments.begin(), fragments.end(), [](const Fragment& f) -> bool {

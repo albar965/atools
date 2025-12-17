@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QList<QWidg
   // Container widget and layout for tool button and additional widgets
   QWidget *widget = new QWidget(tabWidget);
   QHBoxLayout *layout = new QHBoxLayout(widget);
-  layout->setMargin(0);
+  layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(2);
 
   // Add additional
@@ -127,7 +127,7 @@ TabWidgetHandler::~TabWidgetHandler()
 
 void TabWidgetHandler::clear()
 {
-  for(const Tab& tab : qAsConst(tabs))
+  for(const Tab& tab : std::as_const(tabs))
   {
     toolButtonCorner->menu()->removeAction(tab.action);
     delete tab.action;
@@ -152,7 +152,7 @@ void TabWidgetHandler::reset()
 void TabWidgetHandler::resetInternal()
 {
   clearTabWidget();
-  for(const Tab& tab : qAsConst(tabs))
+  for(const Tab& tab : std::as_const(tabs))
     addTab(tab.action->data().toInt());
 
   // Activate first
@@ -191,7 +191,7 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
   menu.addAction(closeAction);
   menu.addSeparator();
 
-  for(const Tab& tab : qAsConst(tabs))
+  for(const Tab& tab : std::as_const(tabs))
     menu.addAction(tab.action);
 
   // Open menu
@@ -201,7 +201,7 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
     tabCloseRequestedInternal(index);
 }
 
-void TabWidgetHandler::init(const QVector<int>& tabIdsParam, const QString& settingsPrefixParam)
+void TabWidgetHandler::init(const QList<int>& tabIdsParam, const QString& settingsPrefixParam)
 {
   clear();
   settingsPrefix = settingsPrefixParam;
@@ -392,7 +392,7 @@ void TabWidgetHandler::toolbarActionTriggered()
     if(sendAction == actionOpenAll)
     {
       // Add all closed tabs at the end of the list - keep current selected ==============================
-      const QVector<int> missing = missingTabIds();
+      const QList<int> missing = missingTabIds();
       for(int id : missing)
         addTab(id);
       tabWidget->setCurrentWidget(current);
@@ -487,9 +487,9 @@ void TabWidgetHandler::clearTabWidget()
   tabWidget->blockSignals(false);
 }
 
-const QVector<int> TabWidgetHandler::missingTabIds() const
+const QList<int> TabWidgetHandler::missingTabIds() const
 {
-  QVector<int> retval;
+  QList<int> retval;
 
   for(int id = 0; id < tabs.size(); id++)
   {
@@ -553,7 +553,7 @@ void TabWidgetHandler::updateTabs()
 
 void TabWidgetHandler::updateWidgets()
 {
-  for(const Tab& tab : qAsConst(tabs))
+  for(const Tab& tab : std::as_const(tabs))
   {
     QSignalBlocker actionBlocker(tab.action);
     tab.action->setChecked(false);

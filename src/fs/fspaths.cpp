@@ -41,7 +41,7 @@ static QHash<atools::fs::FsPaths::SimulatorType, QString> filesPathMap;
 static QHash<atools::fs::FsPaths::SimulatorType, QString> sceneryFilepathMap;
 
 /* All supported simulators. Order in this vector defines order of detection. */
-static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES({
+static const QList<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES({
       FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::P3D_V6,
       FsPaths::XPLANE_11, FsPaths::XPLANE_12, FsPaths::MSFS, FsPaths::MSFS_2024
     });
@@ -243,7 +243,6 @@ void FsPaths::loadAllPaths()
 
 void FsPaths::intitialize()
 {
-  qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
   environment = QProcessEnvironment::systemEnvironment();
 }
 
@@ -909,7 +908,7 @@ FsPaths::SimulatorType FsPaths::stringToType(const QString& typeStr)
     return NONE;
 }
 
-const QVector<FsPaths::SimulatorType>& FsPaths::getAllSimulatorTypes()
+const QList<FsPaths::SimulatorType>& FsPaths::getAllSimulatorTypes()
 {
   return ALL_SIMULATOR_TYPES;
 }
@@ -1071,10 +1070,6 @@ QString FsPaths::msfsBasePath(const QString& userCfgOptFile, SimulatorType type)
   if(fileCfgOpt.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream stream(&fileCfgOpt);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    stream.setCodec("UTF-8");
-#endif
-
     while(!stream.atEnd())
     {
       QString line = stream.readLine().trimmed();
@@ -1138,9 +1133,7 @@ QString FsPaths::xplaneBasePath(const QString& installationFile)
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream stream(&file);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    stream.setCodec("UTF-8");
-#endif
+
     while(!stream.atEnd())
     {
       QFileInfo fi(stream.readLine().trimmed());

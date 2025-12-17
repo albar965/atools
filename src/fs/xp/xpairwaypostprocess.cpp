@@ -31,9 +31,7 @@ namespace atools {
 namespace fs {
 namespace xp {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
-#endif
 
 // ==================================================================
 /* X-Plane types */
@@ -62,7 +60,7 @@ inline bool operator!=(const AirwayPoint& seg1, const AirwayPoint& seg2)
   return !(seg1 == seg2);
 }
 
-inline uint qHash(const AirwayPoint& seg)
+inline size_t qHash(const AirwayPoint& seg)
 {
   return qHash(seg.ident) ^ qHash(seg.region) ^ static_cast<uint>(seg.type);
 }
@@ -111,7 +109,7 @@ inline bool operator!=(const AirwaySegment& seg1, const AirwaySegment& seg2)
   return !(seg1 == seg2);
 }
 
-inline uint qHash(const AirwaySegment& seg)
+inline size_t qHash(const AirwaySegment& seg)
 {
   return qHash(seg.prev) ^ qHash(seg.next);
 }

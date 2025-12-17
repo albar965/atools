@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ void FileSystemWatcher::pathUpdatedDelayed()
 
   // Collect existing changed files and the parent directory if changed
   QStringList updatedFiles, updatedDirs;
-  for(int index : qAsConst(changedPathIndexes))
+  for(int index : std::as_const(changedPathIndexes))
   {
     if(!atools::inRange(paths, index))
     {
@@ -308,7 +308,7 @@ void FileSystemWatcher::setPathsToFsWatcher(bool update)
 
   QStringList files = fsWatcher->files();
   QStringList directories = fsWatcher->directories();
-  for(const PathInfo& info : qAsConst(paths))
+  for(const PathInfo& info : std::as_const(paths))
   {
     // Watch file to get changes
     if(!files.contains(info.path) && !directories.contains(info.path))

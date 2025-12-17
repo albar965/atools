@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "fs/scenery/addoncomponent.h"
 
 #include <QString>
-#include <QVector>
+#include <QList>
 #include <QCoreApplication>
 
 namespace atools {
@@ -40,7 +40,7 @@ public:
   AddOnPackage(const QString& file);
   ~AddOnPackage();
 
-  const QVector<atools::fs::scenery::AddOnComponent>& getComponents() const
+  const QList<atools::fs::scenery::AddOnComponent>& getComponents() const
   {
     return components;
   }
@@ -69,7 +69,7 @@ public:
 private:
   QString filename, baseDirectory, name, description;
 
-  QVector<atools::fs::scenery::AddOnComponent> components;
+  QList<atools::fs::scenery::AddOnComponent> components;
 };
 
 } // namespace scenery

@@ -37,6 +37,11 @@ StaticFileController::StaticFileController(const QHash<QString, QVariant>& setti
   qDebug("StaticFileController: cache timeout=%i, size=%li", cacheTimeout, cacheMaxCost);
 }
 
+StaticFileController::~StaticFileController()
+{
+
+}
+
 void StaticFileController::service(HttpRequest& request, HttpResponse& response)
 {
   QByteArray path = request.getPath();

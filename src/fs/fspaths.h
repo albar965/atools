@@ -104,7 +104,7 @@ public:
 
   Q_ENUM(MsfsInstallType)
 
-  typedef QVector<atools::fs::FsPaths::SimulatorType> SimulatorTypeVector;
+  typedef QList<atools::fs::FsPaths::SimulatorType> SimulatorTypeList;
 
   /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed.
    * Returns package installation path for MSFS. */
@@ -174,7 +174,7 @@ public:
   static atools::fs::FsPaths::SimulatorType stringToType(const QString& typeStr);
 
   /* Array of all four valid types */
-  static const QVector<atools::fs::FsPaths::SimulatorType>& getAllSimulatorTypes();
+  static const QList<atools::fs::FsPaths::SimulatorType>& getAllSimulatorTypes();
 
 private:
   /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed.
@@ -203,7 +203,9 @@ private:
 } /* namespace fs */
 } /* namespace atools */
 
-QDataStream& operator<<(QDataStream& out, const atools::fs::FsPaths::SimulatorType& obj);
+Q_DECLARE_METATYPE(atools::fs::FsPaths::SimulatorType)
+
+QDataStream& operator<<(QDataStream & out, const atools::fs::FsPaths::SimulatorType& obj);
 QDataStream& operator>>(QDataStream& in, atools::fs::FsPaths::SimulatorType& obj);
 
 #endif // ATOOLS_FS_FSPATHS_H

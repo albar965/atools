@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::hex;
 using Qt::dec;
 using Qt::endl;
-#endif
 
 using atools::io::BinaryStream;
 
@@ -152,11 +150,11 @@ bool Approach::isValid() const
 {
   bool valid = !legs.isEmpty();
   valid &= ap::approachTypeToStr(type) != "UNKN";
-  for(const ApproachLeg& leg : qAsConst(legs))
+  for(const ApproachLeg& leg : std::as_const(legs))
     valid &= leg.isValid();
-  for(const ApproachLeg& leg : qAsConst(missedLegs))
+  for(const ApproachLeg& leg : std::as_const(missedLegs))
     valid &= leg.isValid();
-  for(const Transition& trans: qAsConst(transitions))
+  for(const Transition& trans: std::as_const(transitions))
     valid &= trans.isValid();
   return valid;
 

@@ -61,7 +61,7 @@ public:
   void cancelAllDownloads();
 
   /* Get downloaded tracks. */
-  const TrackVectorType& getTracks(atools::track::TrackType type);
+  const TrackListType& getTracks(atools::track::TrackType type);
 
   /* Remove downloaded tracks. */
   void clearTracks();
@@ -84,7 +84,7 @@ public:
 
 signals:
   /* Emitted when HTML page was downloaded and parsed */
-  void trackDownloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type);
+  void trackDownloadFinished(const atools::track::TrackListType& tracks, atools::track::TrackType type);
 
   /* Emitted if download failed */
   void trackDownloadFailed(const QString& error, int errorCode, QString downloadUrl, atools::track::TrackType type);
@@ -103,7 +103,7 @@ private:
   QHash<atools::track::TrackType, atools::util::HttpDownloader *> downloaders;
 
   /* List of tracks for each type */
-  QHash<atools::track::TrackType, atools::track::TrackVectorType> trackList;
+  QHash<atools::track::TrackType, atools::track::TrackListType> trackList;
 
   bool verbose = false;
 };
