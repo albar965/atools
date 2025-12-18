@@ -27,9 +27,6 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-using Qt::hex;
-using Qt::dec;
-
 QString Ndb::ndbTypeToStr(nav::NdbType type)
 {
   switch(type)
@@ -88,7 +85,7 @@ Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *stream)
 
       default:
         qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in NDB record 0x"
-                                       << hex << t << dec << " for ident " << ident;
+                                       << Qt::hex << t << Qt::dec << " for ident " << ident;
     }
     r.seekToEnd();
   }

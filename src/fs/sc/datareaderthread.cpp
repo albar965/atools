@@ -32,10 +32,6 @@ namespace atools {
 namespace fs {
 namespace sc {
 
-using Qt::hex;
-using Qt::dec;
-using Qt::endl;
-
 void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& dataPacket)
 {
   static QDateTime last;
@@ -72,11 +68,11 @@ void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& d
       QTextStream stream(&file);
 
       // GENERAL header =====================================================================
-      stream << "!GENERAL:" << endl;
-      stream << "VERSION = 8" << endl;
-      stream << "RELOAD = 2" << endl;
-      stream << "UPDATE = " << QDateTime::currentDateTimeUtc().toString("yyyyMMddhhmmss") << endl; // 2018 0322 170014
-      stream << "ATIS ALLOW MIN = 5" << endl;
+      stream << "!GENERAL:" << Qt::endl;
+      stream << "VERSION = 8" << Qt::endl;
+      stream << "RELOAD = 2" << Qt::endl;
+      stream << "UPDATE = " << QDateTime::currentDateTimeUtc().toString("yyyyMMddhhmmss") << Qt::endl; // 2018 0322 170014
+      stream << "ATIS ALLOW MIN = 5" << Qt::endl;
 
       const QList<atools::fs::sc::SimConnectAircraft>& aircraft = dataPacket.getAiAircraftConst();
       atools::fs::sc::SimConnectUserAircraft user = dataPacket.getUserAircraftConst();
@@ -141,10 +137,10 @@ void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& d
 #endif
         aircraftFiltered.append(ac);
       }
-      stream << "CONNECTED CLIENTS = " << aircraftFiltered.size() << endl;
+      stream << "CONNECTED CLIENTS = " << aircraftFiltered.size() << Qt::endl;
 
       // CLIENTS =====================================================================
-      stream << "!CLIENTS:" << endl;
+      stream << "!CLIENTS:" << Qt::endl;
 
       // callsign:cid:realname:clienttype:frequency:latitude:longitude:altitude:groundspeed:planned_aircraft:
       // planned_tascruise:planned_depairport:planned_altitude:planned_destairport:server:protrevision:rating
@@ -201,7 +197,7 @@ void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& d
         for(int i = text.size(); i < 40; i++)
           text.append(QString());
 
-        stream << text.join(':') << endl;
+        stream << text.join(':') << Qt::endl;
       }
     }
 

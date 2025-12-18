@@ -29,7 +29,7 @@ HttpConnectionHandlerPool::~HttpConnectionHandlerPool()
     delete handler;
   }
   delete sslConfiguration;
-  qDebug("HttpConnectionHandlerPool (%p): destroyed", static_cast<void*>(this));
+  qDebug("HttpConnectionHandlerPool (%p): destroyed", static_cast<void *>(this));
 }
 
 HttpConnectionHandler *HttpConnectionHandlerPool::getConnectionHandler()

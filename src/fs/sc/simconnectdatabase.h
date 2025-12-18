@@ -51,10 +51,10 @@ public:
 
   static void writeString(QDataStream& out, const QString& str);
 
-  static bool readString(QDataStream & in, QString & str);
+  static bool readString(QDataStream& in, QString& str);
   static void writeLongString(QDataStream& out, const QString& str);
 
-  static bool readLongString(QDataStream & in, QString & str);
+  static bool readLongString(QDataStream& in, QString& str);
 
 protected:
   atools::fs::sc::SimConnectStatus status = OK;

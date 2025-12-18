@@ -37,8 +37,6 @@ namespace atools {
 namespace fs {
 namespace userdata {
 
-using Qt::endl;
-
 using atools::geo::Pos;
 using atools::sql::SqlUtil;
 using atools::sql::SqlDatabase;
@@ -323,14 +321,14 @@ int LogdataManager::importCsv(const QString& filepath)
 // Each time an aircraft is flown in X-Plane, the program logs the flight time in a digital logbook.
 // By default, X‑Plane creates a text file called “X-Plane Pilot.txt” in the ‘X-Plane 11/Output/logbooks directory’.
 // Inside this text file are the following details of previous flights:
-// 0	 Dates of flights
-// 1	 Tail numbers of aircraft
-// 2	 Aircraft types
-// 3	 Airports of departure and arrival
-// 4	 Number of landings
-// 5	 Duration of flights
-// 6	 Time spent flying cross-country, in IFR conditions, and at night
-// 7	 Total time of all flights
+// 0   Dates of flights
+// 1   Tail numbers of aircraft
+// 2   Aircraft types
+// 3   Airports of departure and arrival
+// 4   Number of landings
+// 5   Duration of flights
+// 6   Time spent flying cross-country, in IFR conditions, and at night
+// 7   Total time of all flights
 //
 // I
 // 1 Version
@@ -530,7 +528,7 @@ int LogdataManager::exportCsv(const QString& filepath, const QList<int>& ids, bo
 
     if(!endsWithEol && append)
       // Add needed linefeed for append
-      stream << endl;
+      stream << Qt::endl;
 
     SqlExport sqlExport;
     sqlExport.setEndline(false);
@@ -554,12 +552,12 @@ int LogdataManager::exportCsv(const QString& filepath, const QList<int>& ids, bo
       {
         // Write header
         first = false;
-        stream << sqlExport.getResultSetHeader(query.query.record()) << endl;
+        stream << sqlExport.getResultSetHeader(query.query.record()) << Qt::endl;
       }
       SqlRecord record = query.query.record();
 
       // Write row
-      stream << sqlExport.getResultSetRow(record) << endl;
+      stream << sqlExport.getResultSetRow(record) << Qt::endl;
       numExported++;
     }
 

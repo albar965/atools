@@ -31,8 +31,6 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
-using Qt::endl;
-
 /*
  * Pre SU10:
  *
@@ -206,12 +204,12 @@ QDebug operator<<(QDebug out, const ContentXml& cfg)
 {
   QDebugStateSaver saver(out);
 
-  out.nospace() << "ContentXml[" << endl;
+  out.nospace() << "ContentXml[" << Qt::endl;
 
   for(const SceneryArea& area : cfg.areaEntries)
-    out.nospace().noquote() << area << endl;
+    out.nospace().noquote() << area << Qt::endl;
 
-  out.nospace().noquote() << endl << "]";
+  out.nospace().noquote() << Qt::endl << "]";
   return out;
 }
 

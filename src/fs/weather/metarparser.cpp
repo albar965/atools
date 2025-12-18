@@ -62,8 +62,6 @@
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #pragma GCC diagnostic ignored "-Wshorten-64-to-32"
 
-using Qt::endl;
-
 using std::string;
 using std::map;
 using std::vector;
@@ -1467,13 +1465,13 @@ bool MetarParser::scanSkyCondition()
     return true;
   }
 
-  if(!strncmp(m, "CLR", i = 3) // clear
-     || !strncmp(m, "SKC", i = 3) // sky clear
-     || !strncmp(m, "NCD", i = 3) // nil cloud detected
-     || !strncmp(m, "NSC", i = 3) // no significant clouds
-     || !strncmp(m, "NOSIG", i = 5) // no significant clouds
-     || !strncmp(m, "CAVOK 9999", i = 10) // ceiling and visibility OK 9999 sometimes given too
-     || !strncmp(m, "CAVOK", i = 5)) // ceiling and visibility OK (implies 9999)
+  if(!strncmp(m, "CLR", i = 3) || // clear
+     !strncmp(m, "SKC", i = 3) || // sky clear
+     !strncmp(m, "NCD", i = 3) || // nil cloud detected
+     !strncmp(m, "NSC", i = 3) || // no significant clouds
+     !strncmp(m, "NOSIG", i = 5) || // no significant clouds
+     !strncmp(m, "CAVOK 9999", i = 10) || // ceiling and visibility OK 9999 sometimes given too
+     !strncmp(m, "CAVOK", i = 5))    // ceiling and visibility OK (implies 9999)
   {
     m += i;
     if(!scanBoundary(&m))

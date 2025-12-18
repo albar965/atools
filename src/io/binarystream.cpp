@@ -26,9 +26,6 @@
 namespace atools {
 namespace io {
 
-using Qt::hex;
-using Qt::dec;
-
 /* Default intel / little
  * Big endian 1A2B3C4D = 1A 2B 3C 4D in mem
  * Little endian 1A2B3C4D =  4D 3C 2B 1A in mem
@@ -256,7 +253,7 @@ void BinaryStream::checkStream(const QString& what) const
 
     QString msg = tr("%1 for file \"%2\" failed. Reason: %3 (%4).").arg(what).arg(getFilepath()).arg(statusText).arg(is.status());
 
-    qWarning() << msg << "Position" << hex << "0x" << is.device()->pos() << dec << is.device()->pos();
+    qWarning() << msg << "Position" << Qt::hex << "0x" << is.device()->pos() << Qt::dec << is.device()->pos();
     throw Exception(msg);
   }
 }

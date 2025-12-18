@@ -24,9 +24,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-using Qt::hex;
-using Qt::dec;
-
 using atools::io::BinaryStream;
 
 Subsection::Subsection(const atools::fs::NavDatabaseOptions *options, BinaryStream *stream, const Section& parentSect)
@@ -48,9 +45,9 @@ QDebug operator<<(QDebug out, const Subsection& section)
 
   out.nospace().noquote() << static_cast<const BglBase&>(section)
                           << " Subsection[parent type " << sectionTypeStr(section.getParent().getType())
-                          << hex << ", id 0x" << section.id << dec
+                          << Qt::hex << ", id 0x" << section.id << Qt::dec
                           << ", records " << section.numDataRecords
-                          << hex << ", offset 0x" << section.firstDataRecordOffset << dec
+                          << Qt::hex << ", offset 0x" << section.firstDataRecordOffset << Qt::dec
                           << ", size " << section.dataSize << "]";
   return out;
 }

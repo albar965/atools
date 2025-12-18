@@ -28,8 +28,6 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
-using Qt::endl;
-
 SceneryCfg::SceneryCfg(const QString& textCodec)
   : AbstractIniReader(textCodec), cleanOnExit(false)
 {
@@ -155,12 +153,12 @@ QDebug operator<<(QDebug out, const SceneryCfg& cfg)
   out.nospace() << "SceneryCfg["
                 << "title " << cfg.title
                 << ", description " << cfg.description
-                << ", cleanOnExit " << cfg.cleanOnExit << endl;
+                << ", cleanOnExit " << cfg.cleanOnExit << Qt::endl;
 
   for(const SceneryArea& area : cfg.areaEntries)
-    out.nospace().noquote() << area << endl;
+    out.nospace().noquote() << area << Qt::endl;
 
-  out.nospace().noquote() << endl << "]";
+  out.nospace().noquote() << Qt::endl << "]";
   return out;
 }
 

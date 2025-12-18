@@ -22,8 +22,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-using Qt::endl;
-
 using atools::io::BinaryStream;
 
 QString Helipad::helipadTypeToStr(helipad::HelipadType type)
@@ -77,7 +75,7 @@ QDebug operator<<(QDebug out, const Helipad& record)
 
   out.nospace().noquote() << static_cast<const Record&>(record)
                           << " Helipad[type " << Helipad::helipadTypeToStr(record.type)
-                          << ", surface " << surface::surfaceToDbStr(record.surface) << endl
+                          << ", surface " << surface::surfaceToDbStr(record.surface) << Qt::endl
                           << ", length " << record.length
                           << ", width " << record.width
                           << ", heading " << record.heading

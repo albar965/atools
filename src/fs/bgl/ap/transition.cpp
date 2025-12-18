@@ -25,10 +25,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-using Qt::hex;
-using Qt::dec;
-using Qt::endl;
-
 using atools::io::BinaryStream;
 
 QString Transition::transitionTypeToStr(ap::TransitionType type)
@@ -154,7 +150,7 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *stream, 
         break;
 
       default:
-        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type 0x" << hex << subRecType << dec
+        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type 0x" << Qt::hex << subRecType << Qt::dec
                                        << " for airport ident " << fixAirportIdent;
     }
     r.seekToEnd();
@@ -177,7 +173,7 @@ QDebug operator<<(QDebug out, const Transition& record)
                           << ", dmeRegion " << record.dmeRegion
                           << ", dmeAirportIdent " << record.dmeAirportIdent
                           << ", dmeRadial " << record.dmeRadial
-                          << ", dmeDist " << record.dmeDist << endl;
+                          << ", dmeDist " << record.dmeDist << Qt::endl;
   out << record.legs;
   out << "]";
   return out;

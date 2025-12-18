@@ -146,7 +146,7 @@ private:
 
   void groupProcedures(Airport& airport) const;
   QList<RunwayTransition> groupProcedures(const QList<RunwayTransition>& runwayTransitions,
-                                            const QHash<int, QList<const Runway *> > runwaysByNumber, int airportNumRunwayEnds) const;
+                                          const QHash<int, QList<const Runway *> > runwaysByNumber, int airportNumRunwayEnds) const;
 
   // All waypoint ids already stored in the database
   atools::fs::sc::db::FacilityIdSet waypointsWritten;

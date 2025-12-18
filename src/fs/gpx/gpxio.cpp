@@ -40,8 +40,6 @@ namespace atools {
 namespace fs {
 namespace gpx {
 
-using Qt::endl;
-
 GpxIO::GpxIO()
 {
   errorMsg = tr("Cannot open file %1. Reason: %2");

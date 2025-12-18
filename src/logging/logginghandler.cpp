@@ -30,9 +30,6 @@ namespace logging {
 using internal::LoggingConfig;
 using internal::Channel;
 
-using Qt::endl;
-using Qt::flush;
-
 LoggingHandler *LoggingHandler::instance = nullptr;
 LoggingHandler::LogFunctionType LoggingHandler::logFunc;
 LoggingHandler::AbortFunctionType LoggingHandler::abortFunc;
@@ -114,7 +111,7 @@ void LoggingHandler::logToCatChannels(internal::ChannelMap& streamListCat,
   {
     for(Channel *channel : streamList)
     {
-      (*channel->stream) << message << endl << flush;
+      (*channel->stream) << message << Qt::endl << Qt::flush;
       instance->logConfig->checkStreamSize(channel);
     }
   }
@@ -122,7 +119,7 @@ void LoggingHandler::logToCatChannels(internal::ChannelMap& streamListCat,
   {
     for(Channel *channel : std::as_const(streamListCat[category]))
     {
-      (*channel->stream) << message << endl << flush;
+      (*channel->stream) << message << Qt::endl << Qt::flush;
       instance->logConfig->checkStreamSize(channel);
     }
   }

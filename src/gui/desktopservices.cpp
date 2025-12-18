@@ -73,8 +73,8 @@ void DesktopServices::openFile(QWidget *parent, QString path, bool showInFileMan
         // gdbus call --session --dest org.freedesktop.FileManager1 --object-path /org/freedesktop/FileManager1
         // --method org.freedesktop.FileManager1.ShowItems "['file://$FILE']" ""
         program = "/usr/bin/gdbus";
-        arguments << "call" << "--session" << "--dest" << "org.freedesktop.FileManager1" << "--object-path" <<
-          "/org/freedesktop/FileManager1" << "--method" << "org.freedesktop.FileManager1.ShowItems"
+        arguments << "call" << "--session" << "--dest" << "org.freedesktop.FileManager1" << "--object-path"
+                  << "/org/freedesktop/FileManager1" << "--method" << "org.freedesktop.FileManager1.ShowItems"
                   << QString("['file://%1']").arg(atools::nativeCleanPath(path)) << "\"\"";
       }
 #endif
@@ -86,8 +86,8 @@ void DesktopServices::openFile(QWidget *parent, QString path, bool showInFileMan
       if(QFile::exists("/usr/bin/gdbus") && fileinfo.isDir())
       {
         program = "/usr/bin/gdbus";
-        arguments << "call" << "--session" << "--dest" << "org.freedesktop.FileManager1" << "--object-path" <<
-          "/org/freedesktop/FileManager1" << "--method" << "org.freedesktop.FileManager1.ShowFolders"
+        arguments << "call" << "--session" << "--dest" << "org.freedesktop.FileManager1" << "--object-path"
+                  << "/org/freedesktop/FileManager1" << "--method" << "org.freedesktop.FileManager1.ShowFolders"
                   << QString("['file://%1']").arg(atools::nativeCleanPath(path)) << "\"\"";
       }
 

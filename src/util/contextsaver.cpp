@@ -20,7 +20,5 @@
 namespace atools {
 namespace util {
 
-
-
 } // namespace util
 } // namespace atools

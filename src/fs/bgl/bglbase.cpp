@@ -22,9 +22,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-using Qt::hex;
-using Qt::dec;
-
 using atools::io::BinaryStream;
 
 BglBase::BglBase()
@@ -57,7 +54,7 @@ void BglBase::seekToStart()
 QDebug operator<<(QDebug out, const BglBase& base)
 {
   QDebugStateSaver saver(out);
-  out.nospace().noquote() << hex << " BglBase[start 0x" << base.startOffset << "]";
+  out.nospace().noquote() << Qt::hex << " BglBase[start 0x" << base.startOffset << "]";
   return out;
 }
 

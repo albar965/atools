@@ -29,9 +29,6 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-using Qt::hex;
-using Qt::dec;
-
 enum VorFlags : quint8
 {
   FLAGS_DME_ONLY = 1 << 0, // if 0 then DME only, otherwise 1 for ILS
@@ -75,19 +72,19 @@ Vor::Vor(const NavDatabaseOptions *options, BinaryStream *stream)
 
 #ifdef DEBUG_DUMP_NAVAID_FLAGS
   if(ident == "RQZ")
-    qDebug().nospace() << Q_FUNC_INFO << " VORTAC " << ident << " 0b" << bin << flags << hex << " 0x" << flags;
+    qDebug().nospace() << Q_FUNC_INFO << " VORTAC " << ident << " 0b" << bin << flags << Qt::hex << " 0x" << flags;
 
   if(ident == "LDK")
-    qDebug().nospace() << Q_FUNC_INFO << " TACAN " << ident << " 0b" << bin << flags << hex << " 0x" << flags;
+    qDebug().nospace() << Q_FUNC_INFO << " TACAN " << ident << " 0b" << bin << flags << Qt::hex << " 0x" << flags;
 
   if(ident == "DCU")
-    qDebug().nospace() << Q_FUNC_INFO << " DME " << ident << " 0b" << bin << flags << hex << " 0x" << flags;
+    qDebug().nospace() << Q_FUNC_INFO << " DME " << ident << " 0b" << bin << flags << Qt::hex << " 0x" << flags;
 
   if(ident == "GAD")
-    qDebug().nospace() << Q_FUNC_INFO << " VORDME " << ident << " 0b" << bin << flags << hex << " 0x" << flags;
+    qDebug().nospace() << Q_FUNC_INFO << " VORDME " << ident << " 0b" << bin << flags << Qt::hex << " 0x" << flags;
 
   if(ident == "MTR")
-    qDebug().nospace() << Q_FUNC_INFO << " VOR " << ident << " 0b" << bin << flags << hex << " 0x" << flags << position.getPos();
+    qDebug().nospace() << Q_FUNC_INFO << " VOR " << ident << " 0b" << bin << flags << Qt::hex << " 0x" << flags << position.getPos();
 #endif
 
   unsigned int regionFlags = stream->readUInt();
@@ -125,7 +122,7 @@ Vor::Vor(const NavDatabaseOptions *options, BinaryStream *stream)
       case rec::LOCALIZER_MSFS2024:
       case rec::GLIDESLOPE:
       default:
-        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in VOR record 0x" << hex << t << dec
+        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in VOR record 0x" << Qt::hex << t << Qt::dec
                                        << " for ident " << ident;
         break;
     }

@@ -29,9 +29,6 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-using Qt::hex;
-using Qt::dec;
-
 Tacan::Tacan(const NavDatabaseOptions *options, BinaryStream *stream)
   : NavBase(options, stream)
 {
@@ -75,7 +72,7 @@ Tacan::Tacan(const NavDatabaseOptions *options, BinaryStream *stream)
       case rec::GLIDESLOPE:
         break;
       default:
-        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in TACAN record 0x" << hex << t << dec
+        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in TACAN record 0x" << Qt::hex << t << Qt::dec
                                        << " for ident " << ident;
     }
     r.seekToEnd();

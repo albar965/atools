@@ -42,7 +42,7 @@ class BinaryStream
   Q_DECLARE_TR_FUNCTIONS(BinaryStream)
 
 public:
-  BinaryStream(QFile*binaryFile, QDataStream::ByteOrder order = QDataStream::LittleEndian);
+  BinaryStream(QFile *binaryFile, QDataStream::ByteOrder order = QDataStream::LittleEndian);
 
   BinaryStream(const BinaryStream& other) = delete;
   BinaryStream& operator=(const BinaryStream& other) = delete;

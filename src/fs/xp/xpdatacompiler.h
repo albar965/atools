@@ -283,8 +283,8 @@ private:
 
   /* Read X-Plane 11/Custom Scenery/scenery_packs.ini Returns all airports including disabled but excluding "Global Airports" */
   static QList<atools::fs::xp::SceneryPack> loadFilepathsFromSceneryPacks(const NavDatabaseOptions& opts,
-                                                                            atools::fs::ProgressHandler *progressHandler,
-                                                                            atools::fs::NavDatabaseErrors *navdatabaseErrors);
+                                                                          atools::fs::ProgressHandler *progressHandler,
+                                                                          atools::fs::NavDatabaseErrors *navdatabaseErrors);
 
   int curFileId = 0, curSceneryId = 0;
   QString basePath; /* base for earth_fix.dat earth_awy.dat and earth_nav.dat */

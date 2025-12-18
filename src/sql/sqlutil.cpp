@@ -29,8 +29,6 @@
 namespace atools {
 namespace sql {
 
-using Qt::endl;
-
 SqlUtil::SqlUtil(const SqlDatabase *sqlDb)
   : db(sqlDb)
 {
@@ -287,7 +285,7 @@ void SqlUtil::printTableStats(QDebug& out, const QStringList& tables, bool brief
   out.noquote().nospace();
 
   if(!brief)
-    out << "Statistics for database (tables / rows):" << endl;
+    out << "Statistics for database (tables / rows):" << Qt::endl;
 
   const QStringList tableList = buildTableList(tables);
 
@@ -310,26 +308,26 @@ void SqlUtil::printTableStats(QDebug& out, const QStringList& tables, bool brief
           if(brief)
             out << name << " " << cnt << " ";
           else
-            out << name << ": " << cnt << " rows" << endl;
+            out << name << ": " << cnt << " rows" << Qt::endl;
         }
       }
       else
       {
         out << name << " is empty";
         if(!brief)
-          out << endl;
+          out << Qt::endl;
       }
     }
     else
     {
       out << name << " does not exist";
       if(!brief)
-        out << endl;
+        out << Qt::endl;
     }
   }
 
   if(!brief)
-    out << "Total" << ": " << totalCount << " rows" << endl;
+    out << "Total" << ": " << totalCount << " rows" << Qt::endl;
 }
 
 void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables) const
@@ -337,7 +335,7 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables) const
   QDebugStateSaver saver(out);
   out.noquote().nospace();
 
-  out << "Column value report for database:" << endl;
+  out << "Column value report for database:" << Qt::endl;
 
   const QStringList tableList = buildTableList(tables);
 
@@ -363,7 +361,7 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables) const
             {
               out << name << "." << col;
               if(cnt == 0)
-                out << " has no distinct values" << endl;
+                out << " has no distinct values" << Qt::endl;
               else if(cnt == 1)
               {
                 out << " has only 1 distinct value: ";
@@ -376,17 +374,17 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables) const
                   else
                     out << "[" << val.typeName() << "]";
                 }
-                out << endl;
+                out << Qt::endl;
               }
             }
           }
         }
       }
       else
-        out << name << " is empty" << endl;
+        out << name << " is empty" << Qt::endl;
     }
     else
-      out << name << " does not exist" << endl;
+      out << name << " does not exist" << Qt::endl;
   }
 }
 
@@ -418,23 +416,23 @@ void SqlUtil::reportRangeViolations(QDebug& out,
         if(!header)
         {
           out << "Table range violations for " << table << " (" << column
-              << " not between " << minValue.toString() << " and " << maxValue.toString() << "):" << endl;
-          out << reportCols.join(", ") << endl;
+              << " not between " << minValue.toString() << " and " << maxValue.toString() << "):" << Qt::endl;
+          out << reportCols.join(", ") << Qt::endl;
           header = true;
         }
-        out << buildResultList(q).join(", ") << endl;
+        out << buildResultList(q).join(", ") << Qt::endl;
       }
       if(!header)
         out << "Table range violations for " << table << " (" << column
             << " not between " << minValue.toString() << " and " << maxValue.toString()
-            << "): none found" << endl;
+            << "): none found" << Qt::endl;
 
     }
     else
-      out << table << " is empty" << endl;
+      out << table << " is empty" << Qt::endl;
   }
   else
-    out << table << " does not exist" << endl;
+    out << table << " does not exist" << Qt::endl;
 }
 
 void SqlUtil::reportDuplicates(QDebug& out, const QString& table, const QString& idColumn, const QStringList& identityColumns) const
@@ -463,15 +461,15 @@ void SqlUtil::reportDuplicates(QDebug& out, const QString& table, const QString&
   {
     if(!header)
     {
-      out << "Table duplicates for " << table <<
-        " (" << idColumn << "/" << identityColumns.join(",") << "):" << endl;
+      out << "Table duplicates for " << table
+          << " (" << idColumn << "/" << identityColumns.join(",") << "):" << Qt::endl;
       header = true;
     }
-    out << buildResultList(q).join(", ") << endl;
+    out << buildResultList(q).join(", ") << Qt::endl;
   }
   if(!header)
-    out << "Table duplicates for " << table <<
-      " (" << idColumn << "/" << identityColumns.join(",") << "): none found." << endl;
+    out << "Table duplicates for " << table
+        << " (" << idColumn << "/" << identityColumns.join(",") << "): none found." << Qt::endl;
 }
 
 int SqlUtil::bindAndExec(const QString& sql, const QString& bind, const QVariant& value)

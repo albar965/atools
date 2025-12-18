@@ -37,8 +37,8 @@ QDebug operator<<(QDebug out, const DeleteCom& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << "DeleteCom[type " << record.type
-  << ", frequency " << record.frequency << "]";
+                          << "DeleteCom[type " << record.type
+                          << ", frequency " << record.frequency << "]";
   return out;
 }
 

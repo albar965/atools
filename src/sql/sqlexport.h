@@ -119,7 +119,7 @@ public:
 
   /* Conversion function which converts a variant from the database to a string suitable for CSV.
    *  Special characters are escaped in the returned value */
-  typedef std::function<QString(const QVariant& value)> ConvertFuncType;
+  typedef std::function<QString (const QVariant& value)> ConvertFuncType;
 
   /* Add a conversion function which is applied to one column with the given name */
   void addConversionFunc(const ConvertFuncType& value, const QString& col)

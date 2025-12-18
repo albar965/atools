@@ -52,8 +52,6 @@
 namespace atools {
 namespace fs {
 
-using Qt::endl;
-
 // Number of progress steps besides scenery areas
 // Database report steps
 
@@ -115,11 +113,11 @@ atools::fs::ResultFlags NavDatabase::compileDatabase()
 
   if(result.testFlag(atools::fs::COMPILE_BASIC_VALIDATION_ERROR))
   {
-    qWarning() << endl;
+    qWarning() << Qt::endl;
     qWarning() << "*****************************************************************************";
     qWarning() << "*** Found warnings during basic validation. See log for more information. ***";
     qWarning() << "*****************************************************************************";
-    qWarning() << endl;
+    qWarning() << Qt::endl;
   }
   return result;
 }
@@ -1522,52 +1520,52 @@ bool NavDatabase::createDatabaseReport(ProgressHandler *progress)
   if((aborted = progress->reportOther(tr("Creating table statistics"))))
     return true;
 
-  info << endl;
+  info << Qt::endl;
   util.printTableStats(info);
 
   if((aborted = progress->reportOther(tr("Creating report on values"))))
     return true;
 
-  info << endl;
+  info << Qt::endl;
   util.createColumnReport(info);
 
   if((aborted = progress->reportOther(tr("Creating report on duplicates"))))
     return true;
 
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "airport", "airport_id", {"ident"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "vor", "vor_id", {"ident", "region", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "ndb", "ndb_id", {"ident", "type", "frequency", "region", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "waypoint", "waypoint_id", {"ident", "type", "region", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "ils", "ils_id", {"ident", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "marker", "marker_id", {"type", "heading", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "helipad", "helipad_id", {"lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "parking", "parking_id", {"lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "start", "start_id", {"lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "runway", "runway_id", {"heading", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
-  info << endl;
+  info << Qt::endl;
 
   if((aborted = progress->reportOther(tr("Creating report on coordinate duplicates"))))
     return true;
@@ -2218,7 +2216,7 @@ void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& 
 {
   for(const QString& table : std::as_const(tables))
   {
-    out << "==================================================================" << endl;
+    out << "==================================================================" << Qt::endl;
     util.reportRangeViolations(out, table, {table % "_id", "ident"}, "lonx", -180.f, 180.f);
     util.reportRangeViolations(out, table, {table % "_id", "ident"}, "laty", -90.f, 90.f);
   }

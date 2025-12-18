@@ -262,25 +262,25 @@ void GribReader::readFile(const QString& filename)
         // that holds the data.
         // https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp3-0.shtml
 
-        // 0	/  15	Shape of the Earth (See Code Table 3.2)
-        // 1	/  16	Scale Factor of radius of spherical Earth
-        // 2	/  17-20	Scale value of radius of spherical Earth
-        // 3	/  21	Scale factor of major axis of oblate spheroid Earth
-        // 4	/  22-25	Scaled value of major axis of oblate spheroid Earth
-        // 5	/  26	Scale factor of minor axis of oblate spheroid Earth
-        // 6	/  27-30	Scaled value of minor axis of oblate spheroid Earth
-        // 7	/  31-34	Ni — number of points along a parallel
-        // 8	/  35-38	Nj — number of points along a meridian
-        // 9	/  39-42	Basic angle of the initial production domain (see Note 1)
-        // 10	/  43-46	Subdivisions of basic angle used to define extreme longitudes and latitudes, and direction increments (see Note 1)
-        // 11	/  47-50	La1 — latitude of first grid point (see Note 1)
-        // 12	/  51-54	Lo1 — longitude of first grid point (see Note 1)
-        // 13	/  55	Resolution and component flags (see Flag Table 3.3)
-        // 14	/  56-59	La2 — latitude of last grid point (see Note 1)
-        // 15	/  60-63	Lo2 — longitude of last grid point (see Note 1)
-        // 16	/  64-67	Di — i direction increment (see Notes 1 and 5)
-        // 17	/  68-71	Dj — j direction increment (see Note 1 and 5)
-        // 18	/  72	Scanning mode (flags — see Flag Table 3.4 and Note 6)
+        // 0  /  15 Shape of the Earth (See Code Table 3.2)
+        // 1  /  16 Scale Factor of radius of spherical Earth
+        // 2  /  17-20  Scale value of radius of spherical Earth
+        // 3  /  21 Scale factor of major axis of oblate spheroid Earth
+        // 4  /  22-25  Scaled value of major axis of oblate spheroid Earth
+        // 5  /  26 Scale factor of minor axis of oblate spheroid Earth
+        // 6  /  27-30  Scaled value of minor axis of oblate spheroid Earth
+        // 7  /  31-34  Ni — number of points along a parallel
+        // 8  /  35-38  Nj — number of points along a meridian
+        // 9  /  39-42  Basic angle of the initial production domain (see Note 1)
+        // 10 /  43-46  Subdivisions of basic angle used to define extreme longitudes and latitudes, and direction increments (see Note 1)
+        // 11 /  47-50  La1 — latitude of first grid point (see Note 1)
+        // 12 /  51-54  Lo1 — longitude of first grid point (see Note 1)
+        // 13 /  55 Resolution and component flags (see Flag Table 3.3)
+        // 14 /  56-59  La2 — latitude of last grid point (see Note 1)
+        // 15 /  60-63  Lo2 — longitude of last grid point (see Note 1)
+        // 16 /  64-67  Di — i direction increment (see Notes 1 and 5)
+        // 17 /  68-71  Dj — j direction increment (see Note 1 and 5)
+        // 18 /  72 Scanning mode (flags — see Flag Table 3.4 and Note 6)
         // List of number of points along each meridian or parallel
         // (These octets are only present for quasi-regular grids as described in notes 2 and 3)
 
@@ -337,21 +337,21 @@ void GribReader::readFile(const QString& filename)
         // that holds the data.
         // https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_temp4-0.shtml
         // https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_table4-2-0-2.shtml
-        // 0	/ 10 Parameter category (see Code table 4.1)
-        // 1	/ 11 Parameter number (see Code table 4.2)
-        // 2	/ 12 Type of generating process (see Code table 4.3)
-        // 3	/ 13 Background generating process identifier (defined by originating centre)
-        // 4	/ 14 Analysis or forecast generating process identified (see Code ON388 Table A)
-        // 5	/ 15-16 Hours of observational data cutoff after reference time (see Note)
-        // 6	/ 17 Minutes of observational data cutoff after reference time (see Note)
-        // 7	/ 18 Indicator of unit of time range (see Code table 4.4)
-        // 8	/ 19-22 Forecast time in units defined by octet 18
-        // 9	/ 23 Type of first fixed surface (see Code table 4.5)
-        // 10	/ 24 Scale factor of first fixed surface
-        // 11	/ 25-28 Scaled value of first fixed surface
-        // 12	/ 29 Type of second fixed surfaced (see Code table 4.5)
-        // 13	/ 30 Scale factor of second fixed surface
-        // 14	/ 31-34 Scaled value of second fixed surfaces
+        // 0  / 10 Parameter category (see Code table 4.1)
+        // 1  / 11 Parameter number (see Code table 4.2)
+        // 2  / 12 Type of generating process (see Code table 4.3)
+        // 3  / 13 Background generating process identifier (defined by originating centre)
+        // 4  / 14 Analysis or forecast generating process identified (see Code ON388 Table A)
+        // 5  / 15-16 Hours of observational data cutoff after reference time (see Note)
+        // 6  / 17 Minutes of observational data cutoff after reference time (see Note)
+        // 7  / 18 Indicator of unit of time range (see Code table 4.4)
+        // 8  / 19-22 Forecast time in units defined by octet 18
+        // 9  / 23 Type of first fixed surface (see Code table 4.5)
+        // 10 / 24 Scale factor of first fixed surface
+        // 11 / 25-28 Scaled value of first fixed surface
+        // 12 / 29 Type of second fixed surfaced (see Code table 4.5)
+        // 13 / 30 Scale factor of second fixed surface
+        // 14 / 31-34 Scaled value of second fixed surfaces
         // -          [0, 1, 2, 3,  4, 5, 6, 7, 8,   9,10,    11,  12,13,14
         // ipdtmpl(15)[2, 2, 0, 0, 81, 0, 0, 1, 0, 100, 0, 20000, 255, 0, 0]
         if(verbose)

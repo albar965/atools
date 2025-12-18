@@ -60,6 +60,7 @@ private:
   void messageQuery(QStringList& msgList, const SqlQuery *query);
   void messageRecord(QStringList& msgList, const SqlRecord *record);
   void messageErr(QStringList& msgList, const QSqlError& err);
+
 };
 
 } // namespace sql

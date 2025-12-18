@@ -27,10 +27,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-using Qt::hex;
-using Qt::dec;
-using Qt::endl;
-
 using atools::io::BinaryStream;
 
 Approach::Approach(const NavDatabaseOptions *options, BinaryStream *stream, rec::AirportRecordType airportRecType)
@@ -108,7 +104,7 @@ Approach::Approach(const NavDatabaseOptions *options, BinaryStream *stream, rec:
         break;
 
       default:
-        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type 0x" << hex << recType << dec
+        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type 0x" << Qt::hex << recType << Qt::dec
                                        << " for airport ident " << fixAirportIdent << " offset " << stream->tellg();
     }
     r.seekToEnd();
@@ -129,7 +125,7 @@ QDebug operator<<(QDebug out, const Approach& record)
                           << ", fix region " << record.fixRegion
                           << ", ap icao " << record.fixAirportIdent
                           << ", alt " << record.altitude
-                          << ", hdg " << record.heading << endl;
+                          << ", hdg " << record.heading << Qt::endl;
   out << record.transitions;
   out << record.legs;
   out << record.missedLegs;

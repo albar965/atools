@@ -35,9 +35,6 @@ namespace atools {
 namespace fs {
 namespace common {
 
-using Qt::hex;
-using Qt::dec;
-
 MagDecReader::MagDecReader()
 {
 }
@@ -111,7 +108,7 @@ void MagDecReader::readFromBgl(const QString& filename)
     referenceDate.setDate(year, referenceMonth, referenceDay);
 
     qInfo() << Q_FUNC_INFO << "MagDec World Set" << worldSet
-            << "day" << referenceDay << "month" << referenceMonth << "year" << hex << referenceYear << dec;
+            << "day" << referenceDay << "month" << referenceMonth << "year" << Qt::hex << referenceYear << Qt::dec;
 
     if(numLongValues != 360)
     {

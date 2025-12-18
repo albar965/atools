@@ -31,8 +31,6 @@ namespace atools {
 namespace fs {
 namespace xp {
 
-using Qt::endl;
-
 // ==================================================================
 /* X-Plane types */
 enum AirwayPointType
@@ -122,9 +120,9 @@ QDebug operator<<(QDebug out, const AirwaySegment& segment)
 
 QDebug operator<<(QDebug out, const QList<AirwaySegment>& segments)
 {
-  out << endl;
+  out << Qt::endl;
   for(const AirwaySegment& seg: segments)
-    out << seg << endl;
+    out << seg << Qt::endl;
   return out;
 }
 

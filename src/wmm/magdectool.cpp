@@ -46,8 +46,8 @@ namespace wmm {
 
 /* Copy of MAG_Grid function with simplifications also avoiding the need to write the output to a file */
 QList<float> MAG_GridInternal(int year, int month,
-                                MAGtype_MagneticModel *magneticModel,
-                                MAGtype_Geoid *Geoid, MAGtype_Ellipsoid ellipsoid);
+                              MAGtype_MagneticModel *magneticModel,
+                              MAGtype_Geoid *Geoid, MAGtype_Ellipsoid ellipsoid);
 
 // ==============================================================================
 
@@ -216,7 +216,7 @@ QList<float> MagDecTool::readGeoidBuffer()
 }
 
 QList<float> MAG_GridInternal(int year, int month, MAGtype_MagneticModel *magneticModel,
-                                MAGtype_Geoid *geoid, MAGtype_Ellipsoid ellipsoid)
+                              MAGtype_Geoid *geoid, MAGtype_Ellipsoid ellipsoid)
 {
   // Boundary always covers whole world
   MAGtype_CoordGeodetic minimum;

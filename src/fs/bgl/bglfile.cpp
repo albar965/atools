@@ -45,9 +45,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-using Qt::hex;
-using Qt::dec;
-
 using atools::io::BinaryStream;
 
 BglFile::BglFile(const NavDatabaseOptions *readerOptions)
@@ -170,7 +167,7 @@ void BglFile::handleBoundaries(BinaryStream *bs)
     else if(type != rec::GEOPOL)
       // Should only contain boundaries and geopol records
       qWarning().nospace() << "while reading boundaries: unexpected record "
-                           << hex << "0x" << type << dec << " offset " << bs->tellg();
+                           << Qt::hex << "0x" << type << Qt::dec << " offset " << bs->tellg();
 
     rec.seekToEnd();
   }
@@ -273,7 +270,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
     if(options->isVerbose())
     {
       qDebug() << "=======================";
-      qDebug().nospace().noquote() << "Records of 0x" << hex << subsection.getFirstDataRecordOffset() << dec
+      qDebug().nospace().noquote() << "Records of 0x" << Qt::hex << subsection.getFirstDataRecordOffset() << Qt::dec
                                    << " type " << sectionTypeStr(type);
     }
 
@@ -355,7 +352,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
           {
             rec = handleIlsVor(bs);
             if(options->isVerbose() && rec != nullptr)
-              qDebug() << Q_FUNC_INFO << "ILS_VOR" << hex << rec->getId();
+              qDebug() << Q_FUNC_INFO << "ILS_VOR" << Qt::hex << rec->getId();
           }
           break;
 
@@ -365,7 +362,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
           {
             rec = createRecord<Ndb>(bs, &ndbs);
             if(options->isVerbose() && rec != nullptr)
-              qDebug() << Q_FUNC_INFO << "NDB" << hex << rec->getId();
+              qDebug() << Q_FUNC_INFO << "NDB" << Qt::hex << rec->getId();
           }
           break;
 
@@ -382,7 +379,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
             // Read waypoints and airways
             rec = createRecord<Waypoint>(bs, &waypoints);
             if(options->isVerbose() && rec != nullptr)
-              qDebug() << Q_FUNC_INFO << "WAYPOINT" << hex << rec->getId();
+              qDebug() << Q_FUNC_INFO << "WAYPOINT" << Qt::hex << rec->getId();
           }
           break;
 
@@ -454,7 +451,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
       else
         qWarning().nospace().noquote() << "Invalid record size " << rec->getSize()
                                        << " offset " << bs->tellg()
-                                       << hex << " type 0x" << rec->getId() << dec;
+                                       << Qt::hex << " type 0x" << rec->getId() << Qt::dec;
     }
   }
 }

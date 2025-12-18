@@ -29,10 +29,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-using Qt::hex;
-using Qt::dec;
-using Qt::endl;
-
 using atools::io::BinaryStream;
 
 SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *stream)
@@ -172,8 +168,8 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *stream)
       default:
         /* Shouldn't ever occur, so print error and move on? */
         qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type " << ident
-                                       << hex << " 0x" << r.getId()
-                                       << dec << " " << approachRecordTypeStr(recType) << " offset " << stream->tellg();
+                                       << Qt::hex << " 0x" << r.getId()
+                                       << Qt::dec << " " << approachRecordTypeStr(recType) << " offset " << stream->tellg();
 
     }
     r.seekToEnd();
@@ -191,7 +187,7 @@ QDebug operator<<(QDebug out, const SidStar& record)
   out.nospace().noquote() << static_cast<const Record&>(record)
                           << QString((rec::MSFS_SID == record.id) ? " Departure" : " Arrival")
                           << "[ident " << record.ident
-                          << ", " << endl;
+                          << ", " << Qt::endl;
   out << "  commonRouteLegs " << record.commonRouteLegs;
   out << "  runwayTransitionLegs " << record.runwayTransitionLegs;
   out << "  enrouteTransitions " << record.enrouteTransitions;

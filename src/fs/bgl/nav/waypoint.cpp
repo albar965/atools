@@ -26,8 +26,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-using Qt::endl;
-
 using atools::io::BinaryStream;
 
 QString Waypoint::waypointTypeToStr(nav::WaypointType type)
@@ -173,7 +171,7 @@ QDebug operator<<(QDebug out, const Waypoint& record)
                           << ", magVar " << record.magVar
                           << ", ident " << record.ident
                           << ", region " << record.region
-                          << ", airport ID " << record.airportIdent << endl;
+                          << ", airport ID " << record.airportIdent << Qt::endl;
   out << record.airways;
   out << "]";
   return out;

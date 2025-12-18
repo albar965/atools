@@ -45,8 +45,6 @@ using atools::geo::windDirectionFromUV;
 namespace atools {
 namespace grib {
 
-using Qt::endl;
-
 /* Internal data structure for wind U/V components */
 struct WindData
 {
@@ -485,7 +483,7 @@ QString WindQuery::getDebug(const geo::Pos& pos) const
   QTextStream out(&retval);
   out.setRealNumberPrecision(2);
   out.setRealNumberNotation(QTextStream::FixedNotation);
-  out << "=================" << endl;
+  out << "=================" << Qt::endl;
   for(auto it = p->windLayers.begin(); it != p->windLayers.end(); ++it)
   {
     WindAltLayer layer = it.value();
@@ -493,11 +491,11 @@ QString WindQuery::getDebug(const geo::Pos& pos) const
     WindData wind = windForLayer(layer, grid);
 
     out << "altitude " << it.key() << " surface " << layer.surface
-        << " grid x " << grid.x() << " y " << grid.y() << endl;
+        << " grid x " << grid.x() << " y " << grid.y() << Qt::endl;
     out << "wind u " << wind.u << " v " << wind.v << " kts "
         << " dir " << windDirectionFromUV(wind.u, wind.v) << " deg T"
-        << " speed " << windSpeedFromUV(wind.u, wind.v) << " kts" << endl;
-    out << "-----------" << endl;
+        << " speed " << windSpeedFromUV(wind.u, wind.v) << " kts" << Qt::endl;
+    out << "-----------" << Qt::endl;
   }
   return retval;
 }

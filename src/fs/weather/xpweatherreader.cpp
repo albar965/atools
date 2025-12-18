@@ -171,7 +171,7 @@ QStringList XpWeatherReader::collectWeatherFiles()
 
   // Return only latest three files
   QStringList files;
-  for(int i = 0; i < std::min(3, static_cast<int>(metarFiles.size())); i++)
+  for(int i = 0; i < std::min(3, static_cast < int > (metarFiles.size())); i++)
     files.append(metarFiles.at(i).absoluteFilePath());
 
   if(verbose)

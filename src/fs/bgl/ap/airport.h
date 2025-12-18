@@ -349,7 +349,7 @@ private:
 
   void updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringList& taxinames);
   void updateJetwayParking(const QList<atools::fs::bgl::Jetway>& jetways,
-                     const QHash<atools::fs::bgl::ParkingKey, int>& parkingNumberIndex);
+                           const QHash<atools::fs::bgl::ParkingKey, int>& parkingNumberIndex);
   void updateSummaryFields();
   void removeVehicleParking();
   void updateHelipads();

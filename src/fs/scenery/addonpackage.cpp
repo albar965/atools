@@ -44,7 +44,7 @@ AddOnPackage::AddOnPackage(const QString& file)
 
       if(xmlReader.readNextStartElement())
       {
-          if(xmlReader.name() == QStringLiteral("SimBase.Document"))
+        if(xmlReader.name() == QStringLiteral("SimBase.Document"))
         {
           while(xmlReader.readNextStartElement())
           {

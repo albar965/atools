@@ -27,8 +27,6 @@
 namespace atools {
 namespace sql {
 
-using Qt::endl;
-
 QVariant SqlRecord::value(int i) const
 {
   QVariant retval = sqlRecord.value(i);
@@ -296,7 +294,7 @@ QDebug operator<<(QDebug out, const atools::sql::SqlRecord& record)
 
   out << "SqlRecord[";
   for(int i = 0; i < record.count(); ++i)
-    out << record.sqlRecord.fieldName(i) << record.sqlRecord.value(i) << endl;
+    out << record.sqlRecord.fieldName(i) << record.sqlRecord.value(i) << Qt::endl;
   out << "]";
 
   return out;

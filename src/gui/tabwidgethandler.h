@@ -160,7 +160,7 @@ private:
     {
     }
 
-    Tab(QWidget * tabParam, const QString& titleParam, const QString& tooltipParam, QAction * actionParam)
+    Tab(QWidget *tabParam, const QString& titleParam, const QString& tooltipParam, QAction *actionParam)
       : widget(tabParam), title(titleParam), tooltip(tooltipParam), action(actionParam)
     {
     }

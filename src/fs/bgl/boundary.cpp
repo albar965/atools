@@ -24,10 +24,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-using Qt::hex;
-using Qt::dec;
-using Qt::endl;
-
 using atools::io::BinaryStream;
 
 QString Boundary::boundaryTypeToStr(boundary::BoundaryType type)
@@ -144,7 +140,7 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *stream)
 {
   if(id != rec::BOUNDARY && id != rec::BOUNDARY_MSFS2024)
   {
-    qWarning() << "Not a boundary record" << hex << "0x" << id << dec;
+    qWarning() << "Not a boundary record" << Qt::hex << "0x" << id << Qt::dec;
     excluded = true;
     return;
   }
@@ -235,7 +231,7 @@ QDebug operator<<(QDebug out, const Boundary& record)
                           << ", minAltType " << Boundary::altTypeToStr(record.minAltType)
                           << ", maxAltType " << Boundary::altTypeToStr(record.maxAltType)
                           << ", minPosition " << record.minPosition
-                          << ", maxPosition " << record.maxPosition << endl;
+                          << ", maxPosition " << record.maxPosition << Qt::endl;
   out << record.lines;
   out << "]";
 

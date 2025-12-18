@@ -31,7 +31,7 @@ class WeatherRequest
 public:
   WeatherRequest();
 
-  void read(QDataStream & in);
+  void read(QDataStream& in);
   void write(QDataStream& out);
 
   bool isValid() const;

@@ -42,7 +42,7 @@ int NavDatabaseErrors::getTotalErrors() const
 int NavDatabaseErrors::getTotalWarnings() const
 {
   int total = 0;
-  for(const atools::fs::SceneryErrors & scErr :  sceneryErrors)
+  for(const atools::fs::SceneryErrors& scErr :  sceneryErrors)
   {
     if(scErr.warning)
       total += scErr.fileErrors.size() + scErr.sceneryErrorsMessages.size();

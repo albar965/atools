@@ -24,8 +24,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-using Qt::endl;
-
 Apron2::Apron2(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream, StructureType structureType)
   : bgl::Record(options, stream)
 {
@@ -72,7 +70,7 @@ QDebug operator<<(QDebug out, const Apron2& record)
                           << " Apron2[surface " << surface::surfaceToDbStr(record.surface) << "/"
                           << surface::surfaceToDbStr(record.surface)
                           << ", drawSurface " << record.drawSurface
-                          << ", drawDetail " << record.drawDetail << endl;
+                          << ", drawDetail " << record.drawDetail << Qt::endl;
   out << record.vertices;
   out << record.triangles;
   out << "]";

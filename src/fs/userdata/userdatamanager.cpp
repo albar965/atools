@@ -48,8 +48,6 @@ using atools::sql::SqlRecord;
 using atools::sql::SqlTransaction;
 using atools::sql::SqlColumn;
 
-using Qt::endl;
-
 /* Default visibility. Waypoint is shown on the map at a view distance below this value  */
 const static double VISIBLE_FROM_DEFAULT_NM = 250.;
 const static QStringList CLEANUP_COLUMNS({"type", "name", "ident", "region", "description", "tags"});
@@ -519,7 +517,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QList<int>& ids, a
 
     if(!endsWithEol && (flags & APPEND))
       // Add needed linefeed for append
-      stream << endl;
+      stream << Qt::endl;
 
     bool first = true;
 
@@ -530,7 +528,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QList<int>& ids, a
       {
         // Write header
         first = false;
-        stream << sqlExport.getResultSetHeader(query.query.record()) << endl;
+        stream << sqlExport.getResultSetHeader(query.query.record()) << Qt::endl;
       }
       SqlRecord record = query.query.record();
 
@@ -543,7 +541,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QList<int>& ids, a
       record.setValue("Magnetic Declination", static_cast<double>(magvar));
 
       // Write row
-      stream << sqlExport.getResultSetRow(record) << endl;
+      stream << sqlExport.getResultSetRow(record) << Qt::endl;
       numExported++;
     }
 
@@ -577,7 +575,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QList<int>& ids
           QString line = inStream.readLine();
           if(line.simplified() == "99")
             break;
-          tempOutStream << line << endl;
+          tempOutStream << line << Qt::endl;
         }
 
         inFile.close();
@@ -609,11 +607,11 @@ int UserdataManager::exportXplane(const QString& filepath, const QList<int>& ids
     if(!(flags & APPEND))
     {
       // Add file header
-      stream << "I" << endl << (xp12 ? "1200" : "1100") << " Version - "
+      stream << "I" << Qt::endl << (xp12 ? "1200" : "1100") << " Version - "
              << "data cycle " << QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyMM") << ", "
              << "build " << QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyyyMMdd") << ", "
              << "metadata FixXP" << (xp12 ? "1200" : "1100") << ". "
-             << atools::programFileInfoNoDate() << "." << endl << endl;
+             << atools::programFileInfoNoDate() << "." << Qt::endl << Qt::endl;
     }
 
     QueryWrapper query("select " % idColumnName % ", ident, name, tags, laty, lonx, altitude, tags, region from " % tableName, db, ids,
@@ -664,11 +662,11 @@ int UserdataManager::exportXplane(const QString& filepath, const QList<int>& ids
         stream << " " << query.query.valueStr("name");
       }
 
-      stream << endl;
+      stream << Qt::endl;
       numExported++;
     }
 
-    stream << "99" << endl;
+    stream << "99" << Qt::endl;
 
     file.close();
   }
@@ -691,7 +689,7 @@ int UserdataManager::exportGarmin(const QString& filepath, const QList<int>& ids
     QTextStream stream(&file);
 
     if(!endsWithEol && (flags & APPEND))
-      stream << endl;
+      stream << Qt::endl;
 
     QueryWrapper query("select " % idColumnName % ", ident, name,  laty, lonx from " % tableName, db, ids,
                        idColumnName);
@@ -709,7 +707,7 @@ int UserdataManager::exportGarmin(const QString& filepath, const QList<int>& ids
              << QString::number(query.query.valueDouble("laty"), 'f', 8)
              << ","
              << QString::number(query.query.valueDouble("lonx"), 'f', 8)
-             << endl;
+             << Qt::endl;
       numExported++;
     }
 

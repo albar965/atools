@@ -31,9 +31,6 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-using Qt::hex;
-using Qt::dec;
-
 enum IlsFlags
 {
   FLAGS_DME_ONLY = 1 << 0,
@@ -111,7 +108,7 @@ Ils::Ils(const NavDatabaseOptions *options, BinaryStream *stream)
 
       default:
         qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in ILS record 0x"
-                                       << hex << t << dec << " for ident " << ident;
+                                       << Qt::hex << t << Qt::dec << " for ident " << ident;
     }
     r.seekToEnd();
   }

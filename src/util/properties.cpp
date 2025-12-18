@@ -24,8 +24,6 @@
 namespace atools {
 namespace util {
 
-using Qt::endl;
-
 Properties::Properties()
 {
 
@@ -45,7 +43,7 @@ Properties::Properties(const QHash<QString, QString>& other)
 void Properties::write(QTextStream& stream) const
 {
   for(auto it = begin(); it != end(); ++it)
-    stream << it.key() << "=" << it.value() << endl;
+    stream << it.key() << "=" << it.value() << Qt::endl;
 }
 
 void Properties::read(QTextStream& stream)

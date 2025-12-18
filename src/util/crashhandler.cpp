@@ -55,10 +55,6 @@ namespace atools {
 namespace util {
 namespace crashhandler {
 
-using Qt::hex;
-using Qt::dec;
-using Qt::endl;
-
 #ifndef DISABLE_CRASHHANDLER
 static void setSignalHandler();
 
@@ -93,7 +89,7 @@ void printTrace(QDebug out, const char *funcInfo, const char *file, int line, co
 {
   QDebugStateSaver saver(out);
 
-  out.noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message << endl;
+  out.noquote().nospace() << funcInfo << " " << file << ":" << line << " " << message << Qt::endl;
 
 #ifndef DISABLE_CRASHHANDLER
   std::ostringstream stream;
@@ -101,7 +97,7 @@ void printTrace(QDebug out, const char *funcInfo, const char *file, int line, co
   for(auto it = trace.begin(); it != trace.end(); ++it)
   {
     cpptrace::stacktrace_frame frame = *it;
-    out << QString::fromStdString(frame.filename) << " 0x" << hex << frame.object_address << endl;
+    out << QString::fromStdString(frame.filename) << " 0x" << Qt::hex << frame.object_address << Qt::endl;
   }
   stream << std::ends;
   out << QString::fromStdString(stream.str());

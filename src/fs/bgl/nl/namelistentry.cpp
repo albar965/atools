@@ -28,14 +28,14 @@ QDebug operator<<(QDebug out, const NamelistEntry& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << "NamelistEntry["
-  << "airport ID " << record.airportIdent
-  << ", airport " << record.airportName
-  << ", city " << record.cityName
-  << ", state " << record.stateName
-  << ", country " << record.countryName
-  << ", region ID " << record.regionIdent
-  << ", region name " << record.regionName
-  << "]";
+                          << "airport ID " << record.airportIdent
+                          << ", airport " << record.airportName
+                          << ", city " << record.cityName
+                          << ", state " << record.stateName
+                          << ", country " << record.countryName
+                          << ", region ID " << record.regionIdent
+                          << ", region name " << record.regionName
+                          << "]";
   return out;
 }
 

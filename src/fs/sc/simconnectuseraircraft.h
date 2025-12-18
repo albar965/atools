@@ -45,7 +45,7 @@ public:
   SimConnectUserAircraft();
   virtual ~SimConnectUserAircraft() override;
 
-  virtual void read(QDataStream & in) override;
+  virtual void read(QDataStream& in) override;
   virtual void write(QDataStream& out) const override;
 
   // fs data ----------------------------------------------------

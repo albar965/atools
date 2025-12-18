@@ -48,7 +48,7 @@ QString approachTypeToStr(atools::fs::bgl::ap::ApproachType type);
  * Does not consider special flags like "DME needed" or others.
  *  Gives codes for approaches, SID and STAR but not transitons. */
 QString arincNameAppr(atools::fs::bgl::ap::ApproachType type, const QString& runwayName, char suffix,
-                          bool gpsOverlay);
+                      bool gpsOverlay);
 
 namespace fix {
 

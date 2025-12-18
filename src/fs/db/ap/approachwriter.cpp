@@ -75,7 +75,7 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":airport_ident", dataWriter.getAirportWriter()->getCurrentAirportIdent());
 
   QString runwayName;
-  if( /*type->getRunwayName() == "36" ||*/ type->getRunwayName() == "00" || type->getRunwayName().isEmpty())
+  if(/*type->getRunwayName() == "36" ||*/ type->getRunwayName() == "00" || type->getRunwayName().isEmpty())
   {
     // No valid runway given - try to find one in the approach legs
     QString runway;

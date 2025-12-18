@@ -30,10 +30,6 @@ namespace atools {
 namespace fs {
 namespace db {
 
-using Qt::hex;
-using Qt::dec;
-using Qt::endl;
-
 using atools::sql::SqlUtil;
 using atools::sql::SqlQuery;
 
@@ -273,16 +269,16 @@ QDebug operator<<(QDebug out, const DatabaseMeta& meta)
   QDebugStateSaver saver(out);
 
   out.noquote().nospace()
-    << "===================================" << endl
-    << "DatabaseMeta name " << meta.db->getName() << endl
-    << "databaseName " << meta.db->databaseName() << endl
-    << "Airac Cycle " << meta.airacCycle << endl
-    << "Compiler Version " << meta.compilerVersion << endl
-    << "Data Source " << meta.dataSource << endl
-    << "Last Load Time " << meta.lastLoadTime << endl
-    << "Database Version " << meta.getDatabaseVersion() << endl
-    << "Application Version " << DatabaseMeta::getApplicationVersion() << endl
-    << "Valid Through " << meta.validThrough << endl
+    << "===================================" << Qt::endl
+    << "DatabaseMeta name " << meta.db->getName() << Qt::endl
+    << "databaseName " << meta.db->databaseName() << Qt::endl
+    << "Airac Cycle " << meta.airacCycle << Qt::endl
+    << "Compiler Version " << meta.compilerVersion << Qt::endl
+    << "Data Source " << meta.dataSource << Qt::endl
+    << "Last Load Time " << meta.lastLoadTime << Qt::endl
+    << "Database Version " << meta.getDatabaseVersion() << Qt::endl
+    << "Application Version " << DatabaseMeta::getApplicationVersion() << Qt::endl
+    << "Valid Through " << meta.validThrough << Qt::endl
     << "valid " << meta.valid << " sidStar " << meta.sidStar << " routeType " << meta.routeType << " data " << meta.data
     << " schema " << meta.schema << " script " << meta.script << " boundary " << meta.boundary
     << " properties " << meta.properties;
