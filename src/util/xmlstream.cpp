@@ -17,15 +17,10 @@
 
 #include "util/xmlstream.h"
 #include "exception.h"
-#include "atools.h"
 
 #include <QFileDevice>
 #include <QDebug>
 #include <QXmlStreamReader>
-
-#ifdef QT_CORE5COMPAT_LIB
-#include <QtCore5Compat/QTextCodec>
-#endif
 
 namespace atools {
 namespace util {

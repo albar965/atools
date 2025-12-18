@@ -23,6 +23,10 @@
 #include <QIODevice>
 #include <QFile>
 
+#ifdef QT_CORE5COMPAT_LIB
+#include <QtCore5Compat/QTextCodec>
+#endif
+
 namespace atools {
 namespace io {
 
@@ -116,8 +120,20 @@ void AbstractIniReader::read(const QString& iniFilename)
 
   if(sceneryCfgFile.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    QTextStream sceneryCfg(&sceneryCfgFile);
+    QByteArray bytes = sceneryCfgFile.readAll();
+    QString string;
+#ifdef QT_CORE5COMPAT_LIB
+    // Need to use compat module since Qt 6 removed the capability to use codecs
+    QTextCodec *textCodec = QTextCodec::codecForName(codec.toLatin1());
+    if(textCodec != nullptr)
+      string = textCodec->toUnicode(bytes);
+    else
+      string = bytes;
+#else
+    string = bytes;
+#endif
 
+    QTextStream sceneryCfg(&string);
     onStartDocument(filepath);
 
     currentLine.clear();

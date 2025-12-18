@@ -1475,18 +1475,16 @@ QString WhazzupTextParser::convertAtisText(QString atis)
 
 QString WhazzupTextParser::convertName(QString name, bool utf8)
 {
-  if(utf8)
-    return name;
-  else
+  if(!utf8)
   {
 #ifdef QT_CORE5COMPAT_LIB
     // Need to use compat module since Qt 6 removed the capability to use codecs
     QTextCodec *codec = QTextCodec::codecForName("Windows-1252");
-    return codec->fromUnicode(name);
-#else
-    return name;
+    if(codec != nullptr)
+      return codec->fromUnicode(name);
 #endif
   }
+  return name;
 }
 
 } // namespace online

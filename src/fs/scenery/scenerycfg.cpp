@@ -18,8 +18,6 @@
 #include "fs/scenery/scenerycfg.h"
 #include "fs/scenery/sceneryarea.h"
 
-#include <fstream>
-#include <iostream>
 #include <algorithm>
 
 #include <QDebug>

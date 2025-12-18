@@ -4299,7 +4299,6 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
   if(gfpFile.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&gfpFile);
-    stream.setAutoDetectUnicode(true);
 
     // Read line and remove header
     QString line = stream.readLine();

@@ -79,7 +79,6 @@ QStringList probeFile(const QString& file, int numLinesRead)
   if(testFile.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&testFile);
-    stream.setAutoDetectUnicode(true);
 
     int numLines = 0, numLinesTotal = 0;
     while(!stream.atEnd() && numLines < numLinesRead && numLinesTotal < numLinesRead * 2)
@@ -1180,7 +1179,6 @@ quint32 textFileHash(const QString& filename)
   if(file.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&file);
-    stream.setAutoDetectUnicode(true);
 
     while(!stream.atEnd())
     {

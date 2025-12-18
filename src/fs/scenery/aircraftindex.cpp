@@ -123,7 +123,6 @@ const AircraftIndex::AircraftProperties& AircraftIndex::fetchProperties(const QS
       if(file.open(QIODevice::ReadOnly))
       {
         QTextStream stream(&file);
-        stream.setAutoDetectUnicode(true);
         bool generalSection = false;
         QString icaoTypeDesignator, icaoModel;
 
