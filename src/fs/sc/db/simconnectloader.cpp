@@ -1160,9 +1160,9 @@ ls -lh ~/.config/ABarthel/navaids.csv.gz
         if(!row.at(IDENT).isEmpty())
         {
           // Use null region and all types to do disambiguation in minimal list
-          addNavaid(FacilityId(row.at(IDENT), nullptr, QChar(ID_WAYPOINT)));
-          addNavaid(FacilityId(row.at(IDENT), nullptr, QChar(ID_VORILS)));
-          addNavaid(FacilityId(row.at(IDENT), nullptr, QChar(ID_NDB)));
+          addNavaid(FacilityId(row.at(IDENT), nullptr, QChar(static_cast<char>(ID_WAYPOINT))));
+          addNavaid(FacilityId(row.at(IDENT), nullptr, QChar(static_cast<char>(ID_VORILS))));
+          addNavaid(FacilityId(row.at(IDENT), nullptr, QChar(static_cast<char>(ID_NDB))));
         }
       }
     }

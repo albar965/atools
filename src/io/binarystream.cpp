@@ -240,16 +240,25 @@ void BinaryStream::checkStream(const QString& what) const
       case QDataStream::Ok:
         statusText = tr("No error");
         break;
+
       case QDataStream::ReadPastEnd:
         statusText = tr("Read past file end");
         break;
+
       case QDataStream::ReadCorruptData:
         statusText = tr("Read corrupted data");
         break;
+
       case QDataStream::WriteFailed:
         statusText = tr("Write failed");
         break;
-    }
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+      case QDataStream::SizeLimitExceeded:
+        statusText = tr("Size limit exceeded");
+        break;
+#endif
+      }
 
     QString msg = tr("%1 for file \"%2\" failed. Reason: %3 (%4).").arg(what).arg(getFilepath()).arg(statusText).arg(is.status());
 
