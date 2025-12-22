@@ -70,7 +70,7 @@ QDebug operator<<(QDebug out, const AirwayPoint& point)
 }
 
 // ==================================================================
-enum SegmentDir {DIR_NONE = '\0', DIR_BACKWARD = 'B', DIR_FORWARD = 'F'};
+enum SegmentDir : char {DIR_NONE = '\0', DIR_BACKWARD = 'B', DIR_FORWARD = 'F'};
 
 /* from/to airway segment */
 struct AirwaySegment
@@ -114,7 +114,7 @@ inline size_t qHash(const AirwaySegment& seg)
 
 QDebug operator<<(QDebug out, const AirwaySegment& segment)
 {
-  out << "prev" << segment.prev << "next" << segment.next << QChar(segment.dir);
+  out << "prev" << segment.prev << "next" << segment.next << QChar(static_cast<char>(segment.dir));
   return out;
 }
 

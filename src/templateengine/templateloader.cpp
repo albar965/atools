@@ -40,7 +40,7 @@ QString TemplateLoader::tryFile(QString localizedName)
   QFile file(fileName);
   if(file.exists())
   {
-    file.open(QIODevice::ReadOnly);
+    static_cast<void>(file.open(QIODevice::ReadOnly));
     QString document = file.readAll();
     file.close();
     if(file.error())

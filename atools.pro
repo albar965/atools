@@ -226,6 +226,21 @@ message(-----------------------------------)
 # =====================================================================
 # General Files
 
+# Minimum for Xpconnect build
+# ATOOLS_NO_FS=true
+# ATOOLS_NO_GRIB=true
+# ATOOLS_NO_GUI=true
+# ATOOLS_NO_ROUTING=true
+# ATOOLS_NO_SQL=true
+# ATOOLS_NO_TRACK=true
+# ATOOLS_NO_USERDATA=true
+# ATOOLS_NO_WEATHER=true
+# ATOOLS_NO_WEB=true
+# ATOOLS_NO_WMM=true
+# ATOOLS_NO_NAVSERVER=true
+# ATOOLS_NO_CRASHHANDLER=true
+# ATOOLS_NO_QT5COMPAT=true
+
 HEADERS += \
   src/atools.h \
   src/exception.h \

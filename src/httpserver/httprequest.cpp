@@ -183,7 +183,7 @@ void HttpRequest::readBody(QTcpSocket *socket)
     }
     if(!tempFile->isOpen())
     {
-      tempFile->open();
+      static_cast<void>(tempFile->open());
     }
     // Transfer data in 64kb blocks
     qint64 fileSize = tempFile->size();
@@ -508,7 +508,7 @@ void HttpRequest::parseMultiPartFile()
           if(!uploadedFile)
           {
             uploadedFile = new QTemporaryFile();
-            uploadedFile->open();
+            static_cast<void>(uploadedFile->open());
           }
           uploadedFile->write(line);
           if(uploadedFile->error())
