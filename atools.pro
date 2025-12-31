@@ -59,7 +59,7 @@ VERSION_NUMBER=4.1.0.develop
 
 QT += sql xml core network
 
-CONFIG += build_all c++17 staticlib qt
+CONFIG += build_all c++20 staticlib qt
 CONFIG -= gui debug_and_release debug_and_release_target
 
 TARGET = atools
