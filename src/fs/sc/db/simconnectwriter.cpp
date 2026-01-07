@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -587,16 +587,18 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         // Primary threshold // Primary blastpad // Primary overrun
         // Secondary threshold // Secondary blastpad // Secondary overrun
         if(runway.getPavementFacilities().size() != 6)
-          throw Exception(QString("Wrong pavements size %1 in airport %2").arg(runway.getPavementFacilities().size()).arg(airportIdent));
+          throw Exception(QStringLiteral("Wrong pavements size %1 in airport %2").arg(runway.getPavementFacilities().size()).arg(
+                            airportIdent));
 
         // Primary approach lights // Secondary approach lights
         if(runway.getApproachLightFacilities().size() != 2)
-          throw Exception(QString("Wrong approach lights size %1 in airport %2").
+          throw Exception(QStringLiteral("Wrong approach lights size %1 in airport %2").
                           arg(runway.getApproachLightFacilities().size()).arg(airportIdent));
 
         // Primary left vasi // Primary right vasi // Secondary left vasi // Secondary right vasi
         if(runway.getVasiFacilities().size() != 4)
-          throw Exception(QString("Wrong VASI lights size %1 in airport %2").arg(runway.getVasiFacilities().size()).arg(airportIdent));
+          throw Exception(QStringLiteral("Wrong VASI lights size %1 in airport %2").arg(runway.getVasiFacilities().size()).arg(
+                            airportIdent));
 
         // Runway ===========================================================================================
         const RunwayFacility& runwayFacility = runway.getFacility();
@@ -1625,7 +1627,7 @@ void SimConnectWriter::writeLeg(atools::sql::SqlQuery *query, const LegFacility&
     apprFixType = "F"; // Final Approach Fix
   else if(leg.isMap)
     apprFixType = "M";
-  query->bindValue(":arinc_descr_code", QString("   %1").arg(apprFixType));
+  query->bindValue(":arinc_descr_code", QStringLiteral("   %1").arg(apprFixType));
   query->bindValue(":approach_fix_type", apprFixType);
 
   query->bindValue(":alt_descriptor", enumToStr(bgl::ApproachLeg::altDescriptorToString,

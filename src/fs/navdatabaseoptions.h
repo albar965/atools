@@ -562,7 +562,7 @@ private:
 
   bool includedGui(const QFileInfo& path, const QList<QRegularExpression>& fileExclude, const QList<QRegularExpression>& dirExclude) const;
 
-  QString sceneryFile, basepath, msfsCommunityPath, msfsOfficialPath, sourceDatabase, language = "en-US";
+  QString sceneryFile, basepath, msfsCommunityPath, msfsOfficialPath, sourceDatabase, language = QStringLiteral("en-US");
 
   atools::fs::type::OptionFlags flags;
 

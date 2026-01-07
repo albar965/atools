@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ QString capWord(QString str)
 void capWord(QString& word, QChar last, const QSet<QString>& toUpper, const QSet<QString>& toLower, const QSet<QString>& ignore)
 {
   const static QLocale locale;
-  const static QRegularExpression NUMBER_LETTER_REGEXP("\\d+\\w+");
+  const static QRegularExpression NUMBER_LETTER_REGEXP(QStringLiteral("\\d+\\w+"));
 
   if(toUpper.contains(word.toUpper()))
     // Forced to upper
@@ -195,13 +195,13 @@ QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues)
   QString retval(str);
 
   for(auto it = variableValues.constBegin(); it != variableValues.constEnd(); ++it)
-    retval.replace(QRegularExpression("\\$\\{" % it.key() % "\\}"), it.value().toString());
+    retval.replace(QRegularExpression(QStringLiteral("\\$\\{") % it.key() % QStringLiteral("\\}")), it.value().toString());
 
   return retval;
 }
 
 // \  /  : ; '  *  &amp;  &gt;  &lt;  ?  $  |
-static const QString INVALID_FILENAME_CHARACTERS("\\/:;\'\"*<>?$|");
+static const QString INVALID_FILENAME_CHARACTERS(QStringLiteral("\\/:;\'\"*<>?$|"));
 
 QString invalidFilenameCharacters(bool html)
 {
@@ -217,9 +217,9 @@ QString invalidFilenameCharacters(bool html)
   }
 
   if(html)
-    return retval.join("&nbsp;&nbsp;");
+    return retval.join(QStringLiteral("&nbsp;&nbsp;"));
   else
-    return retval.join("  ");
+    return retval.join(QStringLiteral("  "));
 }
 
 QString cleanFilename(QString filename, int maxLength)
@@ -454,7 +454,7 @@ QString programFileInfo()
          arg(QCoreApplication::applicationVersion()).
          arg(atools::gitRevision()).
          arg(atools::currentIsoWithOffset(false /* milliseconds */)).
-         replace("-", " ");
+         replace(QStringLiteral("-"), QStringLiteral(" "));
 }
 
 QString programFileInfoNoDate()
@@ -463,7 +463,7 @@ QString programFileInfoNoDate()
          arg(QCoreApplication::applicationName()).
          arg(QCoreApplication::applicationVersion()).
          arg(atools::gitRevision()).
-         replace("-", " ");
+         replace(QStringLiteral("-"), QStringLiteral(" "));
 }
 
 bool fileEndsWithEol(const QString& filepath)
@@ -548,7 +548,7 @@ QTime timeFromHourMinStr(const QString& timeStr)
 {
   QTime time;
   bool okHours = true, okMinutes = true;
-  if(timeStr.contains(":"))
+  if(timeStr.contains(QStringLiteral(":")))
     time = QTime(timeStr.section(':', 0, 0).toInt(&okHours), timeStr.section(':', 1, 1).toInt(&okMinutes));
   else if(timeStr.length() == 3 || timeStr.length() == 4)
     time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.right(2).toInt(&okMinutes));
@@ -1066,7 +1066,7 @@ QString normalizeStr(QString str)
   // Decompose string into base characters and diacritics
 
   // Check some special charaters which are omitted by above
-  str = str.replace("ø", "o").replace("Ø", "O").replace("æ", "ae").replace("Æ", "Ae").replace("×", "x");
+  str = str.replace(QStringLiteral("ø"), QStringLiteral("o")).replace(QStringLiteral("Ø"), QStringLiteral("O")).replace(QStringLiteral("æ"), QStringLiteral("ae")).replace(QStringLiteral("Æ"), QStringLiteral("Ae")).replace(QStringLiteral("×"), QStringLiteral("x"));
 
   QString retval;
   const QString norm = str.normalized(QString::NormalizationForm_KD);
@@ -1199,9 +1199,9 @@ quint32 textFileHash(const QString& filename)
 
 QString convertToIsoWithOffset(const QDateTime& dateTime, bool milliseconds)
 {
-  const static QLatin1String PATTERN_MS("yyyy-MM-ddTHH:mm:ss.zzz");
-  const static QLatin1String PATTERN("yyyy-MM-ddTHH:mm:ss");
-  const static QString STR("%1%2:%3");
+  const static QString PATTERN_MS(QStringLiteral("yyyy-MM-ddTHH:mm:ss.zzz"));
+  const static QString PATTERN(QStringLiteral("yyyy-MM-ddTHH:mm:ss"));
+  const static QString STR(QStringLiteral("%1%2:%3"));
 
   int offset = dateTime.offsetFromUtc();
   return dateTime.toString(milliseconds ? PATTERN_MS : PATTERN) % STR.

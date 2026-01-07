@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -180,16 +180,16 @@ void MoraReader::fillDbFromFile(const QList<QStringList>& lines, int fileId)
   for(const QStringList& line :lines)
   {
     if(line.size() != 32)
-      throw atools::Exception(QString("Line too short in MORA grid \"%1\"").arg(line.join(" ")));
+      throw atools::Exception(QStringLiteral("Line too short in MORA grid \"%1\"").arg(line.join(" ")));
 
     bool ok;
     int startLatY = line.at(0).toInt(&ok); // 89 to -90
     if(!ok)
-      throw atools::Exception(QString("Invalid latitude value in MORA grid \"%1\"").arg(line.join(" ")));
+      throw atools::Exception(QStringLiteral("Invalid latitude value in MORA grid \"%1\"").arg(line.join(" ")));
 
     int startLonX = line.at(1).toInt(&ok); // -180 to -150
     if(!ok)
-      throw atools::Exception(QString("Invalid longitude value in MORA grid \"%1\"").arg(line.join(" ")));
+      throw atools::Exception(QStringLiteral("Invalid longitude value in MORA grid \"%1\"").arg(line.join(" ")));
 
     // Change to top left corner
     int pos = (-startLatY + 89) * 360 + startLonX + 180; // 0 - 64800-1
@@ -237,7 +237,7 @@ void MoraReader::debugPrint(const QList<quint16>& grid)
   for(int laty = 90; laty > -90; laty--)
   {
     QString line;
-    line += QString("%1 ").arg(laty, 2, 10, QChar('0'));
+    line += QStringLiteral("%1 ").arg(laty, 2, 10, QChar('0'));
     for(int lonx = -180; lonx < 180; lonx++)
     {
       int pos = (-laty + 90) * 360 + lonx + 180;

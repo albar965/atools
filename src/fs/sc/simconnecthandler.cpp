@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -503,7 +503,7 @@ void SimConnectHandlerPrivate::copyToSimConnectAircraft(const SimDataAircraft& s
     aircraft.category = UNKNOWN;
 
     // Append unknown category string - category needs to be valid for MSFS and FSX
-    aircraft.airplaneTitle.append(QString(" [CAT \"%1\"]").arg(QString(simDataAircraft.category)));
+    aircraft.airplaneTitle.append(QStringLiteral(" [CAT \"%1\"]").arg(QString(simDataAircraft.category)));
   }
 
   aircraft.wingSpanFt = static_cast<quint16>(simDataAircraft.wingSpan);
@@ -1149,7 +1149,7 @@ const WeatherRequest& SimConnectHandler::getWeatherRequest() const
 
 QString SimConnectHandler::getName() const
 {
-  return QString("SimConnect");
+  return QStringLiteral("SimConnect");
 }
 
 int SimConnectHandler::getApplicationVersionMajor() const

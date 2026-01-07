@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ SceneryArea::SceneryArea(int num, const QString& sceneryTitle, const QString& sc
 void SceneryArea::fixTitle()
 {
   if(title.isEmpty())
-    title = QString("Unnamed scenery number %1 layer %2").arg(areaNumber).arg(layer);
+    title = QStringLiteral("Unnamed scenery number %1 layer %2").arg(areaNumber).arg(layer);
 }
 
 QDebug operator<<(QDebug out, const SceneryArea& area)

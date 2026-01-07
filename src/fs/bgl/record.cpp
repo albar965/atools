@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ bool Record::isFullyValid() const
 
 QString Record::getObjectName() const
 {
-  return QString(" Record[offset 0x%1, id 0x%2, size %3] ").
+  return QStringLiteral(" Record[offset 0x%1, id 0x%2, size %3] ").
          arg(getStartOffset(), 0, 16).arg(id, 0, 16).arg(size);
 }
 

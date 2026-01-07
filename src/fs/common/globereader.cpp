@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ GlobeReader::~GlobeReader()
 bool GlobeReader::isDirValid(const QString& path)
 {
   QDir dir(path);
-  const QFileInfoList entries = dir.entryInfoList({"???g"}, QDir::Files, QDir::Name | QDir::IgnoreCase);
+  const QFileInfoList entries = dir.entryInfoList({QStringLiteral("???g")}, QDir::Files, QDir::Name | QDir::IgnoreCase);
   for(const QFileInfo& file : entries)
   {
     if(fileEntryValid(file))
@@ -65,7 +65,7 @@ bool GlobeReader::isDirValid(const QString& path)
 bool GlobeReader::fileEntryValid(const QFileInfo& fileEntry)
 {
   return fileEntry.exists() && fileEntry.isReadable() && fileEntry.isFile() &&
-         QDir::match("[a-p][1-9][0-9][gb]", fileEntry.fileName()) &&
+         QDir::match(QStringLiteral("[a-p][1-9][0-9][gb]"), fileEntry.fileName()) &&
          (fileEntry.size() == FILE_SIZE_LARGE || fileEntry.size() == FILE_SIZE_SMALL);
 }
 
@@ -80,7 +80,7 @@ bool GlobeReader::openFiles()
   QDir dir(dataDir);
 
   // Read only filenames here
-  const QFileInfoList entries = dir.entryInfoList({"????"}, QDir::Files, QDir::Name | QDir::IgnoreCase);
+  const QFileInfoList entries = dir.entryInfoList({QStringLiteral("????")}, QDir::Files, QDir::Name | QDir::IgnoreCase);
   for(const QFileInfo& fileEntry : entries)
   {
     if(fileEntryValid(fileEntry))
@@ -331,7 +331,7 @@ qint64 GlobeReader::calcFileOffset(int gridCol, int gridRow, int& fileIndex)
     fileRowOffset = gridRow - (TILE_ROWS_SMALL + TILE_ROWS_LARGE * 2);
   }
   else
-    throw atools::Exception(QString("Invalid grid row %1").arg(gridRow));
+    throw atools::Exception(QStringLiteral("Invalid grid row %1").arg(gridRow));
 
   // Index in file array
   fileIndex = fileRow * 4 + fileCol;

@@ -57,9 +57,9 @@ int Template::setVariable(const QString name, const QString value)
 int Template::setCondition(const QString name, const bool value)
 {
   int count = 0;
-  QString startTag = QString("{if %1}").arg(name);
-  QString elseTag = QString("{else %1}").arg(name);
-  QString endTag = QString("{end %1}").arg(name);
+  QString startTag = QStringLiteral("{if %1}").arg(name);
+  QString elseTag = QStringLiteral("{else %1}").arg(name);
+  QString endTag = QStringLiteral("{end %1}").arg(name);
   // search for if-else-end
   int start = indexOf(startTag);
   while(start >= 0)
@@ -181,12 +181,12 @@ int Template::loop(const QString name, const int repetitions)
             // number variables, conditions and sub-loop within the loop
             QString nameNum = name + QString::number(i);
             QString s = loopPart;
-            s.replace(QString("{%1.").arg(name), QString("{%1.").arg(nameNum));
-            s.replace(QString("{if %1.").arg(name), QString("{if %1.").arg(nameNum));
-            s.replace(QString("{ifnot %1.").arg(name), QString("{ifnot %1.").arg(nameNum));
-            s.replace(QString("{else %1.").arg(name), QString("{else %1.").arg(nameNum));
-            s.replace(QString("{end %1.").arg(name), QString("{end %1.").arg(nameNum));
-            s.replace(QString("{loop %1.").arg(name), QString("{loop %1.").arg(nameNum));
+            s.replace(QStringLiteral("{%1.").arg(name), QStringLiteral("{%1.").arg(nameNum));
+            s.replace(QStringLiteral("{if %1.").arg(name), QStringLiteral("{if %1.").arg(nameNum));
+            s.replace(QStringLiteral("{ifnot %1.").arg(name), QStringLiteral("{ifnot %1.").arg(nameNum));
+            s.replace(QStringLiteral("{else %1.").arg(name), QStringLiteral("{else %1.").arg(nameNum));
+            s.replace(QStringLiteral("{end %1.").arg(name), QStringLiteral("{end %1.").arg(nameNum));
+            s.replace(QStringLiteral("{loop %1.").arg(name), QStringLiteral("{loop %1.").arg(nameNum));
             insertMe.append(s);
           }
           replace(start, end - start + endTag.length(), insertMe);
@@ -208,12 +208,12 @@ int Template::loop(const QString name, const int repetitions)
           // number variables, conditions and sub-loop within the loop
           QString nameNum = name + QString::number(i);
           QString s = loopPart;
-          s.replace(QString("{%1.").arg(name), QString("{%1.").arg(nameNum));
-          s.replace(QString("{if %1.").arg(name), QString("{if %1.").arg(nameNum));
-          s.replace(QString("{ifnot %1.").arg(name), QString("{ifnot %1.").arg(nameNum));
-          s.replace(QString("{else %1.").arg(name), QString("{else %1.").arg(nameNum));
-          s.replace(QString("{end %1.").arg(name), QString("{end %1.").arg(nameNum));
-          s.replace(QString("{loop %1.").arg(name), QString("{loop %1.").arg(nameNum));
+          s.replace(QStringLiteral("{%1.").arg(name), QStringLiteral("{%1.").arg(nameNum));
+          s.replace(QStringLiteral("{if %1.").arg(name), QStringLiteral("{if %1.").arg(nameNum));
+          s.replace(QStringLiteral("{ifnot %1.").arg(name), QStringLiteral("{ifnot %1.").arg(nameNum));
+          s.replace(QStringLiteral("{else %1.").arg(name), QStringLiteral("{else %1.").arg(nameNum));
+          s.replace(QStringLiteral("{end %1.").arg(name), QStringLiteral("{end %1.").arg(nameNum));
+          s.replace(QStringLiteral("{loop %1.").arg(name), QStringLiteral("{loop %1.").arg(nameNum));
           insertMe.append(s);
         }
         replace(start, end - start + endTag.length(), insertMe);

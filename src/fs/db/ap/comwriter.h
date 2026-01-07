@@ -30,7 +30,7 @@ class ComWriter :
 {
 public:
   ComWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "com")
+    : WriterBase(db, dataWriter, QStringLiteral("com"))
   {
   }
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1190,7 +1190,7 @@ void XpAirportReader::writeHelipad(const QStringList& line, const atools::fs::xp
   insertStartQuery->bindValue(":airport_id", curAirportId);
   insertStartQuery->bindValue(":runway_end_id", QVariant(QVariant::Int));
   insertStartQuery->bindValue(":number", ++curHelipadStartNumber);
-  insertStartQuery->bindValue(":runway_name", QString("%1").arg(curHelipadStartNumber, 2, 10, QChar('0')));
+  insertStartQuery->bindValue(":runway_name", QStringLiteral("%1").arg(curHelipadStartNumber, 2, 10, QChar('0')));
   insertStartQuery->bindValue(":laty", pos.getLatY());
   insertStartQuery->bindValue(":lonx", pos.getLonX());
   insertStartQuery->bindValue(":type", "H");

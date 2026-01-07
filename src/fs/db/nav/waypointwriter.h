@@ -30,7 +30,7 @@ class WaypointWriter :
 {
 public:
   WaypointWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "waypoint")
+    : WriterBase(db, dataWriter, QStringLiteral("waypoint"))
   {
   }
 

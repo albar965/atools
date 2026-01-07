@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1924,7 +1924,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   writeTextElementIf(writer, "CruisingAltF", QString::number(plan.cruiseAltitudeFt, 'f', 8));
   writeTextElementIf(writer, "Comment", plan.comment);
   writeTextElementIf(writer, "CreationDate", atools::currentIsoWithOffset(false /* milliseconds */));
-  writeTextElementIf(writer, "FileVersion", QString("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
+  writeTextElementIf(writer, "FileVersion", QStringLiteral("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
   writeTextElementIf(writer, "ProgramName", QCoreApplication::applicationName());
   writeTextElementIf(writer, "ProgramVersion", QCoreApplication::applicationVersion());
   writeTextElementIf(writer, "Documentation", "https://www.littlenavmap.org/lnmpln.html");
@@ -2133,7 +2133,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     writer.writeTextElement("DepartureID", plan.departureIdent);
     writer.writeTextElement("DestinationID", plan.destinationIdent);
     writer.writeTextElement("Title", plan.departureIdent % " - " % plan.destinationIdent);
-    writer.writeTextElement("Descr", QString("Flight from %1 to %2 created by %3 %4").
+    writer.writeTextElement("Descr", QStringLiteral("Flight from %1 to %2 created by %3 %4").
                             arg(plan.departureIdent).arg(plan.destinationIdent).
                             arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion()));
     writer.writeTextElement("FPType", Flightplan::flightplanTypeToString(plan.flightplanType));
@@ -2803,7 +2803,7 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
       }
       else if(entry.getIdent() != lastAirwayTo)
       {
-        QString coords = QString("%1,%2").
+        QString coords = QStringLiteral("%1,%2").
                          arg(entry.getPosition().getLatY(), 0, 'f', 6).
                          arg(entry.getPosition().getLonX(), 0, 'f', 6);
 
@@ -2928,7 +2928,7 @@ void FlightplanIO::saveFeelthereFpl(const atools::fs::pln::Flightplan& plan, con
         // Do not save procedure points
         continue;
 
-      QString prefix = QString("Wpt.%1.").arg(index, 2, 10, QChar('0'));
+      QString prefix = QStringLiteral("Wpt.%1.").arg(index, 2, 10, QChar('0'));
       stream << prefix << "ident=" << identOrDegMinFormat(entry) << Qt::endl;
       stream << prefix << "type=" << (i == plan.size() - 1 ? "1" : "4") << Qt::endl;
       stream << prefix << "latitude=" << entry.getPosition().getLatY() << Qt::endl;
@@ -2980,8 +2980,8 @@ void FlightplanIO::saveLeveldRte(const atools::fs::pln::Flightplan& plan, const 
         continue;
 
       stream << "W," << identOrDegMinFormat(entry) << "," << entry.getAirway() << ",30,"
-             << QString("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << ","
-             << QString("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6, QChar('0'))
+             << QStringLiteral("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << ","
+             << QStringLiteral("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6, QChar('0'))
              << ",0.000000,0.000000,0,0,0,0" << Qt::endl;
     }
 
@@ -3072,19 +3072,19 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& filename, con
         case atools::fs::pln::entry::VOR:
           stream << "VORDME";
           if(entry.getFrequency() > 0)
-            frequency = QString("%1").arg(entry.getFrequency() / 1000., 0, 'f', 2, QChar('0'));
+            frequency = QStringLiteral("%1").arg(entry.getFrequency() / 1000., 0, 'f', 2, QChar('0'));
           break;
         case atools::fs::pln::entry::NDB:
           stream << "NDB";
           if(entry.getFrequency() > 0)
-            frequency = QString("%1").arg(entry.getFrequency() / 100., 0, 'f', 1, QChar('0'));
+            frequency = QStringLiteral("%1").arg(entry.getFrequency() / 100., 0, 'f', 1, QChar('0'));
           break;
       }
 
       stream << "|" << frequency << "|" << entry.getRegion() << "|"
-             << QString("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << "|"
-             << QString("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6,
-                           QChar('0')) << "|0|" << (entry.getAirway().isEmpty() ? "DCT" : entry.getAirway()) << Qt::endl;
+             << QStringLiteral("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << "|"
+             << QStringLiteral("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6,
+                                  QChar('0')) << "|0|" << (entry.getAirway().isEmpty() ? "DCT" : entry.getAirway()) << Qt::endl;
 
       num++;
     }
@@ -3159,20 +3159,20 @@ void FlightplanIO::saveQwRte(const Flightplan& plan, const QString& filename) co
         case atools::fs::pln::entry::VOR:
           type = "WPT";
           if(entry.getFrequency() > 0)
-            frequency = QString("%1").arg(entry.getFrequency() / 1000., 0, 'f', 2, QChar('0'));
+            frequency = QStringLiteral("%1").arg(entry.getFrequency() / 1000., 0, 'f', 2, QChar('0'));
           break;
 
         case atools::fs::pln::entry::NDB:
           type = "WPT";
           if(entry.getFrequency() > 0)
-            frequency = QString("%1").arg(entry.getFrequency() / 100., 0, 'f', 1, QChar('0'));
+            frequency = QStringLiteral("%1").arg(entry.getFrequency() / 100., 0, 'f', 1, QChar('0'));
           break;
       }
 
       // MADEB            47.324375  10.288886  WPT ---    UM738
-      stream << QString("%1").arg(identOrDegMinFormat(entry), -17)
-             << QString("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << "  "
-             << QString("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6, QChar('0')) << "  "
+      stream << QStringLiteral("%1").arg(identOrDegMinFormat(entry), -17)
+             << QStringLiteral("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << "  "
+             << QStringLiteral("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6, QChar('0')) << "  "
              << type << " " << frequency << "    " << entry.getAirway() << Qt::endl;
     }
 
@@ -3218,14 +3218,14 @@ void FlightplanIO::saveMdr(const Flightplan& plan, const QString& filename) cons
       const FlightplanEntry& prev = plan.at(i - 1);
       if(!lastAirway.isEmpty())
         // Airway has changed - print the last waypoint
-        stream << lastAirway << " " << prev.getIdent() << " " << QString("%1 %2").
+        stream << lastAirway << " " << prev.getIdent() << " " << QStringLiteral("%1 %2").
           arg(prev.getPosition().getLatY(), 0, 'f', 6).
           arg(prev.getPosition().getLonX(), 0, 'f', 6) << Qt::endl;
 
       if(entry.getAirway().isEmpty() && i != plan.size() - 1)
       {
         // Not an airway - print as is
-        QString coords = QString("%1 %2").
+        QString coords = QStringLiteral("%1 %2").
                          arg(entry.getPosition().getLatY(), 0, 'f', 6).
                          arg(entry.getPosition().getLonX(), 0, 'f', 6);
 
@@ -3305,7 +3305,7 @@ void FlightplanIO::saveTfdi(const Flightplan& plan, const QString& filename, con
           case atools::fs::pln::entry::UNKNOWN:
           case atools::fs::pln::entry::USER:
             writer.writeAttribute("Type", "PilotDefinedWaypoint");
-            writer.writeAttribute("Ident", QString("WP%1").arg(wpIdent++));
+            writer.writeAttribute("Ident", QStringLiteral("WP%1").arg(wpIdent++));
             break;
         }
         writer.writeAttribute("Latitude", QString::number(entry.getPosition().getLatY(), 'f', 4));
@@ -3446,7 +3446,7 @@ void FlightplanIO::saveCivaFms(atools::fs::pln::Flightplan plan, const QString& 
   {
     // Prepare entry for copying
     FlightplanEntry entry = plan.at(i);
-    entry.setIdent(QString("WP%1").arg(splitPlan.size() + 1)); // Change ident
+    entry.setIdent(QStringLiteral("WP%1").arg(splitPlan.size() + 1)); // Change ident
     entry.setPosition(entry.getPosition().alt(0.f)); // Set altitude to zero
     entry.setWaypointType(atools::fs::pln::entry::USER); // Change to user type to export with prefix 28
     entry.setFlags(atools::fs::pln::entry::NONE); // No flags - all points exported - missed approach removed
@@ -3970,13 +3970,13 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename) 
 
       // 51.578888-000.918889
       // 51.330874 000.034811
-      QString latY = QString("%1").arg(std::abs(entry.getPosition().getLatY()), 9, 'f', 6);
+      QString latY = QStringLiteral("%1").arg(std::abs(entry.getPosition().getLatY()), 9, 'f', 6);
       if(entry.getPosition().getLatY() < 0.f)
         latY.prepend("-");
       else
         latY.prepend(" ");
 
-      QString lonX = QString("%1").arg(std::abs(entry.getPosition().getLonX()), 10, 'f', 6, '0');
+      QString lonX = QStringLiteral("%1").arg(std::abs(entry.getPosition().getLonX()), 10, 'f', 6, '0');
       if(entry.getPosition().getLonX() < 0.f)
         lonX.prepend("-");
       else
@@ -3985,7 +3985,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename) 
       stream << identOrDegMinFormat(entry) << ",0,";
 
       stream << latY << lonX;
-      stream << ",0,0," << QString("%1").arg(atools::roundToInt(heading), 3, 10, QChar('0')) << ".00000";
+      stream << ",0,0," << QStringLiteral("%1").arg(atools::roundToInt(heading), 3, 10, QChar('0')) << ".00000";
 
       // Ignore rest of the fields
       stream << ",0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,"
@@ -4157,7 +4157,7 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
 
         if(ident.isEmpty() || addedUserWaypoints.contains(ident))
           // Replace with own name if nothing left or a user waypoint with the same name already exists
-          ident = QString("UPT%1").arg(wpNum++, 2, 10, QChar('0'));
+          ident = QStringLiteral("UPT%1").arg(wpNum++, 2, 10, QChar('0'));
 
         // Remember changed name in index
         userWaypointNameIndex.insert(curIdx, ident);
@@ -4177,7 +4177,7 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
         if(!pos.almostEqual(entry.getPosition(), Pos::POS_EPSILON_5M))
         {
           // Same identifier but different location - add as user waypoint
-          wptDat[0] = QString("UPT%1").arg(wpNum++, 2, 10, QChar('0'));
+          wptDat[0] = QStringLiteral("UPT%1").arg(wpNum++, 2, 10, QChar('0'));
           wptDat[1] = "USER WAYPOINT";
           userWaypointNameIndex.insert(curIdx, ident);
           addedUserWaypoints.insert(ident);

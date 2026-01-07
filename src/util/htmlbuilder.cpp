@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -360,7 +360,7 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
         break;
       default:
         qWarning() << "Invalid variant type" << value.typeName() << "in HtmlBuilder. Name" << name;
-        valueStr = QString("Error: Invalid variant type \"%1\"").arg(value.typeName());
+        valueStr = QStringLiteral("Error: Invalid variant type \"%1\"").arg(value.typeName());
 
     }
     htmlText.append(alt(flags.testFlag(html::ALIGN_RIGHT) ? tableRowAlignRight : tableRow).arg(asText(name, flags, color),
@@ -475,7 +475,7 @@ HtmlBuilder& HtmlBuilder::tdAtts(const QHash<QString, QString>& attributes)
 {
   QString atts;
   for(auto it = attributes.constBegin(); it != attributes.constEnd(); ++it)
-    atts.append(QString(" %1=\"%2\" ").arg(it.key()).arg(it.value()));
+    atts.append(QStringLiteral(" %1=\"%2\" ").arg(it.key()).arg(it.value()));
 
   htmlText.append("<td " % atts % ">");
   return *this;
@@ -489,7 +489,7 @@ HtmlBuilder& HtmlBuilder::td()
 
 HtmlBuilder& HtmlBuilder::tdW(int widthPercent)
 {
-  htmlText.append(QString("<td width=\"%1%\">").arg(widthPercent));
+  htmlText.append(QStringLiteral("<td width=\"%1%\">").arg(widthPercent));
   return *this;
 }
 
@@ -563,7 +563,7 @@ HtmlBuilder& HtmlBuilder::tableAtts(const QHash<QString, QString>& attributes)
 {
   QString atts;
   for(auto it = attributes.constBegin(); it != attributes.constEnd(); ++it)
-    atts.append(QString(" %1=\"%2\" ").arg(it.key()).arg(it.value()));
+    atts.append(QStringLiteral(" %1=\"%2\" ").arg(it.key()).arg(it.value()));
 
   htmlText.append("<table " % atts % ">\n<tbody>\n");
   tableRowsCur = 0;
@@ -919,14 +919,14 @@ HtmlBuilder& HtmlBuilder::img(const QIcon& icon, const QString& alt, const QStri
   QBuffer buffer(&data);
   icon.pixmap(pixmapSize).save(&buffer, "PNG", 100);
 
-  img(QString("data:image/png;base64, %1").arg(QString(data.toBase64())), alt, style, size);
+  img(QStringLiteral("data:image/png;base64, %1").arg(QString(data.toBase64())), alt, style, size);
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::img(const QString& src, const QString& alt, const QString& style, QSize size)
 {
-  QString widthAtt = size.width() > 0 ? QString(" width=\"") % QString::number(size.width()) % "\"" : QString();
-  QString heightAtt = size.height() > 0 ? QString(" height=\"") % QString::number(size.height()) % "\"" : QString();
+  QString widthAtt = size.width() > 0 ? QStringLiteral(" width=\"") % QString::number(size.width()) % "\"" : QString();
+  QString heightAtt = size.height() > 0 ? QStringLiteral(" height=\"") % QString::number(size.height()) % "\"" : QString();
   QString altAtt = alt.isEmpty() ? QString() : " alt=\"" % alt % "\"";
   QString styleAtt = style.isEmpty() ? QString() : " style=\"" % style % "\"";
 
@@ -1071,7 +1071,7 @@ QString HtmlBuilder::asText(QString str, html::Flags flags, QColor foreground, Q
 
 bool HtmlBuilder::checklength(int maxLines, const QString& msg)
 {
-  QString dotText(QString("<b>%1</b>").arg(msg));
+  QString dotText(QStringLiteral("<b>%1</b>").arg(msg));
   if(numLines > maxLines)
   {
     if(!htmlText.endsWith(dotText))
@@ -1083,7 +1083,7 @@ bool HtmlBuilder::checklength(int maxLines, const QString& msg)
 
 bool HtmlBuilder::checklengthTextBar(int maxLines, const QString& msg, int length)
 {
-  QString dotText(QString("<b>%1</b>").arg(msg));
+  QString dotText(QStringLiteral("<b>%1</b>").arg(msg));
   if(numLines > maxLines)
   {
     if(!htmlText.endsWith(dotText))
@@ -1127,10 +1127,10 @@ HtmlBuilder& HtmlBuilder::doc(const QString& title, const QString& css, const QS
         "<head>\n");
 
   if(!css.isEmpty())
-    htmlText.append(QString("<style type=\"text/css\" xml:space=\"preserve\">\n%1</style>\n").arg(css));
+    htmlText.append(QStringLiteral("<style type=\"text/css\" xml:space=\"preserve\">\n%1</style>\n").arg(css));
 
   if(!title.isEmpty())
-    htmlText.append(QString("<title>%1</title>\n").arg(title));
+    htmlText.append(QStringLiteral("<title>%1</title>\n").arg(title));
 
   // Other header lines like "meta"
   for(const QString& line : headerLines)
@@ -1166,7 +1166,7 @@ QString HtmlBuilder::getEncodedImageHref(const QIcon& icon, QSize imageSize)
   QBuffer buffer(&data);
   icon.pixmap(imageSize).save(&buffer, "PNG", 100);
 
-  return QString("data:image/png;base64, %1").arg(QString(data.toBase64()));
+  return QStringLiteral("data:image/png;base64, %1").arg(QString(data.toBase64()));
 }
 
 QString HtmlBuilder::toEntities(const QString& src)

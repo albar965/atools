@@ -34,7 +34,7 @@ public:
    * @param signSeparator separator character for each dot/dash
    * @param charSeparator separator character for each sign
    */
-  MorseCode(const QString& signSeparator = QString(), const QString& charSeparator = "\n");
+  MorseCode(const QString& signSeparator = QString(), const QString& charSeparator = QStringLiteral("\n"));
   ~MorseCode();
 
   QString getCode(const QString& text);

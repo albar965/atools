@@ -35,7 +35,7 @@ class SidStarWriter :
 {
 public:
   SidStarWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "approach")
+    : WriterBase(db, dataWriter, QStringLiteral("approach"))
   {
   }
 

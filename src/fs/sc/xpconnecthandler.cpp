@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -158,7 +158,7 @@ atools::fs::sc::State XpConnectHandler::getState() const
 
 QString XpConnectHandler::getName() const
 {
-  return QLatin1String("XpConnect");
+  return QStringLiteral("XpConnect");
 }
 
 void XpConnectHandler::disconnect()

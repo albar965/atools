@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -180,7 +180,7 @@ QString UserdataManager::cleanupWhere(const QStringList& duplicateColumns, bool 
   {
     QStringList joinCols;
     for(const QString& column : duplicateColumns)
-      joinCols.append(QString(" u1.%1 = u2.%1 ").arg(column));
+      joinCols.append(QStringLiteral(" u1.%1 = u2.%1 ").arg(column));
 
     QString queryStr("select u1.userdata_id from userdata u1 join userdata u2 on " % joinCols.join(" and ") %
                      " where u1.userdata_id < u2.userdata_id");
@@ -558,7 +558,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QList<int>& ids
   {
     // Copy the whole file into a new one and remove the trailing 99
     QFile tempOutFile(QFileInfo(filepath).path() % QDir::separator() %
-                      QString("lnm_user_fix_dat_%1").arg(QDateTime::currentSecsSinceEpoch()));
+                      QStringLiteral("lnm_user_fix_dat_%1").arg(QDateTime::currentSecsSinceEpoch()));
     if(tempOutFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
       QFile inFile(filepath);

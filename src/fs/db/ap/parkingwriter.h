@@ -30,7 +30,7 @@ class ParkingWriter :
 {
 public:
   ParkingWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "parking")
+    : WriterBase(db, dataWriter, QStringLiteral("parking"))
   {
   }
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -190,7 +190,7 @@ void AircraftPerf::saveXmlInternal(QXmlStreamWriter& writer) const
   // Save header and metadata =======================================================
   writer.writeStartElement("Header");
   writer.writeTextElement("CreationDate", atools::currentIsoWithOffset(false /* milliseconds */));
-  writer.writeTextElement("FileVersion", QString("%1.%2").arg(LNMPERF_VERSION_MAJOR).arg(LNMPERF_VERSION_MINOR));
+  writer.writeTextElement("FileVersion", QStringLiteral("%1.%2").arg(LNMPERF_VERSION_MAJOR).arg(LNMPERF_VERSION_MINOR));
   writer.writeTextElement("ProgramName", QCoreApplication::applicationName());
   writer.writeTextElement("ProgramVersion", QCoreApplication::applicationVersion());
   writer.writeTextElement("Documentation", "https://www.littlenavmap.org/lnmperf.html");

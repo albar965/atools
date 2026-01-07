@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -600,7 +600,8 @@ void LogdataManager::repairDateTime(const QString& column)
   int offsetH = offsetMin / 60;
   int offsetM = offsetMin % 60;
 
-  QString offsetStr = QString("%1%2:%3").arg(offsetMin < 0 ? "-" : "+").arg(offsetH, 2, 10, QChar('0')).arg(offsetM, 2, 10, QChar('0'));
+  QString offsetStr = QStringLiteral("%1%2:%3").arg(offsetMin < 0 ? "-" : "+").arg(offsetH, 2, 10, QChar('0')).arg(offsetM, 2, 10,
+                                                                                                                   QChar('0'));
 
   SqlTransaction transaction(db);
 
@@ -677,7 +678,7 @@ QString LogdataManager::cleanupWhere(bool departureAndDestEqual, bool departureO
                       "destination_ident glob '[0-9][0-9][0-9][0-9][NS][0-9]*[0-9][EW]')");
 
   if(minFlownDistance >= 0.f)
-    queryWhere.append(QString("(distance_flown <= %1)").arg(minFlownDistance));
+    queryWhere.append(QStringLiteral("(distance_flown <= %1)").arg(minFlownDistance));
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << queryWhere;

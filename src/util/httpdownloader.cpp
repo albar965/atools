@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -227,7 +227,7 @@ void HttpDownloader::setDefaultUserAgent(const QString& extension)
 {
   // Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:59.0) Gecko/20100101 Firefox/59.0
   // Little Navmap/1.9.1.develop (Ubuntu 17.10; x86_64; de-DE) Qt 5.9.3 extension
-  userAgent = QString("%1/%2 (%3; %4; %5) Qt %6%7").
+  userAgent = QStringLiteral("%1/%2 (%3; %4; %5) Qt %6%7").
               arg(QCoreApplication::applicationName()).
               arg(QCoreApplication::applicationVersion()).
               arg(QSysInfo::prettyProductName()).
@@ -240,7 +240,7 @@ void HttpDownloader::setDefaultUserAgent(const QString& extension)
 void HttpDownloader::setDefaultUserAgentShort(const QString& extension)
 {
   // Little Navmap/1.9.1.develop extension
-  userAgent = QString("%1/%2%3").
+  userAgent = QStringLiteral("%1/%2%3").
               arg(QCoreApplication::applicationName()).
               arg(QCoreApplication::applicationVersion()).
               arg(extension);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ bool Marker::isValid() const
 
 QString Marker::getObjectName() const
 {
-  return Record::getObjectName() + QString("marker ident %1 region %2 position %3").
+  return Record::getObjectName() + QStringLiteral("marker ident %1 region %2 position %3").
          arg(ident).arg(region).arg(position.getPos().toString());
 }
 

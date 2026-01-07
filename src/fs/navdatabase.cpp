@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -899,7 +899,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     databaseMetadata.setAiracCycle(dfdCompiler->getAiracCycle(), dfdCompiler->getValidThrough());
 
   databaseMetadata.setDataSource(FsPaths::typeToShortName(sim));
-  databaseMetadata.setCompilerVersion(QString("atools %1 (revision %2) %3 %4 (%5)").
+  databaseMetadata.setCompilerVersion(QStringLiteral("atools %1 (revision %2) %3 %4 (%5)").
                                       arg(atools::version()).
                                       arg(atools::gitRevision()).
                                       arg(QCoreApplication::applicationName()).
@@ -2011,7 +2011,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       // Use $HOME/.config for testing
       QString addonsCfgFileLocal = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).value(0);
 #endif
-      addonsCfgFileLocal += SEP % QString("Lockheed Martin") % SEP % QString("Prepar3D v%1").arg(simNum) %
+      addonsCfgFileLocal += SEP % QStringLiteral("Lockheed Martin") % SEP % QStringLiteral("Prepar3D v%1").arg(simNum) %
 #if !defined(Q_OS_WIN32)
                             " LocalData" %
 #endif
@@ -2029,7 +2029,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       // Use $HOME/.config for testing
       QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).value(0);
 #endif
-      addonsCfgFile += SEP % QString("Lockheed Martin") % SEP % QString("Prepar3D v%1").arg(simNum) % SEP % "add-ons.cfg";
+      addonsCfgFile += SEP % QStringLiteral("Lockheed Martin") % SEP % QStringLiteral("Prepar3D v%1").arg(simNum) % SEP % "add-ons.cfg";
       addonsCfgFiles.append(addonsCfgFile);
     }
 
@@ -2043,7 +2043,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       // Use /tmp for testing
       QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).value(0);
 #endif
-      addonsAllUsersCfgFile += SEP % QString("Lockheed Martin") % SEP % QString("Prepar3D v%1").arg(simNum) %
+      addonsAllUsersCfgFile += SEP % QStringLiteral("Lockheed Martin") % SEP % QStringLiteral("Prepar3D v%1").arg(simNum) %
 #if !defined(Q_OS_WIN32)
                                " ProgramData" %
 #endif

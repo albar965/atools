@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,18 +52,19 @@ Settings::Settings()
   {
     // Create directory so getConfigFilename() does not fail
     if(QDir().mkpath(path))
-      infoMessages.append(QString("Created settings path \"%1\"").arg(path));
+      infoMessages.append(QStringLiteral("Created settings path \"%1\"").arg(path));
     else
-      errorMessages.append(QString("Cannot create settings path \"%1\"").arg(path));
+      errorMessages.append(QStringLiteral("Cannot create settings path \"%1\"").arg(path));
   }
 
   if(qSettings->status() != QSettings::NoError)
-    errorMessages.append(QString("Error creating settings file \"%1\" reason %2").arg(qSettings->fileName()).arg(qSettings->status()));
+    errorMessages.append(QStringLiteral("Error creating settings file \"%1\" reason %2").arg(qSettings->fileName()).arg(
+                           qSettings->status()));
 
   if(!qSettings->isWritable())
-    errorMessages.append(QString("Settings file \"%1\" not writeable").arg(qSettings->fileName()));
+    errorMessages.append(QStringLiteral("Settings file \"%1\" not writeable").arg(qSettings->fileName()));
 
-  infoMessages.append(QString("Using settings file \"%1\"").arg(qSettings->fileName()));
+  infoMessages.append(QStringLiteral("Using settings file \"%1\"").arg(qSettings->fileName()));
 }
 
 Settings::~Settings()
@@ -83,9 +84,9 @@ void Settings::createOverridePath()
       if(!QFile::exists(overridePath))
       {
         if(QDir().mkpath(overridePath))
-          infoMessages.append(QString("Created absolute settings path \"%1\"").arg(overridePath));
+          infoMessages.append(QStringLiteral("Created absolute settings path \"%1\"").arg(overridePath));
         else
-          errorMessages.append(QString("Cannot create settings path \"%1\"").arg(overridePath));
+          errorMessages.append(QStringLiteral("Cannot create settings path \"%1\"").arg(overridePath));
       }
     }
     else
@@ -95,9 +96,9 @@ void Settings::createOverridePath()
       if(!appDir.exists(overridePath))
       {
         if(appDir.mkpath(overridePath))
-          infoMessages.append(QString("Created relative settings path \"%1\"").arg(overridePath));
+          infoMessages.append(QStringLiteral("Created relative settings path \"%1\"").arg(overridePath));
         else
-          errorMessages.append(QString("Cannot create settings path \"%1\"").arg(overridePath));
+          errorMessages.append(QStringLiteral("Cannot create settings path \"%1\"").arg(overridePath));
       }
     }
   }
@@ -195,7 +196,7 @@ QString Settings::getOverloadedLocalPath(const QString& filename, bool ignoreMis
     // No overloading and file exists return the original path
     return filename;
   else if(!ignoreMissing)
-    errorMessages.append(QString("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
+    errorMessages.append(QStringLiteral("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
 
   return QString();
 }
@@ -212,7 +213,7 @@ QString Settings::getOverloadedPath(const QString& filename, bool ignoreMissing)
     // No overloading and file exists return the original path
     return filename;
   else if(!ignoreMissing)
-    errorMessages.append(QString("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
+    errorMessages.append(QStringLiteral("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
 
   return QString();
 }
@@ -236,7 +237,7 @@ void Settings::syncSettings()
   qs->sync();
 
   if(qs->status() != QSettings::NoError)
-    errorMessages.append(QString("Error writing to settings file \"%1\" reason %2").arg(qs->fileName()).arg(qs->status()));
+    errorMessages.append(QStringLiteral("Error writing to settings file \"%1\" reason %2").arg(qs->fileName()).arg(qs->status()));
 }
 
 void Settings::clearSettings()
@@ -245,7 +246,7 @@ void Settings::clearSettings()
   qs->clear();
 
   if(qs->status() != QSettings::NoError)
-    errorMessages.append(QString("Error clearing settings file \"%1\" reason %2").arg(qs->fileName()).arg(qs->status()));
+    errorMessages.append(QStringLiteral("Error clearing settings file \"%1\" reason %2").arg(qs->fileName()).arg(qs->status()));
   syncSettings();
 }
 

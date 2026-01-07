@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -793,12 +793,12 @@ void DfdCompiler::writeAirspaceCom()
     if(ind == "F" || ind == "U")
     {
       updateAirspaceCom(comQuery, updateBoundaryQuery,
-                        airspaceIdentIdMap.value(QString("%1|%2|%3O").
+                        airspaceIdentIdMap.value(QStringLiteral("%1|%2|%3O").
                                                  arg(comQuery.valueStr("area_code")).
                                                  arg(comQuery.valueStr("fir_uir_identifier")).
                                                  arg(ind), -1));
       updateAirspaceCom(comQuery, updateBoundaryQuery,
-                        airspaceIdentIdMap.value(QString("%1|%2|%3N").
+                        airspaceIdentIdMap.value(QStringLiteral("%1|%2|%3N").
                                                  arg(comQuery.valueStr("area_code")).
                                                  arg(comQuery.valueStr("fir_uir_identifier")).
                                                  arg(ind), -1));
@@ -807,23 +807,23 @@ void DfdCompiler::writeAirspaceCom()
     {
       // Search the index twice since regions were split up earlier
       updateAirspaceCom(comQuery, updateBoundaryQuery,
-                        airspaceIdentIdMap.value(QString("%1|%2|%3O").
+                        airspaceIdentIdMap.value(QStringLiteral("%1|%2|%3O").
                                                  arg(comQuery.valueStr("area_code")).
                                                  arg(comQuery.valueStr("fir_uir_identifier")).
                                                  arg("F"), -1));
       updateAirspaceCom(comQuery, updateBoundaryQuery,
-                        airspaceIdentIdMap.value(QString("%1|%2|%3O").
+                        airspaceIdentIdMap.value(QStringLiteral("%1|%2|%3O").
                                                  arg(comQuery.valueStr("area_code")).
                                                  arg(comQuery.valueStr("fir_uir_identifier")).
                                                  arg("U"), -1));
 
       updateAirspaceCom(comQuery, updateBoundaryQuery,
-                        airspaceIdentIdMap.value(QString("%1|%2|%3N").
+                        airspaceIdentIdMap.value(QStringLiteral("%1|%2|%3N").
                                                  arg(comQuery.valueStr("area_code")).
                                                  arg(comQuery.valueStr("fir_uir_identifier")).
                                                  arg("F"), -1));
       updateAirspaceCom(comQuery, updateBoundaryQuery,
-                        airspaceIdentIdMap.value(QString("%1|%2|%3N").
+                        airspaceIdentIdMap.value(QStringLiteral("%1|%2|%3N").
                                                  arg(comQuery.valueStr("area_code")).
                                                  arg(comQuery.valueStr("fir_uir_identifier")).
                                                  arg("U"), -1));
@@ -929,7 +929,7 @@ void DfdCompiler::beginControlledAirspace(atools::sql::SqlQuery& query)
 
 void DfdCompiler::beginFirUirAirspaceNew(atools::sql::SqlQuery& query)
 {
-  airspaceIdentIdMap.insert(QString("%1|%2|%3N").
+  airspaceIdentIdMap.insert(QStringLiteral("%1|%2|%3N").
                             arg(query.valueStr("area_code")).
                             arg(query.valueStr("fir_uir_identifier")).
                             arg(query.valueStr("fir_uir_indicator")), curAirspaceId);
@@ -954,7 +954,7 @@ void DfdCompiler::beginFirUirAirspaceNew(atools::sql::SqlQuery& query)
 
 void DfdCompiler::beginFirUirAirspaceCenter(atools::sql::SqlQuery& query)
 {
-  airspaceIdentIdMap.insert(QString("%1|%2|%3O").
+  airspaceIdentIdMap.insert(QStringLiteral("%1|%2|%3O").
                             arg(query.valueStr("area_code")).
                             arg(query.valueStr("fir_uir_identifier")).
                             arg(query.valueStr("fir_uir_indicator")), curAirspaceId);
@@ -1360,7 +1360,7 @@ void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
 
     // qDebug() << query.record();
     // Fill context for error reporting
-    procInput.context = QString("File %1, airport %2, procedure %3, transition %4").
+    procInput.context = QStringLiteral("File %1, airport %2, procedure %3, transition %4").
                         arg(db.databaseName()).
                         arg(query.valueStr("airport_identifier")).
                         arg(query.valueStr("procedure_identifier")).
@@ -1563,7 +1563,7 @@ void DfdCompiler::writeAirportMsa()
   QStringList sectorCols;
   QString sectorColsStr;
   for(int i = 1; i <= 5; i++)
-    sectorCols.append(QString("m.sector_bearing_%1, m.sector_altitude_%1").arg(i));
+    sectorCols.append(QStringLiteral("m.sector_bearing_%1, m.sector_altitude_%1").arg(i));
   sectorColsStr = sectorCols.join(", ") + ", m.magnetic_true_indicator ";
   // area_code  icao_code  airport_identifier  msa_center  msa_center_latitude  msa_center_longitude
   // magnetic_true_indicator  multiple_code  radius_limit
@@ -1617,8 +1617,8 @@ void DfdCompiler::writeAirportMsa()
     // Collect all sector bearings until values are null
     for(int i = 1; i <= 5; i++)
     {
-      QString brg = QString("sector_bearing_%1").arg(i);
-      QString alt = QString("sector_altitude_%1").arg(i);
+      QString brg = QStringLiteral("sector_bearing_%1").arg(i);
+      QString alt = QStringLiteral("sector_altitude_%1").arg(i);
       if(!query.isNull(brg) && !query.isNull(alt))
         geo.addSector(query.valueFloat(brg), query.valueFloat(alt) * 100.f);
       else
@@ -1787,7 +1787,7 @@ void DfdCompiler::initQueries()
         }, true /* named bindings */));
 
   airportFileWriteQuery = new SqlQuery(db);
-  airportFileWriteQuery->prepare(QString("insert into airport_file (file_id, ident) values(%1, :ident)").arg(FILE_ID));
+  airportFileWriteQuery->prepare(QStringLiteral("insert into airport_file (file_id, ident) values(%1, :ident)").arg(FILE_ID));
 
   runwayQuery = new SqlQuery(db);
   runwayQuery->prepare("select * from src.tbl_runways order by icao_code, airport_identifier, runway_identifier");

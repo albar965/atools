@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ QList<QLocale> Translator::findTranslationFiles()
 QList<QLocale> Translator::findTranslationFilesInternal(const QString& path)
 {
   static const QString APP_NAME = QFileInfo(QCoreApplication::applicationFilePath()).baseName();
-  static const QString FILTER = QString("%1_*.qm").arg(APP_NAME);
+  static const QString FILTER = QStringLiteral("%1_*.qm").arg(APP_NAME);
   static const QRegularExpression QM_FILE_LANG(APP_NAME + "_(.+).qm");
   static const QRegularExpression QM_FILE_LANG_REGION(APP_NAME + "_(.+)_(.+).qm");
 

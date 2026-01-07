@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -131,14 +131,17 @@ const MetarParser& Metar::getMetarParser(MetarType type) const
 // 1CI312&CI001FNVN002N 13/12 07/05&A1528 Q1009 @@@ 50 7 135 20 |
 QString Metar::cleanMetar(const QString& metar)
 {
-  const static QRegularExpression CLOUD_EXTENSION("(CI|CS|CC|AS|AC|SC|NS|ST|CU|CB)...[FRA][NOLMHS]([VLMHD])([NRFHS])(\\d\\d\\d)[NTLMS]");
-  const static QList<QString> CLOUD_DENSITIES({"CLR", "FEW", "FEW", "SCT", "SCT", "BKN", "BKN", "BKN", "OVC"});
-  const static QRegularExpression WIND("^(\\d{3}|VRB)\\d{1,3}(G\\d{2,3})?(KT|KMH|MPS)$");
-  const static QRegularExpression VARIABLE_WIND("^\\d{3}V\\d{3}$");
-  const static QRegularExpression LONG_VISIBILITY("^(\\d{3})(SM|KM)$");
-  const static QRegularExpression VISIBILITY_KM("^(\\d{1,2})KM$");
-  const static QRegularExpression TEMPERATURE("^([-M]?)(\\d{1,2})/([-M]?)(\\d{1,2})$");
-  const static QRegularExpression CLOUD("^([0-8])(CI|CS|CC|AS|AC|SC|NS|ST|CU|CB)([0-9]{3})$");
+  const static QRegularExpression CLOUD_EXTENSION(QStringLiteral(
+                                                    "(CI|CS|CC|AS|AC|SC|NS|ST|CU|CB)...[FRA][NOLMHS]([VLMHD])([NRFHS])(\\d\\d\\d)[NTLMS]"));
+  const static QList<QString> CLOUD_DENSITIES({QStringLiteral("CLR"), QStringLiteral("FEW"), QStringLiteral("FEW"), QStringLiteral("SCT"),
+                                               QStringLiteral("SCT"), QStringLiteral("BKN"), QStringLiteral("BKN"), QStringLiteral("BKN"),
+                                               QStringLiteral("OVC")});
+  const static QRegularExpression WIND(QStringLiteral("^(\\d{3}|VRB)\\d{1,3}(G\\d{2,3})?(KT|KMH|MPS)$"));
+  const static QRegularExpression VARIABLE_WIND(QStringLiteral("^\\d{3}V\\d{3}$"));
+  const static QRegularExpression LONG_VISIBILITY(QStringLiteral("^(\\d{3})(SM|KM)$"));
+  const static QRegularExpression VISIBILITY_KM(QStringLiteral("^(\\d{1,2})KM$"));
+  const static QRegularExpression TEMPERATURE(QStringLiteral("^([-M]?)(\\d{1,2})/([-M]?)(\\d{1,2})$"));
+  const static QRegularExpression CLOUD(QStringLiteral("^([0-8])(CI|CS|CC|AS|AC|SC|NS|ST|CU|CB)([0-9]{3})$"));
 
   // CI Cirrus
   // CS Cirro-stratus (maps to CI)
@@ -170,11 +173,11 @@ QString Metar::cleanMetar(const QString& metar)
 
   int numWind = 0, numVar = 0, numTmp = 0;
   // FSX gives the precipidation indication only in the cloud extension
-  const QStringList met = metar.section("@@@", 0, 0).simplified().split(" ");
+  const QStringList met = metar.section(QStringLiteral("@@@"), 0, 0).simplified().split(QStringLiteral(" "));
   QString precipitation;
   for(const QString& str : met)
   {
-    QString extension = str.section("&", 1, 1).simplified();
+    QString extension = str.section(QStringLiteral("&"), 1, 1).simplified();
 
     QRegularExpressionMatch extensionCloudMatch = CLOUD_EXTENSION.match(extension);
     if(extensionCloudMatch.hasMatch())
@@ -187,22 +190,22 @@ QString Metar::cleanMetar(const QString& metar)
       if(altitude == 0)
       {
         // If altitude is 0 precipitation extends to the ground
-        if(intensity == "V" || intensity == "L")
-          precipitation += "-";
-        // else if(intensity == "M")
-        else if(intensity == "H" || intensity == "D")
-          precipitation += "+";
+        if(intensity == QStringLiteral("V") || intensity == QStringLiteral("L"))
+          precipitation += QStringLiteral("-");
+        // else if(intensity == QStringLiteral("M"))
+        else if(intensity == QStringLiteral("H") || intensity == QStringLiteral("D"))
+          precipitation += QStringLiteral("+");
 
-        if(type == "N")
+        if(type == QStringLiteral("N"))
           precipitation.clear();
-        else if(type == "R")
-          precipitation += "RA";
-        else if(type == "F")
-          precipitation += "RAFZ";
-        else if(type == "H")
-          precipitation += "FR";
-        else if(type == "S")
-          precipitation += "SN";
+        else if(type == QStringLiteral("R"))
+          precipitation += QStringLiteral("RA");
+        else if(type == QStringLiteral("F"))
+          precipitation += QStringLiteral("RAFZ");
+        else if(type == QStringLiteral("H"))
+          precipitation += QStringLiteral("FR");
+        else if(type == QStringLiteral("S"))
+          precipitation += QStringLiteral("SN");
         break;
       }
     }
@@ -212,12 +215,12 @@ QString Metar::cleanMetar(const QString& metar)
   QStringList retval;
   for(const QString& str : met)
   {
-    QString cleanStr = str.section("&", 0, 0).simplified();
+    QString cleanStr = str.section(QStringLiteral("&"), 0, 0).simplified();
 
-    if(cleanStr == "000000Z" && timestamp.isValid())
+    if(cleanStr == QStringLiteral("000000Z") && timestamp.isValid())
       // Fix empty timestamp
-      cleanStr = QLocale(QLocale::C).toString(timestamp, "ddHHmm") + "Z";
-    else if(cleanStr == "????")
+      cleanStr = QLocale(QLocale::C).toString(timestamp, QStringLiteral("ddHHmm")) + QStringLiteral("Z");
+    else if(cleanStr == QStringLiteral("????"))
       // Replace pattern from interpolated with real station name
       cleanStr = requestIdent;
     else
@@ -240,28 +243,28 @@ QString Metar::cleanMetar(const QString& metar)
       QRegularExpressionMatch visMatch = LONG_VISIBILITY.match(cleanStr);
       if(visMatch.hasMatch())
         // Fix too long three digit visibility
-        cleanStr = "99" + visMatch.captured(2);
+        cleanStr = QStringLiteral("99") + visMatch.captured(2);
 
       QRegularExpressionMatch visMatchSm = VISIBILITY_KM.match(cleanStr);
       if(visMatchSm.hasMatch())
         // Convert visibility from km to nm
         cleanStr =
-          QString::number(atools::roundToInt(atools::geo::meterToMi(visMatchSm.captured(1).toFloat() * 1000.f))) + "SM";
+          QString::number(atools::roundToInt(atools::geo::meterToMi(visMatchSm.captured(1).toFloat() * 1000.f))) + QStringLiteral("SM");
 
       QRegularExpressionMatch tmpMatch = TEMPERATURE.match(cleanStr);
       if(tmpMatch.hasMatch())
       {
-        // Fix temperature - 1-2 digits to 2 digits and "-" to "M"
+        // Fix temperature - 1-2 digits to 2 digits and QStringLiteral("-") to QStringLiteral("M")
         numTmp++;
 
         if(numTmp > 1)
           // Skip duplicate temperature indications
           continue;
 
-        cleanStr = QString("%1%2/%3%4").
-                   arg(tmpMatch.captured(1).replace("-", "M")).
+        cleanStr = QStringLiteral("%1%2/%3%4").
+                   arg(tmpMatch.captured(1).replace(QStringLiteral("-"), QStringLiteral("M"))).
                    arg(tmpMatch.captured(2).toInt(), 2, 10, QChar('0')).
-                   arg(tmpMatch.captured(3).replace("-", "M")).
+                   arg(tmpMatch.captured(3).replace(QStringLiteral("-"), QStringLiteral("M"))).
                    arg(tmpMatch.captured(4).toInt(), 2, 10, QChar('0'));
       }
 
@@ -285,7 +288,7 @@ QString Metar::cleanMetar(const QString& metar)
     retval.append(cleanStr);
   }
 
-  cleanMetar = retval.join(" ").simplified().toUpper();
+  cleanMetar = retval.join(QStringLiteral(" ")).simplified().toUpper();
 
   return cleanMetar;
 }

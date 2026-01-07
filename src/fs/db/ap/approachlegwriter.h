@@ -30,7 +30,7 @@ class ApproachLegWriter :
 {
 public:
   ApproachLegWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : LegBaseWriter(db, dataWriter, "approach_leg")
+    : LegBaseWriter(db, dataWriter, QStringLiteral("approach_leg"))
   {
   }
 

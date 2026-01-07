@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -295,7 +295,7 @@ float MagDecReader::magvar(int offset) const
   if(offset >= 0 && offset < static_cast<int>(numValues))
     return magDecValues[offset];
   else
-    throw Exception(QString("Wrong offset into magnetic declination %1").arg(offset));
+    throw Exception(QStringLiteral("Wrong offset into magnetic declination %1").arg(offset));
 }
 
 // Latitude/Longitude table is 130,320 bytes length and starts at offset 0x88.

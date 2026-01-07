@@ -30,7 +30,7 @@ class AirportFileWriter :
 {
 public:
   AirportFileWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "airport_file")
+    : WriterBase(db, dataWriter, QStringLiteral("airport_file"))
   {
   }
 

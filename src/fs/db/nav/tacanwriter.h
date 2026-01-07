@@ -31,7 +31,7 @@ class TacanWriter :
 {
 public:
   TacanWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "vor")
+    : WriterBase(db, dataWriter, QStringLiteral("vor"))
   {
   }
 

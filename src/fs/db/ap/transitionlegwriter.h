@@ -30,7 +30,7 @@ class TransitionLegWriter :
 {
 public:
   TransitionLegWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : LegBaseWriter(db, dataWriter, "transition_leg")
+    : LegBaseWriter(db, dataWriter, QStringLiteral("transition_leg"))
   {
   }
 

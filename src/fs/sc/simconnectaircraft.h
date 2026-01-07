@@ -430,7 +430,7 @@ public:
   QString getTransponderCodeStr() const
   {
     // Get number as octal
-    return transponderCode != -1 ? QString("%1").arg(transponderCode, 4, 8, QChar('0')) : QString();
+    return transponderCode != -1 ? QStringLiteral("%1").arg(transponderCode, 4, 8, QChar('0')) : QString();
   }
 
   DataFlags getDataFlags() const

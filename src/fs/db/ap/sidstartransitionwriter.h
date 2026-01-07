@@ -31,7 +31,7 @@ class SidStarTransitionWriter :
 {
 public:
   SidStarTransitionWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "transition")
+    : WriterBase(db, dataWriter, QStringLiteral("transition"))
   {
   }
 

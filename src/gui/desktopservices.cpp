@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ void DesktopServices::openFile(QWidget *parent, QString path, bool showInFileMan
       if(QFile::exists("/usr/bin/osascript"))
       {
         program = "/usr/bin/osascript";
-        arguments << "-e" << QString("tell application \"Finder\" to (reveal POSIX file \"%1\") activate").
+        arguments << "-e" << QStringLiteral("tell application \"Finder\" to (reveal POSIX file \"%1\") activate").
           arg(atools::nativeCleanPath(path));
       }
 
@@ -75,7 +75,7 @@ void DesktopServices::openFile(QWidget *parent, QString path, bool showInFileMan
         program = "/usr/bin/gdbus";
         arguments << "call" << "--session" << "--dest" << "org.freedesktop.FileManager1" << "--object-path"
                   << "/org/freedesktop/FileManager1" << "--method" << "org.freedesktop.FileManager1.ShowItems"
-                  << QString("['file://%1']").arg(atools::nativeCleanPath(path)) << "\"\"";
+                  << QStringLiteral("['file://%1']").arg(atools::nativeCleanPath(path)) << "\"\"";
       }
 #endif
     }
@@ -88,7 +88,7 @@ void DesktopServices::openFile(QWidget *parent, QString path, bool showInFileMan
         program = "/usr/bin/gdbus";
         arguments << "call" << "--session" << "--dest" << "org.freedesktop.FileManager1" << "--object-path"
                   << "/org/freedesktop/FileManager1" << "--method" << "org.freedesktop.FileManager1.ShowFolders"
-                  << QString("['file://%1']").arg(atools::nativeCleanPath(path)) << "\"\"";
+                  << QStringLiteral("['file://%1']").arg(atools::nativeCleanPath(path)) << "\"\"";
       }
 
       if(QFile::exists("/usr/bin/xdg-open") && fileinfo.isFile())

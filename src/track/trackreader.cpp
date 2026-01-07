@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -536,7 +536,7 @@ QStringList TrackReader::toNatWaypoints(const QStringList& str)
     if(match.hasMatch())
     {
       // Whole degree waypoint ========
-      wp = QString("%1%2N").
+      wp = QStringLiteral("%1%2N").
            arg(match.captured(1).toInt(), 2, 10, QChar('0')).
            arg(match.captured(2).toInt(), 2, 10, QChar('0'));
     }
@@ -546,7 +546,7 @@ QStringList TrackReader::toNatWaypoints(const QStringList& str)
       if(match.hasMatch())
       {
         // Half degree waypoint ========
-        wp = QString("H%1%2").
+        wp = QStringLiteral("H%1%2").
              arg(match.captured(1).toInt(), 2, 10, QChar('0')).
              arg(match.captured(2).toInt(), 2, 10, QChar('0'));
       }

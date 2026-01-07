@@ -19,6 +19,7 @@
 #define ATOOLS_BGL_UTIL_H
 
 #include <QString>
+#include <QStringLiteral>
 
 namespace atools {
 namespace fs {
@@ -38,8 +39,8 @@ QString enumToStr(QString func(TYPE t), TYPE value)
   if(retval.isEmpty())
     return QString();
 
-  if(retval == "NONE" || retval == "NO" || retval == "UNKNOWN" || retval == "INVALID" ||
-     retval.startsWith("UNKNOWN_") || retval.endsWith("_UNKNOWN"))
+  if(retval == QStringLiteral("NONE") || retval == QStringLiteral("NO") || retval == QStringLiteral("UNKNOWN") ||
+     retval == QStringLiteral("INVALID") || retval.startsWith(QStringLiteral("UNKNOWN_")) || retval.endsWith(QStringLiteral("_UNKNOWN")))
     return QString();
   else
     return retval;

@@ -143,82 +143,82 @@ static QStringList runway_friction;
 void initTranslateableTexts()
 {
   description = {
-    {"SH", MetarParser::tr("Showers of")},
-    {"TS", MetarParser::tr("Thunderstorm with")},
-    {"BC", MetarParser::tr("Patches of")},
-    {"BL", MetarParser::tr("Blowing")},
-    {"DR", MetarParser::tr("Low drifting")},
-    {"FZ", MetarParser::tr("Freezing")},
-    {"MI", MetarParser::tr("Shallow")},
-    {"PR", MetarParser::tr("Partial")},
+    {QStringLiteral("SH"), MetarParser::tr("Showers of")},
+    {QStringLiteral("TS"), MetarParser::tr("Thunderstorm with")},
+    {QStringLiteral("BC"), MetarParser::tr("Patches of")},
+    {QStringLiteral("BL"), MetarParser::tr("Blowing")},
+    {QStringLiteral("DR"), MetarParser::tr("Low drifting")},
+    {QStringLiteral("FZ"), MetarParser::tr("Freezing")},
+    {QStringLiteral("MI"), MetarParser::tr("Shallow")},
+    {QStringLiteral("PR"), MetarParser::tr("Partial")},
     {QString(), QString()}
   };
 
   phenomenon = {
-    {"DZ", MetarParser::tr("Drizzle")},
-    {"GR", MetarParser::tr("Hail")},
-    {"GS", MetarParser::tr("Small hail and/or snow pellets")},
-    {"IC", MetarParser::tr("Ice crystals")},
-    {"PE", MetarParser::tr("Ice pellets")},
-    {"RA", MetarParser::tr("Rain")},
-    {"SG", MetarParser::tr("Snow grains")},
-    {"SN", MetarParser::tr("Snow")},
-    {"UP", MetarParser::tr("Unknown precipitation")},
-    {"BR", MetarParser::tr("Mist")},
-    {"DU", MetarParser::tr("Widespread dust")},
-    {"FG", MetarParser::tr("Fog")},
-    {"FGBR", MetarParser::tr("Fog bank")},
-    {"FU", MetarParser::tr("Smoke")},
-    {"HZ", MetarParser::tr("Haze")},
-    {"PY", MetarParser::tr("Spray")},
-    {"SA", MetarParser::tr("Sand")},
-    {"VA", MetarParser::tr("Volcanic ash")},
-    {"DS", MetarParser::tr("Duststorm")},
-    {"FC", MetarParser::tr("Funnel cloud/tornado waterspout")},
-    {"PO", MetarParser::tr("Well-developed dust/sand whirls")},
-    {"SQ", MetarParser::tr("Squalls")},
-    {"SS", MetarParser::tr("Sandstorm")},
-    {"UP", MetarParser::tr("Unknown")}, // ... due to failed automatic acquisition
+    {QStringLiteral("DZ"), MetarParser::tr("Drizzle")},
+    {QStringLiteral("GR"), MetarParser::tr("Hail")},
+    {QStringLiteral("GS"), MetarParser::tr("Small hail and/or snow pellets")},
+    {QStringLiteral("IC"), MetarParser::tr("Ice crystals")},
+    {QStringLiteral("PE"), MetarParser::tr("Ice pellets")},
+    {QStringLiteral("RA"), MetarParser::tr("Rain")},
+    {QStringLiteral("SG"), MetarParser::tr("Snow grains")},
+    {QStringLiteral("SN"), MetarParser::tr("Snow")},
+    {QStringLiteral("UP"), MetarParser::tr("Unknown precipitation")},
+    {QStringLiteral("BR"), MetarParser::tr("Mist")},
+    {QStringLiteral("DU"), MetarParser::tr("Widespread dust")},
+    {QStringLiteral("FG"), MetarParser::tr("Fog")},
+    {QStringLiteral("FGBR"), MetarParser::tr("Fog bank")},
+    {QStringLiteral("FU"), MetarParser::tr("Smoke")},
+    {QStringLiteral("HZ"), MetarParser::tr("Haze")},
+    {QStringLiteral("PY"), MetarParser::tr("Spray")},
+    {QStringLiteral("SA"), MetarParser::tr("Sand")},
+    {QStringLiteral("VA"), MetarParser::tr("Volcanic ash")},
+    {QStringLiteral("DS"), MetarParser::tr("Duststorm")},
+    {QStringLiteral("FC"), MetarParser::tr("Funnel cloud/tornado waterspout")},
+    {QStringLiteral("PO"), MetarParser::tr("Well-developed dust/sand whirls")},
+    {QStringLiteral("SQ"), MetarParser::tr("Squalls")},
+    {QStringLiteral("SS"), MetarParser::tr("Sandstorm")},
+    {QStringLiteral("UP"), MetarParser::tr("Unknown")}, // ... due to failed automatic acquisition
     {QString(), QString()}
   };
 
   special = {
-    {"NSW", MetarParser::tr("No significant weather")},
+    {QStringLiteral("NSW"), MetarParser::tr("No significant weather")},
     {QString(), QString()}
-    /* { "VCSH", "showers in the vicinity" },
+    /* { QStringLiteral("VCSH"), "showers in the vicinity" },
      * { "VCTS", "thunderstorm in the vicinity" }, */
   };
 
   colors = {
-    {"BLU", MetarParser::tr("Blue")}, // 2500 ft,  8.0 km
-    {"WHT", MetarParser::tr("White")}, // 1500 ft,  5.0 km
-    {"GRN", MetarParser::tr("Green")}, // 700 ft,  3.7 km
-    {"YLO", MetarParser::tr("Yellow")}, // 300 ft,  1.6 km
-    {"AMB", MetarParser::tr("Amber")}, // 200 ft,  0.8 km
-    {"RED", MetarParser::tr("Red")},
+    {QStringLiteral("BLU"), MetarParser::tr("Blue")}, // 2500 ft,  8.0 km
+    {QStringLiteral("WHT"), MetarParser::tr("White")}, // 1500 ft,  5.0 km
+    {QStringLiteral("GRN"), MetarParser::tr("Green")}, // 700 ft,  3.7 km
+    {QStringLiteral("YLO"), MetarParser::tr("Yellow")}, // 300 ft,  1.6 km
+    {QStringLiteral("AMB"), MetarParser::tr("Amber")}, // 200 ft,  0.8 km
+    {QStringLiteral("RED"), MetarParser::tr("Red")},
     {QString(), QString()}
   };
 
   cloud_types = {
-    {"AC", MetarParser::tr("altocumulus")},
-    {"ACC", MetarParser::tr("altocumulus castellanus")},
-    {"ACSL", MetarParser::tr("altocumulus standing lenticular")},
-    {"AS", MetarParser::tr("altostratus")},
-    {"CB", MetarParser::tr("cumulonimbus")},
-    {"CBMAM", MetarParser::tr("cumulonimbus mammatus")},
-    {"CC", MetarParser::tr("cirrocumulus")},
-    {"CCSL", MetarParser::tr("cirrocumulus standing lenticular")},
-    {"CI", MetarParser::tr("cirrus")},
-    {"CS", MetarParser::tr("cirrostratus")},
-    {"CU", MetarParser::tr("cumulus")},
-    {"CUFRA", MetarParser::tr("cumulus fractus")},
-    {"NS", MetarParser::tr("nimbostratus")},
-    {"SAC", MetarParser::tr("stratoaltocumulus")}, // guessed
-    {"SC", MetarParser::tr("stratocumulus")},
-    {"SCSL", MetarParser::tr("stratocumulus standing lenticular")},
-    {"ST", MetarParser::tr("stratus")},
-    {"STFRA", MetarParser::tr("stratus fractus")},
-    {"TCU", MetarParser::tr("towering cumulus")},
+    {QStringLiteral("AC"), MetarParser::tr("altocumulus")},
+    {QStringLiteral("ACC"), MetarParser::tr("altocumulus castellanus")},
+    {QStringLiteral("ACSL"), MetarParser::tr("altocumulus standing lenticular")},
+    {QStringLiteral("AS"), MetarParser::tr("altostratus")},
+    {QStringLiteral("CB"), MetarParser::tr("cumulonimbus")},
+    {QStringLiteral("CBMAM"), MetarParser::tr("cumulonimbus mammatus")},
+    {QStringLiteral("CC"), MetarParser::tr("cirrocumulus")},
+    {QStringLiteral("CCSL"), MetarParser::tr("cirrocumulus standing lenticular")},
+    {QStringLiteral("CI"), MetarParser::tr("cirrus")},
+    {QStringLiteral("CS"), MetarParser::tr("cirrostratus")},
+    {QStringLiteral("CU"), MetarParser::tr("cumulus")},
+    {QStringLiteral("CUFRA"), MetarParser::tr("cumulus fractus")},
+    {QStringLiteral("NS"), MetarParser::tr("nimbostratus")},
+    {QStringLiteral("SAC"), MetarParser::tr("stratoaltocumulus")}, // guessed
+    {QStringLiteral("SC"), MetarParser::tr("stratocumulus")},
+    {QStringLiteral("SCSL"), MetarParser::tr("stratocumulus standing lenticular")},
+    {QStringLiteral("ST"), MetarParser::tr("stratus")},
+    {QStringLiteral("STFRA"), MetarParser::tr("stratus fractus")},
+    {QStringLiteral("TCU"), MetarParser::tr("towering cumulus")},
     {QString(), QString()}
   };
 
@@ -541,22 +541,22 @@ QString MetarParser::buildMetarString(const QStringList& remarks) const
   metarStr.append(getId());
 
   // Time ====================================
-  metarStr.append(QString("%1%2%3Z").arg(_day, 2, 10, QChar('0')).arg(_hour, 2, 10, QChar('0')).arg(_minute, 2, 10, QChar('0')));
+  metarStr.append(QStringLiteral("%1%2%3Z").arg(_day, 2, 10, QChar('0')).arg(_hour, 2, 10, QChar('0')).arg(_minute, 2, 10, QChar('0')));
 
   // Wind ====================================
   if(_wind_dir != -1 && _wind_speed > 0.f && _wind_speed < INVALID_METAR_VALUE)
-    metarStr.append(QString("%1%2KT").arg(_wind_dir, 3, 10, QChar('0')).
+    metarStr.append(QStringLiteral("%1%2KT").arg(_wind_dir, 3, 10, QChar('0')).
                     arg(atools::geo::meterPerSecToKnots(_wind_speed), 2, 'f', 0, QChar('0')));
   else
-    metarStr.append("00000KT");
+    metarStr.append(QStringLiteral("00000KT"));
 
   // Visibility ====================================
   if(_min_visibility.isDistanceValid())
-    metarStr.append(QString("%1").arg(_min_visibility.visibilityMeter, 4, 'f', 0, QChar('0')));
+    metarStr.append(QStringLiteral("%1").arg(_min_visibility.visibilityMeter, 4, 'f', 0, QChar('0')));
 
   // Precipitation ====================================
-  metarStr.append(getIntensityStringShort(_rain, "RA"));
-  metarStr.append(getIntensityStringShort(_snow, "SN"));
+  metarStr.append(getIntensityStringShort(_rain, QStringLiteral("RA")));
+  metarStr.append(getIntensityStringShort(_snow, QStringLiteral("SN")));
 
   // Clouds ==========================================
   for(const MetarCloud& cloud : _clouds)
@@ -564,18 +564,18 @@ QString MetarParser::buildMetarString(const QStringList& remarks) const
     QString coverageStr = cloud.getCoverageStringShort();
 
     if(!coverageStr.isEmpty())
-      metarStr.append(coverageStr + QString("%1").arg(atools::geo::meterToFeet(cloud.altitudeMeter) / 100.f, 3, 'f', 0, QChar('0')));
+      metarStr.append(coverageStr + QStringLiteral("%1").arg(atools::geo::meterToFeet(cloud.altitudeMeter) / 100.f, 3, 'f', 0, QChar('0')));
   }
 
   // Temperature ====================================
   if(_temp < INVALID_METAR_VALUE && _dewp < INVALID_METAR_VALUE)
-    metarStr.append(QString("%1%2/%3%4").
+    metarStr.append(QStringLiteral("%1%2/%3%4").
                     arg(_temp <= -0.5f ? "M" : QString()).arg(std::abs(_temp), 2, 'f', 0, QChar('0')).
                     arg(_dewp <= -0.5f ? "M" : QString()).arg(std::abs(_dewp), 2, 'f', 0, QChar('0')));
 
   // Pressure =============================================
   if(_pressure > 0.f && _pressure < INVALID_METAR_VALUE)
-    metarStr.append(QString("Q%1").arg(getPressureMbar(), 4, 'f', 0, QChar('0')));
+    metarStr.append(QStringLiteral("Q%1").arg(getPressureMbar(), 4, 'f', 0, QChar('0')));
 
   metarStr.append(remarks);
 
@@ -591,13 +591,13 @@ QString MetarParser::getIntensityStringShort(int intensityValue, const QString& 
       break;
 
     case LIGHT:
-      return "-" + weatherPhenomenon;
+      return QStringLiteral("-") + weatherPhenomenon;
 
     case MODERATE:
       return weatherPhenomenon;
 
     case HEAVY:
-      return "+" + weatherPhenomenon;
+      return QStringLiteral("+") + weatherPhenomenon;
   }
   return QString();
 }
@@ -1471,7 +1471,7 @@ bool MetarParser::scanSkyCondition()
      !strncmp(m, "NSC", i = 3) || // no significant clouds
      !strncmp(m, "NOSIG", i = 5) || // no significant clouds
      !strncmp(m, "CAVOK 9999", i = 10) || // ceiling and visibility OK 9999 sometimes given too
-     !strncmp(m, "CAVOK", i = 5))    // ceiling and visibility OK (implies 9999)
+     !strncmp(m, "CAVOK", i = 5)) // ceiling and visibility OK (implies 9999)
   {
     m += i;
     if(!scanBoundary(&m))

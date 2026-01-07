@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ Q_REQUIRED_RESULT inline bool checkValue(const QString& message, TYPE value, TYP
 {
   if(expected != value)
   {
-    qWarning() << Q_FUNC_INFO << QString("GribReader: Error reading grib file: %1: value %2 not equal to expected value %3").
+    qWarning() << Q_FUNC_INFO << QStringLiteral("GribReader: Error reading grib file: %1: value %2 not equal to expected value %3").
       arg(message).arg(value).arg(expected);
     return false;
   }
@@ -84,7 +84,7 @@ Q_REQUIRED_RESULT bool checkValue(const QString& message, TYPE value, const QLis
     for(TYPE val : expected)
       expectedStr.append(QString::number(static_cast<int>(val)));
 
-    qWarning() << Q_FUNC_INFO << QString("GribReader: Error reading grib file: %1: value %2 not in expected range %3").
+    qWarning() << Q_FUNC_INFO << QStringLiteral("GribReader: Error reading grib file: %1: value %2 not in expected range %3").
       arg(message).arg(value).arg(expectedStr.join(GribReader::tr(", ")));
     return false;
   }

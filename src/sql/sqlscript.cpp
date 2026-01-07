@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,9 @@ void SqlScript::executeScript(const QString& filename)
       qDebug() << "-- Done ----------------------------------------------------";
   }
   else
-    throw SqlException(db, QString("Cannot open script file \"%1\". Reason: %2.").arg(scriptFile.fileName()).arg(scriptFile.errorString()));
+    throw SqlException(db,
+                       QStringLiteral("Cannot open script file \"%1\". Reason: %2.").arg(scriptFile.fileName()).arg(
+                         scriptFile.errorString()));
   scriptFile.close();
 }
 

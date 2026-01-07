@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,8 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
 
     int i = 1;
     while(fi.exists() && i < 100)
-      fi.setFile(dir.filePath() + QDir::separator() + base.baseName() + QString("%1%2").arg(sep).arg(i++) + "." + base.completeSuffix());
+      fi.setFile(dir.filePath() + QDir::separator() + base.baseName() + QStringLiteral("%1%2").arg(sep).arg(i++) + "." +
+                 base.completeSuffix());
 
     name = fi.fileName();
   }

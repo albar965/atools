@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -261,9 +261,9 @@ QString approachIndicatorToDb(ApproachIndicator value, const XpReaderContext *co
 QString XpReaderContext::messagePrefix() const
 {
   if(fileVersion > 0)
-    return QString("File %1, version %2, line %3").arg(filePath).arg(fileVersion).arg(lineNumber);
+    return QStringLiteral("File %1, version %2, line %3").arg(filePath).arg(fileVersion).arg(lineNumber);
   else
-    return QString("File %1, line %3").arg(filePath).arg(lineNumber);
+    return QStringLiteral("File %1, line %3").arg(filePath).arg(lineNumber);
 }
 
 } // namespace xp

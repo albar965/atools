@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -845,25 +845,25 @@ void WhazzupTextParser::assignFlightplan(QStringList& columns, const QJsonObject
       int depTimeH = departureTime / 3600;
       int depTimeM = (departureTime / 60) - (depTimeH * 60);
       columns[c::PLANNED_DEPTIME] =
-        QString("%1%2").arg(depTimeH, 2, 10, QChar('0')).arg(depTimeM, 2, 10, QChar('0'));
+        QStringLiteral("%1%2").arg(depTimeH, 2, 10, QChar('0')).arg(depTimeM, 2, 10, QChar('0'));
 
       int actualDepartureTime = flightplanObj.value("actualDepartureTime").toVariant().toInt();
       int actDepTimeH = actualDepartureTime / 3600;
       int actDepTimeM = (actualDepartureTime / 60) - (actDepTimeH * 60);
       columns[c::PLANNED_ACTDEPTIME] =
-        QString("%1%2").arg(actDepTimeH, 2, 10, QChar('0')).arg(actDepTimeM, 2, 10, QChar('0'));
+        QStringLiteral("%1%2").arg(actDepTimeH, 2, 10, QChar('0')).arg(actDepTimeM, 2, 10, QChar('0'));
 
       int eet = flightplanObj.value("eet").toVariant().toInt();
       int eetH = eet / 3600;
       int eetM = (eet / 60) - (eetH * 60);
-      columns[c::PLANNED_HRSENROUTE] = QString("%1").arg(eetH);
-      columns[c::PLANNED_MINENROUTE] = QString("%1").arg(eetM);
+      columns[c::PLANNED_HRSENROUTE] = QStringLiteral("%1").arg(eetH);
+      columns[c::PLANNED_MINENROUTE] = QStringLiteral("%1").arg(eetM);
 
       int endurance = flightplanObj.value("endurance").toVariant().toInt();
       int enduranceH = endurance / 3600;
       int enduranceM = (endurance / 60) - (enduranceH * 60);
-      columns[c::PLANNED_HRSFUEL] = QString("%1").arg(enduranceH);
-      columns[c::PLANNED_MINFUEL] = QString("%1").arg(enduranceM);
+      columns[c::PLANNED_HRSFUEL] = QStringLiteral("%1").arg(enduranceH);
+      columns[c::PLANNED_MINFUEL] = QStringLiteral("%1").arg(enduranceM);
     }
     else
     {

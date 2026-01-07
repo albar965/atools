@@ -30,7 +30,7 @@ class IlsWriter :
 {
 public:
   IlsWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "ils")
+    : WriterBase(db, dataWriter, QStringLiteral("ils"))
   {
   }
 

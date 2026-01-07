@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -209,7 +209,7 @@ public:
     HRESULT hr = api->AddToFacilityDefinition(dataDefinitionId, name);
 
     if(hr != S_OK)
-      atools::Exception(QString("Error adding facility definition \"%1\"").arg(name));
+      atools::Exception(QStringLiteral("Error adding facility definition \"%1\"").arg(name));
     return *this;
   }
 

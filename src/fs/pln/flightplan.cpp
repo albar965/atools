@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -123,28 +123,28 @@ QString Flightplan::getDescription() const
   if(departureIdent == departureName || departureName.isEmpty())
     depart = departureIdent;
   else
-    depart = QString("%1 (%2)").arg(departureName).arg(departureIdent);
+    depart = QStringLiteral("%1 (%2)").arg(departureName).arg(departureIdent);
 
   if(destinationIdent == destinationName || destinationName.isEmpty())
     dest = destinationIdent;
   else
-    dest = QString("%1 (%2)").arg(destinationName).arg(destinationIdent);
+    dest = QStringLiteral("%1 (%2)").arg(destinationName).arg(destinationIdent);
 
   text.append(atools::strJoin(QStringList({depart, dest}), " to "));
 
   if(getCruiseAltitudeFt() > FLIGHTPLAN_ALTITUDE_FT_MIN && getCruiseAltitudeFt() < FLIGHTPLAN_ALTITUDE_FT_MAX)
-    text.append(QString(" at %1 ft").arg(atools::roundToInt(getCruiseAltitudeFt())));
+    text.append(QStringLiteral(" at %1 ft").arg(atools::roundToInt(getCruiseAltitudeFt())));
 
   QString type = getFlightplanTypeStr();
   if(!type.isEmpty())
-    text.append(QString(", %1").arg(type));
+    text.append(QStringLiteral(", %1").arg(type));
 
   return text;
 }
 
 QString Flightplan::getDescr() const
 {
-  return QString("%1, %2 created by %3 %4").
+  return QStringLiteral("%1, %2 created by %3 %4").
          arg(departureIdent).arg(destinationIdent).arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 }
 
@@ -337,7 +337,7 @@ QString Flightplan::toShortString() const
   for(const FlightplanEntry& entry : *this)
   {
     if(!entry.getAirway().isEmpty())
-      str.append(QString("[%1]").arg(entry.getAirway()));
+      str.append(QStringLiteral("[%1]").arg(entry.getAirway()));
     str.append(entry.getIdent());
   }
   return str.join(' ');

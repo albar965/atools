@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -93,9 +93,9 @@ void GribDownloader::startDownloadInternal()
   for(int surface : std::as_const(surfaces))
   {
     if(surface > 0)
-      levelStr.append(QString("lev_%1_mb=on&").arg(surface));
+      levelStr.append(QStringLiteral("lev_%1_mb=on&").arg(surface));
     else if(surface < 0)
-      levelStr.append(QString("lev_%1_m_above_ground=on&").arg(-surface));
+      levelStr.append(QStringLiteral("lev_%1_m_above_ground=on&").arg(-surface));
     else
       qWarning() << "Invalid surface value" << surface;
   }
@@ -103,7 +103,7 @@ void GribDownloader::startDownloadInternal()
   // Collect data parmeters ======================
   QString parameterStr;
   for(const QString& parameter : std::as_const(parameters))
-    parameterStr.append(QString("var_%1=on&").arg(parameter));
+    parameterStr.append(QStringLiteral("var_%1=on&").arg(parameter));
 
   // URL ===============================
   // https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl?file=gfs.t00z.pgrb2.1p00.anl&lev_80_m_above_ground=on&

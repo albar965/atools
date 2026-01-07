@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -575,7 +575,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpRea
     {
       reader->reset();
       // Enrich error message and rethrow a new one
-      throw atools::Exception(QString("Caught exception in file \"%1\" in line %2. Message: %3").
+      throw atools::Exception(QStringLiteral("Caught exception in file \"%1\" in line %2. Message: %3").
                               arg(fileinfo.filePath()).arg(lineNum).arg(e.what()));
     }
   }
@@ -623,7 +623,8 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
       if(!fields.isEmpty() && fileVersion < minFileVersion)
       {
         qWarning() << "Version of" << filename << "is" << fields.constFirst() << "but expected a minimum of" << minFileVersion;
-        throw atools::Exception(QString("Found file version %1. Minimum supported is %2.").arg(fields.constFirst()).arg(minFileVersion));
+        throw atools::Exception(QStringLiteral("Found file version %1. Minimum supported is %2.").arg(fields.constFirst()).arg(
+                                  minFileVersion));
       }
 
       metadataWriter->writeFile(filename, QString(), curSceneryId, ++curFileId);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -552,7 +552,7 @@ QString adjustMsfsUserWpName(QString name, int length, int *number)
   if(name.isEmpty())
   {
     if(number != nullptr)
-      name = QString("AUTOWP%1").arg((*number)++);
+      name = QStringLiteral("AUTOWP%1").arg((*number)++);
     else
       name = "AUTOWP";
   }
@@ -566,7 +566,7 @@ QString adjustIdent(QString ident, int length, int id)
   if(ident.isEmpty())
   {
     if(id != -1)
-      ident = QString("N%1").arg(id, 4, 36, QChar('0')).left(length);
+      ident = QStringLiteral("N%1").arg(id, 4, 36, QChar('0')).left(length);
     else
       ident = "UNKWN";
   }
@@ -665,30 +665,30 @@ QString createSpeedAndAltitude(float speedKts, float altFeet, bool metricSpeed, 
   QString str;
   if(metricSpeed)
     // K: Kilometers per hour followed by a four digit value.
-    str = QString("K%1").arg(atools::geo::knotsToKmh(speedKts), 4, 'f', 0, QChar('0'));
+    str = QStringLiteral("K%1").arg(atools::geo::knotsToKmh(speedKts), 4, 'f', 0, QChar('0'));
   else
     // N: Knots followed by a four digit value.
-    str = QString("N%1").arg(speedKts, 4, 'f', 0, QChar('0'));
+    str = QStringLiteral("N%1").arg(speedKts, 4, 'f', 0, QChar('0'));
 
   if(metricAlt)
   {
     // Meter ===========================
     if(altFeet < atools::geo::feetToMeter(18000.f))
       // M: Altitude in tens of meter in four digits.
-      str.append(QString("M%2").arg(atools::geo::feetToMeter(altFeet) / 10.f, 4, 'f', 0, QChar('0')));
+      str.append(QStringLiteral("M%2").arg(atools::geo::feetToMeter(altFeet) / 10.f, 4, 'f', 0, QChar('0')));
     else
       // S: Metric flight level in three digits of tens of meters.
-      str.append(QString("S%2").arg(atools::geo::feetToMeter(altFeet) / 10.f, 3, 'f', 0, QChar('0')));
+      str.append(QStringLiteral("S%2").arg(atools::geo::feetToMeter(altFeet) / 10.f, 3, 'f', 0, QChar('0')));
   }
   else
   {
     // Feet ===========================
     if(altFeet < 18000.f)
       // A: Altitude in hundreds of feet in three digits.
-      str.append(QString("A%2").arg(altFeet / 100.f, 3, 'f', 0, QChar('0')));
+      str.append(QStringLiteral("A%2").arg(altFeet / 100.f, 3, 'f', 0, QChar('0')));
     else
       // F :Flight level in three digits.
-      str.append(QString("F%2").arg(altFeet / 100.f, 3, 'f', 0, QChar('0')));
+      str.append(QStringLiteral("F%2").arg(altFeet / 100.f, 3, 'f', 0, QChar('0')));
   }
   return str;
 }
@@ -757,7 +757,7 @@ bool runwayContains(const QStringList& runways, QString name, bool fuzzy)
 
 inline QString runwayNameJoin(int number, const QString& designator)
 {
-  return QString("%1%2").arg(number, 2, 10, QChar('0')).arg(designator);
+  return QStringLiteral("%1%2").arg(number, 2, 10, QChar('0')).arg(designator);
 }
 
 /* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list */
@@ -960,7 +960,7 @@ bool runwayNameSplitStr(const QString& name, QString *number, QString *designato
 
   if(retval && number != nullptr)
     // If it is a number with designator make sure to add a 0 prefix
-    *number = QString("%1").arg(num, 2, 10, QChar('0'));
+    *number = QStringLiteral("%1").arg(num, 2, 10, QChar('0'));
   return retval;
 }
 

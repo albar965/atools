@@ -31,7 +31,7 @@ class RunwayWriter :
 {
 public:
   RunwayWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "runway")
+    : WriterBase(db, dataWriter, QStringLiteral("runway"))
   {
   }
 

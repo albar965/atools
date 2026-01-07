@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -119,78 +119,78 @@ QString ApproachLeg::legTypeToString(leg::Type type, const QString& src, bool wa
   switch(type)
   {
     case atools::fs::bgl::leg::AF: // Arc To a Fix
-      return "AF";
+      return QStringLiteral("AF");
 
     case atools::fs::bgl::leg::CA: // Course To Altitude
-      return "CA";
+      return QStringLiteral("CA");
 
     case atools::fs::bgl::leg::CD: // Course To a DME
-      return "CD";
+      return QStringLiteral("CD");
 
     case atools::fs::bgl::leg::CF: // Course To a Fix
-      return "CF";
+      return QStringLiteral("CF");
 
     case atools::fs::bgl::leg::CI: // Course To Next Leg Intercept
-      return "CI";
+      return QStringLiteral("CI");
 
     case atools::fs::bgl::leg::CR: // Course To a Radial
-      return "CR";
+      return QStringLiteral("CR");
 
     case atools::fs::bgl::leg::DF: // Direct To a Fix
-      return "DF";
+      return QStringLiteral("DF");
 
     case atools::fs::bgl::leg::FA: // Fix To Altitude
-      return "FA";
+      return QStringLiteral("FA");
 
     case atools::fs::bgl::leg::FC: // Fix To a Distance on Course
-      return "FC";
+      return QStringLiteral("FC");
 
     case atools::fs::bgl::leg::FD: // Fix To a DME Termination
-      return "FD";
+      return QStringLiteral("FD");
 
     case atools::fs::bgl::leg::FM: // Fix To a Manual Termination
-      return "FM";
+      return QStringLiteral("FM");
 
     case atools::fs::bgl::leg::HA: // Hold to Altitude
-      return "HA";
+      return QStringLiteral("HA");
 
     case atools::fs::bgl::leg::HF: // Hold to Fix
-      return "HF";
+      return QStringLiteral("HF");
 
     case atools::fs::bgl::leg::HM: // Hold to Manual Termination
-      return "HM";
+      return QStringLiteral("HM");
 
     case atools::fs::bgl::leg::IF: // Initial Fix
-      return "IF";
+      return QStringLiteral("IF");
 
     case atools::fs::bgl::leg::PI: // Procedure Turn
-      return "PI";
+      return QStringLiteral("PI");
 
     case atools::fs::bgl::leg::RF: // Radius to Fix
-      return "RF";
+      return QStringLiteral("RF");
 
     case atools::fs::bgl::leg::TF: // Track To a Fix
-      return "TF";
+      return QStringLiteral("TF");
 
     case atools::fs::bgl::leg::VA: // Heading To Altitude
-      return "VA";
+      return QStringLiteral("VA");
 
     case atools::fs::bgl::leg::VD: // Heading To DME
-      return "VD";
+      return QStringLiteral("VD");
 
     case atools::fs::bgl::leg::VI: // Heading To Next Leg Intercept
-      return "VI";
+      return QStringLiteral("VI");
 
     case atools::fs::bgl::leg::VM: // Heading To Manual Termination
-      return "VM";
+      return QStringLiteral("VM");
 
     case atools::fs::bgl::leg::VR: // Heading To a Radial
-      return "VR";
+      return QStringLiteral("VR");
 
   }
   if(warn)
     qWarning().nospace().noquote() << "Invalid approach leg type " << type << " Msg: " << src;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QString ApproachLeg::altDescriptorToString(leg::AltDescriptor altDescr)
@@ -201,20 +201,20 @@ QString ApproachLeg::altDescriptorToString(leg::AltDescriptor altDescr)
       return QString();
 
     case atools::fs::bgl::leg::A:
-      return "A";
+      return QStringLiteral("A");
 
     case atools::fs::bgl::leg::PLUS:
-      return "+";
+      return QStringLiteral("+");
 
     case atools::fs::bgl::leg::MINUS:
-      return "-";
+      return QStringLiteral("-");
 
     case atools::fs::bgl::leg::B:
-      return "B";
+      return QStringLiteral("B");
 
   }
   qWarning().nospace().noquote() << "Invalid approach altitude descriptor " << altDescr;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QString ApproachLeg::speedDescriptorToString(leg::SpeedDescriptor speedDescr)
@@ -226,13 +226,13 @@ QString ApproachLeg::speedDescriptorToString(leg::SpeedDescriptor speedDescr)
       return QString();
 
     case leg::AT_OR_ABOVE:
-      return "+";
+      return QStringLiteral("+");
 
     case leg::AT_OR_BELOW:
-      return "-";
+      return QStringLiteral("-");
   }
   qWarning().nospace().noquote() << "Invalid approach altitude descriptor " << speedDescr;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QString ApproachLeg::turnDirToString(leg::TurnDirection turnDir)
@@ -240,27 +240,28 @@ QString ApproachLeg::turnDirToString(leg::TurnDirection turnDir)
   switch(turnDir)
   {
     case atools::fs::bgl::leg::NONE:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case atools::fs::bgl::leg::L:
-      return "L";
+      return QStringLiteral("L");
 
     case atools::fs::bgl::leg::R:
-      return "R";
+      return QStringLiteral("R");
 
     case atools::fs::bgl::leg::BOTH:
-      return "B";
+      return QStringLiteral("B");
 
   }
   qWarning().nospace().noquote() << "Invalid approach turn direction " << turnDir;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 bool ApproachLeg::isValid() const
 {
   // Check validity by looking at the most important fields in the leg
-  return legTypeToString(type, QString(), false) != "INVALID" && altDescriptorToString(altDescriptor) != "INVALID" &&
-         turnDirToString(turnDirection) != "INVALID" && atools::inRange(0.f, 360.f, theta) &&
+  return legTypeToString(type, QString(),
+                         false) != QStringLiteral("INVALID") && altDescriptorToString(altDescriptor) != QStringLiteral("INVALID") &&
+         turnDirToString(turnDirection) != QStringLiteral("INVALID") && atools::inRange(0.f, 360.f, theta) &&
          atools::inRange(0.f, 360.f, course) &&
          rho >= 0.f &&
          atools::inRange(0.f, 20000.f, altitude1) &&

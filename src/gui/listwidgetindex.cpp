@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -158,13 +158,13 @@ void ListWidgetIndex::find(QString text)
 
       if(dynamic_cast<const QAbstractItemView *>(widget) != nullptr)
         // Border around view
-        widget->setStyleSheet(QString("border: 3px solid %1").arg(colorName));
+        widget->setStyleSheet(QStringLiteral("border: 3px solid %1").arg(colorName));
       else if(dynamic_cast<const QGroupBox *>(widget) != nullptr)
         // Only title for group boxes
-        widget->setStyleSheet(QString("QGroupBox::title {background: %1}").arg(colorName));
+        widget->setStyleSheet(QStringLiteral("QGroupBox::title {background: %1}").arg(colorName));
       else
         // Background for other widgets
-        widget->setStyleSheet(QString("background: %1").arg(colorName));
+        widget->setStyleSheet(QStringLiteral("background: %1").arg(colorName));
     }
 
     // Set current page to first in list and remember current page index =================================

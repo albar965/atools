@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -258,7 +258,7 @@ void BinaryStream::checkStream(const QString& what) const
         statusText = tr("Size limit exceeded");
         break;
 #endif
-      }
+    }
 
     QString msg = tr("%1 for file \"%2\" failed. Reason: %3 (%4).").arg(what).arg(getFilepath()).arg(statusText).arg(is.status());
 
