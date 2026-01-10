@@ -53,7 +53,7 @@ void Translator::load(const QString& language)
       loadApp("atools", appPath, language);
 
       // Load the Qt translations only if a language was found for the application to avoid mixed language dialogs
-      QString translationsPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+      QString translationsPath = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
       // First application path
       if(!loadAndInstall("qt", appPath, language))
         // second official translations path

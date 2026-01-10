@@ -65,30 +65,6 @@ SqlQuery::SqlQuery(const SqlDatabase& sqlDb)
   db = new SqlDatabase(sqlDb);
 }
 
-SqlQuery::SqlQuery(const SqlQuery& other)
-{
-  query = other.query;
-  queryString = other.queryString;
-  placeholderList = other.placeholderList;
-  placeholderSet = other.placeholderSet;
-  positionalPlaceholders = other.positionalPlaceholders;
-  db = new SqlDatabase(*other.db);
-}
-
-SqlQuery& SqlQuery::operator=(const SqlQuery& other)
-{
-  query = other.query;
-  queryString = other.queryString;
-  placeholderList = other.placeholderList;
-  placeholderSet = other.placeholderSet;
-  positionalPlaceholders = other.positionalPlaceholders;
-
-  delete db;
-  db = new SqlDatabase(*other.db);
-
-  return *this;
-}
-
 SqlQuery::~SqlQuery()
 {
   delete db;
@@ -275,7 +251,7 @@ void SqlQuery::clearBoundValues()
     for(const QVariant& value : query.boundValues())
     {
       if(value.isValid() && !value.isNull())
-        query.bindValue(pos, QVariant(value.type()));
+        query.bindValue(pos, QVariant(value.metaType()));
       pos++;
     }
   }
@@ -286,7 +262,7 @@ void SqlQuery::clearBoundValues()
     {
       QVariant val = query.boundValue(placeholder);
       if(val.isValid() && !val.isNull())
-        query.bindValue(placeholder, QVariant(val.type()));
+        query.bindValue(placeholder, QVariant(val.metaType()));
     }
   }
 }
@@ -354,37 +330,49 @@ void SqlQuery::addBindValue(const QVariant& val, QSql::ParamType type)
 void SqlQuery::bindNullStr(const QString& placeholder)
 {
   checkPlaceholder(Q_FUNC_INFO, placeholder);
-  query.bindValue(placeholder, QVariant(QVariant::String));
+  query.bindValue(placeholder, QVariant(QMetaType::fromType<QString>()));
 }
 
 void SqlQuery::bindNullStr(int pos)
 {
   checkPos(Q_FUNC_INFO, pos);
-  query.bindValue(pos, QVariant(QVariant::String));
+  query.bindValue(pos, QVariant(QMetaType::fromType<QString>()));
 }
 
 void SqlQuery::bindNullInt(const QString& placeholder)
 {
   checkPlaceholder(Q_FUNC_INFO, placeholder);
-  query.bindValue(placeholder, QVariant(QVariant::Int));
+  query.bindValue(placeholder, QVariant(QMetaType::fromType<int>()));
 }
 
 void SqlQuery::bindNullInt(int pos)
 {
   checkPos(Q_FUNC_INFO, pos);
-  query.bindValue(pos, QVariant(QVariant::Int));
+  query.bindValue(pos, QVariant(QMetaType::fromType<int>()));
 }
 
 void SqlQuery::bindNullFloat(const QString& placeholder)
 {
   checkPlaceholder(Q_FUNC_INFO, placeholder);
-  query.bindValue(placeholder, QVariant(QVariant::Double));
+  query.bindValue(placeholder, QVariant(QMetaType::fromType<double>()));
 }
 
 void SqlQuery::bindNullFloat(int pos)
 {
   checkPos(Q_FUNC_INFO, pos);
-  query.bindValue(pos, QVariant(QVariant::Double));
+  query.bindValue(pos, QVariant(QMetaType::fromType<double>()));
+}
+
+void SqlQuery::bindNullBytes(const QString& placeholder)
+{
+  checkPlaceholder(Q_FUNC_INFO, placeholder);
+  query.bindValue(placeholder, QVariant(QMetaType::fromType<QByteArray>()));
+}
+
+void SqlQuery::bindNullBytes(int pos)
+{
+  checkPos(Q_FUNC_INFO, pos);
+  query.bindValue(pos, QVariant(QMetaType::fromType<QByteArray>()));
 }
 
 void SqlQuery::bindRecord(const SqlRecord& record, const QString& bindPrefix)

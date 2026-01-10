@@ -86,7 +86,7 @@ QString SqlExport::getResultSetRow(const QVariantList& values, const QStringList
   return retval;
 }
 
-QString SqlExport::buildString(QString value) const
+QString SqlExport::buildString(const QString& value) const
 {
   static const QRegularExpression WHITESPACE("^\\s+$");
 
@@ -104,7 +104,7 @@ QString SqlExport::buildString(QString value) const
   return retval;
 }
 
-QString SqlExport::printValue(QVariant value) const
+QString SqlExport::printValue(const QVariant& value) const
 {
   QString retval;
 
@@ -114,9 +114,9 @@ QString SqlExport::printValue(QVariant value) const
     retval += nullValue;
   else
   {
-    if(value.type() == QVariant::Double)
+    if(value.metaType() == QMetaType::fromType<double>() || value.metaType() == QMetaType::fromType<float>())
       retval += QString::number(value.toDouble(), 'f', numberPrecision);
-    else if(value.canConvert(QVariant::String))
+    else if(value.canConvert(QMetaType::fromType<QString>()))
       retval += buildString(value.toString());
     else
     {

@@ -25,7 +25,7 @@ namespace fs {
 namespace common {
 
 const static QLatin1String EN_ROUTE("ENRT");
-const static QVariant NULL_INT(QVariant::Int);
+const static QVariant NULL_INT(QMetaType::fromType<int>());
 
 const static AirportIndex::IdPos EMPTY_IDPOS = std::make_pair(-1, atools::geo::EMPTY_POS);
 const static AirportIndex::IdName EMPTY_IDNAME = std::make_pair(-1, AirportIndex::Name());

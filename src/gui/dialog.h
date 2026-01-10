@@ -30,7 +30,7 @@ namespace gui {
 class DialogButton
 {
 public:
-  DialogButton(const QString& textParam, QMessageBox::StandardButtons buttonParam)
+  DialogButton(const QString& textParam, QMessageBox::StandardButton buttonParam)
     : text(textParam), button(buttonParam)
   {
   }
@@ -40,14 +40,14 @@ public:
     return text;
   }
 
-  QMessageBox::StandardButtons getButton() const
+  QMessageBox::StandardButton getButton() const
   {
     return button;
   }
 
 private:
   QString text; /* Text for button */
-  QMessageBox::StandardButtons button; /* Button type */
+  QMessageBox::StandardButton button; /* Button type */
 };
 
 typedef QList<DialogButton> DialogButtonList;

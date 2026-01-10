@@ -76,7 +76,7 @@ public:
   QSqlIndex primaryIndex(const QString& tablename) const;
 
   SqlRecord record(const QString& tablename, const QString& prefix = QString(), const QStringList& excludeColumns = QStringList()) const;
-  SqlQuery exec(const QString& queryText = QString()) const;
+  int exec(const QString& queryText = QString()) const;
   QSqlError lastError() const;
   bool isValid() const;
 

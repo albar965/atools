@@ -134,8 +134,8 @@ public:
 
 private:
   QString printEndl() const;
-  QString buildString(QString value) const;
-  QString printValue(QVariant value) const;
+  QString buildString(const QString& value) const;
+  QString printValue(const QVariant& value) const;
 
   bool endline = true, header = true;
   int maxValues = -1;

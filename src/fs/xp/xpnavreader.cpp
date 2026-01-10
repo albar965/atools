@@ -140,15 +140,15 @@ void XpNavReader::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   }
   else
   {
-    insertVorQuery->bindValue(":dme_altitude", QVariant(QVariant::Int));
-    insertVorQuery->bindValue(":dme_lonx", QVariant(QVariant::Double));
-    insertVorQuery->bindValue(":dme_laty", QVariant(QVariant::Double));
+    insertVorQuery->bindNullInt(":dme_altitude");
+    insertVorQuery->bindNullFloat(":dme_lonx");
+    insertVorQuery->bindNullFloat(":dme_laty");
 
     // VOR only - unlikely to have an elevation
     if(at(line, ALT).toInt() != 0)
       insertVorQuery->bindValue(":altitude", at(line, ALT).toInt());
     else
-      insertVorQuery->bindValue(":altitude", QVariant(QVariant::Int));
+      insertVorQuery->bindNullInt(":altitude");
   }
 
   insertVorQuery->bindValue(":lonx", at(line, LONX).toFloat());
@@ -190,7 +190,7 @@ void XpNavReader::writeNdb(const QStringList& line, int curFileId, const XpReade
   if(at(line, ALT).toInt() != 0)
     insertNdbQuery->bindValue(":altitude", at(line, ALT).toInt());
   else
-    insertNdbQuery->bindValue(":altitude", QVariant(QVariant::Int));
+    insertNdbQuery->bindNullInt(":altitude");
   insertNdbQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
   insertNdbQuery->bindValue(":lonx", pos.getLonX());
   insertNdbQuery->bindValue(":laty", pos.getLatY());

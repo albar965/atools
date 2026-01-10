@@ -1323,7 +1323,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
       insertQuery->bindNullFloat(":max_laty");
       insertQuery->bindNullFloat(":min_lonx");
       insertQuery->bindNullFloat(":min_laty");
-      insertQuery->bindValue(":geometry", QVariant(QVariant::ByteArray));
+      insertQuery->bindNullBytes(":geometry");
     }
   }
 

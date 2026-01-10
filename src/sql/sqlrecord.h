@@ -217,14 +217,14 @@ public:
   /* Set all empty string values to null */
   void setEmptyStringsToNull();
 
-  void appendField(const QString& fieldName, QVariant::Type type);
-  void insertField(int pos, const QString& fieldName, QVariant::Type type);
+  void appendField(const QString& fieldName, const QMetaType& type);
+  void insertField(int pos, const QString& fieldName, const QMetaType& type);
 
   /* Adds field if not exists and value too. Type is derived from value */
   SqlRecord& appendFieldAndValue(const QString& fieldName, QVariant value);
-  SqlRecord& appendFieldAndNullValue(const QString& fieldName, QVariant::Type type);
+  SqlRecord& appendFieldAndNullValue(const QString& fieldName, const QMetaType& type);
   SqlRecord& insertFieldAndValue(int pos, const QString& fieldName, QVariant value);
-  SqlRecord& insertFieldAndNullValue(int pos, const QString& fieldName, QVariant::Type type);
+  SqlRecord& insertFieldAndNullValue(int pos, const QString& fieldName, const QMetaType& type);
 
   /* Adds field if not exists and value too if value. Type is derived from value */
   SqlRecord& appendFieldAndValueIf(const QString& fieldName, QVariant value);
@@ -238,8 +238,8 @@ public:
   void clear();
   void clearValues();
 
-  QVariant::Type fieldType(int i) const;
-  QVariant::Type fieldType(const QString& name) const;
+  QMetaType fieldType(int i) const;
+  QMetaType fieldType(const QString& name) const;
 
   void remove(int pos);
   void remove(const QString& name);

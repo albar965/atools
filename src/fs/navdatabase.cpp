@@ -680,9 +680,9 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   // -----------------------------------------------------------------------
   // Create empty data writer pointers which will read all files and fill the database
   // Pointers will be initialized on demand/compilation type and be delete on exit (like thrown exception)
-  QScopedPointer<atools::fs::db::DataWriter> fsDataWriter;
-  QScopedPointer<atools::fs::xp::XpDataCompiler> xpDataCompiler;
-  QScopedPointer<atools::fs::ng::DfdCompiler> dfdCompiler;
+  std::unique_ptr<atools::fs::db::DataWriter> fsDataWriter;
+  std::unique_ptr<atools::fs::xp::XpDataCompiler> xpDataCompiler;
+  std::unique_ptr<atools::fs::ng::DfdCompiler> dfdCompiler;
 
   // MSFS indexes and libraries =========================================
   QScopedPointer<scenery::LanguageJson> languageIndex;
@@ -701,7 +701,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
 
     // Load Navigraph from source database ======================================================
     dfdCompiler.reset(new atools::fs::ng::DfdCompiler(*db, *options, &progress));
-    loadDfd(&progress, dfdCompiler.data(), area);
+    loadDfd(&progress, dfdCompiler.get(), area);
     dfdCompiler->close();
   }
   else if(FsPaths::isAnyXplane(sim))
@@ -715,7 +715,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
 
     // Load X-Plane scenery database ======================================================
     xpDataCompiler.reset(new atools::fs::xp::XpDataCompiler(*db, *options, &progress, errors));
-    loadXplane(&progress, xpDataCompiler.data(), area);
+    loadXplane(&progress, xpDataCompiler.get(), area);
     xpDataCompiler->close();
   }
   else if(sim == FsPaths::MSFS || sim == FsPaths::MSFS_2024)
@@ -761,14 +761,14 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     }
 
     // Load all community and official scenery/BGL files  =====================================
-    loadMsfs(&progress, fsDataWriter.data(), sceneryCfg);
+    loadMsfs(&progress, fsDataWriter.get(), sceneryCfg);
     fsDataWriter->close();
   }
   else
   {
     // Load FSX / P3D scenery database ======================================================
     fsDataWriter.reset(new atools::fs::db::DataWriter(*db, *options, &progress));
-    loadFsxP3d(&progress, fsDataWriter.data(), sceneryCfg);
+    loadFsxP3d(&progress, fsDataWriter.get(), sceneryCfg);
     fsDataWriter->close();
   }
 
@@ -893,9 +893,9 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   if((sim == FsPaths::MSFS || sim == FsPaths::MSFS_2024) && result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
     databaseMetadata.addProperty(atools::fs::db::PROPERTYNAME_MSFS_NAVIGRAPH_FOUND, "true");
 
-  if(!xpDataCompiler.isNull())
+  if(xpDataCompiler)
     databaseMetadata.setAiracCycle(xpDataCompiler->getAiracCycle());
-  if(!dfdCompiler.isNull())
+  if(dfdCompiler)
     databaseMetadata.setAiracCycle(dfdCompiler->getAiracCycle(), dfdCompiler->getValidThrough());
 
   databaseMetadata.setDataSource(FsPaths::typeToShortName(sim));
@@ -909,7 +909,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   databaseMetadata.updateAll();
   db->commit();
 
-  if(!dfdCompiler.isNull())
+  if(dfdCompiler)
     // database is kept locked by queries - need to close this late to avoid statistics generation for attached
     dfdCompiler->detachDatabase();
 
@@ -935,7 +935,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   if(options->isDatabaseReport())
   {
     // Do a report of problems rather than failing totally during loading
-    if(!fsDataWriter.isNull())
+    if(fsDataWriter)
       fsDataWriter->logResults();
     createDatabaseReport(&progress);
   }
@@ -1461,8 +1461,8 @@ void NavDatabase::runPreparationScript(atools::sql::SqlDatabase& db)
     while(scriptQuery.next())
     {
       qDebug() << "prepare script" << scriptQuery.valueStr("statement");
-      SqlQuery query = db.exec(scriptQuery.valueStr("statement"));
-      qDebug().nospace() << "[" << query.numRowsAffected() << "]";
+      int numRowsAffected = db.exec(scriptQuery.valueStr("statement"));
+      qDebug().nospace() << "[" << numRowsAffected << "]";
     }
     db.commit();
 

@@ -902,7 +902,7 @@ void ZipWriterPrivate::addEntry(EntryType type, const QString& fileName,
  */
 ZipReader::ZipReader(const QString& archive, QIODevice::OpenMode mode)
 {
-  QScopedPointer<QFile> f(new QFile(archive));
+  std::unique_ptr<QFile> f(new QFile(archive));
   f->open(mode);
   ZipReader::Status status;
   if(f->error() == QFile::NoError)
@@ -919,8 +919,7 @@ ZipReader::ZipReader(const QString& archive, QIODevice::OpenMode mode)
       status = FileError;
   }
 
-  d = new ZipReaderPrivate(f.data(), /*ownDevice=*/ true);
-  f.take();
+  d = new ZipReaderPrivate(f.release(), /*ownDevice=*/ true);
   d->status = status;
 }
 
@@ -1225,7 +1224,7 @@ void ZipReader::close()
  */
 ZipWriter::ZipWriter(const QString& fileName, QIODevice::OpenMode mode)
 {
-  QScopedPointer<QFile> f(new QFile(fileName));
+  std::unique_ptr<QFile> f(new QFile(fileName));
   f->open(mode);
   ZipWriter::Status status;
   if(f->error() == QFile::NoError)
@@ -1242,8 +1241,7 @@ ZipWriter::ZipWriter(const QString& fileName, QIODevice::OpenMode mode)
       status = ZipWriter::FileError;
   }
 
-  d = new ZipWriterPrivate(f.data(), /*ownDevice=*/ true);
-  f.take();
+  d = new ZipWriterPrivate(f.release(), /*ownDevice=*/ true);
   d->status = status;
 }
 

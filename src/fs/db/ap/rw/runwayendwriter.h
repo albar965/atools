@@ -30,7 +30,7 @@ class RunwayEndWriter :
 {
 public:
   RunwayEndWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "runway_end")
+    : WriterBase(db, dataWriter, QLatin1String("runway_end"))
   {
   }
 

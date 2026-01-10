@@ -280,11 +280,11 @@ SqlRecord SqlDatabase::record(const QString& tablename, const QString& prefix, c
   }
 }
 
-SqlQuery SqlDatabase::exec(const QString& queryText) const
+int SqlDatabase::exec(const QString& queryText) const
 {
   SqlQuery query = SqlQuery(this);
   query.exec(queryText);
-  return query;
+  return query.numRowsAffected();
 }
 
 QSqlError SqlDatabase::lastError() const

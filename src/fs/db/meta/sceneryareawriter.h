@@ -30,7 +30,7 @@ class SceneryAreaWriter :
 {
 public:
   SceneryAreaWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, QStringLiteral("scenery_area"))
+    : WriterBase(db, dataWriter, QLatin1String("scenery_area"))
   {
   }
 

@@ -67,6 +67,11 @@ TARGET_NAME=$$TARGET
 
 TEMPLATE = lib
 
+!versionAtLeast(QT_VERSION, 6.5) {
+    message("Cannot use Qt $${QT_VERSION}. Need at least Qt 6.5 or newer.")
+    error("Need at least Qt 6.5 or newer")
+}
+
 win32 { contains(QT_ARCH, i386) { WINARCH = win32 } else { WINARCH = win64 } }
 
 # =======================================================================
@@ -153,7 +158,7 @@ else {
   DEFINES += DISABLE_CRASHHANDLER
 }
 
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x050F00
+DEFINES += QT_DISABLE_DEPRECATED_UP_TO=0x060500
 
 macx {
   QMAKE_MACOSX_DEPLOYMENT_TARGET = 11.0

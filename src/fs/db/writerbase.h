@@ -52,7 +52,7 @@ public:
    *        will be generated from this
    * @param sqlParam custom insert statement to insert data. If this is set tablename will be ignored.
    */
-  WriterBase(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter, const QString& tablename,
+  WriterBase(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter, const QLatin1String& tablename,
              const QString& sqlParam = QString());
 
   typedef QList<const TYPE *> TypePtrList;
@@ -108,7 +108,7 @@ int WriterBase<TYPE>::id = 0;
 template<typename TYPE>
 WriterBase<TYPE>::WriterBase(sql::SqlDatabase& db,
                              atools::fs::db::DataWriter& dataWriter,
-                             const QString& tablename,
+                             const QLatin1String& tablename,
                              const QString& sqlParam)
   : WriterBaseBasic(db, dataWriter, tablename, sqlParam)
 {

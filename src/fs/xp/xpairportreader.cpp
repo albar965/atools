@@ -507,7 +507,7 @@ void XpAirportReader::bindTaxiEdge(const QStringList& line, const atools::fs::xp
   numTaxiPath++;
   insertTaxiQuery->bindValue(":taxi_path_id", ++curTaxiPathId);
   insertTaxiQuery->bindValue(":airport_id", curAirportId);
-  insertTaxiQuery->bindValue(":surface", QVariant(QVariant::String));
+  insertTaxiQuery->bindNullStr(":surface");
   insertTaxiQuery->bindValue(":width", 0.f);
   insertTaxiQuery->bindValue(":name", name);
   insertTaxiQuery->bindValue(":type", "T" /* taxi */);
@@ -749,7 +749,7 @@ void XpAirportReader::writeStartupLocation(const QStringList& line, const atools
   insertParkingQuery->bindValue(":number", -1);
   insertParkingQuery->bindValue(":radius", 50.f); // Feet
   // Fill airline codes later from metadata
-  insertParkingQuery->bindValue(":airline_codes", QVariant(QVariant::String));
+  insertParkingQuery->bindNullStr(":airline_codes");
 
   QString name = mid(line, sl::NAME, true /* ignore error */);
 
@@ -964,7 +964,7 @@ void XpAirportReader::writeStartup(const QStringList& line, const atools::fs::xp
   insertParkingQuery->bindValue(":heading", at(line, s::HEADING).toFloat());
   insertParkingQuery->bindValue(":number", -1);
   insertParkingQuery->bindValue(":radius", 50.f); // Feet
-  insertParkingQuery->bindValue(":airline_codes", QVariant(QVariant::String));
+  insertParkingQuery->bindNullStr(":airline_codes");
   insertParkingQuery->bindValue(":name", mid(line, s::NAME, true /* ignore error */));
   insertParkingQuery->bindValue(":has_jetway", 0);
   insertParkingQuery->bindValue(":type", "");
@@ -1188,7 +1188,7 @@ void XpAirportReader::writeHelipad(const QStringList& line, const atools::fs::xp
   numStart++;
   insertStartQuery->bindValue(":start_id", ++curStartId);
   insertStartQuery->bindValue(":airport_id", curAirportId);
-  insertStartQuery->bindValue(":runway_end_id", QVariant(QVariant::Int));
+  insertStartQuery->bindNullInt(":runway_end_id");
   insertStartQuery->bindValue(":number", ++curHelipadStartNumber);
   insertStartQuery->bindValue(":runway_name", QStringLiteral("%1").arg(curHelipadStartNumber, 2, 10, QChar('0')));
   insertStartQuery->bindValue(":laty", pos.getLatY());
@@ -1305,7 +1305,7 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
   if(rowCode == LAND_RUNWAY)
     insertRunwayQuery->bindValue(":smoothness", at(line, rw::SMOOTHNESS).toDouble());
   else
-    insertRunwayQuery->bindValue(":smoothness", QVariant::Double);
+    insertRunwayQuery->bindNullFloat(":smoothness");
 
   // Add shoulder surface (X-Plane only)
   int shoulder = at(line, rw::SHOULDER_SURFACE).toInt();
@@ -1314,7 +1314,7 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
   else if(shoulder == 2)
     insertRunwayQuery->bindValue(":shoulder", surfaceToDb(CONCRETE, &context));
   else
-    insertRunwayQuery->bindValue(":shoulder", QVariant(QVariant::String));
+    insertRunwayQuery->bindNullStr(":shoulder");
 
   insertRunwayQuery->bindValue(":length", lengthFeet);
   insertRunwayQuery->bindValue(":width", widthFeet);
@@ -1330,7 +1330,7 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
     // Lights
     int edgeLights = at(line, rw::EDGE_LIGHTS).toInt();
     if(edgeLights == 0)
-      insertRunwayQuery->bindValue(":edge_light", QVariant(QVariant::String));
+      insertRunwayQuery->bindNullStr(":edge_light");
     else if(edgeLights == 1)
       insertRunwayQuery->bindValue(":edge_light", "L");
     else if(edgeLights == 2)
@@ -1344,7 +1344,7 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
     if(centerLights == 1)
       insertRunwayQuery->bindValue(":center_light", "M"); // Either none or medium
     else
-      insertRunwayQuery->bindValue(":center_light", QVariant(QVariant::String));
+      insertRunwayQuery->bindNullStr(":center_light");
 
     if(edgeLights > 0 || centerLights > 0)
       numLightRunway++;
@@ -1381,7 +1381,7 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
       rec.setValue(":app_light_system_type", als);
     }
     else
-      rec.setValue(":app_light_system_type", QVariant(QVariant::String));
+      rec.setNull(":app_light_system_type");
 
     rec.setValue(":has_reils", at(line, rw::PRIMARY_REIL).toInt() > 0);
     rec.setValue(":has_touchdown_lights", at(line, rw::PRIMARY_TDZ_LIGHT).toInt());
@@ -1391,7 +1391,7 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
     // No lights and markings on water
     rec.setValue(":offset_threshold", 0);
     rec.setValue(":blast_pad", 0);
-    rec.setValue(":app_light_system_type", QVariant(QVariant::String));
+    rec.setNull(":app_light_system_type");
     rec.setValue(":has_reils", 0);
     rec.setValue(":has_touchdown_lights", 0);
   }
@@ -1430,7 +1430,7 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
       rec.setValue(":app_light_system_type", als);
     }
     else
-      rec.setValue(":app_light_system_type", QVariant(QVariant::String));
+      rec.setNull(":app_light_system_type");
 
     rec.setValue(":has_reils", at(line, rw::SECONDARY_REIL).toInt() > 0);
     rec.setValue(":has_touchdown_lights", at(line, rw::SECONDARY_TDZ_LIGHT).toInt());
@@ -1440,7 +1440,7 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
     // No lights and markings on water
     rec.setValue(":offset_threshold", 0);
     rec.setValue(":blast_pad", 0);
-    rec.setValue(":app_light_system_type", QVariant(QVariant::String));
+    rec.setNull(":app_light_system_type");
     rec.setValue(":has_reils", 0);
     rec.setValue(":has_touchdown_lights", 0);
   }
@@ -1471,7 +1471,7 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
   insertStartQuery->bindValue(":start_id", ++curStartId);
   insertStartQuery->bindValue(":airport_id", curAirportId);
   insertStartQuery->bindValue(":runway_end_id", primRwEndId);
-  insertStartQuery->bindValue(":number", QVariant(QVariant::Int));
+  insertStartQuery->bindNullInt(":number");
   insertStartQuery->bindValue(":runway_name", primaryName);
   insertStartQuery->bindValue(":laty", primaryPos.getLatY());
   insertStartQuery->bindValue(":lonx", primaryPos.getLonX());
@@ -1485,7 +1485,7 @@ void XpAirportReader::bindRunway(const QStringList& line, AirportRowCode rowCode
   insertStartQuery->bindValue(":start_id", ++curStartId);
   insertStartQuery->bindValue(":airport_id", curAirportId);
   insertStartQuery->bindValue(":runway_end_id", secRwEndId);
-  insertStartQuery->bindValue(":number", QVariant(QVariant::Int));
+  insertStartQuery->bindNullInt(":number");
   insertStartQuery->bindValue(":runway_name", secondaryName);
   insertStartQuery->bindValue(":laty", secondaryPos.getLatY());
   insertStartQuery->bindValue(":lonx", secondaryPos.getLonX());

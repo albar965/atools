@@ -33,7 +33,7 @@ class StartWriter :
 {
 public:
   StartWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, QStringLiteral("start"))
+    : WriterBase(db, dataWriter, QLatin1String("start"))
   {
   }
 

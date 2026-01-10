@@ -30,7 +30,7 @@ class MarkerWriter :
 {
 public:
   MarkerWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, QStringLiteral("marker"))
+    : WriterBase(db, dataWriter, QLatin1String("marker"))
   {
   }
 

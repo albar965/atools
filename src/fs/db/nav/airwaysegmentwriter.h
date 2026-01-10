@@ -30,7 +30,7 @@ class AirwaySegmentWriter :
 {
 public:
   AirwaySegmentWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, QStringLiteral("tmp_airway_point"))
+    : WriterBase(db, dataWriter, QLatin1String("tmp_airway_point"))
   {
   }
 

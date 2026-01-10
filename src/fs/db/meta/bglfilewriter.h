@@ -30,7 +30,7 @@ class BglFileWriter :
 {
 public:
   BglFileWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, QStringLiteral("bgl_file")), sceneryAreaId(0)
+    : WriterBase(db, dataWriter, QLatin1String("bgl_file")), sceneryAreaId(0)
   {
   }
 

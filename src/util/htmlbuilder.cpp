@@ -318,46 +318,53 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
     flags |= row2AlignRightFlag ? html::ALIGN_RIGHT : html::NONE;
 
     QString valueStr;
-    switch(value.type())
+    switch(value.metaType().id())
     {
-      case QVariant::Invalid:
-        valueStr = "Error: Invalid Variant";
-        qWarning() << "Invalid Variant in HtmlBuilder. Name" << name;
-        break;
-      case QVariant::Bool:
+      case QMetaType::Bool:
         valueStr = value.toBool() ? tr("Yes") : tr("No");
         break;
-      case QVariant::Int:
+
+      case QMetaType::Type::Int:
         valueStr = locale.toString(value.toInt());
         break;
-      case QVariant::UInt:
+
+      case QMetaType::Type::UInt:
         valueStr = locale.toString(value.toUInt());
         break;
-      case QVariant::LongLong:
+
+      case QMetaType::Type::LongLong:
         valueStr = locale.toString(value.toLongLong());
         break;
-      case QVariant::ULongLong:
+
+      case QMetaType::Type::ULongLong:
         valueStr = locale.toString(value.toULongLong());
         break;
-      case QVariant::Double:
+
+      case QMetaType::Type::Double:
         valueStr = locale.toString(value.toDouble(), 'f', defaultPrecision);
         break;
-      case QVariant::Char:
-      case QVariant::String:
+
+      case QMetaType::Type::Char:
+      case QMetaType::Type::QString:
         valueStr = value.toString();
         break;
-      case QVariant::StringList:
+
+      case QMetaType::Type::QStringList:
         valueStr = value.toStringList().join(", ");
         break;
-      case QVariant::Date:
+
+      case QMetaType::Type::QDate:
         valueStr = locale.toString(value.toDate(), dateFormat);
         break;
-      case QVariant::Time:
+
+      case QMetaType::Type::QTime:
         valueStr = locale.toString(value.toTime(), dateFormat);
         break;
-      case QVariant::DateTime:
+
+      case QMetaType::Type::QDateTime:
         valueStr = locale.toString(value.toDateTime(), dateFormat);
         break;
+
       default:
         qWarning() << "Invalid variant type" << value.typeName() << "in HtmlBuilder. Name" << name;
         valueStr = QStringLiteral("Error: Invalid variant type \"%1\"").arg(value.typeName());

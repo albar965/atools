@@ -96,23 +96,23 @@ QString SqlRecord::fieldName(int i) const
   return retval;
 }
 
-QVariant::Type SqlRecord::fieldType(int i) const
+QMetaType SqlRecord::fieldType(int i) const
 {
   QSqlField retval = sqlRecord.field(i);
   if(sqlRecord.fieldName(i).isEmpty())
     throw SqlException(this, QLatin1String(Q_FUNC_INFO) %
                        " Field index " + QString::number(i) + " does not exist in query \"" + queryString + "\"");
-  return retval.type();
+  return retval.metaType();
 }
 
-QVariant::Type SqlRecord::fieldType(const QString& name) const
+QMetaType SqlRecord::fieldType(const QString& name) const
 {
   QSqlField retval = sqlRecord.field(name);
   if(!contains(name))
     throw SqlException(this, QLatin1String(Q_FUNC_INFO) %
                        " Field name \"" + name + "\" does not exist in query \"" + queryString + "\"");
 
-  return retval.type();
+  return retval.metaType();
 }
 
 bool SqlRecord::isGenerated(int i) const
@@ -151,17 +151,17 @@ void SqlRecord::setEmptyStringsToNull()
 {
   for(int i = 0; i < count(); i++)
   {
-    if(sqlRecord.field(i).type() == QVariant::String && sqlRecord.value(i).toString().isEmpty())
+    if(sqlRecord.field(i).metaType() == QMetaType::fromType<QString>() && sqlRecord.value(i).toString().isEmpty())
       sqlRecord.setNull(i);
   }
 }
 
-void SqlRecord::appendField(const QString& fieldName, QVariant::Type type)
+void SqlRecord::appendField(const QString& fieldName, const QMetaType& type)
 {
   sqlRecord.append(QSqlField(fieldName, type));
 }
 
-void SqlRecord::insertField(int pos, const QString& fieldName, QVariant::Type type)
+void SqlRecord::insertField(int pos, const QString& fieldName, const QMetaType& type)
 {
   sqlRecord.insert(pos, QSqlField(fieldName, type));
 }
@@ -169,12 +169,12 @@ void SqlRecord::insertField(int pos, const QString& fieldName, QVariant::Type ty
 SqlRecord& SqlRecord::appendFieldAndValue(const QString& fieldName, QVariant value)
 {
   if(!contains(fieldName))
-    appendField(fieldName, value.type());
+    appendField(fieldName, value.metaType());
   setValue(fieldName, value);
   return *this;
 }
 
-SqlRecord& SqlRecord::appendFieldAndNullValue(const QString& fieldName, QVariant::Type type)
+SqlRecord& SqlRecord::appendFieldAndNullValue(const QString& fieldName, const QMetaType& type)
 {
   if(!contains(fieldName))
     appendField(fieldName, type);
@@ -185,12 +185,12 @@ SqlRecord& SqlRecord::appendFieldAndNullValue(const QString& fieldName, QVariant
 SqlRecord& SqlRecord::insertFieldAndValue(int pos, const QString& fieldName, QVariant value)
 {
   if(!contains(fieldName))
-    insertField(pos, fieldName, value.type());
+    insertField(pos, fieldName, value.metaType());
   setValue(fieldName, value);
   return *this;
 }
 
-SqlRecord& SqlRecord::insertFieldAndNullValue(int pos, const QString& fieldName, QVariant::Type type)
+SqlRecord& SqlRecord::insertFieldAndNullValue(int pos, const QString& fieldName, const QMetaType& type)
 {
   if(!contains(fieldName))
     insertField(pos, fieldName, type);

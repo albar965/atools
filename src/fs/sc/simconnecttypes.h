@@ -88,6 +88,7 @@ enum AircraftFlag : quint16
 ATOOLS_DECLARE_FLAGS_16(AircraftFlags, AircraftFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::AircraftFlags)
 
+/* Register all serializable types */
 void registerMetaTypes();
 
 } // namespace sc

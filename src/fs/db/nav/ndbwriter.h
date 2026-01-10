@@ -30,7 +30,7 @@ class NdbWriter :
 {
 public:
   NdbWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, QStringLiteral("ndb"))
+    : WriterBase(db, dataWriter, QLatin1String("ndb"))
   {
   }
 

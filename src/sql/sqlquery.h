@@ -50,8 +50,8 @@ public:
   explicit SqlQuery(const atools::sql::SqlDatabase& sqlDb);
   explicit SqlQuery(const atools::sql::SqlDatabase *sqlDb);
 
-  SqlQuery(const atools::sql::SqlQuery& other);
-  SqlQuery& operator=(const atools::sql::SqlQuery& other);
+  SqlQuery(const atools::sql::SqlQuery& other) = delete;
+  SqlQuery& operator=(const atools::sql::SqlQuery& other) = delete;
 
   ~SqlQuery();
 
@@ -224,8 +224,14 @@ public:
   void bindNullStr(int pos);
   void bindNullInt(const QString& placeholder);
   void bindNullInt(int pos);
+
+  /* Type double */
   void bindNullFloat(const QString& placeholder);
   void bindNullFloat(int pos);
+
+  /* Type QByteArray */
+  void bindNullBytes(const QString& placeholder);
+  void bindNullBytes(int pos);
 
   void bindRecord(const atools::sql::SqlRecord& record, const QString& bindPrefix = QString());
 

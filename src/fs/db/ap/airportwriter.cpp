@@ -62,7 +62,7 @@ using atools::fs::bgl::SidStar;
 using atools::geo::meterToFeet;
 
 AirportWriter::AirportWriter(sql::SqlDatabase& db, DataWriter& dataWriter)
-  : WriterBase(db, dataWriter, "airport"), deleteProcessor(db, dataWriter.getOptions())
+  : WriterBase(db, dataWriter, QLatin1String("airport")), deleteProcessor(db, dataWriter.getOptions())
 {
   query = new atools::sql::SqlQuery(getDataWriter().getDatabase());
   query->prepare("select airport_id from airport where ident = ?");

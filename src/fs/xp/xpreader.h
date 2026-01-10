@@ -71,7 +71,7 @@ protected:
     else
       // Have to stop reading the file since the rest can be corrupted
       throw atools::Exception(ctx->messagePrefix() +
-                              QStringLiteral(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+                              QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
   }
 
   /* Returns empty string for airport ident ENRT (enroute) */
@@ -79,23 +79,23 @@ protected:
   {
     if(index < line.size())
     {
-      const QString& str = line.at(index).simplified();
-      return str == QStringLiteral("ENRT") ? QString() : str;
+      const QString str = line.at(index).simplified();
+      return str == QLatin1String("ENRT") ? QString() : str;
     }
     else
       // Have to stop reading the file since the rest can be corrupted
       throw atools::Exception(ctx->messagePrefix() +
-                              QStringLiteral(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+                              QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
   }
 
   QString mid(const QStringList& line, int index, bool ignoreError = false)
   {
     if(index < line.size())
-      return line.mid(index).join(QStringLiteral(" "));
+      return line.mid(index).join(QLatin1String(" "));
     else if(!ignoreError)
       // Have to stop reading the file since the rest can be corrupted
       throw atools::Exception(ctx->messagePrefix() +
-                              QStringLiteral(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+                              QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
     return QString();
   }
 

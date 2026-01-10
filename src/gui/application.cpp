@@ -302,6 +302,11 @@ void Application::buildCrashReport(const QString& crashReportFile, const QString
 
 bool Application::notify(QObject *receiver, QEvent *event)
 {
+  if(event->type() == QEvent::ApplicationFontChange)
+    emit fontChanged(QGuiApplication::font());
+  else if(event->type() == QEvent::ApplicationPaletteChange)
+    emit paletteChanged(QGuiApplication::palette());
+
 #ifdef DEBUG_LOG_ALL_MESSAGES
   if(receiver != nullptr)
     qInfo() << Q_FUNC_INFO << receiver->objectName();

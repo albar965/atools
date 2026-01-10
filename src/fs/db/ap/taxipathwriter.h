@@ -30,7 +30,7 @@ class TaxiPathWriter :
 {
 public:
   TaxiPathWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, QStringLiteral("taxi_path"))
+    : WriterBase(db, dataWriter, QLatin1String("taxi_path"))
   {
   }
 

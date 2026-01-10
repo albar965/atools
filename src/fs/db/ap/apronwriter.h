@@ -34,7 +34,7 @@ class ApronWriter :
 {
 public:
   ApronWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, QStringLiteral("apron"))
+    : WriterBase(db, dataWriter, QLatin1String("apron"))
   {
   }
 

@@ -40,7 +40,6 @@ WriterBaseBasic::WriterBaseBasic(atools::sql::SqlDatabase& sqlDb,
     sqlStatement = SqlUtil(&db).buildInsertStatement(tablename);
   else
     sqlStatement = sqlParam;
-  sqlQuery = SqlQuery(db);
 
   sqlQuery.prepare(sqlStatement);
 }
@@ -87,17 +86,17 @@ void WriterBaseBasic::bindStrOrNull(const QString& placeholder, const QString& v
 
 void WriterBaseBasic::bindNullInt(const QString& placeholder)
 {
-  return sqlQuery.bindValue(placeholder, QVariant(QVariant::Int));
+  return sqlQuery.bindValue(placeholder, QVariant(QMetaType::fromType<int>()));
 }
 
 void WriterBaseBasic::bindNullFloat(const QString& placeholder)
 {
-  return sqlQuery.bindValue(placeholder, QVariant(QVariant::Double));
+  return sqlQuery.bindValue(placeholder, QVariant(QMetaType::fromType<double>()));
 }
 
 void WriterBaseBasic::bindNullString(const QString& placeholder)
 {
-  return sqlQuery.bindValue(placeholder, QVariant(QVariant::String));
+  return sqlQuery.bindValue(placeholder, QVariant(QMetaType::fromType<QString>()));
 }
 
 void WriterBaseBasic::executeStatement()

@@ -427,11 +427,7 @@ public:
 
   /* Returns "7777" for 4095/07777/0xFFF/0b111111111111
    *  Empty string if not available */
-  QString getTransponderCodeStr() const
-  {
-    // Get number as octal
-    return transponderCode != -1 ? QStringLiteral("%1").arg(transponderCode, 4, 8, QChar('0')) : QString();
-  }
+  QString getTransponderCodeStr() const;
 
   DataFlags getDataFlags() const
   {

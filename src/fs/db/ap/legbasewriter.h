@@ -34,7 +34,7 @@ class LegBaseWriter :
 public:
   LegBaseWriter(atools::sql::SqlDatabase& db,
                 atools::fs::db::DataWriter& dataWriter,
-                const QString& table);
+                const QLatin1String& table);
 
 protected:
   virtual void writeObject(const atools::fs::bgl::ApproachLeg *type) override;

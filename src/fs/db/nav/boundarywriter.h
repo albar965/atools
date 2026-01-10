@@ -32,7 +32,7 @@ class BoundaryWriter :
 {
 public:
   BoundaryWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, QStringLiteral("boundary"))
+    : WriterBase(db, dataWriter, QLatin1String("boundary"))
   {
   }
 

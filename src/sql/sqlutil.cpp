@@ -369,7 +369,7 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables) const
                 while(queryGroup.next())
                 {
                   QVariant val = queryGroup.value(0);
-                  if(val.type() != QVariant::ByteArray && val.canConvert(QVariant::String))
+                  if(val.metaType() != QMetaType::fromType<QByteArray>() && val.canConvert(QMetaType::fromType<QString>()))
                     out << val.toString();
                   else
                     out << "[" << val.typeName() << "]";

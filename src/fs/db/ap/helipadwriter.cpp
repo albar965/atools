@@ -36,7 +36,7 @@ using atools::geo::meterToFeet;
 using atools::fs::bgl::surface::surfaceToDbStr;
 
 HelipadWriter::HelipadWriter(sql::SqlDatabase& db, DataWriter& dataWriter)
-  : WriterBase(db, dataWriter, "helipad")
+  : WriterBase(db, dataWriter, QLatin1String("helipad"))
 {
 }
 

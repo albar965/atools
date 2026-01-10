@@ -31,7 +31,7 @@ class SidStarApproachLegWriter :
 {
 public:
   SidStarApproachLegWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : LegBaseWriter(db, dataWriter, QStringLiteral("approach_leg"))
+    : LegBaseWriter(db, dataWriter, QLatin1String("approach_leg"))
   {
   }
 

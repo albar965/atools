@@ -496,11 +496,11 @@ void DfdCompiler::pairRunways(QList<std::pair<SqlRecord, SqlRecord> >& runwaypai
       SqlRecord opposedRec(rec);
       opposedRec.setValue("runway_identifier", opposedRname);
       opposedRec.setValue("displaced_threshold_distance", 0);
-      opposedRec.setValue("llz_identifier", QVariant(QVariant::String));
+      opposedRec.setNull("llz_identifier");
       opposedRec.setValue("runway_true_bearing", opposedHeadingTrue);
 
       // Set closed sign
-      opposedRec.appendField("is_closed", QVariant::Bool);
+      opposedRec.appendField("is_closed", QMetaType::fromType<bool>());
       opposedRec.setValue("is_closed", true);
 
       Pos opposedPos(rec.valueFloat("runway_longitude"), rec.valueFloat("runway_latitude"));

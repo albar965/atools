@@ -29,7 +29,7 @@ namespace db {
 
 using atools::fs::bgl::ApproachLeg;
 
-LegBaseWriter::LegBaseWriter(sql::SqlDatabase& db, DataWriter& dataWriter, const QString& table)
+LegBaseWriter::LegBaseWriter(sql::SqlDatabase& db, DataWriter& dataWriter, const QLatin1String& table)
   : WriterBase(db, dataWriter, table)
 {
 }

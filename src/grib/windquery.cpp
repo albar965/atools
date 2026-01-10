@@ -631,7 +631,7 @@ void WindQuery::layersByAlt(WindAltLayer& lower, WindAltLayer& upper, float alti
       }
       else
       {
-        lower = *(it - 1);
+        lower = *(std::prev(it));
         upper = *it;
       }
     }

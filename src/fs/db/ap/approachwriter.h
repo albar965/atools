@@ -33,7 +33,7 @@ class ApproachWriter :
 {
 public:
   ApproachWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, QStringLiteral("approach"))
+    : WriterBase(db, dataWriter, QLatin1String("approach"))
   {
   }
 

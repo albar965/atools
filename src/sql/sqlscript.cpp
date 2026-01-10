@@ -103,7 +103,7 @@ void SqlScript::executeScript(QTextStream& script)
           for(int i = 0; i < rec.count(); i++)
           {
             QVariant val = rec.value(i);
-            if(val.type() == QVariant::String)
+            if(val.metaType() == QMetaType::fromType<QString>())
               rowValues += "\"" + val.toString() + "\"";
             else
               rowValues += val.toString();

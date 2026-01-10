@@ -270,14 +270,14 @@ protected:
     QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase *sqlDb, const QList<int>& idVector, const QString& idColName)
       : query(sqlDb), ids(idVector), hasIds(!ids.isEmpty())
     {
-      query.prepare(queryStr + (hasIds ? QStringLiteral(" where ") + idColName + QStringLiteral(" = :id") : QString()));
+      query.prepare(queryStr + (hasIds ? QLatin1String(" where ") + idColName + QLatin1String(" = :id") : QString()));
     }
 
     /* Returns records in arbitrary order */
     QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase *sqlDb, const QSet<int>& idSet, const QString& idColName)
       : query(sqlDb), ids(idSet.constBegin(), idSet.constEnd()), hasIds(!ids.isEmpty())
     {
-      query.prepare(queryStr + (hasIds ? QStringLiteral(" where ") + idColName + QStringLiteral(" = :id") : QString()));
+      query.prepare(queryStr + (hasIds ? QLatin1String(" where ") + idColName + QLatin1String(" = :id") : QString()));
     }
 
     void exec()
@@ -293,7 +293,7 @@ protected:
         if(ids.isEmpty())
           return false;
 
-        query.bindValue(QStringLiteral(":id"), ids.takeFirst());
+        query.bindValue(QLatin1String(":id"), ids.takeFirst());
         query.exec();
       }
       return query.next();

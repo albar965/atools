@@ -272,7 +272,7 @@ QDataStream& operator>>(QDataStream& in, Props& props)
 Prop::Prop(int keyParam, const QVariant& valueParam)
   : key(keyParam)
 {
-  QMetaType::Type metatype = static_cast<QMetaType::Type>(valueParam.type());
+  QMetaType::Type metatype = static_cast<QMetaType::Type>(valueParam.metaType().id());
   switch(metatype)
   {
     case QMetaType::Bool:

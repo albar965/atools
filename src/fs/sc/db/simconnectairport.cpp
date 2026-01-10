@@ -41,7 +41,7 @@ const QVariant Airport::getTowerFrequency() const
     if(frequency.type == atools::fs::bgl::com::TOWER)
       return frequency.frequency;
   }
-  return QVariant(QVariant::Int);
+  return QVariant(QMetaType::fromType<int>());
 }
 
 const QVariant Airport::getAtisFrequency() const
@@ -51,7 +51,7 @@ const QVariant Airport::getAtisFrequency() const
     if(frequency.type == atools::fs::bgl::com::ATIS)
       return frequency.frequency;
   }
-  return QVariant(QVariant::Int);
+  return QVariant(QMetaType::fromType<int>());
 }
 
 const QVariant Airport::getAwosFrequency() const
@@ -61,7 +61,7 @@ const QVariant Airport::getAwosFrequency() const
     if(frequency.type == atools::fs::bgl::com::AWOS)
       return frequency.frequency;
   }
-  return QVariant(QVariant::Int);
+  return QVariant(QMetaType::fromType<int>());
 }
 
 const QVariant Airport::getAsosFrequency() const
@@ -71,8 +71,7 @@ const QVariant Airport::getAsosFrequency() const
     if(frequency.type == atools::fs::bgl::com::ASOS)
       return frequency.frequency;
   }
-  return QVariant(QVariant::Int);
-
+  return QVariant(QMetaType::fromType<int>());
 }
 
 const QVariant Airport::getUnicomFrequency() const
@@ -82,7 +81,7 @@ const QVariant Airport::getUnicomFrequency() const
     if(frequency.type == atools::fs::bgl::com::UNICOM)
       return frequency.frequency;
   }
-  return QVariant(QVariant::Int);
+  return QVariant(QMetaType::fromType<int>());
 }
 
 int Airport::getNumParkingGate() const
@@ -257,7 +256,7 @@ const QVariant Airport::getLargestParkingGate() const
   if(index >= 0)
     return atools::fs::bgl::Parking::parkingTypeToStr(static_cast<atools::fs::bgl::ap::ParkingType>(taxiParkings.at(index).type));
   else
-    return QVariant(QVariant::String);
+    return QVariant(QMetaType::fromType<QString>());
 }
 
 const QVariant Airport::getLargestParkingRamp() const
@@ -279,7 +278,7 @@ const QVariant Airport::getLargestParkingRamp() const
   if(index >= 0)
     return atools::fs::bgl::Parking::parkingTypeToStr(static_cast<atools::fs::bgl::ap::ParkingType>(taxiParkings.at(index).type));
   else
-    return QVariant(QVariant::String);
+    return QVariant(QMetaType::fromType<QString>());
 }
 
 bool Runway::isHard() const

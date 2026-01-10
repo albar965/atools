@@ -131,7 +131,7 @@ QVariant vorTypeToDb(VorType type, bool isNav, bool isTacan)
   }
 
   qWarning() << Q_FUNC_INFO << "Invalid VOR type " << type;
-  return QVariant(QVariant::String);
+  return QVariant(QMetaType::fromType<QString>());
 }
 
 bool lsTypeValid(LsCategory type)
@@ -186,7 +186,7 @@ QVariant lsTypeToDb(LsCategory type)
       break;
   }
   qWarning() << Q_FUNC_INFO << "Invalid ILS type " << type;
-  return QVariant(QVariant::String);
+  return QVariant(QMetaType::fromType<QString>());
 }
 
 } // namespace db

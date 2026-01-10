@@ -30,7 +30,7 @@ class VorWriter :
 {
 public:
   VorWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, QStringLiteral("vor"))
+    : WriterBase(db, dataWriter, QLatin1String("vor"))
   {
   }
 

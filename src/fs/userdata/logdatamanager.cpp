@@ -575,7 +575,7 @@ QString LogdataManager::blobConversionFunctionEmpty(const QVariant&)
 
 QString LogdataManager::blobConversionFunction(const QVariant& value)
 {
-  if(value.isValid() && !value.isNull() && value.type() == QVariant::ByteArray)
+  if(value.isValid() && !value.isNull() && value.metaType() == QMetaType::fromType<QByteArray>())
     return QString(atools::zip::gzipDecompress(value.toByteArray()));
 
   return QString();
@@ -800,7 +800,7 @@ void LogdataManager::fixEmptyBlobField(sql::SqlRecord& rec, const QString& name)
 void LogdataManager::fixEmptyBlobField(sql::SqlQuery& query, const QString& name)
 {
   if(query.boundValue(name, true /* ignoreInvalid */).toByteArray().isEmpty())
-    query.bindValue(name, QVariant(QVariant::ByteArray));
+    query.bindValue(name, QVariant(QMetaType::fromType<QByteArray>()));
 }
 
 void LogdataManager::fixEmptyFields(sql::SqlRecord& rec)

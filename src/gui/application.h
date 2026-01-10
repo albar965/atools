@@ -192,6 +192,8 @@ public:
 signals:
   /* Called by queued connection from QGuiApplication::commitDataRequest */
   void applicationAboutToQuit();
+  void fontChanged(const QFont& font);
+  void paletteChanged(const QPalette& palette);
 
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;

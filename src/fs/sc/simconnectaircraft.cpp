@@ -197,6 +197,12 @@ void SimConnectAircraft::cleanAircraftNames()
     airplaneModel.clear();
 }
 
+QString SimConnectAircraft::getTransponderCodeStr() const
+{
+  // Get number as octal
+  return transponderCode != -1 ? QStringLiteral("%1").arg(transponderCode, 4, 8, QChar('0')) : QString();
+}
+
 } // namespace sc
 } // namespace fs
 } // namespace atools

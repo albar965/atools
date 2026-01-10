@@ -51,7 +51,7 @@ public:
   bool isScenery() const
   {
     // "content_type": "SCENERY"
-    return contentType.compare(QStringLiteral("SCENERY"), Qt::CaseInsensitive) == 0;
+    return contentType.compare(QLatin1String("SCENERY"), Qt::CaseInsensitive) == 0;
   }
 
   /* Might be scenery or core. Only excludes known types which are not scenery. */
@@ -67,14 +67,14 @@ public:
 
     // Cannot discriminate by values since add-on developers use often wrong types
     // Instead exclude obvious known types
-    return contentType.compare(QStringLiteral("INSTRUMENTS"), Qt::CaseInsensitive) != 0 &&
-           contentType.compare(QStringLiteral("LIVERY"), Qt::CaseInsensitive) != 0;
+    return contentType.compare(QLatin1String("INSTRUMENTS"), Qt::CaseInsensitive) != 0 &&
+           contentType.compare(QLatin1String("LIVERY"), Qt::CaseInsensitive) != 0;
   }
 
   bool isAircraft() const
   {
     // "content_type": "AIRCRAFT"
-    return contentType.compare(QStringLiteral("AIRCRAFT"), Qt::CaseInsensitive) == 0;
+    return contentType.compare(QLatin1String("AIRCRAFT"), Qt::CaseInsensitive) == 0;
   }
 
   const QString& getContentType() const

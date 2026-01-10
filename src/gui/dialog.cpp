@@ -249,8 +249,16 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
 
     // Set the button texts
     for(const DialogButton& db : buttonList)
+    {
       if(!db.getText().isEmpty())
-        msg.setButtonText(db.getButton(), db.getText());
+      {
+        QAbstractButton *button = msg.button(db.getButton());
+        if(button != nullptr)
+          button->setText(db.getText());
+        else
+          qWarning() << Q_FUNC_INFO << "Button" << db.getButton() << "not found";
+      }
+    }
 
     retval = msg.exec();
 

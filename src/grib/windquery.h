@@ -208,7 +208,7 @@ private:
 
   /* Parameters to download from NOAA - U/V wind component.
    *  Add "TMP" for temperature */
-  const QStringList PARAMETERS = {QStringLiteral("UGRD"), QStringLiteral("VGRD")};
+  const QStringList PARAMETERS = {QLatin1String("UGRD"), QLatin1String("VGRD")};
 
   /* Do roughly four samples per degree when interpolating winds for lines */
   int samplesPerDegree = 4;

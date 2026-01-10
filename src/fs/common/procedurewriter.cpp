@@ -624,8 +624,8 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
   rwy = rwy.trimmed();
   if(rwy.isEmpty())
   {
-    rec.setValue(":runway_name", QVariant(QVariant::String));
-    rec.setValue(":runway_end_id", QVariant(QVariant::Int));
+    rec.setValue(":runway_name", QVariant(QMetaType::fromType<QString>()));
+    rec.setValue(":runway_end_id", QVariant(QMetaType::fromType<int>()));
   }
   else
   {
@@ -825,8 +825,8 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
   }
   else
   {
-    rec.setValue(":fix_lonx", QVariant(QVariant::Double));
-    rec.setValue(":fix_laty", QVariant(QVariant::Double));
+    rec.setValue(":fix_lonx", QVariant(QMetaType::fromType<double>()));
+    rec.setValue(":fix_laty", QVariant(QMetaType::fromType<double>()));
   }
 
   // not used: fix_airport_ident
@@ -852,8 +852,8 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
       }
       else
       {
-        rec.setValue(":recommended_fix_lonx", QVariant(QVariant::Double));
-        rec.setValue(":recommended_fix_laty", QVariant(QVariant::Double));
+        rec.setValue(":recommended_fix_lonx", QVariant(QMetaType::fromType<double>()));
+        rec.setValue(":recommended_fix_laty", QVariant(QMetaType::fromType<double>()));
       }
 
     }
@@ -877,8 +877,8 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     }
     else
     {
-      rec.setValue(":recommended_fix_lonx", QVariant(QVariant::Double));
-      rec.setValue(":recommended_fix_laty", QVariant(QVariant::Double));
+      rec.setValue(":recommended_fix_lonx", QVariant(QMetaType::fromType<double>()));
+      rec.setValue(":recommended_fix_laty", QVariant(QMetaType::fromType<double>()));
     }
   }
   // else null

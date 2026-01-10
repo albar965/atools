@@ -59,7 +59,12 @@ void MetadataWriter::writeSceneryArea(const QString& filepath, const QString& sc
   insertSceneryQuery->bindValue(":number", curSceneryId);
   insertSceneryQuery->bindValue(":layer", curSceneryId);
   insertSceneryQuery->bindValue(":title", sceneryName);
-  insertSceneryQuery->bindValue(":local_path", filepath.isEmpty() ? QVariant(QVariant::String) : QFileInfo(filepath).filePath());
+
+  if(filepath.isEmpty())
+    insertSceneryQuery->bindNullStr(":local_path");
+  else
+    insertSceneryQuery->bindValue(":local_path", QFileInfo(filepath).filePath());
+
   insertSceneryQuery->bindValue(":active", true);
   insertSceneryQuery->bindValue(":required", true);
   insertSceneryQuery->exec();

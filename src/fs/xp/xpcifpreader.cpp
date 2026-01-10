@@ -154,7 +154,7 @@ void XpCifpReader::read(const QStringList& line, const XpReaderContext& context)
   procInput.speedLimitDescr = at(line, SPD_LIMIT_DESCR).trimmed();
   procInput.speedLimit = at(line, SPEED_LIMIT).toInt();
   procInput.verticalAngle =
-    at(line, VERT_ANGLE).simplified().isEmpty() ? QVariant(QVariant::Double) : at(line, VERT_ANGLE).toDouble() / 100.;
+    at(line, VERT_ANGLE).simplified().isEmpty() ? QVariant(QMetaType::fromType<double>()) : at(line, VERT_ANGLE).toDouble() / 100.;
   procInput.centerFixOrTaaPt = at(line, CENTER_FIX_OR_TAA_PT).trimmed();
   procInput.centerIcaoCode = at(line, CENTER_ICAO_CODE).trimmed();
   procInput.centerSecCode = at(line, CENTER_SEC_CODE);
