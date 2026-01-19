@@ -210,19 +210,24 @@ QString BinaryStream::readString(Encoding encoding)
 
 QString BinaryStream::readString(int length, Encoding encoding)
 {
+  // Read the whole length into memory
   char *buf = new char[static_cast<size_t>(length)];
   readBytes(buf, length);
 
+  // QByteArray always appends null terminator
   QByteArray retval;
   for(int i = 0; i < length; i++)
   {
-    retval.append(buf[i]);
     if(buf[i] == '\0')
       break;
+
+    retval.append(buf[i]);
   }
   delete[] buf;
 
-  if(encoding == UTF8)
+  if(retval.isEmpty())
+    return QString();
+  else if(encoding == UTF8)
     return QString::fromUtf8(retval);
   else if(encoding == LATIN1)
     return QString::fromLatin1(retval);
