@@ -130,10 +130,9 @@ QFont getBestFixedFont()
 
 #if defined(Q_OS_WINDOWS)
   bool found = false;
-  QFontDatabase fontDb;
   for(const QString& family : QStringList({"Andale Mono", "Consolas", "Lucida Console", "Inconsolata"}))
   {
-    fixedFont = fontDb.font(family, "Normal", QApplication::font().pointSize());
+    fixedFont = QFontDatabase::font(family, "Normal", QApplication::font().pointSize());
 
     // Get information about the actually used font
     QFontInfo info(fixedFont);
