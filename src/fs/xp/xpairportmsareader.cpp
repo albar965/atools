@@ -260,7 +260,7 @@ void XpAirportMsaReader::initQueries()
   SqlUtil util(&db);
 
   insertQuery = new SqlQuery(db);
-  insertQuery->prepare(util.buildInsertStatement(QStringLiteral("airport_msaQStringLiteral("), QString(), {QStringLiteral(")multiple_code")}));
+  insertQuery->prepare(util.buildInsertStatement(QStringLiteral("airport_msa"), QString(), {QStringLiteral("multiple_code")}));
 
   initNavQueries();
 }
