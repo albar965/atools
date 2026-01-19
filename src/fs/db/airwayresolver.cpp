@@ -87,7 +87,7 @@ AirwayResolver::AirwayResolver(sql::SqlDatabase *sqlDb, atools::fs::ProgressHand
   : progressHandler(progress), curAirwayId(1), numAirways(0), airwayInsertStmt(sqlDb), db(sqlDb)
 {
   SqlUtil util(sqlDb);
-  airwayInsertStmt.prepare(util.buildInsertStatement("airway"));
+  airwayInsertStmt.prepare(util.buildInsertStatement(QStringLiteral("airway")));
 }
 
 AirwayResolver::~AirwayResolver()
@@ -113,7 +113,7 @@ bool AirwayResolver::run(int numReportSteps)
 
   // Clean the table
   SqlQuery deleteAirwayQuery(db);
-  deleteAirwayQuery.exec("delete from airway");
+  deleteAirwayQuery.exec(QStringLiteral("delete from airway"));
   int deleted = deleteAirwayQuery.numRowsAffected();
   qInfo() << "Removed" << deleted << "from airway table";
 
@@ -121,7 +121,7 @@ bool AirwayResolver::run(int numReportSteps)
   QSet<AirwaySegment> airway;
   QString currentAirway;
 
-  int totalRowCount = SqlUtil(db).rowCount("tmp_airway_point");
+  int totalRowCount = SqlUtil(db).rowCount(QStringLiteral("tmp_airway_point"));
 
   int rowsPerStep = static_cast<int>(std::ceil(static_cast<float>(totalRowCount) / static_cast<float>(numReportSteps)));
   int row = 0, steps = 0;
@@ -137,13 +137,13 @@ bool AirwayResolver::run(int numReportSteps)
   // Get all tmp_airway_point rows and join previous and next waypoints to the result by ident and region
   // Result is ordered by airway name
   SqlQuery tmpAirwayPointQuery(db);
-  tmpAirwayPointQuery.exec("select * from tmp_airway_point order by name"); // where name = 'Y655'
+  tmpAirwayPointQuery.exec(QStringLiteral("select * from tmp_airway_point order by name")); // where name = 'Y655'
   atools::geo::Pos lastPosition;
   float longestAirwaySegmentMeter = 0.f;
   while(tmpAirwayPointQuery.next())
   {
-    QString awName = tmpAirwayPointQuery.value("name").toString();
-    QString awType = tmpAirwayPointQuery.value("type").toString();
+    QString awName = tmpAirwayPointQuery.value(QStringLiteral("name")).toString();
+    QString awType = tmpAirwayPointQuery.value(QStringLiteral("type")).toString();
 
     if((row++ % rowsPerStep) == 0)
     {
@@ -168,15 +168,15 @@ bool AirwayResolver::run(int numReportSteps)
 
     int midWpId = -1, prevWpId = -1, nextWpId = -1;
     Pos midWpPos, prevWpPos, nextWpPos;
-    fetchNavaid(prevWpId, prevWpPos, tmpAirwayPointQuery, tmpWaypointQuery, "previous_", lastPosition);
+    fetchNavaid(prevWpId, prevWpPos, tmpAirwayPointQuery, tmpWaypointQuery, QStringLiteral("previous_"), lastPosition);
     if(prevWpPos.isValidRange())
       lastPosition = prevWpPos;
 
-    fetchNavaid(midWpId, midWpPos, tmpAirwayPointQuery, tmpWaypointQuery, "mid_", lastPosition);
+    fetchNavaid(midWpId, midWpPos, tmpAirwayPointQuery, tmpWaypointQuery, QStringLiteral("mid_"), lastPosition);
     if(midWpPos.isValidRange())
       lastPosition = midWpPos;
 
-    fetchNavaid(nextWpId, nextWpPos, tmpAirwayPointQuery, tmpWaypointQuery, "next_", lastPosition);
+    fetchNavaid(nextWpId, nextWpPos, tmpAirwayPointQuery, tmpWaypointQuery, QStringLiteral("next_"), lastPosition);
     if(nextWpPos.isValidRange())
       lastPosition = nextWpPos;
 
@@ -186,9 +186,9 @@ bool AirwayResolver::run(int numReportSteps)
       float midPrevDist = midWpPos.distanceMeterTo(prevWpPos);
       if(maxAirwaySegmentLengthNm <= 1.f || midPrevDist < atools::geo::nmToMeter(maxAirwaySegmentLengthNm))
       {
-        int prevMinAlt = tmpAirwayPointQuery.value("previous_minimum_altitude").toInt();
-        int prevMaxAlt = tmpAirwayPointQuery.value("previous_maximum_altitude").toInt();
-        char prevDir = atools::strToChar(tmpAirwayPointQuery.value("previous_direction").toString());
+        int prevMinAlt = tmpAirwayPointQuery.value(QStringLiteral("previous_minimum_altitude")).toInt();
+        int prevMaxAlt = tmpAirwayPointQuery.value(QStringLiteral("previous_maximum_altitude")).toInt();
+        char prevDir = atools::strToChar(tmpAirwayPointQuery.value(QStringLiteral("previous_direction")).toString());
         airway.insert(AirwaySegment(prevWpId, midWpId, prevDir, prevMinAlt, prevMaxAlt, awType, prevWpPos, midWpPos));
       }
 
@@ -201,9 +201,9 @@ bool AirwayResolver::run(int numReportSteps)
       float midNextDist = midWpPos.distanceMeterTo(nextWpPos);
       if(maxAirwaySegmentLengthNm <= 1.f || midNextDist < atools::geo::nmToMeter(maxAirwaySegmentLengthNm))
       {
-        int nextMinAlt = tmpAirwayPointQuery.value("next_minimum_altitude").toInt();
-        int nextMaxAlt = tmpAirwayPointQuery.value("next_maximum_altitude").toInt();
-        char nextDir = atools::strToChar(tmpAirwayPointQuery.value("next_direction").toString());
+        int nextMinAlt = tmpAirwayPointQuery.value(QStringLiteral("next_minimum_altitude")).toInt();
+        int nextMaxAlt = tmpAirwayPointQuery.value(QStringLiteral("next_maximum_altitude")).toInt();
+        char nextDir = atools::strToChar(tmpAirwayPointQuery.value(QStringLiteral("next_direction")).toString());
         airway.insert(AirwaySegment(midWpId, nextWpId, nextDir, nextMinAlt, nextMaxAlt, awType, midWpPos, nextWpPos));
       }
 
@@ -239,9 +239,9 @@ void AirwayResolver::fetchNavaid(int& id, atools::geo::Pos& pos, atools::sql::Sq
   // region varchar(2) not null,
   // lonx double not null,
   // laty double not null
-  tmpWaypointQuery.bindValue(BIND_IDENT, tmpAirwayPointQuery.valueStr(prefix % "ident"));
-  tmpWaypointQuery.bindValue(BIND_REGION, tmpAirwayPointQuery.valueStr(prefix % "region"));
-  tmpWaypointQuery.bindValue(BIND_TYPE, tmpAirwayPointQuery.valueStr(prefix % "type"));
+  tmpWaypointQuery.bindValue(BIND_IDENT, tmpAirwayPointQuery.valueStr(prefix % QStringLiteral("ident")));
+  tmpWaypointQuery.bindValue(BIND_REGION, tmpAirwayPointQuery.valueStr(prefix % QStringLiteral("region")));
+  tmpWaypointQuery.bindValue(BIND_TYPE, tmpAirwayPointQuery.valueStr(prefix % QStringLiteral("type")));
   tmpWaypointQuery.exec();
 
   QList<std::pair<int, Pos> > wpList;
@@ -374,30 +374,30 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
 
       TypeRowValueList row;
 
-      row.append(std::make_pair(":airway_id", curAirwayId));
-      row.append(std::make_pair(":airway_name", airwayName));
-      row.append(std::make_pair(":airway_type", newSegment.type));
+      row.append(std::make_pair(QStringLiteral(":airway_id"), curAirwayId));
+      row.append(std::make_pair(QStringLiteral(":airway_name"), airwayName));
+      row.append(std::make_pair(QStringLiteral(":airway_type"), newSegment.type));
       // route_type varchar(5), unused
 
-      row.append(std::make_pair(":airway_fragment_no", fragmentNum));
-      row.append(std::make_pair(":sequence_no", seqNo));
+      row.append(std::make_pair(QStringLiteral(":airway_fragment_no"), fragmentNum));
+      row.append(std::make_pair(QStringLiteral(":sequence_no"), seqNo));
 
-      row.append(std::make_pair(":from_waypoint_id", newSegment.fromWaypointId));
-      row.append(std::make_pair(":to_waypoint_id", newSegment.toWaypointId));
+      row.append(std::make_pair(QStringLiteral(":from_waypoint_id"), newSegment.fromWaypointId));
+      row.append(std::make_pair(QStringLiteral(":to_waypoint_id"), newSegment.toWaypointId));
 
-      row.append(std::make_pair(":direction", atools::charToStr(newSegment.dir)));
-      row.append(std::make_pair(":minimum_altitude", newSegment.minAlt));
-      row.append(std::make_pair(":maximum_altitude", newSegment.maxAlt));
-      row.append(std::make_pair(":left_lonx", bounding.getTopLeft().getLonX()));
-      row.append(std::make_pair(":top_laty", bounding.getTopLeft().getLatY()));
-      row.append(std::make_pair(":right_lonx", bounding.getBottomRight().getLonX()));
-      row.append(std::make_pair(":bottom_laty", bounding.getBottomRight().getLatY()));
+      row.append(std::make_pair(QStringLiteral(":direction"), atools::charToStr(newSegment.dir)));
+      row.append(std::make_pair(QStringLiteral(":minimum_altitude"), newSegment.minAlt));
+      row.append(std::make_pair(QStringLiteral(":maximum_altitude"), newSegment.maxAlt));
+      row.append(std::make_pair(QStringLiteral(":left_lonx"), bounding.getTopLeft().getLonX()));
+      row.append(std::make_pair(QStringLiteral(":top_laty"), bounding.getTopLeft().getLatY()));
+      row.append(std::make_pair(QStringLiteral(":right_lonx"), bounding.getBottomRight().getLonX()));
+      row.append(std::make_pair(QStringLiteral(":bottom_laty"), bounding.getBottomRight().getLatY()));
 
       // Write start and end coordinates for this segment
-      row.append(std::make_pair(":from_lonx", newSegment.fromPos.getLonX()));
-      row.append(std::make_pair(":from_laty", newSegment.fromPos.getLatY()));
-      row.append(std::make_pair(":to_lonx", newSegment.toPos.getLonX()));
-      row.append(std::make_pair(":to_laty", newSegment.toPos.getLatY()));
+      row.append(std::make_pair(QStringLiteral(":from_lonx"), newSegment.fromPos.getLonX()));
+      row.append(std::make_pair(QStringLiteral(":from_laty"), newSegment.fromPos.getLatY()));
+      row.append(std::make_pair(QStringLiteral(":to_lonx"), newSegment.toPos.getLonX()));
+      row.append(std::make_pair(QStringLiteral(":to_laty"), newSegment.toPos.getLatY()));
 
       fragment.boundValues.append(row);
 

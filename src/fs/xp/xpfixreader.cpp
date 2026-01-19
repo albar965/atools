@@ -69,26 +69,26 @@ void XpFixReader::read(const QStringList& line, const XpReaderContext& context)
 
   atools::geo::Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
-  insertWaypointQuery->bindValue(":waypoint_id", ++curFixId);
-  insertWaypointQuery->bindValue(":file_id", context.curFileId);
-  insertWaypointQuery->bindValue(":ident", at(line, IDENT));
-  insertWaypointQuery->bindValue(":name", mid(line, NAME, true /* ignore error */));
-  insertWaypointQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT), false /* allIdents */));
-  insertWaypointQuery->bindValue(":airport_ident", atAirportIdent(line, AIRPORT));
-  insertWaypointQuery->bindValue(":region", at(line, REGION)); // ZZ for no region
-  insertWaypointQuery->bindValue(":type", "WN"); // All named waypoints
+  insertWaypointQuery->bindValue(QStringLiteral(":waypoint_id"), ++curFixId);
+  insertWaypointQuery->bindValue(QStringLiteral(":file_id"), context.curFileId);
+  insertWaypointQuery->bindValue(QStringLiteral(":ident"), at(line, IDENT));
+  insertWaypointQuery->bindValue(QStringLiteral(":name"), mid(line, NAME, true /* ignore error */));
+  insertWaypointQuery->bindValue(QStringLiteral(":airport_id"), airportIndex->getAirportIdVar(at(line, AIRPORT), false /* allIdents */));
+  insertWaypointQuery->bindValue(QStringLiteral(":airport_ident"), atAirportIdent(line, AIRPORT));
+  insertWaypointQuery->bindValue(QStringLiteral(":region"), at(line, REGION)); // ZZ for no region
+  insertWaypointQuery->bindValue(QStringLiteral(":type"), QStringLiteral("WN")); // All named waypoints
 
   QString arincType = atools::fs::util::waypointFlagsFromXplane(line.value(ARINC_TYPE));
   if(!arincType.isEmpty())
-    insertWaypointQuery->bindValue(":arinc_type", arincType);
+    insertWaypointQuery->bindValue(QStringLiteral(":arinc_type"), arincType);
   else
-    insertWaypointQuery->bindNullStr(":arinc_type");
+    insertWaypointQuery->bindNullStr(QStringLiteral(":arinc_type"));
 
-  insertWaypointQuery->bindValue(":num_victor_airway", 0); // filled  by sql/fs/db/xplane/prepare_airway.sql
-  insertWaypointQuery->bindValue(":num_jet_airway", 0); // as above
-  insertWaypointQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
-  insertWaypointQuery->bindValue(":lonx", pos.getLonX());
-  insertWaypointQuery->bindValue(":laty", pos.getLatY());
+  insertWaypointQuery->bindValue(QStringLiteral(":num_victor_airway"), 0); // filled  by sql/fs/db/xplane/prepare_airway.sql
+  insertWaypointQuery->bindValue(QStringLiteral(":num_jet_airway"), 0); // as above
+  insertWaypointQuery->bindValue(QStringLiteral(":mag_var"), context.magDecReader->getMagVar(pos));
+  insertWaypointQuery->bindValue(QStringLiteral(":lonx"), pos.getLonX());
+  insertWaypointQuery->bindValue(QStringLiteral(":laty"), pos.getLatY());
   insertWaypointQuery->exec();
 
   progress->incNumWaypoints();
@@ -111,7 +111,7 @@ void XpFixReader::initQueries()
   SqlUtil util(&db);
 
   insertWaypointQuery = new SqlQuery(db);
-  insertWaypointQuery->prepare(util.buildInsertStatement("waypoint", QString(), {"nav_id"}));
+  insertWaypointQuery->prepare(util.buildInsertStatement(QStringLiteral("waypoint"), QString(), {QStringLiteral("nav_id")}));
 }
 
 void XpFixReader::deInitQueries()

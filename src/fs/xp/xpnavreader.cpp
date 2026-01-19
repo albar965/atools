@@ -83,76 +83,76 @@ void XpNavReader::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
 
   if(range == 0)
   {
-    rangeType = "H";
-    insertVorQuery->bindNullInt(":range");
+    rangeType = QStringLiteral("H");
+    insertVorQuery->bindNullInt(QStringLiteral(":range"));
   }
   else if(range == 125)
   {
-    rangeType = "H";
+    rangeType = QStringLiteral("H");
     // likely high power VOR
-    insertVorQuery->bindValue(":range", 130);
+    insertVorQuery->bindValue(QStringLiteral(":range"), 130);
   }
   else
   {
     if(range < 30)
-      rangeType = "T";
+      rangeType = QStringLiteral("T");
     else if(range < 50)
-      rangeType = "L";
+      rangeType = QStringLiteral("L");
     else if(range < 140)
-      rangeType = "H";
-    insertVorQuery->bindValue(":range", range);
+      rangeType = QStringLiteral("H");
+    insertVorQuery->bindValue(QStringLiteral(":range"), range);
   }
 
   QString suffix = line.constLast().toUpper();
-  if(suffix == "VOR" || suffix == "DME" || suffix == "VOR-DME" || suffix == "VOR/DME")
+  if(suffix == QStringLiteral("VOR") || suffix == QStringLiteral("DME") || suffix == QStringLiteral("VOR-DME") || suffix == QStringLiteral("VOR/DME"))
     type = rangeType;
-  else if(suffix == "VORTAC")
-    type = "VT" + rangeType;
-  else if(suffix == "TACAN")
-    type = "TC";
+  else if(suffix == QStringLiteral("VORTAC"))
+    type = QStringLiteral("VT") + rangeType;
+  else if(suffix == QStringLiteral("TACAN"))
+    type = QStringLiteral("TC");
 
-  bool hasDme = suffix == "DME" || suffix == "VORTAC" || suffix == "VOR-DME" || suffix == "VOR/DME";
+  bool hasDme = suffix == QStringLiteral("DME") || suffix == QStringLiteral("VORTAC") || suffix == QStringLiteral("VOR-DME") || suffix == QStringLiteral("VOR/DME");
   int frequency = at(line, FREQ).toInt();
 
-  insertVorQuery->bindValue(":vor_id", ++curVorId);
-  insertVorQuery->bindValue(":file_id", curFileId);
-  insertVorQuery->bindValue(":ident", at(line, IDENT));
-  insertVorQuery->bindValue(":name", line.mid(RW, line.size() - 11).join(" "));
-  insertVorQuery->bindValue(":region", at(line, REGION));
-  insertVorQuery->bindValue(":type", type);
-  insertVorQuery->bindValue(":frequency", frequency * 10);
-  insertVorQuery->bindValue(":mag_var", at(line, MAGVAR).toFloat());
-  insertVorQuery->bindValue(":dme_only", dmeOnly);
-  insertVorQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT), false /* allIdents */));
-  insertVorQuery->bindValue(":airport_ident", atAirportIdent(line, AIRPORT));
+  insertVorQuery->bindValue(QStringLiteral(":vor_id"), ++curVorId);
+  insertVorQuery->bindValue(QStringLiteral(":file_id"), curFileId);
+  insertVorQuery->bindValue(QStringLiteral(":ident"), at(line, IDENT));
+  insertVorQuery->bindValue(QStringLiteral(":name"), line.mid(RW, line.size() - 11).join(QStringLiteral(" ")));
+  insertVorQuery->bindValue(QStringLiteral(":region"), at(line, REGION));
+  insertVorQuery->bindValue(QStringLiteral(":type"), type);
+  insertVorQuery->bindValue(QStringLiteral(":frequency"), frequency * 10);
+  insertVorQuery->bindValue(QStringLiteral(":mag_var"), at(line, MAGVAR).toFloat());
+  insertVorQuery->bindValue(QStringLiteral(":dme_only"), dmeOnly);
+  insertVorQuery->bindValue(QStringLiteral(":airport_id"), airportIndex->getAirportIdVar(at(line, AIRPORT), false /* allIdents */));
+  insertVorQuery->bindValue(QStringLiteral(":airport_ident"), atAirportIdent(line, AIRPORT));
 
-  if(suffix == "TACAN" || suffix == "VORTAC")
-    insertVorQuery->bindValue(":channel", atools::fs::util::tacanChannelForFrequency(frequency));
+  if(suffix == QStringLiteral("TACAN") || suffix == QStringLiteral("VORTAC"))
+    insertVorQuery->bindValue(QStringLiteral(":channel"), atools::fs::util::tacanChannelForFrequency(frequency));
   else
-    insertVorQuery->bindNullStr(":channel");
+    insertVorQuery->bindNullStr(QStringLiteral(":channel"));
 
   if(hasDme)
   {
-    insertVorQuery->bindValue(":dme_altitude", at(line, ALT).toInt());
-    insertVorQuery->bindValue(":dme_lonx", at(line, LONX).toFloat());
-    insertVorQuery->bindValue(":dme_laty", at(line, LATY).toFloat());
-    insertVorQuery->bindValue(":altitude", at(line, ALT).toInt());
+    insertVorQuery->bindValue(QStringLiteral(":dme_altitude"), at(line, ALT).toInt());
+    insertVorQuery->bindValue(QStringLiteral(":dme_lonx"), at(line, LONX).toFloat());
+    insertVorQuery->bindValue(QStringLiteral(":dme_laty"), at(line, LATY).toFloat());
+    insertVorQuery->bindValue(QStringLiteral(":altitude"), at(line, ALT).toInt());
   }
   else
   {
-    insertVorQuery->bindNullInt(":dme_altitude");
-    insertVorQuery->bindNullFloat(":dme_lonx");
-    insertVorQuery->bindNullFloat(":dme_laty");
+    insertVorQuery->bindNullInt(QStringLiteral(":dme_altitude"));
+    insertVorQuery->bindNullFloat(QStringLiteral(":dme_lonx"));
+    insertVorQuery->bindNullFloat(QStringLiteral(":dme_laty"));
 
     // VOR only - unlikely to have an elevation
     if(at(line, ALT).toInt() != 0)
-      insertVorQuery->bindValue(":altitude", at(line, ALT).toInt());
+      insertVorQuery->bindValue(QStringLiteral(":altitude"), at(line, ALT).toInt());
     else
-      insertVorQuery->bindNullInt(":altitude");
+      insertVorQuery->bindNullInt(QStringLiteral(":altitude"));
   }
 
-  insertVorQuery->bindValue(":lonx", at(line, LONX).toFloat());
-  insertVorQuery->bindValue(":laty", at(line, LATY).toFloat());
+  insertVorQuery->bindValue(QStringLiteral(":lonx"), at(line, LONX).toFloat());
+  insertVorQuery->bindValue(QStringLiteral(":laty"), at(line, LATY).toFloat());
 
   insertVorQuery->exec();
 
@@ -165,35 +165,35 @@ void XpNavReader::writeNdb(const QStringList& line, int curFileId, const XpReade
 
   QString type;
   if(range < 24)
-    type = "CP";
+    type = QStringLiteral("CP");
   else if(range < 40)
-    type = "MH";
+    type = QStringLiteral("MH");
   else if(range < 70)
-    type = "H";
+    type = QStringLiteral("H");
   else
-    type = "HH";
+    type = QStringLiteral("HH");
 
   Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
-  insertNdbQuery->bindValue(":ndb_id", ++curNdbId);
-  insertNdbQuery->bindValue(":file_id", curFileId);
-  insertNdbQuery->bindValue(":ident", at(line, IDENT));
-  insertNdbQuery->bindValue(":name", line.mid(RW, line.size() - 11).join(" "));
-  insertNdbQuery->bindValue(":region", at(line, REGION));
-  insertNdbQuery->bindValue(":type", type);
-  insertNdbQuery->bindValue(":frequency", at(line, FREQ).toInt() * 100);
-  insertNdbQuery->bindValue(":range", range);
-  insertNdbQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT), false /* allIdents */));
-  insertNdbQuery->bindValue(":airport_ident", atAirportIdent(line, AIRPORT));
+  insertNdbQuery->bindValue(QStringLiteral(":ndb_id"), ++curNdbId);
+  insertNdbQuery->bindValue(QStringLiteral(":file_id"), curFileId);
+  insertNdbQuery->bindValue(QStringLiteral(":ident"), at(line, IDENT));
+  insertNdbQuery->bindValue(QStringLiteral(":name"), line.mid(RW, line.size() - 11).join(QStringLiteral(" ")));
+  insertNdbQuery->bindValue(QStringLiteral(":region"), at(line, REGION));
+  insertNdbQuery->bindValue(QStringLiteral(":type"), type);
+  insertNdbQuery->bindValue(QStringLiteral(":frequency"), at(line, FREQ).toInt() * 100);
+  insertNdbQuery->bindValue(QStringLiteral(":range"), range);
+  insertNdbQuery->bindValue(QStringLiteral(":airport_id"), airportIndex->getAirportIdVar(at(line, AIRPORT), false /* allIdents */));
+  insertNdbQuery->bindValue(QStringLiteral(":airport_ident"), atAirportIdent(line, AIRPORT));
 
   // NDBs never have an altitude
   if(at(line, ALT).toInt() != 0)
-    insertNdbQuery->bindValue(":altitude", at(line, ALT).toInt());
+    insertNdbQuery->bindValue(QStringLiteral(":altitude"), at(line, ALT).toInt());
   else
-    insertNdbQuery->bindNullInt(":altitude");
-  insertNdbQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
-  insertNdbQuery->bindValue(":lonx", pos.getLonX());
-  insertNdbQuery->bindValue(":laty", pos.getLatY());
+    insertNdbQuery->bindNullInt(QStringLiteral(":altitude"));
+  insertNdbQuery->bindValue(QStringLiteral(":mag_var"), context.magDecReader->getMagVar(pos));
+  insertNdbQuery->bindValue(QStringLiteral(":lonx"), pos.getLonX());
+  insertNdbQuery->bindValue(QStringLiteral(":laty"), pos.getLatY());
 
   insertNdbQuery->exec();
 
@@ -204,21 +204,21 @@ void XpNavReader::writeMarker(const QStringList& line, int curFileId, NavRowCode
 {
   QString type;
   if(rowCode == OM)
-    type = "OUTER";
+    type = QStringLiteral("OUTER");
   else if(rowCode == MM)
-    type = "MIDDLE";
+    type = QStringLiteral("MIDDLE");
   else if(rowCode == IM)
-    type = "INNER";
+    type = QStringLiteral("INNER");
 
-  insertMarkerQuery->bindValue(":marker_id", ++curMarkerId);
-  insertMarkerQuery->bindValue(":file_id", curFileId);
-  insertMarkerQuery->bindValue(":region", at(line, REGION));
-  insertMarkerQuery->bindValue(":type", type);
-  insertMarkerQuery->bindValue(":ident", at(line, IDENT));
-  insertMarkerQuery->bindValue(":heading", at(line, HDG).toFloat());
-  insertMarkerQuery->bindValue(":altitude", at(line, ALT).toInt());
-  insertMarkerQuery->bindValue(":lonx", at(line, LONX).toFloat());
-  insertMarkerQuery->bindValue(":laty", at(line, LATY).toFloat());
+  insertMarkerQuery->bindValue(QStringLiteral(":marker_id"), ++curMarkerId);
+  insertMarkerQuery->bindValue(QStringLiteral(":file_id"), curFileId);
+  insertMarkerQuery->bindValue(QStringLiteral(":region"), at(line, REGION));
+  insertMarkerQuery->bindValue(QStringLiteral(":type"), type);
+  insertMarkerQuery->bindValue(QStringLiteral(":ident"), at(line, IDENT));
+  insertMarkerQuery->bindValue(QStringLiteral(":heading"), at(line, HDG).toFloat());
+  insertMarkerQuery->bindValue(QStringLiteral(":altitude"), at(line, ALT).toInt());
+  insertMarkerQuery->bindValue(QStringLiteral(":lonx"), at(line, LONX).toFloat());
+  insertMarkerQuery->bindValue(QStringLiteral(":laty"), at(line, LATY).toFloat());
 
   insertMarkerQuery->exec();
 
@@ -241,23 +241,23 @@ QChar XpNavReader::ilsType(const QString& name, bool glideslope)
   QChar type('\0');
 
   // Read type from name
-  if(name == "LOC")
+  if(name == QStringLiteral("LOC"))
     type = '0';
-  else if(name == "SDF")
+  else if(name == QStringLiteral("SDF"))
     type = glideslope ? 'S' : 'F';
-  else if(name == "LDA")
+  else if(name == QStringLiteral("LDA"))
     type = glideslope ? 'L' : 'A';
-  else if(name == "IGS")
+  else if(name == QStringLiteral("IGS"))
     type = 'I';
   else
   {
     if(glideslope)
     {
-      if(name.contains("CAT-III") || name.contains("CAT III") || name.contains("CATIII"))
+      if(name.contains(QStringLiteral("CAT-III")) || name.contains(QStringLiteral("CAT III")) || name.contains(QStringLiteral("CATIII")))
         type = '3';
-      else if(name.contains("CAT-II") || name.contains("CAT II") || name.contains("CATII"))
+      else if(name.contains(QStringLiteral("CAT-II")) || name.contains(QStringLiteral("CAT II")) || name.contains(QStringLiteral("CATII")))
         type = '2';
-      else if(name.contains("CAT-I") || name.contains("CAT I") || name.contains("CATI"))
+      else if(name.contains(QStringLiteral("CAT-I")) || name.contains(QStringLiteral("CAT I")) || name.contains(QStringLiteral("CATI")))
         type = '1';
       else
         type = 'U'; // ILS of unknown category
@@ -290,21 +290,21 @@ void XpNavReader::updateSbasGbasThreshold(const QStringList& line)
   float heading = atools::geo::normalizeCourse(std::fmod(hdg, 1000.f));
   float pitch = std::floor(hdg / 1000.f) / 100.f;
 
-  updateSbasGbasThresholdQuery->bindValue(":id", ilsId);
-  updateSbasGbasThresholdQuery->bindValue(":gs_altitude", at(line, ALT).toInt());
-  updateSbasGbasThresholdQuery->bindValue(":gs_lonx", pos.getLonX());
-  updateSbasGbasThresholdQuery->bindValue(":gs_laty", pos.getLatY());
-  updateSbasGbasThresholdQuery->bindValue(":gs_pitch", pitch);
-  updateSbasGbasThresholdQuery->bindValue(":loc_heading", heading);
-  updateSbasGbasThresholdQuery->bindValue(":type", "T");
-  updateSbasGbasThresholdQuery->bindValue(":provider", at(line, NAME));
-  updateSbasGbasThresholdQuery->bindValue(":lonx", pos.getLonX());
-  updateSbasGbasThresholdQuery->bindValue(":laty", pos.getLatY());
+  updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":id"), ilsId);
+  updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":gs_altitude"), at(line, ALT).toInt());
+  updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":gs_lonx"), pos.getLonX());
+  updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":gs_laty"), pos.getLatY());
+  updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":gs_pitch"), pitch);
+  updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":loc_heading"), heading);
+  updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":type"), QStringLiteral("T"));
+  updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":provider"), at(line, NAME));
+  updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":lonx"), pos.getLonX());
+  updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":laty"), pos.getLatY());
 
   assignIlsGeometry(updateSbasGbasThresholdQuery, pos, heading, ILS_FEATHER_WIDTH_DEG * 2.f);
 
-  // updateSbasGbasThresholdQuery->bindValue(":gs_range", atools::geo::meterToFeet(at(line, RANGE).toInt()));
-  // updateSbasGbasThresholdQuery->bindValue(":range", at(line, RANGE).toInt());
+  // updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":gs_range"), atools::geo::meterToFeet(at(line, RANGE).toInt()));
+  // updateSbasGbasThresholdQuery->bindValue(QStringLiteral(":range"), at(line, RANGE).toInt());
 
   updateSbasGbasThresholdQuery->exec();
   updateSbasGbasThresholdQuery->clearBoundValues();
@@ -328,17 +328,17 @@ void XpNavReader::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
   const QString& runwayName = at(line, RW);
   Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
-  insertIlsQuery->bindValue(":ils_id", curIlsId);
+  insertIlsQuery->bindValue(QStringLiteral(":ils_id"), curIlsId);
 
-  ilsName = line.mid(NAME).join(" ").simplified().toUpper();
+  ilsName = line.mid(NAME).join(QStringLiteral(" ")).simplified().toUpper();
   float heading = at(line, HDG).toFloat();
   float width = 0.f;
 
   if(rowCode == SBAS_GBAS_FINAL)
   {
     /*  14 Final approach path alignment point of an SBAS or GBAS approach path */
-    insertIlsQuery->bindValue(":perf_indicator", at(line, NAME));
-    insertIlsQuery->bindValue(":frequency", at(line, FREQ).toInt());
+    insertIlsQuery->bindValue(QStringLiteral(":perf_indicator"), at(line, NAME));
+    insertIlsQuery->bindValue(QStringLiteral(":frequency"), at(line, FREQ).toInt());
     width = ILS_FEATHER_WIDTH_DEG * 2.f;
   }
   else if(rowCode == GBAS)
@@ -349,38 +349,38 @@ void XpNavReader::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
       pos = rwpos;
     // else Use station position as a fall back
 
-    insertIlsQuery->bindValue(":frequency", at(line, FREQ).toInt());
-    insertIlsQuery->bindValue(":type", "G");
-    insertIlsQuery->bindValue(":gs_pitch", std::floor(at(line, HDG).toFloat() / 1000.f) / 100.f);
+    insertIlsQuery->bindValue(QStringLiteral(":frequency"), at(line, FREQ).toInt());
+    insertIlsQuery->bindValue(QStringLiteral(":type"), QStringLiteral("G"));
+    insertIlsQuery->bindValue(QStringLiteral(":gs_pitch"), std::floor(at(line, HDG).toFloat() / 1000.f) / 100.f);
     heading = atools::geo::normalizeCourse(std::fmod(heading, 1000.f));
     width = RNV_FEATHER_WIDTH_DEG;
   }
   else
   {
     // Normal ILS, SDF, LOC, etc.
-    insertIlsQuery->bindValue(":frequency", at(line, FREQ).toInt() * 10);
+    insertIlsQuery->bindValue(QStringLiteral(":frequency"), at(line, FREQ).toInt() * 10);
 
     // Is probably updated later in updateIlsGlideslope()
-    insertIlsQuery->bindValue(":type", ilsType(ilsName, false /* glideslope */));
-    insertIlsQuery->bindValue(":range", at(line, RANGE).toInt());
+    insertIlsQuery->bindValue(QStringLiteral(":type"), ilsType(ilsName, false /* glideslope */));
+    insertIlsQuery->bindValue(QStringLiteral(":range"), at(line, RANGE).toInt());
     heading = atools::geo::normalizeCourse(heading);
     width = ILS_FEATHER_WIDTH_DEG;
   }
 
-  insertIlsQuery->bindValue(":loc_heading", heading);
-  insertIlsQuery->bindValue(":ident", ilsIdent);
-  insertIlsQuery->bindValue(":loc_airport_ident", airportIdent);
-  insertIlsQuery->bindValue(":region", at(line, REGION));
-  insertIlsQuery->bindValue(":loc_runway_name", runwayName);
-  insertIlsQuery->bindValue(":name", ilsName);
-  insertIlsQuery->bindValue(":loc_runway_end_id", airportIndex->getRunwayEndIdVar(airportIdent, runwayName, false /* allAirportIdents */));
-  insertIlsQuery->bindValue(":altitude", at(line, ALT).toInt());
-  insertIlsQuery->bindValue(":lonx", pos.getLonX());
-  insertIlsQuery->bindValue(":laty", pos.getLatY());
+  insertIlsQuery->bindValue(QStringLiteral(":loc_heading"), heading);
+  insertIlsQuery->bindValue(QStringLiteral(":ident"), ilsIdent);
+  insertIlsQuery->bindValue(QStringLiteral(":loc_airport_ident"), airportIdent);
+  insertIlsQuery->bindValue(QStringLiteral(":region"), at(line, REGION));
+  insertIlsQuery->bindValue(QStringLiteral(":loc_runway_name"), runwayName);
+  insertIlsQuery->bindValue(QStringLiteral(":name"), ilsName);
+  insertIlsQuery->bindValue(QStringLiteral(":loc_runway_end_id"), airportIndex->getRunwayEndIdVar(airportIdent, runwayName, false /* allAirportIdents */));
+  insertIlsQuery->bindValue(QStringLiteral(":altitude"), at(line, ALT).toInt());
+  insertIlsQuery->bindValue(QStringLiteral(":lonx"), pos.getLonX());
+  insertIlsQuery->bindValue(QStringLiteral(":laty"), pos.getLatY());
 
-  insertIlsQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
-  insertIlsQuery->bindNullFloat(":loc_width");
-  insertIlsQuery->bindValue(":has_backcourse", 0);
+  insertIlsQuery->bindValue(QStringLiteral(":mag_var"), context.magDecReader->getMagVar(pos));
+  insertIlsQuery->bindNullFloat(QStringLiteral(":loc_width"));
+  insertIlsQuery->bindValue(QStringLiteral(":has_backcourse"), 0);
 
   if(rowCode != SBAS_GBAS_FINAL)
     assignIlsGeometry(insertIlsQuery, pos, heading, width);
@@ -395,12 +395,12 @@ void XpNavReader::assignIlsGeometry(atools::sql::SqlQuery *query, const atools::
   Pos p1, p2, pmid;
   atools::fs::util::calculateIlsGeometry(pos, heading, width, atools::fs::util::DEFAULT_FEATHER_LEN_NM, p1, p2, pmid);
 
-  query->bindValue(":end1_lonx", p1.getLonX());
-  query->bindValue(":end1_laty", p1.getLatY());
-  query->bindValue(":end_mid_lonx", pmid.getLonX());
-  query->bindValue(":end_mid_laty", pmid.getLatY());
-  query->bindValue(":end2_lonx", p2.getLonX());
-  query->bindValue(":end2_laty", p2.getLatY());
+  query->bindValue(QStringLiteral(":end1_lonx"), p1.getLonX());
+  query->bindValue(QStringLiteral(":end1_laty"), p1.getLatY());
+  query->bindValue(QStringLiteral(":end_mid_lonx"), pmid.getLonX());
+  query->bindValue(QStringLiteral(":end_mid_laty"), pmid.getLatY());
+  query->bindValue(QStringLiteral(":end2_lonx"), p2.getLonX());
+  query->bindValue(QStringLiteral(":end2_laty"), p2.getLatY());
 }
 
 void XpNavReader::updateIlsGlideslope(const QStringList& line)
@@ -415,13 +415,13 @@ void XpNavReader::updateIlsGlideslope(const QStringList& line)
 
   int ilsId = airportIndex->getAirportIlsId(airportIdent, airportRegion, ilsIdent);
 
-  updateIlsGsTypeQuery->bindValue(":id", ilsId);
-  updateIlsGsTypeQuery->bindValue(":gs_pitch", std::floor(at(line, HDG).toFloat() / 1000.f) / 100.f);
-  updateIlsGsTypeQuery->bindValue(":gs_range", at(line, RANGE).toInt());
-  updateIlsGsTypeQuery->bindValue(":gs_altitude", at(line, ALT).toInt());
-  updateIlsGsTypeQuery->bindValue(":gs_lonx", at(line, LONX).toFloat());
-  updateIlsGsTypeQuery->bindValue(":gs_laty", at(line, LATY).toFloat());
-  updateIlsGsTypeQuery->bindValue(":type", ilsType(ilsName, true /* glideslope */)); // Update cat since gs is now available
+  updateIlsGsTypeQuery->bindValue(QStringLiteral(":id"), ilsId);
+  updateIlsGsTypeQuery->bindValue(QStringLiteral(":gs_pitch"), std::floor(at(line, HDG).toFloat() / 1000.f) / 100.f);
+  updateIlsGsTypeQuery->bindValue(QStringLiteral(":gs_range"), at(line, RANGE).toInt());
+  updateIlsGsTypeQuery->bindValue(QStringLiteral(":gs_altitude"), at(line, ALT).toInt());
+  updateIlsGsTypeQuery->bindValue(QStringLiteral(":gs_lonx"), at(line, LONX).toFloat());
+  updateIlsGsTypeQuery->bindValue(QStringLiteral(":gs_laty"), at(line, LATY).toFloat());
+  updateIlsGsTypeQuery->bindValue(QStringLiteral(":type"), ilsType(ilsName, true /* glideslope */)); // Update cat since gs is now available
   updateIlsGsTypeQuery->exec();
   updateIlsGsTypeQuery->clearBoundValues();
 }
@@ -438,11 +438,11 @@ void XpNavReader::updateIlsDme(const QStringList& line)
 
   int ilsId = airportIndex->getAirportIlsId(airportIdent, airportRegion, ilsIdent);
 
-  updateIlsDmeQuery->bindValue(":id", ilsId);
-  updateIlsDmeQuery->bindValue(":dme_range", at(line, RANGE).toInt());
-  updateIlsDmeQuery->bindValue(":dme_altitude", at(line, ALT).toInt());
-  updateIlsDmeQuery->bindValue(":dme_lonx", at(line, LONX).toFloat());
-  updateIlsDmeQuery->bindValue(":dme_laty", at(line, LATY).toFloat());
+  updateIlsDmeQuery->bindValue(QStringLiteral(":id"), ilsId);
+  updateIlsDmeQuery->bindValue(QStringLiteral(":dme_range"), at(line, RANGE).toInt());
+  updateIlsDmeQuery->bindValue(QStringLiteral(":dme_altitude"), at(line, ALT).toInt());
+  updateIlsDmeQuery->bindValue(QStringLiteral(":dme_lonx"), at(line, LONX).toFloat());
+  updateIlsDmeQuery->bindValue(QStringLiteral(":dme_laty"), at(line, LATY).toFloat());
   updateIlsDmeQuery->exec();
   updateIlsDmeQuery->clearBoundValues();
 }
@@ -507,7 +507,7 @@ void XpNavReader::read(const QStringList& line, const XpReaderContext& context)
     case DME:
       if(options.isIncludedNavDbObject(atools::fs::type::ILS))
       {
-        if(line.constLast() == "DME-ILS")
+        if(line.constLast() == QStringLiteral("DME-ILS"))
           updateIlsDme(line);
       }
       break;
@@ -516,7 +516,7 @@ void XpNavReader::read(const QStringList& line, const XpReaderContext& context)
     case DME_ONLY:
       if(options.isIncludedNavDbObject(atools::fs::type::ILS))
       {
-        if(line.constLast() == "DME-ILS")
+        if(line.constLast() == QStringLiteral("DME-ILS"))
           updateIlsDme(line);
         else
           writeVor(line, true, context.curFileId);

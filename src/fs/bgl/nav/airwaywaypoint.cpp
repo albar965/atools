@@ -75,19 +75,19 @@ QString AirwayWaypoint::airwayWaypointTypeToStr(nav::AirwayWaypointType type)
   switch(type)
   {
     case nav::AIRWAY_WP_NONE:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case nav::AIRWAY_WP_NDB:
-      return "N";
+      return QStringLiteral("N");
 
     case nav::AIRWAY_WP_VOR:
-      return "V";
+      return QStringLiteral("V");
 
     case nav::AIRWAY_WP_OTHER:
-      return "O";
+      return QStringLiteral("O");
   }
   qWarning().nospace().noquote() << "Invalid airway waypoint type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QDebug operator<<(QDebug out, const AirwayWaypoint& record)

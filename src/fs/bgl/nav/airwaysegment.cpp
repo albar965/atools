@@ -30,19 +30,19 @@ QString AirwaySegment::airwayTypeToStr(nav::AirwayType type)
   switch(type)
   {
     case nav::NONE:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case nav::VICTOR:
-      return "V";
+      return QStringLiteral("V");
 
     case nav::JET:
-      return "J";
+      return QStringLiteral("J");
 
     case nav::BOTH:
-      return "B";
+      return QStringLiteral("B");
   }
   qWarning().nospace().noquote() << "Invalid airway type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 AirwaySegment::AirwaySegment(const atools::fs::NavDatabaseOptions *options, BinaryStream *stream, const atools::fs::bgl::Waypoint& waypoint)

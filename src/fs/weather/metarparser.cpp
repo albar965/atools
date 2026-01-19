@@ -570,8 +570,8 @@ QString MetarParser::buildMetarString(const QStringList& remarks) const
   // Temperature ====================================
   if(_temp < INVALID_METAR_VALUE && _dewp < INVALID_METAR_VALUE)
     metarStr.append(QStringLiteral("%1%2/%3%4").
-                    arg(_temp <= -0.5f ? "M" : QString()).arg(std::abs(_temp), 2, 'f', 0, QChar('0')).
-                    arg(_dewp <= -0.5f ? "M" : QString()).arg(std::abs(_dewp), 2, 'f', 0, QChar('0')));
+                    arg(_temp <= -0.5f ? QStringLiteral("M") : QString()).arg(std::abs(_temp), 2, 'f', 0, QChar('0')).
+                    arg(_dewp <= -0.5f ? QStringLiteral("M") : QString()).arg(std::abs(_dewp), 2, 'f', 0, QChar('0')));
 
   // Pressure =============================================
   if(_pressure > 0.f && _pressure < INVALID_METAR_VALUE)
@@ -2065,16 +2065,16 @@ QString MetarCloud::getCoverageStringShort(MetarCloud::Coverage cloudCoverage)
       return QString();
 
     case atools::fs::weather::MetarCloud::COVERAGE_FEW:
-      return "FEW";
+      return QStringLiteral("FEW");
 
     case atools::fs::weather::MetarCloud::COVERAGE_SCATTERED:
-      return "SCT";
+      return QStringLiteral("SCT");
 
     case atools::fs::weather::MetarCloud::COVERAGE_BROKEN:
-      return "BKN";
+      return QStringLiteral("BKN");
 
     case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
-      return "OVC";
+      return QStringLiteral("OVC");
   }
   return QString();
 
@@ -2082,19 +2082,19 @@ QString MetarCloud::getCoverageStringShort(MetarCloud::Coverage cloudCoverage)
 
 MetarCloud::Coverage MetarCloud::getCoverage(const QString& coverage)
 {
-  if(coverage == QLatin1String("clear"))
+  if(coverage == QStringLiteral("clear"))
     return COVERAGE_CLEAR;
 
-  if(coverage == QLatin1String("few"))
+  if(coverage == QStringLiteral("few"))
     return COVERAGE_FEW;
 
-  if(coverage == QLatin1String("scattered"))
+  if(coverage == QStringLiteral("scattered"))
     return COVERAGE_SCATTERED;
 
-  if(coverage == QLatin1String("broken"))
+  if(coverage == QStringLiteral("broken"))
     return COVERAGE_BROKEN;
 
-  if(coverage == QLatin1String("overcast"))
+  if(coverage == QStringLiteral("overcast"))
     return COVERAGE_OVERCAST;
 
   return COVERAGE_NIL;

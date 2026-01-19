@@ -17,9 +17,9 @@
 
 #include "fs/xp/xpcifpreader.h"
 
+#include "atools.h"
 #include "fs/common/airportindex.h"
 #include "fs/common/procedurewriter.h"
- #include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -90,7 +90,7 @@ void XpCifpReader::read(const QStringList& line, const XpReaderContext& context)
     return;
 
   QString rowCode = line.at(PROC_ROW_CODE);
-  if(!(rowCode == "SID" || rowCode == "STAR" || rowCode == "APPCH"))
+  if(!(rowCode == QStringLiteral("SID") || rowCode == QStringLiteral("STAR") || rowCode == QStringLiteral("APPCH")))
     // Skip all unknown row codes
     return;
 
@@ -140,7 +140,7 @@ void XpCifpReader::read(const QStringList& line, const XpReaderContext& context)
 
   procInput.rteHoldTime = procInput.rteHoldDist = 0.f;
   QString distTime = at(line, RTE_DIST_HOLD_DIST_TIME).trimmed();
-  if(distTime.startsWith("T"))
+  if(distTime.startsWith(QStringLiteral("T")))
     // time minutes/10
     procInput.rteHoldTime = distTime.mid(1).toFloat() / 10.f;
   else

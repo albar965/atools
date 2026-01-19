@@ -312,7 +312,7 @@ QVariant surfaceToDb(Surface surface)
   switch(surface)
   {
     case CONCRETE:
-      return "C";
+      return QStringLiteral("C");
 
     case WRIGHT_FLYER_TRACK:
     case HARD_TURF:
@@ -321,7 +321,7 @@ QVariant surfaceToDb(Surface surface)
     case LONG_GRASS:
     case GRASS:
     case FOREST:
-      return "G"; // Grass
+      return QStringLiteral("G"); // Grass
 
     case WATER_FSX:
     case OCEAN:
@@ -330,60 +330,60 @@ QVariant surfaceToDb(Surface surface)
     case RIVER:
     case WASTE_WATER:
     case WATER:
-      return "W"; // Water
+      return QStringLiteral("W"); // Water
 
     case URBAN:
     case ASPHALT:
-      return "A"; // Asphalt
+      return QStringLiteral("A"); // Asphalt
 
     case SNOW:
-      return "SN";
+      return QStringLiteral("SN");
 
     case ICE:
-      return "I";
+      return QStringLiteral("I");
 
     case DIRT:
-      return "D";
+      return QStringLiteral("D");
 
     case CORAL:
-      return "CR";
+      return QStringLiteral("CR");
 
     case GRAVEL:
-      return "GR";
+      return QStringLiteral("GR");
 
     case PAINT:
     case OIL_TREATED:
-      return "OT";
+      return QStringLiteral("OT");
 
     case STEEL_MATS:
-      return "SM";
+      return QStringLiteral("SM");
 
     case BITUMINUS:
-      return "B";
+      return QStringLiteral("B");
 
     case BRICK:
-      return "BR";
+      return QStringLiteral("BR");
 
     case MACADAM:
-      return "M";
+      return QStringLiteral("M");
 
     case PLANKS:
-      return "PL";
+      return QStringLiteral("PL");
 
     case SAND:
-      return "S";
+      return QStringLiteral("S");
 
     case SHALE:
-      return "SH";
+      return QStringLiteral("SH");
 
     case TARMAC:
-      return "T";
+      return QStringLiteral("T");
 
     case UNKNOWN:
     case UNDEFINED:
-      return "UNKNOWN";
+      return QStringLiteral("UNKNOWN");
   }
-  return "UNKNOWN";
+  return QStringLiteral("UNKNOWN");
 }
 
 size_t qHash(const LegFacility& leg)

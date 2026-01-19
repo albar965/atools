@@ -58,11 +58,11 @@ QString waypointTypeToRouteDb(char type)
       return QString(QChar(type));
 
     case 'W':
-      return "O";
+      return QStringLiteral("O");
   }
 
   qWarning() << Q_FUNC_INFO << "Invalid airway waypoint type " << type;
-  return "\0";
+  return QStringLiteral("\0");
 }
 
 QVariant vorTypeToDb(VorType type, bool isNav, bool isTacan)
@@ -81,18 +81,18 @@ QVariant vorTypeToDb(VorType type, bool isNav, bool isTacan)
       switch(type)
       {
         case TERMINAL:
-          return "VTT";
+          return QStringLiteral("VTT");
 
         case LOW_ALTITUDE:
         case LOW_ALT:
-          return "VTL";
+          return QStringLiteral("VTL");
 
         case HIGH_ALTITUDE:
         case HIGH_ALT:
-          return "VTH";
+          return QStringLiteral("VTH");
 
         case VOR_UNKNOWN:
-          return "VT";
+          return QStringLiteral("VT");
 
         case VOT:
         case ILS:
@@ -101,7 +101,7 @@ QVariant vorTypeToDb(VorType type, bool isNav, bool isTacan)
     }
     else
       // TACAN
-      return "TC";
+      return QStringLiteral("TC");
   }
   else
   {
@@ -109,21 +109,21 @@ QVariant vorTypeToDb(VorType type, bool isNav, bool isTacan)
     switch(type)
     {
       case TERMINAL:
-        return "T";
+        return QStringLiteral("T");
 
       case LOW_ALTITUDE:
       case LOW_ALT:
-        return "L";
+        return QStringLiteral("L");
 
       case HIGH_ALTITUDE:
       case HIGH_ALT:
-        return "H";
+        return QStringLiteral("H");
 
       case VOT:
-        return "V";
+        return QStringLiteral("V");
 
       case ILS:
-        return "I";
+        return QStringLiteral("I");
 
       case VOR_UNKNOWN:
         break;
@@ -157,30 +157,30 @@ QVariant lsTypeToDb(LsCategory type)
   switch(type)
   {
     case LOCALIZER:
-      return "0";
+      return QStringLiteral("0");
 
     case CAT1:
-      return "1";
+      return QStringLiteral("1");
 
     case CAT2:
-      return "2";
+      return QStringLiteral("2");
 
     case CAT3:
-      return "3";
+      return QStringLiteral("3");
 
     case IGS:
-      return "I";
+      return QStringLiteral("I");
 
     case LDA_WITH_GS:
-      return "L";
+      return QStringLiteral("L");
     case LDA_NO_GS:
-      return "A";
+      return QStringLiteral("A");
 
     case SDF_WITH_GS:
-      return "S";
+      return QStringLiteral("S");
 
     case SDF_NO_GS:
-      return "F";
+      return QStringLiteral("F");
 
     case NONE:
       break;

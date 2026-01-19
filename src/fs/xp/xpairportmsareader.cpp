@@ -128,17 +128,17 @@ void XpAirportMsaReader::read(const QStringList& line, const XpReaderContext& co
       navIdent = airportIdent;
       magvar = context.magDecReader->getMagVar(airportPos);
       center = airportPos;
-      navType = "A";
+      navType = QStringLiteral("A");
       break;
 
     case MSA_WAYPOINT:
       fetchWaypoint(navIdent, region, navId, magvar, center);
-      navType = "W";
+      navType = QStringLiteral("W");
       break;
 
     case MSA_NDB:
       fetchNdb(navIdent, region, navId, magvar, center);
-      navType = "N";
+      navType = QStringLiteral("N");
       break;
 
     case MSA_VOR: // or ILS
@@ -146,10 +146,10 @@ void XpAirportMsaReader::read(const QStringList& line, const XpReaderContext& co
       if(navId == -1)
       {
         fetchIls(navIdent, region, navId, magvar, center);
-        navType = "I";
+        navType = QStringLiteral("I");
       }
       else
-        navType = "V";
+        navType = QStringLiteral("V");
 
       break;
 
@@ -172,7 +172,7 @@ void XpAirportMsaReader::read(const QStringList& line, const XpReaderContext& co
 
       center = airportIndex->getRunwayEndPos(airportIdent, navIdent, false /* allAirportIdents */);
       magvar = context.magDecReader->getMagVar(airportPos);
-      navType = "R";
+      navType = QStringLiteral("R");
       break;
   }
 
@@ -200,48 +200,48 @@ void XpAirportMsaReader::read(const QStringList& line, const XpReaderContext& co
     }
 
     // Calculate geometry for arcs, label points and bearing endpoints to speed up drawing
-    bool trueBearing = at(line, MAG_TRUE) == "T";
+    bool trueBearing = at(line, MAG_TRUE) == QStringLiteral("T");
     geo.calculate(center, radius, magvar, trueBearing);
 
     if(geo.isValid())
     {
-      insertQuery->bindValue(":airport_msa_id", ++curMsaId);
-      insertQuery->bindValue(":file_id", context.curFileId);
-      insertQuery->bindValue(":airport_id", airportId);
-      insertQuery->bindValue(":airport_ident", airportIdent);
-      insertQuery->bindValue(":nav_id", navId);
-      insertQuery->bindValue(":nav_ident", navIdent);
-      insertQuery->bindValue(":nav_type", navType); // N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
+      insertQuery->bindValue(QStringLiteral(":airport_msa_id"), ++curMsaId);
+      insertQuery->bindValue(QStringLiteral(":file_id"), context.curFileId);
+      insertQuery->bindValue(QStringLiteral(":airport_id"), airportId);
+      insertQuery->bindValue(QStringLiteral(":airport_ident"), airportIdent);
+      insertQuery->bindValue(QStringLiteral(":nav_id"), navId);
+      insertQuery->bindValue(QStringLiteral(":nav_ident"), navIdent);
+      insertQuery->bindValue(QStringLiteral(":nav_type"), navType); // N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
 
-      if(navType == "V")
+      if(navType == QStringLiteral("V"))
       {
-        insertQuery->bindValue(":vor_type", vorType);
-        insertQuery->bindValue(":vor_dme_only", vorDmeOnly);
-        insertQuery->bindValue(":vor_has_dme", vorHasDme);
+        insertQuery->bindValue(QStringLiteral(":vor_type"), vorType);
+        insertQuery->bindValue(QStringLiteral(":vor_dme_only"), vorDmeOnly);
+        insertQuery->bindValue(QStringLiteral(":vor_has_dme"), vorHasDme);
       }
       else
       {
-        insertQuery->bindNullInt(":vor_type");
-        insertQuery->bindNullInt(":vor_dme_only");
-        insertQuery->bindNullInt(":vor_has_dme");
+        insertQuery->bindNullInt(QStringLiteral(":vor_type"));
+        insertQuery->bindNullInt(QStringLiteral(":vor_dme_only"));
+        insertQuery->bindNullInt(QStringLiteral(":vor_has_dme"));
       }
 
-      insertQuery->bindValue(":region", region);
-      insertQuery->bindValue(":true_bearing", trueBearing);
-      insertQuery->bindValue(":mag_var", magvar);
-      insertQuery->bindValue(":radius", radius);
+      insertQuery->bindValue(QStringLiteral(":region"), region);
+      insertQuery->bindValue(QStringLiteral(":true_bearing"), trueBearing);
+      insertQuery->bindValue(QStringLiteral(":mag_var"), magvar);
+      insertQuery->bindValue(QStringLiteral(":radius"), radius);
 
       // Store bounding rect to simplify queries
       const geo::Rect& bounding = geo.getBoundingRect();
-      insertQuery->bindValue(":left_lonx", bounding.getTopLeft().getLonX());
-      insertQuery->bindValue(":top_laty", bounding.getTopLeft().getLatY());
-      insertQuery->bindValue(":right_lonx", bounding.getBottomRight().getLonX());
-      insertQuery->bindValue(":bottom_laty", bounding.getBottomRight().getLatY());
+      insertQuery->bindValue(QStringLiteral(":left_lonx"), bounding.getTopLeft().getLonX());
+      insertQuery->bindValue(QStringLiteral(":top_laty"), bounding.getTopLeft().getLatY());
+      insertQuery->bindValue(QStringLiteral(":right_lonx"), bounding.getBottomRight().getLonX());
+      insertQuery->bindValue(QStringLiteral(":bottom_laty"), bounding.getBottomRight().getLatY());
 
-      insertQuery->bindValue(":lonx", center.getLonX());
-      insertQuery->bindValue(":laty", center.getLatY());
+      insertQuery->bindValue(QStringLiteral(":lonx"), center.getLonX());
+      insertQuery->bindValue(QStringLiteral(":laty"), center.getLatY());
 
-      insertQuery->bindValue(":geometry", geo.writeToByteArray());
+      insertQuery->bindValue(QStringLiteral(":geometry"), geo.writeToByteArray());
 
       insertQuery->exec();
       insertQuery->clearBoundValues();
@@ -260,7 +260,7 @@ void XpAirportMsaReader::initQueries()
   SqlUtil util(&db);
 
   insertQuery = new SqlQuery(db);
-  insertQuery->prepare(util.buildInsertStatement("airport_msa", QString(), {"multiple_code"}));
+  insertQuery->prepare(util.buildInsertStatement(QStringLiteral("airport_msaQStringLiteral("), QString(), {QStringLiteral(")multiple_code")}));
 
   initNavQueries();
 }

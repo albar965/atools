@@ -371,27 +371,27 @@ void ProcedureWriter::writeProcedureLeg(const ProcedureInput& line)
 
 void ProcedureWriter::assignApproachIds(ProcedureWriter::Procedure& proc)
 {
-  proc.record.setValue(":approach_id", ++curApproachId);
+  proc.record.setValue(QStringLiteral(":approach_id"), ++curApproachId);
 }
 
 void ProcedureWriter::assignApproachLegIds(sql::SqlRecordList& records)
 {
   for(SqlRecord& rec : records)
   {
-    rec.setValue(":approach_leg_id", ++curApproachLegId);
-    rec.setValue(":approach_id", curApproachId);
+    rec.setValue(QStringLiteral(":approach_leg_id"), ++curApproachLegId);
+    rec.setValue(QStringLiteral(":approach_id"), curApproachId);
   }
 }
 
 void ProcedureWriter::assignTransitionIds(ProcedureWriter::Procedure& proc)
 {
-  proc.record.setValue(":transition_id", ++curTransitionId);
-  proc.record.setValue(":approach_id", curApproachId);
+  proc.record.setValue(QStringLiteral(":transition_id"), ++curTransitionId);
+  proc.record.setValue(QStringLiteral(":approach_id"), curApproachId);
 
   for(SqlRecord& rec : proc.legRecords)
   {
-    rec.setValue(":transition_leg_id", ++curTransitionLegId);
-    rec.setValue(":transition_id", curTransitionId);
+    rec.setValue(QStringLiteral(":transition_leg_id"), ++curTransitionLegId);
+    rec.setValue(QStringLiteral(":transition_id"), curTransitionId);
   }
 }
 
@@ -413,7 +413,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
       // Collect flags from legs
       for(const SqlRecord& legRec : std::as_const(appr.legRecords))
       {
-        if(legRec.valueFloat(":vertical_angle", 0.f) < 0.1f)
+        if(legRec.valueFloat(QStringLiteral(":vertical_angle"), 0.f) < 0.1f)
           appr.record.setValue(":has_vertical_angle", 1);
         if(legRec.valueFloat(":rnp", 0.f) > 0.f)
           appr.record.setValue(":has_rnp", 1);
@@ -477,7 +477,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
         sidCommon = approaches.takeLast();
 
         // Remove the IF of the common route
-        if(sidCommon.legRecords.constFirst().value(":type") == "IF")
+        if(sidCommon.legRecords.constFirst().value(QStringLiteral(":type")) == QStringLiteral("IF"))
           sidCommon.legRecords.removeFirst();
       }
 
@@ -514,7 +514,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
           insertApproachLegQuery->bindAndExecRecords(starCommon.legRecords);
 
           // Remove the IF of the STAR which will be replaced by the TF of the common route
-          if(appr.legRecords.constFirst().value(":type") == "IF")
+          if(appr.legRecords.constFirst().value(QStringLiteral(":type")) == QStringLiteral("IF"))
             appr.legRecords.removeFirst();
         }
 
@@ -553,20 +553,20 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
 
   // Orphaned procedures where airport is not present in simulator - mostly X-Plane
   if(line.airportId == -1)
-    rec.setNull(":airport_id");
+    rec.setNull(QStringLiteral(":airport_id"));
   else
-    rec.setValue(":airport_id", line.airportId);
+    rec.setValue(QStringLiteral(":airport_id"), line.airportId);
 
   if(line.airportIdent.isEmpty())
-    rec.setNull(":airport_ident");
+    rec.setNull(QStringLiteral(":airport_ident"));
   else
-    rec.setValue(":airport_ident", line.airportIdent);
+    rec.setValue(QStringLiteral(":airport_ident"), line.airportIdent);
 
   QString suffix, rwy;
   QString apprIdent = line.sidStarAppIdent.trimmed();
 
   if(curRowCode == rc::APPROACH)
-    rec.setValue(":arinc_name", apprIdent);
+    rec.setValue(QStringLiteral(":arinc_name"), apprIdent);
 
   bool commonRoute = false;
 
@@ -574,7 +574,7 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
   if(curRowCode == rc::SID || curRowCode == rc::STAR)
   {
     rwy = sidStarRunwayNameAndSuffix(line);
-    rec.setValue(":arinc_name", line.transIdent);
+    rec.setValue(QStringLiteral(":arinc_name"), line.transIdent);
 
     if(curRowCode == rc::SID)
       commonRoute = atools::contains(static_cast<rt::SidRouteType>(curRouteType), rt::SID_COMMON);
@@ -589,15 +589,15 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
   QString type = procedureType(line);
   if(curRowCode == rc::STAR)
   {
-    rec.setValue(":suffix", "A");
-    rec.setValue(":has_gps_overlay", 1);
-    rec.setValue(":type", "GPS");
+    rec.setValue(QStringLiteral(":suffix"), QStringLiteral("A"));
+    rec.setValue(QStringLiteral(":has_gps_overlay"), 1);
+    rec.setValue(QStringLiteral(":type"), QStringLiteral("GPS"));
   }
   else if(curRowCode == rc::SID)
   {
-    rec.setValue(":suffix", "D");
-    rec.setValue(":has_gps_overlay", 1);
-    rec.setValue(":type", "GPS");
+    rec.setValue(QStringLiteral(":suffix"), QStringLiteral("D"));
+    rec.setValue(QStringLiteral(":has_gps_overlay"), 1);
+    rec.setValue(QStringLiteral(":type"), QStringLiteral("GPS"));
   }
   else
   {
@@ -616,35 +616,37 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
 
     // GPS overlay flag
     QString gpsIndicator = line.gnssFmsIndicator.trimmed();
-    rec.setValue(":has_gps_overlay", type != "GPS" && !gpsIndicator.isEmpty() && gpsIndicator != "0" && gpsIndicator != "U");
-    rec.setValue(":suffix", suffix);
-    rec.setValue(":type", type);
+    rec.setValue(QStringLiteral(":has_gps_overlay"),
+                 type != QStringLiteral("GPS") && !gpsIndicator.isEmpty() && gpsIndicator != QStringLiteral("0") &&
+                 gpsIndicator != QStringLiteral("U"));
+    rec.setValue(QStringLiteral(":suffix"), suffix);
+    rec.setValue(QStringLiteral(":type"), type);
   }
 
   rwy = rwy.trimmed();
   if(rwy.isEmpty())
   {
-    rec.setValue(":runway_name", QVariant(QMetaType::fromType<QString>()));
-    rec.setValue(":runway_end_id", QVariant(QMetaType::fromType<int>()));
+    rec.setValue(QStringLiteral(":runway_name"), QVariant(QMetaType::fromType<QString>()));
+    rec.setValue(QStringLiteral(":runway_end_id"), QVariant(QMetaType::fromType<int>()));
   }
   else
   {
-    rec.setValue(":runway_name", rwy);
-    rec.setValue(":runway_end_id", airportIndex->getRunwayEndIdVar(line.airportId, rwy));
+    rec.setValue(QStringLiteral(":runway_name"), rwy);
+    rec.setValue(QStringLiteral(":runway_end_id"), airportIndex->getRunwayEndIdVar(line.airportId, rwy));
   }
 
   NavIdInfo navInfo = navaidTypeFix(line);
   // Might be reset later when writing the FAP leg
-  rec.setValue(":fix_type", navInfo.type);
+  rec.setValue(QStringLiteral(":fix_type"), navInfo.type);
 
   if(curRouteType == rc::APPROACH)
-    rec.setValue(":fix_ident", line.fixIdent);
+    rec.setValue(QStringLiteral(":fix_ident"), line.fixIdent);
   else // SID and STAR
-    rec.setValue(":fix_ident", line.sidStarAppIdent.trimmed());
+    rec.setValue(QStringLiteral(":fix_ident"), line.sidStarAppIdent.trimmed());
 
-  rec.setValue(":fix_region", navInfo.region);
+  rec.setValue(QStringLiteral(":fix_region"), navInfo.region);
 
-  rec.setValue(":aircraft_category", line.aircraftCategory);
+  rec.setValue(QStringLiteral(":aircraft_category"), line.aircraftCategory);
 
   approaches.append(Procedure(curRowCode, rec, commonRoute, line.sidStarAppIdent.trimmed()));
 
@@ -669,19 +671,19 @@ void ProcedureWriter::writeApproachLeg(const ProcedureInput& line)
     {
       NavIdInfo fafInfo = navaidTypeFix(line);
       // FAF - use this one to set the approach name
-      approaches.last().record.setValue(":fix_type", fafInfo.type);
-      approaches.last().record.setValue(":fix_ident", line.fixIdent);
-      approaches.last().record.setValue(":fix_region", fafInfo.region);
+      approaches.last().record.setValue(QStringLiteral(":fix_type"), fafInfo.type);
+      approaches.last().record.setValue(QStringLiteral(":fix_ident"), line.fixIdent);
+      approaches.last().record.setValue(QStringLiteral(":fix_region"), fafInfo.region);
     }
 
     if(waypointDescr.at(3) != QChar(' ') && curRowCode == rc::APPROACH)
-      rec.setValue(":approach_fix_type", waypointDescr.at(3));
+      rec.setValue(QStringLiteral(":approach_fix_type"), waypointDescr.at(3));
   }
 
   if(!writingMissedApproach)
     // First missed approach leg - remember state
     writingMissedApproach = waypointDescr.size() > 2 && waypointDescr.at(2) == 'M';
-  rec.setValue(":is_missed", writingMissedApproach);
+  rec.setValue(QStringLiteral(":is_missed"), writingMissedApproach);
 
   bindLeg(line, rec);
 
@@ -694,11 +696,11 @@ void ProcedureWriter::writeTransition(const ProcedureInput& line)
   SqlRecord rec(TRANSITION_RECORD);
 
   NavIdInfo navInfo = navaidTypeFix(line);
-  rec.setValue(":type", "F"); // set later to D if DME arc leg terminator
-  rec.setValue(":fix_type", navInfo.type);
-  rec.setValue(":fix_ident", line.transIdent.trimmed());
-  rec.setValue(":fix_region", navInfo.region);
-  rec.setValue(":aircraft_category", line.aircraftCategory);
+  rec.setValue(QStringLiteral(":type"), QStringLiteral("F")); // set later to D if DME arc leg terminator
+  rec.setValue(QStringLiteral(":fix_type"), navInfo.type);
+  rec.setValue(QStringLiteral(":fix_ident"), line.transIdent.trimmed());
+  rec.setValue(QStringLiteral(":fix_region"), navInfo.region);
+  rec.setValue(QStringLiteral(":aircraft_category"), line.aircraftCategory);
 
   transitions.append(Procedure(curRowCode, rec, false /* common route */, line.sidStarAppIdent.trimmed()));
 
@@ -713,29 +715,29 @@ void ProcedureWriter::writeTransitionLeg(const ProcedureInput& line)
   // Ids are assigned later
   SqlRecord rec(TRANSITION_LEG_RECORD);
 
-  if(line.pathTerm == "AF")
+  if(line.pathTerm == QStringLiteral("AF"))
   {
     // Set transition type to DME arc if an AF leg is found
     SqlRecord& lastRec = transitions.last().record;
 
     // Arc to fix
-    lastRec.setValue(":type", "D");
+    lastRec.setValue(QStringLiteral(":type"), QStringLiteral("D"));
 
     // not used: dme_airport_ident
     if(line.theta < atools::fs::common::INVALID_FLOAT)
-      lastRec.setValue(":dme_radial", line.theta);
+      lastRec.setValue(QStringLiteral(":dme_radial"), line.theta);
     else
-      lastRec.setNull(":dme_radial");
+      lastRec.setNull(QStringLiteral(":dme_radial"));
 
     if(line.rho < atools::fs::common::INVALID_FLOAT)
-      lastRec.setValue(":dme_distance", line.rho);
+      lastRec.setValue(QStringLiteral(":dme_distance"), line.rho);
     else
-      lastRec.setNull(":dme_distance");
+      lastRec.setNull(QStringLiteral(":dme_distance"));
 
     if(!line.recdNavaid.trimmed().isEmpty())
     {
-      lastRec.setValue(":dme_ident", line.recdNavaid.trimmed());
-      lastRec.setValue(":dme_region", line.recdRegion.trimmed());
+      lastRec.setValue(QStringLiteral(":dme_ident"), line.recdNavaid.trimmed());
+      lastRec.setValue(QStringLiteral(":dme_region"), line.recdRegion.trimmed());
     }
     else
       qWarning() << line.context << "No recommended navaid for AF leg";
@@ -753,26 +755,26 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
   // Overfly but not for runways
   bool overfly = waypointDescr.size() > 1 && (waypointDescr.at(1) == 'Y' || waypointDescr.at(1) == 'B') && waypointDescr.at(0) != 'G';
 
-  rec.setValue(":type", line.pathTerm);
+  rec.setValue(QStringLiteral(":type"), line.pathTerm);
 
   // Altitude
   QString altDescr = line.altDescr;
   bool swapAlt = false;
   bool altDescrValid = true;
 
-  if(altDescr == "+" || altDescr == "-" || altDescr == "B")
+  if(altDescr == QStringLiteral("+") || altDescr == QStringLiteral("-") || altDescr == QStringLiteral("B"))
     // Use same values - no mapping needed
-    rec.setValue(":alt_descriptor", altDescr);
-  else if(altDescr == "C")
+    rec.setValue(QStringLiteral(":alt_descriptor"), altDescr);
+  else if(altDescr == QStringLiteral("C"))
   {
     // At or above in second field - swap values and turn into at or above
     swapAlt = true;
-    rec.setValue(":alt_descriptor", "+");
+    rec.setValue(QStringLiteral(":alt_descriptor"), QStringLiteral("+"));
   }
-  else if(altDescr.isEmpty() || altDescr == " " || altDescr == "@")
+  else if(altDescr.isEmpty() || altDescr == QStringLiteral(" ") || altDescr == QStringLiteral("@"))
     // At altitude
-    rec.setValue(":alt_descriptor", "A");
-  else if(altDescr == "G" || altDescr == "I")
+    rec.setValue(QStringLiteral(":alt_descriptor"), QStringLiteral("A"));
+  else if(altDescr == QStringLiteral("G") || altDescr == QStringLiteral("I"))
     // G Glide Slope altitude (MSL) specified in the second "Altitude" field and
     // "at" altitude specified in the first "Altitude" field on the FAF Waypoint in Precision Approach Coding
     // with electronic Glide Slope.
@@ -780,8 +782,8 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     // "at" altitude specified in first "Altitude" field on the FACF Waypoint in Precision Approach Coding
     // with electronic Glide Slope
     // Ignore Glide Slope altitude and turn into simple at restriction
-    rec.setValue(":alt_descriptor", "A");
-  else if(altDescr == "H" || altDescr == "J")
+    rec.setValue(QStringLiteral(":alt_descriptor"), QStringLiteral("A"));
+  else if(altDescr == QStringLiteral("H") || altDescr == QStringLiteral("J"))
     // H Glide Slope Altitude (MSL) specified in second "Altitude" field and
     // "at or above" altitude specified in first "Altitude" field on the FAF Waypoint in Precision Approach Coding
     // with electronic Glide Slope
@@ -789,16 +791,16 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     // "at or above" altitude J specified in first "Altitude" field on the FACF Waypoint in Precision Approach Coding
     // with electronic Glide Slope "At" altitude on the coded vertical angle in the
     // Ignore Glide Slope altitude and turn into simple at or above restriction
-    rec.setValue(":alt_descriptor", "+");
-  else if(altDescr == "V")
+    rec.setValue(QStringLiteral(":alt_descriptor"), QStringLiteral("+"));
+  else if(altDescr == QStringLiteral("V"))
     // Ignore second altitude in step down fix waypoints and convert to at or above
-    rec.setValue(":alt_descriptor", "+");
-  else if(altDescr == "X")
+    rec.setValue(QStringLiteral(":alt_descriptor"), QStringLiteral("+"));
+  else if(altDescr == QStringLiteral("X"))
     // Ignore second altitude in step down fix waypoints and convert to at
-    rec.setValue(":alt_descriptor", "A");
-  else if(altDescr == "Y")
+    rec.setValue(QStringLiteral(":alt_descriptor"), QStringLiteral("A"));
+  else if(altDescr == QStringLiteral("Y"))
     // Ignore second altitude in step down fix waypoints and convert to at or below
-    rec.setValue(":alt_descriptor", "-");
+    rec.setValue(QStringLiteral(":alt_descriptor"), QStringLiteral("-"));
   else
   {
     altDescrValid = false;
@@ -806,32 +808,32 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
   }
 
   QString turnDir = line.turnDir.trimmed();
-  if(turnDir == "E")
-    rec.setValue(":turn_direction", "B");
+  if(turnDir == QStringLiteral("E"))
+    rec.setValue(QStringLiteral(":turn_direction"), QStringLiteral("B"));
   else if(turnDir.size() == 1)
-    rec.setValue(":turn_direction", turnDir);
+    rec.setValue(QStringLiteral(":turn_direction"), turnDir);
   // else null
 
   NavIdInfo navInfo = navaidTypeFix(line);
 
-  rec.setValue(":fix_type", navInfo.type);
-  rec.setValue(":fix_ident", line.fixIdent);
-  rec.setValue(":fix_region", navInfo.region);
+  rec.setValue(QStringLiteral(":fix_type"), navInfo.type);
+  rec.setValue(QStringLiteral(":fix_ident"), line.fixIdent);
+  rec.setValue(QStringLiteral(":fix_region"), navInfo.region);
 
-  if(line.waypointPos.isValid() && rec.contains(":fix_lonx") && rec.contains(":fix_laty"))
+  if(line.waypointPos.isValid() && rec.contains(QStringLiteral(":fix_lonx")) && rec.contains(QStringLiteral(":fix_laty")))
   {
-    rec.setValue(":fix_lonx", line.waypointPos.getLonX());
-    rec.setValue(":fix_laty", line.waypointPos.getLatY());
+    rec.setValue(QStringLiteral(":fix_lonx"), line.waypointPos.getLonX());
+    rec.setValue(QStringLiteral(":fix_laty"), line.waypointPos.getLatY());
   }
   else
   {
-    rec.setValue(":fix_lonx", QVariant(QMetaType::fromType<double>()));
-    rec.setValue(":fix_laty", QVariant(QMetaType::fromType<double>()));
+    rec.setValue(QStringLiteral(":fix_lonx"), QVariant(QMetaType::fromType<double>()));
+    rec.setValue(QStringLiteral(":fix_laty"), QVariant(QMetaType::fromType<double>()));
   }
 
   // not used: fix_airport_ident
 
-  if(line.pathTerm == "RF")
+  if(line.pathTerm == QStringLiteral("RF"))
   {
     if(!line.centerFixOrTaaPt.isEmpty())
     {
@@ -840,20 +842,20 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
                                            line.centerFixOrTaaPt, line.centerIcaoCode, line.centerPos, line.airportPos);
 
       // Constant radius arc
-      rec.setValue(":recommended_fix_type", centerNavInfo.type);
-      rec.setValue(":recommended_fix_ident", line.centerFixOrTaaPt.trimmed());
-      rec.setValue(":recommended_fix_region", centerNavInfo.region);
+      rec.setValue(QStringLiteral(":recommended_fix_type"), centerNavInfo.type);
+      rec.setValue(QStringLiteral(":recommended_fix_ident"), line.centerFixOrTaaPt.trimmed());
+      rec.setValue(QStringLiteral(":recommended_fix_region"), centerNavInfo.region);
 
       if(line.recdWaypointPos.isValid() &&
-         rec.contains(":recommended_fix_lonx") && rec.contains(":recommended_fix_laty"))
+         rec.contains(QStringLiteral(":recommended_fix_lonx")) && rec.contains(QStringLiteral(":recommended_fix_laty")))
       {
-        rec.setValue(":recommended_fix_lonx", line.recdWaypointPos.getLonX());
-        rec.setValue(":recommended_fix_laty", line.recdWaypointPos.getLatY());
+        rec.setValue(QStringLiteral(":recommended_fix_lonx"), line.recdWaypointPos.getLonX());
+        rec.setValue(QStringLiteral(":recommended_fix_laty"), line.recdWaypointPos.getLatY());
       }
       else
       {
-        rec.setValue(":recommended_fix_lonx", QVariant(QMetaType::fromType<double>()));
-        rec.setValue(":recommended_fix_laty", QVariant(QMetaType::fromType<double>()));
+        rec.setValue(QStringLiteral(":recommended_fix_lonx"), QVariant(QMetaType::fromType<double>()));
+        rec.setValue(QStringLiteral(":recommended_fix_laty"), QVariant(QMetaType::fromType<double>()));
       }
 
     }
@@ -866,84 +868,85 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
                                        QString(), line.recdSecCode, line.recdSubCode, line.recdNavaid, line.recdRegion,
                                        line.recdWaypointPos, line.airportPos);
 
-    rec.setValue(":recommended_fix_type", recdNavInfo.type);
-    rec.setValue(":recommended_fix_ident", line.recdNavaid.trimmed());
-    rec.setValue(":recommended_fix_region", recdNavInfo.region);
+    rec.setValue(QStringLiteral(":recommended_fix_type"), recdNavInfo.type);
+    rec.setValue(QStringLiteral(":recommended_fix_ident"), line.recdNavaid.trimmed());
+    rec.setValue(QStringLiteral(":recommended_fix_region"), recdNavInfo.region);
 
-    if(line.recdWaypointPos.isValid() && rec.contains(":recommended_fix_lonx") && rec.contains(":recommended_fix_laty"))
+    if(line.recdWaypointPos.isValid() && rec.contains(QStringLiteral(":recommended_fix_lonx")) &&
+       rec.contains(QStringLiteral(":recommended_fix_laty")))
     {
-      rec.setValue(":recommended_fix_lonx", line.recdWaypointPos.getLonX());
-      rec.setValue(":recommended_fix_laty", line.recdWaypointPos.getLatY());
+      rec.setValue(QStringLiteral(":recommended_fix_lonx"), line.recdWaypointPos.getLonX());
+      rec.setValue(QStringLiteral(":recommended_fix_laty"), line.recdWaypointPos.getLatY());
     }
     else
     {
-      rec.setValue(":recommended_fix_lonx", QVariant(QMetaType::fromType<double>()));
-      rec.setValue(":recommended_fix_laty", QVariant(QMetaType::fromType<double>()));
+      rec.setValue(QStringLiteral(":recommended_fix_lonx"), QVariant(QMetaType::fromType<double>()));
+      rec.setValue(QStringLiteral(":recommended_fix_laty"), QVariant(QMetaType::fromType<double>()));
     }
   }
   // else null
 
-  if(line.pathTerm == "AF" && line.recdNavaid.trimmed().isEmpty())
+  if(line.pathTerm == QStringLiteral("AF") && line.recdNavaid.trimmed().isEmpty())
     qWarning() << line.context << "No recommended fix for AF leg";
 
-  rec.setValue(":is_flyover", overfly);
-  rec.setValue(":is_true_course", 0); // Not used
-  rec.setValue(":course", line.magCourse);
+  rec.setValue(QStringLiteral(":is_flyover"), overfly);
+  rec.setValue(QStringLiteral(":is_true_course"), 0); // Not used
+  rec.setValue(QStringLiteral(":course"), line.magCourse);
 
   if(line.rnp < atools::fs::common::INVALID_FLOAT)
-    rec.setValue(":rnp", line.rnp);
+    rec.setValue(QStringLiteral(":rnp"), line.rnp);
   else
-    rec.setNull(":rnp");
+    rec.setNull(QStringLiteral(":rnp"));
 
   // time minutes
-  rec.setValue(":time", line.rteHoldTime);
+  rec.setValue(QStringLiteral(":time"), line.rteHoldTime);
 
   // distance nm
-  rec.setValue(":distance", line.rteHoldDist);
+  rec.setValue(QStringLiteral(":distance"), line.rteHoldDist);
 
   if(line.theta < atools::fs::common::INVALID_FLOAT)
-    rec.setValue(":theta", line.theta);
+    rec.setValue(QStringLiteral(":theta"), line.theta);
   else
-    rec.setNull(":theta");
+    rec.setNull(QStringLiteral(":theta"));
 
   if(line.rho < atools::fs::common::INVALID_FLOAT)
-    rec.setValue(":rho", line.rho);
+    rec.setValue(QStringLiteral(":rho"), line.rho);
   else
-    rec.setNull(":rho");
+    rec.setNull(QStringLiteral(":rho"));
 
   if(altDescrValid)
   {
-    rec.setValue(":altitude1", altitudeFromStr(swapAlt ? line.altitude2 : line.altitude));
-    rec.setValue(":altitude2", altitudeFromStr(swapAlt ? line.altitude : line.altitude2));
+    rec.setValue(QStringLiteral(":altitude1"), altitudeFromStr(swapAlt ? line.altitude2 : line.altitude));
+    rec.setValue(QStringLiteral(":altitude2"), altitudeFromStr(swapAlt ? line.altitude : line.altitude2));
   }
 
   // Speed limit ==========================
   if(line.speedLimit > 0)
   {
-    rec.setValue(":speed_limit", line.speedLimit);
+    rec.setValue(QStringLiteral(":speed_limit"), line.speedLimit);
 
     QString spdDescr = line.speedLimitDescr;
-    if(spdDescr == "+" || spdDescr == "-")
-      rec.setValue(":speed_limit_type", spdDescr);
+    if(spdDescr == QStringLiteral("+") || spdDescr == QStringLiteral("-"))
+      rec.setValue(QStringLiteral(":speed_limit_type"), spdDescr);
     // else null means speed at
 
-    if(!atools::contains(spdDescr, {QString(), " ", "+", "-"}))
+    if(!atools::contains(spdDescr, {QString(), QStringLiteral(" "), QStringLiteral("+"), QStringLiteral("-")}))
       qWarning() << line.context << "Invalid speed limit" << spdDescr;
   }
   // else null
 
   // Vertical angle ==========================
   if(!line.verticalAngle.isNull())
-    rec.setValue(":vertical_angle", line.verticalAngle);
+    rec.setValue(QStringLiteral(":vertical_angle"), line.verticalAngle);
   // else null
 
   // arinc_descr_code varchar(25), -- ARINC description code 5.17
-  rec.setValue(":arinc_descr_code", line.descCode);
+  rec.setValue(QStringLiteral(":arinc_descr_code"), line.descCode);
 }
 
 float ProcedureWriter::altitudeFromStr(const QString& altStr)
 {
-  if(altStr.startsWith("FL"))
+  if(altStr.startsWith(QStringLiteral("FL")))
     // Simplify - turn flight levelt to feet
     return altStr.mid(2).toFloat() * 100.f;
   else
@@ -954,8 +957,8 @@ void ProcedureWriter::finish(const ProcedureInput& line)
 {
   finishProcedure(line);
 
-  updateAirportQuery->bindValue(":num", numProcedures);
-  updateAirportQuery->bindValue(":id", line.airportId);
+  updateAirportQuery->bindValue(QStringLiteral(":num"), numProcedures);
+  updateAirportQuery->bindValue(QStringLiteral(":id"), line.airportId);
   updateAirportQuery->exec();
   numProcedures = 0;
 }
@@ -976,15 +979,15 @@ void ProcedureWriter::reset()
 atools::fs::common::rc::RowCode ProcedureWriter::toRowCode(const ProcedureInput& line)
 {
   QString code = line.rowCode;
-  if(code == "APPCH")
+  if(code == QStringLiteral("APPCH"))
     return rc::APPROACH;
-  else if(code == "SID")
+  else if(code == QStringLiteral("SID"))
     return rc::SID;
-  else if(code == "STAR")
+  else if(code == QStringLiteral("STAR"))
     return rc::STAR;
-  else if(code == "RWY")
+  else if(code == QStringLiteral("RWY"))
     return rc::RWY;
-  else if(code == "PRDAT")
+  else if(code == QStringLiteral("PRDAT"))
     return rc::PRDAT;
   else
   {
@@ -1004,60 +1007,60 @@ QString ProcedureWriter::procedureType(const ProcedureInput& line)
     {
       // New types from X-Plane
       case rt::FLIGHT_MANAGEMENT_SYSTEM_FMS_APPROACH:
-        type = "FMS";
+        type = QStringLiteral("FMS");
         break;
       case rt::INSTRUMENT_GUIDANCE_SYSTEM_IGS_APPROACH:
-        type = "IGS";
+        type = QStringLiteral("IGS");
         break;
       case rt::GNSS_LANDING_SYSTEM_GLSAPPROACH:
-        type = "GNSS";
+        type = QStringLiteral("GNSS");
         break;
       case rt::TACAN_APPROACH:
-        type = "TCN";
+        type = QStringLiteral("TCN");
         break;
       case rt::MICROWAVE_LANDING_SYSTEM_MLS_TYPE_A_APPROACH:
       case rt::MICROWAVE_LANDING_SYSTEM_MLS_TYPE_B_AND_C_APPROACH:
       case rt::MICROWAVE_LANDING_SYSTEM_MLS_APPROACH:
-        type = "MLS";
+        type = QStringLiteral("MLS");
         break;
       case rt::PROCEDURE_WITH_CIRCLE_TOLAND_MINIMUMS:
-        type = "CTL";
+        type = QStringLiteral("CTL");
         break;
 
       // FSX/P3D types
       case rt::GLOBAL_POSITIONING_SYSTEM_GPS_APPROACH:
-        type = "GPS";
+        type = QStringLiteral("GPS");
         break;
       case rt::LOCALIZER_BACKCOURSE_APPROACH:
-        type = "LOCB";
+        type = QStringLiteral("LOCB");
         break;
       case rt::INSTRUMENT_LANDING_SYSTEM_ILS_APPROACH:
-        type = "ILS";
+        type = QStringLiteral("ILS");
         break;
       case rt::LOCALIZER_ONLY_LOC_APPROACH:
-        type = "LOC";
+        type = QStringLiteral("LOC");
         break;
       case rt::AREA_NAVIGATION_RNAV_APPROACH_NOTE_1:
-        type = "RNAV";
+        type = QStringLiteral("RNAV");
         break;
       case rt::NON_DIRECTIONAL_BEACON_NDB_APPROACH:
-        type = "NDB";
+        type = QStringLiteral("NDB");
         break;
       case rt::VOR_APPROACH:
-        type = "VOR";
+        type = QStringLiteral("VOR");
         break;
       case rt::VOR_APPROACH_USING_VORDME_VORTAC:
       case rt::VORDME_APPROACH:
-        type = "VORDME";
+        type = QStringLiteral("VORDME");
         break;
       case rt::NON_DIRECTIONAL_BEACON_AND_DME_NDB_AND_DME_APPROACH:
-        type = "NDBDME";
+        type = QStringLiteral("NDBDME");
         break;
       case rt::LOCALIZER_DIRECTIONAL_AID_LDA_APPROACH:
-        type = "LDA";
+        type = QStringLiteral("LDA");
         break;
       case rt::SIMPLIFIED_DIRECTIONAL_FACILITY_SDF_APPROACH:
-        type = "SDF";
+        type = QStringLiteral("SDF");
         break;
 
       // case rt::MISSED_APPROACH:
@@ -1068,7 +1071,7 @@ QString ProcedureWriter::procedureType(const ProcedureInput& line)
 
         if(curRouteType == ' ' || curRouteType == '\0')
           // No way to get a type
-          type = "UNKNOWN";
+          type = QStringLiteral("UNKNOWN");
         else
           // Fall back to single character
           type = atools::charToStr(curRouteType);
@@ -1076,7 +1079,7 @@ QString ProcedureWriter::procedureType(const ProcedureInput& line)
     }
   }
   else if(curRowCode == rc::SID || curRowCode == rc::STAR)
-    type = "GPS";
+    type = QStringLiteral("GPS");
 
   return type;
 }
@@ -1110,16 +1113,16 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
       {
         case atools::fs::common::dc::HELIPORT_AS_WAYPOINT:
         case atools::fs::common::dc::AIRPORT_AS_WAYPOINT:
-          return NavIdInfo("A", region);
+          return NavIdInfo(QStringLiteral("A"), region);
 
         case atools::fs::common::dc::RUNWAY_AS_WAYPOINT:
-          return NavIdInfo("R", region);
+          return NavIdInfo(QStringLiteral("R"), region);
 
         case atools::fs::common::dc::NDB_NAVAID_AS_WAYPOINT:
-          return NavIdInfo("N", region);
+          return NavIdInfo(QStringLiteral("N"), region);
 
         case atools::fs::common::dc::VHF_NAVAID_AS_WAYPOINT:
-          return NavIdInfo("V", region);
+          return NavIdInfo(QStringLiteral("V"), region);
 
         // Values below can refer to waypoint, VOR or NDB resolve them below
         case atools::fs::common::dc::NON_ESSENTIAL_WAYPOINT:
@@ -1176,12 +1179,12 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
       if(!inf.type.isEmpty())
       {
         // N = NDB, OA = off airway, V = VOR, WN = named waypoint, WU = unnamed waypoint, G = GBAS approach station
-        if(inf.type == "WN" || inf.type == "WU")
+        if(inf.type == QStringLiteral("WN") || inf.type == QStringLiteral("WU"))
         {
-          inf.type = "W";
+          inf.type = QStringLiteral("W");
           return inf;
         }
-        else if(inf.type == "N" || inf.type == "V")
+        else if(inf.type == QStringLiteral("N") || inf.type == QStringLiteral("V"))
           return inf;
       }
     }
@@ -1210,20 +1213,20 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
     switch(subSec)
     {
       case atools::fs::common::sc::TERMINAL_WAYPOINTS:
-        return NavIdInfo("TW", region);
+        return NavIdInfo(QStringLiteral("TW"), region);
 
       case atools::fs::common::sc::RUNWAYS:
-        return NavIdInfo("R", region);
+        return NavIdInfo(QStringLiteral("R"), region);
 
       case atools::fs::common::sc::LOCALIZER_MARKER:
       case atools::fs::common::sc::LOCALIZER_GLIDE_SLOPE:
-        return NavIdInfo("L", region);
+        return NavIdInfo(QStringLiteral("L"), region);
 
       case atools::fs::common::sc::TERMINAL_NDB:
-        return NavIdInfo("TN", region);
+        return NavIdInfo(QStringLiteral("TN"), region);
 
       case atools::fs::common::sc::REFERENCE_POINTS:
-        return NavIdInfo("A", region); // Airport reference point - new with X-Plane
+        return NavIdInfo(QStringLiteral("A"), region); // Airport reference point - new with X-Plane
 
       case atools::fs::common::sc::GLS_STATION:
         // ignore these
@@ -1251,10 +1254,10 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
     switch(subSec)
     {
       case atools::fs::common::sc::WAYPOINTS:
-        return NavIdInfo("W", region);
+        return NavIdInfo(QStringLiteral("W"), region);
 
       case atools::fs::common::sc::VORDME:
-        return NavIdInfo("V", region);
+        return NavIdInfo(QStringLiteral("V"), region);
 
       case atools::fs::common::sc::AIRWAY_MARKERS:
       case atools::fs::common::sc::HOLDING_PATTERNS:
@@ -1273,10 +1276,10 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
     switch(subSec)
     {
       case atools::fs::common::sc::VHF:
-        return NavIdInfo("V", region);
+        return NavIdInfo(QStringLiteral("V"), region);
 
       case atools::fs::common::sc::NDB:
-        return NavIdInfo("N", region);
+        return NavIdInfo(QStringLiteral("N"), region);
     }
     qWarning() << context << "Unexpected navaid section" << sectionCode << "sub" << subSectionCode;
   }
@@ -1289,27 +1292,31 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
 void ProcedureWriter::findFix(atools::sql::SqlQuery *query, const QString& ident, const QString& region,
                               const atools::geo::PosD& pos) const
 {
-  query->bindValue(":ident", ident);
-  query->bindValue(":region", region.isEmpty() ? "%" : region);
-  query->bindValue(":lonx", pos.getLonX());
-  query->bindValue(":laty", pos.getLatY());
+  query->bindValue(QStringLiteral(":ident"), ident);
+  query->bindValue(QStringLiteral(":region"), region.isEmpty() ? QStringLiteral("%") : region);
+  query->bindValue(QStringLiteral(":lonx"), pos.getLonX());
+  query->bindValue(QStringLiteral(":laty"), pos.getLatY());
   query->exec();
 }
 
 QString ProcedureWriter::sidStarRunwayNameAndSuffix(const ProcedureInput& line)
 {
   QString ident = line.transIdent;
-  if(ident.startsWith("RW"))
+  if(ident.startsWith(QStringLiteral("RW")))
   {
     // Get designator if there is one
     QString desig = ident.size() > 4 ? ident.at(4) : QString();
 
-    if(ident.at(2).isDigit() && ident.at(3).isDigit() && !atools::contains(desig, {QString(), "L", "R", "C", "-", "B", "T"}))
+    if(ident.at(2).isDigit() && ident.at(3).isDigit() && !atools::contains(desig,
+                                                                           {QString(), QStringLiteral("L"), QStringLiteral("R"),
+                                                                            QStringLiteral("C"), QStringLiteral("-"), QStringLiteral("B"),
+                                                                            QStringLiteral("T")}))
       qWarning() << line.context << "Invalid designator" << desig;
 
-    if(desig != "B") // B = multiple runways with same number but different designator
+    if(desig != QStringLiteral("B")) // B = multiple runways with same number but different designator
     {
-      if(!desig.isEmpty() && desig != "L" && desig != "R" && desig != "C" && desig != "T")
+      if(!desig.isEmpty() && desig != QStringLiteral("L") && desig != QStringLiteral("R") && desig != QStringLiteral("C") &&
+         desig != QStringLiteral("T"))
         desig.clear();
 
       // Get runway number only if valid to ignore all CVOR, NDEA, etc. approaches
@@ -1331,7 +1338,9 @@ void ProcedureWriter::apprRunwayNameAndSuffix(const ProcedureInput& line, QStrin
 
   // Check for digits to get runway - circle to land if no runway given
   bool hasRunway = rw.size() == 2 && rw.at(0).isDigit() && rw.at(1).isDigit() &&
-                   atools::contains(desig, {QString(), "L", "R", "C", "-", "B", "T"});
+                   atools::contains(desig,
+                                    {QString(), QStringLiteral("L"), QStringLiteral("R"), QStringLiteral("C"), QStringLiteral("-"),
+                                     QStringLiteral("B"), QStringLiteral("T")});
 
   if(hasRunway && ident.size() >= 4 && ident.at(3).isDigit())
     // Full number like P168 - this is not a runway
@@ -1342,8 +1351,8 @@ void ProcedureWriter::apprRunwayNameAndSuffix(const ProcedureInput& line, QStrin
     // TODO consider true designator
     // D26 D26-1 D26-2 D26-Y D26-Z D26LZ
     // I26L, B08R, R29, V01L, N35 L16RA, L16RB, V08-A, V08-B I18L1, I18L2, N08T R35-Y, R35-Z
-    if(desig == "L" || desig == "R" || desig == "C" || desig == "T")
-      // Add only real designators and not "B"
+    if(desig == QStringLiteral("L") || desig == QStringLiteral("R") || desig == QStringLiteral("C") || desig == QStringLiteral("T"))
+      // Add only real designators and not QStringLiteral("B")
       runway = rw + desig;
     else
       runway = rw;
@@ -1354,10 +1363,10 @@ void ProcedureWriter::apprRunwayNameAndSuffix(const ProcedureInput& line, QStrin
     // CNDB CNDM CVDM CVOR CVORY
     // VDME VDMF VDMH VOR1 VOR2 VORA VORB
     // VORA, VORB VOR-A, VOR-B, NDBB, CVOR, VDMA, LOCD,BI P168, NDAT (NDB, DME, Alpha, True), NDB-1, NDB-2
-    if(ident.contains("-"))
+    if(ident.contains(QStringLiteral("-")))
       // Suffix after dash
       suffix = ident.section('-', 1, 1);
-    else if(ident.startsWith("C"))
+    else if(ident.startsWith(QStringLiteral("C")))
       // Special case for CNDB or CVOR
       suffix = ident.mid(4, 1);
     else
@@ -1372,19 +1381,19 @@ void ProcedureWriter::initQueries()
   SqlUtil util(&db);
 
   insertApproachQuery = new SqlQuery(db);
-  insertApproachQuery->prepare(util.buildInsertStatement("approach"));
+  insertApproachQuery->prepare(util.buildInsertStatement(QStringLiteral("approach")));
 
   insertApproachLegQuery = new SqlQuery(db);
-  insertApproachLegQuery->prepare(util.buildInsertStatement("approach_leg"));
+  insertApproachLegQuery->prepare(util.buildInsertStatement(QStringLiteral("approach_leg")));
 
   insertTransitionQuery = new SqlQuery(db);
-  insertTransitionQuery->prepare(util.buildInsertStatement("transition"));
+  insertTransitionQuery->prepare(util.buildInsertStatement(QStringLiteral("transition")));
 
   insertTransitionLegQuery = new SqlQuery(db);
-  insertTransitionLegQuery->prepare(util.buildInsertStatement("transition_leg"));
+  insertTransitionLegQuery->prepare(util.buildInsertStatement(QStringLiteral("transition_leg")));
 
   updateAirportQuery = new SqlQuery(db);
-  updateAirportQuery->prepare("update airport set num_approach = :num where airport_id = :id");
+  updateAirportQuery->prepare(QStringLiteral("update airport set num_approach = :num where airport_id = :id"));
 
   findWaypointExactQuery = new SqlQuery(db);
   findWaypointExactQuery->prepare("select type, region from waypoint where ident = :ident and region like :region and "

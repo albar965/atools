@@ -1066,7 +1066,11 @@ QString normalizeStr(QString str)
   // Decompose string into base characters and diacritics
 
   // Check some special charaters which are omitted by above
-  str = str.replace(QStringLiteral("ø"), QStringLiteral("o")).replace(QStringLiteral("Ø"), QStringLiteral("O")).replace(QStringLiteral("æ"), QStringLiteral("ae")).replace(QStringLiteral("Æ"), QStringLiteral("Ae")).replace(QStringLiteral("×"), QStringLiteral("x"));
+  str = str.replace(QStringLiteral("ø"), QStringLiteral("o")).
+        replace(QStringLiteral("Ø"), QStringLiteral("O")).
+        replace(QStringLiteral("æ"), QStringLiteral("ae")).
+        replace(QStringLiteral("Æ"), QStringLiteral("Ae")).
+        replace(QStringLiteral("×"), QStringLiteral("x"));
 
   QString retval;
   const QString norm = str.normalized(QString::NormalizationForm_KD);
@@ -1257,7 +1261,7 @@ QString linkTarget(const QFileInfo& path)
       if(dwRet < BUFFER_SIZE)
       {
         target = QString::fromWCharArray(junctionPathW);
-        target.remove("\\\\?\\");
+        target.remove(QStringLiteral("\\\\?\\"));
 
         // Clear path if target is the same. This can happen with mounted drives which are also identified as Junctions
         if(atools::cleanPath(target) == atools::cleanPath(path.absoluteFilePath()))
@@ -1416,9 +1420,9 @@ QString canonicalFilePath(const QFileInfo& path)
 QString cleanPath(const QString& filename)
 {
 #ifdef Q_OS_WIN
-  if(filename.startsWith(QLatin1String("//")) || filename.startsWith(QLatin1String("\\\\")))
+  if(filename.startsWith(QStringLiteral("//")) || filename.startsWith(QStringLiteral("\\\\")))
     // clean replaces \\ in UNC paths
-    return "//" % QDir::cleanPath(filename.mid(2));
+    return QStringLiteral("//") % QDir::cleanPath(filename.mid(2));
   else
     return QDir::cleanPath(filename);
 
