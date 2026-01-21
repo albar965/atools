@@ -69,7 +69,7 @@ protected:
   qint64 startOffset;
 
   atools::io::BinaryStream *bs = nullptr;
-  const atools::fs::NavDatabaseOptions *opts = nullptr;
+  const atools::fs::NavDatabaseOptions *options = nullptr;
 };
 
 } // namespace fs

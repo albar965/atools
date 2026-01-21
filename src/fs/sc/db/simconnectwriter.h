@@ -41,6 +41,8 @@ class SqlDatabase;
 }
 namespace fs {
 
+class NavDatabaseOptions;
+
 namespace common {
 class MagDecReader;
 }
@@ -80,7 +82,7 @@ class SimConnectWriter
   Q_DECLARE_TR_FUNCTIONS(SimConnectWriter)
 
 public:
-  SimConnectWriter(atools::sql::SqlDatabase& sqlDb, bool verboseParam);
+  SimConnectWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts);
   ~SimConnectWriter();
 
   SimConnectWriter(const SimConnectWriter& other) = delete;
@@ -174,6 +176,8 @@ private:
   QHash<atools::fs::sc::db::FacilityId, atools::fs::sc::db::RunwayId> ilsToRunwayMap;
 
   SimConnectWriterProgressCallback progressCallback = nullptr;
+
+  const atools::fs::NavDatabaseOptions& options;
 
   int progressCounter = 0; // Counter for dot animation
   QString lastMessage; // Repeat last message when calling  callProgressUpdate()

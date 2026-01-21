@@ -183,7 +183,7 @@ void NavDatabase::createSimConnectLoader()
     if(libraryName.isEmpty())
       throw Exception("DLL name not set for MSFS 2024");
 
-    simconnectLoader = new atools::fs::sc::db::SimConnectLoader(activationContext, libraryName, *db, options->isVerbose());
+    simconnectLoader = new atools::fs::sc::db::SimConnectLoader(activationContext, libraryName, *db, *options);
     simconnectLoader->setBatchSize(options->getSimConnectBatchSize());
     simconnectLoader->setAirportFetchDelay(options->getSimConnectAirportFetchDelay());
     simconnectLoader->setNavaidFetchDelay(options->getSimConnectNavaidFetchDelay());
@@ -1299,18 +1299,22 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
           if(!aborted)
             aborted = simconnectLoader->loadAirports(fileId);
 
-          // Load navaids connected to procedures and airways ======================================
-          if(!aborted)
-            aborted = simconnectLoader->loadNavaids(fileId);
+          // Load navaids - waypoints, VOR, NDB and ILS ======================================
+          if(options->isIncludedNavDbObject(type::NAVAIDS))
+          {
+            // Load navaids connected to procedures and airways ======================================
+            if(!aborted)
+              aborted = simconnectLoader->loadNavaids(fileId);
 
-          // Load navaids not connected to procedures or airways ======================================
-          if(!aborted && options->getSimConnectLoadDisconnected())
-            aborted = simconnectLoader->loadDisconnectedNavaids(fileId, result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
+            // Load navaids not connected to procedures or airways ======================================
+            if(!aborted && options->getSimConnectLoadDisconnected())
+              aborted = simconnectLoader->loadDisconnectedNavaids(fileId, result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
 
-          // Initial loading of MSFS 2020 navaids not connected to procedures or airways ======================================
-          if(!aborted && options->getSimConnectLoadDisconnectedFile())
-            // Only for inital load and export of 2020 navaids using loadDisconnectedNavaids20()
-            aborted = simconnectLoader->loadDisconnectedNavaidsFile(fileId);
+            // Initial loading of MSFS 2020 navaids not connected to procedures or airways ======================================
+            if(!aborted && options->getSimConnectLoadDisconnectedFile())
+              // Only for inital load and export of 2020 navaids using loadDisconnectedNavaids20()
+              aborted = simconnectLoader->loadDisconnectedNavaidsFile(fileId);
+          }
 
           // Copy errors like caught exceptions when writing
           if(errors != nullptr)

@@ -31,6 +31,7 @@ namespace sql {
 class SqlDatabase;
 }
 namespace fs {
+class NavDatabaseOptions;
 namespace sc {
 namespace db {
 
@@ -58,7 +59,7 @@ class SimConnectLoader
 public:
   /* Library has to be loaded before */
   SimConnectLoader(const win::ActivationContext *activationContext, const QString& libraryName, atools::sql::SqlDatabase& sqlDb,
-                   bool verbose);
+                   const atools::fs::NavDatabaseOptions& opts);
   ~SimConnectLoader();
 
   SimConnectLoader(const SimConnectLoader& other) = delete;

@@ -38,7 +38,14 @@ class NavDatabaseProgress;
 
 namespace type {
 
-/* Used to enable/disable loading of BGL objects/records and files for X-Plane. */
+/* Used to enable/disable loading of BGL objects/records and files for X-Plane.
+ * Filter by object type. Some combinations of this can result in unexpected behavour.
+ * that is caused by the hierarchical dependency of objects. E.g. filtering out runways
+ * will also remove approaches and ILS.
+ *
+ * Flags apply mostly to X-Plane and MSFS 2020. Flags apply only to MSFS 2024 where noted.
+ *
+ * A feature is included per default if it is not on the list "ExcludeBglObjectFilter". */
 enum NavDbObjectType
 {
   UNKNOWN,
@@ -54,11 +61,15 @@ enum NavDbObjectType
   VOR,
   NDB,
   WAYPOINT,
+  NAVAIDS, /* MSFS 2024 only - disables complete navaid loading. Will skip waypoints, VOR, NDB and ILS to speed up loading.
+              Add "NAVAIDS" to "ExcludeBglObjectFilter" to skip navaid loading. */
   BOUNDARY, /* airspace boundary and all subrecords */
   MARKER,
   APRON, /* apron and its vertices */
   APRON2, /* apron and its vertices2 lists */
   TAXIWAY,
+  TAXIWAYRUNWAY, /* MSFS 2024 and MSFS 2020 only - excludes or includes taxiways of type runway.
+                    Remove "TAXIWAYRUNWAY" from "ExcludeBglObjectFilter" to include these. */
   AIRWAY, /* all airway route processing */
   GEOMETRY /* apron geometry */
 };

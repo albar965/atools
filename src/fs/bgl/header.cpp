@@ -38,7 +38,7 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *stre
   headerSize = stream->readUInt();
   if(headerSize != HEADER_SIZE)
   {
-    if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
+    if(options->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
       qWarning().nospace().noquote() << "Invalid header size: 0x" << Qt::hex << headerSize << Qt::dec;
     // Disabled for www.fsaerodata.com
     // validSize = false;
@@ -51,7 +51,7 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *stre
   if(magicNumber2 != MAGIC_NUMBER2)
     validMagicNumber = false;
 
-  if(!validMagicNumber && opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
+  if(!validMagicNumber && options->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
     qWarning().nospace().noquote() << "Invalid magic number: 0x" << Qt::hex << magicNumber1 << ", 0x" << magicNumber2 << Qt::dec;
 
   // if(!validSize)

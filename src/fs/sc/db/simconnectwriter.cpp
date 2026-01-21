@@ -149,8 +149,8 @@ void extend(atools::geo::Rect& rect, const atools::geo::Pos& pos)
 
 // ====================================================================================================
 
-SimConnectWriter::SimConnectWriter(sql::SqlDatabase& sqlDb, bool verboseParam)
-  : db(sqlDb), verbose(verboseParam)
+SimConnectWriter::SimConnectWriter(sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts)
+  : db(sqlDb), verbose(opts.isVerbose()), options(opts)
 {
   magDecReader = new atools::fs::common::MagDecReader;
   magDecReader->readFromWmm();
@@ -1106,7 +1106,8 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
       // Taxi path ===========================================================================================
       for(const TaxiPathFacility& path : airport.getTaxiPathFacilities())
       {
-        if(path.type == bgl::taxipath::PATH || path.type == bgl::taxipath::TAXI || path.type == bgl::taxipath::PARKING)
+        if(path.type == bgl::taxipath::PATH || path.type == bgl::taxipath::TAXI || path.type == bgl::taxipath::PARKING ||
+           (path.type == bgl::taxipath::RUNWAY && options.isIncludedNavDbObject(type::TAXIWAYRUNWAY)))
         {
           // Check range violations and skip if any
           if(!atools::inRange(airport.getTaxiPointFacilities(), path.start))

@@ -30,7 +30,7 @@ BglBase::BglBase()
 }
 
 BglBase::BglBase(const atools::fs::NavDatabaseOptions *options, io::BinaryStream *stream)
-  : startOffset(stream->tellg()), bs(stream), opts(options)
+  : startOffset(stream->tellg()), bs(stream), options(options)
 {
 }
 
@@ -41,7 +41,7 @@ BglBase::~BglBase()
 BglBase& BglBase::operator=(const BglBase& other)
 {
   bs = other.bs;
-  opts = other.opts;
+  options = other.options;
   startOffset = other.startOffset;
   return *this;
 }

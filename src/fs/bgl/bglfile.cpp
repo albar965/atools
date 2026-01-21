@@ -341,14 +341,14 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
 
         case section::P3D_TACAN:
           // TACAN secion type overlaps with a MSFS 2024 section type
-          if(sim != FsPaths::MSFS_2024)
+          if(sim != FsPaths::MSFS_2024 && options->isIncludedNavDbObject(type::NAVAIDS))
             rec = createRecord<Tacan>(bs, &tacans);
           break;
 
         case section::ILS_VOR:
           // Read VOR, VORDME, DME. Also TACAN for MSFS 2024
           // Do not read from MSFS 2020 Navigraph extension
-          if(!msfsNavigraphNavdata)
+          if(!msfsNavigraphNavdata && options->isIncludedNavDbObject(type::NAVAIDS))
           {
             rec = handleIlsVor(bs);
             if(options->isVerbose() && rec != nullptr)
@@ -358,7 +358,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
 
         case section::NDB:
           // Do not read from MSFS 2020 Navigraph extension
-          if(options->isIncludedNavDbObject(type::NDB) && !msfsNavigraphNavdata)
+          if(options->isIncludedNavDbObject(type::NDB) && !msfsNavigraphNavdata && options->isIncludedNavDbObject(type::NAVAIDS))
           {
             rec = createRecord<Ndb>(bs, &ndbs);
             if(options->isVerbose() && rec != nullptr)
@@ -368,13 +368,13 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
 
         case section::MARKER:
           // Do not read from MSFS 2020 Navigraph extension
-          if(options->isIncludedNavDbObject(type::MARKER) && !msfsNavigraphNavdata)
+          if(options->isIncludedNavDbObject(type::MARKER) && !msfsNavigraphNavdata && options->isIncludedNavDbObject(type::NAVAIDS))
             rec = createRecord<Marker>(bs, &marker);
           break;
 
         case section::WAYPOINT:
           // Do not read from MSFS 2020 Navigraph extension
-          if(options->isIncludedNavDbObject(type::WAYPOINT) && !msfsNavigraphNavdata)
+          if(options->isIncludedNavDbObject(type::WAYPOINT) && !msfsNavigraphNavdata && options->isIncludedNavDbObject(type::NAVAIDS))
           {
             // Read waypoints and airways
             rec = createRecord<Waypoint>(bs, &waypoints);

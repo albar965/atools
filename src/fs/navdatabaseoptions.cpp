@@ -453,6 +453,9 @@ QString type::navDbObjectTypeToString(type::NavDbObjectType type)
     case WAYPOINT:
       return "WAYPOINT";
 
+    case NAVAIDS:
+      return "NAVAIDS";
+
     case BOUNDARY:
       return "BOUNDARY";
 
@@ -470,6 +473,9 @@ QString type::navDbObjectTypeToString(type::NavDbObjectType type)
 
     case TAXIWAY:
       return "TAXIWAY";
+
+    case TAXIWAYRUNWAY:
+      return "TAXIWAYRUNWAY";
 
     case GEOMETRY:
       return "GEOMETRY";
@@ -506,6 +512,8 @@ type::NavDbObjectType type::stringToNavDbObjectType(const QString& typeStr)
     return NDB;
   else if(typeStr == "WAYPOINT")
     return WAYPOINT;
+  else if(typeStr == "NAVAIDS")
+    return NAVAIDS;
   else if(typeStr == "BOUNDARY")
     return BOUNDARY;
   else if(typeStr == "MARKER")
@@ -516,6 +524,8 @@ type::NavDbObjectType type::stringToNavDbObjectType(const QString& typeStr)
     return APRON2;
   else if(typeStr == "TAXIWAY")
     return TAXIWAY;
+  else if(typeStr == "TAXIWAYRUNWAY")
+    return TAXIWAYRUNWAY;
   else if(typeStr == "AIRWAY")
     return AIRWAY;
   else if(typeStr == "GEOMETRY")

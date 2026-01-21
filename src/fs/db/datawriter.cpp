@@ -303,7 +303,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
           airportFileWriter->write(bglFile.getAirports());
 
           // Ignore navaids from the Navigraph update
-          if(!area.isMsfsNavigraphNavdata())
+          if(!area.isMsfsNavigraphNavdata() && options.isIncludedNavDbObject(type::NAVAIDS))
           {
             // Write all navaids to the database
             waypointWriter->write(bglFile.getWaypoints());

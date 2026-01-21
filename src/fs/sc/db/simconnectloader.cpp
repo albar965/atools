@@ -20,6 +20,7 @@
 #include "atools.h"
 
 #include "exception.h"
+#include "fs/navdatabaseoptions.h"
 #include "fs/sc/db/simconnectairport.h"
 #include "fs/sc/db/simconnectid.h"
 #include "fs/sc/db/simconnectnav.h"
@@ -36,6 +37,7 @@
 #include <QThread>
 #include <QRegularExpression>
 #include <QFile>
+
 
 namespace atools {
 namespace fs {
@@ -82,7 +84,7 @@ enum FacilityDataDefinitionId : SIMCONNECT_DATA_DEFINITION_ID
   /* Waypoints and route/airway children */
   FACILITY_DATA_WAYPOINT_ROUTE_DEFINITION_ID = FACILITY_DATA_NAVAID_DEFINITION_ID + 1,
 
-  /* Waypoints only*/
+  /* Waypoints only */
   FACILITY_DATA_WAYPOINT_DEFINITION_ID = FACILITY_DATA_NAVAID_DEFINITION_ID + 2,
 
   /* NDB */
@@ -110,8 +112,8 @@ class SimConnectLoaderPrivate
 {
 public:
   SimConnectLoaderPrivate(const atools::win::ActivationContext *activationContext, atools::sql::SqlDatabase& sqlDb,
-                          const QString& libraryName, bool verboseLogging)
-    : verbose(verboseLogging)
+                          const QString& libraryName, const atools::fs::NavDatabaseOptions& opts)
+    : verbose(opts.isVerbose()), options(opts)
   {
     qDebug() << Q_FUNC_INFO << "Creating DLL and API for" << libraryName;
 
@@ -120,7 +122,7 @@ public:
     if(!api->bindFunctions(activationContext, libraryName))
       throw atools::Exception("Error binding functions.");
     else
-      writer = new SimConnectWriter(sqlDb, verbose);
+      writer = new SimConnectWriter(sqlDb, opts);
   }
 
   ~SimConnectLoaderPrivate()
@@ -329,6 +331,8 @@ public:
       batchSize = 2000, fileId = 0, numException = 0;
 
   unsigned long airportFetchDelay = 50, navaidFetchDelay = 50;
+
+  const atools::fs::NavDatabaseOptions& options;
 };
 
 // ====================================================================================================================
@@ -1733,10 +1737,10 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
 // ==================================================================================================================
 // SimConnectLoader =================================================================================================
 SimConnectLoader::SimConnectLoader(const win::ActivationContext *activationContext, const QString& libraryName,
-                                   atools::sql::SqlDatabase& sqlDb, bool verbose)
+                                   atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts)
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
-  p = new SimConnectLoaderPrivate(activationContext, sqlDb, libraryName, verbose);
+  p = new SimConnectLoaderPrivate(activationContext, sqlDb, libraryName, opts);
 #else
   Q_UNUSED(activationContext)
   Q_UNUSED(libraryName)

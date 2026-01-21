@@ -339,7 +339,8 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *stream, atools
             taxipath::Type pathType = path.getType();
 
             if(pathType == atools::fs::bgl::taxipath::TAXI || pathType == atools::fs::bgl::taxipath::PATH ||
-               pathType == atools::fs::bgl::taxipath::PARKING)
+               pathType == atools::fs::bgl::taxipath::PARKING ||
+               (pathType == atools::fs::bgl::taxipath::RUNWAY && options->isIncludedNavDbObject(type::TAXIWAYRUNWAY)))
               taxipaths.append(path);
           }
         }
@@ -520,7 +521,7 @@ bool Airport::isMsfsPoiDummy(bool addon) const
 
 bool Airport::isCurrentRecordValid()
 {
-  Record tempRec(opts, bs);
+  Record tempRec(options, bs);
   rec::AirportRecordType tempType = tempRec.getId<rec::AirportRecordType>();
   bool valid = bgl::rec::airportRecordTypeValid(tempType) && tempRec.isFullyValid();
   tempRec.seekToStart();
@@ -560,7 +561,7 @@ void Airport::extractMainComFrequencies(const QList<Com>& coms, int& towerFreque
 
 void Airport::reportFarCoordinate(const atools::geo::Pos& pos, const QString& text)
 {
-  if(opts->isAirportValidation())
+  if(options->isAirportValidation())
   {
     float dist = atools::geo::meterToNm(position.getPos().distanceMeterTo(pos));
     if(dist > 10.f)
@@ -783,9 +784,9 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
       case taxipath::UNKNOWN:
       case taxipath::CLOSED:
       case taxipath::VEHICLE:
-      case taxipath::RUNWAY:
       case taxipath::ROAD:
       case taxipath::PAINTEDLINE:
+      case taxipath::RUNWAY: // Runway type uses included name index and runway designator for name
         break;
 
       case taxipath::PATH:
@@ -808,12 +809,12 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
       case taxipath::UNKNOWN:
       case taxipath::CLOSED:
       case taxipath::VEHICLE:
-      case taxipath::RUNWAY:
       case taxipath::ROAD:
       case taxipath::PAINTEDLINE:
         break;
 
       case taxipath::PATH:
+      case taxipath::RUNWAY:
       case taxipath::TAXI:
         if(inRange(taxipoints, taxiPath.startIndex) && inRange(taxipoints, taxiPath.endIndex))
         {
