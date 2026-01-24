@@ -165,17 +165,6 @@ public:
                          QMessageBox::StandardButton dialogDefaultButton,
                          QMessageBox::StandardButton defaultButton);
 
-  /* Show a simple message box for showing action instead of progress.
-  * The box has no close button and does not close on Esc.
-  * Also sets wait cursor. Delete with deleteSimpleProgressDialog() */
-  QMessageBox *showSimpleProgressDialog(const QString& message)
-  {
-    return showSimpleProgressDialog(parent, message);
-  }
-
-  static QMessageBox *showSimpleProgressDialog(QWidget *parentWidget, const QString& message);
-  static void deleteSimpleProgressDialog(QMessageBox *messageBox);
-
   /* =======================================================================================================
    * Static methods replacing the QMessageBox methods but adding text selection and more flags
    * plus a logging the message. */

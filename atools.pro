@@ -546,6 +546,7 @@ HEADERS += \
   src/gui/messagebox.h \
   src/gui/palettesettings.h \
   src/gui/signalblocker.h \
+  src/gui/simplewaitdialog.h \
   src/gui/sqlquerydialog.h \
   src/gui/tabwidgethandler.h \
   src/gui/tools.h \
@@ -581,6 +582,7 @@ SOURCES += \
   src/gui/messagebox.cpp \
   src/gui/palettesettings.cpp \
   src/gui/signalblocker.cpp \
+  src/gui/simplewaitdialog.cpp \
   src/gui/sqlquerydialog.cpp \
   src/gui/tabwidgethandler.cpp \
   src/gui/tools.cpp \
@@ -599,8 +601,9 @@ SOURCES += \
 FORMS += \
   src/gui/choicedialog.ui \
   src/gui/messagebox.ui \
-  src/gui/treedialog.ui \
-  src/gui/sqlquerydialog.ui
+  src/gui/simplewaitdialog.ui \
+  src/gui/sqlquerydialog.ui \
+  src/gui/treedialog.ui
 } # ATOOLS_NO_GUI
 
 # =====================================================================

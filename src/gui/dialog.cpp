@@ -304,33 +304,6 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
   return retval;
 }
 
-QMessageBox *Dialog::showSimpleProgressDialog(QWidget *parentWidget, const QString& message)
-{
-  Application::closeSplashScreen();
-
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
-  QMessageBox *progressBox = new QMessageBox(QMessageBox::NoIcon, QCoreApplication::applicationName(), message,
-                                             QMessageBox::NoButton, parentWidget);
-  progressBox->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
-  progressBox->setStandardButtons(QMessageBox::NoButton);
-  progressBox->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-  progressBox->setWindowModality(Qt::ApplicationModal);
-  progressBox->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-  progressBox->show();
-
-  Application::processEventsExtended();
-  return progressBox;
-}
-
-void Dialog::deleteSimpleProgressDialog(QMessageBox *messageBox)
-{
-  messageBox->close();
-  messageBox->deleteLater();
-
-  QGuiApplication::restoreOverrideCursor();
-}
-
 QMessageBox::StandardButton Dialog::messageBox(QWidget *parent, QMessageBox::Icon icon, const QString& text,
                                                QMessageBox::StandardButtons buttons, QMessageBox::StandardButton defaultButton)
 {
