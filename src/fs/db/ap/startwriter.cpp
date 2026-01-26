@@ -43,9 +43,9 @@ void StartWriter::writeObject(const Start *type)
   bind(":runway_name", type->getRunwayName());
   bind(":type", bgl::util::enumToStr(Start::startTypeToStr, type->getType()));
   bind(":heading", type->getHeading());
-  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
+  bind(":altitude", roundToInt(meterToFeet(type->getPosD().getAltitude())));
+  bind(":lonx", type->getPosD().getLonX());
+  bind(":laty", type->getPosD().getLatY());
 
   bool isComplete = false;
   const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();

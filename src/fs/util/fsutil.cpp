@@ -1110,17 +1110,27 @@ QString waypointFlagsFromXplane(const QString& flags, const QString& defaultValu
 void calculateIlsGeometry(const atools::geo::Pos& pos, float headingTrue, float widthDeg, float featherLengthNm,
                           atools::geo::Pos& p1, atools::geo::Pos& p2, atools::geo::Pos& pmid)
 {
-  float hdg = atools::geo::opposedCourseDeg(headingTrue);
-  float lengthMeter = atools::geo::nmToMeter(featherLengthNm);
-  widthDeg = std::max(2.f, widthDeg);
+  atools::geo::PosD p1D, p2D, pmidD;
+  calculateIlsGeometryD(atools::geo::PosD(pos), headingTrue, widthDeg, featherLengthNm, p1D, p2D, pmidD);
+  p1 = p1D.asPos();
+  p2 = p2D.asPos();
+  pmid = pmidD.asPos();
+}
 
-  if(!(widthDeg < atools::geo::INVALID_FLOAT) || widthDeg < 0.1f)
-    widthDeg = 4.f;
+void calculateIlsGeometryD(const atools::geo::PosD& pos, double headingTrue, double widthDeg, double featherLengthNm,
+                           atools::geo::PosD& p1, atools::geo::PosD& p2, atools::geo::PosD& pmid)
+{
+  double hdg = atools::geo::opposedCourseDeg(headingTrue);
+  double lengthMeter = atools::geo::nmToMeter(featherLengthNm);
+  widthDeg = std::max(2., widthDeg);
 
-  p1 = pos.endpoint(lengthMeter, hdg - widthDeg / 2.f);
-  p2 = pos.endpoint(lengthMeter, hdg + widthDeg / 2.f);
-  float featherWidth = p1.distanceMeterTo(p2);
-  pmid = pos.endpoint(lengthMeter - featherWidth / 2.f, hdg);
+  if(!(widthDeg < atools::geo::INVALID_FLOAT) || widthDeg < 0.1)
+    widthDeg = 4.;
+
+  p1 = pos.endpoint(lengthMeter, hdg - widthDeg / 2.);
+  p2 = pos.endpoint(lengthMeter, hdg + widthDeg / 2.);
+  double featherWidth = p1.distanceMeterTo(p2);
+  pmid = pos.endpoint(lengthMeter - featherWidth / 2., hdg);
 }
 
 QDateTime xpGribFilenameToDate(const QString& filename)

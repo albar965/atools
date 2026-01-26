@@ -26,6 +26,7 @@ namespace atools {
 namespace geo {
 class LineString;
 class Pos;
+class PosD;
 }
 namespace fs {
 namespace util {
@@ -36,6 +37,9 @@ atools::geo::LineString correctBoundary(const atools::geo::LineString& geometry)
 /* Calculate the display points of an ILS feather. Minimum width is 2 degrees */
 void calculateIlsGeometry(const atools::geo::Pos& pos, float headingTrue, float widthDeg, float featherLengthNm,
                           geo::Pos& p1, geo::Pos& p2, geo::Pos& pmid);
+
+void calculateIlsGeometryD(const atools::geo::PosD& pos, double headingTrue, double widthDeg, double featherLengthNm,
+                           atools::geo::PosD& p1, atools::geo::PosD& p2, atools::geo::PosD& pmid);
 
 const float DEFAULT_FEATHER_LEN_NM = 9.f;
 

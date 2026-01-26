@@ -63,7 +63,12 @@ public:
     return pos.getAltitude();
   }
 
-  const atools::geo::Pos& getPos() const
+  const atools::geo::Pos getPos() const
+  {
+    return pos.asPos();
+  }
+
+  const atools::geo::PosD& getPosD() const
   {
     return pos;
   }
@@ -76,7 +81,7 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& record);
 
-  atools::geo::Pos pos;
+  atools::geo::PosD pos;
 };
 
 } // namespace bgl

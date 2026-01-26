@@ -60,9 +60,9 @@ public:
    */
   QString getRunwayName() const;
 
-  const atools::fs::bgl::BglPosition& getPosition() const
+  const atools::geo::PosD& getPosD() const
   {
-    return position;
+    return position.getPosD();
   }
 
   /*

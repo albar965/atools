@@ -59,13 +59,13 @@ void TaxiPathWriter::writeObject(const TaxiPath *type)
 
   bind(":start_type", bgl::util::enumToStr(TaxiPoint::pointTypeToString, type->getStartPoint().getType()));
   bind(":start_dir", bgl::util::enumToStr(TaxiPoint::dirToString, type->getStartPoint().getOrientation()));
-  bind(":start_lonx", type->getStartPoint().getPosition().getLonX());
-  bind(":start_laty", type->getStartPoint().getPosition().getLatY());
+  bind(":start_lonx", type->getStartPoint().getPosD().getLonX());
+  bind(":start_laty", type->getStartPoint().getPosD().getLatY());
 
   bind(":end_type", bgl::util::enumToStr(TaxiPoint::pointTypeToString, type->getEndPoint().getType()));
   bind(":end_dir", bgl::util::enumToStr(TaxiPoint::dirToString, type->getEndPoint().getOrientation()));
-  bind(":end_lonx", type->getEndPoint().getPosition().getLonX());
-  bind(":end_laty", type->getEndPoint().getPosition().getLatY());
+  bind(":end_lonx", type->getEndPoint().getPosD().getLonX());
+  bind(":end_laty", type->getEndPoint().getPosD().getLatY());
 
   executeStatement();
 }

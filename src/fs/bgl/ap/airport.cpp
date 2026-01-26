@@ -647,8 +647,8 @@ void Airport::updateSummaryFields()
 
   for(const Parking& parking : std::as_const(parkings))
   {
-    reportFarCoordinate(parking.getPosition().getPos(), "parking");
-    points.append(parking.getPosition().getPos());
+    reportFarCoordinate(parking.getPosD().asPos(), "parking");
+    points.append(parking.getPosD().asPos());
 
     // Assign fuel from parking if not set in flags
     // https://devsupport.flightsimulator.com/questions/10232/su10-u3-removed-fuel-flags-from-bgl-files.html
@@ -705,23 +705,23 @@ void Airport::updateSummaryFields()
 
   for(const Start& s : std::as_const(starts))
   {
-    reportFarCoordinate(s.getPosition().getPos(), "start");
-    points.append(s.getPosition().getPos());
+    reportFarCoordinate(s.getPosD().asPos(), "start");
+    points.append(s.getPosD().asPos());
   }
 
   for(const Helipad& h : std::as_const(helipads))
   {
-    reportFarCoordinate(h.getPosition().getPos(), "helipad");
-    points.append(h.getPosition().getPos());
+    reportFarCoordinate(h.getPosD().asPos(), "helipad");
+    points.append(h.getPosD().asPos());
   }
 
   for(const TaxiPath& p : std::as_const(taxipaths))
   {
-    reportFarCoordinate(p.getStartPoint().getPosition().getPos(), "taxipath start");
-    points.append(p.getStartPoint().getPosition().getPos());
+    reportFarCoordinate(p.getStartPoint().getPosD().asPos(), "taxipath start");
+    points.append(p.getStartPoint().getPosD().asPos());
 
-    reportFarCoordinate(p.getEndPoint().getPosition().getPos(), "taxipath end");
-    points.append(p.getEndPoint().getPosition().getPos());
+    reportFarCoordinate(p.getEndPoint().getPosD().asPos(), "taxipath end");
+    points.append(p.getEndPoint().getPosD().asPos());
   }
 
   updateHelipads();
@@ -758,7 +758,7 @@ void Airport::updateHelipads()
     int startIdx = 1;
     for(const Start& start : std::as_const(starts))
     {
-      if(start.getPosition().getPos().almostEqual(helipad.getPosition().getPos(), atools::geo::Pos::POS_EPSILON_5M))
+      if(start.getPosD().almostEqual(helipad.getPosD(), atools::geo::Pos::POS_EPSILON_5M))
         helipad.setStartIndex(startIdx);
       startIdx++;
     }

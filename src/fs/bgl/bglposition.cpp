@@ -36,8 +36,8 @@ BglPosition::BglPosition(float lonX, float latY, float altitude)
 
 BglPosition::BglPosition(BinaryStream *stream, bool hasAltitude, float altitudeDivisor)
 {
-  float lonX = converter::intToLonX(stream->readInt());
-  float latY = converter::intToLatY(stream->readInt());
+  double lonX = converter::intToLonX(stream->readInt());
+  double latY = converter::intToLatY(stream->readInt());
 
   float altitude;
   if(hasAltitude)
@@ -45,7 +45,7 @@ BglPosition::BglPosition(BinaryStream *stream, bool hasAltitude, float altitudeD
   else
     altitude = 0.f;
 
-  pos = atools::geo::Pos(lonX, latY, altitude);
+  pos = atools::geo::PosD(lonX, latY, altitude);
 }
 
 QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& record)

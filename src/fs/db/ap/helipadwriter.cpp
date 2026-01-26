@@ -62,9 +62,9 @@ void HelipadWriter::writeObject(const Helipad *type)
   bind(":heading", type->getHeading());
   bindBool(":is_transparent", type->isTransparent());
   bindBool(":is_closed", type->isClosed());
-  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
+  bind(":altitude", roundToInt(meterToFeet(type->getPosD().getAltitude())));
+  bind(":lonx", type->getPosD().getLonX());
+  bind(":laty", type->getPosD().getLatY());
 
   executeStatement();
 }

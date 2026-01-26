@@ -153,7 +153,7 @@ public:
     return position;
   }
 
-  const atools::geo::Pos& getPos() const
+  const atools::geo::Pos getPos() const
   {
     return position.getPos();
   }

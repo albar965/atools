@@ -30,18 +30,18 @@ namespace converter {
  * Converts the BGL specific coordinate format to degrees
  * @return longitude degrees
  */
-inline float intToLonX(int lonX)
+inline double intToLonX(int lonX)
 {
-  return (lonX * (360.0f / (3.f * 0x10000000))) - 180.0f;
+  return (lonX * (360. / (3. * 0x10000000))) - 180.;
 }
 
 /*
  * Converts the BGL specific coordinate format to degrees
  * @return latitude degrees
  */
-inline float intToLatY(int latY)
+inline double intToLatY(int latY)
 {
-  return 90.0f - latY * (180.0f / (2.f * 0x10000000));
+  return 90. - latY * (180. / (2. * 0x10000000));
 }
 
 /* Get the time in seconds since epoch from the BGL header specific format */

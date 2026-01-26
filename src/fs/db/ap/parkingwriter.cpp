@@ -47,8 +47,8 @@ void ParkingWriter::writeObject(const Parking *type)
   bind(":radius", roundToInt(meterToFeet(type->getRadius())));
   bind(":heading", type->getHeading());
   bindBool(":has_jetway", type->hasJetway());
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
+  bind(":lonx", type->getPosD().getLonX());
+  bind(":laty", type->getPosD().getLatY());
 
   executeStatement();
 }

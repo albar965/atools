@@ -47,7 +47,7 @@ TaxiPoint::TaxiPoint(const Parking& parkingSpot)
   // Create a taxi point from a parking spot. This does not have a BGL equivalent.
   type = taxipoint::PARKING;
   dir = taxipoint::UNKNOWN_DIR;
-  position = parkingSpot.getPosition();
+  position = parkingSpot.getBglPosition();
   parking = parkingSpot;
 }
 

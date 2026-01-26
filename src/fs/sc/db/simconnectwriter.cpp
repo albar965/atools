@@ -49,7 +49,7 @@ namespace db {
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 using atools::geo::Rect;
-using atools::geo::Pos;
+using atools::geo::PosD;
 using atools::fs::bgl::util::enumToStr;
 
 // Do not extend bounding rectangle beyond this distance from center point
@@ -68,13 +68,13 @@ float mToFt(float meter, int precision = 0)
 }
 
 // Binding inline helper functions ===================================================
-inline bool valid(const geo::Pos& pos)
+inline bool valid(const geo::PosD& pos)
 {
   return pos.isValid() && !pos.isNull();
 }
 
 /* Binds position to query if valid or null if not */
-inline void bindPos(atools::sql::SqlQuery *query, const geo::Pos& pos, const QString& prefix = QString())
+inline void bindPos(atools::sql::SqlQuery *query, const geo::PosD& pos, const QString& prefix = QString())
 {
   if(valid(pos))
   {
@@ -89,7 +89,7 @@ inline void bindPos(atools::sql::SqlQuery *query, const geo::Pos& pos, const QSt
 }
 
 /* Binds position and altitude in meter to query  */
-inline void bindPosAlt(atools::sql::SqlQuery *query, const atools::geo::Pos& pos, const QString& prefix = QString())
+inline void bindPosAlt(atools::sql::SqlQuery *query, const atools::geo::PosD& pos, const QString& prefix = QString())
 {
   bindPos(query, pos, prefix);
 
@@ -99,24 +99,14 @@ inline void bindPosAlt(atools::sql::SqlQuery *query, const atools::geo::Pos& pos
     query->bindNullFloat(QStringLiteral(":") % prefix % QStringLiteral("altitude"));
 }
 
-inline void bindPos(atools::sql::SqlQuery *query, float lonX, float latY, const QString& prefix = QString())
-{
-  bindPos(query, Pos(lonX, latY), prefix);
-}
-
 inline void bindPos(atools::sql::SqlQuery *query, double lonX, double latY, const QString& prefix = QString())
 {
-  bindPos(query, Pos(lonX, latY), prefix);
-}
-
-inline void bindPosAlt(atools::sql::SqlQuery *query, float lonX, float latY, float altitude, const QString& prefix = QString())
-{
-  bindPosAlt(query, Pos(lonX, latY, altitude), prefix);
+  bindPos(query, PosD(lonX, latY), prefix);
 }
 
 inline void bindPosAlt(atools::sql::SqlQuery *query, double lonX, double latY, double altitude, const QString& prefix = QString())
 {
-  bindPosAlt(query, Pos(lonX, latY, altitude), prefix);
+  bindPosAlt(query, PosD(lonX, latY, altitude), prefix);
 }
 
 inline void bindPosNull(atools::sql::SqlQuery *query, const QString& prefix = QString())
@@ -131,13 +121,13 @@ inline void bindPosAltNull(atools::sql::SqlQuery *query, const QString& prefix =
   query->bindNullFloat(QStringLiteral(":") % prefix % QStringLiteral("altitude"));
 }
 
-inline atools::geo::Pos calcPosFromBias(const atools::geo::Pos& airportPos, float biasXMeter, float biasYMeter)
+inline atools::geo::PosD calcPosFromBias(const atools::geo::PosD& airportPos, float biasXMeter, float biasYMeter)
 {
   // Calculate offset position from bias in meter
   atools::geo::PosD pos(airportPos);
   pos.setLonX(pos.endpoint(biasXMeter, 90.).getLonX()); // Do precise calculation
-  pos.setLatY(pos.getLatY() + atools::geo::meterToNm(static_cast<double>(biasYMeter)) / 60.); // 1 deg minute = 1 NM
-  return pos.asPos();
+  pos.setLatY(pos.getLatY() + atools::geo::meterToNm(biasYMeter) / 60.); // 1 deg minute = 1 NM
+  return pos;
 }
 
 void extend(atools::geo::Rect& rect, const atools::geo::Pos& pos)
@@ -506,11 +496,11 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
     try
     {
       // Write airport =========================================================================================
-      Pos airportPos(airportFacility.longitude, airportFacility.latitude, airportFacility.altitude);
-      Pos towerPos(airportFacility.towerLongitude, airportFacility.towerLatitude, airportFacility.towerAltitude);
+      PosD airportPos(airportFacility.longitude, airportFacility.latitude, airportFacility.altitude);
+      PosD towerPos(airportFacility.towerLongitude, airportFacility.towerLatitude, airportFacility.towerAltitude);
 
       // Airport position is center and bounding will not be extended beyond MAX_DISTANCE_TO_BOUNDING_NM
-      Rect bounding(airportPos);
+      Rect bounding(airportPos.asPos());
 
       if(verbose)
         qDebug() << Q_FUNC_INFO << airportIdent << airportFacility.longitude << airportFacility.latitude;
@@ -584,10 +574,10 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
       airportStmt->bindValue(QStringLiteral(":is_3d"), 0);
 
       // SimConnect MAGVAR gives wrong indications - calculate using WMM for airports
-      airportStmt->bindValue(QStringLiteral(":mag_var"), magDecReader->getMagVar(airportPos));
+      airportStmt->bindValue(QStringLiteral(":mag_var"), magDecReader->getMagVar(airportPos.asPos()));
 
       bindPosAlt(airportStmt, towerPos, QStringLiteral("tower_"));
-      extend(bounding, towerPos);
+      extend(bounding, towerPos.asPos());
 
       airportStmt->bindValue(QStringLiteral(":transition_altitude"), mToFt(airportFacility.transitionAltitude));
       airportStmt->bindValue(QStringLiteral(":transition_level"), mToFt(airportFacility.transitionLevel));
@@ -665,16 +655,16 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         runwayStmt->bindValue(QStringLiteral(":has_center_red"), 0);
 
         // Calculate runway end positions for drawing ======================
-        Pos runwayCenterPos(runwayFacility.longitude, runwayFacility.latitude, runwayFacility.altitude);
-        extend(bounding, runwayCenterPos);
+        PosD runwayCenterPos(runwayFacility.longitude, runwayFacility.latitude, runwayFacility.altitude);
+        extend(bounding, runwayCenterPos.asPos());
 
-        Pos primaryPos = runwayCenterPos.endpoint(runwayFacility.length / 2.f, atools::geo::opposedCourseDeg(runwayFacility.heading));
+        PosD primaryPos = runwayCenterPos.endpoint(runwayFacility.length / 2., atools::geo::opposedCourseDeg(runwayFacility.heading));
         primaryPos.setAltitude(runwayCenterPos.getAltitude());
-        extend(bounding, primaryPos);
+        extend(bounding, primaryPos.asPos());
 
-        Pos secondaryPos = runwayCenterPos.endpoint(runwayFacility.length / 2.f, runwayFacility.heading);
+        PosD secondaryPos = runwayCenterPos.endpoint(runwayFacility.length / 2., runwayFacility.heading);
         secondaryPos.setAltitude(runwayCenterPos.getAltitude());
-        extend(bounding, secondaryPos);
+        extend(bounding, secondaryPos.asPos());
 
         bindPos(runwayStmt, primaryPos, QStringLiteral("primary_"));
         bindPos(runwayStmt, secondaryPos, QStringLiteral("secondary_"));
@@ -746,10 +736,10 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
 
       // Starts ===========================================================================================
       // Maps position and index for helipad to start relation
-      QList<std::pair<Pos, int> > startIndex;
+      QList<std::pair<PosD, int> > startIndex;
       for(const StartFacility& start : airport.getStartFacilities())
       {
-        Pos startPos(start.longitude, start.latitude, start.altitude);
+        PosD startPos(start.longitude, start.latitude, start.altitude);
 
         if(valid(startPos))
         {
@@ -761,7 +751,8 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
           if(startType == bgl::start::RUNWAY)
           {
             QString runwayName = bgl::converter::runwayToStr(start.number, start.designator);
-            int endId = runwayIndex.getRunwayEndId(airportIdent, runwayName, QStringLiteral("SimConnect - start ") % startPos.toString());
+            int endId = runwayIndex.getRunwayEndId(airportIdent, runwayName,
+                                                   QStringLiteral("SimConnect - start ") % startPos.asPos().toString());
 
             if(endId > 0)
               startStmt->bindValue(QStringLiteral(":runway_end_id"), endId);
@@ -782,7 +773,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
 
           bindPosAlt(startStmt, startPos);
           startStmt->exec();
-          extend(bounding, startPos);
+          extend(bounding, startPos.asPos());
           startIndex.append(std::make_pair(startPos, startId));
         }
       }
@@ -802,12 +793,12 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
       // Helipads ===========================================================================================
       for(const HelipadFacility& helipad : airport.getHelipadFacilities())
       {
-        Pos helipadPos(helipad.longitude, helipad.latitude, helipad.altitude);
+        PosD helipadPos(helipad.longitude, helipad.latitude, helipad.altitude);
         if(valid(helipadPos))
         {
           // Look for a start position by coordinates for the helipad =========
           int helipadStartId = -1;
-          for(const std::pair<Pos, int>& start : startIndex)
+          for(const std::pair<PosD, int>& start : startIndex)
           {
             if(start.first.almostEqual(helipadPos, atools::geo::Pos::POS_EPSILON_1M))
             {
@@ -835,7 +826,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
           helipadStmt->bindValue(QStringLiteral(":is_closed"), 0);
           bindPosAlt(helipadStmt, helipadPos);
           helipadStmt->exec();
-          extend(bounding, helipadPos);
+          extend(bounding, helipadPos.asPos());
         }
       }
 
@@ -1071,7 +1062,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
       {
         bgl::ap::ParkingType parkingType = static_cast<bgl::ap::ParkingType>(parking.type);
         QString parkingTypeStr = enumToStr(bgl::Parking::parkingTypeToStr, parkingType);
-        Pos parkingPos(calcPosFromBias(airportPos, parking.biasX, parking.biasY));
+        PosD parkingPos(calcPosFromBias(airportPos, parking.biasX, parking.biasY));
 
         // Add only valid and omit vehicle parking
         if(valid(parkingPos) && parkingType != bgl::ap::VEHICLES && !parkingTypeStr.isEmpty())
@@ -1094,7 +1085,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
 
           bindPos(parkingStmt, parkingPos);
           parkingStmt->exec();
-          extend(bounding, parkingPos);
+          extend(bounding, parkingPos.asPos());
         }
 
         // Insert all parking spots
@@ -1169,11 +1160,11 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
           taxiPathStmt->bindValue(QStringLiteral(":start_dir"), enumToStr(bgl::TaxiPoint::dirToString,
                                                                           static_cast<bgl::taxipoint::PointDir>(startPoint.orientation)));
 
-          Pos startPos(calcPosFromBias(airportPos, startPoint.biasX, startPoint.biasY));
+          PosD startPos(calcPosFromBias(airportPos, startPoint.biasX, startPoint.biasY));
           bindPos(taxiPathStmt, startPos, QStringLiteral("start_"));
 
           // End is either node or parking depending on type ======================================================
-          Pos endPos;
+          PosD endPos;
           QString endType, endDir;
           if(path.type == bgl::taxipath::PARKING)
           {
@@ -1205,8 +1196,8 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
             bindPos(taxiPathStmt, endPos, QStringLiteral("end_"));
             taxiPathStmt->exec();
 
-            extend(bounding, startPos);
-            extend(bounding, endPos);
+            extend(bounding, startPos.asPos());
+            extend(bounding, endPos.asPos());
           }
         }
       }
@@ -1383,8 +1374,8 @@ bool SimConnectWriter::writeVorAndIlsToDatabase(const QList<VorFacility>& vors, 
       ilsStmt->bindValue(QStringLiteral(":loc_width"), vorIls.localizerWidth);
 
       // Calculate feather geometry ===================================
-      Pos p1, p2, pmid, pos(vorIls.vorLongitude, vorIls.vorLatitude);
-      util::calculateIlsGeometry(pos, heading, vorIls.localizerWidth, atools::fs::util::DEFAULT_FEATHER_LEN_NM, p1, p2, pmid);
+      PosD p1, p2, pmid, pos(vorIls.vorLongitude, vorIls.vorLatitude);
+      util::calculateIlsGeometryD(pos, heading, vorIls.localizerWidth, atools::fs::util::DEFAULT_FEATHER_LEN_NM, p1, p2, pmid);
 
       bindPos(ilsStmt, p1, QStringLiteral("end1_"));
       bindPos(ilsStmt, pmid, QStringLiteral("end_mid_"));
@@ -1716,7 +1707,7 @@ void SimConnectWriter::writeLeg(atools::sql::SqlQuery *query, const LegFacility&
 
   if(leg.verticalAngle > 0)
   {
-    query->bindValue(QStringLiteral(":vertical_angle"), 360.f - leg.verticalAngle);
+    query->bindValue(QStringLiteral(":vertical_angle"), 360. - leg.verticalAngle);
     if(verticalAngleFound != nullptr)
       *verticalAngleFound |= true;
   }
