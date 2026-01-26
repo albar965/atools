@@ -232,6 +232,34 @@ void centerWidgetOnScreen(QWidget *widget, const QSize& size)
 
 }
 
+void ensureVisibility(QWidget *mainWindow)
+{
+  // Has to be visible for 40 pixels at least on one screen
+  static const int BUFFER_PIXELS = 40;
+  bool visible = false;
+
+  const QList<QScreen *> screens = QGuiApplication::screens();
+  for(const QScreen *screen : screens)
+  {
+    QRect geometry = screen->availableGeometry();
+    QRect intersected = geometry.intersected(mainWindow->frameGeometry());
+    if(intersected.width() > BUFFER_PIXELS && intersected.height() > BUFFER_PIXELS)
+    {
+      visible = true;
+      qDebug() << Q_FUNC_INFO << "Visibility" << visible << "on" << screen->name() << geometry
+               << "window frame" << mainWindow->frameGeometry();
+      break;
+    }
+  }
+
+  if(!visible)
+  {
+    qDebug() << Q_FUNC_INFO << "Getting window back on screen" << QGuiApplication::primaryScreen()->name()
+             << QGuiApplication::primaryScreen()->availableGeometry() << "window frame" << mainWindow->frameGeometry();
+    centerWidgetOnScreen(mainWindow, QSize());
+  }
+}
+
 } // namespace util
 } // namespace gui
 } // namespace atools

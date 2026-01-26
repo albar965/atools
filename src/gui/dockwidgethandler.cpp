@@ -34,6 +34,7 @@
 #include <QScreen>
 #include <QFile>
 #include <QTimer>
+#include <QWidget>
 
 namespace atools {
 namespace gui {
@@ -129,33 +130,11 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
     mainWindow->menuWidget()->setVisible(true); // Do not hide
 
   // Check if window if off screen ==================
-  bool visible = false;
   if(verbose)
     qDebug() << Q_FUNC_INFO << "mainWindow->frameGeometry()" << mainWindow->frameGeometry();
 
-  // Has to be visible for 20 pixels at least on one screen
-  const QList<QScreen *> screens = QGuiApplication::screens();
-  for(const QScreen *screen : screens)
-  {
-    QRect geometry = screen->availableGeometry();
-    QRect intersected = geometry.intersected(mainWindow->frameGeometry());
-    if(intersected.width() > 20 && intersected.height() > 20)
-    {
-      if(verbose)
-        qDebug() << Q_FUNC_INFO << "Visible on" << screen->name() << geometry;
-      visible = true;
-      break;
-    }
-  }
-
-  if(!visible)
-  {
-    // Move back to primary top left plus offset
-    QRect geometry = QApplication::primaryScreen()->availableGeometry();
-    mainWindow->move(geometry.topLeft() + QPoint(20, 20));
-    if(verbose)
-      qDebug() << Q_FUNC_INFO << "Getting window back on screen" << QApplication::primaryScreen()->name() << geometry;
-  }
+  // Center window on main screen if it is not fully visible
+  util::ensureVisibility(mainWindow);
 }
 
 void MainWindowState::fromWindow(const QMainWindow *mainWindow)

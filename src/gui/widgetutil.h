@@ -68,6 +68,9 @@ bool anyWidgetChanged(const QList<const QObject *>& widgets);
 /* Centers the widget on the primary screen (not its parent) */
 void centerWidgetOnScreen(QWidget *widget, const QSize& size);
 
+/* Moves widget to be visible on main screen */
+void ensureVisibility(QWidget *widget);
+
 /*
  * @return true if all actions that are checkable are checked
  */
