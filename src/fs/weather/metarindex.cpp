@@ -167,7 +167,7 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
       continue;
     }
 
-    if(format == XPLANE && (line.startsWith("MDEG ") || line.startsWith("DEG ")))
+    if(format == XPLANE && (line.startsWith(QStringLiteral("MDEG ")) || line.startsWith(QStringLiteral("DEG "))))
     {
       lineNum++;
       // Ignore X-Plane's special coordinate format
@@ -185,7 +185,7 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
          line.at(10) == ' ')
       {
         // Found line containing date like "2017/10/29 11:45"
-        lastTimestamp = QDateTime::fromString(line, "yyyy/MM/dd hh:mm");
+        lastTimestamp = QDateTime::fromString(line, QStringLiteral("yyyy/MM/dd hh:mm"));
         lastTimestamp.setTimeZone(QTimeZone::utc()); // Does not change date and time numbers
         lineNum++;
         continue;
@@ -406,9 +406,9 @@ int MetarIndex::readJson(QTextStream& stream, const QString& fileOrUrl, bool mer
   for(const QJsonValue& airportValue : arr)
   {
     QJsonObject airportObj = airportValue.toObject();
-    QString ident = airportObj.value("airportIcao").toString().toLatin1();
-    QString metar = airportObj.value("metar").toString().toLatin1();
-    QDateTime metarDateTime = QDateTime::fromString(airportObj.value("updatedAt").toString(), Qt::ISODateWithMs);
+    QString ident = airportObj.value(QStringLiteral("airportIcao")).toString().toLatin1();
+    QString metar = airportObj.value(QStringLiteral("metar")).toString().toLatin1();
+    QDateTime metarDateTime = QDateTime::fromString(airportObj.value(QStringLiteral("updatedAt")).toString(), Qt::ISODateWithMs);
 
     if(!metarDateTime.isValid())
     {

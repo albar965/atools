@@ -137,44 +137,44 @@ bool AirspaceReaderIvao::readFile(const QString& filenameParam)
         // "position": "FSS", -> FSS
         // "position": "GND", -> G
         // "position": "TWR", -> T
-        QString position = obj.value("position").toString();
+        QString position = obj.value(QStringLiteral("position")).toString();
 
         // "type": "FIR",
         // "type": "TMA",
         // QString type = obj.value("type").toString();
 
-        QString airportId = obj.value("airport_id").toString();
-        QString middleIdent = obj.value("middle_identifier").toString();
-        QString name = obj.value("name").toString();
+        QString airportId = obj.value(QStringLiteral("airport_id")).toString();
+        QString middleIdent = obj.value(QStringLiteral("middle_identifier")).toString();
+        QString name = obj.value(QStringLiteral("name")).toString();
 
         // Fetch geometry ==================================================
         LineString line;
-        QJsonArray coordinates = obj.value("map_region").toArray();
+        QJsonArray coordinates = obj.value(QStringLiteral("map_region")).toArray();
         for(int coordIdx = 0; coordIdx < coordinates.count(); coordIdx++)
         {
           QJsonObject coordObj = coordinates.at(coordIdx).toObject();
-          line.append(Pos(coordObj.value("lng").toDouble(), coordObj.value("lat").toDouble()));
+          line.append(Pos(coordObj.value(QStringLiteral("lng")).toDouble(), coordObj.value(QStringLiteral("lat")).toDouble()));
         }
 
         QString dbType = positionToDbType(position);
 
         if(!dbType.isEmpty() && !airportId.isEmpty())
         {
-          insertAirspaceQuery->bindValue(":boundary_id", airspaceId++);
-          insertAirspaceQuery->bindValue(":file_id", fileId);
-          insertAirspaceQuery->bindValue(":description", name);
-          insertAirspaceQuery->bindValue(":type", dbType);
+          insertAirspaceQuery->bindValue(QStringLiteral(":boundary_id"), airspaceId++);
+          insertAirspaceQuery->bindValue(QStringLiteral(":file_id"), fileId);
+          insertAirspaceQuery->bindValue(QStringLiteral(":description"), name);
+          insertAirspaceQuery->bindValue(QStringLiteral(":type"), dbType);
 
           // Unused fields here
-          insertAirspaceQuery->bindNullStr(":restrictive_designation");
-          insertAirspaceQuery->bindNullStr(":restrictive_type");
-          insertAirspaceQuery->bindNullStr(":multiple_code");
-          insertAirspaceQuery->bindValue(":time_code", "U");
+          insertAirspaceQuery->bindNullStr(QStringLiteral(":restrictive_designation"));
+          insertAirspaceQuery->bindNullStr(QStringLiteral(":restrictive_type"));
+          insertAirspaceQuery->bindNullStr(QStringLiteral(":multiple_code"));
+          insertAirspaceQuery->bindValue(QStringLiteral(":time_code"), QStringLiteral("U"));
 
           // Build ident string like "LEPA_S_TWR" as used in IVAO data JSON ==================
           QStringList ident({airportId, middleIdent, position});
           ident.removeAll(QString());
-          insertAirspaceQuery->bindValue(":name", ident.join('_'));
+          insertAirspaceQuery->bindValue(QStringLiteral(":name"), ident.join('_'));
 
           // Get airport position from callback ====================
           Pos airportPos;
@@ -196,14 +196,14 @@ bool AirspaceReaderIvao::readFile(const QString& filenameParam)
 
           if(!line.isEmpty())
           {
-            insertAirspaceQuery->bindValue(":max_lonx", bounding.getEast());
-            insertAirspaceQuery->bindValue(":max_laty", bounding.getNorth());
-            insertAirspaceQuery->bindValue(":min_lonx", bounding.getWest());
-            insertAirspaceQuery->bindValue(":min_laty", bounding.getSouth());
+            insertAirspaceQuery->bindValue(QStringLiteral(":max_lonx"), bounding.getEast());
+            insertAirspaceQuery->bindValue(QStringLiteral(":max_laty"), bounding.getNorth());
+            insertAirspaceQuery->bindValue(QStringLiteral(":min_lonx"), bounding.getWest());
+            insertAirspaceQuery->bindValue(QStringLiteral(":min_laty"), bounding.getSouth());
 
             // Create geometry blob
             atools::fs::common::BinaryGeometry geo(atools::fs::util::correctBoundary(line));
-            insertAirspaceQuery->bindValue(":geometry", geo.writeToByteArray());
+            insertAirspaceQuery->bindValue(QStringLiteral(":geometry"), geo.writeToByteArray());
 
             insertAirspaceQuery->exec();
             insertAirspaceQuery->clearBoundValues();
@@ -231,29 +231,29 @@ bool AirspaceReaderIvao::readFile(const QString& filenameParam)
 
 QString AirspaceReaderIvao::positionToDbType(const QString& position)
 {
-  if(position == "APP")
-    return "A";
+  if(position == QStringLiteral("APP"))
+    return QStringLiteral("A");
 
-  if(position == "ATIS")
+  if(position == QStringLiteral("ATIS"))
     return QString();
 
-  if(position == "CTR")
-    return "C";
+  if(position == QStringLiteral("CTR"))
+    return QStringLiteral("C");
 
-  if(position == "DEL")
-    return "CL";
+  if(position == QStringLiteral("DEL"))
+    return QStringLiteral("CL");
 
-  if(position == "DEP")
-    return "D";
+  if(position == QStringLiteral("DEP"))
+    return QStringLiteral("D");
 
-  if(position == "FSS")
-    return "FSS";
+  if(position == QStringLiteral("FSS"))
+    return QStringLiteral("FSS");
 
-  if(position == "GND")
-    return "G";
+  if(position == QStringLiteral("GND"))
+    return QStringLiteral("G");
 
-  if(position == "TWR")
-    return "T";
+  if(position == QStringLiteral("TWR"))
+    return QStringLiteral("T");
 
   return QString();
 }

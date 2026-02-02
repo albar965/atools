@@ -25,11 +25,11 @@ namespace online {
 
 QString clientType(const QString& type)
 {
-  if(type == "ATC")
+  if(type == QStringLiteral("ATC"))
     return QObject::tr("ATC");
-  else if(type == "PILOT")
+  else if(type == QStringLiteral("PILOT"))
     return QObject::tr("Pilot");
-  else if(type == "FOLME")
+  else if(type == QStringLiteral("FOLME"))
     return QObject::tr("Follow me car");
   else
     return type;
@@ -85,25 +85,25 @@ QString facilityTypeToDb(fac::FacilityType type)
       return QString();
 
     case atools::fs::online::fac::FLIGHT_INFORMATION:
-      return "FIR";
+      return QStringLiteral("FIR");
 
     case atools::fs::online::fac::DELIVERY:
-      return "CL";
+      return QStringLiteral("CL");
 
     case atools::fs::online::fac::GROUND:
-      return "G";
+      return QStringLiteral("G");
 
     case atools::fs::online::fac::TOWER:
-      return "T";
+      return QStringLiteral("T");
 
     case atools::fs::online::fac::APPROACH:
-      return "A";
+      return QStringLiteral("A");
 
     case atools::fs::online::fac::ACC:
-      return "C";
+      return QStringLiteral("C");
 
     case atools::fs::online::fac::DEPARTURE:
-      return "D";
+      return QStringLiteral("D");
 
     case atools::fs::online::fac::UNKNOWN:
       return QString();
@@ -116,31 +116,31 @@ QString facilityTypeTextSettings(fac::FacilityType type)
   switch(type)
   {
     case atools::fs::online::fac::OBSERVER:
-      return QLatin1String("Observer");
+      return QStringLiteral("Observer");
 
     case atools::fs::online::fac::FLIGHT_INFORMATION:
-      return QLatin1String("FIR");
+      return QStringLiteral("FIR");
 
     case atools::fs::online::fac::DELIVERY:
-      return QLatin1String("Delivery");
+      return QStringLiteral("Delivery");
 
     case atools::fs::online::fac::GROUND:
-      return QLatin1String("Ground");
+      return QStringLiteral("Ground");
 
     case atools::fs::online::fac::TOWER:
-      return QLatin1String("Tower");
+      return QStringLiteral("Tower");
 
     case atools::fs::online::fac::APPROACH:
-      return QLatin1String("Approach");
+      return QStringLiteral("Approach");
 
     case atools::fs::online::fac::ACC:
-      return QLatin1String("ACC");
+      return QStringLiteral("ACC");
 
     case atools::fs::online::fac::DEPARTURE:
-      return QLatin1String("Departure");
+      return QStringLiteral("Departure");
 
     case atools::fs::online::fac::UNKNOWN:
-      return QLatin1String("Unknown");
+      return QStringLiteral("Unknown");
   }
   return QString::number(type);
 }
@@ -149,21 +149,21 @@ fac::FacilityType textToFacilityType(QString value)
 {
   // IVAO: DEL; GND; TWR; APP; DEP; CTR; FSS
   value = value.toUpper();
-  if(value.startsWith("OBS"))
+  if(value.startsWith(QStringLiteral("OBS")))
     return atools::fs::online::fac::OBSERVER;
-  else if(value == "FIR" || value == "FSS")
+  else if(value == QStringLiteral("FIR") || value == QStringLiteral("FSS"))
     return atools::fs::online::fac::FLIGHT_INFORMATION;
-  else if(value.startsWith("DEL"))
+  else if(value.startsWith(QStringLiteral("DEL")))
     return atools::fs::online::fac::DELIVERY;
-  else if(value == "GROUND" || value == "GND")
+  else if(value == QStringLiteral("GROUND") || value == QStringLiteral("GND"))
     return atools::fs::online::fac::GROUND;
-  else if(value == "TOWER" || value == "TWR")
+  else if(value == QStringLiteral("TOWER") || value == QStringLiteral("TWR"))
     return atools::fs::online::fac::TOWER;
-  else if(value.startsWith("APP"))
+  else if(value.startsWith(QStringLiteral("APP")))
     return atools::fs::online::fac::APPROACH;
-  else if(value == "ACC" || value == "CTR")
+  else if(value == QStringLiteral("ACC") || value == QStringLiteral("CTR"))
     return atools::fs::online::fac::ACC;
-  else if(value.startsWith("DEP"))
+  else if(value.startsWith(QStringLiteral("DEP")))
     return atools::fs::online::fac::DEPARTURE;
 
   return atools::fs::online::fac::UNKNOWN;

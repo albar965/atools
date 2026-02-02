@@ -109,7 +109,7 @@ QString SqlExport::printValue(const QVariant& value) const
   QString retval;
 
   if(!value.isValid() && !value.isNull())
-    retval += "[INVALID_VALUE]";
+    retval += QStringLiteral("[INVALID_VALUE]");
   else if(value.isNull())
     retval += nullValue;
   else
@@ -120,9 +120,9 @@ QString SqlExport::printValue(const QVariant& value) const
       retval += buildString(value.toString());
     else
     {
-      retval += "[CANNOT_CONVERT_VALUE:";
+      retval += QStringLiteral("[CANNOT_CONVERT_VALUE:");
       retval += value.typeName();
-      retval += "]";
+      retval += QStringLiteral("]");
     }
   }
   return retval;
@@ -131,7 +131,7 @@ QString SqlExport::printValue(const QVariant& value) const
 QString SqlExport::printEndl() const
 {
   if(endline)
-    return "\n";
+    return QStringLiteral("\n");
   else
     return QString();
 }

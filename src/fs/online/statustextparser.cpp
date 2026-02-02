@@ -92,19 +92,19 @@ void StatusTextParser::read(QTextStream& stream)
   {
     QString line = stream.readLine().trimmed();
 
-    if(line.isEmpty() || line.startsWith(";") || line.startsWith("#"))
+    if(line.isEmpty() || line.startsWith(QStringLiteral(";")) || line.startsWith(QStringLiteral("#")))
       continue;
     QString key = line.section('=', 0, 0);
 
-    if(key == "url0")
+    if(key == QStringLiteral("url0"))
       urlList.append(line.section('=', 1).trimmed());
-    else if(key == "json3")
+    else if(key == QStringLiteral("json3"))
       urlJson3 = line.section('=', 1).trimmed();
-    if(key == "gzurl0")
+    if(key == QStringLiteral("gzurl0"))
       urlListGzip.append(line.section('=', 1).trimmed());
-    else if(key == "url1")
+    else if(key == QStringLiteral("url1"))
       urlListVoice.append(line.section('=', 1).trimmed());
-    else if(key == "msg0")
+    else if(key == QStringLiteral("msg0"))
       message = line.section('=', 1).trimmed();
   }
 }

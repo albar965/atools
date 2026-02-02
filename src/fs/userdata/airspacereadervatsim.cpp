@@ -137,7 +137,7 @@ AirspaceReaderVatsim::~AirspaceReaderVatsim()
 // .);
 bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
 {
-  const static QRegularExpression REGEXP_DESCR("[\\-_]");
+  const static QRegularExpression REGEXP_DESCR(QStringLiteral("[\\-_]"));
 
   reset();
   resetErrors();
@@ -152,29 +152,29 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
     if(error.error == QJsonParseError::NoError)
     {
-      const QJsonArray featureArray = doc.object().value("features").toArray();
+      const QJsonArray featureArray = doc.object().value(QStringLiteral("features")).toArray();
       for(const QJsonValue& featureValue : featureArray)
       {
         QJsonObject featureObj = featureValue.toObject();
-        QJsonObject propertiesObj = featureObj.value("properties").toObject();
-        QJsonObject geometryObj = featureObj.value("geometry").toObject();
+        QJsonObject propertiesObj = featureObj.value(QStringLiteral("properties")).toObject();
+        QJsonObject geometryObj = featureObj.value(QStringLiteral("geometry")).toObject();
 
         // Used for name
-        QString id = propertiesObj.value("id").toString();
+        QString id = propertiesObj.value(QStringLiteral("id")).toString();
 
         // Region and division only for logging
-        QString region = propertiesObj.value("region").toString(); // only firboundaries.json
-        QString division = propertiesObj.value("division").toString(); //// only firboundaries.json
+        QString region = propertiesObj.value(QStringLiteral("region")).toString(); // only firboundaries.json
+        QString division = propertiesObj.value(QStringLiteral("division")).toString(); //// only firboundaries.json
 
         // Collect prefixes from array
         QStringList prefixes;
-        const QJsonArray prefixArray = propertiesObj.value("prefix").toArray(QJsonArray());
+        const QJsonArray prefixArray = propertiesObj.value(QStringLiteral("prefix")).toArray(QJsonArray());
         for(const QJsonValue& prefix :  prefixArray) // only traconboundaries.json
           prefixes.append(prefix.toString());
 
         // Skip unknown polygon types =====
-        QString geometryType = geometryObj.value("type").toString();
-        if(geometryType != "MultiPolygon")
+        QString geometryType = geometryObj.value(QStringLiteral("type")).toString();
+        if(geometryType != QStringLiteral("MultiPolygon"))
         {
           qWarning() << Q_FUNC_INFO << "Unexpected polygon type" << geometryType
                      << "Only MultiPolygon allowed" << "id" << id << "region" << region << "division" << division;
@@ -182,7 +182,7 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
         }
 
         // Read array of polygons ==============
-        const QJsonArray geoArray = geometryObj.value("coordinates").toArray();
+        const QJsonArray geoArray = geometryObj.value(QStringLiteral("coordinates")).toArray();
         for(const QJsonValue& geometryValue : geoArray)
         {
           // Read array of polygon rings - first is outer ==============
@@ -214,25 +214,26 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
 
             if(!line.isEmpty())
             {
-              insertAirspaceQuery->bindValue(":boundary_id", airspaceId++);
-              insertAirspaceQuery->bindValue(":file_id", fileId);
+              insertAirspaceQuery->bindValue(QStringLiteral(":boundary_id"), airspaceId++);
+              insertAirspaceQuery->bindValue(QStringLiteral(":file_id"), fileId);
 
               // Unused fields here
-              insertAirspaceQuery->bindNullStr(":restrictive_designation");
-              insertAirspaceQuery->bindNullStr(":restrictive_type");
-              insertAirspaceQuery->bindNullStr(":multiple_code");
-              insertAirspaceQuery->bindValue(":time_code", "U");
+              insertAirspaceQuery->bindNullStr(QStringLiteral(":restrictive_designation"));
+              insertAirspaceQuery->bindNullStr(QStringLiteral(":restrictive_type"));
+              insertAirspaceQuery->bindNullStr(QStringLiteral(":multiple_code"));
+              insertAirspaceQuery->bindValue(QStringLiteral(":time_code"), QStringLiteral("U"));
 
               // Build boundary name
               QStringList ident;
-              if(propertiesObj.contains("oceanic"))
+              if(propertiesObj.contains(QStringLiteral("oceanic")))
               {
                 // Center - only firboundaries.json
-                ident.append(id.replace('-', '_').replace("__", "_") % "_CTR");
+                ident.append(id.replace('-', '_').replace(QStringLiteral("__"), QStringLiteral("_")) % QStringLiteral("_CTR"));
                 ident.removeAll(QString());
-                insertAirspaceQuery->bindValue(":type", "C");
-                insertAirspaceQuery->bindValue(":name", ident.join('_'));
-                insertAirspaceQuery->bindValue(":description", QString(id.section(REGEXP_DESCR, 0, 0) % " Center"));
+                insertAirspaceQuery->bindValue(QStringLiteral(":type"), QStringLiteral("C"));
+                insertAirspaceQuery->bindValue(QStringLiteral(":name"), ident.join('_'));
+                insertAirspaceQuery->bindValue(QStringLiteral(":description"),
+                                               QString(id.section(REGEXP_DESCR, 0, 0) % QStringLiteral(" Center")));
               }
               else
               {
@@ -248,35 +249,35 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
                 ident.append(id);
 
                 // TRACON
-                QString suffix = propertiesObj.value("suffix").toString();
-                if(suffix == "DEP")
+                QString suffix = propertiesObj.value(QStringLiteral("suffix")).toString();
+                if(suffix == QStringLiteral("DEP"))
                 {
                   // Departure
-                  ident.append("DEP");
-                  insertAirspaceQuery->bindValue(":type", "D");
+                  ident.append(QStringLiteral("DEP"));
+                  insertAirspaceQuery->bindValue(QStringLiteral(":type"), QStringLiteral("D"));
                 }
                 else
                 {
                   // Approach
-                  ident.append("APP");
-                  insertAirspaceQuery->bindValue(":type", "A");
+                  ident.append(QStringLiteral("APP"));
+                  insertAirspaceQuery->bindValue(QStringLiteral(":type"), QStringLiteral("A"));
                 }
 
                 ident.removeAll(QString());
-                insertAirspaceQuery->bindValue(":name", ident.join('_'));
-                insertAirspaceQuery->bindValue(":description", propertiesObj.value("name").toString());
+                insertAirspaceQuery->bindValue(QStringLiteral(":name"), ident.join('_'));
+                insertAirspaceQuery->bindValue(QStringLiteral(":description"), propertiesObj.value(QStringLiteral("name")).toString());
               }
 
               // Assign bounding rectangle
               Rect bounding = line.boundingRect();
-              insertAirspaceQuery->bindValue(":max_lonx", bounding.getEast());
-              insertAirspaceQuery->bindValue(":max_laty", bounding.getNorth());
-              insertAirspaceQuery->bindValue(":min_lonx", bounding.getWest());
-              insertAirspaceQuery->bindValue(":min_laty", bounding.getSouth());
+              insertAirspaceQuery->bindValue(QStringLiteral(":max_lonx"), bounding.getEast());
+              insertAirspaceQuery->bindValue(QStringLiteral(":max_laty"), bounding.getNorth());
+              insertAirspaceQuery->bindValue(QStringLiteral(":min_lonx"), bounding.getWest());
+              insertAirspaceQuery->bindValue(QStringLiteral(":min_laty"), bounding.getSouth());
 
               // Create geometry blob
               atools::fs::common::BinaryGeometry geo(atools::fs::util::correctBoundary(line));
-              insertAirspaceQuery->bindValue(":geometry", geo.writeToByteArray());
+              insertAirspaceQuery->bindValue(QStringLiteral(":geometry"), geo.writeToByteArray());
 
               insertAirspaceQuery->exec();
               insertAirspaceQuery->clearBoundValues();

@@ -16,7 +16,6 @@
 *****************************************************************************/
 
 #include "logging/logginghandler.h"
-#include "atools.h"
 #include "logging/loggingconfig.h"
 
 #include <QDebug>
@@ -182,11 +181,6 @@ void LoggingHandler::messageHandlerNarrow(QtMsgType type, const QMessageLogConte
   static const QLatin1String VIRTUAL_VOID("virtual void ");
   static const QLatin1String VIRTUAL("virtual ");
   static const QLatin1String DEFAULT("default");
-
-  if(msg.contains("invalid bitmap"))
-  {
-    bool dummy = false;
-  }
 
   QString message = msg;
   QString function(context.function);

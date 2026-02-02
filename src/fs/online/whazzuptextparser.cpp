@@ -196,25 +196,25 @@ void WhazzupTextParser::readTransceivers(const QString& file)
   for(const QJsonValue& transVal : transValues)
   {
     QJsonObject transObj = transVal.toObject();
-    QString callsign = transObj.value("callsign").toString();
+    QString callsign = transObj.value(QStringLiteral("callsign")).toString();
 
     // Get all transceivers with coordinates and frequency for this callsign
-    const QJsonArray transceiverValues = transObj.value("transceivers").toArray();
+    const QJsonArray transceiverValues = transObj.value(QStringLiteral("transceivers")).toArray();
     for(const QJsonValue& transceiverVal : transceiverValues)
     {
       QJsonObject transceiverObj = transceiverVal.toObject();
-      Pos pos(transceiverObj.value("lonDeg"), transceiverObj.value("latDeg"));
+      Pos pos(transceiverObj.value(QStringLiteral("lonDeg")), transceiverObj.value(QStringLiteral("latDeg")));
 
       // Build and add object to multi hash with callsign as key
       Transceiver transceiver;
 
       // frequency in kHz
-      int frequency = atools::roundToInt(transceiverObj.value("frequency").toDouble() / 1000.f);
+      int frequency = atools::roundToInt(transceiverObj.value(QStringLiteral("frequency")).toDouble() / 1000.f);
       if(frequency < 100 && error)
         qWarning() << Q_FUNC_INFO << "Invalid frequency" << transceiverObj.value("frequency").toInt() << "for" << callsign;
       else
         transceiver.frequency.insert(frequency);
-      transceiver.pos = Pos(transceiverObj.value("lonDeg"), transceiverObj.value("latDeg"));
+      transceiver.pos = Pos(transceiverObj.value(QStringLiteral("lonDeg")), transceiverObj.value(QStringLiteral("latDeg")));
       transceiverMap.insert(callsign, transceiver);
     } // for(QJsonValue transceiverVal : transObj.value("transceivers").toArray())
   } // for(QJsonValue transVal : doc.array())
@@ -242,16 +242,16 @@ bool WhazzupTextParser::readInternalJson(const QString& file, const QDateTime& l
     // "connected_clients": 1857,
     // "unique_users": 1777
     // },
-    QJsonObject generalObj = obj.value("general").toObject();
-    update = generalObj.value("update_timestamp").toVariant().toDateTime();
+    QJsonObject generalObj = obj.value(QStringLiteral("general")).toObject();
+    update = generalObj.value(QStringLiteral("update_timestamp")).toVariant().toDateTime();
 
     // Version and reload time in minutes
-    version = generalObj.value("version").toInt();
-    reload = generalObj.value("reload").toInt();
+    version = generalObj.value(QStringLiteral("version")).toInt();
+    reload = generalObj.value(QStringLiteral("reload")).toInt();
   }
   else if(format == IVAO_JSON2)
     // "updatedAt": "2021-06-20T21:09:19.642Z",
-    update = obj.value("updatedAt").toVariant().toDateTime();
+    update = obj.value(QStringLiteral("updatedAt")).toVariant().toDateTime();
 
   if(update.isValid())
   {
@@ -265,31 +265,31 @@ bool WhazzupTextParser::readInternalJson(const QString& file, const QDateTime& l
 
   // Read other object arrays ==================================================================
   // Clients/pilots =================================
-  QJsonObject clients = format == VATSIM_JSON3 ? obj : obj.value("clients").toObject();
-  QJsonArray pilotsArr = clients.value("pilots").toArray();
+  QJsonObject clients = format == VATSIM_JSON3 ? obj : obj.value(QStringLiteral("clients")).toObject();
+  QJsonArray pilotsArr = clients.value(QStringLiteral("pilots")).toArray();
   if(!pilotsArr.isEmpty())
-    db->exec("delete from client");
+    db->exec(QStringLiteral("delete from client"));
 
   readPilotsJson(pilotsArr);
 
   // Controllers/atcs and observers =================================
-  QJsonArray controllersArr = format == VATSIM_JSON3 ? obj.value("controllers").toArray() :
-                              obj.value("clients").toObject().value("atcs").toArray();
+  QJsonArray controllersArr = format == VATSIM_JSON3 ? obj.value(QStringLiteral("controllers")).toArray() :
+                              obj.value(QStringLiteral("clients")).toObject().value(QStringLiteral("atcs")).toArray();
   if(!controllersArr.isEmpty())
-    db->exec("delete from atc");
+    db->exec(QStringLiteral("delete from atc"));
   readControllersJson(controllersArr, false /* observer */);
 
   if(format == IVAO_JSON2)
-    readControllersJson(clients.value("observers").toArray(), true /* observer */);
+    readControllersJson(clients.value(QStringLiteral("observers")).toArray(), true /* observer */);
 
   // Servers =================================
-  QJsonArray serversArr = obj.value("servers").toArray();
+  QJsonArray serversArr = obj.value(QStringLiteral("servers")).toArray();
   if(!serversArr.isEmpty())
-    db->exec("delete from server");
+    db->exec(QStringLiteral("delete from server"));
   readServersJson(serversArr, false /* voice */);
 
   if(format == IVAO_JSON2)
-    readServersJson(obj.value("voiceServers").toArray(), true /* voice */);
+    readServersJson(obj.value(QStringLiteral("voiceServers")).toArray(), true /* voice */);
 
   // Prefiles - only VATSIM =================================
   if(format == VATSIM_JSON3)
@@ -323,7 +323,7 @@ void WhazzupTextParser::readAtisJson(const QJsonObject& obj)
   // "last_updated": "2021-03-14T16:07:01.3407158Z",
   // "logon_time": "2021-03-14T11:51:43.3004568Z"
   // },
-  const QJsonArray atisArr = obj.value("atis").toArray();
+  const QJsonArray atisArr = obj.value(QStringLiteral("atis")).toArray();
 
   for(const QJsonValue& atisVal : atisArr)
   {
@@ -333,15 +333,15 @@ void WhazzupTextParser::readAtisJson(const QJsonObject& obj)
     // ident:hostname_or_IP:location:name:clients_connection_allowed:
     // CZECH:212.67.73.150:Czech Republic:CenterEast Europe Server - sponsored by VACC-CZ:1:
     QStringList columns;
-    columns.append(atisObj.value("callsign").toVariant().toString());
+    columns.append(atisObj.value(QStringLiteral("callsign")).toVariant().toString());
 
     // Build a comma separated list of ATIS lines
     QStringList atisList;
-    const QJsonArray atisArray = atisObj.value("text_atis").toArray();
+    const QJsonArray atisArray = atisObj.value(QStringLiteral("text_atis")).toArray();
     for(const QJsonValue& value : atisArray)
       atisList.append(value.toString());
     atisList.removeAll(QString());
-    columns.append(atisList.join(", "));
+    columns.append(atisList.join(QStringLiteral(", ")));
   }
 }
 
@@ -366,10 +366,10 @@ void WhazzupTextParser::readServersJson(const QJsonArray& serversArr, bool voice
       // "name": "ANONYM",
       // "clients_connection_allowed": 1
       // },
-      columns.append(serverObj.value("ident").toVariant().toString());
-      columns.append(serverObj.value("hostname_or_ip").toVariant().toString());
-      columns.append(serverObj.value("location").toVariant().toString());
-      columns.append(serverObj.value("name").toVariant().toString());
+      columns.append(serverObj.value(QStringLiteral("ident")).toVariant().toString());
+      columns.append(serverObj.value(QStringLiteral("hostname_or_ip")).toVariant().toString());
+      columns.append(serverObj.value(QStringLiteral("location")).toVariant().toString());
+      columns.append(serverObj.value(QStringLiteral("name")).toVariant().toString());
       columns.append(QString()); // client_connections_allowed
       columns.append(QString()); // allowed_connections
       columns.append(QString()); // voice_type
@@ -386,13 +386,13 @@ void WhazzupTextParser::readServersJson(const QJsonArray& serversArr, bool voice
       // "currentConnections": 131,
       // "maximumConnections": 750
       // },
-      columns.append(serverObj.value("id").toVariant().toString());
-      columns.append(serverObj.value("hostname").toVariant().toString());
-      columns.append(serverObj.value("countryId").toVariant().toString());
-      columns.append(serverObj.value("description").toVariant().toString());
+      columns.append(serverObj.value(QStringLiteral("id")).toVariant().toString());
+      columns.append(serverObj.value(QStringLiteral("hostname")).toVariant().toString());
+      columns.append(serverObj.value(QStringLiteral("countryId")).toVariant().toString());
+      columns.append(serverObj.value(QStringLiteral("description")).toVariant().toString());
       columns.append(QString()); // client_connections_allowed
       columns.append(QString()); // allowed_connections
-      columns.append(voice ? "T" : QString()); // voice_type
+      columns.append(voice ? QStringLiteral("T") : QString()); // voice_type
     }
 
     parseServersSection(columns);
@@ -407,9 +407,9 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
   {
     QStringList columns(defaultColumns);
     QJsonObject atcObj = atcVal.toObject();
-    QString callsign = atcObj.value("callsign").toVariant().toString();
+    QString callsign = atcObj.value(QStringLiteral("callsign")).toVariant().toString();
     columns[c::CALLSIGN] = callsign;
-    columns[c::CLIENTTYPE] = "ATC";
+    columns[c::CLIENTTYPE] = QStringLiteral("ATC");
 
     if(format == VATSIM_JSON3)
     {
@@ -429,29 +429,29 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
       // "last_updated": "2021-03-14T16:07:00.8535377Z",
       // "logon_time": "2021-03-14T08:10:47.665987Z"
       // },
-      columns[c::CID] = atcObj.value("cid").toVariant().toString();
-      columns[c::REALNAME] = atcObj.value("name").toVariant().toString();
+      columns[c::CID] = atcObj.value(QStringLiteral("cid")).toVariant().toString();
+      columns[c::REALNAME] = atcObj.value(QStringLiteral("name")).toVariant().toString();
 
-      columns[c::FACILITYTYPE] = atcObj.value("facility").toVariant().toString();
-      columns[c::SERVER] = atcObj.value("server").toVariant().toString();
-      columns[c::VISUALRANGE] = atcObj.value("visual_range").toVariant().toString();
+      columns[c::FACILITYTYPE] = atcObj.value(QStringLiteral("facility")).toVariant().toString();
+      columns[c::SERVER] = atcObj.value(QStringLiteral("server")).toVariant().toString();
+      columns[c::VISUALRANGE] = atcObj.value(QStringLiteral("visual_range")).toVariant().toString();
 
       // Read ATIS message array into linefeed separated string =========
       QStringList atisStrList;
-      const QJsonArray atisArray = atcObj.value("text_atis").toArray();
+      const QJsonArray atisArray = atcObj.value(QStringLiteral("text_atis")).toArray();
       for(const QJsonValue& value : atisArray)
         atisStrList.append(value.toString());
       atisStrList.removeAll(QString());
       columns[v::ATIS_MESSAGE] = atisStrList.join('\n');
-      columns[v::TIME_LAST_ATIS_RECEIVED] = atcObj.value("last_updated").toVariant().toString();
-      columns[v::TIME_LOGON] = atcObj.value("logon_time").toVariant().toString();
+      columns[v::TIME_LAST_ATIS_RECEIVED] = atcObj.value(QStringLiteral("last_updated")).toVariant().toString();
+      columns[v::TIME_LOGON] = atcObj.value(QStringLiteral("logon_time")).toVariant().toString();
 
       // Get all transceivers with callsign =========
       if(transceiverMap.contains(callsign))
       {
         Rect rect;
         QSet<int> frequencies; // kHz
-        frequencies.insert(atools::roundToInt(atcObj.value("frequency").toVariant().toDouble() * 1000.f));
+        frequencies.insert(atools::roundToInt(atcObj.value(QStringLiteral("frequency")).toVariant().toDouble() * 1000.f));
 
         // Read all frequencies and build a bounding rectangle from positions
         const QList<Transceiver> transceivers = transceiverMap.values(callsign);
@@ -476,12 +476,12 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
       else
       {
         // Center has no geometry in the transceiever list ====================
-        columns[c::FREQUENCY] = QString::number(atcObj.value("frequency").toVariant().toDouble());
+        columns[c::FREQUENCY] = QString::number(atcObj.value(QStringLiteral("frequency")).toVariant().toDouble());
 
-        if(atcObj.contains("latitude") && atcObj.contains("longitude"))
+        if(atcObj.contains(QStringLiteral("latitude")) && atcObj.contains(QStringLiteral("longitude")))
         {
-          columns[c::LATITUDE] = atcObj.value("latitude").toVariant().toString();
-          columns[c::LONGITUDE] = atcObj.value("longitude").toVariant().toString();
+          columns[c::LATITUDE] = atcObj.value(QStringLiteral("latitude")).toVariant().toString();
+          columns[c::LONGITUDE] = atcObj.value(QStringLiteral("longitude")).toVariant().toString();
         }
       }
     }
@@ -519,35 +519,35 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
       // "timestamp": "2021-06-20T21:08:59.133Z"
       // }
       // },
-      columns[c::CID] = atcObj.value("id").toVariant().toString();
-      columns[c::REALNAME] = atcObj.value("name").toVariant().toString();
-      columns[c::SERVER] = atcObj.value("serverId").toVariant().toString();
-      columns[i::SOFTWARE_NAME] = atcObj.value("softwareTypeId").toVariant().toString();
-      columns[i::SOFTWARE_VERSION] = atcObj.value("softwareVersion").toVariant().toString();
+      columns[c::CID] = atcObj.value(QStringLiteral("id")).toVariant().toString();
+      columns[c::REALNAME] = atcObj.value(QStringLiteral("name")).toVariant().toString();
+      columns[c::SERVER] = atcObj.value(QStringLiteral("serverId")).toVariant().toString();
+      columns[i::SOFTWARE_NAME] = atcObj.value(QStringLiteral("softwareTypeId")).toVariant().toString();
+      columns[i::SOFTWARE_VERSION] = atcObj.value(QStringLiteral("softwareVersion")).toVariant().toString();
 
       // Read ATIS message array =========
       QStringList atisList;
-      const QJsonArray atisArr = atcObj.value("atis").toObject().value("lines").toArray();
+      const QJsonArray atisArr = atcObj.value(QStringLiteral("atis")).toObject().value(QStringLiteral("lines")).toArray();
       for(const QJsonValue& value : atisArr)
         atisList.append(value.toString());
       atisList.removeAll(QString());
       columns[i::ATIS] = atisList.join('\n');
-      columns[i::ATIS_TIME] = atcObj.value("atis").toObject().value("timestamp").toString();
+      columns[i::ATIS_TIME] = atcObj.value(QStringLiteral("atis")).toObject().value(QStringLiteral("timestamp")).toString();
 
-      columns[i::CONNECTION_TIME] = atcObj.value("createdAt").toVariant().toString();
+      columns[i::CONNECTION_TIME] = atcObj.value(QStringLiteral("createdAt")).toVariant().toString();
 
-      QJsonObject atcSession = atcObj.value("atcSession").toObject();
-      columns[c::FREQUENCY] = atcSession.value("frequency").toVariant().toString();
+      QJsonObject atcSession = atcObj.value(QStringLiteral("atcSession")).toObject();
+      columns[c::FREQUENCY] = atcSession.value(QStringLiteral("frequency")).toVariant().toString();
 
       if(observer)
         columns[c::FACILITYTYPE] = QString::number(fac::OBSERVER);
       else
-        columns[c::FACILITYTYPE] = QString::number(textToFacilityType(atcSession.value("position").toVariant().toString()));
+        columns[c::FACILITYTYPE] = QString::number(textToFacilityType(atcSession.value(QStringLiteral("position")).toVariant().toString()));
 
-      QJsonObject lastTrack = atcObj.value("lastTrack").toObject();
-      columns[c::VISUALRANGE] = lastTrack.value("distance").toVariant().toString();
-      columns[c::LONGITUDE] = lastTrack.value("longitude").toVariant().toString();
-      columns[c::LATITUDE] = lastTrack.value("latitude").toVariant().toString();
+      QJsonObject lastTrack = atcObj.value(QStringLiteral("lastTrack")).toObject();
+      columns[c::VISUALRANGE] = lastTrack.value(QStringLiteral("distance")).toVariant().toString();
+      columns[c::LONGITUDE] = lastTrack.value(QStringLiteral("longitude")).toVariant().toString();
+      columns[c::LATITUDE] = lastTrack.value(QStringLiteral("latitude")).toVariant().toString();
     }
 
     // Read line with method for delimited format
@@ -563,8 +563,8 @@ void WhazzupTextParser::readPilotsJson(const QJsonArray& pilotsArr)
     QStringList columns(defaultColumns);
     QJsonObject pilotObj = pilotVal.toObject();
 
-    columns[c::CALLSIGN] = pilotObj.value("callsign").toString();
-    columns[c::CLIENTTYPE] = "PILOT";
+    columns[c::CALLSIGN] = pilotObj.value(QStringLiteral("callsign")).toString();
+    columns[c::CLIENTTYPE] = QStringLiteral("PILOT");
 
     if(format == VATSIM_JSON3)
     {
@@ -604,17 +604,17 @@ void WhazzupTextParser::readPilotsJson(const QJsonArray& pilotsArr)
       // "logon_time": "2021-03-13T22:38:09.826199Z",
       // "last_updated": "2021-03-14T16:07:00.8565953Z"
       // },
-      columns[c::CID] = pilotObj.value("cid").toVariant().toString();
-      columns[c::REALNAME] = pilotObj.value("name").toString();
-      columns[c::LATITUDE] = pilotObj.value("latitude").toVariant().toString();
-      columns[c::LONGITUDE] = pilotObj.value("longitude").toVariant().toString();
-      columns[c::ALTITUDE] = pilotObj.value("altitude").toVariant().toString();
-      columns[c::GROUNDSPEED] = pilotObj.value("groundspeed").toVariant().toString();
-      columns[c::SERVER] = pilotObj.value("server").toVariant().toString();
-      columns[c::TRANSPONDER] = pilotObj.value("transponder").toVariant().toString();
+      columns[c::CID] = pilotObj.value(QStringLiteral("cid")).toVariant().toString();
+      columns[c::REALNAME] = pilotObj.value(QStringLiteral("name")).toString();
+      columns[c::LATITUDE] = pilotObj.value(QStringLiteral("latitude")).toVariant().toString();
+      columns[c::LONGITUDE] = pilotObj.value(QStringLiteral("longitude")).toVariant().toString();
+      columns[c::ALTITUDE] = pilotObj.value(QStringLiteral("altitude")).toVariant().toString();
+      columns[c::GROUNDSPEED] = pilotObj.value(QStringLiteral("groundspeed")).toVariant().toString();
+      columns[c::SERVER] = pilotObj.value(QStringLiteral("server")).toVariant().toString();
+      columns[c::TRANSPONDER] = pilotObj.value(QStringLiteral("transponder")).toVariant().toString();
 
       // Insert values from flight plan object
-      assignFlightplan(columns, pilotObj.value("flight_plan").toObject());
+      assignFlightplan(columns, pilotObj.value(QStringLiteral("flight_plan")).toObject());
 
       // IGNORED planned_depairport_lat
       // IGNORED planned_depairport_lon
@@ -622,8 +622,8 @@ void WhazzupTextParser::readPilotsJson(const QJsonArray& pilotsArr)
       // IGNORED planned_destairport_lon
       // atis_message
       // time_last_atis_received
-      columns[v::TIME_LOGON] = pilotObj.value("logon_time").toVariant().toString();
-      columns[v::HEADING] = pilotObj.value("heading").toVariant().toString();
+      columns[v::TIME_LOGON] = pilotObj.value(QStringLiteral("logon_time")).toVariant().toString();
+      columns[v::HEADING] = pilotObj.value(QStringLiteral("heading")).toVariant().toString();
     }
     else if(format == IVAO_JSON2)
     {
@@ -681,27 +681,28 @@ void WhazzupTextParser::readPilotsJson(const QJsonArray& pilotsArr)
       // "transponderMode": "S"
       // }
 
-      columns[c::CID] = pilotObj.value("userId").toVariant().toString();
+      columns[c::CID] = pilotObj.value(QStringLiteral("userId")).toVariant().toString();
 
-      QJsonObject lastTrack = pilotObj.value("lastTrack").toObject();
-      columns[c::LATITUDE] = lastTrack.value("latitude").toVariant().toString();
-      columns[c::LONGITUDE] = lastTrack.value("longitude").toVariant().toString();
-      columns[c::ALTITUDE] = lastTrack.value("altitude").toVariant().toString();
-      columns[c::GROUNDSPEED] = lastTrack.value("groundSpeed").toVariant().toString();
+      QJsonObject lastTrack = pilotObj.value(QStringLiteral("lastTrack")).toObject();
+      columns[c::LATITUDE] = lastTrack.value(QStringLiteral("latitude")).toVariant().toString();
+      columns[c::LONGITUDE] = lastTrack.value(QStringLiteral("longitude")).toVariant().toString();
+      columns[c::ALTITUDE] = lastTrack.value(QStringLiteral("altitude")).toVariant().toString();
+      columns[c::GROUNDSPEED] = lastTrack.value(QStringLiteral("groundSpeed")).toVariant().toString();
 
-      columns[c::SERVER] = pilotObj.value("serverId").toVariant().toString();
-      columns[c::TRANSPONDER] = lastTrack.value("transponder").toVariant().toString();
+      columns[c::SERVER] = pilotObj.value(QStringLiteral("serverId")).toVariant().toString();
+      columns[c::TRANSPONDER] = lastTrack.value(QStringLiteral("transponder")).toVariant().toString();
 
       // Insert values from flight plan object
-      assignFlightplan(columns, pilotObj.value("flightPlan").toObject());
+      assignFlightplan(columns, pilotObj.value(QStringLiteral("flightPlan")).toObject());
 
-      columns[i::CONNECTION_TIME] = pilotObj.value("createdAt").toVariant().toString();
-      columns[i::SOFTWARE_NAME] = pilotObj.value("softwareTypeId").toVariant().toString();
-      columns[i::SOFTWARE_VERSION] = pilotObj.value("softwareVersion").toVariant().toString();
-      columns[i::HEADING] = lastTrack.value("heading").toVariant().toString();
-      columns[i::ON_GROUND] = lastTrack.value("onGround").toVariant().toBool() ? "1" : "0";
-      columns[i::STATE] = lastTrack.value("state").toVariant().toString();
-      columns[i::SIMULATOR] = pilotObj.value("pilotSession").toObject().value("simulatorId").toVariant().toString();
+      columns[i::CONNECTION_TIME] = pilotObj.value(QStringLiteral("createdAt")).toVariant().toString();
+      columns[i::SOFTWARE_NAME] = pilotObj.value(QStringLiteral("softwareTypeId")).toVariant().toString();
+      columns[i::SOFTWARE_VERSION] = pilotObj.value(QStringLiteral("softwareVersion")).toVariant().toString();
+      columns[i::HEADING] = lastTrack.value(QStringLiteral("heading")).toVariant().toString();
+      columns[i::ON_GROUND] = lastTrack.value(QStringLiteral("onGround")).toVariant().toBool() ? QStringLiteral("1") : QStringLiteral("0");
+      columns[i::STATE] = lastTrack.value(QStringLiteral("state")).toVariant().toString();
+      columns[i::SIMULATOR] =
+        pilotObj.value(QStringLiteral("pilotSession")).toObject().value(QStringLiteral("simulatorId")).toVariant().toString();
     }
 
     // Read line with method for delimited format
@@ -735,19 +736,19 @@ void WhazzupTextParser::readPrefilesJson(const QJsonObject& obj)
   // "last_updated": "2021-03-14T13:19:23.9417633Z"
   // },
   // Prefill with empty strings for pilots/clients delimited format
-  const QJsonArray prefilesArr = obj.value("prefiles").toArray();
+  const QJsonArray prefilesArr = obj.value(QStringLiteral("prefiles")).toArray();
   for(const QJsonValue& prefileVal : prefilesArr)
   {
     QStringList columns(defaultColumns);
     QJsonObject pilotObj = prefileVal.toObject();
 
-    columns[c::CALLSIGN] = pilotObj.value("callsign").toVariant().toString();
-    columns[c::CID] = pilotObj.value("cid").toVariant().toString();
-    columns[c::REALNAME] = pilotObj.value("name").toVariant().toString();
-    columns[c::CLIENTTYPE] = "PILOT";
+    columns[c::CALLSIGN] = pilotObj.value(QStringLiteral("callsign")).toVariant().toString();
+    columns[c::CID] = pilotObj.value(QStringLiteral("cid")).toVariant().toString();
+    columns[c::REALNAME] = pilotObj.value(QStringLiteral("name")).toVariant().toString();
+    columns[c::CLIENTTYPE] = QStringLiteral("PILOT");
 
     // Insert values from flight plan object
-    assignFlightplan(columns, pilotObj.value("flight_plan").toObject());
+    assignFlightplan(columns, pilotObj.value(QStringLiteral("flight_plan")).toObject());
 
     // Prefill with empty strings for pilots/clients delimited format
     parseSection(columns, false /*ATC*/, true /* prefile */, true /* isJson */);
@@ -756,8 +757,8 @@ void WhazzupTextParser::readPrefilesJson(const QJsonObject& obj)
 
 void WhazzupTextParser::assignFlightplan(QStringList& columns, const QJsonObject& flightplanObj)
 {
-  columns[c::PLANNED_REMARKS] = flightplanObj.value("remarks").toVariant().toString();
-  columns[c::PLANNED_ROUTE] = flightplanObj.value("route").toVariant().toString();
+  columns[c::PLANNED_REMARKS] = flightplanObj.value(QStringLiteral("remarks")).toVariant().toString();
+  columns[c::PLANNED_ROUTE] = flightplanObj.value(QStringLiteral("route")).toVariant().toString();
 
   if(format == VATSIM_JSON3)
   {
@@ -778,28 +779,28 @@ void WhazzupTextParser::assignFlightplan(QStringList& columns, const QJsonObject
     // "route": "N0511F290 LANDA UW64 MCS UB688 ... UN472 BADUR UN585 FEJAC DCT JSY DCT REVTU UP87 ROXOG"
     // },
 
-    columns[c::PLANNED_AIRCRAFT] = flightplanObj.value("aircraft").toVariant().toString();
-    columns[c::PLANNED_TASCRUISE] = flightplanObj.value("cruise_tas").toVariant().toString();
-    columns[c::PLANNED_DEPAIRPORT] = flightplanObj.value("departure").toVariant().toString();
-    columns[c::PLANNED_ALTITUDE] = flightplanObj.value("altitude").toVariant().toString();
-    columns[c::PLANNED_DESTAIRPORT] = flightplanObj.value("arrival").toVariant().toString();
+    columns[c::PLANNED_AIRCRAFT] = flightplanObj.value(QStringLiteral("aircraft")).toVariant().toString();
+    columns[c::PLANNED_TASCRUISE] = flightplanObj.value(QStringLiteral("cruise_tas")).toVariant().toString();
+    columns[c::PLANNED_DEPAIRPORT] = flightplanObj.value(QStringLiteral("departure")).toVariant().toString();
+    columns[c::PLANNED_ALTITUDE] = flightplanObj.value(QStringLiteral("altitude")).toVariant().toString();
+    columns[c::PLANNED_DESTAIRPORT] = flightplanObj.value(QStringLiteral("arrival")).toVariant().toString();
 
-    columns[c::PLANNED_FLIGHTTYPE] = flightplanObj.value("flight_rules").toVariant().toString();
-    columns[c::PLANNED_DEPTIME] = flightplanObj.value("deptime").toVariant().toString();
+    columns[c::PLANNED_FLIGHTTYPE] = flightplanObj.value(QStringLiteral("flight_rules")).toVariant().toString();
+    columns[c::PLANNED_DEPTIME] = flightplanObj.value(QStringLiteral("deptime")).toVariant().toString();
 
     // Split time into hours and minutes as in delimited format
-    QString minEnrouteHours = flightplanObj.value("enroute_time").toVariant().toString();
+    QString minEnrouteHours = flightplanObj.value(QStringLiteral("enroute_time")).toVariant().toString();
     minEnrouteHours.chop(2);
     columns[c::PLANNED_HRSENROUTE] = minEnrouteHours;
-    columns[c::PLANNED_MINENROUTE] = flightplanObj.value("enroute_time").toVariant().toString().right(2);
+    columns[c::PLANNED_MINENROUTE] = flightplanObj.value(QStringLiteral("enroute_time")).toVariant().toString().right(2);
 
     // Split time into hours and minutes as in delimited format
-    QString minFuelHours = flightplanObj.value("fuel_time").toVariant().toString();
+    QString minFuelHours = flightplanObj.value(QStringLiteral("fuel_time")).toVariant().toString();
     minFuelHours.chop(2);
     columns[c::PLANNED_HRSFUEL] = minFuelHours;
-    columns[c::PLANNED_MINFUEL] = flightplanObj.value("fuel_time").toVariant().toString().right(2);
+    columns[c::PLANNED_MINFUEL] = flightplanObj.value(QStringLiteral("fuel_time")).toVariant().toString().right(2);
 
-    columns[c::PLANNED_ALTAIRPORT] = flightplanObj.value("alternate").toVariant().toString();
+    columns[c::PLANNED_ALTAIRPORT] = flightplanObj.value(QStringLiteral("alternate")).toVariant().toString();
   }
   else if(format == IVAO_JSON2)
   {
@@ -827,39 +828,39 @@ void WhazzupTextParser::assignFlightplan(QStringList& columns, const QJsonObject
     // "aircraftEquipments": "S",
     // "aircraftTransponderTypes": "S"
     // },
-    columns[c::PLANNED_AIRCRAFT] = flightplanObj.value("aircraftId").toVariant().toString();
-    columns[c::PLANNED_TASCRUISE] = flightplanObj.value("speed").toVariant().toString();
-    columns[c::PLANNED_DEPAIRPORT] = flightplanObj.value("departureId").toVariant().toString();
-    columns[c::PLANNED_ALTITUDE] = flightplanObj.value("level").toVariant().toString();
-    columns[c::PLANNED_DESTAIRPORT] = flightplanObj.value("arrivalId").toVariant().toString();
+    columns[c::PLANNED_AIRCRAFT] = flightplanObj.value(QStringLiteral("aircraftId")).toVariant().toString();
+    columns[c::PLANNED_TASCRUISE] = flightplanObj.value(QStringLiteral("speed")).toVariant().toString();
+    columns[c::PLANNED_DEPAIRPORT] = flightplanObj.value(QStringLiteral("departureId")).toVariant().toString();
+    columns[c::PLANNED_ALTITUDE] = flightplanObj.value(QStringLiteral("level")).toVariant().toString();
+    columns[c::PLANNED_DESTAIRPORT] = flightplanObj.value(QStringLiteral("arrivalId")).toVariant().toString();
 
-    columns[c::PLANNED_FLIGHTTYPE] = flightplanObj.value("flightRules").toVariant().toString();
-    columns[i::FLIGHTPLAN_TYPE_OF_FLIGHT] = flightplanObj.value("flightType").toVariant().toString();
-    columns[i::FLIGHTPLAN_PERSONS_ON_BOARD] = flightplanObj.value("peopleOnBoard").toVariant().toString();
+    columns[c::PLANNED_FLIGHTTYPE] = flightplanObj.value(QStringLiteral("flightRules")).toVariant().toString();
+    columns[i::FLIGHTPLAN_TYPE_OF_FLIGHT] = flightplanObj.value(QStringLiteral("flightType")).toVariant().toString();
+    columns[i::FLIGHTPLAN_PERSONS_ON_BOARD] = flightplanObj.value(QStringLiteral("peopleOnBoard")).toVariant().toString();
 
     if(format == IVAO_JSON2)
     {
       // All values are given in seconds
       // Split time into hours and minutes as in delimited format
-      int departureTime = flightplanObj.value("departureTime").toVariant().toInt();
+      int departureTime = flightplanObj.value(QStringLiteral("departureTime")).toVariant().toInt();
       int depTimeH = departureTime / 3600;
       int depTimeM = (departureTime / 60) - (depTimeH * 60);
       columns[c::PLANNED_DEPTIME] =
         QStringLiteral("%1%2").arg(depTimeH, 2, 10, QChar('0')).arg(depTimeM, 2, 10, QChar('0'));
 
-      int actualDepartureTime = flightplanObj.value("actualDepartureTime").toVariant().toInt();
+      int actualDepartureTime = flightplanObj.value(QStringLiteral("actualDepartureTime")).toVariant().toInt();
       int actDepTimeH = actualDepartureTime / 3600;
       int actDepTimeM = (actualDepartureTime / 60) - (actDepTimeH * 60);
       columns[c::PLANNED_ACTDEPTIME] =
         QStringLiteral("%1%2").arg(actDepTimeH, 2, 10, QChar('0')).arg(actDepTimeM, 2, 10, QChar('0'));
 
-      int eet = flightplanObj.value("eet").toVariant().toInt();
+      int eet = flightplanObj.value(QStringLiteral("eet")).toVariant().toInt();
       int eetH = eet / 3600;
       int eetM = (eet / 60) - (eetH * 60);
       columns[c::PLANNED_HRSENROUTE] = QStringLiteral("%1").arg(eetH);
       columns[c::PLANNED_MINENROUTE] = QStringLiteral("%1").arg(eetM);
 
-      int endurance = flightplanObj.value("endurance").toVariant().toInt();
+      int endurance = flightplanObj.value(QStringLiteral("endurance")).toVariant().toInt();
       int enduranceH = endurance / 3600;
       int enduranceM = (endurance / 60) - (enduranceH * 60);
       columns[c::PLANNED_HRSFUEL] = QStringLiteral("%1").arg(enduranceH);
@@ -868,22 +869,22 @@ void WhazzupTextParser::assignFlightplan(QStringList& columns, const QJsonObject
     else
     {
       // Split time into hours and minutes as in delimited format
-      columns[c::PLANNED_DEPTIME] = flightplanObj.value("departureTime").toVariant().toString();
-      columns[c::PLANNED_ACTDEPTIME] = flightplanObj.value("actualDepartureTime").toVariant().toString();
+      columns[c::PLANNED_DEPTIME] = flightplanObj.value(QStringLiteral("departureTime")).toVariant().toString();
+      columns[c::PLANNED_ACTDEPTIME] = flightplanObj.value(QStringLiteral("actualDepartureTime")).toVariant().toString();
 
-      QString minEnrouteHours = flightplanObj.value("eet").toVariant().toString();
+      QString minEnrouteHours = flightplanObj.value(QStringLiteral("eet")).toVariant().toString();
       minEnrouteHours.chop(2);
       columns[c::PLANNED_HRSENROUTE] = minEnrouteHours;
-      columns[c::PLANNED_MINENROUTE] = flightplanObj.value("eet").toVariant().toString().right(2);
+      columns[c::PLANNED_MINENROUTE] = flightplanObj.value(QStringLiteral("eet")).toVariant().toString().right(2);
 
-      QString minFuelHours = flightplanObj.value("endurance").toVariant().toString();
+      QString minFuelHours = flightplanObj.value(QStringLiteral("endurance")).toVariant().toString();
       minFuelHours.chop(2);
       columns[c::PLANNED_HRSFUEL] = minFuelHours;
-      columns[c::PLANNED_MINFUEL] = flightplanObj.value("endurance").toVariant().toString().right(2);
+      columns[c::PLANNED_MINFUEL] = flightplanObj.value(QStringLiteral("endurance")).toVariant().toString().right(2);
     }
 
-    columns[c::PLANNED_ALTAIRPORT] = flightplanObj.value("alternativeId").toVariant().toString();
-    columns[i::FLIGHTPLAN_2ND_ALTERNATE_AERODROME] = flightplanObj.value("alternative2Id").toVariant().toString();
+    columns[c::PLANNED_ALTAIRPORT] = flightplanObj.value(QStringLiteral("alternativeId")).toVariant().toString();
+    columns[i::FLIGHTPLAN_2ND_ALTERNATE_AERODROME] = flightplanObj.value(QStringLiteral("alternative2Id")).toVariant().toString();
   }
 }
 
@@ -895,23 +896,24 @@ bool WhazzupTextParser::readInternalDelimited(QTextStream& stream, const QDateTi
   while(!stream.atEnd())
   {
     QString line = stream.readLine().trimmed();
-    if(line.startsWith("!"))
+    if(line.startsWith(QStringLiteral("!")))
       // Remember section
       sections.insert(line.mid(1).toUpper().trimmed().replace(':', ""));
   }
 
   // Delete tables for available sections and keep others
-  if(sections.contains("CLIENTS"))
+  if(sections.contains(QStringLiteral("CLIENTS")))
   {
-    db->exec("delete from client");
-    db->exec("delete from atc");
+    db->exec(QStringLiteral("delete from client"));
+    db->exec(QStringLiteral("delete from atc"));
   }
 
-  if(sections.contains("SERVERS"))
-    db->exec("delete from server where voice_type is null");
+  if(sections.contains(QStringLiteral("SERVERS")))
+    db->exec(QStringLiteral("delete from server where voice_type is null"));
 
-  if(sections.contains("VOICE") || sections.contains("VOICE_SERVERS") || sections.contains("VOICE SERVERS"))
-    db->exec("delete from server where voice_type is not null");
+  if(sections.contains(QStringLiteral("VOICE")) || sections.contains(QStringLiteral("VOICE_SERVERS")) ||
+     sections.contains(QStringLiteral("VOICE SERVERS")))
+    db->exec(QStringLiteral("delete from server where voice_type is not null"));
 
   // Got back and read the whole file
   stream.seek(0);
@@ -921,18 +923,18 @@ bool WhazzupTextParser::readInternalDelimited(QTextStream& stream, const QDateTi
     QString line = stream.readLine().trimmed();
 
     // Skip comments and empty lines
-    if(line.isEmpty() || line.startsWith(";") || line.startsWith("#"))
+    if(line.isEmpty() || line.startsWith(QStringLiteral(";")) || line.startsWith(QStringLiteral("#")))
       continue;
 
-    if(line.startsWith("!"))
+    if(line.startsWith(QStringLiteral("!")))
       // Remember section
       curSection = line.mid(1).toUpper().trimmed().replace(':', "");
     else
     {
       // Parse the section data  (CSV like with : separator
-      if(curSection == "GENERAL")
+      if(curSection == QStringLiteral("GENERAL"))
       {
-        QDateTime update = parseGeneralSection(line.split("="));
+        QDateTime update = parseGeneralSection(line.split(QStringLiteral("=")));
 
         if(update.isValid())
         {
@@ -944,18 +946,19 @@ bool WhazzupTextParser::readInternalDelimited(QTextStream& stream, const QDateTi
           updateTimestamp = update;
         }
       }
-      else if(curSection == "CLIENTS")
+      else if(curSection == QStringLiteral("CLIENTS"))
       {
         QStringList columns = line.split(':');
 
         // Check client type
-        parseSection(columns, at(columns, 3, error) == "ATC" /*ATC*/, false /* prefile */, false /* isJson */);
+        parseSection(columns, at(columns, 3, error) == QStringLiteral("ATC") /*ATC*/, false /* prefile */, false /* isJson */);
       }
-      else if(curSection == "PREFILE")
+      else if(curSection == QStringLiteral("PREFILE"))
         parseSection(line.split(':'), false /*ATC*/, true /* prefile */, false /* isJson */);
-      else if(curSection == "SERVERS")
+      else if(curSection == QStringLiteral("SERVERS"))
         parseServersSection(line.split(':'));
-      else if(curSection == "VOICE" || curSection == "VOICE_SERVERS" || curSection == "VOICE SERVERS" || curSection == "AIRPORTS")
+      else if(curSection == QStringLiteral("VOICE") || curSection == QStringLiteral("VOICE_SERVERS") ||
+              curSection == QStringLiteral("VOICE SERVERS") || curSection == QStringLiteral("AIRPORTS"))
         parseVoiceSection(line.split(':'));
     }
   }
@@ -973,15 +976,15 @@ QDateTime WhazzupTextParser::parseGeneralSection(const QStringList& line)
   QString key = at(line, 0, error).trimmed().toUpper();
   QString value = at(line, 1, error).trimmed().toUpper();
   QDateTime update;
-  if(key == "VERSION")
+  if(key == QStringLiteral("VERSION"))
     version = value.toInt();
-  else if(key == "RELOAD") // RELOAD  is time in minutes this file will be updated
+  else if(key == QStringLiteral("RELOAD")) // RELOAD  is time in minutes this file will be updated
     reload = value.toInt();
-  else if(key == "UPDATE") // UPDATE is the last date and time this file has been updated. Format is yyyymmddhhnnss
-    update = QDateTime::fromString(value, "yyyyMMddhhmmss");
-  // else if(key == "ATIS ALLOW MIN")
+  else if(key == QStringLiteral("UPDATE")) // UPDATE is the last date and time this file has been updated. Format is yyyymmddhhnnss
+    update = QDateTime::fromString(value, QStringLiteral("yyyyMMddhhmmss"));
+  // else if(key == QStringLiteral("ATIS ALLOW MIN"))
   // atisAllowMin = value.toInt();
-  // else if(key == "CONNECTED CLIENTS")
+  // else if(key == QStringLiteral("CONNECTED CLIENTS"))
   // connectedClients = value.toInt();
 
   return update;
@@ -1049,33 +1052,33 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
   insertQuery->clearBoundValues();
 
   const QString callsign = at(line, c::CALLSIGN, error);
-  insertQuery->bindValue(":callsign", callsign);
+  insertQuery->bindValue(QStringLiteral(":callsign"), callsign);
 
   const QString vid = at(line, c::CID, error);
-  insertQuery->bindValue(":vid", vid);
-  insertQuery->bindValue(":name", convertName(at(line, c::REALNAME, error), isJson));
+  insertQuery->bindValue(QStringLiteral(":vid"), vid);
+  insertQuery->bindValue(QStringLiteral(":name"), convertName(at(line, c::REALNAME, error), isJson));
 
   // Get client type so we can check if it goes into a atc or client table
   QString clientType = at(line, c::CLIENTTYPE, error);
-  bool atc = clientType == "ATC";
-  insertQuery->bindValue(":client_type", clientType);
+  bool atc = clientType == QStringLiteral("ATC");
+  insertQuery->bindValue(QStringLiteral(":client_type"), clientType);
 
   if(atc)
   {
     // Add frequencies separated by "&" ====================
     QStringList freqStrToBind;
-    const QStringList split = at(line, c::FREQUENCY, error).split("&");
+    const QStringList split = at(line, c::FREQUENCY, error).split(QStringLiteral("&"));
     for(const QString& str : split)
     {
       // MHz to kHz
       QString freqStr = QString::number(atools::roundToInt(str.trimmed().toDouble() * 1000.));
-      if(error && (freqStr == "0" || freqStr.isEmpty()))
+      if(error && (freqStr == QStringLiteral("0") || freqStr.isEmpty()))
         qWarning() << "Invalid number" << str << "at" << c::FREQUENCY << "for" << line;
 
       freqStrToBind.append(freqStr);
     }
     std::sort(freqStrToBind.begin(), freqStrToBind.end());
-    insertQuery->bindValue(":frequency", freqStrToBind.join('&'));
+    insertQuery->bindValue(QStringLiteral(":frequency"), freqStrToBind.join('&'));
   }
 
   // Coordinates ====================
@@ -1084,14 +1087,14 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
   if(!at(line, c::LATITUDE, error).isEmpty() && !at(line, c::LONGITUDE, error).isEmpty())
   {
     position = Pos(atFloat(line, c::LONGITUDE, error), atFloat(line, c::LATITUDE, error));
-    insertQuery->bindValue(":lonx", position.getLonX());
-    insertQuery->bindValue(":laty", position.getLatY());
+    insertQuery->bindValue(QStringLiteral(":lonx"), position.getLonX());
+    insertQuery->bindValue(QStringLiteral(":laty"), position.getLatY());
     hasCoordinates = true;
   }
   else
   {
-    insertQuery->bindNullFloat(":laty");
-    insertQuery->bindNullFloat(":lonx");
+    insertQuery->bindNullFloat(QStringLiteral(":laty"));
+    insertQuery->bindNullFloat(QStringLiteral(":lonx"));
     hasCoordinates = false;
   }
 
@@ -1099,25 +1102,25 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
   {
     // Decode and add altitude - store as feet ====================
     QString alt = at(line, c::ALTITUDE, error).trimmed();
-    if(alt.startsWith("FL"))
+    if(alt.startsWith(QStringLiteral("FL")))
       // Convert flight level FL to altitude
-      insertQuery->bindValue(":altitude", alt.mid(2).toInt() * 100);
-    else if(alt.startsWith("F"))
-      // Convert flight level with prefix "F" to altitude
-      insertQuery->bindValue(":altitude", alt.mid(1).toInt() * 100);
+      insertQuery->bindValue(QStringLiteral(":altitude"), alt.mid(2).toInt() * 100);
+    else if(alt.startsWith(QStringLiteral("F")))
+      // Convert flight level with prefix QStringLiteral("F") to altitude
+      insertQuery->bindValue(QStringLiteral(":altitude"), alt.mid(1).toInt() * 100);
     else
-      insertQuery->bindValue(":altitude", alt.toInt());
+      insertQuery->bindValue(QStringLiteral(":altitude"), alt.toInt());
 
-    insertQuery->bindValue(":groundspeed", at(line, c::GROUNDSPEED, error));
-    insertQuery->bindValue(":flightplan_aircraft", at(line, c::PLANNED_AIRCRAFT, error));
-    insertQuery->bindValue(":flightplan_cruising_speed", at(line, c::PLANNED_TASCRUISE, error));
-    insertQuery->bindValue(":flightplan_departure_aerodrome", at(line, c::PLANNED_DEPAIRPORT, error));
-    insertQuery->bindValue(":flightplan_cruising_level", at(line, c::PLANNED_ALTITUDE, error));
-    insertQuery->bindValue(":flightplan_destination_aerodrome", at(line, c::PLANNED_DESTAIRPORT, error));
-    insertQuery->bindValue(":transponder_code", at(line, c::TRANSPONDER, error));
+    insertQuery->bindValue(QStringLiteral(":groundspeed"), at(line, c::GROUNDSPEED, error));
+    insertQuery->bindValue(QStringLiteral(":flightplan_aircraft"), at(line, c::PLANNED_AIRCRAFT, error));
+    insertQuery->bindValue(QStringLiteral(":flightplan_cruising_speed"), at(line, c::PLANNED_TASCRUISE, error));
+    insertQuery->bindValue(QStringLiteral(":flightplan_departure_aerodrome"), at(line, c::PLANNED_DEPAIRPORT, error));
+    insertQuery->bindValue(QStringLiteral(":flightplan_cruising_level"), at(line, c::PLANNED_ALTITUDE, error));
+    insertQuery->bindValue(QStringLiteral(":flightplan_destination_aerodrome"), at(line, c::PLANNED_DESTAIRPORT, error));
+    insertQuery->bindValue(QStringLiteral(":transponder_code"), at(line, c::TRANSPONDER, error));
   }
 
-  insertQuery->bindValue(":server", at(line, c::SERVER, error));
+  insertQuery->bindValue(QStringLiteral(":server"), at(line, c::SERVER, error));
 
   int visualRange = atInt(line, c::VISUALRANGE, error);
 
@@ -1127,7 +1130,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
 
   if(atc)
   {
-    insertQuery->bindValue(":facility_type", QString::number(facilityType));
+    insertQuery->bindValue(QStringLiteral(":facility_type"), QString::number(facilityType));
 
     // Convert the facility type to database airspace types ==============
     QString boundaryType, comType;
@@ -1137,42 +1140,42 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
         break;
 
       case atools::fs::online::fac::OBSERVER:
-        boundaryType = "OBS";
+        boundaryType = QStringLiteral("OBS");
         break;
 
       case atools::fs::online::fac::FLIGHT_INFORMATION:
-        boundaryType = "C"; // Center
-        comType = "INF"; // Information
+        boundaryType = QStringLiteral("C"); // Center
+        comType = QStringLiteral("INF"); // Information
         break;
 
       case atools::fs::online::fac::DELIVERY:
-        boundaryType = "CL"; // Clearance
-        comType = "C"; // Clearance delivery
+        boundaryType = QStringLiteral("CL"); // Clearance
+        comType = QStringLiteral("C"); // Clearance delivery
         break;
 
       case atools::fs::online::fac::GROUND:
-        boundaryType = "G";
-        comType = "G"; // Ground control
+        boundaryType = QStringLiteral("G");
+        comType = QStringLiteral("G"); // Ground control
         break;
 
       case atools::fs::online::fac::TOWER:
-        boundaryType = "T";
-        comType = "T"; // Tower, Air Traffic Control
+        boundaryType = QStringLiteral("T");
+        comType = QStringLiteral("T"); // Tower, Air Traffic Control
         break;
 
       case atools::fs::online::fac::APPROACH:
-        boundaryType = "A";
-        comType = "A"; // Approach control
+        boundaryType = QStringLiteral("A");
+        comType = QStringLiteral("A"); // Approach control
         break;
 
       case atools::fs::online::fac::ACC:
-        boundaryType = "C"; // Center
-        comType = "CTR"; // Area control center
+        boundaryType = QStringLiteral("C"); // Center
+        comType = QStringLiteral("CTR"); // Area control center
         break;
 
       case atools::fs::online::fac::DEPARTURE:
-        boundaryType = "D";
-        comType = "D"; // Departure control
+        boundaryType = QStringLiteral("D");
+        comType = QStringLiteral("D"); // Departure control
         break;
     }
 
@@ -1187,33 +1190,33 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
         circleRadius = value.second;
     }
 
-    insertQuery->bindValue(":type", boundaryType);
-    insertQuery->bindValue(":com_type", comType);
-    insertQuery->bindValue(":radius", circleRadius);
-    insertQuery->bindValue(":visual_range", visualRange);
+    insertQuery->bindValue(QStringLiteral(":type"), boundaryType);
+    insertQuery->bindValue(QStringLiteral(":com_type"), comType);
+    insertQuery->bindValue(QStringLiteral(":radius"), circleRadius);
+    insertQuery->bindValue(QStringLiteral(":visual_range"), visualRange);
   } // if(atc)
   else
   {
     // Not ATC - client ====================
-    insertQuery->bindValue(":flightplan_flight_rules", at(line, c::PLANNED_FLIGHTTYPE, error));
+    insertQuery->bindValue(QStringLiteral(":flightplan_flight_rules"), at(line, c::PLANNED_FLIGHTTYPE, error));
 
     QString departureTime = at(line, c::PLANNED_DEPTIME, error);
-    if(!departureTime.isEmpty() && departureTime != "0")
-      insertQuery->bindValue(":flightplan_departure_time", departureTime);
+    if(!departureTime.isEmpty() && departureTime != QStringLiteral("0"))
+      insertQuery->bindValue(QStringLiteral(":flightplan_departure_time"), departureTime);
 
     QString actualDepartureTime = at(line, c::PLANNED_ACTDEPTIME, error);
-    if(!actualDepartureTime.isEmpty() && actualDepartureTime != "0")
-      insertQuery->bindValue(":flightplan_actual_departure_time", actualDepartureTime);
+    if(!actualDepartureTime.isEmpty() && actualDepartureTime != QStringLiteral("0"))
+      insertQuery->bindValue(QStringLiteral(":flightplan_actual_departure_time"), actualDepartureTime);
 
     // Convert two fields to minutes
     int hoursEnroute = atInt(line, c::PLANNED_HRSENROUTE, error);
     int minsEnroute = atInt(line, c::PLANNED_MINENROUTE, error);
-    insertQuery->bindValue(":flightplan_enroute_minutes", hoursEnroute * 60 + minsEnroute);
+    insertQuery->bindValue(QStringLiteral(":flightplan_enroute_minutes"), hoursEnroute * 60 + minsEnroute);
 
     // Convert two fields to minutes
     int hoursEndurance = atInt(line, c::PLANNED_HRSFUEL, error);
     int minsEndurance = atInt(line, c::PLANNED_MINFUEL, error);
-    insertQuery->bindValue(":flightplan_endurance_minutes", hoursEndurance * 60 + minsEndurance);
+    insertQuery->bindValue(QStringLiteral(":flightplan_endurance_minutes"), hoursEndurance * 60 + minsEndurance);
 
     // Calculate estimated arrival time ================================
     QTime eta;
@@ -1231,54 +1234,56 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
           static_cast<int>(depTime.msecsSinceStartOfDay() + enrouteMin * 60. * 1000.));
 
       if(eta.isValid())
-        insertQuery->bindValue(":flightplan_estimated_arrival_time", eta.toString("HHmm"));
+        insertQuery->bindValue(QStringLiteral(":flightplan_estimated_arrival_time"), eta.toString(QStringLiteral("HHmm")));
     }
 
-    insertQuery->bindValue(":flightplan_alternate_aerodrome", at(line, c::PLANNED_ALTAIRPORT, error));
-    insertQuery->bindValue(":flightplan_other_info", at(line, c::PLANNED_REMARKS, error));
-    insertQuery->bindValue(":flightplan_route", at(line, c::PLANNED_ROUTE, error));
+    insertQuery->bindValue(QStringLiteral(":flightplan_alternate_aerodrome"), at(line, c::PLANNED_ALTAIRPORT, error));
+    insertQuery->bindValue(QStringLiteral(":flightplan_other_info"), at(line, c::PLANNED_REMARKS, error));
+    insertQuery->bindValue(QStringLiteral(":flightplan_route"), at(line, c::PLANNED_ROUTE, error));
   } // else if(atc)
 
   if(format == IVAO || format == IVAO_JSON2)
   {
-    insertQuery->bindValue(":connection_time", parseDateTime(line, i::CONNECTION_TIME, format == IVAO_JSON2 /* jsonFormat */));
+    insertQuery->bindValue(QStringLiteral(":connection_time"),
+                           parseDateTime(line, i::CONNECTION_TIME, format == IVAO_JSON2 /* jsonFormat */));
 
     if(atc)
     {
-      insertQuery->bindValue(":atis", convertAtisText(at(line, i::ATIS, error)));
-      insertQuery->bindValue(":atis_time", parseDateTime(line, i::ATIS_TIME, format == IVAO_JSON2 /* jsonFormat */));
+      insertQuery->bindValue(QStringLiteral(":atis"), convertAtisText(at(line, i::ATIS, error)));
+      insertQuery->bindValue(QStringLiteral(":atis_time"), parseDateTime(line, i::ATIS_TIME, format == IVAO_JSON2 /* jsonFormat */));
     }
     else
     {
-      insertQuery->bindValue(":flightplan_2nd_alternate_aerodrome", at(line, i::FLIGHTPLAN_2ND_ALTERNATE_AERODROME, error));
-      insertQuery->bindValue(":flightplan_type_of_flight", at(line, i::FLIGHTPLAN_TYPE_OF_FLIGHT, error));
-      insertQuery->bindValue(":flightplan_persons_on_board", atInt(line, i::FLIGHTPLAN_PERSONS_ON_BOARD, error));
-      insertQuery->bindValue(":heading", atInt(line, i::HEADING, error));
-      insertQuery->bindValue(":on_ground", atInt(line, i::ON_GROUND, error));
-      insertQuery->bindValue(":simulator", at(line, i::SIMULATOR, error));
+      insertQuery->bindValue(QStringLiteral(":flightplan_2nd_alternate_aerodrome"), at(line, i::FLIGHTPLAN_2ND_ALTERNATE_AERODROME, error));
+      insertQuery->bindValue(QStringLiteral(":flightplan_type_of_flight"), at(line, i::FLIGHTPLAN_TYPE_OF_FLIGHT, error));
+      insertQuery->bindValue(QStringLiteral(":flightplan_persons_on_board"), atInt(line, i::FLIGHTPLAN_PERSONS_ON_BOARD, error));
+      insertQuery->bindValue(QStringLiteral(":heading"), atInt(line, i::HEADING, error));
+      insertQuery->bindValue(QStringLiteral(":on_ground"), atInt(line, i::ON_GROUND, error));
+      insertQuery->bindValue(QStringLiteral(":simulator"), at(line, i::SIMULATOR, error));
 
       if(format == IVAO_JSON2)
-        insertQuery->bindValue(":state", at(line, i::STATE, error));
+        insertQuery->bindValue(QStringLiteral(":state"), at(line, i::STATE, error));
     }
   }
   else if(format == VATSIM || format == VATSIM_JSON3)
   {
-    insertQuery->bindValue(":connection_time", parseDateTime(line, v::TIME_LOGON, format == VATSIM_JSON3 /* jsonFormat */));
+    insertQuery->bindValue(QStringLiteral(":connection_time"), parseDateTime(line, v::TIME_LOGON, format == VATSIM_JSON3 /* jsonFormat */));
 
     if(atc)
     {
-      insertQuery->bindValue(":atis", convertAtisText(at(line, v::ATIS_MESSAGE, error)));
-      insertQuery->bindValue(":atis_time", parseDateTime(line, v::TIME_LAST_ATIS_RECEIVED, format == VATSIM_JSON3 /* jsonFormat */));
+      insertQuery->bindValue(QStringLiteral(":atis"), convertAtisText(at(line, v::ATIS_MESSAGE, error)));
+      insertQuery->bindValue(QStringLiteral(":atis_time"),
+                             parseDateTime(line, v::TIME_LAST_ATIS_RECEIVED, format == VATSIM_JSON3 /* jsonFormat */));
     }
     else
     {
       // On ground flag not available - determine roughly by ground speed ===============
-      insertQuery->bindValue(":heading", atInt(line, v::HEADING, error));
+      insertQuery->bindValue(QStringLiteral(":heading"), atInt(line, v::HEADING, error));
       // Use on ground if speed below 30 knots
       bool ok = false;
       float gs = at(line, c::GROUNDSPEED, error).toFloat(&ok);
-      insertQuery->bindValue(":on_ground", (ok && gs < 30.f) || prefile); // Either slow or prefile
-      insertQuery->bindValue(":state", prefile ? "Prefile" : QString());
+      insertQuery->bindValue(QStringLiteral(":on_ground"), (ok && gs < 30.f) || prefile); // Either slow or prefile
+      insertQuery->bindValue(QStringLiteral(":state"), prefile ? QStringLiteral("Prefile") : QString());
     }
   }
 
@@ -1308,22 +1313,22 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
 
       // Add bounding rectangle
       Rect bounding = lineString.boundingRect();
-      insertQuery->bindValue(":max_lonx", bounding.getEast());
-      insertQuery->bindValue(":max_laty", bounding.getNorth());
-      insertQuery->bindValue(":min_lonx", bounding.getWest());
-      insertQuery->bindValue(":min_laty", bounding.getSouth());
+      insertQuery->bindValue(QStringLiteral(":max_lonx"), bounding.getEast());
+      insertQuery->bindValue(QStringLiteral(":max_laty"), bounding.getNorth());
+      insertQuery->bindValue(QStringLiteral(":min_lonx"), bounding.getWest());
+      insertQuery->bindValue(QStringLiteral(":min_laty"), bounding.getSouth());
 
       // Store geometry in same format as boundaries
-      insertQuery->bindValue(":geometry",
+      insertQuery->bindValue(QStringLiteral(":geometry"),
                              atools::fs::common::BinaryGeometry(atools::fs::util::correctBoundary(lineString)).writeToByteArray());
     }
     else
     {
-      insertQuery->bindNullFloat(":max_lonx");
-      insertQuery->bindNullFloat(":max_laty");
-      insertQuery->bindNullFloat(":min_lonx");
-      insertQuery->bindNullFloat(":min_laty");
-      insertQuery->bindNullBytes(":geometry");
+      insertQuery->bindNullFloat(QStringLiteral(":max_lonx"));
+      insertQuery->bindNullFloat(QStringLiteral(":max_laty"));
+      insertQuery->bindNullFloat(QStringLiteral(":min_lonx"));
+      insertQuery->bindNullFloat(QStringLiteral(":min_laty"));
+      insertQuery->bindNullBytes(QStringLiteral(":geometry"));
     }
   }
 
@@ -1334,10 +1339,10 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
   hashKey << callsign << QString::number(facilityType) << vid;
 
   // Look up recent database id by key or get a new one
-  int id = semiPermanentId(isAtc ? atcIdMap : clientIdMap, isAtc ? curAtcId : curClientId, hashKey.join("|"));
+  int id = semiPermanentId(isAtc ? atcIdMap : clientIdMap, isAtc ? curAtcId : curClientId, hashKey.join(QStringLiteral("|")));
 
   // qDebug() << hashKey << id;
-  insertQuery->bindValue(isAtc ? ":atc_id" : ":client_id", id);
+  insertQuery->bindValue(isAtc ? QStringLiteral(":atc_id") : QStringLiteral(":client_id"), id);
 
   insertQuery->exec();
 }
@@ -1362,7 +1367,7 @@ QDateTime WhazzupTextParser::parseDateTime(const QStringList& line, int index, b
                          // 2021-03-13T22:38:09.826199Z
                          QDateTime::fromString(str, Qt::ISODateWithMs) :
                          // 20180322162024
-                         QDateTime::fromString(str, "yyyyMMddhhmmss");
+                         QDateTime::fromString(str, QStringLiteral("yyyyMMddhhmmss"));
 
     if(!datetime.isValid() && error)
       qWarning() << "Invalid datetime at index" << index << line.at(index) << "in line" << line;
@@ -1387,17 +1392,17 @@ void WhazzupTextParser::parseServersSection(const QStringList& line)
   // CZECH:212.67.73.150:Czech Republic:CenterEast Europe Server - sponsored by VACC-CZ:1:
   int index = 0;
   serverInsertQuery->clearBoundValues();
-  serverInsertQuery->bindValue(":ident", at(line, index++, error));
-  serverInsertQuery->bindValue(":hostname", at(line, index++, error));
-  serverInsertQuery->bindValue(":location", at(line, index++, error));
-  serverInsertQuery->bindValue(":name", at(line, index++, error));
+  serverInsertQuery->bindValue(QStringLiteral(":ident"), at(line, index++, error));
+  serverInsertQuery->bindValue(QStringLiteral(":hostname"), at(line, index++, error));
+  serverInsertQuery->bindValue(QStringLiteral(":location"), at(line, index++, error));
+  serverInsertQuery->bindValue(QStringLiteral(":name"), at(line, index++, error));
   index++; // client_connections_allowed
 
   if(format == IVAO || format == IVAO_JSON2)
     index++; // allowed_connections
 
   if(format == IVAO_JSON2)
-    serverInsertQuery->bindValue(":voice_type", at(line, index++, error));
+    serverInsertQuery->bindValue(QStringLiteral(":voice_type"), at(line, index++, error));
 
   serverInsertQuery->exec();
 }
@@ -1410,11 +1415,11 @@ void WhazzupTextParser::parseVoiceSection(const QStringList& line)
 
   int index = 0;
   serverInsertQuery->clearBoundValues();
-  serverInsertQuery->bindValue(":hostname", at(line, index++, error));
-  serverInsertQuery->bindValue(":location", at(line, index++, error));
-  serverInsertQuery->bindValue(":name", at(line, index++, error));
+  serverInsertQuery->bindValue(QStringLiteral(":hostname"), at(line, index++, error));
+  serverInsertQuery->bindValue(QStringLiteral(":location"), at(line, index++, error));
+  serverInsertQuery->bindValue(QStringLiteral(":name"), at(line, index++, error));
   index++; // allowed_connections
-  serverInsertQuery->bindValue(":voice_type", at(line, index++, error));
+  serverInsertQuery->bindValue(QStringLiteral(":voice_type"), at(line, index++, error));
   serverInsertQuery->exec();
 }
 
@@ -1425,13 +1430,13 @@ void WhazzupTextParser::initQueries()
   SqlUtil util(db);
 
   clientInsertQuery = new SqlQuery(db);
-  clientInsertQuery->prepare(util.buildInsertStatement("client", "or replace"));
+  clientInsertQuery->prepare(util.buildInsertStatement(QStringLiteral("client"), QStringLiteral("or replace")));
 
   atcInsertQuery = new SqlQuery(db);
-  atcInsertQuery->prepare(util.buildInsertStatement("atc", "or replace"));
+  atcInsertQuery->prepare(util.buildInsertStatement(QStringLiteral("atc"), QStringLiteral("or replace")));
 
   serverInsertQuery = new SqlQuery(db);
-  serverInsertQuery->prepare(util.buildInsertStatement("server", QString(), {"server_id"}));
+  serverInsertQuery->prepare(util.buildInsertStatement(QStringLiteral("server"), QString(), {QStringLiteral("server_id")}));
 }
 
 void WhazzupTextParser::deInitQueries()
@@ -1464,13 +1469,13 @@ void WhazzupTextParser::reset()
 
 QString WhazzupTextParser::convertAtisText(QString atis)
 {
-  if(atis.startsWith("$"))
+  if(atis.startsWith(QStringLiteral("$")))
     atis = atis.mid(1).trimmed();
 
-  QStringList lines = atis.split("^§");
+  QStringList lines = atis.split(QStringLiteral("^§"));
   for(QString& line : lines)
     line = line.trimmed();
-  return lines.join("\n");
+  return lines.join(QStringLiteral("\n"));
 }
 
 QString WhazzupTextParser::convertName(QString name, bool utf8)

@@ -116,12 +116,12 @@ int OnlinedataManager::getReloadMinutesFromWhazzup() const
 
 bool OnlinedataManager::hasSchema()
 {
-  return SqlUtil(db).hasTable("client");
+  return SqlUtil(db).hasTable(QStringLiteral("client"));
 }
 
 bool OnlinedataManager::hasData()
 {
-  return SqlUtil(db).hasTableAndRows("client") || SqlUtil(db).hasTableAndRows("atc");
+  return SqlUtil(db).hasTableAndRows(QStringLiteral("client")) || SqlUtil(db).hasTableAndRows(QStringLiteral("atc"));
 }
 
 void OnlinedataManager::createSchema()
@@ -131,7 +131,7 @@ void OnlinedataManager::createSchema()
   SqlTransaction transaction(db);
   SqlScript script(db, true /*options->isVerbose()*/);
 
-  script.executeScript(":/atools/resources/sql/fs/online/create_online_schema.sql");
+  script.executeScript(QStringLiteral(":/atools/resources/sql/fs/online/create_online_schema.sql"));
   transaction.commit();
 }
 
@@ -140,7 +140,7 @@ void OnlinedataManager::clearData()
   SqlTransaction transaction(db);
   const QStringList tables = db->tables();
   for(const QString& table : tables)
-    db->exec("delete from " + table);
+    db->exec(QStringLiteral("delete from ") + table);
   transaction.commit();
 }
 
@@ -151,7 +151,7 @@ void OnlinedataManager::dropSchema()
   SqlTransaction transaction(db);
   SqlScript script(db, true /*options->isVerbose()*/);
 
-  script.executeScript(":/atools/resources/sql/fs/online/drop_online_schema.sql");
+  script.executeScript(QStringLiteral(":/atools/resources/sql/fs/online/drop_online_schema.sql"));
   transaction.commit();
 }
 
@@ -191,8 +191,8 @@ atools::fs::sc::SimConnectAircraft OnlinedataManager::getClientAircraft(const at
 sql::SqlRecord OnlinedataManager::getClientRecordById(int clientId)
 {
   SqlQuery query(db);
-  query.prepare("select * from client where client_id = :id");
-  query.bindValue(":id", clientId);
+  query.prepare(QStringLiteral("select * from client where client_id = :id"));
+  query.bindValue(QStringLiteral(":id"), clientId);
   query.exec();
   SqlRecord rec;
   if(query.next())
@@ -204,8 +204,8 @@ sql::SqlRecord OnlinedataManager::getClientRecordById(int clientId)
 sql::SqlRecordList OnlinedataManager::getClientRecordsByCallsign(const QString& callsign)
 {
   SqlQuery query(db);
-  query.prepare("select * from client where callsign = :callsign");
-  query.bindValue(":callsign", callsign);
+  query.prepare(QStringLiteral("select * from client where callsign = :callsign"));
+  query.bindValue(QStringLiteral(":callsign"), callsign);
   query.exec();
   sql::SqlRecordList recs;
   while(query.next())
@@ -216,19 +216,25 @@ sql::SqlRecordList OnlinedataManager::getClientRecordsByCallsign(const QString& 
 QList<OnlineAircraft> OnlinedataManager::getClientCallsignAndPosMap()
 {
   QList<OnlineAircraft> clientMap;
-  SqlQuery query("select client_id, vid, callsign, groundspeed, heading, altitude, lonx, laty from client", db);
+  SqlQuery query(QStringLiteral("select client_id, vid, callsign, groundspeed, heading, altitude, lonx, laty from client"), db);
   query.exec();
   while(query.next())
-    clientMap.append(OnlineAircraft(query.valueInt("client_id"), query.valueStr("vid"), query.valueStr("callsign"),
-                                    atools::fs::sc::SimConnectAircraft::airplaneRegistrationToKey(query.valueStr("callsign")),
-                                    query.valueFloat("groundspeed"), query.valueFloat("heading"),
-                                    atools::geo::Pos(query.valueFloat("lonx"), query.valueFloat("laty"), query.valueFloat("altitude"))));
+    clientMap.append(OnlineAircraft(query.valueInt(QStringLiteral("client_id")),
+                                    query.valueStr(QStringLiteral("vid")),
+                                    query.valueStr(QStringLiteral("callsign")),
+                                    atools::fs::sc::SimConnectAircraft::airplaneRegistrationToKey(query.valueStr(QStringLiteral(
+                                                                                                                   "callsign"))),
+                                    query.valueFloat(QStringLiteral("groundspeed")),
+                                    query.valueFloat(QStringLiteral("heading")),
+                                    atools::geo::Pos(query.valueFloat(QStringLiteral("lonx")),
+                                                     query.valueFloat(QStringLiteral("laty")),
+                                                     query.valueFloat(QStringLiteral("altitude")))));
   return clientMap;
 }
 
 int OnlinedataManager::getNumClients() const
 {
-  return SqlUtil(db).rowCount("client");
+  return SqlUtil(db).rowCount(QStringLiteral("client"));
 }
 
 void OnlinedataManager::setAtcSize(const atools::fs::online::AtcSizeMap& sizeMap)
@@ -244,7 +250,7 @@ void OnlinedataManager::setGeometryCallback(GeoCallbackType func)
 void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::SqlRecord& record,
                                        const sc::SimConnectAircraft& simShadowAircraft)
 {
-  if(record.valueStr("client_type") != "PILOT")
+  if(record.valueStr(QStringLiteral("client_type")) != QStringLiteral("PILOT"))
     return;
 
   using namespace atools::fs::sc;
@@ -269,8 +275,8 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
     ac.modelRadiusFt = ac.wingSpanFt = ac.deckHeight = 0;
   }
 
-  ac.objectId = static_cast<quint32>(record.valueInt("client_id"));
-  ac.airplaneReg = record.valueStr("callsign");
+  ac.objectId = static_cast<quint32>(record.valueInt(QStringLiteral("client_id")));
+  ac.airplaneReg = record.valueStr(QStringLiteral("callsign"));
 
   // record.valueStr("vid");
   // record.valueStr("name");
@@ -283,20 +289,20 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
   // ac.airplaneAirline,
   // ac.airplaneFlightnumber,
 
-  ac.groundSpeedKts = record.valueFloat("groundspeed");
-  ac.airplaneType = record.valueStr("flightplan_aircraft");
+  ac.groundSpeedKts = record.valueFloat(QStringLiteral("groundspeed"));
+  ac.airplaneType = record.valueStr(QStringLiteral("flightplan_aircraft"));
 
   // record.valueStr("flightplan_cruising_speed");
 
-  ac.fromIdent = record.valueStr("flightplan_departure_aerodrome");
+  ac.fromIdent = record.valueStr(QStringLiteral("flightplan_departure_aerodrome"));
 
   // record.valueStr("flightplan_cruising_level");
 
-  ac.toIdent = record.valueStr("flightplan_destination_aerodrome");
+  ac.toIdent = record.valueStr(QStringLiteral("flightplan_destination_aerodrome"));
 
   // Convert octal string to decimal
   bool ok;
-  ac.transponderCode = record.valueStr("transponder_code", "-1").toShort(&ok, 8);
+  ac.transponderCode = record.valueStr(QStringLiteral("transponder_code"), QStringLiteral("-1")).toShort(&ok, 8);
   if(!ok)
     // Invalid
     ac.transponderCode = -1;
@@ -325,18 +331,19 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
   // record.valueStr("flightplan_type_of_flight");
   // record.valueStr("flightplan_persons_on_board");
 
-  ac.headingTrueDeg = record.valueFloat("heading");
+  ac.headingTrueDeg = record.valueFloat(QStringLiteral("heading"));
 
   ac.flags = atools::fs::sc::SIM_ONLINE;
-  if(record.valueBool("on_ground"))
+  if(record.valueBool(QStringLiteral("on_ground")))
     ac.flags |= atools::fs::sc::ON_GROUND;
 
   // record.valueStr("simulator");
   // record.valueStr("plane");
   // record.valueStr("qnh_mb");
 
-  if(!record.isNull("lonx") && !record.isNull("laty"))
-    ac.position = atools::geo::Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
+  if(!record.isNull(QStringLiteral("lonx")) && !record.isNull(QStringLiteral("laty")))
+    ac.position = atools::geo::Pos(record.valueFloat(QStringLiteral("lonx")), record.valueFloat(QStringLiteral("laty")),
+                                   record.valueFloat(QStringLiteral("altitude")));
   else
     ac.position = atools::geo::Pos();
 

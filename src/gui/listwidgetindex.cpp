@@ -208,7 +208,7 @@ void ListWidgetIndex::buildIndex()
 
     if(!stopwords.contains(lang))
       // Fall back to English
-      lang = "en";
+      lang = QStringLiteral("en");
     currentStopwords = &stopwords[lang];
 
     qDebug() << Q_FUNC_INFO << "Using stopwords language" << lang;
