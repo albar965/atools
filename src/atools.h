@@ -43,6 +43,9 @@ extern const QChar SEP;
 QString replaceVar(QString str, const QString& name, const QVariant& value);
 QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues);
 
+/* Checks also for valid, null and empty string since empty strings are not null */
+bool isVariantNull(const QVariant& value);
+
 /* Program information which can be added to file headers:
  * Created by %1 Version %2 (revision %3) on %4*/
 QString programFileInfo();

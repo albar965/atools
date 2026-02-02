@@ -15,6 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "atools.h"
 #include "sql/sqlexception.h"
 #include "sql/sqlrecord.h"
 
@@ -198,16 +199,16 @@ SqlRecord& SqlRecord::insertFieldAndNullValue(int pos, const QString& fieldName,
   return *this;
 }
 
-SqlRecord& SqlRecord::appendFieldAndValueIf(const QString& fieldName, QVariant value)
+SqlRecord& SqlRecord::appendFieldAndValueIf(const QString& fieldName, const QVariant& value)
 {
-  if(!value.isNull() && value.isValid())
+  if(!atools::isVariantNull(value))
     appendFieldAndValue(fieldName, value);
   return *this;
 }
 
-SqlRecord& SqlRecord::insertFieldAndValueIf(int pos, const QString& fieldName, QVariant value)
+SqlRecord& SqlRecord::insertFieldAndValueIf(int pos, const QString& fieldName, const QVariant& value)
 {
-  if(!value.isNull() && value.isValid())
+  if(!atools::isVariantNull(value))
     insertFieldAndValue(pos, fieldName, value);
   return *this;
 }

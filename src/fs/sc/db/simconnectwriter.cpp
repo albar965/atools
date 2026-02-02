@@ -565,7 +565,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
       // Calculate rating =======================================
       airportStmt->bindValue(QStringLiteral(":rating"),
                              util::calculateAirportRating(false /* isAddon */,
-                                                          !airport.getTowerFrequency().isNull(),
+                                                          !atools::isVariantNull(airport.getTowerFrequency()),
                                                           true /* msfs */,
                                                           airport.getTaxiPathFacilities().size(),
                                                           airport.getTaxiParkingFacilities().size(),

@@ -65,12 +65,14 @@ using atools::absInt;
 
 Pos::Pos(const QVariant& longitudeX, const QVariant& latitudeY, const QVariant& alt)
 {
-  if(!longitudeX.isNull() && !latitudeY.isNull() && longitudeX.isValid() && latitudeY.isValid())
+  if(!atools::isVariantNull(longitudeX) && !atools::isVariantNull(latitudeY))
   {
     *this = Pos(longitudeX.toFloat(), latitudeY.toFloat());
 
-    if(!alt.isNull() && alt.isValid())
+    if(!atools::isVariantNull(alt))
       altitude = alt.toFloat();
+    else
+      altitude = 0.f;
   }
   else
   {

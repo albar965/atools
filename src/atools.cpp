@@ -200,6 +200,13 @@ QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues)
   return retval;
 }
 
+bool isVariantNull(const QVariant& value)
+{
+  return value.isNull() || !value.isValid() ||
+         (value.metaType() == QMetaType::fromType<QString>() && value.toString().isEmpty()) ||
+         (value.metaType() == QMetaType::fromType<QByteArray>() && value.toByteArray().isEmpty());
+}
+
 // \  /  : ; '  *  &amp;  &gt;  &lt;  ?  $  |
 static const QString INVALID_FILENAME_CHARACTERS(QStringLiteral("\\/:;\'\"*<>?$|"));
 

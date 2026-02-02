@@ -575,7 +575,7 @@ QString LogdataManager::blobConversionFunctionEmpty(const QVariant&)
 
 QString LogdataManager::blobConversionFunction(const QVariant& value)
 {
-  if(value.isValid() && !value.isNull() && value.metaType() == QMetaType::fromType<QByteArray>())
+  if(!atools::isVariantNull(value) && value.metaType() == QMetaType::fromType<QByteArray>())
     return QString(atools::zip::gzipDecompress(value.toByteArray()));
 
   return QString();

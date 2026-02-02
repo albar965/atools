@@ -227,8 +227,8 @@ public:
   SqlRecord& insertFieldAndNullValue(int pos, const QString& fieldName, const QMetaType& type);
 
   /* Adds field if not exists and value too if value. Type is derived from value */
-  SqlRecord& appendFieldAndValueIf(const QString& fieldName, QVariant value);
-  SqlRecord& insertFieldAndValueIf(int pos, const QString& fieldName, QVariant value);
+  SqlRecord& appendFieldAndValueIf(const QString& fieldName, const QVariant& value);
+  SqlRecord& insertFieldAndValueIf(int pos, const QString& fieldName, const QVariant& value);
 
   void setValue(int i, const QVariant& val);
   void setValue(const QString& name, const QVariant& val);

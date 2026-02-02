@@ -405,7 +405,7 @@ HtmlBuilder& HtmlBuilder::row2If(const QString& name, int value, html::Flags fla
 
 HtmlBuilder& HtmlBuilder::row2IfVar(const QString& name, const QVariant& value, html::Flags flags, QColor color)
 {
-  if(!value.isNull() && value.isValid())
+  if(!atools::isVariantNull(value))
     row2(name, value.toString(), flags, color);
 
   return *this;
