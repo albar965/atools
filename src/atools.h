@@ -496,6 +496,7 @@ QString currentIsoWithOffset(bool milliseconds = true);
 /* Keep subtracting months for incomplete date and time until it is not in the future and the day matches
  * but not more than one year to avoid endless loops */
 QDateTime correctDate(int day, int hour, int minute);
+QDateTime correctDate(int day, int hour, int minute, const QDateTime& dateTimeReference);
 
 /* Determines timezone offset by seconds of day and creates local time from incomplete values based on current year.
  * Time can be converted to UTC which might also roll over the date.

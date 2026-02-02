@@ -43,7 +43,6 @@
 #include <string>
 #include <time.h>
 #include <cstring>
-#include <iostream>
 
 #include <QDateTime>
 #include <QStringBuilder>
@@ -691,14 +690,6 @@ void MetarParser::parse()
   scanRemainder();
   scanRemark();
 
-  if(groupCount < 4)
-  {
-    delete[] _data;
-    _data = nullptr;
-    errors.append(tr("METAR \"%1\" is incomplete.").arg(metar));
-    return;
-  }
-
   if(correctDate)
   {
     // Not full date parsed - find based on current time
@@ -708,15 +699,22 @@ void MetarParser::parse()
     _year = dateTime.date().year();
   }
 
-  // Calculate flight rules (IFR, VFR, etc.), max and lowest ceiling
-  postProcess();
+  if(groupCount < 4)
+  {
+    errors.append(tr("METAR \"%1\" is incomplete.").arg(metar));
+    parsed = false;
+  }
+  else
+  {
+    // Calculate flight rules (IFR, VFR, etc.), max and lowest ceiling
+    postProcess();
+    parsed = true;
+  }
 
   delete[] _data;
   _data = nullptr;
   unusedData = _m;
   _m = nullptr;
-
-  parsed = true;
 }
 
 void MetarParser::postProcessCloudCoverage()

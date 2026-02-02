@@ -1110,15 +1110,34 @@ QString normalizeStr(QString str)
 
 QDateTime correctDate(int day, int hour, int minute)
 {
-  QDateTime dateTime = QDateTime::currentDateTimeUtc();
+  return correctDate(day, hour, minute, QDateTime::currentDateTimeUtc());
+}
+
+QDateTime correctDate(int day, int hour, int minute, const QDateTime& dateTimeReference)
+{
+  QDateTime dateTime(dateTimeReference);
   dateTime.setDate(QDate(dateTime.date().year(), dateTime.date().month(), day));
   dateTime.setTime(QTime(hour, minute));
 
-  // Keep subtracting months until it is not in the future and the day matches
+  // Keep subtracting months until it is not in the future and the day matches month
   // but not more than one year to avoid endless loops
-  int months = 0;
-  while((dateTime > QDateTime::currentDateTimeUtc() || day != dateTime.date().day()) && months < 12)
-    dateTime = dateTime.addMonths(-(++months));
+  // QDateTime turns invalid if day exceeds days of month
+  int months = 0, year = 0;
+  while((!dateTime.isValid() || dateTime > dateTimeReference) && year < 2)
+  {
+    months++;
+    dateTime = dateTimeReference;
+    if(dateTime.date().month() - months < 1)
+    {
+      // Roll down to next year if below January
+      year++;
+      months = 0;
+    }
+
+    dateTime.setDate(QDate(dateTime.date().year() - year, dateTime.date().month() - months, day));
+    dateTime.setTime(QTime(hour, minute));
+  }
+
   return dateTime;
 }
 
