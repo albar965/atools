@@ -245,6 +245,6 @@ private:
 } // namespace gui
 } // namespace atools
 
-Q_DECLARE_TYPEINFO(atools::gui::DialogButton, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(atools::gui::DialogButton, Q_RELOCATABLE_TYPE);
 
 #endif // ATOOLS_GUI_DIALOG_H

@@ -104,6 +104,6 @@ QDebug operator<<(QDebug out, const atools::track::Track& record);
 } // namespace track
 } // namespace atools
 
-Q_DECLARE_TYPEINFO(atools::track::Track, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(atools::track::Track, Q_RELOCATABLE_TYPE);
 
 #endif // ATOOLS_TRACKTYPES_H

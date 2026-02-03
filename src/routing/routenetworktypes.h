@@ -330,7 +330,7 @@ struct Result
 } // namespace route
 } // namespace atools
 
-Q_DECLARE_TYPEINFO(atools::routing::Node, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(atools::routing::Node, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(atools::routing::Edge, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_ROUTENETWORKBASE_H
