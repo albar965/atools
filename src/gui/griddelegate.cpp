@@ -23,8 +23,8 @@
 namespace atools {
 namespace gui {
 
-GridDelegate::GridDelegate(QObject *parent)
-  : QStyledItemDelegate(parent)
+GridDelegate::GridDelegate(QObject *parent, double borderPenWidthParam, int heightIncreaseParam)
+  : QStyledItemDelegate(parent), borderPenWidth(borderPenWidthParam), heightIncrease(heightIncreaseParam)
 {
   styleChanged();
 }

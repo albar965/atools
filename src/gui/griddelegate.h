@@ -33,29 +33,23 @@ class GridDelegate :
   Q_OBJECT
 
 public:
-  explicit GridDelegate(QObject *parent);
+  /*
+   * borderPenWidthParam = width border around cells
+   * heightIncreaseParam = cell height increased by pixels
+   */
+  explicit GridDelegate(QObject *parent, double borderPenWidthParam = 1.5, int heightIncreaseParam = 3);
   virtual ~GridDelegate() override;
 
+  /* Updates pen */
   void styleChanged();
-
-  /* Width of border pen */
-  void setBorderPenWidth(double value)
-  {
-    borderPenWidth = value;
-  }
-
-  void setHeightIncrease(int value)
-  {
-    heightIncrease = value;
-  }
 
 private:
   QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
   void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
   QPen gridPen;
-  double borderPenWidth = 1.5;
-  int heightIncrease = 3;
+  double borderPenWidth;
+  int heightIncrease;
 };
 
 } // namespace gui
