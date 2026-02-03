@@ -1119,7 +1119,7 @@ QDateTime correctDate(int day, int hour, int minute, const QDateTime& dateTimeRe
   dateTime.setDate(QDate(dateTime.date().year(), dateTime.date().month(), day));
   dateTime.setTime(QTime(hour, minute));
 
-  // Keep subtracting months until it is not in the future and the day matches month
+  // Keep subtracting months until it is not in the future (including time) and the day matches month
   // but not more than one year to avoid endless loops
   // QDateTime turns invalid if day exceeds days of month
   int months = 0, year = 0;
@@ -1129,9 +1129,9 @@ QDateTime correctDate(int day, int hour, int minute, const QDateTime& dateTimeRe
     dateTime = dateTimeReference;
     if(dateTime.date().month() - months < 1)
     {
-      // Roll down to next year if below January
+      // Roll down to next year if at or below January
       year++;
-      months = 0;
+      months = -12; // Add 12 months
     }
 
     dateTime.setDate(QDate(dateTime.date().year() - year, dateTime.date().month() - months, day));
