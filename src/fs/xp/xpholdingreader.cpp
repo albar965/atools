@@ -96,7 +96,7 @@ void XpHoldingReader::read(const QStringList& line, const XpReaderContext& conte
   ctx = &context;
 
   // Avoid duplicates having the exact same values for all fields
-  QString key = line.join(",");
+  QString key = line.join(QStringLiteral(","));
   if(holdingSet.contains(key))
     return;
   else
@@ -134,57 +134,57 @@ void XpHoldingReader::read(const QStringList& line, const XpReaderContext& conte
   {
     case HOLD_WAYPOINT:
       fetchWaypoint(navIdent, region, navId, magvar, pos);
-      navType = "W";
+      navType = QStringLiteral("W");
       break;
 
     case HOLD_NDB:
       fetchNdb(navIdent, region, navId, magvar, pos);
-      navType = "N";
+      navType = QStringLiteral("N");
       break;
 
     case HOLD_VOR:
       fetchVor(navIdent, region, navId, magvar, pos, vorType, vorDmeOnly, vorHasDme);
-      navType = "V";
+      navType = QStringLiteral("V");
       break;
   }
 
-  insertQuery->bindValue(":holding_id", ++curHoldId);
-  insertQuery->bindValue(":file_id", context.curFileId);
+  insertQuery->bindValue(QStringLiteral(":holding_id"), ++curHoldId);
+  insertQuery->bindValue(QStringLiteral(":file_id"), context.curFileId);
 
   if(airportId != -1)
   {
-    insertQuery->bindValue(":airport_id", airportId);
-    insertQuery->bindValue(":airport_ident", airportIdent);
+    insertQuery->bindValue(QStringLiteral(":airport_id"), airportId);
+    insertQuery->bindValue(QStringLiteral(":airport_ident"), airportIdent);
   }
 
-  insertQuery->bindValue(":nav_id", navId);
-  insertQuery->bindValue(":nav_ident", navIdent);
-  insertQuery->bindValue(":nav_type", navType); // N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
+  insertQuery->bindValue(QStringLiteral(":nav_id"), navId);
+  insertQuery->bindValue(QStringLiteral(":nav_ident"), navIdent);
+  insertQuery->bindValue(QStringLiteral(":nav_type"), navType); // N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
 
-  if(navType == "V")
+  if(navType == QStringLiteral("V"))
   {
-    insertQuery->bindValue(":vor_type", vorType);
-    insertQuery->bindValue(":vor_dme_only", vorDmeOnly);
-    insertQuery->bindValue(":vor_has_dme", vorHasDme);
+    insertQuery->bindValue(QStringLiteral(":vor_type"), vorType);
+    insertQuery->bindValue(QStringLiteral(":vor_dme_only"), vorDmeOnly);
+    insertQuery->bindValue(QStringLiteral(":vor_has_dme"), vorHasDme);
   }
   else
   {
-    insertQuery->bindNullInt(":vor_type");
-    insertQuery->bindNullInt(":vor_dme_only");
-    insertQuery->bindNullInt(":vor_has_dme");
+    insertQuery->bindNullInt(QStringLiteral(":vor_type"));
+    insertQuery->bindNullInt(QStringLiteral(":vor_dme_only"));
+    insertQuery->bindNullInt(QStringLiteral(":vor_has_dme"));
   }
 
-  insertQuery->bindValue(":region", region);
-  insertQuery->bindValue(":mag_var", magvar);
-  insertQuery->bindValue(":course", at(line, COURSE_MAG).toFloat());
-  insertQuery->bindValue(":turn_direction", at(line, DIR));
-  insertQuery->bindValue(":leg_length", at(line, LEG_LENGTH).toFloat());
-  insertQuery->bindValue(":leg_time", at(line, LEG_TIME).toFloat());
-  insertQuery->bindValue(":minimum_altitude", at(line, MIN_ALT).toFloat());
-  insertQuery->bindValue(":maximum_altitude", at(line, MAX_ALT).toFloat());
-  insertQuery->bindValue(":speed_limit", at(line, SPEED).toInt());
-  insertQuery->bindValue(":lonx", pos.getLonX());
-  insertQuery->bindValue(":laty", pos.getLatY());
+  insertQuery->bindValue(QStringLiteral(":region"), region);
+  insertQuery->bindValue(QStringLiteral(":mag_var"), magvar);
+  insertQuery->bindValue(QStringLiteral(":course"), at(line, COURSE_MAG).toFloat());
+  insertQuery->bindValue(QStringLiteral(":turn_direction"), at(line, DIR));
+  insertQuery->bindValue(QStringLiteral(":leg_length"), at(line, LEG_LENGTH).toFloat());
+  insertQuery->bindValue(QStringLiteral(":leg_time"), at(line, LEG_TIME).toFloat());
+  insertQuery->bindValue(QStringLiteral(":minimum_altitude"), at(line, MIN_ALT).toFloat());
+  insertQuery->bindValue(QStringLiteral(":maximum_altitude"), at(line, MAX_ALT).toFloat());
+  insertQuery->bindValue(QStringLiteral(":speed_limit"), at(line, SPEED).toInt());
+  insertQuery->bindValue(QStringLiteral(":lonx"), pos.getLonX());
+  insertQuery->bindValue(QStringLiteral(":laty"), pos.getLatY());
   insertQuery->exec();
   insertQuery->clearBoundValues();
 }

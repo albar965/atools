@@ -28,26 +28,26 @@ QString surfaceToDb(Surface value, const XpReaderContext *context)
   switch(value)
   {
     case UNKNOWN:
-      return "UNKNOWN";
+      return QStringLiteral("UNKNOWN");
 
     case TRANSPARENT:
-      return "TR";
+      return QStringLiteral("TR");
 
     case TURF_OR_GRASS:
-      return "G";
+      return QStringLiteral("G");
 
     case DRY_LAKEBED:
     case DIRT:
-      return "D";
+      return QStringLiteral("D");
 
     case GRAVEL:
-      return "GR";
+      return QStringLiteral("GR");
 
     case WATER:
-      return "W";
+      return QStringLiteral("W");
 
     case SNOW_OR_ICE:
-      return "SN";
+      return QStringLiteral("SN");
 
     case ASPHALT:
     case ASPHALT_L:
@@ -69,7 +69,7 @@ QString surfaceToDb(Surface value, const XpReaderContext *context)
     case ASPHALT_D3_PATCHED:
     case ASPHALT_D3_PLAIN:
     case ASPHALT_D3_WORN:
-      return "A";
+      return QStringLiteral("A");
 
     case CONCRETE:
     case CONCRETE_L:
@@ -80,7 +80,7 @@ QString surfaceToDb(Surface value, const XpReaderContext *context)
     case CONCRETE_D:
     case CONCRETE_D_DIRTY:
     case CONCRETE_D_WORN:
-      return "C";
+      return QStringLiteral("C");
   }
 
 #ifdef DEBUG_INFORMATION
@@ -90,7 +90,7 @@ QString surfaceToDb(Surface value, const XpReaderContext *context)
 #endif
 
   // Fall back to asphalt
-  return "A";
+  return QStringLiteral("A");
 }
 
 bool isSurfaceHard(Surface value)
@@ -172,40 +172,40 @@ QString alsToDb(ApproachLight value, const XpReaderContext *context)
       return QString();
 
     case ALSF_I:
-      return "ALSF1";
+      return QStringLiteral("ALSF1");
 
     case ALSF_II:
-      return "ALSF2";
+      return QStringLiteral("ALSF2");
 
     case CALVERT:
-      return "CALVERT";
+      return QStringLiteral("CALVERT");
 
     case CALVERT_ILS:
-      return "CALVERT2";
+      return QStringLiteral("CALVERT2");
 
     case SSALR:
-      return "SSALR";
+      return QStringLiteral("SSALR");
 
     case SSALF:
-      return "SSALF";
+      return QStringLiteral("SSALF");
 
     case SALS:
-      return "SALS";
+      return QStringLiteral("SALS");
 
     case MALSR:
-      return "MALSR";
+      return QStringLiteral("MALSR");
 
     case MALSF:
-      return "MALSF";
+      return QStringLiteral("MALSF");
 
     case MALS:
-      return "MALS";
+      return QStringLiteral("MALS");
 
     case ODALS:
-      return "ODALS";
+      return QStringLiteral("ODALS");
 
     case RAIL:
-      return "RAIL";
+      return QStringLiteral("RAIL");
 
   }
   qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown ALS value" << value;
@@ -231,24 +231,24 @@ QString approachIndicatorToDb(ApproachIndicator value, const XpReaderContext *co
   switch(value)
   {
     case VASI:
-      return "VASI22";
+      return QStringLiteral("VASI22");
 
     case PAPI_4L:
     case PAPI_4R:
-      return "PAPI4";
+      return QStringLiteral("PAPI4");
 
     case APAPI_L:
     case APAPI_R:
-      return "APAPI";
+      return QStringLiteral("APAPI");
 
     case SPACE_SHUTTLE_PAPI:
-      return "PAPI4";
+      return QStringLiteral("PAPI4");
 
     case TRI_COLOR_VASI:
-      return "TRICOLOR";
+      return QStringLiteral("TRICOLOR");
 
     case RUNWAY_GUARD:
-      return "GUARD";
+      return QStringLiteral("GUARD");
 
     case NO_APPR_INDICATOR:
       break;

@@ -63,24 +63,24 @@ void XpAirwayReader::read(const QStringList& line, const XpReaderContext& contex
 
   QString names = at(line, NAME);
 
-  const QStringList nameList = names.split("-");
+  const QStringList nameList = names.split(QStringLiteral("-"));
   for(const QString& name : nameList)
   {
     // Split dash separated airway list
-    insertAirwayQuery->bindValue(":tmp_airway_id", ++curAirwayId);
-    insertAirwayQuery->bindValue(":name", name);
-    insertAirwayQuery->bindValue(":type", at(line, TYPE).toInt());
-    insertAirwayQuery->bindValue(":direction", at(line, DIRECTION));
-    insertAirwayQuery->bindValue(":minimum_altitude", at(line, MIN_ALT).toInt());
-    insertAirwayQuery->bindValue(":maximum_altitude", at(line, MAX_ALT).toInt());
+    insertAirwayQuery->bindValue(QStringLiteral(":tmp_airway_id"), ++curAirwayId);
+    insertAirwayQuery->bindValue(QStringLiteral(":name"), name);
+    insertAirwayQuery->bindValue(QStringLiteral(":type"), at(line, TYPE).toInt());
+    insertAirwayQuery->bindValue(QStringLiteral(":direction"), at(line, DIRECTION));
+    insertAirwayQuery->bindValue(QStringLiteral(":minimum_altitude"), at(line, MIN_ALT).toInt());
+    insertAirwayQuery->bindValue(QStringLiteral(":maximum_altitude"), at(line, MAX_ALT).toInt());
 
-    insertAirwayQuery->bindValue(":previous_ident", at(line, FROM_IDENT));
-    insertAirwayQuery->bindValue(":previous_region", at(line, FROM_REGION));
-    insertAirwayQuery->bindValue(":previous_type", at(line, FROM_TYPE).toInt());
+    insertAirwayQuery->bindValue(QStringLiteral(":previous_ident"), at(line, FROM_IDENT));
+    insertAirwayQuery->bindValue(QStringLiteral(":previous_region"), at(line, FROM_REGION));
+    insertAirwayQuery->bindValue(QStringLiteral(":previous_type"), at(line, FROM_TYPE).toInt());
 
-    insertAirwayQuery->bindValue(":next_ident", at(line, TO_IDENT));
-    insertAirwayQuery->bindValue(":next_region", at(line, TO_REGION));
-    insertAirwayQuery->bindValue(":next_type", at(line, TO_TYPE).toInt());
+    insertAirwayQuery->bindValue(QStringLiteral(":next_ident"), at(line, TO_IDENT));
+    insertAirwayQuery->bindValue(QStringLiteral(":next_region"), at(line, TO_REGION));
+    insertAirwayQuery->bindValue(QStringLiteral(":next_type"), at(line, TO_TYPE).toInt());
 
     insertAirwayQuery->exec();
   }
@@ -103,7 +103,7 @@ void XpAirwayReader::initQueries()
   SqlUtil util(&db);
 
   insertAirwayQuery = new SqlQuery(db);
-  insertAirwayQuery->prepare(util.buildInsertStatement("tmp_airway"));
+  insertAirwayQuery->prepare(util.buildInsertStatement(QStringLiteral("tmp_airway")));
 }
 
 void XpAirwayReader::deInitQueries()

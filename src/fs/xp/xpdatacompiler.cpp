@@ -511,26 +511,26 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpRea
           }
         }
 
-        if(flags.testFlag(READ_AIRSPACE) && !line.startsWith("AN"))
+        if(flags.testFlag(READ_AIRSPACE) && !line.startsWith(QStringLiteral("AN")))
         {
           // Strip OpenAirport file comments except for airport names
-          int idx = line.indexOf("*");
+          int idx = line.indexOf(QStringLiteral("*"));
           if(idx != -1)
-            line = line.left(line.indexOf("*"));
+            line = line.left(line.indexOf(QStringLiteral("*")));
         }
         else if(!flags.testFlag(READ_CIFP))
         {
           // Strip dat-file comments
-          if(line.startsWith("#"))
+          if(line.startsWith(QStringLiteral("#")))
             line.clear();
         }
 
         if(!line.isEmpty())
         {
           if(flags.testFlag(READ_CIFP))
-            fields = line.split(",");
+            fields = line.split(QStringLiteral(","));
           else
-            fields = line.simplified().split(" ");
+            fields = line.simplified().split(QStringLiteral(" "));
 
           if(fields.size() >= minColumns)
           {
@@ -538,7 +538,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpRea
             {
               // Extract colon separated row code
               QString first = fields.takeFirst();
-              QStringList rowCode = first.split(":");
+              QStringList rowCode = first.split(QStringLiteral(":"));
               if(rowCode.size() == 2)
               {
                 fields.prepend(rowCode.at(1));
@@ -605,7 +605,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
       {
         line = stream.readLine().simplified();
         lineNum++;
-      } while(line.isEmpty() && !stream.atEnd() && line != "99");
+      } while(line.isEmpty() && !stream.atEnd() && line != QStringLiteral("99"));
       qInfo() << Q_FUNC_INFO << line;
 
       // Metadata and copyright ===========
@@ -613,10 +613,10 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
       {
         line = stream.readLine().simplified();
         lineNum++;
-      } while(line.isEmpty() && !stream.atEnd() && line != "99");
+      } while(line.isEmpty() && !stream.atEnd() && line != QStringLiteral("99"));
       qInfo() << Q_FUNC_INFO << line;
 
-      QStringList fields = line.simplified().split(" ");
+      QStringList fields = line.simplified().split(QStringLiteral(" "));
       if(!fields.isEmpty())
         fileVersion = fields.constFirst().toInt();
 
@@ -640,7 +640,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
       while(!stream.atEnd())
       {
         line = stream.readLine();
-        if(line == "99")
+        if(line == QStringLiteral("99"))
           break;
         lines++;
       }

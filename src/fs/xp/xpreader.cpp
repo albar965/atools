@@ -39,6 +39,40 @@ XpReader::~XpReader()
 
 }
 
+const QString& XpReader::at(const QStringList& line, int index)
+{
+  if(index < line.size())
+    return line.at(index);
+  else
+    // Have to stop reading the file since the rest can be corrupted
+    throw atools::Exception(ctx->messagePrefix() +
+                            QStringLiteral(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+}
+
+QString XpReader::atAirportIdent(const QStringList& line, int index)
+{
+  if(index < line.size())
+  {
+    const QString str = line.at(index).simplified();
+    return str == QStringLiteral("ENRT") ? QString() : str;
+  }
+  else
+    // Have to stop reading the file since the rest can be corrupted
+    throw atools::Exception(ctx->messagePrefix() +
+                            QStringLiteral(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+}
+
+QString XpReader::mid(const QStringList& line, int index, bool ignoreError)
+{
+  if(index < line.size())
+    return line.mid(index).join(QStringLiteral(" "));
+  else if(!ignoreError)
+    // Have to stop reading the file since the rest can be corrupted
+    throw atools::Exception(ctx->messagePrefix() +
+                            QStringLiteral(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+  return QString();
+}
+
 void XpReader::fetchWaypoint(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos)
 {
   fetchNavaid(waypointQuery, ident, region, id, magvar, pos);
@@ -64,23 +98,23 @@ void XpReader::fetchNavaid(atools::sql::SqlQuery *query, const QString& ident, c
                            int& id, float& magvar, atools::geo::Pos& pos, QString *vorType,
                            bool *dmeOnly, bool *hasDme)
 {
-  query->bindValue(":ident", ident);
-  query->bindValue(":region", region);
+  query->bindValue(QStringLiteral(":ident"), ident);
+  query->bindValue(QStringLiteral(":region"), region);
   query->exec();
   if(query->next())
   {
-    id = query->valueInt("id");
-    magvar = query->valueFloat("mag_var");
-    pos = atools::geo::Pos(query->valueFloat("lonx"), query->valueFloat("laty"));
+    id = query->valueInt(QStringLiteral("id"));
+    magvar = query->valueFloat(QStringLiteral("mag_var"));
+    pos = atools::geo::Pos(query->valueFloat(QStringLiteral("lonx")), query->valueFloat(QStringLiteral("laty")));
 
     if(vorType != nullptr)
-      *vorType = query->valueStr("type");
+      *vorType = query->valueStr(QStringLiteral("type"));
 
     if(dmeOnly != nullptr)
-      *dmeOnly = query->valueInt("dme_only");
+      *dmeOnly = query->valueInt(QStringLiteral("dme_only"));
 
     if(hasDme != nullptr)
-      *hasDme = !query->isNull("dme_altitude");
+      *hasDme = !query->isNull(QStringLiteral("dme_altitude"));
   }
   else
   {
@@ -145,7 +179,7 @@ void XpReader::err(const QString& msg)
 
       if(ctx != nullptr)
       {
-        message = ctx->messagePrefix() + " " + msg;
+        message = ctx->messagePrefix() + QStringLiteral(" ") + msg;
         filepath = ctx->filePath;
       }
       else

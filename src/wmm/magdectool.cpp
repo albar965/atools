@@ -84,7 +84,7 @@ void MagDecTool::init(int year, int month)
   referenceDate.setDate(year, month, 1);
 
   // Put coeffizients file into a temporary, so that the C code can read it
-  atools::io::TempFile temp(QString(":/atools/resources/wmm/WMM.COF"), "_wmm.cof");
+  atools::io::TempFile temp(QStringLiteral(":/atools/resources/wmm/WMM.COF"), "_wmm.cof");
 
   // Have to change locale to C since sscanf which is used in the geomagnetism library is locale dependent
   char *oldlocale = setlocale(LC_NUMERIC, nullptr);

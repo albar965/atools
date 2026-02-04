@@ -135,13 +135,13 @@ QString convertType(AirwayPointType xptype)
       return QString();
 
     case atools::fs::xp::AW_FIX:
-      return "O";
+      return QStringLiteral("O");
 
     case atools::fs::xp::AW_NDB:
-      return "N";
+      return QStringLiteral("N");
 
     case atools::fs::xp::AW_VOR:
-      return "V";
+      return QStringLiteral("V");
   }
   return QString();
 }
@@ -155,13 +155,13 @@ QString convertAirwayType(AirwayType type)
       return QString();
 
     case atools::fs::xp::BOTH:
-      return "B";
+      return QStringLiteral("B");
 
     case atools::fs::xp::VICTOR:
-      return "V";
+      return QStringLiteral("V");
 
     case atools::fs::xp::JET:
-      return "J";
+      return QStringLiteral("J");
   }
   return QString();
 }
@@ -193,8 +193,8 @@ bool XpAirwayPostProcess::postProcessEarthAirway()
   // Read duplets from temp table
   while(airwayTempQuery.next())
   {
-    QString airway = airwayTempQuery.valueStr("name");
-    AirwayType airwayType = static_cast<AirwayType>(airwayTempQuery.valueInt("type"));
+    QString airway = airwayTempQuery.valueStr(QStringLiteral("name"));
+    AirwayType airwayType = static_cast<AirwayType>(airwayTempQuery.valueInt(QStringLiteral("type")));
 
     if(currentAirway.isEmpty())
     {
@@ -216,15 +216,15 @@ bool XpAirwayPostProcess::postProcessEarthAirway()
 
     // Add a segment from the database
     AirwaySegment segment;
-    segment.minAlt = airwayTempQuery.valueInt("minimum_altitude");
-    segment.maxAlt = airwayTempQuery.valueInt("maximum_altitude");
-    segment.next.ident = airwayTempQuery.valueStr("next_ident");
-    segment.next.region = airwayTempQuery.valueStr("next_region");
-    segment.next.type = static_cast<AirwayPointType>(airwayTempQuery.valueInt("next_type"));
-    segment.prev.ident = airwayTempQuery.valueStr("previous_ident");
-    segment.prev.region = airwayTempQuery.valueStr("previous_region");
-    segment.prev.type = static_cast<AirwayPointType>(airwayTempQuery.valueInt("previous_type"));
-    segment.dir = static_cast<SegmentDir>(atools::strToChar(airwayTempQuery.valueStr("direction")));
+    segment.minAlt = airwayTempQuery.valueInt(QStringLiteral("minimum_altitude"));
+    segment.maxAlt = airwayTempQuery.valueInt(QStringLiteral("maximum_altitude"));
+    segment.next.ident = airwayTempQuery.valueStr(QStringLiteral("next_ident"));
+    segment.next.region = airwayTempQuery.valueStr(QStringLiteral("next_region"));
+    segment.next.type = static_cast<AirwayPointType>(airwayTempQuery.valueInt(QStringLiteral("next_type")));
+    segment.prev.ident = airwayTempQuery.valueStr(QStringLiteral("previous_ident"));
+    segment.prev.region = airwayTempQuery.valueStr(QStringLiteral("previous_region"));
+    segment.prev.type = static_cast<AirwayPointType>(airwayTempQuery.valueInt(QStringLiteral("previous_type")));
+    segment.dir = static_cast<SegmentDir>(atools::strToChar(airwayTempQuery.valueStr(QStringLiteral("direction"))));
 
     segments.insert(segments.size(), segment);
   }
@@ -358,30 +358,30 @@ void XpAirwayPostProcess::writeSegment(SqlQuery& insertTmpAirwayPoint, const QSt
   if(nextSeg.next.ident.isEmpty() && prevSeg.prev.ident.isEmpty())
     qWarning() << Q_FUNC_INFO << "Airway" << name << "Empty prev and next ident";
 
-  insertTmpAirwayPoint.bindValue(":name", name);
-  insertTmpAirwayPoint.bindValue(":type", convertAirwayType(type));
-  insertTmpAirwayPoint.bindValue(":mid_type", convertType(prevSeg.next.type));
-  insertTmpAirwayPoint.bindValue(":mid_ident", prevSeg.next.ident);
-  insertTmpAirwayPoint.bindValue(":mid_region", prevSeg.next.region);
+  insertTmpAirwayPoint.bindValue(QStringLiteral(":name"), name);
+  insertTmpAirwayPoint.bindValue(QStringLiteral(":type"), convertAirwayType(type));
+  insertTmpAirwayPoint.bindValue(QStringLiteral(":mid_type"), convertType(prevSeg.next.type));
+  insertTmpAirwayPoint.bindValue(QStringLiteral(":mid_ident"), prevSeg.next.ident);
+  insertTmpAirwayPoint.bindValue(QStringLiteral(":mid_region"), prevSeg.next.region);
 
   if(!prevSeg.prev.ident.isEmpty())
   {
-    insertTmpAirwayPoint.bindValue(":previous_type", convertType(prevSeg.prev.type));
-    insertTmpAirwayPoint.bindValue(":previous_ident", prevSeg.prev.ident);
-    insertTmpAirwayPoint.bindValue(":previous_region", prevSeg.prev.region);
-    insertTmpAirwayPoint.bindValue(":previous_minimum_altitude", prevSeg.minAlt * 100);
-    insertTmpAirwayPoint.bindValue(":previous_maximum_altitude", prevSeg.maxAlt * 100);
-    insertTmpAirwayPoint.bindValue(":previous_direction", atools::charToStr(prevSeg.dir));
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":previous_type"), convertType(prevSeg.prev.type));
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":previous_ident"), prevSeg.prev.ident);
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":previous_region"), prevSeg.prev.region);
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":previous_minimum_altitude"), prevSeg.minAlt * 100);
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":previous_maximum_altitude"), prevSeg.maxAlt * 100);
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":previous_direction"), atools::charToStr(prevSeg.dir));
   }
 
   if(!nextSeg.next.ident.isEmpty())
   {
-    insertTmpAirwayPoint.bindValue(":next_type", convertType(nextSeg.next.type));
-    insertTmpAirwayPoint.bindValue(":next_ident", nextSeg.next.ident);
-    insertTmpAirwayPoint.bindValue(":next_region", nextSeg.next.region);
-    insertTmpAirwayPoint.bindValue(":next_minimum_altitude", nextSeg.minAlt * 100);
-    insertTmpAirwayPoint.bindValue(":next_maximum_altitude", nextSeg.maxAlt * 100);
-    insertTmpAirwayPoint.bindValue(":next_direction", atools::charToStr(nextSeg.dir));
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":next_type"), convertType(nextSeg.next.type));
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":next_ident"), nextSeg.next.ident);
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":next_region"), nextSeg.next.region);
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":next_minimum_altitude"), nextSeg.minAlt * 100);
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":next_maximum_altitude"), nextSeg.maxAlt * 100);
+    insertTmpAirwayPoint.bindValue(QStringLiteral(":next_direction"), atools::charToStr(nextSeg.dir));
   }
 
   insertTmpAirwayPoint.exec();
