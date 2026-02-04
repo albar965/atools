@@ -124,12 +124,19 @@ void ChoiceDialog::addRadioButtonInt(int id, int groupId, const QString& text, c
   addWidgetInt(id, button);
 }
 
-void ChoiceDialog::addLine()
+void ChoiceDialog::addLine(QFrame::Shadow shadow, int width, const QColor& color)
 {
   QFrame *line;
   line = new QFrame(this);
   line->setFrameShape(QFrame::HLine);
-  line->setFrameShadow(QFrame::Sunken);
+  line->setFrameShadow(shadow);
+  if(width != -1)
+    // Width 0 results in one pixel line
+    line->setLineWidth(width - 1);
+
+  if(color.isValid())
+    line->setStyleSheet(QStringLiteral("QFrame {color: %1}").arg(color.name()));
+
   ui->verticalLayoutScrollArea->insertWidget(-1, line);
 }
 

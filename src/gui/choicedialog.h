@@ -20,6 +20,7 @@
 
 #include <QAbstractButton>
 #include <QDialog>
+#include <QFrame>
 #include <QSet>
 
 namespace Ui {
@@ -121,8 +122,8 @@ public:
     required = ids;
   }
 
-  /* Add a separator line */
-  void addLine();
+  /* Add a horizontal separator line. Use "QApplication::palette().color(QPalette::Mid)" for normal frame color. */
+  void addLine(QFrame::Shadow shadow = QFrame::Sunken, int width = -1, const QColor& color = QColor());
 
   /* Add a vertical spacer */
   void addSpacer();
