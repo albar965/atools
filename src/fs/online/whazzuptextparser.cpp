@@ -30,6 +30,7 @@
 #include <QJsonObject>
 #include <QIODevice>
 #include <QJsonObject>
+#include <QTimeZone>
 
 #ifdef QT_CORE5COMPAT_LIB
 #include <QtCore5Compat/QTextCodec>
@@ -259,7 +260,7 @@ bool WhazzupTextParser::readInternalJson(const QString& file, const QDateTime& l
       // This is older than the last update - bail out
       return false;
 
-    update.setTimeSpec(Qt::UTC);
+    update.setTimeZone(QTimeZone::UTC);
     updateTimestamp = update;
   }
 
@@ -942,7 +943,7 @@ bool WhazzupTextParser::readInternalDelimited(QTextStream& stream, const QDateTi
             // This is older than the last update - bail out
             return false;
 
-          update.setTimeSpec(Qt::UTC);
+          update.setTimeZone(QTimeZone::UTC);
           updateTimestamp = update;
         }
       }

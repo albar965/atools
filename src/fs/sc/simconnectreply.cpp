@@ -21,6 +21,7 @@
 #include <QDebug>
 #include <QDataStream>
 #include <QIODevice>
+#include <QTimeZone>
 
 namespace atools {
 namespace fs {
@@ -81,7 +82,7 @@ bool SimConnectReply::read(QIODevice *ioDevice)
 
   quint32 ts;
   in >> ts;
-  packetTs = QDateTime::fromMSecsSinceEpoch(ts, Qt::UTC);
+  packetTs = QDateTime::fromMSecsSinceEpoch(ts, QTimeZone::UTC);
 
   in >> cmd;
   command = Commands(cmd);

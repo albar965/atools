@@ -35,6 +35,7 @@
 #include <QStringBuilder>
 #include <QDir>
 #include <QRegularExpression>
+#include <QTimeZone>
 
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 
@@ -1016,12 +1017,12 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       QTime localTime = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(p->simDataUser.localTimeSeconds * 1000.f));
 
       // Offset from FS: Measured in seconds, positive west of GMT.
-      QDateTime localDateTime(localDate, localTime, Qt::OffsetFromUTC, -p->simDataUser.timeZoneOffsetSeconds);
+      QDateTime localDateTime(localDate, localTime, QTimeZone(-p->simDataUser.timeZoneOffsetSeconds));
       data.userAircraft.localDateTime = localDateTime;
 
       QDate zuluDate(p->simDataUser.zuluYear, p->simDataUser.zuluMonth, p->simDataUser.zuluDay);
       QTime zuluTime = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(p->simDataUser.zuluTimeSeconds * 1000.f));
-      QDateTime zuluDateTime(zuluDate, zuluTime, Qt::UTC);
+      QDateTime zuluDateTime(zuluDate, zuluTime, QTimeZone::UTC);
       data.userAircraft.zuluDateTime = zuluDateTime;
     } // if(p->userDataFetched)
     else

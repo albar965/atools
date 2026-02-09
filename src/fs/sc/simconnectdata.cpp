@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QDataStream>
 #include <QIODevice>
+#include <QTimeZone>
 
 using atools::fs::weather::Metar;
 
@@ -86,7 +87,7 @@ bool SimConnectData::read(QIODevice *ioDevice)
 
   quint32 ts;
   in >> ts;
-  packetTs = QDateTime::fromSecsSinceEpoch(ts, Qt::UTC);
+  packetTs = QDateTime::fromSecsSinceEpoch(ts, QTimeZone::UTC);
 
   quint8 hasUser = 0;
   in >> hasUser;
@@ -114,7 +115,8 @@ bool SimConnectData::read(QIODevice *ioDevice)
     quint32 minSinceEpoch;
     in >> lonx >> laty >> altitude >> minSinceEpoch;
 
-    Metar metar(ident, atools::geo::Pos(lonx, laty, altitude), QDateTime::fromMSecsSinceEpoch(minSinceEpoch * 1000, Qt::UTC), QString());
+    Metar metar(ident, atools::geo::Pos(lonx, laty, altitude),
+                QDateTime::fromMSecsSinceEpoch(minSinceEpoch * 1000, QTimeZone::UTC), QString());
     // Do not parse here - only METAR strings are transferred
 
     readLongString(in, ident);

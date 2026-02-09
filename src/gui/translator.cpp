@@ -124,18 +124,18 @@ QList<QLocale> Translator::findTranslationFiles()
         if(l1.language() != l2.language())
           return l1.language() < l2.language();
         else
-          return l1.country() < l2.country();
+          return l1.territory() < l2.territory();
       });
   // Remove consecutive duplicates in the sorted list ==================
   retval.erase(std::unique(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
-        return l1.language() == l2.language() && l1.country() == l2.country();
+        return l1.language() == l2.language() && l1.territory() == l2.territory();
       }), retval.end());
 
   // Now sort list by native language and country name ==============
   std::sort(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
         int cmp = l1.nativeLanguageName().compare(l2.nativeLanguageName());
         if(cmp == 0)
-          return l1.nativeCountryName().compare(l2.nativeCountryName()) < 0;
+          return l1.nativeTerritoryName().compare(l2.nativeTerritoryName()) < 0;
         else
           return cmp < 0;
       });
@@ -177,7 +177,7 @@ QList<QLocale> Translator::findTranslationFilesInternal(const QString& path)
     if(locale.language() != QLocale::C)
     {
       qInfo() << Q_FUNC_INFO << fi.filePath() << "name" << locale.name() << "bcp47Name" << locale.bcp47Name()
-              << "country" << QLocale::countryToString(locale.country()) << "native" << locale.nativeCountryName()
+              << "country" << QLocale::territoryToString(locale.territory()) << "native" << locale.nativeTerritoryName()
               << "language" << QLocale::languageToString(locale.language()) << "native" << locale.nativeLanguageName();
       retval.append(locale);
     }

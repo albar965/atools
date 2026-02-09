@@ -29,6 +29,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QRegularExpression>
+#include <QTimeZone>
 #include <QXmlStreamReader>
 
 using atools::geo::Pos;
@@ -245,7 +246,7 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
           // (UTC/Zulu) in ISO 8601 format: "yyyy-mm-ddThh:mm:ssZ" or "yyyy-MM-ddTHH:mm:ss.zzzZ"
           // <time>2011-01-16T23:59:01Z</time>
           // Changes time number to local if Qt::UTC is omitted
-          writer.writeTextElement("time", QDateTime::fromMSecsSinceEpoch(pos.timestampMs, Qt::UTC).toString(Qt::ISODateWithMs));
+          writer.writeTextElement("time", QDateTime::fromMSecsSinceEpoch(pos.timestampMs, QTimeZone::UTC).toString(Qt::ISODateWithMs));
         }
 
         writer.writeEndElement(); // trkpt

@@ -165,10 +165,10 @@ void TrackReader::extractPacotsTracksFlex(const QStringList& lines)
         {
           from =
             QDateTime(QDate(match.captured(5).toInt(), monthFromStr(match.captured(2)), match.captured(1).toInt()),
-                      QTime(match.captured(3).toInt(), match.captured(4).toInt()), Qt::UTC);
+                      QTime(match.captured(3).toInt(), match.captured(4).toInt()), QTimeZone::UTC);
           to =
             QDateTime(QDate(match.captured(10).toInt(), monthFromStr(match.captured(7)), match.captured(6).toInt()),
-                      QTime(match.captured(8).toInt(), match.captured(9).toInt()), Qt::UTC);
+                      QTime(match.captured(8).toInt(), match.captured(9).toInt()), QTimeZone::UTC);
 
         }
         inRemark = false;
@@ -285,13 +285,13 @@ void TrackReader::extractTracks(const QStringList& lines, const QRegularExpressi
                                                   matchDate.captured(2).toInt(),
                                                   matchDate.captured(3).toInt()),
                                             QTime(matchDate.captured(4).toInt(),
-                                                  matchDate.captured(5).toInt()), Qt::UTC);
+                                                  matchDate.captured(5).toInt()), QTimeZone::UTC);
 
           temp.last().validTo = QDateTime(QDate(matchDate.captured(6).toInt() + 2000,
                                                 matchDate.captured(7).toInt(),
                                                 matchDate.captured(8).toInt()),
                                           QTime(matchDate.captured(9).toInt(),
-                                                matchDate.captured(10).toInt()), Qt::UTC);
+                                                matchDate.captured(10).toInt()), QTimeZone::UTC);
         }
       }
       else if(numAfterStart >= 2)
@@ -404,12 +404,12 @@ void TrackReader::extractNatTracks(const QStringList& lines)
       if(match.hasMatch())
       {
         QDateTime f = QDateTime(QDate(year, monthFromStr(match.captured(1)), match.captured(2).toInt()),
-                                QTime(match.captured(3).toInt(), match.captured(4).toInt()), Qt::UTC);
+                                QTime(match.captured(3).toInt(), match.captured(4).toInt()), QTimeZone::UTC);
         if(f.isValid())
           from = f;
 
         QDateTime t = QDateTime(QDate(year, monthFromStr(match.captured(5)), match.captured(6).toInt()),
-                                QTime(match.captured(7).toInt(), match.captured(8).toInt()), Qt::UTC);
+                                QTime(match.captured(7).toInt(), match.captured(8).toInt()), QTimeZone::UTC);
         if(t.isValid())
           to = t;
       }

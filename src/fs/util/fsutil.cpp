@@ -26,6 +26,7 @@
 #include <QRegularExpression>
 #include <QSet>
 #include <QStringBuilder>
+#include <QTimeZone>
 
 namespace atools {
 namespace fs {
@@ -1150,7 +1151,7 @@ QDateTime xpGribFilenameToDate(const QString& filename)
 #endif
 
     return QDateTime(QDate(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt()),
-                     QTime(match.captured(4).toInt(), match.captured(5).toInt()), Qt::UTC);
+                     QTime(match.captured(4).toInt(), match.captured(5).toInt()), QTimeZone::UTC);
   }
   else
   {
@@ -1172,7 +1173,7 @@ QDateTime xpMetarFilenameToDate(const QString& filename)
 
   if(match.hasMatch())
     return QDateTime(QDate(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt()),
-                     QTime(match.captured(4).toInt(), match.captured(5).toInt()), Qt::UTC);
+                     QTime(match.captured(4).toInt(), match.captured(5).toInt()), QTimeZone::UTC);
   else
     return QDateTime();
 }

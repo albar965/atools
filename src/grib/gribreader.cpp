@@ -29,6 +29,7 @@ extern "C" {
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QTimeZone>
 
 namespace atools {
 namespace grib {
@@ -227,7 +228,7 @@ void GribReader::readFile(const QString& filename)
                                              static_cast<int>(gribField->idsect[7])),
                                        QTime(static_cast<int>(gribField->idsect[8]),
                                              static_cast<int>(gribField->idsect[9]),
-                                             static_cast<int>(gribField->idsect[10])), Qt::UTC);
+                                             static_cast<int>(gribField->idsect[10])), QTimeZone::UTC);
         }
         if(!checkValue("Datetime is not valid", dataset.datetime.isValid(), true))
           continue;

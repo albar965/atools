@@ -29,6 +29,7 @@
 #include <QStringBuilder>
 #include <QFileInfo>
 #include <QDir>
+#include <QTimeZone>
 
 #if defined(QT_WIDGETS_LIB)
 #include <QFontMetrics>
