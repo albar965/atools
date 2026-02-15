@@ -1142,48 +1142,49 @@ QDateTime correctDate(int day, int hour, int minute, const QDateTime& dateTimeRe
   return dateTime;
 }
 
-QDateTime correctDateLocal(int dayOfYear, float secondsOfDayLocal, float secondsOfDayUtc, float longitudeX)
+void correctDateLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int dayOfYearLocal, float secondsOfDayLocal,
+                      float secondsOfDayUtc, float lonX)
 {
-  float offsetSeconds = 0.f;
-  int offset = 0;
+  const static float SECONDS_PER_DAY = 3600.f * 24.f;
+  const static float SECONDS_PER_HALF_DAY = 3600.f * 12.f;
 
-  if(longitudeX > 0.f)
+  const QDate localDate = QDate(QDate::currentDate().year(), 1, 1).addDays(dayOfYearLocal - 1);
+  const QTime localTime = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(secondsOfDayLocal * 1000.f));
+
+  if(atools::almostEqual(secondsOfDayLocal, secondsOfDayUtc))
   {
-    // East of Greenwich - offset is positive
-    if(secondsOfDayLocal > secondsOfDayUtc)
-      // Same day
-      offsetSeconds = secondsOfDayLocal - secondsOfDayUtc;
-    else
-      // Day rollover
-      offsetSeconds = secondsOfDayUtc - secondsOfDayLocal;
-
-    // Round timezone offset to the nearest five minutes
-    offset = static_cast<int>(offsetSeconds + 2.5f) / 5 * 5;
+    // Simple case - UTC and local are the same
+    localDateTime = QDateTime(localDate, localTime, QTimeZone(0));   // "2026-06-04T12:00:00+00:00"
+    utcDateTime = QDateTime(localDate, localTime, QTimeZone::UTC);   // "2026-06-04T12:00:00Z"
   }
-  else if(longitudeX < 0.f)
+  else
   {
-    // West of Greenwich - offset is negative
-    if(secondsOfDayLocal > secondsOfDayUtc)
-      // Same day
-      offsetSeconds = secondsOfDayUtc - secondsOfDayLocal;
-    else
-      // Day rollover
-      offsetSeconds = secondsOfDayLocal - secondsOfDayUtc;
+    float offsetSeconds = secondsOfDayLocal - secondsOfDayUtc;
+    if(lonX > 0.f)
+    {
+      // Overturning day East
+      if(offsetSeconds < -SECONDS_PER_HALF_DAY)
+        offsetSeconds = SECONDS_PER_DAY - secondsOfDayUtc + secondsOfDayLocal;
+    }
+    else if(lonX < 0.f)
+    {
+      // Overturning day West
+      if(offsetSeconds > SECONDS_PER_HALF_DAY)
+        offsetSeconds = -(SECONDS_PER_DAY - secondsOfDayLocal + secondsOfDayUtc);
+    }
 
-    // Round timezone offset to the nearest five minutes
-    offset = static_cast<int>(offsetSeconds - 2.5f) / 5 * 5;
+    // Correct sign for +/- 12 hour offsets
+    if((lonX > 90.f && lonX < 180.f && atools::almostEqual(offsetSeconds, -SECONDS_PER_HALF_DAY)) ||
+       (lonX < -90.f && lonX > -180.f && atools::almostEqual(offsetSeconds, SECONDS_PER_HALF_DAY)))
+      offsetSeconds = -offsetSeconds;
+
+    // The offsetSeconds from UTC must be in the range -14 hours to +14 hours otherwise an invalid time zone will be returned.
+    localDateTime = QDateTime(localDate, localTime, QTimeZone(atools::roundToInt(offsetSeconds)));
+
+    // The result represents the same moment in time as, and is equal to, this datetime.
+    // Date rollover is done by QDateTime
+    utcDateTime = localDateTime.toOffsetFromUtc(0);
   }
-
-  if(offset > 12 * 3600)
-    offset = 24 * 3600 - offset;
-  if(offset < -12 * 3600)
-    offset = -(24 * 3600) - offset;
-
-  // Calculate local day for current year
-  QDate localDate = QDate(QDate::currentDate().year(), 1, 1).addDays(dayOfYear - 1);
-  QTime localTime = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(secondsOfDayLocal * 1000.f));
-
-  return QDateTime(localDate, localTime, Qt::OffsetFromUTC, offset);
 }
 
 QDateTime timeToNextHourInterval(QDateTime datetime, int intervalsPerDay)

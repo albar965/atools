@@ -500,8 +500,10 @@ QDateTime correctDate(int day, int hour, int minute, const QDateTime& dateTimeRe
 
 /* Determines timezone offset by seconds of day and creates local time from incomplete values based on current year.
  * Time can be converted to UTC which might also roll over the date.
- * Used to create a complete timedata from the cumbersome X-Plane time and date datarefs */
-QDateTime correctDateLocal(int dayOfYear, float secondsOfDayLocal, float secondsOfDayUtc, float longitudeX);
+ * Used to create a complete timedata from the cumbersome X-Plane time and date datarefs.
+ * Unreliable - use atools::timezone::TimeZone::correctDateLocal() for a more accurate representation. */
+void correctDateLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int dayOfYearLocal, float secondsOfDayLocal,
+                      float secondsOfDayUtc, float lonX);
 
 template<typename TYPE>
 constexpr int sign(TYPE t)

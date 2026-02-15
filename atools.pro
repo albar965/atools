@@ -95,6 +95,7 @@ ATOOLS_NO_WEB=$$(ATOOLS_NO_WEB)
 ATOOLS_NO_FS=$$(ATOOLS_NO_FS)
 ATOOLS_NO_GRIB=$$(ATOOLS_NO_GRIB)
 ATOOLS_NO_WMM=$$(ATOOLS_NO_WMM)
+ATOOLS_NO_TIMEZONE=$$(ATOOLS_NO_TIMEZONE)
 ATOOLS_NO_NAVSERVER=$$(ATOOLS_NO_NAVSERVER)
 ATOOLS_NO_CRASHHANDLER=$$(ATOOLS_NO_CRASHHANDLER)
 ATOOLS_NO_QT5COMPAT=$$(ATOOLS_NO_QT5COMPAT)
@@ -212,6 +213,7 @@ message(ATOOLS_NO_WEB: $$ATOOLS_NO_WEB)
 message(ATOOLS_NO_FS: $$ATOOLS_NO_FS)
 message(ATOOLS_NO_GRIB: $$ATOOLS_NO_GRIB)
 message(ATOOLS_NO_WMM: $$ATOOLS_NO_WMM)
+message(ATOOLS_NO_TIMEZONE: $$ATOOLS_NO_TIMEZONE)
 message(ATOOLS_NO_NAVSERVER: $$ATOOLS_NO_NAVSERVER)
 message(ATOOLS_NO_CRASHHANDLER: $$ATOOLS_NO_CRASHHANDLER)
 message(ATOOLS_NO_QT5COMPAT: $$ATOOLS_NO_QT5COMPAT)
@@ -246,6 +248,7 @@ message(-----------------------------------)
 # ATOOLS_NO_WEATHER=true
 # ATOOLS_NO_WEB=true
 # ATOOLS_NO_WMM=true
+# ATOOLS_NO_TIMEZONE=true
 # ATOOLS_NO_NAVSERVER=true
 # ATOOLS_NO_CRASHHANDLER=true
 # ATOOLS_NO_QT5COMPAT=true
@@ -253,6 +256,7 @@ message(-----------------------------------)
 HEADERS += \
   src/atools.h \
   src/exception.h \
+  src/fs/db/countryupdater.h \
   src/fs/gpx/gpxio.h \
   src/fs/gpx/gpxtypes.h \
   src/fs/navdatabaseflags.h \
@@ -341,6 +345,7 @@ HEADERS += \
 SOURCES += \
   src/atools.cpp \
   src/exception.cpp \
+  src/fs/db/countryupdater.cpp \
   src/fs/gpx/gpxio.cpp \
   src/fs/gpx/gpxtypes.cpp \
   src/fs/navdatabaseflags.cpp \
@@ -618,6 +623,16 @@ SOURCES += \
   src/wmm/GeomagnetismLibrary.c \
   src/wmm/magdectool.cpp
 } # ATOOLS_NO_WMM
+
+!isEqual(ATOOLS_NO_TIMEZONE, "true") {
+HEADERS += \
+  src/timezone/library/zonedetect.h \
+  src/timezone/timezonemanager.h
+
+SOURCES += \
+  src/timezone/library/zonedetect.cpp \
+  src/timezone/timezonemanager.cpp
+} # ATOOLS_NO_TIMEZONE
 
 # =====================================================================
 # Routing
