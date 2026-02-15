@@ -129,6 +129,30 @@ void SimConnectAircraft::write(QDataStream& out) const
       << static_cast<quint8>(category) << static_cast<quint8>(engineType) << transponderCode << properties;
 }
 
+atools::geo::PosD SimConnectAircraft::getPositionD() const
+{
+  if(properties.contains(PROP_AIRCRAFT_LONX) && properties.contains(PROP_AIRCRAFT_LATY))
+    return atools::geo::PosD(properties.value(PROP_AIRCRAFT_LONX).getValueDouble(),
+                             properties.value(PROP_AIRCRAFT_LATY).getValueDouble(), position.getAltitude());
+  else
+    return atools::geo::PosD(position);
+}
+
+void SimConnectAircraft::getXPlaneDate(int& localDateDays, float& localTimeSec, float& zuluTimeSec)
+{
+  if(properties.contains(PROP_LOCAL_DATE_DAYS) && properties.contains(PROP_LOCAL_TIME_SEC) && properties.contains(PROP_ZULU_TIME_SEC))
+  {
+    localDateDays = properties.value(PROP_LOCAL_DATE_DAYS).getValueInt();
+    localTimeSec = properties.value(PROP_LOCAL_TIME_SEC).getValueFloat();
+    zuluTimeSec = properties.value(PROP_ZULU_TIME_SEC).getValueFloat();
+  }
+  else
+  {
+    localDateDays = SC_INVALID_INT;
+    localTimeSec = zuluTimeSec = SC_INVALID_FLOAT;
+  }
+}
+
 int SimConnectAircraft::getId() const
 {
   if(objectId > std::numeric_limits<int>::max())

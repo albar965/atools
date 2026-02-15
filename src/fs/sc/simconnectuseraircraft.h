@@ -192,6 +192,12 @@ public:
     return zuluDateTime;
   }
 
+  void setDateTime(const QDateTime& localDateTimeParam, const QDateTime& utcDateTimeParam)
+  {
+    localDateTime = localDateTimeParam;
+    zuluDateTime = utcDateTimeParam;
+  }
+
   float getTrackDegMag() const
   {
     return trackMagDeg;

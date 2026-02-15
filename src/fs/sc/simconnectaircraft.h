@@ -80,7 +80,10 @@ enum SimConnectAircraftPropTypes
   PROP_AIRCRAFT_CFG,
   PROP_AIRCRAFT_LONX,
   PROP_AIRCRAFT_LATY,
-  PROP_XPCONNECT_VERSION
+  PROP_XPCONNECT_VERSION,
+  PROP_LOCAL_DATE_DAYS,
+  PROP_LOCAL_TIME_SEC,
+  PROP_ZULU_TIME_SEC
 };
 
 /*
@@ -95,6 +98,16 @@ public:
 
   virtual void read(QDataStream& in);
   virtual void write(QDataStream& out) const;
+
+  bool isAnyXplane() const
+  {
+    return flags.testFlag(atools::fs::sc::SIM_XPLANE11) || flags.testFlag(atools::fs::sc::SIM_XPLANE12);
+  }
+
+  bool isAnyMsfs() const
+  {
+    return flags.testFlag(atools::fs::sc::SIM_MSFS_2020) || flags.testFlag(atools::fs::sc::SIM_MSFS_2024);
+  }
 
   // fs data ----------------------------------------------------
 
@@ -162,15 +175,11 @@ public:
     return position;
   }
 
-  /* More accurate optional position as double */
-  atools::geo::PosD getPositionD() const
-  {
-    if(properties.contains(PROP_AIRCRAFT_LONX) && properties.contains(PROP_AIRCRAFT_LATY))
-      return atools::geo::PosD(properties.value(PROP_AIRCRAFT_LONX).getValueDouble(),
-                               properties.value(PROP_AIRCRAFT_LATY).getValueDouble(), position.getAltitude());
-    else
-      return atools::geo::PosD(position);
-  }
+  /* More accurate optional position as double from properties */
+  atools::geo::PosD getPositionD() const;
+
+  /* Get raw X-Plane date variables and use a real timezone database to calculate local and UTC values. */
+  void getXPlaneDate(int& localDateDays, float& localTimeSec, float& zuluTimeSec);
 
   /* Leaves altitude intact */
   void setCoordinates(atools::geo::Pos value)
