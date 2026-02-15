@@ -195,6 +195,9 @@ QString BinaryStream::readString(Encoding encoding)
   do
   {
     c = readByte();
+    if(c == '\0')
+      break;
+
     retval.append(c);
   } while(c != '\0');
 
