@@ -17,6 +17,7 @@
 
 #include "fs/xp/xpdatacompiler.h"
 
+#include "fs/db/countryupdater.h"
 #include "fs/navdatabaseoptions.h"
 #include "fs/xp/xpfixreader.h"
 #include "fs/xp/xpmorareader.h"
@@ -104,6 +105,7 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
   airwayPostProcess = new XpAirwayPostProcess(db);
   metadataWriter = new MetadataWriter(db);
   magDecReader = new MagDecReader();
+  countryUpdater = new atools::fs::db::CountryUpdater(db, options.getTimeZoneDatabase(), options.isVerbose());
 
   initQueries();
 }
@@ -447,6 +449,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpRea
       context.flags = flags | flagsFromOptions();
       context.fileVersion = fileVersion;
       context.magDecReader = magDecReader;
+      context.countryUpdater = countryUpdater;
 
 #ifdef DEBUG_INFORMATION
       if(!flags.testFlag(READ_CIFP))
@@ -670,44 +673,20 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
 
 void XpDataCompiler::close()
 {
-  delete fixReader;
-  fixReader = nullptr;
-
-  delete moraReader;
-  moraReader = nullptr;
-
-  delete navReader;
-  navReader = nullptr;
-
-  delete cifpReader;
-  cifpReader = nullptr;
-
-  delete airspaceReader;
-  airspaceReader = nullptr;
-
-  delete airwayReader;
-  airwayReader = nullptr;
-
-  delete airportReader;
-  airportReader = nullptr;
-
-  delete airportMsaReader;
-  airportMsaReader = nullptr;
-
-  delete holdingReader;
-  holdingReader = nullptr;
-
-  delete airwayPostProcess;
-  airwayPostProcess = nullptr;
-
-  delete airportIndex;
-  airportIndex = nullptr;
-
-  delete magDecReader;
-  magDecReader = nullptr;
-
-  delete metadataWriter;
-  metadataWriter = nullptr;
+  ATOOLS_DELETE_LOG(fixReader);
+  ATOOLS_DELETE_LOG(moraReader);
+  ATOOLS_DELETE_LOG(navReader);
+  ATOOLS_DELETE_LOG(cifpReader);
+  ATOOLS_DELETE_LOG(airspaceReader);
+  ATOOLS_DELETE_LOG(airwayReader);
+  ATOOLS_DELETE_LOG(airportReader);
+  ATOOLS_DELETE_LOG(airportMsaReader);
+  ATOOLS_DELETE_LOG(holdingReader);
+  ATOOLS_DELETE_LOG(airwayPostProcess);
+  ATOOLS_DELETE_LOG(airportIndex);
+  ATOOLS_DELETE_LOG(magDecReader);
+  ATOOLS_DELETE_LOG(metadataWriter);
+  ATOOLS_DELETE_LOG(countryUpdater);
 
   deInitQueries();
 }

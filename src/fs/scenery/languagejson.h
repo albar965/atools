@@ -46,7 +46,7 @@ public:
   /* Read translations for all languages from directory using given file filter.
    * Stores translations for all languages to database.
    * Clears index after reading. */
-  void readFromDirToDb(sql::SqlDatabase *db, const QString& dirname, const QString& fileFilter, const QStringList& keyPrefixes = {});
+  void readFromDirToDb(sql::SqlDatabase& db, const QString& dirname, const QString& fileFilter, const QStringList& keyPrefixes = {});
 
   /* Read translations for the given language from the database into the index.
    * Clears index before reading. */
@@ -54,7 +54,7 @@ public:
 
   /* Write translations for the given language from the index to the database.
    * Clears index before reading. */
-  void writeToDb(atools::sql::SqlDatabase *db) const;
+  void writeToDb(sql::SqlDatabase& db) const;
 
   /* Clear in memory index */
   void clear()

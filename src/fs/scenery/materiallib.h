@@ -36,7 +36,7 @@ namespace scenery {
 class MaterialLib
 {
 public:
-  MaterialLib(const atools::fs::NavDatabaseOptions *opts, atools::fs::ProgressHandler *progress, atools::fs::SceneryErrors *errors);
+  MaterialLib(const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progress, atools::fs::SceneryErrors *errors);
 
   /* Read a material library from a community package by looking into the layout.json file
    *  @param basePath Path containing the layout file. */
@@ -66,7 +66,7 @@ public:
 private:
   QHash<QUuid, QString> surfaceMap;
 
-  const atools::fs::NavDatabaseOptions *options = nullptr;
+  const atools::fs::NavDatabaseOptions& options;
   atools::fs::ProgressHandler *progressHandler = nullptr;
   atools::fs::SceneryErrors *sceneryErrors = nullptr;
 };

@@ -47,6 +47,8 @@ class ProgressHandler;
 
 namespace db {
 
+class CountryUpdater;
+
 class BglFileWriter;
 class SceneryAreaWriter;
 class AirportWriter;
@@ -294,6 +296,11 @@ public:
   int getNextSceneryId() const;
   int getNextFileId() const;
 
+  atools::fs::db::CountryUpdater *getCountryUpdater() const
+  {
+    return countryUpdater;
+  }
+
 private:
   int numFiles = 0, numNamelists = 0, numVors = 0, numIls = 0,
       numNdbs = 0, numMarker = 0, numWaypoints = 0, numBoundaries = 0, numObjectsWritten = 0;
@@ -342,6 +349,7 @@ private:
 
   atools::fs::db::RunwayIndex *runwayIndex = nullptr;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
+  atools::fs::db::CountryUpdater *countryUpdater = nullptr;
 
   const atools::fs::NavDatabaseOptions& options;
   const atools::fs::scenery::LanguageJson *languageIndex = nullptr;

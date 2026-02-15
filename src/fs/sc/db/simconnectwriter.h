@@ -48,6 +48,8 @@ class MagDecReader;
 }
 
 namespace db {
+
+class CountryUpdater;
 class RunwayIndex;
 }
 namespace sc {
@@ -181,6 +183,8 @@ private:
 
   int progressCounter = 0; // Counter for dot animation
   QString lastMessage; // Repeat last message when calling  callProgressUpdate()
+
+  atools::fs::db::CountryUpdater *countryUpdater = nullptr;
 
   // Used to send progress reports not too often
   qint64 progressTimerElapsed = 0L;

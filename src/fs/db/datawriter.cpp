@@ -18,6 +18,7 @@
 #include "fs/db/datawriter.h"
 
 #include "fs/bgl/bglfile.h"
+#include "fs/db/countryupdater.h"
 #include "fs/scenery/fileresolver.h"
 #include "fs/scenery/languagejson.h"
 #include "fs/scenery/materiallib.h"
@@ -109,6 +110,7 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, atool
   ndbWriter = new NdbWriter(db, *this);
   markerWriter = new MarkerWriter(db, *this);
   ilsWriter = new IlsWriter(db, *this);
+  countryUpdater = new atools::fs::db::CountryUpdater(db, options.getTimeZoneDatabase(), options.isVerbose());
 
   boundaryWriter = new BoundaryWriter(db, *this);
 
@@ -123,66 +125,37 @@ DataWriter::~DataWriter()
 
 void DataWriter::close()
 {
-  delete bglFileWriter;
-  bglFileWriter = nullptr;
-  delete sceneryAreaWriter;
-  sceneryAreaWriter = nullptr;
-  delete airportWriter;
-  airportWriter = nullptr;
-  delete airportFileWriter;
-  airportFileWriter = nullptr;
-  delete runwayWriter;
-  runwayWriter = nullptr;
-  delete runwayEndWriter;
-  runwayEndWriter = nullptr;
-  delete approachWriter;
-  approachWriter = nullptr;
-  delete approachLegWriter;
-  approachLegWriter = nullptr;
-  delete approachTransWriter;
-  approachTransWriter = nullptr;
-  delete approachTransLegWriter;
-  approachTransLegWriter = nullptr;
-  delete sidStarWriter;
-  sidStarWriter = nullptr;
-  delete sidStarApproachLegWriter;
-  sidStarApproachLegWriter = nullptr;
-  delete sidStarTransWriter;
-  sidStarTransWriter = nullptr;
-  delete sidStarTransLegWriter;
-  sidStarTransLegWriter = nullptr;
-  delete parkingWriter;
-  parkingWriter = nullptr;
-  delete airportHelipadWriter;
-  airportHelipadWriter = nullptr;
-  delete airportStartWriter;
-  airportStartWriter = nullptr;
-  delete airportApronWriter;
-  airportApronWriter = nullptr;
-  delete airportTaxiPathWriter;
-  airportTaxiPathWriter = nullptr;
-  delete airportComWriter;
-  airportComWriter = nullptr;
-  delete waypointWriter;
-  waypointWriter = nullptr;
-  delete airwaySegmentWriter;
-  airwaySegmentWriter = nullptr;
-  delete vorWriter;
-  vorWriter = nullptr;
-  delete tacanWriter;
-  tacanWriter = nullptr;
-  delete ndbWriter;
-  ndbWriter = nullptr;
-  delete markerWriter;
-  markerWriter = nullptr;
-  delete ilsWriter;
-  ilsWriter = nullptr;
-  delete boundaryWriter;
-  boundaryWriter = nullptr;
-  delete runwayIndex;
-  runwayIndex = nullptr;
-  delete magDecReader;
-  magDecReader = nullptr;
+  ATOOLS_DELETE(bglFileWriter);
+  ATOOLS_DELETE(sceneryAreaWriter);
+  ATOOLS_DELETE(airportWriter);
+  ATOOLS_DELETE(airportFileWriter);
+  ATOOLS_DELETE(runwayWriter);
+  ATOOLS_DELETE(runwayEndWriter);
+  ATOOLS_DELETE(approachWriter);
+  ATOOLS_DELETE(approachLegWriter);
+  ATOOLS_DELETE(approachTransWriter);
+  ATOOLS_DELETE(approachTransLegWriter);
+  ATOOLS_DELETE(sidStarWriter);
+  ATOOLS_DELETE(sidStarApproachLegWriter);
+  ATOOLS_DELETE(sidStarTransWriter);
+  ATOOLS_DELETE(sidStarTransLegWriter);
+  ATOOLS_DELETE(parkingWriter);
+  ATOOLS_DELETE(airportHelipadWriter);
+  ATOOLS_DELETE(airportStartWriter);
+  ATOOLS_DELETE(airportApronWriter);
+  ATOOLS_DELETE(airportTaxiPathWriter);
+  ATOOLS_DELETE(airportComWriter);
+  ATOOLS_DELETE(waypointWriter);
+  ATOOLS_DELETE(airwaySegmentWriter);
+  ATOOLS_DELETE(vorWriter);
+  ATOOLS_DELETE(tacanWriter);
+  ATOOLS_DELETE(ndbWriter);
+  ATOOLS_DELETE(markerWriter);
+  ATOOLS_DELETE(ilsWriter);
+  ATOOLS_DELETE(boundaryWriter);
+  ATOOLS_DELETE(runwayIndex);
+  ATOOLS_DELETE(magDecReader);
+  ATOOLS_DELETE(countryUpdater);
 }
 
 float DataWriter::getMagVar(const geo::Pos& pos, float defaultValue) const

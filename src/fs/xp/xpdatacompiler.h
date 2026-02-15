@@ -305,6 +305,7 @@ private:
   atools::fs::common::AirportIndex *airportIndex = nullptr;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
   atools::fs::common::MetadataWriter *metadataWriter = nullptr;
+  atools::fs::db::CountryUpdater *countryUpdater = nullptr;
 
   int minFileVersion = 850;
   atools::fs::NavDatabaseErrors *errors = nullptr;

@@ -543,6 +543,16 @@ public:
     simConnectLoadDisconnectedFile = value;
   }
 
+  const QString& getTimeZoneDatabase() const
+  {
+    return timeZoneDatabase;
+  }
+
+  void setTimeZoneDatabase(const QString& newTimezoneDatabase)
+  {
+    timeZoneDatabase = newTimezoneDatabase;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::NavDatabaseOptions& opts);
 
@@ -585,6 +595,7 @@ private:
   /* Elements set from GUI. Not loaded from config file */
   QList<QRegularExpression> dirExcludesGui, fileExcludesGui, dirAddonExcludesGui, fileAddonExcludesGui;
   QStringList dirIncludesGui;
+  QString timeZoneDatabase;
 
   QSet<atools::fs::type::NavDbObjectType> navDbObjectTypeFiltersInc, navDbObjectTypeFiltersExcl;
 

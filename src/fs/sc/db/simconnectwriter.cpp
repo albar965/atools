@@ -24,6 +24,7 @@
 #include "fs/bgl/nav/ndb.h"
 #include "fs/bgl/util.h"
 #include "fs/common/magdecreader.h"
+#include "fs/db/countryupdater.h"
 #include "fs/db/runwayindex.h"
 #include "fs/sc/db/simconnectairport.h"
 #include "fs/sc/db/simconnectid.h"
@@ -144,12 +145,14 @@ SimConnectWriter::SimConnectWriter(sql::SqlDatabase& sqlDb, const atools::fs::Na
 {
   magDecReader = new atools::fs::common::MagDecReader;
   magDecReader->readFromWmm();
+  countryUpdater = new atools::fs::db::CountryUpdater(db, options.getTimeZoneDatabase(), options.isVerbose());
 }
 
 SimConnectWriter::~SimConnectWriter()
 {
   deInitQueries();
   ATOOLS_DELETE_LOG(magDecReader);
+  ATOOLS_DELETE_LOG(countryUpdater);
 }
 
 bool SimConnectWriter::callProgressUpdate()
@@ -348,7 +351,7 @@ void SimConnectWriter::initQueries()
   airportStmt->prepare(util.buildInsertStatement(QStringLiteral("airport"), QString(),
                                                  {QStringLiteral("icao"), QStringLiteral("iata"), QStringLiteral("faa"),
                                                   QStringLiteral("local"), QStringLiteral("city"), QStringLiteral("state"),
-                                                  QStringLiteral("country"), QStringLiteral("flatten"), QStringLiteral("type"),
+                                                  QStringLiteral("flatten"), QStringLiteral("type"),
                                                   QStringLiteral("scenery_local_path"), QStringLiteral("bgl_filename")}));
 
   airportFileStmt = new SqlQuery(db);
@@ -512,6 +515,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
       airportStmt->bindValue(QStringLiteral(":file_id"), fileId);
       airportStmt->bindValue(QStringLiteral(":ident"), airportIdent);
       airportStmt->bindValue(QStringLiteral(":name"), airportFacility.name);
+      airportStmt->bindValue(QStringLiteral(":country"), countryUpdater->updateAirportCountry(QStringLiteral(), airportPos.asPos()));
       airportStmt->bindValue(QStringLiteral(":region"), airportRegion);
       airportStmt->bindValue(QStringLiteral(":tower_frequency"), airport.getTowerFrequency());
       airportStmt->bindValue(QStringLiteral(":atis_frequency"), airport.getAtisFrequency());

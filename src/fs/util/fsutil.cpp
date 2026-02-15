@@ -33,7 +33,7 @@ namespace fs {
 namespace util {
 
 // Closed airport by name
-const static QRegularExpression REGEXP_CLOSED(QLatin1String("(\\[X\\]|\\bCLSD\\b|\\bCLOSED\\b)"));
+const static QRegularExpression REGEXP_CLOSED("(\\[X\\]|\\bCLSD\\b|\\bCLOSED\\b)");
 const static QRegularExpression REGEXP_DIGIT("\\d");
 const static QRegularExpression REGEXP_WAYPOINT_DME("(\\w+) \\((\\w+) ([\\d\\.]+) DME\\)");
 const static QRegularExpression REGEXP_WHITESPACE("\\s");
@@ -64,45 +64,45 @@ static const QStringList CONTAINS_MIL({
 // Look for military designator words - if an airport name matches
 // one of these patterns it will be designated as "military"
 static const QList<QRegularExpression> REGEXP_MIL({
-        QRegularExpression(QLatin1String("(\\[M\\]|\\[MIL\\])")), // X-Plane special
-        QRegularExpression(QLatin1String("\\bAAC\\b")),
-        QRegularExpression(QLatin1String("\\bAAF\\b")),
-        QRegularExpression(QLatin1String("\\bAB\\b")),
-        QRegularExpression(QLatin1String("\\bAFB\\b")),
-        QRegularExpression(QLatin1String("\\bAFLD\\b")),
-        QRegularExpression(QLatin1String("\\bAFS\\b")),
-        QRegularExpression(QLatin1String("\\bAF\\b")),
-        QRegularExpression(QLatin1String("\\bAHP\\b")),
-        QRegularExpression(QLatin1String("\\bAIR BASE\\b")),
-        QRegularExpression(QLatin1String("\\bAIR FORCE\\b")),
-        QRegularExpression(QLatin1String("\\bAIRBASE\\b")),
-        QRegularExpression(QLatin1String("\\bANGB\\b")),
-        QRegularExpression(QLatin1String("\\bARB\\b")),
-        QRegularExpression(QLatin1String("\\bARMY\\b")),
-        QRegularExpression(QLatin1String("\\bCFB\\b")),
-        QRegularExpression(QLatin1String("\\bLRRS\\b")),
-        QRegularExpression(QLatin1String("\\bMCAF\\b")),
-        QRegularExpression(QLatin1String("\\bMCALF\\b")),
-        QRegularExpression(QLatin1String("\\bMCAS\\b")),
-        QRegularExpression(QLatin1String("\\bMILITARY\\b")),
-        QRegularExpression(QLatin1String("\\bMIL\\b")),
-        QRegularExpression(QLatin1String("\\bNAF\\b")),
-        QRegularExpression(QLatin1String("\\bNALF\\b")),
-        QRegularExpression(QLatin1String("\\bNAS\\b")),
-        QRegularExpression(QLatin1String("\\bNAVAL\\b")),
-        QRegularExpression(QLatin1String("\\bNAVY\\b")),
-        QRegularExpression(QLatin1String("\\bNAWS\\b")),
-        QRegularExpression(QLatin1String("\\bNOLF\\b")),
-        QRegularExpression(QLatin1String("\\bNSB\\b")),
-        QRegularExpression(QLatin1String("\\bNSF\\b")),
-        QRegularExpression(QLatin1String("\\bNSWC\\b")),
-        QRegularExpression(QLatin1String("\\bNSY\\b")),
-        QRegularExpression(QLatin1String("\\bNS\\b")),
-        QRegularExpression(QLatin1String("\\bNWS\\b")),
-        QRegularExpression(QLatin1String("\\bPMRF\\b")),
-        QRegularExpression(QLatin1String("\\bRAF\\b")),
-        QRegularExpression(QLatin1String("\\bRNAS\\b")),
-        QRegularExpression(QLatin1String("\\bROYAL MARINES\\b")),
+        QRegularExpression(QStringLiteral("(\\[M\\]|\\[MIL\\])")), // X-Plane special
+        QRegularExpression(QStringLiteral("\\bAAC\\b")),
+        QRegularExpression(QStringLiteral("\\bAAF\\b")),
+        QRegularExpression(QStringLiteral("\\bAB\\b")),
+        QRegularExpression(QStringLiteral("\\bAFB\\b")),
+        QRegularExpression(QStringLiteral("\\bAFLD\\b")),
+        QRegularExpression(QStringLiteral("\\bAFS\\b")),
+        QRegularExpression(QStringLiteral("\\bAF\\b")),
+        QRegularExpression(QStringLiteral("\\bAHP\\b")),
+        QRegularExpression(QStringLiteral("\\bAIR BASE\\b")),
+        QRegularExpression(QStringLiteral("\\bAIR FORCE\\b")),
+        QRegularExpression(QStringLiteral("\\bAIRBASE\\b")),
+        QRegularExpression(QStringLiteral("\\bANGB\\b")),
+        QRegularExpression(QStringLiteral("\\bARB\\b")),
+        QRegularExpression(QStringLiteral("\\bARMY\\b")),
+        QRegularExpression(QStringLiteral("\\bCFB\\b")),
+        QRegularExpression(QStringLiteral("\\bLRRS\\b")),
+        QRegularExpression(QStringLiteral("\\bMCAF\\b")),
+        QRegularExpression(QStringLiteral("\\bMCALF\\b")),
+        QRegularExpression(QStringLiteral("\\bMCAS\\b")),
+        QRegularExpression(QStringLiteral("\\bMILITARY\\b")),
+        QRegularExpression(QStringLiteral("\\bMIL\\b")),
+        QRegularExpression(QStringLiteral("\\bNAF\\b")),
+        QRegularExpression(QStringLiteral("\\bNALF\\b")),
+        QRegularExpression(QStringLiteral("\\bNAS\\b")),
+        QRegularExpression(QStringLiteral("\\bNAVAL\\b")),
+        QRegularExpression(QStringLiteral("\\bNAVY\\b")),
+        QRegularExpression(QStringLiteral("\\bNAWS\\b")),
+        QRegularExpression(QStringLiteral("\\bNOLF\\b")),
+        QRegularExpression(QStringLiteral("\\bNSB\\b")),
+        QRegularExpression(QStringLiteral("\\bNSF\\b")),
+        QRegularExpression(QStringLiteral("\\bNSWC\\b")),
+        QRegularExpression(QStringLiteral("\\bNSY\\b")),
+        QRegularExpression(QStringLiteral("\\bNS\\b")),
+        QRegularExpression(QStringLiteral("\\bNWS\\b")),
+        QRegularExpression(QStringLiteral("\\bPMRF\\b")),
+        QRegularExpression(QStringLiteral("\\bRAF\\b")),
+        QRegularExpression(QStringLiteral("\\bRNAS\\b")),
+        QRegularExpression(QStringLiteral("\\bROYAL MARINES\\b")),
       });
 
 QString capAirportName(const QString& str)
@@ -115,7 +115,11 @@ QString capAirportName(const QString& str)
           "USFS", "CGAS", "TV", "NVC", "USAF",
           "I", "II", "III", "IV", "V", "VI"});
 
-  return atools::capString(str, FORCE_UPPER).replace("-O-", "-o-").replace("-N-", "-n-").replace("-A-", "-a-").trimmed();
+  return atools::capString(str, FORCE_UPPER).
+         replace(QStringLiteral("-O-"), QStringLiteral("-o-")).
+         replace(QStringLiteral("-N-"), QStringLiteral("-n-")).
+         replace(QStringLiteral("-A-"), QStringLiteral("-a-")).
+         replace(QStringLiteral(" And "), QStringLiteral(" and ")).simplified();
 }
 
 /* from https://en.wikipedia.org/wiki/List_of_aircraft_type_designators */
@@ -400,7 +404,7 @@ QString runwayFlags(QString runway, bool& prefixRw, bool& noPrefixNull, bool& su
   if(runway.isEmpty())
     return QString();
 
-  prefixRw = runway.startsWith("RW");
+  prefixRw = runway.startsWith(QStringLiteral("RW"));
   if(prefixRw)
     runway = runway.mid(2);
 
@@ -495,7 +499,7 @@ QString capWaypointNameString(const QString& ident, const QString& name, bool em
       QRegularExpressionMatch match = REGEXP_WAYPOINT_DME.match(name);
       if(match.hasMatch())
         // Special case "IKR138012 (KRE 11.2 DME)"
-        return match.captured(1) % " (" % match.captured(2).toUpper() % ' ' + match.captured(3) % " DME)";
+        return match.captured(1) % QStringLiteral(" (") % match.captured(2).toUpper() % ' ' + match.captured(3) % QStringLiteral(" DME)");
 
     }
   }
@@ -539,7 +543,7 @@ QString adjustFsxUserWpName(QString name, int length)
   name.replace(USER_WP_NAME_REGEXP_FSX, "");
   name = name.left(length).trimmed();
   if(name.isEmpty())
-    name = "User_WP";
+    name = QStringLiteral("User_WP");
   return name;
 }
 
@@ -548,14 +552,14 @@ QString adjustMsfsUserWpName(QString name, int length, int *number)
   static const QRegularExpression USER_WP_NAME_REGEXP_MSFS("[^A-Za-z0-9\\ \\/\\(\\)\\=\\?\\;\\,\\:\\.\\_\\-\\*]");
 
   name = atools::normalizeStr(name);
-  name.replace(USER_WP_NAME_REGEXP_MSFS, "");
+  name.replace(USER_WP_NAME_REGEXP_MSFS, QStringLiteral());
   name = name.left(length).trimmed();
   if(name.isEmpty())
   {
     if(number != nullptr)
       name = QStringLiteral("AUTOWP%1").arg((*number)++);
     else
-      name = "AUTOWP";
+      name = QStringLiteral("AUTOWP");
   }
   return name;
 }
@@ -569,7 +573,7 @@ QString adjustIdent(QString ident, int length, int id)
     if(id != -1)
       ident = QStringLiteral("N%1").arg(id, 4, 36, QChar('0')).left(length);
     else
-      ident = "UNKWN";
+      ident = QStringLiteral("UNKWN");
   }
   return ident.toUpper();
 }
@@ -577,9 +581,9 @@ QString adjustIdent(QString ident, int length, int id)
 QString adjustRegion(QString region)
 {
   static const QRegularExpression IDENT_REGEXP("[^A-Z0-9]");
-  region = region.toUpper().replace(IDENT_REGEXP, "").left(2);
+  region = region.toUpper().replace(IDENT_REGEXP, QStringLiteral()).left(2);
   if(region.length() != 2)
-    region = "ZZ";
+    region = QStringLiteral("ZZ");
   return region.toUpper();
 }
 
@@ -629,23 +633,23 @@ bool extractSpeedAndAltitude(const QString& item, float& speedKnots, float& altF
     float alt = match.captured(5).toFloat(&altOk);
 
     // Altitude ==============================
-    if(altUnit == "F") // Flight Level
+    if(altUnit == QStringLiteral("F")) // Flight Level
       altFeet = alt >= 1000.f ? alt : alt * 100.f;
-    else if(altUnit == "S") // Standard Metric Level in tens of meters
+    else if(altUnit == QStringLiteral("S")) // Standard Metric Level in tens of meters
       altFeet = atools::geo::meterToFeet(alt * 10.f);
-    else if(altUnit == "A") // Altitude in hundreds of feet
+    else if(altUnit == QStringLiteral("A")) // Altitude in hundreds of feet
       altFeet = alt >= 1000.f ? alt : alt * 100.f;
-    else if(altUnit == "M") // Altitude in tens of meters
+    else if(altUnit == QStringLiteral("M")) // Altitude in tens of meters
       altFeet = atools::geo::meterToFeet(alt * 10.f);
     else
       altOk = false;
 
     // Speed ==============================
-    if(speedUnit == "K") // km/h
+    if(speedUnit == QStringLiteral("K")) // km/h
       speedKnots = atools::geo::meterToNm(speed * 1000.f);
-    else if(speedUnit == "N") // knots
+    else if(speedUnit == QStringLiteral("N")) // knots
       speedKnots = speed;
-    else if(speedUnit == "M") // mach
+    else if(speedUnit == QStringLiteral("M")) // mach
       speedKnots = atools::geo::machToTasFromAlt(altFeet, speed / 100.f);
     else
       spdOk = false;
@@ -765,16 +769,16 @@ inline QString runwayNameJoin(int number, const QString& designator)
 const QStringList runwayNameVariants(QString name)
 {
   QString prefix;
-  if(name.startsWith("RW"))
+  if(name.startsWith(QStringLiteral("RW")))
   {
-    prefix = "RW";
+    prefix = QStringLiteral("RW");
     name = name.mid(2);
   }
 
   QString suffix;
   if(name.endsWith('T'))
   {
-    suffix = "T";
+    suffix = QStringLiteral("T");
     name.chop(1);
   }
 
@@ -798,8 +802,8 @@ const QStringList runwayNameZeroPrefixVariants(const QString& name)
 
   if(name.startsWith('0'))
     retval.append(name.mid(1));
-  else if(name.startsWith("RW0"))
-    retval.append("RW" % name.mid(3));
+  else if(name.startsWith(QStringLiteral("RW0")))
+    retval.append(QStringLiteral("RW") % name.mid(3));
 
   return retval;
 }
@@ -860,7 +864,7 @@ QString runwayBestFitFromList(const QString& runwayName, const QStringList& airp
         rwNormVariant = rwNormVariant.mid(1);
 
       if(prefixRw)
-        rwNormVariant.prepend("RW");
+        rwNormVariant.prepend(QStringLiteral("RW"));
 
       if(suffixTrue)
         rwNormVariant.append('T');
@@ -891,7 +895,7 @@ QString runwayBestFit(const QString& runwayName, const QStringList& airportRunwa
         procRwNormVariant = procRwNormVariant.mid(1);
 
       if(prefixRw)
-        procRwNormVariant.prepend("RW");
+        procRwNormVariant.prepend(QStringLiteral("RW"));
 
       if(suffixTrue)
         procRwNormVariant.append('T');
@@ -906,13 +910,13 @@ QString runwayBestFit(const QString& runwayName, const QStringList& airportRunwa
 QString runwayDesignatorLong(const QString& designatorName)
 {
   if(designatorName.startsWith('L'))
-    return "LEFT";
+    return QStringLiteral("LEFT");
   else if(designatorName.startsWith('R'))
-    return "RIGHT";
+    return QStringLiteral("RIGHT");
   else if(designatorName.startsWith('C'))
-    return "CENTER";
+    return QStringLiteral("CENTER");
   else if(designatorName.startsWith('W'))
-    return "WATER";
+    return QStringLiteral("WATER");
 
   return designatorName;
 }
@@ -928,7 +932,7 @@ bool runwayNameSplitNum(const QString& name, int *number, QString *designator, b
   const static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)(T?)$");
 
   QString rwname(name);
-  if(rwname.startsWith("RW"))
+  if(rwname.startsWith(QStringLiteral("RW")))
     rwname = rwname.mid(2);
 
   if(number != nullptr)
@@ -947,7 +951,7 @@ bool runwayNameSplitNum(const QString& name, int *number, QString *designator, b
       *designator = match.captured(2);
 
     if(trueHeading != nullptr)
-      *trueHeading = match.captured(3) == "T";
+      *trueHeading = match.captured(3) == QStringLiteral("T");
 
     return true;
   }
@@ -992,7 +996,7 @@ int compareRunwayNumber(const QString& rw1, const QString& rw2)
 
 bool hasSidStarAllRunways(const QString& approachArincName)
 {
-  return approachArincName == "ALL" || approachArincName.isEmpty();
+  return approachArincName == QStringLiteral("ALL") || approachArincName.isEmpty();
 }
 
 bool hasSidStarParallelRunways(QString approachArincName)
@@ -1003,8 +1007,8 @@ bool hasSidStarParallelRunways(QString approachArincName)
     return false;
   else
   {
-    if(!approachArincName.startsWith("RW"))
-      approachArincName = "RW" % approachArincName;
+    if(!approachArincName.startsWith(QStringLiteral("RW")))
+      approachArincName = QStringLiteral("RW") % approachArincName;
 
     return approachArincName.contains(PARALLEL_REGEXP);
   }
@@ -1024,31 +1028,31 @@ void sidStarMultiRunways(const QStringList& runwayNames, const QString& arincNam
   {
     // Check which runways are assigned from values like "RW12B"
     QString runwayName = arincName.mid(2, 2);
-    if(runwayContains(runwayNames, runwayName % "L", false /* fuzzy */))
+    if(runwayContains(runwayNames, runwayName % QStringLiteral("L"), false /* fuzzy */))
     {
       if(sidStarDispNames != nullptr)
-        sidStarDispNames->append(runwayName % "L");
+        sidStarDispNames->append(runwayName % QStringLiteral("L"));
 
       if(sidStarRunways != nullptr)
-        sidStarRunways->append(runwayName % "L");
+        sidStarRunways->append(runwayName % QStringLiteral("L"));
     }
 
-    if(runwayContains(runwayNames, runwayName % "R", false /* fuzzy */))
+    if(runwayContains(runwayNames, runwayName % QStringLiteral("R"), false /* fuzzy */))
     {
       if(sidStarDispNames != nullptr)
-        sidStarDispNames->append(runwayName % "R");
+        sidStarDispNames->append(runwayName % QStringLiteral("R"));
 
       if(sidStarRunways != nullptr)
-        sidStarRunways->append(runwayName % "R");
+        sidStarRunways->append(runwayName % QStringLiteral("R"));
     }
 
-    if(runwayContains(runwayNames, runwayName % "C", false /* fuzzy */))
+    if(runwayContains(runwayNames, runwayName % QStringLiteral("C"), false /* fuzzy */))
     {
       if(sidStarDispNames != nullptr)
-        sidStarDispNames->append(runwayName % "C");
+        sidStarDispNames->append(runwayName % QStringLiteral("C"));
 
       if(sidStarRunways != nullptr)
-        sidStarRunways->append(runwayName % "C");
+        sidStarRunways->append(runwayName % QStringLiteral("C"));
     }
   }
 }
@@ -1248,6 +1252,19 @@ QString runwayDesignator(const QString& runwayName)
     return atools::fs::util::runwayDesignatorLong(designator);
   else
     return QString();
+}
+
+QString capAdminName(const QString& str)
+{
+  if((str.length() == 2 || str.length() == 3) && str.isUpper())
+    return str;
+  else
+    return atools::capString(str).
+           replace(QStringLiteral("-O-"), QStringLiteral("-o-")).
+           replace(QStringLiteral("-N-"), QStringLiteral("-n-")).
+           replace(QStringLiteral("-A-"), QStringLiteral("-a-")).
+           replace(QStringLiteral(" And "), QStringLiteral(" and ")).
+           replace(QStringLiteral(" Of "), QStringLiteral(" of ")).simplified();
 }
 
 } // namespace util

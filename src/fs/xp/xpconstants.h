@@ -24,6 +24,10 @@
 
 namespace atools {
 namespace fs {
+
+namespace db {
+class CountryUpdater;
+}
 namespace common {
 class MagDecReader;
 }
@@ -63,6 +67,7 @@ struct XpReaderContext
           cifpAirportIdent;
   atools::fs::xp::ContextFlags flags = NO_FLAG;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
+  atools::fs::db::CountryUpdater *countryUpdater = nullptr;
 
   /* Prepare a header for warning messages or exceptions*/
   QString messagePrefix() const;

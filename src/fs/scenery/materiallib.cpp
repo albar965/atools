@@ -35,7 +35,7 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
-MaterialLib::MaterialLib(const NavDatabaseOptions *opts, ProgressHandler *progress, SceneryErrors *errors)
+MaterialLib::MaterialLib(const NavDatabaseOptions& opts, ProgressHandler *progress, SceneryErrors *errors)
   : options(opts), progressHandler(progress), sceneryErrors(errors)
 {
 
@@ -142,7 +142,7 @@ void MaterialLib::readOfficial(const QString& basePath)
  */
 void MaterialLib::read(const QString& filename)
 {
-  if(options->isIncludedGui(QFileInfo(filename)))
+  if(options.isIncludedGui(QFileInfo(filename)))
   {
     if(atools::checkFile(Q_FUNC_INFO, filename))
     {

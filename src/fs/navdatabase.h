@@ -51,6 +51,8 @@ class ManifestJson;
 }
 
 namespace db {
+
+class CountryUpdater;
 class DataWriter;
 }
 
@@ -79,12 +81,8 @@ public:
    * @param readerOptions Configuration and progress callback options. Optional for schema creation
    * @param sqlDb Database to fill with data
    */
-  NavDatabase(const atools::fs::NavDatabaseOptions *readerOptions, atools::sql::SqlDatabase *sqlDb,
-              atools::fs::NavDatabaseErrors *databaseErrors, const QString& revision)
-    : db(sqlDb), errors(databaseErrors), options(readerOptions), gitRevision(revision)
-  {
-
-  }
+  NavDatabase(const atools::fs::NavDatabaseOptions& readerOptions, sql::SqlDatabase& sqlDb,
+              atools::fs::NavDatabaseErrors *databaseErrors, const QString& revision);
 
   ~NavDatabase();
 
@@ -222,9 +220,10 @@ private:
   const atools::win::ActivationContext *activationContext = nullptr;
   QString libraryName;
 
-  atools::sql::SqlDatabase *db;
+  atools::sql::SqlDatabase& db;
   atools::fs::NavDatabaseErrors *errors = nullptr;
-  const atools::fs::NavDatabaseOptions *options = nullptr;
+  atools::fs::db::CountryUpdater *countryUpdater = nullptr;
+  const atools::fs::NavDatabaseOptions& options;
   bool aborted = false;
   QString gitRevision;
   atools::fs::ResultFlags result = atools::fs::COMPILE_NONE;

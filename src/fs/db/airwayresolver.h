@@ -40,7 +40,7 @@ class AirwayResolver
   Q_DECLARE_TR_FUNCTIONS(AirwayResolver)
 
 public:
-  AirwayResolver(atools::sql::SqlDatabase *sqlDb, atools::fs::ProgressHandler& progress);
+  AirwayResolver(atools::sql::SqlDatabase& sqlDb, atools::fs::ProgressHandler& progress);
   virtual ~AirwayResolver();
 
   /*
@@ -93,7 +93,7 @@ private:
   atools::fs::ProgressHandler& progressHandler;
   int curAirwayId, numAirways;
   atools::sql::SqlQuery airwayInsertStmt;
-  atools::sql::SqlDatabase *db;
+  atools::sql::SqlDatabase& db;
 };
 
 } // namespace writer

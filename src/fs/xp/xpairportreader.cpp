@@ -17,6 +17,7 @@
 
 #include "fs/xp/xpairportreader.h"
 
+#include "fs/db/countryupdater.h"
 #include "sql/sqlutil.h"
 #include "sql/sqlquery.h"
 #include "sql/sqldatabase.h"
@@ -755,7 +756,8 @@ void XpAirportReader::writeStartupLocation(const QStringList& line, const atools
 
   bool hasFuel = false;
   QString lowerName = name.toLower();
-  if(lowerName.contains(QStringLiteral("avgas")) || lowerName.contains(QStringLiteral("mogas")) || lowerName.contains(QStringLiteral("gas-station")))
+  if(lowerName.contains(QStringLiteral("avgas")) || lowerName.contains(QStringLiteral("mogas")) ||
+     lowerName.contains(QStringLiteral("gas-station")))
   {
     hasFuel = true;
     insertAirportQuery->bindValue(QStringLiteral(":has_avgas"), 1);
@@ -1089,7 +1091,7 @@ void XpAirportReader::bindMetadata(const QStringList& line, const atools::fs::xp
   else if(key == QStringLiteral("faa_code"))
     airportFaa = value;
   else if(key == QStringLiteral("city"))
-    insertAirportQuery->bindValue(QStringLiteral(":city"), value);
+    insertAirportQuery->bindValue(QStringLiteral(":city"), atools::fs::util::capAdminName(value));
   else if(key == QStringLiteral("country"))
   {
     // Remove area or country code from "USA United States"
@@ -1098,7 +1100,7 @@ void XpAirportReader::bindMetadata(const QStringList& line, const atools::fs::xp
     if(value.size() > 6 && value.at(0).isUpper() && value.at(1).isUpper() && value.at(2).isUpper() && value.at(3) == ' ')
       value = value.mid(4);
 
-    insertAirportQuery->bindValue(QStringLiteral(":country"), value);
+    country = value;
   }
   else if(key == QStringLiteral("flatten"))
     insertAirportQuery->bindValue(QStringLiteral(":flatten"), value);
@@ -1725,12 +1727,15 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
 
     insertAirportQuery->bindValue(QStringLiteral(":mag_var"), context.magDecReader->getMagVar(center));
 
+    insertAirportQuery->bindValue(QStringLiteral(":country"), context.countryUpdater->updateAirportCountry(country, center));
+
     insertAirportQuery->exec();
     if(insertAirportQuery->numRowsAffected() != 1)
       qWarning() << Q_FUNC_INFO << context.messagePrefix() << "Nothing written for curAirportId" << curAirportId
                  << "airportIdent" << airportIdent;
 
     insertAirportQuery->clearBoundValues();
+    country.clear();
 
     progress->incNumAirports();
 
@@ -1819,10 +1824,13 @@ void XpAirportReader::initQueries()
   insertParkingQuery->prepare(util.buildInsertStatement(QStringLiteral("parking"), QString(), {QStringLiteral("pushback")}));
 
   insertApronQuery = new SqlQuery(db);
-  insertApronQuery->prepare(util.buildInsertStatement(QStringLiteral("apron"), QString(), {QStringLiteral("vertices"), QStringLiteral("vertices2"), QStringLiteral("triangles")}));
+  insertApronQuery->prepare(util.buildInsertStatement(QStringLiteral("apron"), QString(),
+                                                      {QStringLiteral("vertices"), QStringLiteral("vertices2"),
+                                                       QStringLiteral("triangles")}));
 
   insertTaxiQuery = new SqlQuery(db);
-  insertTaxiQuery->prepare(util.buildInsertStatement(QStringLiteral("taxi_path"), QString(), {QStringLiteral("start_dir"), QStringLiteral("end_dir")}));
+  insertTaxiQuery->prepare(util.buildInsertStatement(QStringLiteral("taxi_path"), QString(),
+                                                     {QStringLiteral("start_dir"), QStringLiteral("end_dir")}));
 
   insertAirportFileQuery = new SqlQuery(db);
   insertAirportFileQuery->prepare(util.buildInsertStatement(QStringLiteral("airport_file")));

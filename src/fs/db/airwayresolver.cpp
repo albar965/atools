@@ -83,7 +83,7 @@ size_t qHash(const AirwayResolver::AirwaySegment& segment)
   return static_cast<unsigned int>(segment.fromWaypointId) ^ static_cast<unsigned int>(segment.toWaypointId);
 }
 
-AirwayResolver::AirwayResolver(sql::SqlDatabase *sqlDb, atools::fs::ProgressHandler& progress)
+AirwayResolver::AirwayResolver(SqlDatabase& sqlDb, atools::fs::ProgressHandler& progress)
   : progressHandler(progress), curAirwayId(1), numAirways(0), airwayInsertStmt(sqlDb), db(sqlDb)
 {
   SqlUtil util(sqlDb);
@@ -221,7 +221,7 @@ bool AirwayResolver::run(int numReportSteps)
   qInfo() << Q_FUNC_INFO << "Longest segment is" << atools::geo::meterToNm(longestAirwaySegmentMeter) << "NM";
 
   if(!aborted)
-    db->commit();
+    db.commit();
 
   return aborted;
 }

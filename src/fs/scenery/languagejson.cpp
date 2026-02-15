@@ -88,7 +88,7 @@ void LanguageJson::readFromFile(const QString& filename, const QStringList& keyP
   }
 }
 
-void LanguageJson::readFromDirToDb(sql::SqlDatabase *db, const QString& dirname, const QString& fileFilter,
+void LanguageJson::readFromDirToDb(sql::SqlDatabase& db, const QString& dirname, const QString& fileFilter,
                                    const QStringList& keyPrefixes)
 {
   QDir dir(dirname);
@@ -135,7 +135,7 @@ void LanguageJson::readFromDb(sql::SqlDatabase *db, const QString& languageParam
     qWarning() << Q_FUNC_INFO << "Table translation not found in database or empty";
 }
 
-void LanguageJson::writeToDb(sql::SqlDatabase *db) const
+void LanguageJson::writeToDb(sql::SqlDatabase& db) const
 {
   atools::sql::SqlQuery query(db);
   query.prepare("insert into translation (language, key, text) values(?, ?, ?)");
@@ -161,7 +161,7 @@ void LanguageJson::writeToDb(sql::SqlDatabase *db) const
     }
 
   }
-  db->commit();
+  db.commit();
 }
 
 void LanguageJson::adjustLanguage()

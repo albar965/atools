@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "fs/db/ap/airportwriter.h"
+#include "fs/db/countryupdater.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/meta/sceneryareawriter.h"
 #include "fs/db/ap/rw/runwaywriter.h"
@@ -499,14 +500,12 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
 
 void AirportWriter::fetchAdmin(const Airport *type, QString& city, QString& state, QString& country, QString& region)
 {
-  const static QSet<QString> TOLOWER({"of", "and"});
-
   const NamelistEntry *nl = nameListIndex.value(type->getIdent(), nullptr);
   if(nl != nullptr)
   {
-    city = atools::capString(getDataWriter().getLanguage(nl->getCityName()), {}, TOLOWER).simplified();
-    state = atools::capString(getDataWriter().getLanguage(nl->getStateName()), {}, TOLOWER).simplified();
-    country = atools::capString(getDataWriter().getLanguage(nl->getCountryName()), {}, TOLOWER).simplified();
+    city = atools::fs::util::capAdminName(getDataWriter().getLanguage(nl->getCityName()));
+    state = atools::fs::util::capAdminName(getDataWriter().getLanguage(nl->getStateName()));
+    country = getDataWriter().getCountryUpdater()->updateAirportCountry(getDataWriter().getLanguage(nl->getCountryName()), type->getPos());
 
     if(!type->getRegion().isEmpty())
       region = type->getRegion().simplified();

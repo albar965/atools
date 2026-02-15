@@ -96,10 +96,10 @@ void Namelist::readList(QStringList& names, BinaryStream *stream, int numNames, 
   for(int i = 0; i < numNames; i++)
     indexes[i] = stream->readInt();
 
-  qint64 offs = stream->tellg();
+  qint64 offset = stream->tellg();
   for(int i = 0; i < numNames; i++)
   {
-    stream->seekg(offs + indexes[i]);
+    stream->seekg(offset + indexes[i]);
     names.append(stream->readString(encoding));
   }
   delete[] indexes;

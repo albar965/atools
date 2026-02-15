@@ -147,6 +147,9 @@ QString capWaypointNameString(const QString& ident, const QString& name, bool em
 /* Capitalize airport name making special designators (AFB, ...) upper case */
 QString capAirportName(const QString& str);
 
+/* Capitalize country and other administrative names */
+QString capAdminName(const QString& str);
+
 /* Limits ident to upper case characters and digits and trims length to five for userpoints.
  * Returns N with following number if empty. */
 QString adjustIdent(QString ident, int length = 5, int id = -1);
