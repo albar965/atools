@@ -45,7 +45,7 @@ TreeDialog::TreeDialog(QWidget *parent, const QString& title, const QString& des
   setWindowModality(Qt::ApplicationModal);
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(ui->treeWidget);
-  gridDelegate = new atools::gui::GridDelegate(ui->treeWidget);
+  gridDelegate = new atools::gui::GridDelegate(ui->treeWidget, 1. /* borderPenWidth */, 1 /* heightIncrease */);
   ui->treeWidget->setItemDelegate(gridDelegate);
 
   // Hide label if text is empty
