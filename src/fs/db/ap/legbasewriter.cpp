@@ -47,53 +47,53 @@ void LegBaseWriter::writeObject(const ApproachLeg *type)
     return;
   }
 
-  bind(":type", typeStr);
-  bind(":alt_descriptor",
+  bind(QStringLiteral(":type"), typeStr);
+  bind(QStringLiteral(":alt_descriptor"),
        bgl::util::enumToStr(bgl::ApproachLeg::altDescriptorToString, type->getAltDescriptor()));
-  bind(":turn_direction", bgl::util::enumToStr(bgl::ApproachLeg::turnDirToString, type->getTurnDirection()));
-  bind(":fix_type", bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, type->getFixType()));
-  bind(":fix_ident", type->getFixIdent());
-  bind(":fix_region", type->getFixRegion());
-  bind(":fix_airport_ident", type->getFixAirportIdent());
-  bind(":recommended_fix_type",
+  bind(QStringLiteral(":turn_direction"), bgl::util::enumToStr(bgl::ApproachLeg::turnDirToString, type->getTurnDirection()));
+  bind(QStringLiteral(":fix_type"), bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, type->getFixType()));
+  bind(QStringLiteral(":fix_ident"), type->getFixIdent());
+  bind(QStringLiteral(":fix_region"), type->getFixRegion());
+  bind(QStringLiteral(":fix_airport_ident"), type->getFixAirportIdent());
+  bind(QStringLiteral(":recommended_fix_type"),
        bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, type->getRecommendedFixType()));
-  bind(":recommended_fix_ident", type->getRecommendedFixIdent());
-  bind(":recommended_fix_region", type->getRecommendedFixRegion());
-  bindBool(":is_flyover", type->isFlyover());
-  bindBool(":is_true_course", type->isTrueCourse());
-  bind(":course", type->getCourse());
+  bind(QStringLiteral(":recommended_fix_ident"), type->getRecommendedFixIdent());
+  bind(QStringLiteral(":recommended_fix_region"), type->getRecommendedFixRegion());
+  bindBool(QStringLiteral(":is_flyover"), type->isFlyover());
+  bindBool(QStringLiteral(":is_true_course"), type->isTrueCourse());
+  bind(QStringLiteral(":course"), type->getCourse());
 
   if(type->isTime())
   {
-    bind(":time", type->getDistOrTime());
-    bindNullFloat(":distance");
+    bind(QStringLiteral(":time"), type->getDistOrTime());
+    bindNullFloat(QStringLiteral(":distance"));
   }
   else
   {
-    bind(":distance", roundToInt(atools::geo::meterToNm(type->getDistOrTime())));
-    bindNullFloat(":time");
+    bind(QStringLiteral(":distance"), roundToInt(atools::geo::meterToNm(type->getDistOrTime())));
+    bindNullFloat(QStringLiteral(":time"));
   }
 
-  bind(":theta", type->getTheta());
-  bind(":rho", atools::geo::meterToNm(type->getRho()));
-  bind(":altitude1", roundToInt(atools::geo::meterToFeet(type->getAltitude1())));
-  bind(":altitude2", roundToInt(atools::geo::meterToFeet(type->getAltitude2())));
+  bind(QStringLiteral(":theta"), type->getTheta());
+  bind(QStringLiteral(":rho"), atools::geo::meterToNm(type->getRho()));
+  bind(QStringLiteral(":altitude1"), roundToInt(atools::geo::meterToFeet(type->getAltitude1())));
+  bind(QStringLiteral(":altitude2"), roundToInt(atools::geo::meterToFeet(type->getAltitude2())));
 
   if(type->getSpeedLimit() > 10.f)
   {
-    bind(":speed_limit", roundToInt(type->getSpeedLimit()));
-    bind(":speed_limit_type", "-"); // Assume limit for maximum speed - type is not given in BGL
+    bind(QStringLiteral(":speed_limit"), roundToInt(type->getSpeedLimit()));
+    bind(QStringLiteral(":speed_limit_type"), QStringLiteral("-")); // Assume limit for maximum speed - type is not given in BGL
   }
   else
   {
-    bindNullInt(":speed_limit");
-    bindNullString(":speed_limit_type");
+    bindNullInt(QStringLiteral(":speed_limit"));
+    bindNullString(QStringLiteral(":speed_limit_type"));
   }
 
   if(std::abs(type->getVerticalAngle()) > 0.f)
-    bind(":vertical_angle", -type->getVerticalAngle() / 100.f);
+    bind(QStringLiteral(":vertical_angle"), -type->getVerticalAngle() / 100.f);
   else
-    bindNullInt(":vertical_angle");
+    bindNullInt(QStringLiteral(":vertical_angle"));
 
   executeStatement();
 }

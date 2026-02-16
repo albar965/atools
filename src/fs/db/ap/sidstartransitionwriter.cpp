@@ -40,26 +40,26 @@ void SidStarTransitionWriter::writeObject(const QList<atools::fs::bgl::ApproachL
              << " at airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  bind(":transition_id", getNextId());
-  bind(":approach_id", getDataWriter().getSidStarWriter()->getCurrentId());
+  bind(QStringLiteral(":transition_id"), getNextId());
+  bind(QStringLiteral(":approach_id"), getDataWriter().getSidStarWriter()->getCurrentId());
 
   // For SIDs and STARs, the transition type is always FULL.
-  bind(":type", Transition::transitionTypeToStr(bgl::ap::FULL));
+  bind(QStringLiteral(":type"), Transition::transitionTypeToStr(bgl::ap::FULL));
   // Most of the fields are omitted too.
-  bindNullFloat(":altitude");
-  bindNullString(":dme_ident");
-  bindNullString(":dme_region");
-  bindNullString(":dme_airport_ident");
-  bindNullInt(":dme_radial");
-  bindNullInt(":dme_distance");
+  bindNullFloat(QStringLiteral(":altitude"));
+  bindNullString(QStringLiteral(":dme_ident"));
+  bindNullString(QStringLiteral(":dme_region"));
+  bindNullString(QStringLiteral(":dme_airport_ident"));
+  bindNullInt(QStringLiteral(":dme_radial"));
+  bindNullInt(QStringLiteral(":dme_distance"));
 
   bool isArrival = 'A' == getDataWriter().getSidStarWriter()->getCurrentSidStar()->getSuffix();
   const ApproachLeg& fixLeg = isArrival ? type->constFirst() : type->constLast();
   // Fill in the fix information.
-  bind(":fix_type", bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, fixLeg.getFixType()));
-  bind(":fix_ident", fixLeg.getFixIdent());
-  bind(":fix_region", fixLeg.getFixRegion());
-  bind(":fix_airport_ident", fixLeg.getFixAirportIdent());
+  bind(QStringLiteral(":fix_type"), bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, fixLeg.getFixType()));
+  bind(QStringLiteral(":fix_ident"), fixLeg.getFixIdent());
+  bind(QStringLiteral(":fix_region"), fixLeg.getFixRegion());
+  bind(QStringLiteral(":fix_airport_ident"), fixLeg.getFixAirportIdent());
 
   // Write the transition row.
   executeStatement();

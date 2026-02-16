@@ -29,49 +29,49 @@ QString RunwayVasi::vasiTypeToStr(rw::VasiType type)
   switch(type)
   {
     case rw::NONE:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case rw::VASI21:
-      return "VASI21";
+      return QStringLiteral("VASI21");
 
     case rw::VASI31:
-      return "VASI31";
+      return QStringLiteral("VASI31");
 
     case rw::VASI22:
-      return "VASI22";
+      return QStringLiteral("VASI22");
 
     case rw::VASI32:
-      return "VASI32";
+      return QStringLiteral("VASI32");
 
     case rw::VASI23:
-      return "VASI23";
+      return QStringLiteral("VASI23");
 
     case rw::VASI33:
-      return "VASI33";
+      return QStringLiteral("VASI33");
 
     case rw::PAPI2:
-      return "PAPI2";
+      return QStringLiteral("PAPI2");
 
     case rw::PAPI4:
-      return "PAPI4";
+      return QStringLiteral("PAPI4");
 
     case rw::TRICOLOR:
-      return "TRICOLOR";
+      return QStringLiteral("TRICOLOR");
 
     case rw::PVASI:
-      return "PVASI";
+      return QStringLiteral("PVASI");
 
     case rw::TVASI:
-      return "TVASI";
+      return QStringLiteral("TVASI");
 
     case rw::BALL:
-      return "BALL";
+      return QStringLiteral("BALL");
 
     case rw::APAP_PANELS:
-      return "APAP_PANELS";
+      return QStringLiteral("APAP_PANELS");
   }
   qWarning().nospace().noquote() << "Invalid VASI type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 RunwayVasi::RunwayVasi()

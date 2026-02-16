@@ -47,37 +47,37 @@ void TacanWriter::writeObject(const bgl::Tacan *type)
   }
 
   // Use VOR id
-  bind(":vor_id", getDataWriter().getVorWriter()->getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
-  bind(":ident", type->getIdent());
-  bind(":name", type->getName());
-  bind(":region", type->getRegion());
-  bind(":type", "TC");
+  bind(QStringLiteral(":vor_id"), getDataWriter().getVorWriter()->getNextId());
+  bind(QStringLiteral(":file_id"), getDataWriter().getBglFileWriter()->getCurrentId());
+  bind(QStringLiteral(":ident"), type->getIdent());
+  bind(QStringLiteral(":name"), type->getName());
+  bind(QStringLiteral(":region"), type->getRegion());
+  bind(QStringLiteral(":type"), QStringLiteral("TC"));
 
-  bind(":airport_ident", type->getAirportIdent());
-  bindNullInt(":airport_id");
+  bind(QStringLiteral(":airport_ident"), type->getAirportIdent());
+  bindNullInt(QStringLiteral(":airport_id"));
 
-  bindNullInt(":frequency");
-  bind(":channel", type->getChannel());
-  bind(":range", roundToInt(meterToNm(type->getRange())));
-  bind(":mag_var", getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
-  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
-  bind(":dme_only", type->isDmeOnly());
+  bindNullInt(QStringLiteral(":frequency"));
+  bind(QStringLiteral(":channel"), type->getChannel());
+  bind(QStringLiteral(":range"), roundToInt(meterToNm(type->getRange())));
+  bind(QStringLiteral(":mag_var"), getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
+  bind(QStringLiteral(":altitude"), roundToInt(meterToFeet(type->getPosition().getAltitude())));
+  bind(QStringLiteral(":lonx"), type->getPosition().getLonX());
+  bind(QStringLiteral(":laty"), type->getPosition().getLatY());
+  bind(QStringLiteral(":dme_only"), type->isDmeOnly());
 
   const Dme *dme = type->getDme();
   if(dme != nullptr)
   {
-    bind(":dme_altitude", roundToInt(meterToFeet(dme->getPosition().getAltitude())));
-    bind(":dme_lonx", dme->getPosition().getLonX());
-    bind(":dme_laty", dme->getPosition().getLatY());
+    bind(QStringLiteral(":dme_altitude"), roundToInt(meterToFeet(dme->getPosition().getAltitude())));
+    bind(QStringLiteral(":dme_lonx"), dme->getPosition().getLonX());
+    bind(QStringLiteral(":dme_laty"), dme->getPosition().getLatY());
   }
   else
   {
-    bindNullFloat(":dme_altitude");
-    bindNullFloat(":dme_lonx");
-    bindNullFloat(":dme_laty");
+    bindNullFloat(QStringLiteral(":dme_altitude"));
+    bindNullFloat(QStringLiteral(":dme_lonx"));
+    bindNullFloat(QStringLiteral(":dme_laty"));
   }
 
   executeStatement();

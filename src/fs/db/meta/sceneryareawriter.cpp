@@ -36,15 +36,15 @@ void SceneryAreaWriter::writeObject(const SceneryArea *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing SceneryArea layer " << type->getLayer() << " title " << type->getTitle();
 
-  bind(":scenery_area_id", getNextId());
-  bind(":number", type->getAreaNumber());
-  bind(":layer", type->getLayer());
-  bind(":title", type->getTitle());
-  bind(":remote_path", atools::nativeCleanPath(type->getRemotePath()));
-  bind(":local_path", atools::nativeCleanPath(type->getLocalPath()));
-  bind(":active", type->isActive());
-  bind(":required", type->isRequired());
-  bind(":exclude", type->getExclude());
+  bind(QStringLiteral(":scenery_area_id"), getNextId());
+  bind(QStringLiteral(":number"), type->getAreaNumber());
+  bind(QStringLiteral(":layer"), type->getLayer());
+  bind(QStringLiteral(":title"), type->getTitle());
+  bind(QStringLiteral(":remote_path"), atools::nativeCleanPath(type->getRemotePath()));
+  bind(QStringLiteral(":local_path"), atools::nativeCleanPath(type->getLocalPath()));
+  bind(QStringLiteral(":active"), type->isActive());
+  bind(QStringLiteral(":required"), type->isRequired());
+  bind(QStringLiteral(":exclude"), type->getExclude());
 
   executeStatement();
 }

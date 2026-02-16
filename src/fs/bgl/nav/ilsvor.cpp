@@ -30,23 +30,23 @@ QString IlsVor::ilsVorTypeToStr(nav::IlsVorType type)
   switch(type)
   {
     case nav::TERMINAL:
-      return "T";
+      return QStringLiteral("T");
 
     case nav::LOW:
-      return "L";
+      return QStringLiteral("L");
 
     case nav::HIGH:
-      return "H";
+      return QStringLiteral("H");
 
     case nav::ILS:
-      return "I";
+      return QStringLiteral("I");
 
     case nav::VOT:
-      return "V";
+      return QStringLiteral("V");
 
   }
   qWarning().nospace().noquote() << "Invalid ILS/VOR type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 IlsVor::IlsVor(const NavDatabaseOptions *options, BinaryStream *stream)

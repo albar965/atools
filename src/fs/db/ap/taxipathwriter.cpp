@@ -42,30 +42,30 @@ void TaxiPathWriter::writeObject(const TaxiPath *type)
     qDebug() << "Writing TaxiPath for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  bind(":taxi_path_id", getNextId());
-  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
-  bind(":type", TaxiPath::pathTypeToString(type->getType()));
+  bind(QStringLiteral(":taxi_path_id"), getNextId());
+  bind(QStringLiteral(":airport_id"), getDataWriter().getAirportWriter()->getCurrentId());
+  bind(QStringLiteral(":type"), TaxiPath::pathTypeToString(type->getType()));
 
   if(!type->getMaterialUuid().isNull())
-    bind(":surface", atools::fs::bgl::surface::surfaceToDbStr(getDataWriter().getSurface(type->getMaterialUuid())));
+    bind(QStringLiteral(":surface"), atools::fs::bgl::surface::surfaceToDbStr(getDataWriter().getSurface(type->getMaterialUuid())));
   else
-    bind(":surface", atools::fs::bgl::surface::surfaceToDbStr(type->getSurface()));
+    bind(QStringLiteral(":surface"), atools::fs::bgl::surface::surfaceToDbStr(type->getSurface()));
 
-  bind(":width", roundToInt(meterToFeet(type->getWidth())));
-  bind(":name", type->getName());
+  bind(QStringLiteral(":width"), roundToInt(meterToFeet(type->getWidth())));
+  bind(QStringLiteral(":name"), type->getName());
 
-  bindBool(":is_draw_surface", type->isDrawSurface());
-  bindBool(":is_draw_detail", type->isDrawDetail());
+  bindBool(QStringLiteral(":is_draw_surface"), type->isDrawSurface());
+  bindBool(QStringLiteral(":is_draw_detail"), type->isDrawDetail());
 
-  bind(":start_type", bgl::util::enumToStr(TaxiPoint::pointTypeToString, type->getStartPoint().getType()));
-  bind(":start_dir", bgl::util::enumToStr(TaxiPoint::dirToString, type->getStartPoint().getOrientation()));
-  bind(":start_lonx", type->getStartPoint().getPosD().getLonX());
-  bind(":start_laty", type->getStartPoint().getPosD().getLatY());
+  bind(QStringLiteral(":start_type"), bgl::util::enumToStr(TaxiPoint::pointTypeToString, type->getStartPoint().getType()));
+  bind(QStringLiteral(":start_dir"), bgl::util::enumToStr(TaxiPoint::dirToString, type->getStartPoint().getOrientation()));
+  bind(QStringLiteral(":start_lonx"), type->getStartPoint().getPosD().getLonX());
+  bind(QStringLiteral(":start_laty"), type->getStartPoint().getPosD().getLatY());
 
-  bind(":end_type", bgl::util::enumToStr(TaxiPoint::pointTypeToString, type->getEndPoint().getType()));
-  bind(":end_dir", bgl::util::enumToStr(TaxiPoint::dirToString, type->getEndPoint().getOrientation()));
-  bind(":end_lonx", type->getEndPoint().getPosD().getLonX());
-  bind(":end_laty", type->getEndPoint().getPosD().getLatY());
+  bind(QStringLiteral(":end_type"), bgl::util::enumToStr(TaxiPoint::pointTypeToString, type->getEndPoint().getType()));
+  bind(QStringLiteral(":end_dir"), bgl::util::enumToStr(TaxiPoint::dirToString, type->getEndPoint().getOrientation()));
+  bind(QStringLiteral(":end_lonx"), type->getEndPoint().getPosD().getLonX());
+  bind(QStringLiteral(":end_laty"), type->getEndPoint().getPosD().getLatY());
 
   executeStatement();
 }

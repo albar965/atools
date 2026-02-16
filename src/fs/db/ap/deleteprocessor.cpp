@@ -85,7 +85,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const atools::
   deleteRunwayStmt->prepare("delete from runway where airport_id  = :prevApId");
 
   // Delete all runways of all other airports
-  updateRunwayStmt->prepare(updateAptFeatureStmt("runway"));
+  updateRunwayStmt->prepare(updateAptFeatureStmt(QStringLiteral("runway")));
 
   // Get all primary and secondary end ids for the given airports
   fetchRunwayEndIdStmt->prepare(
@@ -111,30 +111,30 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const atools::
     "from airport where ident = :apIdent and airport_id <> :curApId order by airport_id desc limit 1");
 
   // Delete all facilities of the old airport
-  deleteComStmt->prepare(delAptFeatureStmt("com"));
-  deleteHelipadStmt->prepare(delAptFeatureStmt("helipad"));
-  deleteStartStmt->prepare(delAptFeatureStmt("start"));
-  deleteParkingStmt->prepare(delAptFeatureStmt("parking"));
-  updateParkingStmt->prepare(updateAptFeatureStmt("parking"));
-  deleteApronStmt->prepare(delAptFeatureStmt("apron"));
-  deleteTaxiPathStmt->prepare(delAptFeatureStmt("taxi_path"));
+  deleteComStmt->prepare(delAptFeatureStmt(QStringLiteral("com")));
+  deleteHelipadStmt->prepare(delAptFeatureStmt(QStringLiteral("helipad")));
+  deleteStartStmt->prepare(delAptFeatureStmt(QStringLiteral("start")));
+  deleteParkingStmt->prepare(delAptFeatureStmt(QStringLiteral("parking")));
+  updateParkingStmt->prepare(updateAptFeatureStmt(QStringLiteral("parking")));
+  deleteApronStmt->prepare(delAptFeatureStmt(QStringLiteral("apron")));
+  deleteTaxiPathStmt->prepare(delAptFeatureStmt(QStringLiteral("taxi_path")));
 
   // Update NDB and VOR airport ids - resulting duplicates will be deleted later
-  updateWpStmt->prepare(updateAptFeatureStmt("waypoint"));
-  updateVorStmt->prepare(updateAptFeatureStmt("vor"));
-  updateNdbStmt->prepare(updateAptFeatureStmt("ndb"));
+  updateWpStmt->prepare(updateAptFeatureStmt(QStringLiteral("waypoint")));
+  updateVorStmt->prepare(updateAptFeatureStmt(QStringLiteral("vor")));
+  updateNdbStmt->prepare(updateAptFeatureStmt(QStringLiteral("ndb")));
 
   // Update facilities with new airport id
-  updateComStmt->prepare(updateAptFeatureStmt("com"));
-  updateHelipadStmt->prepare(updateAptFeatureStmt("helipad"));
-  updateStartStmt->prepare(updateAptFeatureStmt("start"));
-  updateApronStmt->prepare(updateAptFeatureStmt("apron"));
-  updateTaxiPathStmt->prepare(updateAptFeatureStmt("taxi_path"));
+  updateComStmt->prepare(updateAptFeatureStmt(QStringLiteral("com")));
+  updateHelipadStmt->prepare(updateAptFeatureStmt(QStringLiteral("helipad")));
+  updateStartStmt->prepare(updateAptFeatureStmt(QStringLiteral("start")));
+  updateApronStmt->prepare(updateAptFeatureStmt(QStringLiteral("apron")));
+  updateTaxiPathStmt->prepare(updateAptFeatureStmt(QStringLiteral("taxi_path")));
 
   // Relink approach (and everything dependent) to a new airport
   updateApproachRwIds->prepare("update approach set runway_end_id = :newRwId where runway_end_id = :oldRwId");
-  updateApproachStmt->prepare(updateAptFeatureStmt("approach"));
-  deleteApproachStmt->prepare(delAptFeatureStmt("approach"));
+  updateApproachStmt->prepare(updateAptFeatureStmt(QStringLiteral("approach")));
+  deleteApproachStmt->prepare(delAptFeatureStmt(QStringLiteral("approach")));
 
   updateBoundingStmt->prepare("update airport set left_lonx = :leftlonx, top_laty = :toplaty, "
                               "right_lonx = :rightlonx, bottom_laty = :bottomlaty "
@@ -249,21 +249,21 @@ void DeleteProcessor::postProcessDelete()
   // Copy all names over from the previous airport if this one has empty names =================
   if(!prevName.isEmpty() && curName.isEmpty())
   {
-    copyAirportColumns.append("name");
-    copyAirportColumns.append("is_military");
+    copyAirportColumns.append(QStringLiteral("name"));
+    copyAirportColumns.append(QStringLiteral("is_military"));
   }
 
   if(!prevCity.isEmpty() && curCity.isEmpty())
-    copyAirportColumns.append("city");
+    copyAirportColumns.append(QStringLiteral("city"));
 
   if(!prevState.isEmpty() && curState.isEmpty())
-    copyAirportColumns.append("state");
+    copyAirportColumns.append(QStringLiteral("state"));
 
   if(!prevCountry.isEmpty() && curCountry.isEmpty())
-    copyAirportColumns.append("country");
+    copyAirportColumns.append(QStringLiteral("country"));
 
   if(!prevRegion.isEmpty() && curRegion.isEmpty())
-    copyAirportColumns.append("region");
+    copyAirportColumns.append(QStringLiteral("region"));
 
   // OBSOLETE: Imitating the wrong behavior of MSFS if an update tries to change the ident of an airport which was used at another one before.
   // Example: Boyd Field (54XS) in MSFS which actually Bar C Ranch Airport (54XS) at another location.
@@ -277,8 +277,8 @@ void DeleteProcessor::postProcessDelete()
   {
     // Do not copy old airport coordinates to new one if distance is more than 10 NM
     // Report far moved airport and update bounding rectangle later
-    // copyAirportColumns.append("lonx");
-    // copyAirportColumns.append("laty");
+    // copyAirportColumns.append(QStringLiteral("lonx"));
+    // copyAirportColumns.append(QStringLiteral("laty"));
     if(deleteAirport != nullptr)
       qDebug() << Q_FUNC_INFO << "Moved far airport"
                << "new" << curAirport->getIdent() << curAirport->getName() << curAirport->getPos()
@@ -298,7 +298,7 @@ void DeleteProcessor::postProcessDelete()
     if(hasPrevious && !isFlagSet(deleteFlags, bgl::del::APPROACHES))
       // Relink the approaches to the new airport and update the count on the airport
       // transferApproaches(); not needed this is covered by sql update script
-      copyAirportColumns.append("num_approach");
+      copyAirportColumns.append(QStringLiteral("num_approach"));
   }
 
   // Work on facilities that will be either removed or attached to the new airport depending on flags
@@ -308,7 +308,7 @@ void DeleteProcessor::postProcessDelete()
 
     if(!isFlagSet(deleteFlags, bgl::del::APRONS) && hasPrevious)
       // Update apron count in new airport
-      copyAirportColumns.append("num_apron");
+      copyAirportColumns.append(QStringLiteral("num_apron"));
   }
 
   if(prevHasCom)
@@ -326,7 +326,7 @@ void DeleteProcessor::postProcessDelete()
 
     if(!isFlagSet(deleteFlags, bgl::del::HELIPADS) && hasPrevious)
       // Update helipad count in new airport
-      copyAirportColumns.append("num_helipad");
+      copyAirportColumns.append(QStringLiteral("num_helipad"));
   }
 
   if(prevHasTaxi)
@@ -335,7 +335,7 @@ void DeleteProcessor::postProcessDelete()
 
     if(!isFlagSet(deleteFlags, bgl::del::TAXIWAYS) && hasPrevious)
       // Update taxi count in new airport
-      copyAirportColumns.append("num_taxi_path");
+      copyAirportColumns.append(QStringLiteral("num_taxi_path"));
   }
 
   if(prevHasStart)
@@ -344,7 +344,7 @@ void DeleteProcessor::postProcessDelete()
 
     if(!isFlagSet(deleteFlags, bgl::del::STARTS) && hasPrevious)
       // Update start count in new airport
-      copyAirportColumns.append("num_starts");
+      copyAirportColumns.append(QStringLiteral("num_starts"));
   }
 
   if(prevHasRunways)
@@ -354,18 +354,18 @@ void DeleteProcessor::postProcessDelete()
     else if(hasPrevious)
     {
       // Relink runways
-      bindAndExecute(updateRunwayStmt, "runways updated");
+      bindAndExecute(updateRunwayStmt, QStringLiteral("runways updated"));
       copyAirportColumns.append(RUNWAY_COLUMNS);
     }
   }
 
   if(!curAirport->getParkings().isEmpty())
     // New airport has parking - delete the previous ones
-    bindAndExecute(deleteParkingStmt, "parking spots deleted");
+    bindAndExecute(deleteParkingStmt, QStringLiteral("parking spots deleted"));
   else if(hasPrevious)
   {
     // New airport has no parking - transfer previous ones and update counts
-    bindAndExecute(updateParkingStmt, "parking spots updated");
+    bindAndExecute(updateParkingStmt, QStringLiteral("parking spots updated"));
     copyAirportColumns.append(AIRPORT_COLUMNS);
   }
 
@@ -377,24 +377,24 @@ void DeleteProcessor::postProcessDelete()
 
     // Update tower TODO not accurate
     if(!curAirport->hasTowerObj())
-      copyAirportColumns.append("has_tower_object");
+      copyAirportColumns.append(QStringLiteral("has_tower_object"));
 
     if(curAirport->getTowerPosition().getAltitude() == 0.f)
-      copyAirportColumns.append("tower_altitude");
+      copyAirportColumns.append(QStringLiteral("tower_altitude"));
 
     if(curAirport->getTowerPosition().getPos().isNull() || !curAirport->getTowerPosition().getPos().isValid())
     {
-      copyAirportColumns.append("tower_lonx");
-      copyAirportColumns.append("tower_laty");
+      copyAirportColumns.append(QStringLiteral("tower_lonx"));
+      copyAirportColumns.append(QStringLiteral("tower_laty"));
     }
 
     if(curAirport->getMagVar() == 0.f)
       // TODO FSAD does not update magvar in their airports yet
-      copyAirportColumns.append("mag_var");
+      copyAirportColumns.append(QStringLiteral("mag_var"));
 
     if(isAddon)
       // Previous was an addon - keep this state here, even if this airport is excluded
-      copyAirportColumns.append("is_addon");
+      copyAirportColumns.append(QStringLiteral("is_addon"));
   }
 
   // Copy columns from previous airport to current airport
@@ -413,17 +413,17 @@ void DeleteProcessor::postProcessDelete()
 void DeleteProcessor::updateBoundingRect()
 {
   // Fetch min/max runway, taxipath, parking and other coordinates from current airport
-  fetchBoundingStmt->bindValue(":apid", curAirportId);
-  executeStatement(fetchBoundingStmt, "Fetch bounding");
+  fetchBoundingStmt->bindValue(QStringLiteral(":apid"), curAirportId);
+  executeStatement(fetchBoundingStmt, QStringLiteral("Fetch bounding"));
   if(fetchBoundingStmt->next())
   {
-    if(!fetchBoundingStmt->isNull("left_lonx") && !fetchBoundingStmt->isNull("top_laty") &&
-       !fetchBoundingStmt->isNull("right_lonx") && !fetchBoundingStmt->isNull("bottom_laty"))
+    if(!fetchBoundingStmt->isNull(QStringLiteral("left_lonx")) && !fetchBoundingStmt->isNull(QStringLiteral("top_laty")) &&
+       !fetchBoundingStmt->isNull(QStringLiteral("right_lonx")) && !fetchBoundingStmt->isNull(QStringLiteral("bottom_laty")))
     {
-      geo::Rect bounding(fetchBoundingStmt->value("left_lonx").toFloat(),
-                         fetchBoundingStmt->value("top_laty").toFloat(),
-                         fetchBoundingStmt->value("right_lonx").toFloat(),
-                         fetchBoundingStmt->value("bottom_laty").toFloat());
+      geo::Rect bounding(fetchBoundingStmt->value(QStringLiteral("left_lonx")).toFloat(),
+                         fetchBoundingStmt->value(QStringLiteral("top_laty")).toFloat(),
+                         fetchBoundingStmt->value(QStringLiteral("right_lonx")).toFloat(),
+                         fetchBoundingStmt->value(QStringLiteral("bottom_laty")).toFloat());
 
       if(bounding.isValid())
       {
@@ -441,12 +441,12 @@ void DeleteProcessor::updateBoundingRect()
 #endif
 
         // Update current airport
-        updateBoundingStmt->bindValue(":apid", curAirportId);
-        updateBoundingStmt->bindValue(":leftlonx", bounding.getWest());
-        updateBoundingStmt->bindValue(":toplaty", bounding.getNorth());
-        updateBoundingStmt->bindValue(":rightlonx", bounding.getEast());
-        updateBoundingStmt->bindValue(":bottomlaty", bounding.getSouth());
-        executeStatement(updateBoundingStmt, "Update bounding");
+        updateBoundingStmt->bindValue(QStringLiteral(":apid"), curAirportId);
+        updateBoundingStmt->bindValue(QStringLiteral(":leftlonx"), bounding.getWest());
+        updateBoundingStmt->bindValue(QStringLiteral(":toplaty"), bounding.getNorth());
+        updateBoundingStmt->bindValue(QStringLiteral(":rightlonx"), bounding.getEast());
+        updateBoundingStmt->bindValue(QStringLiteral(":bottomlaty"), bounding.getSouth());
+        executeStatement(updateBoundingStmt, QStringLiteral("Update bounding"));
       }
     }
   }
@@ -456,29 +456,29 @@ void DeleteProcessor::updateBoundingRect()
 void DeleteProcessor::removePrevRunways()
 {
   QList<int> runwayEndIds;
-  fetchRunwayEndIdStmt->bindValue(":prevApId", prevAirportId);
-  fetchIds(fetchRunwayEndIdStmt, runwayEndIds, " runway ends to delete");
+  fetchRunwayEndIdStmt->bindValue(QStringLiteral(":prevApId"), prevAirportId);
+  fetchIds(fetchRunwayEndIdStmt, runwayEndIds, QStringLiteral(" runway ends to delete"));
 
   // Delete runway first due to foreign key from rw -> rw end
-  bindAndExecute(deleteRunwayStmt, "runways deleted");
+  bindAndExecute(deleteRunwayStmt, QStringLiteral("runways deleted"));
 
   for(int it : std::as_const(runwayEndIds))
   {
     // Remove runway
-    deleteRunwayEndStmt->bindValue(":endId", it);
-    executeStatement(deleteRunwayEndStmt, "runway ends deleted");
+    deleteRunwayEndStmt->bindValue(QStringLiteral(":endId"), it);
+    executeStatement(deleteRunwayEndStmt, QStringLiteral("runway ends deleted"));
   }
 }
 
 void DeleteProcessor::removePrevAirport()
 {
-  // Unlink navigation - will be updated later in "update_nav_ids.sql" script
+  // Unlink navigation - will be updated later in QStringLiteral("update_nav_ids.sql") script
   // we accecpt duplicates here - these will be deleted later
-  bindAndExecute(updateWpStmt, "waypoints updated");
-  bindAndExecute(updateVorStmt, "vors updated");
-  bindAndExecute(updateNdbStmt, "ndb updated");
+  bindAndExecute(updateWpStmt, QStringLiteral("waypoints updated"));
+  bindAndExecute(updateVorStmt, QStringLiteral("vors updated"));
+  bindAndExecute(updateNdbStmt, QStringLiteral("ndb updated"));
 
-  int deleted = bindAndExecute(deleteAirportStmt, "airports deleted");
+  int deleted = bindAndExecute(deleteAirportStmt, QStringLiteral("airports deleted"));
   if(deleted > 1)
     qWarning() << "Removed more than one airport" << deleted;
 }
@@ -511,30 +511,30 @@ void DeleteProcessor::removeOrUpdate(SqlQuery *deleteStmt, SqlQuery *updateStmt,
   QString delTypeStr = bgl::DeleteAirport::deleteAllFlagsToStr(flag).toLower();
 
   if(isFlagSet(deleteFlags, flag))
-    bindAndExecute(deleteStmt, delTypeStr + " deleted");
+    bindAndExecute(deleteStmt, delTypeStr % QStringLiteral(" deleted"));
   else
-    bindAndExecute(updateStmt, delTypeStr + " updated");
+    bindAndExecute(updateStmt, delTypeStr % QStringLiteral(" updated"));
 }
 
 /* Create a statement that sets all airport_id columns to null in the given table that have
  * an airport_id that belongs to the other airports */
 QString DeleteProcessor::updateAptFeatureToNullStmt(const QString& table)
 {
-  return "update " + table + " set airport_id = null where airport_id = :prevApId";
+  return "update " % table % " set airport_id = null where airport_id = :prevApId";
 }
 
 /* Create a statement that updates all airport_id columns in the given table that have
  * an airport_id that belongs to the other airports */
 QString DeleteProcessor::updateAptFeatureStmt(const QString& table)
 {
-  return "update " + table + " set airport_id = :curApId where airport_id = :prevApId";
+  return "update " % table % " set airport_id = :curApId where airport_id = :prevApId";
 }
 
 /* Create a statement that deletes all rows in the given table that have an airport_id
  * that belongs to the other airports */
 QString DeleteProcessor::delAptFeatureStmt(const QString& table)
 {
-  return "delete from " + table + " where airport_id = :prevApId";
+  return "delete from " % table % " where airport_id = :prevApId";
 }
 
 int DeleteProcessor::bindAndExecute(const QString& sql, const QString& msg)
@@ -546,12 +546,12 @@ int DeleteProcessor::bindAndExecute(const QString& sql, const QString& msg)
 
 int DeleteProcessor::bindAndExecute(SqlQuery *query, const QString& msg)
 {
-  if(query->hasPlaceholder(":prevApId"))
-    query->bindValue(":prevApId", prevAirportId);
-  if(query->hasPlaceholder(":curApId"))
-    query->bindValue(":curApId", curAirportId);
-  if(query->hasPlaceholder(":apIdent"))
-    query->bindValue(":apIdent", curIdent);
+  if(query->hasPlaceholder(QStringLiteral(":prevApId")))
+    query->bindValue(QStringLiteral(":prevApId"), prevAirportId);
+  if(query->hasPlaceholder(QStringLiteral(":curApId")))
+    query->bindValue(QStringLiteral(":curApId"), curAirportId);
+  if(query->hasPlaceholder(QStringLiteral(":apIdent")))
+    query->bindValue(QStringLiteral(":apIdent"), curIdent);
 
   return executeStatement(query, msg);
 }
@@ -638,28 +638,29 @@ void DeleteProcessor::extractPreviousAirportFeatures()
 
   if(selectAirportStmt->next())
   {
-    prevHasApproach |= selectAirportStmt->valueInt("num_approach") > 0;
-    prevHasApron |= selectAirportStmt->valueInt("num_apron") > 0;
-    prevHasCom |= selectAirportStmt->valueInt("num_com") > 0;
-    prevHasHelipad |= selectAirportStmt->valueInt("num_helipad") > 0;
-    prevHasTaxi |= selectAirportStmt->valueInt("num_taxi_path") > 0;
-    prevHasRunways |= selectAirportStmt->valueInt("num_runways") > 0;
-    prevHasStart |= selectAirportStmt->valueInt("num_starts") > 0;
-    isAddon |= selectAirportStmt->valueBool("is_addon");
-    previousRating = std::max(previousRating, selectAirportStmt->valueInt("rating"));
+    prevHasApproach |= selectAirportStmt->valueInt(QStringLiteral("num_approach")) > 0;
+    prevHasApron |= selectAirportStmt->valueInt(QStringLiteral("num_apron")) > 0;
+    prevHasCom |= selectAirportStmt->valueInt(QStringLiteral("num_com")) > 0;
+    prevHasHelipad |= selectAirportStmt->valueInt(QStringLiteral("num_helipad")) > 0;
+    prevHasTaxi |= selectAirportStmt->valueInt(QStringLiteral("num_taxi_path")) > 0;
+    prevHasRunways |= selectAirportStmt->valueInt(QStringLiteral("num_runways")) > 0;
+    prevHasStart |= selectAirportStmt->valueInt(QStringLiteral("num_starts")) > 0;
+    isAddon |= selectAirportStmt->valueBool(QStringLiteral("is_addon"));
+    previousRating = std::max(previousRating, selectAirportStmt->valueInt(QStringLiteral("rating")));
 
-    sceneryLocalPath = selectAirportStmt->valueStr("scenery_local_path");
-    bglFilename = selectAirportStmt->valueStr("bgl_filename");
+    sceneryLocalPath = selectAirportStmt->valueStr(QStringLiteral("scenery_local_path"));
+    bglFilename = selectAirportStmt->valueStr(QStringLiteral("bgl_filename"));
 
-    prevPos = atools::geo::Pos(selectAirportStmt->valueFloat("lonx"), selectAirportStmt->valueFloat("laty"));
+    prevPos = atools::geo::Pos(selectAirportStmt->valueFloat(QStringLiteral("lonx")),
+                               selectAirportStmt->valueFloat(QStringLiteral("laty")));
 
-    prevAirportId = selectAirportStmt->valueInt("airport_id");
+    prevAirportId = selectAirportStmt->valueInt(QStringLiteral("airport_id"));
 
-    prevName = selectAirportStmt->valueStr("name");
-    prevCity = selectAirportStmt->valueStr("city");
-    prevState = selectAirportStmt->valueStr("state");
-    prevCountry = selectAirportStmt->valueStr("country");
-    prevRegion = selectAirportStmt->valueStr("region");
+    prevName = selectAirportStmt->valueStr(QStringLiteral("name"));
+    prevCity = selectAirportStmt->valueStr(QStringLiteral("city"));
+    prevState = selectAirportStmt->valueStr(QStringLiteral("state"));
+    prevCountry = selectAirportStmt->valueStr(QStringLiteral("country"));
+    prevRegion = selectAirportStmt->valueStr(QStringLiteral("region"));
 
     hasPrevious = true;
 
@@ -682,19 +683,21 @@ void DeleteProcessor::copyAirportValues(const QStringList& copyAirportColumns)
   {
     // Select values from previous/old airport
     SqlQuery query(db), insert(db);
-    query.prepare("select " + copyAirportColumns.join(",") + " from airport where airport_id = :prevApId");
-    query.bindValue(":prevApId", prevAirportId);
+    query.prepare(QStringLiteral("select ") % copyAirportColumns.join(QStringLiteral(",")) %
+                  QStringLiteral(" from airport where airport_id = :prevApId"));
+    query.bindValue(QStringLiteral(":prevApId"), prevAirportId);
     query.exec();
 
     QStringList bindCols(copyAirportColumns);
     for(QString& bindCol : bindCols)
-      bindCol = bindCol + " = :" + bindCol;
+      bindCol = bindCol % QStringLiteral(" = :") % bindCol;
 
     if(query.next())
     {
       // Assign values to this current/new airport
-      insert.prepare("update airport set " + bindCols.join(", ") + " where airport_id = :aptid");
-      insert.bindValue(":aptid", curAirportId);
+      insert.prepare(QStringLiteral("update airport set ") % bindCols.join(QStringLiteral(", ")) %
+                     QStringLiteral(" where airport_id = :aptid"));
+      insert.bindValue(QStringLiteral(":aptid"), curAirportId);
       SqlUtil::copyRowValues(query, insert);
       insert.exec();
       if(insert.numRowsAffected() <= 0)

@@ -29,9 +29,9 @@ void atools::fs::db::AirportFileWriter::writeObject(const atools::fs::bgl::Airpo
   if(getOptions().isVerbose())
     qDebug() << "Writing airport file " << type->getIdent();
 
-  bind(":airport_file_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
-  bind(":ident", type->getIdent());
+  bind(QStringLiteral(":airport_file_id"), getNextId());
+  bind(QStringLiteral(":file_id"), getDataWriter().getBglFileWriter()->getCurrentId());
+  bind(QStringLiteral(":ident"), type->getIdent());
 
   executeStatement();
 }

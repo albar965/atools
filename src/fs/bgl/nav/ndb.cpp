@@ -32,19 +32,19 @@ QString Ndb::ndbTypeToStr(nav::NdbType type)
   switch(type)
   {
     case nav::COMPASS_POINT:
-      return "CP";
+      return QStringLiteral("CP");
 
     case nav::MH:
-      return "MH";
+      return QStringLiteral("MH");
 
     case nav::H:
-      return "H";
+      return QStringLiteral("H");
 
     case nav::HH:
-      return "HH";
+      return QStringLiteral("HH");
   }
   qWarning().nospace().noquote() << "Invalid NDB type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *stream)

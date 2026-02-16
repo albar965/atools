@@ -109,7 +109,7 @@ QString runwayToStr(int runwayNumber, int designator)
   if(runwayNumber < 10)
   {
     // Normal one digit runway number with leading zero
-    retval += "0";
+    retval += QStringLiteral("0");
     retval += QChar(static_cast<char>(runwayNumber) + '0');
   }
   else if(runwayNumber > 36)
@@ -118,28 +118,28 @@ QString runwayToStr(int runwayNumber, int designator)
     switch(runwayNumber)
     {
       case 37:
-        return "N";
+        return QStringLiteral("N");
 
       case 38:
-        return "NE";
+        return QStringLiteral("NE");
 
       case 39:
-        return "E";
+        return QStringLiteral("E");
 
       case 40:
-        return "SE";
+        return QStringLiteral("SE");
 
       case 41:
-        return "S";
+        return QStringLiteral("S");
 
       case 42:
-        return "SW";
+        return QStringLiteral("SW");
 
       case 43:
-        return "W";
+        return QStringLiteral("W");
 
       case 44:
-        return "NW";
+        return QStringLiteral("NW");
 
       default:
         qWarning() << "Runway number out of range in runwayToStr()" << runwayNumber;

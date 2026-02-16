@@ -33,15 +33,15 @@ void ComWriter::writeObject(const Com *type)
     qDebug() << "Writing COM for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  bind(":com_id", getNextId());
-  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
-  bind(":type", bgl::util::enumToStr(bgl::Com::comTypeToStr, type->getType()));
+  bind(QStringLiteral(":com_id"), getNextId());
+  bind(QStringLiteral(":airport_id"), getDataWriter().getAirportWriter()->getCurrentId());
+  bind(QStringLiteral(":type"), bgl::util::enumToStr(bgl::Com::comTypeToStr, type->getType()));
 
   bool msfs = getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS;
 
   // 126250 (MHz * 1000) -> 126250000
-  bind(":frequency", type->getFrequency() * (msfs ? 1000 : 1));
-  bind(":name", type->getName());
+  bind(QStringLiteral(":frequency"), type->getFrequency() * (msfs ? 1000 : 1));
+  bind(QStringLiteral(":name"), type->getName());
 
   executeStatement();
 }

@@ -34,9 +34,9 @@ void SidStarApproachLegWriter::writeObject(const ApproachLeg *type)
              << " at airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  bind(":approach_leg_id", getNextId());
-  bind(":approach_id", getDataWriter().getSidStarWriter()->getCurrentId());
-  bindBool(":is_missed", false);
+  bind(QStringLiteral(":approach_leg_id"), getNextId());
+  bind(QStringLiteral(":approach_id"), getDataWriter().getSidStarWriter()->getCurrentId());
+  bindBool(QStringLiteral(":is_missed"), false);
 
   LegBaseWriter::writeObject(type);
 }

@@ -37,8 +37,8 @@ void TransitionLegWriter::writeObject(const ApproachLeg *type)
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   // Bind only ids here
-  bind(":transition_leg_id", getNextId());
-  bind(":transition_id", getDataWriter().getApproachTransWriter()->getCurrentId());
+  bind(QStringLiteral(":transition_leg_id"), getNextId());
+  bind(QStringLiteral(":transition_id"), getDataWriter().getApproachTransWriter()->getCurrentId());
 
   // Let the base class do the writing
   LegBaseWriter::writeObject(type);

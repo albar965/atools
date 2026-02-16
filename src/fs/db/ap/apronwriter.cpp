@@ -40,25 +40,25 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
     qDebug() << "Writing Apron for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  bind(":apron_id", getNextId());
-  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
+  bind(QStringLiteral(":apron_id"), getNextId());
+  bind(QStringLiteral(":airport_id"), getDataWriter().getAirportWriter()->getCurrentId());
 
   // Use MSFS material library is UUID is set
   if(!type->first->getMaterialUuid().isNull())
-    bind(":surface", surfaceToDbStr(getDataWriter().getSurface(type->first->getMaterialUuid())));
+    bind(QStringLiteral(":surface"), surfaceToDbStr(getDataWriter().getSurface(type->first->getMaterialUuid())));
   else
-    bind(":surface", surfaceToDbStr(type->first->getSurface()));
+    bind(QStringLiteral(":surface"), surfaceToDbStr(type->first->getSurface()));
 
   // New in P3D v4 - apron2 might be missing
-  bindBool(":is_draw_surface", type->second != nullptr ? type->second->isDrawSurface() : true);
-  bindBool(":is_draw_detail", type->second != nullptr ? type->second->isDrawDetail() : true);
+  bindBool(QStringLiteral(":is_draw_surface"), type->second != nullptr ? type->second->isDrawSurface() : true);
+  bindBool(QStringLiteral(":is_draw_detail"), type->second != nullptr ? type->second->isDrawDetail() : true);
 
   atools::geo::LineString positions;
   for(const bgl::BglPosition& pos : type->first->getVertices())
     positions.append(pos.getPos());
 
   atools::fs::common::BinaryGeometry geo(positions);
-  bind(":vertices", geo.writeToByteArray());
+  bind(QStringLiteral(":vertices"), geo.writeToByteArray());
 
   if(getOptions().isIncludedNavDbObject(type::APRON2) && type->second != nullptr)
   {
@@ -68,15 +68,15 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
 
     geo.setGeometry(positions);
 
-    bind(":vertices2", geo.writeToByteArray());
+    bind(QStringLiteral(":vertices2"), geo.writeToByteArray());
 
     // Triangles are space and comma separated
-    bind(":triangles", toBytes(type->second->getTriangleIndex()));
+    bind(QStringLiteral(":triangles"), toBytes(type->second->getTriangleIndex()));
   }
   else
   {
-    bindNullString(":vertices2");
-    bindNullString(":triangles");
+    bindNullString(QStringLiteral(":vertices2"));
+    bindNullString(QStringLiteral(":triangles"));
   }
 
   executeStatement();

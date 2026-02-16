@@ -45,53 +45,53 @@ void VorWriter::writeObject(const Vor *type)
     return;
   }
 
-  bind(":vor_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
-  bind(":ident", type->getIdent());
-  bind(":name", type->getName());
-  bind(":region", type->getRegion());
+  bind(QStringLiteral(":vor_id"), getNextId());
+  bind(QStringLiteral(":file_id"), getDataWriter().getBglFileWriter()->getCurrentId());
+  bind(QStringLiteral(":ident"), type->getIdent());
+  bind(QStringLiteral(":name"), type->getName());
+  bind(QStringLiteral(":region"), type->getRegion());
 
   if(type->isVortac()) // Only MSFS - P3D uses TacanWriter
-    bind(":type", QStringLiteral("VT%1").arg(bgl::IlsVor::ilsVorTypeToStr(type->getType())));
+    bind(QStringLiteral(":type"), QStringLiteral("VT%1").arg(bgl::IlsVor::ilsVorTypeToStr(type->getType())));
   else if(type->isTacan()) // Only MFSF - P3D uses TacanWriter
-    bind(":type", "TC");
+    bind(QStringLiteral(":type"), QStringLiteral("TC"));
   else
-    bind(":type", bgl::IlsVor::ilsVorTypeToStr(type->getType()));
+    bind(QStringLiteral(":type"), bgl::IlsVor::ilsVorTypeToStr(type->getType()));
 
-  bind(":airport_ident", type->getAirportIdent());
-  bindNullInt(":airport_id");
+  bind(QStringLiteral(":airport_ident"), type->getAirportIdent());
+  bindNullInt(QStringLiteral(":airport_id"));
 
-  bind(":frequency", type->getFrequency());
+  bind(QStringLiteral(":frequency"), type->getFrequency());
 
   if(type->isTacan() || type->isVortac()) // Only MFSF 2024
-    bind(":channel", util::tacanChannelForFrequency(type->getFrequency() / 10));
+    bind(QStringLiteral(":channel"), util::tacanChannelForFrequency(type->getFrequency() / 10));
   else
-    bindNullString(":channel");
+    bindNullString(QStringLiteral(":channel"));
 
-  bind(":range", roundToInt(meterToNm(type->getRange())));
+  bind(QStringLiteral(":range"), roundToInt(meterToNm(type->getRange())));
 
   if(type->isDmeOnly())
-    bind(":mag_var", getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
+    bind(QStringLiteral(":mag_var"), getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
   else
-    bind(":mag_var", type->getMagVar());
+    bind(QStringLiteral(":mag_var"), type->getMagVar());
 
-  bind(":dme_only", type->isDmeOnly());
-  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
+  bind(QStringLiteral(":dme_only"), type->isDmeOnly());
+  bind(QStringLiteral(":altitude"), roundToInt(meterToFeet(type->getPosition().getAltitude())));
+  bind(QStringLiteral(":lonx"), type->getPosition().getLonX());
+  bind(QStringLiteral(":laty"), type->getPosition().getLatY());
 
   const Dme *dme = type->getDme();
   if(dme != nullptr)
   {
-    bind(":dme_altitude", roundToInt(meterToFeet(dme->getPosition().getAltitude())));
-    bind(":dme_lonx", dme->getPosition().getLonX());
-    bind(":dme_laty", dme->getPosition().getLatY());
+    bind(QStringLiteral(":dme_altitude"), roundToInt(meterToFeet(dme->getPosition().getAltitude())));
+    bind(QStringLiteral(":dme_lonx"), dme->getPosition().getLonX());
+    bind(QStringLiteral(":dme_laty"), dme->getPosition().getLatY());
   }
   else
   {
-    bindNullFloat(":dme_altitude");
-    bindNullFloat(":dme_lonx");
-    bindNullFloat(":dme_laty");
+    bindNullFloat(QStringLiteral(":dme_altitude"));
+    bindNullFloat(QStringLiteral(":dme_lonx"));
+    bindNullFloat(QStringLiteral(":dme_laty"));
   }
   executeStatement();
 }

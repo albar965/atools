@@ -1154,8 +1154,8 @@ void correctDateLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int dayO
   if(atools::almostEqual(secondsOfDayLocal, secondsOfDayUtc))
   {
     // Simple case - UTC and local are the same
-    localDateTime = QDateTime(localDate, localTime, QTimeZone(0));   // "2026-06-04T12:00:00+00:00"
-    utcDateTime = QDateTime(localDate, localTime, QTimeZone::UTC);   // "2026-06-04T12:00:00Z"
+    localDateTime = QDateTime(localDate, localTime, QTimeZone(0)); // "2026-06-04T12:00:00+00:00"
+    utcDateTime = QDateTime(localDate, localTime, QTimeZone::UTC); // "2026-06-04T12:00:00Z"
   }
   else
   {

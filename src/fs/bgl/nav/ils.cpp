@@ -128,18 +128,20 @@ QString Ils::getType() const
   // SDF Facility no glideslope          F
 
   if(glideslope == nullptr)
-    return "0"; // Localizer
+    return QStringLiteral("0"); // Localizer
   else
   {
     QString upName = name.toUpper();
-    if(upName.contains("CAT-III") || upName.contains("CAT III") || upName.contains("CATIII"))
-      return "3";
-    else if(upName.contains("CAT-II") || upName.contains("CAT II") || upName.contains("CATII"))
-      return "2";
-    else if(upName.contains("CAT-I") || upName.contains("CAT I") || upName.contains("CATI"))
-      return "1";
+    if(upName.contains(QStringLiteral("CAT-III")) || upName.contains(QStringLiteral("CAT III")) ||
+       upName.contains(QStringLiteral("CATIII")))
+      return QStringLiteral("3");
+    else if(upName.contains(QStringLiteral("CAT-II")) || upName.contains(QStringLiteral("CAT II")) ||
+            upName.contains(QStringLiteral("CATII")))
+      return QStringLiteral("2");
+    else if(upName.contains(QStringLiteral("CAT-I")) || upName.contains(QStringLiteral("CAT I")) || upName.contains(QStringLiteral("CATI")))
+      return QStringLiteral("1");
     else
-      return "U"; // Unknown category
+      return QStringLiteral("U"); // Unknown category
   }
 }
 

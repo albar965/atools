@@ -580,7 +580,7 @@ void Airport::updateSummaryFields()
 
   if(!towerPosition.getPos().isNull() && towerPosition.getPos().isValidRange() && !towerPosition.getPos().isPole())
   {
-    reportFarCoordinate(towerPosition.getPos(), "tower");
+    reportFarCoordinate(towerPosition.getPos(), QStringLiteral("tower"));
     points.append(towerPosition.getPos());
   }
 
@@ -591,13 +591,13 @@ void Airport::updateSummaryFields()
       numLightRunway++;
 
     // Extend bounding rectangle for runway dimensions
-    reportFarCoordinate(rw.getPosition().getPos(), "runway");
+    reportFarCoordinate(rw.getPosition().getPos(), QStringLiteral("runway"));
     points.append(rw.getPosition().getPos());
 
-    reportFarCoordinate(rw.getSecondaryPosition(), "runway secondary");
+    reportFarCoordinate(rw.getSecondaryPosition(), QStringLiteral("runway secondary"));
     points.append(rw.getSecondaryPosition());
 
-    reportFarCoordinate(rw.getSecondaryPosition(), "runway primary");
+    reportFarCoordinate(rw.getSecondaryPosition(), QStringLiteral("runway primary"));
     points.append(rw.getPrimaryPosition());
 
     const RunwayEnd& primary = rw.getPrimary();
@@ -647,7 +647,7 @@ void Airport::updateSummaryFields()
 
   for(const Parking& parking : std::as_const(parkings))
   {
-    reportFarCoordinate(parking.getPosD().asPos(), "parking");
+    reportFarCoordinate(parking.getPosD().asPos(), QStringLiteral("parking"));
     points.append(parking.getPosD().asPos());
 
     // Assign fuel from parking if not set in flags
@@ -688,7 +688,7 @@ void Airport::updateSummaryFields()
     // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
     {
-      reportFarCoordinate(p.getPos(), "apron");
+      reportFarCoordinate(p.getPos(), QStringLiteral("apron"));
       points.append(p.getPos());
     }
   }
@@ -698,29 +698,29 @@ void Airport::updateSummaryFields()
     // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
     {
-      reportFarCoordinate(p.getPos(), "apron2");
+      reportFarCoordinate(p.getPos(), QStringLiteral("apron2"));
       points.append(p.getPos());
     }
   }
 
   for(const Start& s : std::as_const(starts))
   {
-    reportFarCoordinate(s.getPosD().asPos(), "start");
+    reportFarCoordinate(s.getPosD().asPos(), QStringLiteral("start"));
     points.append(s.getPosD().asPos());
   }
 
   for(const Helipad& h : std::as_const(helipads))
   {
-    reportFarCoordinate(h.getPosD().asPos(), "helipad");
+    reportFarCoordinate(h.getPosD().asPos(), QStringLiteral("helipad"));
     points.append(h.getPosD().asPos());
   }
 
   for(const TaxiPath& p : std::as_const(taxipaths))
   {
-    reportFarCoordinate(p.getStartPoint().getPosD().asPos(), "taxipath start");
+    reportFarCoordinate(p.getStartPoint().getPosD().asPos(), QStringLiteral("taxipath start"));
     points.append(p.getStartPoint().getPosD().asPos());
 
-    reportFarCoordinate(p.getEndPoint().getPosD().asPos(), "taxipath end");
+    reportFarCoordinate(p.getEndPoint().getPosD().asPos(), QStringLiteral("taxipath end"));
     points.append(p.getEndPoint().getPosD().asPos());
   }
 

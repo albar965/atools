@@ -31,83 +31,83 @@ QString Boundary::boundaryTypeToStr(boundary::BoundaryType type)
   switch(type)
   {
     case atools::fs::bgl::boundary::NONE:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case atools::fs::bgl::boundary::CENTER:
-      return "C";
+      return QStringLiteral("C");
 
     case atools::fs::bgl::boundary::CLASS_A:
-      return "CA";
+      return QStringLiteral("CA");
 
     case atools::fs::bgl::boundary::CLASS_B:
-      return "CB";
+      return QStringLiteral("CB");
 
     case atools::fs::bgl::boundary::CLASS_C:
-      return "CC";
+      return QStringLiteral("CC");
 
     case atools::fs::bgl::boundary::CLASS_D:
-      return "CD";
+      return QStringLiteral("CD");
 
     case atools::fs::bgl::boundary::CLASS_E:
-      return "CE";
+      return QStringLiteral("CE");
 
     case atools::fs::bgl::boundary::CLASS_F:
-      return "CF";
+      return QStringLiteral("CF");
 
     case atools::fs::bgl::boundary::CLASS_G:
-      return "CG";
+      return QStringLiteral("CG");
 
     case atools::fs::bgl::boundary::TOWER:
-      return "T";
+      return QStringLiteral("T");
 
     case atools::fs::bgl::boundary::CLEARANCE:
-      return "CL";
+      return QStringLiteral("CL");
 
     case atools::fs::bgl::boundary::GROUND:
-      return "G";
+      return QStringLiteral("G");
 
     case atools::fs::bgl::boundary::DEPARTURE:
-      return "D";
+      return QStringLiteral("D");
 
     case atools::fs::bgl::boundary::APPROACH:
-      return "A";
+      return QStringLiteral("A");
 
     case atools::fs::bgl::boundary::MOA:
-      return "M";
+      return QStringLiteral("M");
 
     case atools::fs::bgl::boundary::RESTRICTED:
-      return "R";
+      return QStringLiteral("R");
 
     case atools::fs::bgl::boundary::PROHIBITED:
-      return "P";
+      return QStringLiteral("P");
 
     case atools::fs::bgl::boundary::WARNING:
-      return "W";
+      return QStringLiteral("W");
 
     case atools::fs::bgl::boundary::ALERT:
-      return "AL";
+      return QStringLiteral("AL");
 
     case atools::fs::bgl::boundary::DANGER:
-      return "DA";
+      return QStringLiteral("DA");
 
     case atools::fs::bgl::boundary::NATIONAL_PARK:
-      return "NP";
+      return QStringLiteral("NP");
 
     case atools::fs::bgl::boundary::MODEC:
-      return "MD";
+      return QStringLiteral("MD");
 
     case atools::fs::bgl::boundary::RADAR:
-      return "RD";
+      return QStringLiteral("RD");
 
     case atools::fs::bgl::boundary::TRAINING:
-      return "TR";
+      return QStringLiteral("TR");
 
       // return "CN";Caution- DFD
       // return "WW";Wave window - OpenAir format
       // return "GP";Glider prohibited - OpenAir format
   }
   qWarning().nospace().noquote() << "Invalid BOUNDARY " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QString Boundary::altTypeToStr(boundary::AltitudeType type)
@@ -115,19 +115,19 @@ QString Boundary::altTypeToStr(boundary::AltitudeType type)
   switch(type)
   {
     case atools::fs::bgl::boundary::UNKNOWN:
-      return "UNKNOWN";
+      return QStringLiteral("UNKNOWN");
 
     case atools::fs::bgl::boundary::MEAN_SEA_LEVEL:
-      return "MSL";
+      return QStringLiteral("MSL");
 
     case atools::fs::bgl::boundary::ABOVE_GROUND_LEVEL:
-      return "AGL";
+      return QStringLiteral("AGL");
 
     case atools::fs::bgl::boundary::UNLIMITED:
-      return "UL";
+      return QStringLiteral("UL");
   }
   qWarning().nospace().noquote() << "Invalid ALTITUDETYPE " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 Boundary::Boundary()

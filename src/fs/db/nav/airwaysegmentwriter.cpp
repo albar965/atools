@@ -31,52 +31,53 @@ using atools::fs::bgl::AirwaySegment;
 
 void AirwaySegmentWriter::writeObject(const AirwaySegment *type)
 {
-  bind(":airway_point_id", getNextId());
-  bind(":name", type->getAirwayName());
-  bind(":type", AirwaySegment::airwayTypeToStr(type->getAirwayType()));
+  bind(QStringLiteral(":airway_point_id"), getNextId());
+  bind(QStringLiteral(":name"), type->getAirwayName());
+  bind(QStringLiteral(":type"), AirwaySegment::airwayTypeToStr(type->getAirwayType()));
 
-  bind(":mid_ident", type->getMidWaypoint().getIdent());
-  bind(":mid_region", type->getMidWaypoint().getRegion());
-  bind(":mid_type", bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr, type->getMidWaypoint().getType()));
+  bind(QStringLiteral(":mid_ident"), type->getMidWaypoint().getIdent());
+  bind(QStringLiteral(":mid_region"), type->getMidWaypoint().getRegion());
+  bind(QStringLiteral(":mid_type"), bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr, type->getMidWaypoint().getType()));
 
   if(type->hasNextWaypoint())
   {
     using namespace atools::geo;
     using namespace atools;
 
-    bind(":next_type", bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr, type->getNextWaypoint().getType()));
-    bind(":next_ident", type->getNextWaypoint().getIdent());
-    bind(":next_region", type->getNextWaypoint().getRegion());
-    bind(":next_airport_ident", type->getNextWaypoint().getAirportIdent());
-    bind(":next_minimum_altitude", roundToPrecision(meterToFeet(type->getNextWaypoint().getMinimumAltitude()), 1));
+    bind(QStringLiteral(":next_type"),
+         bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr, type->getNextWaypoint().getType()));
+    bind(QStringLiteral(":next_ident"), type->getNextWaypoint().getIdent());
+    bind(QStringLiteral(":next_region"), type->getNextWaypoint().getRegion());
+    bind(QStringLiteral(":next_airport_ident"), type->getNextWaypoint().getAirportIdent());
+    bind(QStringLiteral(":next_minimum_altitude"), roundToPrecision(meterToFeet(type->getNextWaypoint().getMinimumAltitude()), 1));
   }
   else
   {
-    bindNullString(":next_type");
-    bindNullString(":next_ident");
-    bindNullString(":next_region");
-    bindNullString(":next_airport_ident");
-    bindNullFloat(":next_minimum_altitude");
+    bindNullString(QStringLiteral(":next_type"));
+    bindNullString(QStringLiteral(":next_ident"));
+    bindNullString(QStringLiteral(":next_region"));
+    bindNullString(QStringLiteral(":next_airport_ident"));
+    bindNullFloat(QStringLiteral(":next_minimum_altitude"));
   }
 
   if(type->hasPreviousWaypoint())
   {
     using namespace atools::geo;
 
-    bind(":previous_type",
+    bind(QStringLiteral(":previous_type"),
          bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr, type->getPreviousWaypoint().getType()));
-    bind(":previous_ident", type->getPreviousWaypoint().getIdent());
-    bind(":previous_region", type->getPreviousWaypoint().getRegion());
-    bind(":previous_airport_ident", type->getPreviousWaypoint().getAirportIdent());
-    bind(":previous_minimum_altitude", roundToPrecision(meterToFeet(type->getPreviousWaypoint().getMinimumAltitude()), 1));
+    bind(QStringLiteral(":previous_ident"), type->getPreviousWaypoint().getIdent());
+    bind(QStringLiteral(":previous_region"), type->getPreviousWaypoint().getRegion());
+    bind(QStringLiteral(":previous_airport_ident"), type->getPreviousWaypoint().getAirportIdent());
+    bind(QStringLiteral(":previous_minimum_altitude"), roundToPrecision(meterToFeet(type->getPreviousWaypoint().getMinimumAltitude()), 1));
   }
   else
   {
-    bindNullString(":previous_type");
-    bindNullString(":previous_ident");
-    bindNullString(":previous_region");
-    bindNullString(":previous_airport_ident");
-    bindNullFloat(":previous_minimum_altitude");
+    bindNullString(QStringLiteral(":previous_type"));
+    bindNullString(QStringLiteral(":previous_ident"));
+    bindNullString(QStringLiteral(":previous_region"));
+    bindNullString(QStringLiteral(":previous_airport_ident"));
+    bindNullFloat(QStringLiteral(":previous_minimum_altitude"));
   }
 
   executeStatement();

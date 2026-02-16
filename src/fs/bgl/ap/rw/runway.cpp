@@ -78,19 +78,19 @@ QString Runway::lightToStr(rw::Light type)
   switch(type)
   {
     case rw::NO_LIGHT:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case rw::LOW:
-      return "L";
+      return QStringLiteral("L");
 
     case rw::MEDIUM:
-      return "M";
+      return QStringLiteral("M");
 
     case rw::HIGH:
-      return "H";
+      return QStringLiteral("H");
   }
   qWarning().nospace().noquote() << "Invalid runway lights type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 Runway::Runway(const NavDatabaseOptions *options, BinaryStream *stream, const QString& airportIdent, StructureType structureType)

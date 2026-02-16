@@ -40,43 +40,43 @@ QString approachTypeToStr(ap::ApproachType type)
   switch(type)
   {
     case ap::GPS:
-      return "GPS";
+      return QStringLiteral("GPS");
 
     case ap::VOR:
-      return "VOR";
+      return QStringLiteral("VOR");
 
     case ap::NDB:
-      return "NDB";
+      return QStringLiteral("NDB");
 
     case ap::ILS:
-      return "ILS";
+      return QStringLiteral("ILS");
 
     case ap::LOCALIZER:
-      return "LOC";
+      return QStringLiteral("LOC");
 
     case ap::SDF:
-      return "SDF";
+      return QStringLiteral("SDF");
 
     case ap::LDA:
-      return "LDA";
+      return QStringLiteral("LDA");
 
     case ap::VORDME:
-      return "VORDME";
+      return QStringLiteral("VORDME");
 
     case ap::NDBDME:
-      return "NDBDME";
+      return QStringLiteral("NDBDME");
 
     case ap::RNAV:
-      return "RNAV";
+      return QStringLiteral("RNAV");
 
     case ap::LOCALIZER_BACKCOURSE:
-      return "LOCB";
+      return QStringLiteral("LOCB");
 
     case ap::TACAN:
-      return "TCN";
+      return QStringLiteral("TCN");
   }
   qWarning().nospace().noquote() << "Invalid approach type " << type;
-  return "UNKN";
+  return QStringLiteral("UNKN");
 }
 
 QString approachFixTypeToStr(ap::fix::ApproachFixType type)
@@ -84,22 +84,22 @@ QString approachFixTypeToStr(ap::fix::ApproachFixType type)
   switch(type)
   {
     case ap::fix::AIRPORT: // New in MSFS
-      return "A";
+      return QStringLiteral("A");
 
     case ap::fix::LOCALIZER:
-      return "L";
+      return QStringLiteral("L");
 
     case ap::fix::NONE:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case ap::fix::VOR:
-      return "V";
+      return QStringLiteral("V");
 
     case ap::fix::NDB:
-      return "N";
+      return QStringLiteral("N");
 
     case ap::fix::TERMINAL_NDB:
-      return "TN";
+      return QStringLiteral("TN");
 
     /* From P3D v5 upwards - these are wrong types for this field taken from the XSD.
      * They will be converted to WAYPOINT. */
@@ -108,16 +108,16 @@ QString approachFixTypeToStr(ap::fix::ApproachFixType type)
     case ap::fix::COURSE_TO_DIST:
     case ap::fix::HEADING_TO_ALT:
     case ap::fix::WAYPOINT:
-      return "W";
+      return QStringLiteral("W");
 
     case ap::fix::TERMINAL_WAYPOINT:
-      return "TW";
+      return QStringLiteral("TW");
 
     case ap::fix::RUNWAY:
-      return "R";
+      return QStringLiteral("R");
   }
   qWarning().nospace().noquote() << "Invalid approach fix type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QString arincNameAppr(ApproachType type, const QString& runwayName, char suffix, bool gpsOverlay)
@@ -138,78 +138,78 @@ QString arincNameAppr(ApproachType type, const QString& runwayName, char suffix,
     case atools::fs::bgl::ap::GPS:
       // Global Positioning System (GPS) Approach P or Arrival / STAR or Departure / SID
       if((suffix != 'A' && suffix != 'D') || !gpsOverlay)
-        arincAppWithRunway = "P";
+        arincAppWithRunway = QStringLiteral("P");
       break;
 
     case atools::fs::bgl::ap::VOR:
       // VOR Approach V
-      arincAppWithRunway = "V";
-      arincAppCircleToLand = "VOR";
+      arincAppWithRunway = QStringLiteral("V");
+      arincAppCircleToLand = QStringLiteral("VOR");
       break;
 
     case atools::fs::bgl::ap::NDB:
       // Non-Directional Beacon (NDB) Approach N
-      arincAppWithRunway = "N";
-      arincAppCircleToLand = "NDB";
+      arincAppWithRunway = QStringLiteral("N");
+      arincAppCircleToLand = QStringLiteral("NDB");
       break;
 
     case atools::fs::bgl::ap::ILS:
       // Instrument Landing System (ILS) Approach I
-      arincAppWithRunway = "I";
-      arincAppCircleToLand = "ILS"; // Should never happen - always has a runway
+      arincAppWithRunway = QStringLiteral("I");
+      arincAppCircleToLand = QStringLiteral("ILS"); // Should never happen - always has a runway
       break;
 
     case atools::fs::bgl::ap::LOCALIZER:
       // Localizer Only (LOC) Approach L
-      arincAppWithRunway = "L";
-      arincAppCircleToLand = "LDM";
+      arincAppWithRunway = QStringLiteral("L");
+      arincAppCircleToLand = QStringLiteral("LDM");
       break;
 
     case atools::fs::bgl::ap::SDF:
       // Simplified Directional Facility (SDF) Approach U
-      arincAppWithRunway = "U";
-      arincAppCircleToLand = "SDF"; // Should never happen - always has a runway
+      arincAppWithRunway = QStringLiteral("U");
+      arincAppCircleToLand = QStringLiteral("SDF"); // Should never happen - always has a runway
       break;
 
     case atools::fs::bgl::ap::LDA:
       // Localizer Directional Aid (LDA) Approach X
-      arincAppWithRunway = "X";
-      arincAppCircleToLand = "LDA";
+      arincAppWithRunway = QStringLiteral("X");
+      arincAppCircleToLand = QStringLiteral("LDA");
       break;
 
     case atools::fs::bgl::ap::VORDME:
       // VOR Approach using VORDME/VORTAC S - not in BGL
       // VORDME Approach D
-      arincAppWithRunway = "D";
-      arincAppCircleToLand = "VDM";
+      arincAppWithRunway = QStringLiteral("D");
+      arincAppCircleToLand = QStringLiteral("VDM");
       break;
 
     case atools::fs::bgl::ap::NDBDME:
       // Non-Directional Beacon + DME (NDB+DME) Approach Q
-      arincAppWithRunway = "Q";
-      arincAppCircleToLand = "NDM";
+      arincAppWithRunway = QStringLiteral("Q");
+      arincAppCircleToLand = QStringLiteral("NDM");
       break;
 
     case atools::fs::bgl::ap::RNAV:
       // Area Navigation (RNAV) Approach (Note 1) R
-      arincAppWithRunway = "R";
-      arincAppCircleToLand = "RNV";
+      arincAppWithRunway = QStringLiteral("R");
+      arincAppCircleToLand = QStringLiteral("RNV");
       break;
 
     case atools::fs::bgl::ap::LOCALIZER_BACKCOURSE:
       // Localizer/Backcourse Approach B
-      arincAppWithRunway = "B";
-      arincAppCircleToLand = "LBC";
+      arincAppWithRunway = QStringLiteral("B");
+      arincAppCircleToLand = QStringLiteral("LBC");
       break;
 
     case atools::fs::bgl::ap::TACAN:
       // TACAN Approach T
-      arincAppWithRunway = "T";
-      arincAppCircleToLand = "TCN"; // Should never happen - always has a runway
+      arincAppWithRunway = QStringLiteral("T");
+      arincAppCircleToLand = QStringLiteral("TCN"); // Should never happen - always has a runway
       break;
   }
 
-  QString rw = runwayName != "00" && !runwayName.isEmpty() ? runwayName : QString();
+  QString rw = runwayName != QStringLiteral("00") && !runwayName.isEmpty() ? runwayName : QString();
   QString sfx = suffix != '0' && suffix != 0 ? QString(QChar(suffix)) : QString();
   QString arinc;
 
@@ -217,16 +217,16 @@ QString arincNameAppr(ApproachType type, const QString& runwayName, char suffix,
   {
     // SID or STAR ======================
     if(!rw.isEmpty())
-      arinc = "RW" + rw;
+      arinc = QStringLiteral("RW") + rw;
     else
       // No runway
-      arinc = "ALL";
+      arinc = QStringLiteral("ALL");
   }
   else
   {
     // Approach procedure ======================
     if(!rw.isEmpty())
-      // Add runway and suffix - "D31L"
+      // Add runway and suffix - QStringLiteral("D31L")
       arinc = arincAppWithRunway + rw;
     else
       // Circle-to-land - "VOR", "RNV", etc.
@@ -239,7 +239,7 @@ QString arincNameAppr(ApproachType type, const QString& runwayName, char suffix,
         arinc += sfx;
       else
         // No runway designator. Suffix after runway number separated by dash - "D32-A"
-        arinc += "-" + sfx;
+        arinc += QStringLiteral("-") + sfx;
     }
     else if(rw.isEmpty())
       // Circle-to-land and no suffix - prepend "C" - "CVOR" or "CVDM"

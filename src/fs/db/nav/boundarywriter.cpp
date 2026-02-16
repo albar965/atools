@@ -39,49 +39,50 @@ void BoundaryWriter::writeObject(const Boundary *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing BOUNDARY " << type->getName();
 
-  bind(":boundary_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
-  bind(":type", bgl::util::enumToStr(bgl::Boundary::boundaryTypeToStr, type->getType()));
+  bind(QStringLiteral(":boundary_id"), getNextId());
+  bind(QStringLiteral(":file_id"), getDataWriter().getBglFileWriter()->getCurrentId());
+  bind(QStringLiteral(":type"), bgl::util::enumToStr(bgl::Boundary::boundaryTypeToStr, type->getType()));
 
-  if(type->getName().isEmpty() || type->getName() == "NULL")
-    bindNullString(":name");
+  if(type->getName().isEmpty() || type->getName() == QStringLiteral("NULL"))
+    bindNullString(QStringLiteral(":name"));
   else
-    bind(":name", type->getName());
+    bind(QStringLiteral(":name"), type->getName());
 
   // Fields not used by P3D/FSX
-  bindNullString(":multiple_code");
-  bindNullString(":restrictive_type");
-  bindNullString(":restrictive_designation");
-  bind(":time_code", "U");
+  bindNullString(QStringLiteral(":multiple_code"));
+  bindNullString(QStringLiteral(":restrictive_type"));
+  bindNullString(QStringLiteral(":restrictive_designation"));
+  bind(QStringLiteral(":time_code"), QStringLiteral("U"));
 
   if(type->hasCom())
   {
-    bind(":com_type", bgl::util::enumToStr(bgl::Com::comTypeToStr, type->getComType()));
-    bind(":com_frequency", type->getComFrequency());
-    bind(":com_name", type->getComName());
+    bind(QStringLiteral(":com_type"), bgl::util::enumToStr(bgl::Com::comTypeToStr, type->getComType()));
+    bind(QStringLiteral(":com_frequency"), type->getComFrequency());
+    bind(QStringLiteral(":com_name"), type->getComName());
   }
   else
   {
-    bindNullString(":com_type");
-    bindNullInt(":com_frequency");
-    bindNullString(":com_name");
+    bindNullString(QStringLiteral(":com_type"));
+    bindNullInt(QStringLiteral(":com_frequency"));
+    bindNullString(QStringLiteral(":com_name"));
   }
 
-  bind(":min_altitude_type", bgl::util::enumToStr(bgl::Boundary::altTypeToStr, type->getMinAltType()));
-  bind(":max_altitude_type", bgl::util::enumToStr(bgl::Boundary::altTypeToStr, type->getMaxAltType()));
+  bind(QStringLiteral(":min_altitude_type"), bgl::util::enumToStr(bgl::Boundary::altTypeToStr, type->getMinAltType()));
+  bind(QStringLiteral(":max_altitude_type"), bgl::util::enumToStr(bgl::Boundary::altTypeToStr, type->getMaxAltType()));
 
   using namespace atools::geo;
   using namespace atools;
 
-  bind(":max_altitude", roundToInt(meterToFeet(type->getMaxPosition().getAltitude())));
-  bind(":max_lonx", type->getMaxPosition().getLonX());
-  bind(":max_laty", type->getMaxPosition().getLatY());
+  bind(QStringLiteral(":max_altitude"), roundToInt(meterToFeet(type->getMaxPosition().getAltitude())));
+  bind(QStringLiteral(":max_lonx"), type->getMaxPosition().getLonX());
+  bind(QStringLiteral(":max_laty"), type->getMaxPosition().getLatY());
 
-  bind(":min_altitude", roundToInt(meterToFeet(type->getMinPosition().getAltitude())));
-  bind(":min_lonx", type->getMinPosition().getLonX());
-  bind(":min_laty", type->getMinPosition().getLatY());
+  bind(QStringLiteral(":min_altitude"), roundToInt(meterToFeet(type->getMinPosition().getAltitude())));
+  bind(QStringLiteral(":min_lonx"), type->getMinPosition().getLonX());
+  bind(QStringLiteral(":min_laty"), type->getMinPosition().getLatY());
 
-  bind(":geometry", atools::fs::common::BinaryGeometry(atools::fs::util::correctBoundary(fetchAirspaceLines(type))).writeToByteArray());
+  bind(QStringLiteral(":geometry"),
+       atools::fs::common::BinaryGeometry(atools::fs::util::correctBoundary(fetchAirspaceLines(type))).writeToByteArray());
   executeStatement();
 }
 

@@ -36,15 +36,15 @@ void MarkerWriter::writeObject(const Marker *type)
   using namespace atools::geo;
   using namespace atools;
 
-  bind(":marker_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
-  bind(":ident", type->getIdent());
-  bind(":region", type->getRegion());
-  bind(":type", bgl::Marker::markerTypeToStr(type->getType()));
-  bind(":heading", type->getHeading());
-  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
+  bind(QStringLiteral(":marker_id"), getNextId());
+  bind(QStringLiteral(":file_id"), getDataWriter().getBglFileWriter()->getCurrentId());
+  bind(QStringLiteral(":ident"), type->getIdent());
+  bind(QStringLiteral(":region"), type->getRegion());
+  bind(QStringLiteral(":type"), bgl::Marker::markerTypeToStr(type->getType()));
+  bind(QStringLiteral(":heading"), type->getHeading());
+  bind(QStringLiteral(":altitude"), roundToInt(meterToFeet(type->getPosition().getAltitude())));
+  bind(QStringLiteral(":lonx"), type->getPosition().getLonX());
+  bind(QStringLiteral(":laty"), type->getPosition().getLatY());
 
   executeStatement();
 }

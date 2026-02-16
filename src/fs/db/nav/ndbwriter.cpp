@@ -43,22 +43,22 @@ void NdbWriter::writeObject(const Ndb *type)
   using namespace atools::geo;
   using namespace atools;
 
-  bind(":ndb_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
-  bind(":ident", type->getIdent());
-  bind(":name", type->getName());
-  bind(":region", type->getRegion());
-  bind(":type", bgl::Ndb::ndbTypeToStr(type->getType()));
+  bind(QStringLiteral(":ndb_id"), getNextId());
+  bind(QStringLiteral(":file_id"), getDataWriter().getBglFileWriter()->getCurrentId());
+  bind(QStringLiteral(":ident"), type->getIdent());
+  bind(QStringLiteral(":name"), type->getName());
+  bind(QStringLiteral(":region"), type->getRegion());
+  bind(QStringLiteral(":type"), bgl::Ndb::ndbTypeToStr(type->getType()));
 
-  bind(":airport_ident", type->getAirportIdent());
-  bindNullInt(":airport_id");
+  bind(QStringLiteral(":airport_ident"), type->getAirportIdent());
+  bindNullInt(QStringLiteral(":airport_id"));
 
-  bind(":frequency", type->getFrequency());
-  bind(":range", roundToInt(meterToNm(type->getRange())));
-  bind(":mag_var", type->getMagVar());
-  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
+  bind(QStringLiteral(":frequency"), type->getFrequency());
+  bind(QStringLiteral(":range"), roundToInt(meterToNm(type->getRange())));
+  bind(QStringLiteral(":mag_var"), type->getMagVar());
+  bind(QStringLiteral(":altitude"), roundToInt(meterToFeet(type->getPosition().getAltitude())));
+  bind(QStringLiteral(":lonx"), type->getPosition().getLonX());
+  bind(QStringLiteral(":laty"), type->getPosition().getLatY());
 
   executeStatement();
 }

@@ -50,7 +50,8 @@ void WaypointWriter::writeObject(const Waypoint *type)
   // One letter codes like "P" and "K" are valid and used for unnamed, charted intersections
   // The invalid code "KZ" can be removed
   if((getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS_2024 || getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS) &&
-     type->getRegion() == "KZ" && /*type->getNumJetAirway() == 0 && type->getNumVictorAirway() == 0 && */ type->getAirportIdent().isEmpty())
+     type->getRegion() == QStringLiteral("KZ") &&
+     /*type->getNumJetAirway() == 0 && type->getNumVictorAirway() == 0 && */ type->getAirportIdent().isEmpty())
   {
     qWarning() << Q_FUNC_INFO << "Found invalid waypoint" << type->getIdent() << "with invalid region" << type->getRegion() << "in file"
                << getDataWriter().getBglFileWriter()->getCurrentFilepath();
@@ -65,26 +66,26 @@ void WaypointWriter::writeObject(const Waypoint *type)
     return;
   }
 
-  bind(":waypoint_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
-  bindNullInt(":nav_id");
-  bind(":ident", type->getIdent());
-  bind(":region", type->getRegion());
-  bind(":type", waypointType);
+  bind(QStringLiteral(":waypoint_id"), getNextId());
+  bind(QStringLiteral(":file_id"), getDataWriter().getBglFileWriter()->getCurrentId());
+  bindNullInt(QStringLiteral(":nav_id"));
+  bind(QStringLiteral(":ident"), type->getIdent());
+  bind(QStringLiteral(":region"), type->getRegion());
+  bind(QStringLiteral(":type"), waypointType);
 
-  bindNullInt(":airport_id");
-  bind(":airport_ident", type->getAirportIdent());
+  bindNullInt(QStringLiteral(":airport_id"));
+  bind(QStringLiteral(":airport_ident"), type->getAirportIdent());
 
   if((type->getType() == bgl::nav::NDB || type->getType() == bgl::nav::VOR))
-    bind(":artificial", 1);
+    bind(QStringLiteral(":artificial"), 1);
   else
-    bindNullInt(":artificial");
+    bindNullInt(QStringLiteral(":artificial"));
 
-  bind(":num_victor_airway", type->getNumVictorAirway());
-  bind(":num_jet_airway", type->getNumJetAirway());
-  bind(":mag_var", getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
+  bind(QStringLiteral(":num_victor_airway"), type->getNumVictorAirway());
+  bind(QStringLiteral(":num_jet_airway"), type->getNumJetAirway());
+  bind(QStringLiteral(":mag_var"), getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
+  bind(QStringLiteral(":lonx"), type->getPosition().getLonX());
+  bind(QStringLiteral(":laty"), type->getPosition().getLatY());
 
   executeStatement();
 

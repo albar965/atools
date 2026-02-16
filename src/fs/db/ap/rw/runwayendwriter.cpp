@@ -17,12 +17,12 @@
 
 #include "fs/db/ap/rw/runwayendwriter.h"
 
-#include "fs/db//datawriter.h"
+#include "atools.h"
 #include "fs/bgl/util.h"
-#include "fs/navdatabaseoptions.h"
+#include "fs/db//datawriter.h"
 #include "fs/db/ap/airportwriter.h"
+#include "fs/navdatabaseoptions.h"
 #include "geo/calculations.h"
-#include  "atools.h"
 
 namespace atools {
 namespace fs {
@@ -37,58 +37,58 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
     qDebug() << "Writing Runway end " << type->getName() << " for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  bind(":runway_end_id", getNextId());
-  bind(":name", type->getName());
-  bind(":offset_threshold", roundToInt(meterToFeet(type->getOffsetThreshold())));
-  bind(":blast_pad", roundToInt(meterToFeet(type->getBlastPad())));
-  bind(":overrun", roundToInt(meterToFeet(type->getOverrun())));
-  bind(":has_closed_markings", type->hasClosedMarkings());
-  bind(":has_stol_markings", type->hasStolMarkings());
-  bind(":is_takeoff", type->isTakeoff());
-  bind(":is_landing", type->isLanding());
-  bind(":is_pattern", bgl::RunwayEnd::patternToStr(type->getPattern()));
-  bind(":app_light_system_type", bgl::util::enumToStr(bgl::RunwayApproachLights::appLightSystemToStr,
-                                                      type->getApproachLights().getSystem()));
-  bind(":has_end_lights", type->getApproachLights().hasEndlights());
-  bind(":has_reils", type->getApproachLights().hasReils());
-  bind(":has_touchdown_lights", type->getApproachLights().hasTouchdown());
+  bind(QStringLiteral(":runway_end_id"), getNextId());
+  bind(QStringLiteral(":name"), type->getName());
+  bind(QStringLiteral(":offset_threshold"), roundToInt(meterToFeet(type->getOffsetThreshold())));
+  bind(QStringLiteral(":blast_pad"), roundToInt(meterToFeet(type->getBlastPad())));
+  bind(QStringLiteral(":overrun"), roundToInt(meterToFeet(type->getOverrun())));
+  bind(QStringLiteral(":has_closed_markings"), type->hasClosedMarkings());
+  bind(QStringLiteral(":has_stol_markings"), type->hasStolMarkings());
+  bind(QStringLiteral(":is_takeoff"), type->isTakeoff());
+  bind(QStringLiteral(":is_landing"), type->isLanding());
+  bind(QStringLiteral(":is_pattern"), bgl::RunwayEnd::patternToStr(type->getPattern()));
+  bind(QStringLiteral(":app_light_system_type"), bgl::util::enumToStr(bgl::RunwayApproachLights::appLightSystemToStr,
+                                                                      type->getApproachLights().getSystem()));
+  bind(QStringLiteral(":has_end_lights"), type->getApproachLights().hasEndlights());
+  bind(QStringLiteral(":has_reils"), type->getApproachLights().hasReils());
+  bind(QStringLiteral(":has_touchdown_lights"), type->getApproachLights().hasTouchdown());
 
   if(type->getIlsIdent().isEmpty())
-    bindNullString(":ils_ident");
+    bindNullString(QStringLiteral(":ils_ident"));
   else
-    bind(":ils_ident", type->getIlsIdent());
+    bind(QStringLiteral(":ils_ident"), type->getIlsIdent());
 
-  bind(":end_type", type->isPrimaryEnd() ? QLatin1String("P") : QLatin1String("S"));
+  bind(QStringLiteral(":end_type"), type->isPrimaryEnd() ? QStringLiteral("P") : QStringLiteral("S"));
 
-  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
-  bind(":heading", type->getHeading());
+  bind(QStringLiteral(":altitude"), roundToInt(meterToFeet(type->getPosition().getAltitude())));
+  bind(QStringLiteral(":lonx"), type->getPosition().getLonX());
+  bind(QStringLiteral(":laty"), type->getPosition().getLatY());
+  bind(QStringLiteral(":heading"), type->getHeading());
 
   // Write left VASI if available - otherwise bind values to null
   QString leftVt = bgl::util::enumToStr(bgl::RunwayVasi::vasiTypeToStr, type->getLeftVasi().getType());
   if(!leftVt.isEmpty())
   {
-    bind(":left_vasi_type", leftVt);
-    bind(":left_vasi_pitch", type->getLeftVasi().getPitch());
+    bind(QStringLiteral(":left_vasi_type"), leftVt);
+    bind(QStringLiteral(":left_vasi_pitch"), type->getLeftVasi().getPitch());
   }
   else
   {
-    bindNullString(":left_vasi_type");
-    bindNullFloat(":left_vasi_pitch");
+    bindNullString(QStringLiteral(":left_vasi_type"));
+    bindNullFloat(QStringLiteral(":left_vasi_pitch"));
   }
 
   // Write right VASI if available - otherwise bind values to null
   QString rightVt = bgl::util::enumToStr(bgl::RunwayVasi::vasiTypeToStr, type->getRightVasi().getType());
   if(!rightVt.isEmpty())
   {
-    bind(":right_vasi_type", rightVt);
-    bind(":right_vasi_pitch", type->getRightVasi().getPitch());
+    bind(QStringLiteral(":right_vasi_type"), rightVt);
+    bind(QStringLiteral(":right_vasi_pitch"), type->getRightVasi().getPitch());
   }
   else
   {
-    bindNullString(":right_vasi_type");
-    bindNullFloat(":right_vasi_pitch");
+    bindNullString(QStringLiteral(":right_vasi_type"));
+    bindNullFloat(QStringLiteral(":right_vasi_pitch"));
   }
 
   executeStatement();

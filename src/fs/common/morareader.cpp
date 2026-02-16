@@ -86,9 +86,9 @@ bool MoraReader::readFromTable()
     // lonx_spacing integer not null,
     // laty_spacing integer not null,
     // geometry blob not null
-    lonxColums = moraReadQuery.valueInt("lonx_columns");
-    latyRows = moraReadQuery.valueInt("laty_rows");
-    QByteArray bytes = moraReadQuery.value("geometry").toByteArray();
+    lonxColums = moraReadQuery.valueInt(QStringLiteral("lonx_columns"));
+    latyRows = moraReadQuery.valueInt(QStringLiteral("laty_rows"));
+    QByteArray bytes = moraReadQuery.value(QStringLiteral("geometry")).toByteArray();
 
     // Read data from blob
     QDataStream in(&bytes, QIODevice::ReadOnly);
@@ -131,8 +131,6 @@ bool MoraReader::readFromTable()
 
 void MoraReader::fillDbFromQuery(sql::SqlQuery *moraQuery, int fileId)
 {
-  const static QString MORA_FIELD_NAME("mora%1");
-
   // create table tbl_grid_mora (
   // starting_latitude  integer (3),
   // starting_longitude integer (4),
@@ -149,11 +147,11 @@ void MoraReader::fillDbFromQuery(sql::SqlQuery *moraQuery, int fileId)
   while(moraQuery->next())
   {
     QStringList line;
-    line.append(moraQuery->valueStr("starting_latitude")); // 89 to -90
-    line.append(moraQuery->valueStr("starting_longitude")); // -180 to -150
+    line.append(moraQuery->valueStr(QStringLiteral("starting_latitude"))); // 89 to -90
+    line.append(moraQuery->valueStr(QStringLiteral("starting_longitude"))); // -180 to -150
 
     for(int i = 0; i < 30; i++)
-      line.append(moraQuery->valueStr(MORA_FIELD_NAME.arg(i + 1, 2, 10, QChar('0'))));
+      line.append(moraQuery->valueStr(QStringLiteral("mora%1").arg(i + 1, 2, 10, QChar('0'))));
     lines.append(line);
   }
 
@@ -180,16 +178,16 @@ void MoraReader::fillDbFromFile(const QList<QStringList>& lines, int fileId)
   for(const QStringList& line :lines)
   {
     if(line.size() != 32)
-      throw atools::Exception(QStringLiteral("Line too short in MORA grid \"%1\"").arg(line.join(" ")));
+      throw atools::Exception(QStringLiteral("Line too short in MORA grid \"%1\"").arg(line.join(QStringLiteral(" "))));
 
     bool ok;
     int startLatY = line.at(0).toInt(&ok); // 89 to -90
     if(!ok)
-      throw atools::Exception(QStringLiteral("Invalid latitude value in MORA grid \"%1\"").arg(line.join(" ")));
+      throw atools::Exception(QStringLiteral("Invalid latitude value in MORA grid \"%1\"").arg(line.join(QStringLiteral(" "))));
 
     int startLonX = line.at(1).toInt(&ok); // -180 to -150
     if(!ok)
-      throw atools::Exception(QStringLiteral("Invalid longitude value in MORA grid \"%1\"").arg(line.join(" ")));
+      throw atools::Exception(QStringLiteral("Invalid longitude value in MORA grid \"%1\"").arg(line.join(QStringLiteral(" "))));
 
     // Change to top left corner
     int pos = (-startLatY + 89) * 360 + startLonX + 180; // 0 - 64800-1
@@ -209,7 +207,7 @@ void MoraReader::fillDbFromFile(const QList<QStringList>& lines, int fileId)
       QString valueStr = line.at(i + 2);
       quint16 value;
 
-      if(valueStr == "UNK" /* DSF */ || valueStr == "000" /* X-Plane */)
+      if(valueStr == QStringLiteral("UNK") /* DSF */ || valueStr == QStringLiteral("000") /* X-Plane */)
         // Not surveyed
         value = MoraReader::UNKNOWN;
       else
@@ -244,17 +242,17 @@ void MoraReader::debugPrint(const QList<quint16>& grid)
       quint16 val = grid.at(pos);
 
       if(val == MoraReader::ERROR)
-        line += "E";
+        line += QStringLiteral("E");
       else if(val == MoraReader::OCEAN)
-        line += "O";
+        line += QStringLiteral("O");
       else if(val == MoraReader::UNKNOWN)
-        line += "U";
+        line += QStringLiteral("U");
       else if(val > 10)
-        line += "X";
+        line += QStringLiteral("X");
       else
-        line += " ";
+        line += QStringLiteral(" ");
     }
-    text.append(line).append("\n");
+    text.append(line).append(QStringLiteral("\n"));
   }
   qDebug() << Q_FUNC_INFO << "=================================================================================";
   qDebug().noquote().nospace() << text;
@@ -306,12 +304,12 @@ void MoraReader::writeToTable(const QList<quint16>& grid, int columns, int rows,
   // lonx_columns integer not null,
   // laty_rows integer not null,
   // geometry blob not null
-  if(SqlUtil(db).hasTableAndColumn("mora_grid", "file_id"))
-    moraWriteQuery.bindValue(":file_id", fileId);
-  moraWriteQuery.bindValue(":version", DATA_VERSION);
-  moraWriteQuery.bindValue(":lonx_columns", lonxColums);
-  moraWriteQuery.bindValue(":laty_rows", latyRows);
-  moraWriteQuery.bindValue(":geometry", bytes);
+  if(SqlUtil(db).hasTableAndColumn(QStringLiteral("mora_grid"), QStringLiteral("file_id")))
+    moraWriteQuery.bindValue(QStringLiteral(":file_id"), fileId);
+  moraWriteQuery.bindValue(QStringLiteral(":version"), DATA_VERSION);
+  moraWriteQuery.bindValue(QStringLiteral(":lonx_columns"), lonxColums);
+  moraWriteQuery.bindValue(QStringLiteral(":laty_rows"), latyRows);
+  moraWriteQuery.bindValue(QStringLiteral(":geometry"), bytes);
   moraWriteQuery.exec();
 }
 

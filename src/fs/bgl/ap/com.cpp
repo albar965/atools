@@ -33,70 +33,70 @@ QString Com::comTypeToStr(com::ComType type)
   switch(type)
   {
     case com::NONE:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case com::ATIS:
     case com::ATIS_P3D_V5:
-      return "ATIS";
+      return QStringLiteral("ATIS");
 
     case com::MULTICOM:
     case com::MULTICOM_P3D_V5:
-      return "MC";
+      return QStringLiteral("MC");
 
     case com::UNICOM:
     case com::UNICOM_P3D_V5:
-      return "UC";
+      return QStringLiteral("UC");
 
     case com::CTAF:
     case com::CTAF_P3D_V5:
-      return "CTAF";
+      return QStringLiteral("CTAF");
 
     case com::GROUND:
     case com::GROUND_P3D_V5:
-      return "G";
+      return QStringLiteral("G");
 
     case com::TOWER:
     case com::TOWER_P3D_V5:
-      return "T";
+      return QStringLiteral("T");
 
     case com::CLEARANCE:
     case com::CLEARANCE_P3D_V5:
-      return "C";
+      return QStringLiteral("C");
 
     case com::APPROACH:
     case com::APPROACH_P3D_V5:
-      return "A";
+      return QStringLiteral("A");
 
     case com::DEPARTURE:
     case com::DEPARTURE_P3D_V5:
-      return "D";
+      return QStringLiteral("D");
 
     case com::CENTER:
     case com::CENTER_P3D_V5:
-      return "CTR";
+      return QStringLiteral("CTR");
 
     case com::FSS:
     case com::FSS_P3D_V5:
-      return "FSS";
+      return QStringLiteral("FSS");
 
     case com::AWOS:
     case com::AWOS_P3D_V5:
-      return "AWOS";
+      return QStringLiteral("AWOS");
 
     case com::ASOS:
     case com::ASOS_P3D_V5:
-      return "ASOS";
+      return QStringLiteral("ASOS");
 
     case com::CLEARANCE_PRE_TAXI:
     case com::CLEARANCE_PRE_TAXI_P3D_V5:
-      return "CPT";
+      return QStringLiteral("CPT");
 
     case com::REMOTE_CLEARANCE_DELIVERY:
     case com::REMOTE_CLEARANCE_DELIVERY_P3D_V5:
-      return "RCD";
+      return QStringLiteral("RCD");
   }
   qWarning().nospace().noquote() << "Invalid COM type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 Com::Com()

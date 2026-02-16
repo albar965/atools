@@ -29,58 +29,58 @@ QString Parking::parkingTypeToStr(ap::ParkingType type)
   switch(type)
   {
     case ap::UNKNOWN:
-      return "UNKNOWN";
+      return QStringLiteral("UNKNOWN");
 
     case ap::RAMP_GA:
-      return "RGA";
+      return QStringLiteral("RGA");
 
     case ap::RAMP_GA_SMALL:
-      return "RGAS";
+      return QStringLiteral("RGAS");
 
     case ap::RAMP_GA_MEDIUM:
-      return "RGAM";
+      return QStringLiteral("RGAM");
 
     case ap::RAMP_GA_LARGE:
-      return "RGAL";
+      return QStringLiteral("RGAL");
 
     case ap::RAMP_CARGO:
-      return "RC";
+      return QStringLiteral("RC");
 
     case ap::RAMP_MIL_CARGO:
-      return "RMC";
+      return QStringLiteral("RMC");
 
     case ap::RAMP_MIL_COMBAT:
-      return "RMCB";
+      return QStringLiteral("RMCB");
 
     case ap::GATE_SMALL:
-      return "GS";
+      return QStringLiteral("GS");
 
     case ap::GATE_MEDIUM:
-      return "GM";
+      return QStringLiteral("GM");
 
     case ap::GATE_HEAVY:
-      return "GH";
+      return QStringLiteral("GH");
 
     case ap::DOCK_GA:
-      return "DGA";
+      return QStringLiteral("DGA");
 
     case ap::FUEL:
-      return "FUEL";
+      return QStringLiteral("FUEL");
 
     case ap::VEHICLES:
-      return "V";
+      return QStringLiteral("V");
 
     case ap::RAMP_GA_EXTRA:
-      return "RE";
+      return QStringLiteral("RE");
 
     case ap::GATE_EXTRA:
-      return "GE";
+      return QStringLiteral("GE");
 
     case ap::MSFS_2024_UNKNOWN:
-      return "UNKN";
+      return QStringLiteral("UNKN");
   }
   qWarning().nospace().noquote() << "Invalid parking type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QString Parking::parkingNameToStr(ap::ParkingName type)
@@ -88,121 +88,121 @@ QString Parking::parkingNameToStr(ap::ParkingName type)
   switch(type)
   {
     case ap::NO_PARKING:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case ap::PARKING:
-      return "P";
+      return QStringLiteral("P");
 
     case ap::N_PARKING:
-      return "NP";
+      return QStringLiteral("NP");
 
     case ap::NE_PARKING:
-      return "NEP";
+      return QStringLiteral("NEP");
 
     case ap::E_PARKING:
-      return "EP";
+      return QStringLiteral("EP");
 
     case ap::SE_PARKING:
-      return "SEP";
+      return QStringLiteral("SEP");
 
     case ap::S_PARKING:
-      return "SP";
+      return QStringLiteral("SP");
 
     case ap::SW_PARKING:
-      return "SWP";
+      return QStringLiteral("SWP");
 
     case ap::W_PARKING:
-      return "WP";
+      return QStringLiteral("WP");
 
     case ap::NW_PARKING:
-      return "NWP";
+      return QStringLiteral("NWP");
 
     case ap::GATE:
-      return "G";
+      return QStringLiteral("G");
 
     case ap::DOCK:
-      return "D";
+      return QStringLiteral("D");
 
     case ap::GATE_A:
-      return "GA";
+      return QStringLiteral("GA");
 
     case ap::GATE_B:
-      return "GB";
+      return QStringLiteral("GB");
 
     case ap::GATE_C:
-      return "GC";
+      return QStringLiteral("GC");
 
     case ap::GATE_D:
-      return "GD";
+      return QStringLiteral("GD");
 
     case ap::GATE_E:
-      return "GE";
+      return QStringLiteral("GE");
 
     case ap::GATE_F:
-      return "GF";
+      return QStringLiteral("GF");
 
     case ap::GATE_G:
-      return "GG";
+      return QStringLiteral("GG");
 
     case ap::GATE_H:
-      return "GH";
+      return QStringLiteral("GH");
 
     case ap::GATE_I:
-      return "GI";
+      return QStringLiteral("GI");
 
     case ap::GATE_J:
-      return "GJ";
+      return QStringLiteral("GJ");
 
     case ap::GATE_K:
-      return "GK";
+      return QStringLiteral("GK");
 
     case ap::GATE_L:
-      return "GL";
+      return QStringLiteral("GL");
 
     case ap::GATE_M:
-      return "GM";
+      return QStringLiteral("GM");
 
     case ap::GATE_N:
-      return "GN";
+      return QStringLiteral("GN");
 
     case ap::GATE_O:
-      return "GO";
+      return QStringLiteral("GO");
 
     case ap::GATE_P:
-      return "GP";
+      return QStringLiteral("GP");
 
     case ap::GATE_Q:
-      return "GQ";
+      return QStringLiteral("GQ");
 
     case ap::GATE_R:
-      return "GR";
+      return QStringLiteral("GR");
 
     case ap::GATE_S:
-      return "GS";
+      return QStringLiteral("GS");
 
     case ap::GATE_T:
-      return "GT";
+      return QStringLiteral("GT");
 
     case ap::GATE_U:
-      return "GU";
+      return QStringLiteral("GU");
 
     case ap::GATE_V:
-      return "GV";
+      return QStringLiteral("GV");
 
     case ap::GATE_W:
-      return "GW";
+      return QStringLiteral("GW");
 
     case ap::GATE_X:
-      return "GX";
+      return QStringLiteral("GX");
 
     case ap::GATE_Y:
-      return "GY";
+      return QStringLiteral("GY");
 
     case ap::GATE_Z:
-      return "GZ";
+      return QStringLiteral("GZ");
   }
   qWarning().nospace().noquote() << "Invalid parking name " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QString Parking::parkingSuffixToStr(ap::ParkingNameSuffix type)
@@ -210,89 +210,89 @@ QString Parking::parkingSuffixToStr(ap::ParkingNameSuffix type)
   switch(type)
   {
     case ap::SUFFIX_NONE:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case ap::SUFFIX_A:
-      return "A";
+      return QStringLiteral("A");
 
     case ap::SUFFIX_B:
-      return "B";
+      return QStringLiteral("B");
 
     case ap::SUFFIX_C:
-      return "C";
+      return QStringLiteral("C");
 
     case ap::SUFFIX_D:
-      return "D";
+      return QStringLiteral("D");
 
     case ap::SUFFIX_E:
-      return "E";
+      return QStringLiteral("E");
 
     case ap::SUFFIX_F:
-      return "F";
+      return QStringLiteral("F");
 
     case ap::SUFFIX_G:
-      return "G";
+      return QStringLiteral("G");
 
     case ap::SUFFIX_H:
-      return "H";
+      return QStringLiteral("H");
 
     case ap::SUFFIX_I:
-      return "I";
+      return QStringLiteral("I");
 
     case ap::SUFFIX_J:
-      return "J";
+      return QStringLiteral("J");
 
     case ap::SUFFIX_K:
-      return "K";
+      return QStringLiteral("K");
 
     case ap::SUFFIX_L:
-      return "L";
+      return QStringLiteral("L");
 
     case ap::SUFFIX_M:
-      return "M";
+      return QStringLiteral("M");
 
     case ap::SUFFIX_N:
-      return "N";
+      return QStringLiteral("N");
 
     case ap::SUFFIX_O:
-      return "O";
+      return QStringLiteral("O");
 
     case ap::SUFFIX_P:
-      return "P";
+      return QStringLiteral("P");
 
     case ap::SUFFIX_Q:
-      return "Q";
+      return QStringLiteral("Q");
 
     case ap::SUFFIX_R:
-      return "R";
+      return QStringLiteral("R");
 
     case ap::SUFFIX_S:
-      return "S";
+      return QStringLiteral("S");
 
     case ap::SUFFIX_T:
-      return "T";
+      return QStringLiteral("T");
 
     case ap::SUFFIX_U:
-      return "U";
+      return QStringLiteral("U");
 
     case ap::SUFFIX_V:
-      return "V";
+      return QStringLiteral("V");
 
     case ap::SUFFIX_W:
-      return "W";
+      return QStringLiteral("W");
 
     case ap::SUFFIX_X:
-      return "X";
+      return QStringLiteral("X");
 
     case ap::SUFFIX_Y:
-      return "Y";
+      return QStringLiteral("Y");
 
     case ap::SUFFIX_Z:
-      return "Z";
+      return QStringLiteral("Z");
 
   }
   qWarning().nospace().noquote() << "Invalid suffix name " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QString Parking::pushBackToStr(ap::PushBack type)
@@ -300,19 +300,19 @@ QString Parking::pushBackToStr(ap::PushBack type)
   switch(type)
   {
     case ap::NONE:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case ap::LEFT:
-      return "L";
+      return QStringLiteral("L");
 
     case ap::RIGHT:
-      return "R";
+      return QStringLiteral("R");
 
     case ap::BOTH:
-      return "B";
+      return QStringLiteral("B");
   }
   qWarning().nospace().noquote() << "Invalid parking name " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 Parking::Parking()

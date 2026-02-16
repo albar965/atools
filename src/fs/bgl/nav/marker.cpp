@@ -30,19 +30,19 @@ QString Marker::markerTypeToStr(nav::MarkerType type)
   switch(type)
   {
     case nav::INNER:
-      return "INNER";
+      return QStringLiteral("INNER");
 
     case nav::MIDDLE:
-      return "MIDDLE";
+      return QStringLiteral("MIDDLE");
 
     case nav::OUTER:
-      return "OUTER";
+      return QStringLiteral("OUTER");
 
     case nav::BACKCOURSE:
-      return "BACKCOURSE";
+      return QStringLiteral("BACKCOURSE");
   }
   qWarning().nospace().noquote() << "Invalid marker type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 bool Marker::isValid() const

@@ -105,7 +105,6 @@ atools::fs::ResultFlags NavDatabase::compileDatabase()
   sceneryCfgCodec = (options.getSimulatorType() == FsPaths::P3D_V4 || options.getSimulatorType() == FsPaths::P3D_V5 ||
                      options.getSimulatorType() == FsPaths::P3D_V6) ? "UTF-8" : QString();
 
-
   atools::fs::ResultFlags result = createInternal(sceneryCfgCodec);
   if(aborted)
   {

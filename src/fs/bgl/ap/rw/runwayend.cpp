@@ -27,13 +27,13 @@ QString RunwayEnd::patternToStr(rw::Pattern pattern)
   switch(pattern)
   {
     case rw::LEFT:
-      return "L";
+      return QStringLiteral("L");
 
     case rw::RIGHT:
-      return "R";
+      return QStringLiteral("R");
   }
   qWarning().nospace().noquote() << "Invalid runway pattern type " << pattern;
-  return "UNKNOWN";
+  return QStringLiteral("UNKNOWN");
 }
 
 QDebug operator<<(QDebug out, const RunwayEnd& record)

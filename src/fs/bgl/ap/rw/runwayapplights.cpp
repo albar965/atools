@@ -29,52 +29,52 @@ QString RunwayApproachLights::appLightSystemToStr(rw::ApproachLightSystem type)
   switch(type)
   {
     case rw::NO_ALS:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case rw::ODALS:
-      return "ODALS";
+      return QStringLiteral("ODALS");
 
     case rw::MALSF:
-      return "MALSF";
+      return QStringLiteral("MALSF");
 
     case rw::MALSR:
-      return "MALSR";
+      return QStringLiteral("MALSR");
 
     case rw::SSALF:
-      return "SSALF";
+      return QStringLiteral("SSALF");
 
     case rw::SSALR:
-      return "SSALR";
+      return QStringLiteral("SSALR");
 
     case rw::ALSF1:
-      return "ALSF1";
+      return QStringLiteral("ALSF1");
 
     case rw::ALSF2:
-      return "ALSF2";
+      return QStringLiteral("ALSF2");
 
     case rw::RAIL:
-      return "RAIL";
+      return QStringLiteral("RAIL");
 
     case rw::CALVERT:
-      return "CALVERT";
+      return QStringLiteral("CALVERT");
 
     case rw::CALVERT2:
-      return "CALVERT2";
+      return QStringLiteral("CALVERT2");
 
     case rw::MALS:
-      return "MALS";
+      return QStringLiteral("MALS");
 
     case rw::SALS:
-      return "SALS";
+      return QStringLiteral("SALS");
 
     case rw::SSALS:
-      return "SSALS";
+      return QStringLiteral("SSALS");
 
     case rw::SALSF:
-      return "SALSF";
+      return QStringLiteral("SALSF");
   }
   qWarning().nospace().noquote() << "Invalid runway ALS type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 enum AppLightFlags

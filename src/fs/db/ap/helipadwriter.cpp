@@ -46,25 +46,25 @@ void HelipadWriter::writeObject(const Helipad *type)
     qDebug() << "Writing Helipad for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  bind(":helipad_id", getNextId());
-  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
+  bind(QStringLiteral(":helipad_id"), getNextId());
+  bind(QStringLiteral(":airport_id"), getDataWriter().getAirportWriter()->getCurrentId());
 
   // Starts are written after helipads so it is safe to use the current start id + index
   if(type->getStartIndex() > 0)
-    bind(":start_id", getDataWriter().getStartWriter()->getCurrentId() + type->getStartIndex());
+    bind(QStringLiteral(":start_id"), getDataWriter().getStartWriter()->getCurrentId() + type->getStartIndex());
   else
-    bindNullInt(":start_id");
+    bindNullInt(QStringLiteral(":start_id"));
 
-  bind(":surface", surfaceToDbStr(type->getSurface()));
-  bind(":type", bgl::util::enumToStr(Helipad::helipadTypeToStr, type->getType()));
-  bind(":length", roundToInt(meterToFeet(type->getLength())));
-  bind(":width", roundToInt(meterToFeet(type->getWidth())));
-  bind(":heading", type->getHeading());
-  bindBool(":is_transparent", type->isTransparent());
-  bindBool(":is_closed", type->isClosed());
-  bind(":altitude", roundToInt(meterToFeet(type->getPosD().getAltitude())));
-  bind(":lonx", type->getPosD().getLonX());
-  bind(":laty", type->getPosD().getLatY());
+  bind(QStringLiteral(":surface"), surfaceToDbStr(type->getSurface()));
+  bind(QStringLiteral(":type"), bgl::util::enumToStr(Helipad::helipadTypeToStr, type->getType()));
+  bind(QStringLiteral(":length"), roundToInt(meterToFeet(type->getLength())));
+  bind(QStringLiteral(":width"), roundToInt(meterToFeet(type->getWidth())));
+  bind(QStringLiteral(":heading"), type->getHeading());
+  bindBool(QStringLiteral(":is_transparent"), type->isTransparent());
+  bindBool(QStringLiteral(":is_closed"), type->isClosed());
+  bind(QStringLiteral(":altitude"), roundToInt(meterToFeet(type->getPosD().getAltitude())));
+  bind(QStringLiteral(":lonx"), type->getPosD().getLonX());
+  bind(QStringLiteral(":laty"), type->getPosD().getLatY());
 
   executeStatement();
 }

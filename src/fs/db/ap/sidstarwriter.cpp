@@ -37,7 +37,7 @@ void SidStarWriter::writeObject(const SidStar *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing "
-             << QString((type->getSuffix() == 'A') ? "STAR" : "SID")
+             << QString((type->getSuffix() == 'A') ? QStringLiteral("STAR") : QStringLiteral("SID"))
              << " procedure for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
@@ -47,17 +47,18 @@ void SidStarWriter::writeObject(const SidStar *type)
   // The logic for this writer is mostly taken from ApproachWriter.
 
   // First, bind the common column values.
-  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
-  // For SID and STAR, the approach type is always "GPS".
-  bind(":type", bgl::util::enumToStr(bgl::ap::approachTypeToStr, bgl::ap::GPS));
-  bind(":suffix", QChar(type->getSuffix()));
+  bind(QStringLiteral(":airport_id"), getDataWriter().getAirportWriter()->getCurrentId());
+  // For SID and STAR, the approach type is always QStringLiteral("GPS").
+  bind(QStringLiteral(":type"), bgl::util::enumToStr(bgl::ap::approachTypeToStr, bgl::ap::GPS));
+  bind(QStringLiteral(":suffix"), QChar(type->getSuffix()));
   // SID and STAR always has GPS overlay set.
-  bindBool(":has_gps_overlay", true);
-  // The "fix" is the SID/STAR procedure name itself.
-  bind(":fix_ident", type->getIdent());
+  bindBool(QStringLiteral(":has_gps_overlay"), true);
+  // The QStringLiteral("fix") is the SID/STAR procedure name itself.
+  bind(QStringLiteral(":fix_ident"), type->getIdent());
 
   // Save the name of this SID/STAR for logging.
-  currentName = QString((type->getSuffix() == 'A') ? "STAR" : "SID") + " " + type->getIdent();
+  currentName = QString((type->getSuffix() ==
+                         'A') ? QStringLiteral("STAR") : QStringLiteral("SID")) + QStringLiteral(" ") + type->getIdent();
 
   // Keep a reference to the record for subwriters (due to complexities...)
   currentSidStar = type;
@@ -67,17 +68,17 @@ void SidStarWriter::writeObject(const SidStar *type)
   if(!type->getCommonRouteLegs().isEmpty())
   {
     const ApproachLeg leg = type->getCommonRouteLegs().constFirst();
-    bind(":fix_type", bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, leg.getFixType()));
-    bind(":fix_region", leg.getFixIdent());
-    bind(":fix_airport_ident", leg.getFixAirportIdent());
+    bind(QStringLiteral(":fix_type"), bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, leg.getFixType()));
+    bind(QStringLiteral(":fix_region"), leg.getFixIdent());
+    bind(QStringLiteral(":fix_airport_ident"), leg.getFixAirportIdent());
   }
   // The remaining columns are NULL.
-  bindNullInt(":altitude");
-  bindNullFloat(":heading");
-  bindNullInt(":missed_altitude");
+  bindNullInt(QStringLiteral(":altitude"));
+  bindNullFloat(QStringLiteral(":heading"));
+  bindNullInt(QStringLiteral(":missed_altitude"));
 
-  bindNullInt(":runway_end_id");
-  bind(":airport_ident", getDataWriter().getAirportWriter()->getCurrentAirportIdent());
+  bindNullInt(QStringLiteral(":runway_end_id"));
+  bind(QStringLiteral(":airport_ident"), getDataWriter().getAirportWriter()->getCurrentAirportIdent());
 
   // If the procedure has any runway transition records, we must generate one approach
   // for each of them.
@@ -88,9 +89,9 @@ void SidStarWriter::writeObject(const SidStar *type)
     {
       runwayIter.next();
 
-      bind(":runway_name", runwayIter.key());
-      bind(":arinc_name", bgl::ap::arincNameAppr(bgl::ap::GPS, runwayIter.key(),
-                                                 type->getSuffix(), true /* gpsOverlay */));
+      bind(QStringLiteral(":runway_name"), runwayIter.key());
+      bind(QStringLiteral(":arinc_name"), bgl::ap::arincNameAppr(bgl::ap::GPS, runwayIter.key(),
+                                                                 type->getSuffix(), true /* gpsOverlay */));
 
       if('A' == type->getSuffix())
         writeArrival(type, &runwayIter.value());
@@ -100,8 +101,8 @@ void SidStarWriter::writeObject(const SidStar *type)
   }
   else
   {
-    bindNullString(":runway_name");
-    bind(":arinc_name", "ALL");
+    bindNullString(QStringLiteral(":runway_name"));
+    bind(QStringLiteral(":arinc_name"), QStringLiteral("ALL"));
 
     if('A' == type->getSuffix())
       writeArrival(type, nullptr);
@@ -116,7 +117,7 @@ void SidStarWriter::writeObject(const SidStar *type)
 void SidStarWriter::writeDeparture(const SidStar *type, const QList<ApproachLeg> *runwayTransLegs)
 {
   // Complete the approach first.
-  bind(":approach_id", getNextId());
+  bind(QStringLiteral(":approach_id"), getNextId());
   executeStatement();
 
   QList<ApproachLeg> commonRouteLegs(type->getCommonRouteLegs());
@@ -139,7 +140,7 @@ void SidStarWriter::writeDeparture(const SidStar *type, const QList<ApproachLeg>
 void SidStarWriter::writeArrival(const atools::fs::bgl::SidStar *type, const QList<ApproachLeg> *runwayTransLegs)
 {
   // Complete the approach first.
-  bind(":approach_id", getNextId());
+  bind(QStringLiteral(":approach_id"), getNextId());
   executeStatement();
 
   // Combine any common route legs with the runway transition legs first. These will

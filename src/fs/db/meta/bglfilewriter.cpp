@@ -40,13 +40,13 @@ void BglFileWriter::writeObject(const BglFile *type)
 
   QFileInfo fi(type->getFilepath());
 
-  bind(":bgl_file_id", getNextId());
-  bind(":scenery_area_id", getDataWriter().getSceneryAreaWriter()->getCurrentId());
-  bind(":bgl_create_time", static_cast<int>(type->getHeader().getCreationTimestamp()));
-  bind(":file_modification_time", static_cast<int>(fi.lastModified().toSecsSinceEpoch()));
-  bind(":filepath", atools::nativeCleanPath(currentFilepath));
-  bind(":filename", atools::nativeCleanPath(currentFilename));
-  bind(":size", type->getFilesize());
+  bind(QStringLiteral(":bgl_file_id"), getNextId());
+  bind(QStringLiteral(":scenery_area_id"), getDataWriter().getSceneryAreaWriter()->getCurrentId());
+  bind(QStringLiteral(":bgl_create_time"), static_cast<int>(type->getHeader().getCreationTimestamp()));
+  bind(QStringLiteral(":file_modification_time"), static_cast<int>(fi.lastModified().toSecsSinceEpoch()));
+  bind(QStringLiteral(":filepath"), atools::nativeCleanPath(currentFilepath));
+  bind(QStringLiteral(":filename"), atools::nativeCleanPath(currentFilename));
+  bind(QStringLiteral(":size"), type->getFilesize());
 
   executeStatement();
 }

@@ -54,104 +54,104 @@ bool isSoft(atools::fs::bgl::Surface surface)
 
 QString surfaceToDbStr(const QString& surface)
 {
-  if(surface == "CONCRETE")
-    return "C";
-  else if(surface == "GRASS" || surface == "ERASE_GRASS")
-    return "G";
-  else if(surface == "WATER")
-    return "W";
-  else if(surface == "ASPHALT")
-    return "A";
-  else if(surface == "CEMENT")
-    return "CE";
-  else if(surface == "CLAY")
-    return "CL";
-  else if(surface == "SNOW")
-    return "SN";
-  else if(surface == "ICE")
-    return "I";
-  else if(surface == "DIRT")
-    return "D";
-  else if(surface == "CORAL")
-    return "CR";
-  else if(surface == "GRAVEL")
-    return "GR";
-  else if(surface == "OIL_TREATED" || surface == "PAINT")
-    return "OT";
-  else if(surface == "STEEL_MATS")
-    return "SM";
-  else if(surface == "BITUMINOUS")
-    return "B";
-  else if(surface == "BRICK")
-    return "BR";
-  else if(surface == "MACADAM")
-    return "M";
-  else if(surface == "PLANKS")
-    return "PL";
-  else if(surface == "SAND")
-    return "S";
-  else if(surface == "SHALE")
-    return "SH";
-  else if(surface == "TARMAC")
-    return "T";
-  else if(surface == "TRANSPARENT")
-    return "TR";
-  else if(surface == "UNDEFINED")
-    return "UNKNOWN";
+  if(surface == QStringLiteral("CONCRETE"))
+    return QStringLiteral("C");
+  else if(surface == QStringLiteral("GRASS") || surface == QStringLiteral("ERASE_GRASS"))
+    return QStringLiteral("G");
+  else if(surface == QStringLiteral("WATER"))
+    return QStringLiteral("W");
+  else if(surface == QStringLiteral("ASPHALT"))
+    return QStringLiteral("A");
+  else if(surface == QStringLiteral("CEMENT"))
+    return QStringLiteral("CE");
+  else if(surface == QStringLiteral("CLAY"))
+    return QStringLiteral("CL");
+  else if(surface == QStringLiteral("SNOW"))
+    return QStringLiteral("SN");
+  else if(surface == QStringLiteral("ICE"))
+    return QStringLiteral("I");
+  else if(surface == QStringLiteral("DIRT"))
+    return QStringLiteral("D");
+  else if(surface == QStringLiteral("CORAL"))
+    return QStringLiteral("CR");
+  else if(surface == QStringLiteral("GRAVEL"))
+    return QStringLiteral("GR");
+  else if(surface == QStringLiteral("OIL_TREATED") || surface == QStringLiteral("PAINT"))
+    return QStringLiteral("OT");
+  else if(surface == QStringLiteral("STEEL_MATS"))
+    return QStringLiteral("SM");
+  else if(surface == QStringLiteral("BITUMINOUS"))
+    return QStringLiteral("B");
+  else if(surface == QStringLiteral("BRICK"))
+    return QStringLiteral("BR");
+  else if(surface == QStringLiteral("MACADAM"))
+    return QStringLiteral("M");
+  else if(surface == QStringLiteral("PLANKS"))
+    return QStringLiteral("PL");
+  else if(surface == QStringLiteral("SAND"))
+    return QStringLiteral("S");
+  else if(surface == QStringLiteral("SHALE"))
+    return QStringLiteral("SH");
+  else if(surface == QStringLiteral("TARMAC"))
+    return QStringLiteral("T");
+  else if(surface == QStringLiteral("TRANSPARENT"))
+    return QStringLiteral("TR");
+  else if(surface == QStringLiteral("UNDEFINED"))
+    return QStringLiteral("UNKNOWN");
 
   // else if(surface == "UNKNOWN")
   // return "UNKNOWN";
 
-  return "UNKNOWN";
+  return QStringLiteral("UNKNOWN");
 }
 
 atools::fs::bgl::Surface  surfaceToType(const QString& surface)
 {
-  if(surface == "CONCRETE")
+  if(surface == QStringLiteral("CONCRETE"))
     return CONCRETE;
-  else if(surface == "GRASS" || surface == "ERASE_GRASS")
+  else if(surface == QStringLiteral("GRASS") || surface == QStringLiteral("ERASE_GRASS"))
     return GRASS;
-  else if(surface == "WATER")
+  else if(surface == QStringLiteral("WATER"))
     return WATER;
-  else if(surface == "ASPHALT")
+  else if(surface == QStringLiteral("ASPHALT"))
     return ASPHALT;
-  else if(surface == "CEMENT")
+  else if(surface == QStringLiteral("CEMENT"))
     return CEMENT;
-  else if(surface == "CLAY")
+  else if(surface == QStringLiteral("CLAY"))
     return CLAY;
-  else if(surface == "SNOW")
+  else if(surface == QStringLiteral("SNOW"))
     return SNOW;
-  else if(surface == "ICE")
+  else if(surface == QStringLiteral("ICE"))
     return ICE;
-  else if(surface == "DIRT")
+  else if(surface == QStringLiteral("DIRT"))
     return DIRT;
-  else if(surface == "CORAL")
+  else if(surface == QStringLiteral("CORAL"))
     return CORAL;
-  else if(surface == "GRAVEL")
+  else if(surface == QStringLiteral("GRAVEL"))
     return GRAVEL;
-  else if(surface == "OIL_TREATED" || surface == "PAINT")
+  else if(surface == QStringLiteral("OIL_TREATED") || surface == QStringLiteral("PAINT"))
     return OIL_TREATED;
-  else if(surface == "STEEL_MATS")
+  else if(surface == QStringLiteral("STEEL_MATS"))
     return STEEL_MATS;
-  else if(surface == "BITUMINOUS")
+  else if(surface == QStringLiteral("BITUMINOUS"))
     return BITUMINOUS;
-  else if(surface == "BRICK")
+  else if(surface == QStringLiteral("BRICK"))
     return BRICK;
-  else if(surface == "MACADAM")
+  else if(surface == QStringLiteral("MACADAM"))
     return MACADAM;
-  else if(surface == "PLANKS")
+  else if(surface == QStringLiteral("PLANKS"))
     return PLANKS;
-  else if(surface == "SAND")
+  else if(surface == QStringLiteral("SAND"))
     return SAND;
-  else if(surface == "SHALE")
+  else if(surface == QStringLiteral("SHALE"))
     return SHALE;
-  else if(surface == "TARMAC")
+  else if(surface == QStringLiteral("TARMAC"))
     return TARMAC;
-  else if(surface == "TRANSPARENT")
+  else if(surface == QStringLiteral("TRANSPARENT"))
     return UNKNOWN;
-  else if(surface == "UNDEFINED")
+  else if(surface == QStringLiteral("UNDEFINED"))
     return UNKNOWN;
-  else if(surface == "UNKNOWN")
+  else if(surface == QStringLiteral("UNKNOWN"))
     return UNKNOWN;
 
   return UNKNOWN;
@@ -162,73 +162,73 @@ QString surfaceToDbStr(Surface surface)
   switch(surface)
   {
     case CONCRETE:
-      return "C";
+      return QStringLiteral("C");
 
     case GRASS:
-      return "G";
+      return QStringLiteral("G");
 
     case WATER:
-      return "W";
+      return QStringLiteral("W");
 
     case ASPHALT:
-      return "A";
+      return QStringLiteral("A");
 
     case CEMENT:
-      return "CE";
+      return QStringLiteral("CE");
 
     case CLAY:
-      return "CL";
+      return QStringLiteral("CL");
 
     case SNOW:
-      return "SN";
+      return QStringLiteral("SN");
 
     case ICE:
-      return "I";
+      return QStringLiteral("I");
 
     case DIRT:
-      return "D";
+      return QStringLiteral("D");
 
     case CORAL:
-      return "CR";
+      return QStringLiteral("CR");
 
     case GRAVEL:
-      return "GR";
+      return QStringLiteral("GR");
 
     case OIL_TREATED:
-      return "OT";
+      return QStringLiteral("OT");
 
     case STEEL_MATS:
-      return "SM";
+      return QStringLiteral("SM");
 
     case BITUMINOUS:
-      return "B";
+      return QStringLiteral("B");
 
     case BRICK:
-      return "BR";
+      return QStringLiteral("BR");
 
     case MACADAM:
-      return "M";
+      return QStringLiteral("M");
 
     case PLANKS:
-      return "PL";
+      return QStringLiteral("PL");
 
     case SAND:
-      return "S";
+      return QStringLiteral("S");
 
     case SHALE:
-      return "SH";
+      return QStringLiteral("SH");
 
     case TARMAC:
-      return "T";
+      return QStringLiteral("T");
 
     // X-Plane
     // case TRANSPARENT:
     // return "TR";
 
     case UNKNOWN:
-      return "UNKNOWN";
+      return QStringLiteral("UNKNOWN");
   }
-  return "UNKNOWN";
+  return QStringLiteral("UNKNOWN");
 }
 
 } // namespace surface

@@ -29,22 +29,22 @@ QString Helipad::helipadTypeToStr(helipad::HelipadType type)
   switch(type)
   {
     case atools::fs::bgl::helipad::NONE:
-      return "NONE";
+      return QStringLiteral("NONE");
 
     case atools::fs::bgl::helipad::H:
-      return "H";
+      return QStringLiteral("H");
 
     case atools::fs::bgl::helipad::SQUARE:
-      return "SQUARE";
+      return QStringLiteral("SQUARE");
 
     case atools::fs::bgl::helipad::CIRCLE:
-      return "CIRCLE";
+      return QStringLiteral("CIRCLE");
 
     case atools::fs::bgl::helipad::MEDICAL:
-      return "MEDICAL";
+      return QStringLiteral("MEDICAL");
   }
   qWarning().nospace().noquote() << "Invalid helipad type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 Helipad::Helipad()

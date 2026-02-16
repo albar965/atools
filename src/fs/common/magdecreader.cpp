@@ -161,16 +161,16 @@ void MagDecReader::readFromBytes(const QByteArray& bytes)
 void MagDecReader::writeToTable(sql::SqlDatabase& db) const
 {
   if(!isValid())
-    throw Exception("MagDecReader is invalid");
+    throw Exception(tr("MagDecReader is invalid"));
 
   db.exec("delete from magdecl");
 
   atools::sql::SqlQuery query(db);
   query.prepare("insert into magdecl (magdecl_id, reference_time, mag_var) values(:id, :time, :magvar)");
 
-  query.bindValue(":id", 1);
-  query.bindValue(":time", QDateTime(getReferenceDate(), QTime(0, 0)).toSecsSinceEpoch());
-  query.bindValue(":magvar", writeToBytes());
+  query.bindValue(QStringLiteral(":id"), 1);
+  query.bindValue(QStringLiteral(":time"), QDateTime(getReferenceDate(), QTime(0, 0)).toSecsSinceEpoch());
+  query.bindValue(QStringLiteral(":magvar"), writeToBytes());
   query.exec();
 }
 
@@ -183,11 +183,11 @@ bool MagDecReader::readFromTable(sql::SqlDatabase& db)
 
     if(query.next())
     {
-      QByteArray bytes = query.value("mag_var").toByteArray();
+      QByteArray bytes = query.value(QStringLiteral("mag_var")).toByteArray();
       readFromBytes(bytes);
 
       QDateTime timestamp;
-      timestamp.setSecsSinceEpoch(query.value("reference_time").toUInt());
+      timestamp.setSecsSinceEpoch(query.value(QStringLiteral("reference_time")).toUInt());
       referenceDate = timestamp.date();
 
       qInfo() << Q_FUNC_INFO << db.databaseName() << "Reference date" << referenceDate;
@@ -226,7 +226,7 @@ float MagDecReader::getMagVar(double longitudeX, double latitudeY) const
 QByteArray MagDecReader::writeToBytes() const
 {
   if(!isValid())
-    throw Exception("Magnetic declination values are invalid");
+    throw Exception(tr("Magnetic declination values are invalid"));
 
   QByteArray bytes;
   QDataStream out(&bytes, QIODevice::WriteOnly);
@@ -243,7 +243,7 @@ QByteArray MagDecReader::writeToBytes() const
 float MagDecReader::getMagVar(const geo::Pos& pos) const
 {
   if(!isValid())
-    throw Exception("MagDecReader is invalid");
+    throw Exception(tr("MagDecReader is invalid"));
 
   if(!pos.isValid())
     return 0.f;

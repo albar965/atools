@@ -30,22 +30,22 @@ QString Start::startTypeToStr(start::StartType type)
   switch(type)
   {
     case start::RUNWAY:
-      return "R";
+      return QStringLiteral("R");
 
     case start::WATER:
-      return "W";
+      return QStringLiteral("W");
 
     case start::HELIPAD:
-      return "H";
+      return QStringLiteral("H");
 
     case start::TRACK:
-      return "T";
+      return QStringLiteral("T");
 
     case start::UNKNOWN:
-      return "UNKNOWN";
+      return QStringLiteral("UNKNOWN");
   }
   qWarning().nospace().noquote() << "Invalid START type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 Start::Start(const NavDatabaseOptions *options, BinaryStream *stream)

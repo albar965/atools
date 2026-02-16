@@ -36,19 +36,19 @@ void ParkingWriter::writeObject(const Parking *type)
     qDebug() << "Writing Parking for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  bind(":parking_id", getNextId());
-  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
-  bind(":type", bgl::util::enumToStr(Parking::parkingTypeToStr, type->getType()));
-  bind(":suffix", bgl::util::enumToStr(Parking::parkingSuffixToStr, type->getSuffix()));
-  bind(":pushback", bgl::util::enumToStr(Parking::pushBackToStr, type->getPushBack()));
-  bind(":name", Parking::parkingNameToStr(type->getName())); // Also allow NONE and UNKNOWN
-  bind(":number", type->getNumber());
-  bind(":airline_codes", type->getAirlineCodes().join(","));
-  bind(":radius", roundToInt(meterToFeet(type->getRadius())));
-  bind(":heading", type->getHeading());
-  bindBool(":has_jetway", type->hasJetway());
-  bind(":lonx", type->getPosD().getLonX());
-  bind(":laty", type->getPosD().getLatY());
+  bind(QStringLiteral(":parking_id"), getNextId());
+  bind(QStringLiteral(":airport_id"), getDataWriter().getAirportWriter()->getCurrentId());
+  bind(QStringLiteral(":type"), bgl::util::enumToStr(Parking::parkingTypeToStr, type->getType()));
+  bind(QStringLiteral(":suffix"), bgl::util::enumToStr(Parking::parkingSuffixToStr, type->getSuffix()));
+  bind(QStringLiteral(":pushback"), bgl::util::enumToStr(Parking::pushBackToStr, type->getPushBack()));
+  bind(QStringLiteral(":name"), Parking::parkingNameToStr(type->getName())); // Also allow NONE and UNKNOWN
+  bind(QStringLiteral(":number"), type->getNumber());
+  bind(QStringLiteral(":airline_codes"), type->getAirlineCodes().join(QStringLiteral(",")));
+  bind(QStringLiteral(":radius"), roundToInt(meterToFeet(type->getRadius())));
+  bind(QStringLiteral(":heading"), type->getHeading());
+  bindBool(QStringLiteral(":has_jetway"), type->hasJetway());
+  bind(QStringLiteral(":lonx"), type->getPosD().getLonX());
+  bind(QStringLiteral(":laty"), type->getPosD().getLatY());
 
   executeStatement();
 }

@@ -48,7 +48,7 @@ QString DeleteAirport::deleteAllFlagsToStr(del::DeleteAllFlags flags)
   // else if(flags != 0)
   // qWarning().nospace().noquote() << "Found unknown delete all flags 0x" << Qt::hex << flags;
 
-  if(retval.endsWith(","))
+  if(retval.endsWith(QStringLiteral(",")))
     retval.chop(1);
 
   return retval;

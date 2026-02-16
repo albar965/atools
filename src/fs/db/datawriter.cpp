@@ -195,7 +195,7 @@ QString DataWriter::getLanguage(const QString& key)
 {
   if(languageIndex != nullptr)
   {
-    if(key.startsWith("TT:"))
+    if(key.startsWith(QStringLiteral("TT:")))
       return languageIndex->getName(key);
 
     return key;

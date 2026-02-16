@@ -56,28 +56,28 @@ QString TaxiPoint::pointTypeToString(taxipoint::PointType type)
   switch(type)
   {
     case atools::fs::bgl::taxipoint::PARKING:
-      return "P";
+      return QStringLiteral("P");
 
     case atools::fs::bgl::taxipoint::UNKNOWN:
-      return "UNKNOWN";
+      return QStringLiteral("UNKNOWN");
 
     case atools::fs::bgl::taxipoint::NORMAL:
-      return "N";
+      return QStringLiteral("N");
 
     case atools::fs::bgl::taxipoint::HOLD_SHORT:
-      return "HS";
+      return QStringLiteral("HS");
 
     case atools::fs::bgl::taxipoint::HOLD_SHORT_NO_DRAW:
-      return "HSND";
+      return QStringLiteral("HSND");
 
     case atools::fs::bgl::taxipoint::ILS_HOLD_SHORT:
-      return "IHS";
+      return QStringLiteral("IHS");
 
     case atools::fs::bgl::taxipoint::ILS_HOLD_SHORT_NO_DRAW:
-      return "IHSND";
+      return QStringLiteral("IHSND");
   }
   qWarning().nospace().noquote() << "Invalid taxi point type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QString TaxiPoint::dirToString(taxipoint::PointDir dir)
@@ -85,16 +85,16 @@ QString TaxiPoint::dirToString(taxipoint::PointDir dir)
   switch(dir)
   {
     case atools::fs::bgl::taxipoint::UNKNOWN_DIR:
-      return "UNKNOWN_DIR";
+      return QStringLiteral("UNKNOWN_DIR");
 
     case atools::fs::bgl::taxipoint::FORWARD:
-      return "F";
+      return QStringLiteral("F");
 
     case atools::fs::bgl::taxipoint::REVERSE:
-      return "R";
+      return QStringLiteral("R");
   }
   qWarning().nospace().noquote() << "Invalid taxi point dir " << dir;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QDebug operator<<(QDebug out, const TaxiPoint& record)

@@ -33,37 +33,37 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
   switch(type)
   {
     case nav::WP_NONE:
-      return "WP_NONE";
+      return QStringLiteral("WP_NONE");
 
     case nav::RNAV:
-      return "RNAV";
+      return QStringLiteral("RNAV");
 
     case nav::VFR:
-      return "VFR";
+      return QStringLiteral("VFR");
 
     case nav::NAMED:
-      return "WN";
+      return QStringLiteral("WN");
 
     case nav::UNNAMED:
-      return "WU";
+      return QStringLiteral("WU");
 
     case nav::VOR:
-      return "V";
+      return QStringLiteral("V");
 
     case nav::NDB:
-      return "N";
+      return QStringLiteral("N");
 
     case nav::OFF_AIRWAY:
-      return "OA";
+      return QStringLiteral("OA");
 
     case nav::IAF:
-      return "IAF";
+      return QStringLiteral("IAF");
 
     case nav::FAF:
-      return "FAF";
+      return QStringLiteral("FAF");
   }
   qWarning().nospace().noquote() << "Invalid waypoint type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 nav::AirwayWaypointType Waypoint::airwayWaypointTypeFromWaypointType(nav::WaypointType type)
@@ -95,7 +95,7 @@ nav::AirwayWaypointType Waypoint::airwayWaypointTypeFromWaypointType(nav::Waypoi
 
 bool Waypoint::isValid() const
 {
-  if(ident == "NPOLE")
+  if(ident == QStringLiteral("NPOLE"))
     // Only waypoint allowed on the poles
     return position.getPos().isValid() && !position.getPos().isNull();
   else

@@ -38,23 +38,23 @@ void StartWriter::writeObject(const Start *type)
     qDebug() << "Writing Start for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  bind(":start_id", getNextId());
-  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
-  bind(":runway_name", type->getRunwayName());
-  bind(":type", bgl::util::enumToStr(Start::startTypeToStr, type->getType()));
-  bind(":heading", type->getHeading());
-  bind(":altitude", roundToInt(meterToFeet(type->getPosD().getAltitude())));
-  bind(":lonx", type->getPosD().getLonX());
-  bind(":laty", type->getPosD().getLatY());
+  bind(QStringLiteral(":start_id"), getNextId());
+  bind(QStringLiteral(":airport_id"), getDataWriter().getAirportWriter()->getCurrentId());
+  bind(QStringLiteral(":runway_name"), type->getRunwayName());
+  bind(QStringLiteral(":type"), bgl::util::enumToStr(Start::startTypeToStr, type->getType()));
+  bind(QStringLiteral(":heading"), type->getHeading());
+  bind(QStringLiteral(":altitude"), roundToInt(meterToFeet(type->getPosD().getAltitude())));
+  bind(QStringLiteral(":lonx"), type->getPosD().getLonX());
+  bind(QStringLiteral(":laty"), type->getPosD().getLatY());
 
   bool isComplete = false;
   const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
-  bindNullInt(":runway_end_id");
+  bindNullInt(QStringLiteral(":runway_end_id"));
 
   if(type->getType() == bgl::start::HELIPAD)
-    bind(":number", type->getNumber());
+    bind(QStringLiteral(":number"), type->getNumber());
   else
-    bindNullInt(":number");
+    bindNullInt(QStringLiteral(":number"));
 
   // Helipads have no runway
   if(!apIdent.isEmpty() && type->getType() != bgl::start::HELIPAD)
@@ -62,12 +62,12 @@ void StartWriter::writeObject(const Start *type)
     // Get associated runway for start position
     if(getOptions().isIncludedAirportIdent(apIdent))
     {
-      QString msg(" start ID " + QString::number(getCurrentId()));
+      QString msg(QStringLiteral(" start ID ") + QString::number(getCurrentId()));
       int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
       if(id != -1)
       {
         isComplete = true;
-        bind(":runway_end_id", id);
+        bind(QStringLiteral(":runway_end_id"), id);
       }
     }
   }

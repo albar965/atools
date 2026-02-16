@@ -104,14 +104,16 @@ void XpNavReader::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   }
 
   QString suffix = line.constLast().toUpper();
-  if(suffix == QStringLiteral("VOR") || suffix == QStringLiteral("DME") || suffix == QStringLiteral("VOR-DME") || suffix == QStringLiteral("VOR/DME"))
+  if(suffix == QStringLiteral("VOR") || suffix == QStringLiteral("DME") || suffix == QStringLiteral("VOR-DME") ||
+     suffix == QStringLiteral("VOR/DME"))
     type = rangeType;
   else if(suffix == QStringLiteral("VORTAC"))
     type = QStringLiteral("VT") + rangeType;
   else if(suffix == QStringLiteral("TACAN"))
     type = QStringLiteral("TC");
 
-  bool hasDme = suffix == QStringLiteral("DME") || suffix == QStringLiteral("VORTAC") || suffix == QStringLiteral("VOR-DME") || suffix == QStringLiteral("VOR/DME");
+  bool hasDme = suffix == QStringLiteral("DME") || suffix == QStringLiteral("VORTAC") || suffix == QStringLiteral("VOR-DME") ||
+                suffix == QStringLiteral("VOR/DME");
   int frequency = at(line, FREQ).toInt();
 
   insertVorQuery->bindValue(QStringLiteral(":vor_id"), ++curVorId);
@@ -373,7 +375,8 @@ void XpNavReader::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
   insertIlsQuery->bindValue(QStringLiteral(":region"), at(line, REGION));
   insertIlsQuery->bindValue(QStringLiteral(":loc_runway_name"), runwayName);
   insertIlsQuery->bindValue(QStringLiteral(":name"), ilsName);
-  insertIlsQuery->bindValue(QStringLiteral(":loc_runway_end_id"), airportIndex->getRunwayEndIdVar(airportIdent, runwayName, false /* allAirportIdents */));
+  insertIlsQuery->bindValue(QStringLiteral(":loc_runway_end_id"),
+                            airportIndex->getRunwayEndIdVar(airportIdent, runwayName, false /* allAirportIdents */));
   insertIlsQuery->bindValue(QStringLiteral(":altitude"), at(line, ALT).toInt());
   insertIlsQuery->bindValue(QStringLiteral(":lonx"), pos.getLonX());
   insertIlsQuery->bindValue(QStringLiteral(":laty"), pos.getLatY());

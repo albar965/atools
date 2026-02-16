@@ -207,52 +207,52 @@ void AirportWriter::writeObject(const Airport *type)
     bglFilenames.append(bglFileWriter->getCurrentFilename());
 
     // Write admin names =====================
-    bindStrOrNull(":name", name);
-    bindStrOrNull(":city", city);
-    bindStrOrNull(":state", state);
-    bindStrOrNull(":country", country);
-    bindStrOrNull(":region", region);
+    bindStrOrNull(QStringLiteral(":name"), name);
+    bindStrOrNull(QStringLiteral(":city"), city);
+    bindStrOrNull(QStringLiteral(":state"), state);
+    bindStrOrNull(QStringLiteral(":country"), country);
+    bindStrOrNull(QStringLiteral(":region"), region);
 
-    bind(":airport_id", nextAirportId);
-    bind(":file_id", bglFileWriter->getCurrentId());
-    bind(":ident", ident);
-    bindNullString(":icao");
-    bindNullString(":iata");
-    bindNullString(":faa");
-    bindNullString(":local");
+    bind(QStringLiteral(":airport_id"), nextAirportId);
+    bind(QStringLiteral(":file_id"), bglFileWriter->getCurrentId());
+    bind(QStringLiteral(":ident"), ident);
+    bindNullString(QStringLiteral(":icao"));
+    bindNullString(QStringLiteral(":iata"));
+    bindNullString(QStringLiteral(":faa"));
+    bindNullString(QStringLiteral(":local"));
 
-    bind(":fuel_flags", type->getFuelFlags());
+    bind(QStringLiteral(":fuel_flags"), type->getFuelFlags());
 
-    bindBool(":has_avgas", (type->getFuelFlags() & AVGAS) == AVGAS);
-    bindBool(":has_jetfuel", (type->getFuelFlags() & JET_FUEL) == JET_FUEL);
+    bindBool(QStringLiteral(":has_avgas"), (type->getFuelFlags() & AVGAS) == AVGAS);
+    bindBool(QStringLiteral(":has_jetfuel"), (type->getFuelFlags() & JET_FUEL) == JET_FUEL);
 
-    bindBool(":has_tower_object", type->hasTowerObj());
+    bindBool(QStringLiteral(":has_tower_object"), type->hasTowerObj());
 
     int towerFrequency = 0, unicomFrequency = 0, awosFrequency = 0, asosFrequency = 0, atisFrequency = 0;
     Airport::extractMainComFrequencies(type->getComs(), towerFrequency, unicomFrequency, awosFrequency, asosFrequency, atisFrequency);
-    bindIntOrNull(":tower_frequency", towerFrequency);
-    bindIntOrNull(":atis_frequency", atisFrequency);
-    bindIntOrNull(":awos_frequency", awosFrequency);
-    bindIntOrNull(":asos_frequency", asosFrequency);
-    bindIntOrNull(":unicom_frequency", unicomFrequency);
+    bindIntOrNull(QStringLiteral(":tower_frequency"), towerFrequency);
+    bindIntOrNull(QStringLiteral(":atis_frequency"), atisFrequency);
+    bindIntOrNull(QStringLiteral(":awos_frequency"), awosFrequency);
+    bindIntOrNull(QStringLiteral(":asos_frequency"), asosFrequency);
+    bindIntOrNull(QStringLiteral(":unicom_frequency"), unicomFrequency);
 
-    bindBool(":is_closed", type->isAirportClosed());
+    bindBool(QStringLiteral(":is_closed"), type->isAirportClosed());
 
-    bindBool(":is_military", atools::fs::util::isNameMilitary(name));
+    bindBool(QStringLiteral(":is_military"), atools::fs::util::isNameMilitary(name));
 
-    bindBool(":is_addon", addon);
-    bindBool(":is_3d", 0);
+    bindBool(QStringLiteral(":is_addon"), addon);
+    bindBool(QStringLiteral(":is_3d"), 0);
 
-    bind(":num_com", type->getComs().size());
+    bind(QStringLiteral(":num_com"), type->getComs().size());
 
-    bind(":num_parking_gate", type->getNumParkingGate());
-    bind(":num_parking_ga_ramp", type->getNumParkingGaRamp());
+    bind(QStringLiteral(":num_parking_gate"), type->getNumParkingGate());
+    bind(QStringLiteral(":num_parking_ga_ramp"), type->getNumParkingGaRamp());
 
-    bind(":num_parking_cargo", type->getNumParkingCargo());
-    bind(":num_parking_mil_cargo", type->getNumParkingMilitaryCargo());
-    bind(":num_parking_mil_combat", type->getNumParkingMilitaryCombat());
+    bind(QStringLiteral(":num_parking_cargo"), type->getNumParkingCargo());
+    bind(QStringLiteral(":num_parking_mil_cargo"), type->getNumParkingMilitaryCargo());
+    bind(QStringLiteral(":num_parking_mil_combat"), type->getNumParkingMilitaryCombat());
 
-    bind(":num_approach", type->getApproaches().size());
+    bind(QStringLiteral(":num_approach"), type->getApproaches().size());
 
     // Count number of runway types ==============================
     int numHardRunway = 0, numSoftRunway = 0, numWaterRunway = 0;
@@ -267,20 +267,20 @@ void AirportWriter::writeObject(const Airport *type)
       numWaterRunway += atools::fs::bgl::surface::isWater(surface);
     }
 
-    bind(":num_runway_soft", numSoftRunway);
-    bind(":num_runway_hard", numHardRunway);
-    bind(":num_runway_water", numWaterRunway);
+    bind(QStringLiteral(":num_runway_soft"), numSoftRunway);
+    bind(QStringLiteral(":num_runway_hard"), numHardRunway);
+    bind(QStringLiteral(":num_runway_water"), numWaterRunway);
 
-    bind(":num_runway_light", type->getNumLightRunway());
-    bind(":num_runway_end_closed", type->getNumRunwayEndClosed());
-    bind(":num_runway_end_vasi", type->getNumRunwayEndVasi());
-    bind(":num_runway_end_als", type->getNumRunwayEndApproachLight());
-    bind(":num_apron", type->getAprons().size());
-    bind(":num_taxi_path", type->getTaxiPaths().size());
-    bind(":num_helipad", type->getHelipads().size());
-    bind(":num_jetway", type->getNumJetway());
-    bind(":num_starts", type->getStarts().size());
-    bindNullInt(":num_runway_end_ils"); // Will be set later by SQL script "update_ils_ids.sql"
+    bind(QStringLiteral(":num_runway_light"), type->getNumLightRunway());
+    bind(QStringLiteral(":num_runway_end_closed"), type->getNumRunwayEndClosed());
+    bind(QStringLiteral(":num_runway_end_vasi"), type->getNumRunwayEndVasi());
+    bind(QStringLiteral(":num_runway_end_als"), type->getNumRunwayEndApproachLight());
+    bind(QStringLiteral(":num_apron"), type->getAprons().size());
+    bind(QStringLiteral(":num_taxi_path"), type->getTaxiPaths().size());
+    bind(QStringLiteral(":num_helipad"), type->getHelipads().size());
+    bind(QStringLiteral(":num_jetway"), type->getNumJetway());
+    bind(QStringLiteral(":num_starts"), type->getStarts().size());
+    bindNullInt(QStringLiteral(":num_runway_end_ils")); // Will be set later by SQL script "update_ils_ids.sql"
 
     // Determine longest runway ==============================
     const Runway *longestRunway = nullptr;
@@ -300,61 +300,61 @@ void AirportWriter::writeObject(const Airport *type)
     using atools::fs::bgl::surface::surfaceToDbStr;
     if(longestRunway != nullptr)
     {
-      bind(":longest_runway_length", roundToInt(meterToFeet(longestRunway->getLength())));
-      bind(":longest_runway_width", roundToInt(meterToFeet(longestRunway->getWidth())));
-      bind(":longest_runway_heading", longestRunway->getHeading());
+      bind(QStringLiteral(":longest_runway_length"), roundToInt(meterToFeet(longestRunway->getLength())));
+      bind(QStringLiteral(":longest_runway_width"), roundToInt(meterToFeet(longestRunway->getWidth())));
+      bind(QStringLiteral(":longest_runway_heading"), longestRunway->getHeading());
 
       // Use MSFS material library is UUID is set
       if(!longestRunway->getMaterialUuid().isNull())
-        bind(":longest_runway_surface", surfaceToDbStr(getDataWriter().getSurface(longestRunway->getMaterialUuid())));
+        bind(QStringLiteral(":longest_runway_surface"), surfaceToDbStr(getDataWriter().getSurface(longestRunway->getMaterialUuid())));
       else
-        bind(":longest_runway_surface", surfaceToDbStr(longestRunway->getSurface()));
+        bind(QStringLiteral(":longest_runway_surface"), surfaceToDbStr(longestRunway->getSurface()));
     }
     else
     {
-      bind(":longest_runway_length", 0);
-      bind(":longest_runway_width", 0);
-      bind(":longest_runway_heading", 0.f);
-      bind(":longest_runway_surface", surfaceToDbStr(atools::fs::bgl::UNKNOWN));
+      bind(QStringLiteral(":longest_runway_length"), 0);
+      bind(QStringLiteral(":longest_runway_width"), 0);
+      bind(QStringLiteral(":longest_runway_heading"), 0.f);
+      bind(QStringLiteral(":longest_runway_surface"), surfaceToDbStr(atools::fs::bgl::UNKNOWN));
     }
 
-    bind(":num_runways", type->getRunways().size());
+    bind(QStringLiteral(":num_runways"), type->getRunways().size());
 
-    bind(":largest_parking_ramp",
+    bind(QStringLiteral(":largest_parking_ramp"),
          bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGaRamp()));
-    bind(":largest_parking_gate", bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGate()));
+    bind(QStringLiteral(":largest_parking_gate"), bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGate()));
 
     // Star get full rating and are not updated later - others are set later
-    bind(":rating", type->isMsfsStar() ? 5 : 0);
+    bind(QStringLiteral(":rating"), type->isMsfsStar() ? 5 : 0);
 
-    bind(":scenery_local_path", sceneryLocalPaths.join(", "));
-    bind(":bgl_filename", bglFilenames.join(", "));
+    bind(QStringLiteral(":scenery_local_path"), sceneryLocalPaths.join(QStringLiteral(", ")));
+    bind(QStringLiteral(":bgl_filename"), bglFilenames.join(QStringLiteral(", ")));
 
-    bind(":left_lonx", type->getBoundingRect().getTopLeft().getLonX());
-    bind(":top_laty", type->getBoundingRect().getTopLeft().getLatY());
-    bind(":right_lonx", type->getBoundingRect().getBottomRight().getLonX());
-    bind(":bottom_laty", type->getBoundingRect().getBottomRight().getLatY());
+    bind(QStringLiteral(":left_lonx"), type->getBoundingRect().getTopLeft().getLonX());
+    bind(QStringLiteral(":top_laty"), type->getBoundingRect().getTopLeft().getLatY());
+    bind(QStringLiteral(":right_lonx"), type->getBoundingRect().getBottomRight().getLonX());
+    bind(QStringLiteral(":bottom_laty"), type->getBoundingRect().getBottomRight().getLatY());
 
     // Use magvar from BGL and fallback to airport included magvar (usually inaccurate)
-    bind(":mag_var", getDataWriter().getMagVar(type->getPos(), type->getMagVar()));
+    bind(QStringLiteral(":mag_var"), getDataWriter().getMagVar(type->getPos(), type->getMagVar()));
 
     if(!type->getTowerPosition().getPos().isNull() && type->getTowerPosition().getPos().isValidRange() &&
        !type->getTowerPosition().getPos().isPole())
     {
-      bind(":tower_altitude", roundToInt(meterToFeet(type->getPos().getAltitude())));
-      bind(":tower_lonx", type->getTowerPosition().getLonX());
-      bind(":tower_laty", type->getTowerPosition().getLatY());
+      bind(QStringLiteral(":tower_altitude"), roundToInt(meterToFeet(type->getPos().getAltitude())));
+      bind(QStringLiteral(":tower_lonx"), type->getTowerPosition().getLonX());
+      bind(QStringLiteral(":tower_laty"), type->getTowerPosition().getLatY());
     }
     else
     {
-      bindNullFloat(":tower_altitude");
-      bindNullFloat(":tower_lonx");
-      bindNullFloat(":tower_laty");
+      bindNullFloat(QStringLiteral(":tower_altitude"));
+      bindNullFloat(QStringLiteral(":tower_lonx"));
+      bindNullFloat(QStringLiteral(":tower_laty"));
     }
 
-    bind(":altitude", roundToInt(meterToFeet(type->getPos().getAltitude())));
-    bind(":lonx", type->getPos().getLonX());
-    bind(":laty", type->getPos().getLatY());
+    bind(QStringLiteral(":altitude"), roundToInt(meterToFeet(type->getPos().getAltitude())));
+    bind(QStringLiteral(":lonx"), type->getPos().getLonX());
+    bind(QStringLiteral(":laty"), type->getPos().getLatY());
 
     // Write the airport to the database
     executeStatement();
@@ -460,32 +460,32 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
                       "where airport_id = :id");
 
   if(towerFrequency == 0)
-    updateQuery.bindNullInt(":tower_frequency");
+    updateQuery.bindNullInt(QStringLiteral(":tower_frequency"));
   else
-    updateQuery.bindValue(":tower_frequency", towerFrequency);
+    updateQuery.bindValue(QStringLiteral(":tower_frequency"), towerFrequency);
 
   if(atisFrequency == 0)
-    updateQuery.bindNullInt(":atis_frequency");
+    updateQuery.bindNullInt(QStringLiteral(":atis_frequency"));
   else
-    updateQuery.bindValue(":atis_frequency", atisFrequency);
+    updateQuery.bindValue(QStringLiteral(":atis_frequency"), atisFrequency);
 
   if(awosFrequency == 0)
-    updateQuery.bindNullInt(":awos_frequency");
+    updateQuery.bindNullInt(QStringLiteral(":awos_frequency"));
   else
-    updateQuery.bindValue(":awos_frequency", awosFrequency);
+    updateQuery.bindValue(QStringLiteral(":awos_frequency"), awosFrequency);
 
   if(asosFrequency == 0)
-    updateQuery.bindNullInt(":asos_frequency");
+    updateQuery.bindNullInt(QStringLiteral(":asos_frequency"));
   else
-    updateQuery.bindValue(":asos_frequency", asosFrequency);
+    updateQuery.bindValue(QStringLiteral(":asos_frequency"), asosFrequency);
 
   if(unicomFrequency == 0)
-    updateQuery.bindNullInt(":unicom_frequency");
+    updateQuery.bindNullInt(QStringLiteral(":unicom_frequency"));
   else
-    updateQuery.bindValue(":unicom_frequency", unicomFrequency);
+    updateQuery.bindValue(QStringLiteral(":unicom_frequency"), unicomFrequency);
 
-  updateQuery.bindValue(":num_com", type->getComs().size());
-  updateQuery.bindValue(":num_approach", type->getApproaches().size() + sidAndStarApproachCount);
+  updateQuery.bindValue(QStringLiteral(":num_com"), type->getComs().size());
+  updateQuery.bindValue(QStringLiteral(":num_approach"), type->getApproaches().size() + sidAndStarApproachCount);
 
   // query.bindValue(":lonx", type->getPosition().getLonX());
   // query.bindValue(":laty", type->getPosition().getLatY());
@@ -494,7 +494,7 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
   // query.bindValue(":right_lonx", type->getBoundingRect().getEast());
   // query.bindValue(":bottom_laty", type->getBoundingRect().getSouth());
 
-  updateQuery.bindValue(":id", predId);
+  updateQuery.bindValue(QStringLiteral(":id"), predId);
   updateQuery.exec();
 }
 

@@ -32,13 +32,13 @@ QString Transition::transitionTypeToStr(ap::TransitionType type)
   switch(type)
   {
     case ap::FULL:
-      return "F";
+      return QStringLiteral("F");
 
     case ap::DME:
-      return "D";
+      return QStringLiteral("D");
   }
   qWarning().nospace().noquote() << "Invalid transition type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 QString Transition::transitionFixTypeToStr(ap::tfix::TransitionFixType type)
@@ -46,13 +46,13 @@ QString Transition::transitionFixTypeToStr(ap::tfix::TransitionFixType type)
   switch(type)
   {
     case ap::tfix::VOR:
-      return "V";
+      return QStringLiteral("V");
 
     case ap::tfix::NDB:
-      return "N";
+      return QStringLiteral("N");
 
     case ap::tfix::TERMINAL_NDB:
-      return "TN";
+      return QStringLiteral("TN");
 
     /* From P3D v5 upwards - these are wrong types for this field taken from the XSD.
      * They will be converted to WAYPOINT. */
@@ -62,19 +62,19 @@ QString Transition::transitionFixTypeToStr(ap::tfix::TransitionFixType type)
     case ap::tfix::HEADING_TO_ALT:
     case ap::tfix::RUNWAY: // TODO use separate indicator
     case ap::tfix::WAYPOINT:
-      return "W";
+      return QStringLiteral("W");
 
     case ap::tfix::TERMINAL_WAYPOINT:
-      return "TW";
+      return QStringLiteral("TW");
   }
   qWarning().nospace().noquote() << "Invalid transition fix type " << type;
-  return "INVALID";
+  return QStringLiteral("INVALID");
 }
 
 bool Transition::isValid() const
 {
   bool valid = !legs.isEmpty();
-  valid &= transitionTypeToStr(type) != "INVALID";
+  valid &= transitionTypeToStr(type) != QStringLiteral("INVALID");
   for(const ApproachLeg& leg : legs)
     valid &= leg.isValid();
   return valid;

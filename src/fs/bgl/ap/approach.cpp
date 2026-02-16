@@ -145,7 +145,7 @@ QString Approach::getRunwayName() const
 bool Approach::isValid() const
 {
   bool valid = !legs.isEmpty();
-  valid &= ap::approachTypeToStr(type) != "UNKN";
+  valid &= ap::approachTypeToStr(type) != QStringLiteral("UNKN");
   for(const ApproachLeg& leg : std::as_const(legs))
     valid &= leg.isValid();
   for(const ApproachLeg& leg : std::as_const(missedLegs))

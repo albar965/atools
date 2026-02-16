@@ -47,32 +47,32 @@ void TransitionWriter::writeObject(const Transition *type)
     return;
   }
 
-  bind(":transition_id", getNextId());
-  bind(":approach_id", getDataWriter().getApproachWriter()->getCurrentId());
+  bind(QStringLiteral(":transition_id"), getNextId());
+  bind(QStringLiteral(":approach_id"), getDataWriter().getApproachWriter()->getCurrentId());
 
-  bind(":type", transtype);
-  bind(":fix_type", Transition::transitionFixTypeToStr(type->getTransFixType()));
-  bind(":fix_ident", type->getTransFixIdent());
-  bind(":fix_region", type->getFixRegion());
-  bind(":fix_airport_ident", type->getFixAirportIdent());
-  bind(":altitude", roundToPrecision(meterToFeet(type->getAltitude()), 1));
+  bind(QStringLiteral(":type"), transtype);
+  bind(QStringLiteral(":fix_type"), Transition::transitionFixTypeToStr(type->getTransFixType()));
+  bind(QStringLiteral(":fix_ident"), type->getTransFixIdent());
+  bind(QStringLiteral(":fix_region"), type->getFixRegion());
+  bind(QStringLiteral(":fix_airport_ident"), type->getFixAirportIdent());
+  bind(QStringLiteral(":altitude"), roundToPrecision(meterToFeet(type->getAltitude()), 1));
 
   // Write DME if available - otherwise null all fields
   if(type->getType() == bgl::ap::DME)
   {
-    bind(":dme_ident", type->getDmeIdent());
-    bind(":dme_region", type->getDmeRegion());
-    bind(":dme_airport_ident", type->getDmeAirportIdent());
-    bind(":dme_radial", type->getDmeRadial());
-    bind(":dme_distance", roundToInt(meterToNm(type->getDmeDistance())));
+    bind(QStringLiteral(":dme_ident"), type->getDmeIdent());
+    bind(QStringLiteral(":dme_region"), type->getDmeRegion());
+    bind(QStringLiteral(":dme_airport_ident"), type->getDmeAirportIdent());
+    bind(QStringLiteral(":dme_radial"), type->getDmeRadial());
+    bind(QStringLiteral(":dme_distance"), roundToInt(meterToNm(type->getDmeDistance())));
   }
   else
   {
-    bindNullString(":dme_ident");
-    bindNullString(":dme_region");
-    bindNullString(":dme_airport_ident");
-    bindNullInt(":dme_radial");
-    bindNullInt(":dme_distance");
+    bindNullString(QStringLiteral(":dme_ident"));
+    bindNullString(QStringLiteral(":dme_region"));
+    bindNullString(QStringLiteral(":dme_airport_ident"));
+    bindNullInt(QStringLiteral(":dme_radial"));
+    bindNullInt(QStringLiteral(":dme_distance"));
   }
   executeStatement();
 

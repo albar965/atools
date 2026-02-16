@@ -38,7 +38,6 @@
 #include <QRegularExpression>
 #include <QFile>
 
-
 namespace atools {
 namespace fs {
 namespace sc {

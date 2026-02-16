@@ -56,35 +56,35 @@ void RunwayWriter::writeObject(const Runway *type)
     qDebug() << "Writing Runway for airport " << apIdent;
 
   // Write runway
-  bind(":runway_id", runwayId);
-  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
-  bind(":primary_end_id", primaryEndId);
-  bind(":secondary_end_id", secondaryEndId);
+  bind(QStringLiteral(":runway_id"), runwayId);
+  bind(QStringLiteral(":airport_id"), getDataWriter().getAirportWriter()->getCurrentId());
+  bind(QStringLiteral(":primary_end_id"), primaryEndId);
+  bind(QStringLiteral(":secondary_end_id"), secondaryEndId);
 
   // Use MSFS material library is UUID is set
   if(!type->getMaterialUuid().isNull())
-    bind(":surface", atools::fs::bgl::surface::surfaceToDbStr(getDataWriter().getSurface(type->getMaterialUuid())));
+    bind(QStringLiteral(":surface"), atools::fs::bgl::surface::surfaceToDbStr(getDataWriter().getSurface(type->getMaterialUuid())));
   else
-    bind(":surface", atools::fs::bgl::surface::surfaceToDbStr(type->getSurface()));
+    bind(QStringLiteral(":surface"), atools::fs::bgl::surface::surfaceToDbStr(type->getSurface()));
 
-  bind(":length", roundToInt(meterToFeet(type->getLength())));
-  bind(":width", roundToInt(meterToFeet(type->getWidth())));
-  bind(":heading", type->getHeading());
-  bind(":pattern_altitude", roundToPrecision(meterToFeet(type->getPatternAltitude()), 1));
-  bind(":marking_flags", type->getMarkingFlags());
-  bind(":edge_light", bgl::util::enumToStr(Runway::lightToStr, type->getEdgeLight()));
-  bind(":center_light",
+  bind(QStringLiteral(":length"), roundToInt(meterToFeet(type->getLength())));
+  bind(QStringLiteral(":width"), roundToInt(meterToFeet(type->getWidth())));
+  bind(QStringLiteral(":heading"), type->getHeading());
+  bind(QStringLiteral(":pattern_altitude"), roundToPrecision(meterToFeet(type->getPatternAltitude()), 1));
+  bind(QStringLiteral(":marking_flags"), type->getMarkingFlags());
+  bind(QStringLiteral(":edge_light"), bgl::util::enumToStr(Runway::lightToStr, type->getEdgeLight()));
+  bind(QStringLiteral(":center_light"),
        bgl::util::enumToStr(Runway::lightToStr, type->getCenterLight()));
-  bind(":has_center_red", type->isCenterRed());
-  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
+  bind(QStringLiteral(":has_center_red"), type->isCenterRed());
+  bind(QStringLiteral(":altitude"), roundToInt(meterToFeet(type->getPosition().getAltitude())));
 
-  bind(":primary_lonx", type->getPrimaryPosition().getLonX());
-  bind(":primary_laty", type->getPrimaryPosition().getLatY());
-  bind(":secondary_lonx", type->getSecondaryPosition().getLonX());
-  bind(":secondary_laty", type->getSecondaryPosition().getLatY());
+  bind(QStringLiteral(":primary_lonx"), type->getPrimaryPosition().getLonX());
+  bind(QStringLiteral(":primary_laty"), type->getPrimaryPosition().getLatY());
+  bind(QStringLiteral(":secondary_lonx"), type->getSecondaryPosition().getLonX());
+  bind(QStringLiteral(":secondary_laty"), type->getSecondaryPosition().getLatY());
 
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
+  bind(QStringLiteral(":lonx"), type->getPosition().getLonX());
+  bind(QStringLiteral(":laty"), type->getPosition().getLatY());
 
   executeStatement();
 }
