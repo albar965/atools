@@ -47,6 +47,7 @@ QString Application::contactUrl;
 QSet<QObject *> Application::tooltipExceptions;
 bool Application::showSplash = true;
 bool Application::shuttingDown = false;
+bool Application::startingUp = false;
 
 QString Application::lockFile;
 bool Application::safeMode = false;
@@ -151,15 +152,17 @@ void Application::clearStartupOptions()
   startupOptions->clear();
 }
 
-void Application::startup()
+void Application::setStartingUp()
 {
   timer.start();
+  startingUp = true;
 }
 
-void Application::startupFinished(const char *func)
+void Application::setStartupFinished(const char *func)
 {
   qInfo() << func << "Startup Finished -------------------------";
   qInfo() << func << "Startup took" << timer.elapsed() << "milliseconds";
+  startingUp = false;
 }
 
 Application *Application::applicationInstance()

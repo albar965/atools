@@ -195,6 +195,9 @@ DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
     }
   }
 
+  if(verbose && sharedMemory != nullptr)
+    qDebug() << Q_FUNC_INFO << "key" << sharedMemory->key() << "native key" << sharedMemory->nativeKey();
+
   if(properties.contains(STARTUP_COMMAND_QUIT))
     exit = true;
 

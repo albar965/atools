@@ -185,9 +185,14 @@ public:
   static void addStartupOptionStrList(const QString& key, const QStringList& value);
   static void clearStartupOptions(); /* Clear for safe mode */
 
-  /* Note on startup and print time into log */
-  static void startup();
-  static void startupFinished(const char *func);
+  /* Note on setStartingUp and print time into log */
+  static void setStartingUp();
+  static void setStartupFinished(const char *func);
+
+  static bool isStartingUp()
+  {
+    return startingUp;
+  }
 
 signals:
   /* Called by queued connection from QGuiApplication::commitDataRequest */
@@ -214,9 +219,7 @@ private:
 
   static atools::util::Properties *startupOptions;
 
-  static bool showExceptionDialog, restartProcess, tooltipsDisabled;
-
-  static bool shuttingDown;
+  static bool showExceptionDialog, restartProcess, tooltipsDisabled, shuttingDown, startingUp;
 
   static QElapsedTimer timer;
 
