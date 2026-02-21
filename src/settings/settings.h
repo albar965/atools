@@ -142,14 +142,36 @@ public:
   QString valueStr(const QString& key, const QString& defaultValue = QString()) const;
   bool valueBool(const QString& key, bool defaultValue = false) const;
   int valueInt(const QString& key, int defaultValue = 0) const;
+  int valueLongLong(const QString& key, long long defaultValue = 0LL) const;
   float valueFloat(const QString& key, float defaultValue = 0.f) const;
   double valueDouble(const QString& key, double defaultValue = 0.) const;
   QVariant valueVar(const QString& key, QVariant defaultValue = QVariant()) const;
+
+  template<typename TYPE>
+  TYPE valueEnum(const QString& key, TYPE defaultValue = TYPE()) const
+  {
+    /* Print error message at compile time if value is no enum */
+    static_assert(std::is_enum<TYPE>(), "std::is_enum<TYPE>()");
+    static_assert(std::is_convertible<TYPE, long long>(), "std::is_convertible<TYPE, long long>()");
+
+    return static_cast<TYPE>(valueLongLong(key, static_cast<long long>(defaultValue)));
+  }
+
+  template<typename TYPE>
+  void setValueEnum(const QString& key, TYPE value)
+  {
+    /* Print error message at compile time if value is no enum */
+    static_assert(std::is_enum<TYPE>(), "std::is_enum<TYPE>()");
+    static_assert(std::is_convertible<TYPE, long long>(), "std::is_convertible<TYPE, long long>()");
+
+    setValue(key, static_cast<long long>(value));
+  }
 
   void setValue(const QString& key, const QStringList& value);
   void setValue(const QString& key, const QString& value);
   void setValue(const QString& key, bool value);
   void setValue(const QString& key, int value);
+  void setValue(const QString& key, long long value);
   void setValue(const QString& key, float value);
   void setValue(const QString& key, double value);
   void setValueVar(const QString& key, const QVariant& value);

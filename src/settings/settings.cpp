@@ -288,6 +288,11 @@ int Settings::valueInt(const QString& key, int defaultValue) const
   return qSettings->value(key, defaultValue).toInt();
 }
 
+int Settings::valueLongLong(const QString& key, long long defaultValue) const
+{
+  return qSettings->value(key, defaultValue).toLongLong();
+}
+
 float Settings::valueFloat(const QString& key, float defaultValue) const
 {
   return qSettings->value(key, defaultValue).toFloat();
@@ -322,6 +327,11 @@ void Settings::setValue(const QString& key, bool value)
 }
 
 void Settings::setValue(const QString& key, int value)
+{
+  qSettings->setValue(key, QString::number(value));
+}
+
+void Settings::setValue(const QString& key, long long value)
 {
   qSettings->setValue(key, QString::number(value));
 }
