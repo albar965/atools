@@ -61,7 +61,7 @@ ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString&
 ChoiceDialog::~ChoiceDialog()
 {
   // Save only dialog dimensions
-  atools::gui::WidgetState widgetState(settingsPrefix, false);
+  atools::gui::WidgetState widgetState(settingsPrefix);
   widgetState.save(this);
 
   delete ui;
@@ -189,7 +189,7 @@ void ChoiceDialog::restoreState()
   for(auto it = index.begin(); it != index.end(); ++it)
     widgets.append(*it);
 
-  atools::gui::WidgetState widgetState(settingsPrefix, false);
+  atools::gui::WidgetState widgetState(settingsPrefix);
   widgetState.restore(widgets);
 
   // Enable or disable ok button
@@ -210,7 +210,7 @@ void ChoiceDialog::saveState() const
   for(auto it = index.begin(); it != index.end(); ++it)
     widgets.append(*it);
 
-  atools::gui::WidgetState widgetState(settingsPrefix, false);
+  atools::gui::WidgetState widgetState(settingsPrefix);
   widgetState.save(widgets);
 }
 

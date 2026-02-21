@@ -78,6 +78,8 @@ void WidgetState::save(const QObject *widget) const
         save(layout->itemAt(i)->layout());
       }
     }
+    else if(const QLabel *label = dynamic_cast<const QLabel *>(widget))
+      saveWidgetVisible(settings, label);
     else if(const QLineEdit *lineEdit = dynamic_cast<const QLineEdit *>(widget))
     {
       saveWidget(settings, lineEdit, lineEdit->text());
@@ -102,14 +104,14 @@ void WidgetState::save(const QObject *widget) const
     {
       saveWidget(settings, comboBox, comboBox->currentIndex());
       if(comboBox->isEditable())
-        saveWidget(settings, comboBox->lineEdit(), comboBox->lineEdit()->text(), comboBox->objectName() % "_Edit");
+        saveWidget(settings, comboBox->lineEdit(), comboBox->lineEdit()->text(), comboBox->objectName() % QStringLiteral("_Edit"));
       saveWidgetVisible(settings, comboBox);
     }
     else if(const QAbstractSlider *slider = dynamic_cast<const QAbstractSlider *>(widget))
     {
       saveWidget(settings, slider, slider->value());
-      saveWidget(settings, slider, slider->minimum(), slider->objectName() % "_Min");
-      saveWidget(settings, slider, slider->maximum(), slider->objectName() % "_Max");
+      saveWidget(settings, slider, slider->minimum(), slider->objectName() % QStringLiteral("_Min"));
+      saveWidget(settings, slider, slider->maximum(), slider->objectName() % QStringLiteral("_Max"));
       saveWidgetVisible(settings, slider);
     }
     else if(const QTabWidget *tabWidget = dynamic_cast<const QTabWidget *>(widget))
@@ -165,15 +167,16 @@ void WidgetState::save(const QObject *widget) const
       saveWidget(settings, fileDialog, fileDialog->saveState());
     else if(const QMainWindow *mainWindow = dynamic_cast<const QMainWindow *>(widget))
     {
-      settings.setValueVar(keyPrefix % "_" % mainWindow->objectName() % "_pos", mainWindow->pos());
-      settings.setValueVar(keyPrefix % "_" % mainWindow->objectName() % "_size", mainWindow->size());
-      settings.setValueVar(keyPrefix % "_" % mainWindow->objectName() % "_maximized", mainWindow->isMaximized());
+      settings.setValueVar(keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_pos"), mainWindow->pos());
+      settings.setValueVar(keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_size"), mainWindow->size());
+      settings.setValueVar(keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_maximized"),
+                           mainWindow->isMaximized());
       saveWidget(settings, mainWindow, mainWindow->saveState());
     }
     else if(const QDialog *dialog = dynamic_cast<const QDialog *>(widget))
     {
-      settings.setValueVar(keyPrefix % "_" % dialog->objectName() % "_size", dialog->geometry().size());
-      settings.setValueVar(keyPrefix % "_" % dialog->objectName() % "_pos", dialog->geometry().topLeft());
+      settings.setValueVar(keyPrefix % QStringLiteral("_") % dialog->objectName() % QStringLiteral("_size"), dialog->geometry().size());
+      settings.setValueVar(keyPrefix % QStringLiteral("_") % dialog->objectName() % QStringLiteral("_pos"), dialog->geometry().topLeft());
     }
     else if(const QSplitter *splitter = dynamic_cast<const QSplitter *>(widget))
       saveWidget(settings, splitter, splitter->saveState());
@@ -195,9 +198,10 @@ void WidgetState::save(const QObject *widget) const
     else if(const QButtonGroup *buttonGroup = dynamic_cast<const QButtonGroup *>(widget))
     {
       if(buttonGroup->checkedButton() != nullptr)
-        settings.setValueVar(keyPrefix % "_" % buttonGroup->objectName() % "_selected", buttonGroup->checkedButton()->objectName());
+        settings.setValueVar(keyPrefix % QStringLiteral("_") % buttonGroup->objectName() % QStringLiteral("_selected"),
+                             buttonGroup->checkedButton()->objectName());
       else
-        settings.setValueVar(keyPrefix % "_" % buttonGroup->objectName() % "_selected", QString());
+        settings.setValueVar(keyPrefix % QStringLiteral("_") % buttonGroup->objectName() % QStringLiteral("_selected"), QString());
     }
     else
       qWarning() << Q_FUNC_INFO << "Found unsupported widget type in save" << widget->metaObject()->className();
@@ -218,6 +222,8 @@ void WidgetState::clear(QObject *widget) const
         clear(layout->itemAt(i)->layout());
       }
     }
+    else if(const QLabel *label = dynamic_cast<const QLabel *>(widget))
+      clearWidgetVisible(settings, label);
     else if(const QLineEdit *lineEdit = dynamic_cast<const QLineEdit *>(widget))
     {
       clearWidget(settings, lineEdit, lineEdit->text());
@@ -241,14 +247,14 @@ void WidgetState::clear(QObject *widget) const
     else if(const QComboBox *comboBox = dynamic_cast<const QComboBox *>(widget))
     {
       clearWidget(settings, comboBox);
-      clearWidget(settings, comboBox->lineEdit(), comboBox->objectName() % "_Edit");
+      clearWidget(settings, comboBox->lineEdit(), comboBox->objectName() % QStringLiteral("_Edit"));
       clearWidgetVisible(settings, comboBox);
     }
     else if(const QAbstractSlider *slider = dynamic_cast<const QAbstractSlider *>(widget))
     {
       clearWidget(settings, slider);
-      clearWidget(settings, slider, slider->objectName() % "_Min");
-      clearWidget(settings, slider, slider->objectName() % "_Max");
+      clearWidget(settings, slider, slider->objectName() % QStringLiteral("_Min"));
+      clearWidget(settings, slider, slider->objectName() % QStringLiteral("_Max"));
       clearWidgetVisible(settings, slider);
     }
     else if(const QTabWidget *tabWidget = dynamic_cast<const QTabWidget *>(widget))
@@ -275,15 +281,15 @@ void WidgetState::clear(QObject *widget) const
       clearWidget(settings, fileDialog, fileDialog->saveState());
     else if(const QMainWindow *mainWindow = dynamic_cast<const QMainWindow *>(widget))
     {
-      settings.remove(keyPrefix % "_" % mainWindow->objectName() % "_pos");
-      settings.remove(keyPrefix % "_" % mainWindow->objectName() % "_size");
-      settings.remove(keyPrefix % "_" % mainWindow->objectName() % "_maximized");
+      settings.remove(keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_pos"));
+      settings.remove(keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_size"));
+      settings.remove(keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_maximized"));
       clearWidget(settings, mainWindow, mainWindow->saveState());
     }
     else if(const QDialog *dialog = dynamic_cast<const QDialog *>(widget))
     {
-      settings.remove(keyPrefix % "_" % dialog->objectName() % "_size");
-      settings.remove(keyPrefix % "_" % dialog->objectName() % "_pos");
+      settings.remove(keyPrefix % QStringLiteral("_") % dialog->objectName() % QStringLiteral("_size"));
+      settings.remove(keyPrefix % QStringLiteral("_") % dialog->objectName() % QStringLiteral("_pos"));
     }
     else if(const QSplitter *splitter = dynamic_cast<const QSplitter *>(widget))
       clearWidget(settings, splitter);
@@ -304,9 +310,9 @@ void WidgetState::clear(QObject *widget) const
     else if(const QButtonGroup *buttonGroup = dynamic_cast<const QButtonGroup *>(widget))
     {
       if(buttonGroup->checkedButton() != nullptr)
-        settings.remove(keyPrefix % "_" % buttonGroup->objectName() % "_selected");
+        settings.remove(keyPrefix % QStringLiteral("_") % buttonGroup->objectName() % QStringLiteral("_selected"));
       else
-        settings.remove(keyPrefix % "_" % buttonGroup->objectName() % "_selected");
+        settings.remove(keyPrefix % QStringLiteral("_") % buttonGroup->objectName() % QStringLiteral("_selected"));
     }
     else
       qWarning() << Q_FUNC_INFO << "Found unsupported widget type in save" << widget->metaObject()->className();
@@ -316,8 +322,8 @@ void WidgetState::clear(QObject *widget) const
 void WidgetState::clearDialog(const QString& keyPrefix, const QString& dialogName)
 {
   Settings& settings = Settings::instance();
-  settings.remove(keyPrefix % "_" % dialogName % "_size");
-  settings.remove(keyPrefix % "_" % dialogName % "_pos");
+  settings.remove(keyPrefix % QStringLiteral("_") % dialogName % QStringLiteral("_size"));
+  settings.remove(keyPrefix % QStringLiteral("_") % dialogName % QStringLiteral("_pos"));
 }
 
 void WidgetState::restore(QObject *widget) const
@@ -337,6 +343,8 @@ void WidgetState::restore(QObject *widget) const
         restore(layout->itemAt(i)->layout());
       }
     }
+    else if(QLabel *label = dynamic_cast<QLabel *>(widget))
+      loadWidgetVisible(settings, label);
     else if(QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget))
     {
       QVariant v = loadWidget(settings, widget);
@@ -382,7 +390,7 @@ void WidgetState::restore(QObject *widget) const
 
       if(comboBox->isEditable())
       {
-        QVariant ev = loadWidget(settings, comboBox->lineEdit(), comboBox->objectName() % "_Edit");
+        QVariant ev = loadWidget(settings, comboBox->lineEdit(), comboBox->objectName() % QStringLiteral("_Edit"));
         if(ev.isValid())
           comboBox->setEditText(ev.toString());
       }
@@ -395,11 +403,11 @@ void WidgetState::restore(QObject *widget) const
       if(v.isValid())
         slider->setValue(v.toInt());
 
-      v = loadWidget(settings, slider, slider->objectName() % "_Min");
+      v = loadWidget(settings, slider, slider->objectName() % QStringLiteral("_Min"));
       if(v.isValid())
         slider->setMinimum(v.toInt());
 
-      v = loadWidget(settings, slider, slider->objectName() % "_Max");
+      v = loadWidget(settings, slider, slider->objectName() % QStringLiteral("_Max"));
       if(v.isValid())
         slider->setMaximum(v.toInt());
 
@@ -516,20 +524,20 @@ void WidgetState::restore(QObject *widget) const
 
         if(restoreMainWindowPos)
         {
-          QString key = keyPrefix % "_" % mainWindow->objectName() % "_pos";
+          QString key = keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_pos");
           if(settings.contains(key))
             mainWindow->move(settings.valueVar(key, mainWindow->pos()).toPoint());
         }
 
         if(restoreMainWindowSize)
         {
-          QString key = keyPrefix % "_" % mainWindow->objectName() % "_size";
+          QString key = keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_size");
           if(settings.contains(key))
             mainWindow->resize(settings.valueVar(key, mainWindow->sizeHint()).toSize());
         }
 
         if(restoreMainWindowState)
-          if(settings.valueVar(keyPrefix % "_" % mainWindow->objectName() % "_maximized", false).toBool())
+          if(settings.valueVar(keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_maximized"), false).toBool())
             mainWindow->setWindowState(mainWindow->windowState() | Qt::WindowMaximized);
       }
     }
@@ -537,8 +545,8 @@ void WidgetState::restore(QObject *widget) const
     {
       if(restoreDialogSize || restoreDialogPos)
       {
-        QString keyPos = keyPrefix % "_" % dialog->objectName() % "_pos";
-        QString keySize = keyPrefix % "_" % dialog->objectName() % "_size";
+        QString keyPos = keyPrefix % QStringLiteral("_") % dialog->objectName() % QStringLiteral("_pos");
+        QString keySize = keyPrefix % QStringLiteral("_") % dialog->objectName() % QStringLiteral("_size");
 
         QPoint pos = restoreDialogPos ? settings.valueVar(keyPos, dialog->geometry().topLeft()).toPoint() : dialog->geometry().topLeft();
         QSize size = restoreDialogSize ? settings.valueVar(keySize, dialog->geometry().size()).toSize() : dialog->geometry().size();
@@ -584,7 +592,7 @@ void WidgetState::restore(QObject *widget) const
       loadWidgetVisible(settings, frame);
     else if(const QButtonGroup *buttonGroup = dynamic_cast<const QButtonGroup *>(widget))
     {
-      QString key = keyPrefix % "_" % buttonGroup->objectName() % "_selected";
+      QString key = keyPrefix % QStringLiteral("_") % buttonGroup->objectName() % QStringLiteral("_selected");
       if(settings.contains(key))
       {
         QString value = settings.valueStr(key);
@@ -614,7 +622,7 @@ bool WidgetState::contains(const QObject *widget) const
 
 QString WidgetState::getSettingsKey(const QObject *widget) const
 {
-  return keyPrefix % "_" % widget->objectName();
+  return keyPrefix % QStringLiteral("_") % widget->objectName();
 }
 
 void WidgetState::syncSettings()
@@ -645,10 +653,7 @@ void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *widget) c
   if(visibility)
   {
     if(!widget->objectName().isEmpty())
-    {
-      if(!widget->isVisible())
-        settings.setValue(keyPrefix % "_visible_" % widget->objectName(), widget->isVisible());
-    }
+      settings.setValue(keyPrefix % QStringLiteral("_visible_") % widget->objectName(), widget->isVisible());
     else
       qWarning() << Q_FUNC_INFO << "Found widget with empty name";
   }
@@ -657,51 +662,52 @@ void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *widget) c
 void WidgetState::clearWidgetVisible(settings::Settings& settings, const QWidget *widget) const
 {
   if(!widget->objectName().isEmpty())
-    settings.remove(keyPrefix % "_visible_" % widget->objectName());
+    settings.remove(keyPrefix % QStringLiteral("_visible_") % widget->objectName());
   else
     qWarning() << Q_FUNC_INFO << "Found widget with empty name";
 }
 
-void WidgetState::saveWidget(Settings& settings, const QObject *object, const QVariant& value, const QString& objName) const
+void WidgetState::saveWidget(Settings& settings, const QObject *object, const QVariant& value, const QString& objectName) const
 {
-  QString name = objName.isEmpty() ? object->objectName() : objName;
-  if(!name.isEmpty())
-    settings.setValueVar(keyPrefix % "_" % name, value);
+  QString objName = objectName.isEmpty() ? object->objectName() : objectName;
+  if(!objName.isEmpty())
+    settings.setValueVar(keyPrefix % QStringLiteral("_") % objName, value);
   else
     qWarning() << Q_FUNC_INFO << "Found widget with empty name";
 }
 
-void WidgetState::clearWidget(Settings& settings, const QObject *object, const QString& objName) const
+void WidgetState::clearWidget(Settings& settings, const QObject *object, const QString& objectName) const
 {
-  QString name = objName.isEmpty() ? object->objectName() : objName;
-  if(!name.isEmpty())
-    settings.remove(keyPrefix % "_" % name);
+  const QString objName = objectName.isEmpty() ? object->objectName() : objectName;
+  if(!objName.isEmpty())
+    settings.remove(keyPrefix % QStringLiteral("_") % objName);
   else
     qWarning() << Q_FUNC_INFO << "Found widget with empty name";
 }
 
-bool WidgetState::containsWidget(Settings& settings, const QObject *object, const QString& objName) const
+bool WidgetState::containsWidget(Settings& settings, const QObject *object, const QString& objectName) const
 {
-  QString name = objName.isEmpty() ? object->objectName() : objName;
-  if(!name.isEmpty())
+  const QString objName = objectName.isEmpty() ? object->objectName() : objectName;
+  if(!objName.isEmpty())
   {
     if(dynamic_cast<const QDialog *>(object) != nullptr)
       // Need to check for size since dialogs are stored using only this key
-      return settings.contains(keyPrefix % "_" % name % "_size") || settings.contains(keyPrefix % "_" % name % "_pos");
+      return settings.contains(keyPrefix % QStringLiteral("_") % objName % QStringLiteral("_size")) ||
+             settings.contains(keyPrefix % QStringLiteral("_") % objName % QStringLiteral("_pos"));
     else
-      return settings.contains(keyPrefix % "_" % name);
+      return settings.contains(keyPrefix % QStringLiteral("_") % objName);
   }
   else
     qWarning() << Q_FUNC_INFO << "Found widget with empty name";
   return false;
 }
 
-QVariant WidgetState::loadWidget(Settings& settings, QObject *object, const QString& objName) const
+QVariant WidgetState::loadWidget(Settings& settings, QObject *object, const QString& objectName) const
 {
-  QString oname = objName.isEmpty() ? object->objectName() : objName;
-  if(!oname.isEmpty())
+  const QString objName = objectName.isEmpty() ? object->objectName() : objectName;
+  if(!objName.isEmpty())
   {
-    QString name = keyPrefix % "_" % oname;
+    QString name = keyPrefix % QStringLiteral("_") % objName;
     if(settings.contains(name))
       return settings.valueVar(name);
   }
@@ -716,13 +722,9 @@ void WidgetState::loadWidgetVisible(Settings& settings, QWidget *widget) const
   {
     if(!widget->objectName().isEmpty())
     {
-      QString name = keyPrefix % "_" % "_visible_" % widget->objectName();
+      const QString name = keyPrefix % QStringLiteral("_visible_") % widget->objectName();
       if(settings.contains(name))
-      {
-        bool visible = settings.valueBool(name);
-        if(!visible)
-          widget->setVisible(visible);
-      }
+        widget->setVisible(settings.valueBool(name, true));
     }
     else
       qWarning() << Q_FUNC_INFO << "Found widget with empty name";

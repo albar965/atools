@@ -39,21 +39,24 @@ namespace gui {
  * Currently supported widget types:
  *
  * QAbstractButton
- * QAbstractSlider
- * QAction
+ * QAbstractSlider - also min/max values
+ * QAction - saves state only if checkable
+ * QActionGroup - all contained widgets
  * QButtonGroup
  * QCheckBox
  * QComboBox
  * QDoubleSpinBox
- * QFileDialog
+ * QFileDialog - size and position
  * QFrame
  * QHeaderView
- * QLayout
+ * QLabel - only visibility
+ * QLayout - saves or loads all child widgets
  * QLineEdit
- * QMainWindow
+ * QListView - selection
+ * QMainWindow - position and maximized state
  * QSpinBox
  * QSplitter
- * QStatusBar
+ * QStatusBar - visibility only
  * QTabBar
  * QTabWidget
  * QTableView
@@ -69,7 +72,7 @@ public:
    * @param saveVisibility if true save visibility of widgets
    * @param blockSignals if true block all signals while changing widgets
    */
-  WidgetState(const QString& settingsKeyPrefix = QString(), bool saveVisibility = true, bool blockSignals = false);
+  WidgetState(const QString& settingsKeyPrefix = QString(), bool saveVisibility = false, bool blockSignals = false);
 
   void save(const QList<QObject *>& widgets) const;
   void save(const QList<const QObject *>& widgets) const;
@@ -146,12 +149,12 @@ public:
 
 private:
   void saveWidget(atools::settings::Settings& settings, const QObject *object, const QVariant& value,
-                  const QString& objName = QString()) const;
+                  const QString& objectName = QString()) const;
   void clearWidget(atools::settings::Settings& settings, const QObject *object,
-                   const QString& objName = QString()) const;
+                   const QString& objectName = QString()) const;
   QVariant loadWidget(atools::settings::Settings& settings, QObject *object,
-                      const QString& objName = QString()) const;
-  bool containsWidget(atools::settings::Settings& settings, const QObject *widget, const QString& objName = QString()) const;
+                      const QString& objectName = QString()) const;
+  bool containsWidget(atools::settings::Settings& settings, const QObject *widget, const QString& objectName = QString()) const;
 
   void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *widget) const;
   void clearWidgetVisible(atools::settings::Settings& settings, const QWidget *widget) const;

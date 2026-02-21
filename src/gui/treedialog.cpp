@@ -241,7 +241,7 @@ void TreeDialog::buttonBoxClicked(QAbstractButton *button)
 
 void TreeDialog::restoreState(bool restoreCheckState, bool restoreExpandState)
 {
-  atools::gui::WidgetState widgetState(settingsPrefix, false);
+  atools::gui::WidgetState widgetState(settingsPrefix);
 
   // Reset size to contents if not previously saved
   bool reset = !widgetState.contains(ui->treeWidget);
@@ -282,7 +282,7 @@ void TreeDialog::restoreState(bool restoreCheckState, bool restoreExpandState)
 
 void TreeDialog::saveStateDialog(bool saveExpandState)
 {
-  atools::gui::WidgetState widgetState(settingsPrefix, false);
+  atools::gui::WidgetState widgetState(settingsPrefix);
   widgetState.save(QList<const QObject *>({this, ui->treeWidget}));
 
   if(saveExpandState)

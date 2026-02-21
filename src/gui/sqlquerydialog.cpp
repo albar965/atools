@@ -151,12 +151,12 @@ void SqlQueryDialog::buttonBoxClicked(QAbstractButton *button)
 
 void SqlQueryDialog::restoreState()
 {
-  atools::gui::WidgetState(settingsPrefix, false).restore(this);
+  atools::gui::WidgetState(settingsPrefix).restore(this);
 }
 
 void SqlQueryDialog::saveState() const
 {
-  atools::gui::WidgetState(settingsPrefix, false).save(this);
+  atools::gui::WidgetState(settingsPrefix).save(this);
 }
 
 } // namespace gui
