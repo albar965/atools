@@ -33,6 +33,7 @@ class Flags
 {
   /* Print error message at compile time if size of enum and template parameter FLAGTYPE differs */
   static_assert(sizeof(ENUM) == sizeof(FLAGTYPE), "atools::util::Flags: sizeof(ENUM) != sizeof(FLAGTYPE)");
+  static_assert(std::is_convertible<ENUM, long long>(), "std::is_convertible<ENUM, long long>()");
 
 public:
   /* Create types for template parameters. */
