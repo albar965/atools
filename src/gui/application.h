@@ -130,8 +130,8 @@ public:
     contactUrl = value;
   }
 
-  /* Process twice and wait 10 ms inbetween. Excludes input events.  */
-  static void processEventsExtended(unsigned long milliseconds = 10L);
+  /* Process twice and wait 10 ms inbetween. Excludes input events per default.  */
+  static void processEventsExtended(unsigned long milliseconds = 10L, bool excludeInputEvents = true);
 
   static QString generalErrorMessage();
 

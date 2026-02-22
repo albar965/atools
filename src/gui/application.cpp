@@ -435,11 +435,11 @@ QString Application::getEmailHtml()
   return mailStr;
 }
 
-void Application::processEventsExtended(unsigned long milliseconds)
+void Application::processEventsExtended(unsigned long milliseconds, bool excludeInputEvents)
 {
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  QApplication::processEvents(excludeInputEvents ? QEventLoop::ExcludeUserInputEvents : QEventLoop::AllEvents);
   QThread::msleep(milliseconds);
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  QApplication::processEvents(excludeInputEvents ? QEventLoop::ExcludeUserInputEvents : QEventLoop::AllEvents);
 }
 
 QString Application::getReportPathHtml()
