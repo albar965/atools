@@ -23,6 +23,7 @@
 #include "timezone/library/zonedetect.h"
 
 #include <QElapsedTimer>
+#include <QFile>
 #include <QTimeZone>
 
 namespace atools {
@@ -32,6 +33,7 @@ class TimeZonePrivate
 {
 public:
   ZoneDetect *timezoneDb = nullptr;
+  QByteArray library;
 
   static void onError(int errZD, int errNative)
   {
@@ -58,10 +60,19 @@ void TimeZoneManager::readFile(const QString& filename)
 {
   ZDSetErrorHandler(TimeZonePrivate::onError);
 
-  QByteArray name(filename.toUtf8());
-  p->timezoneDb = ZDOpenDatabase(name.constData());
-  if(!p->timezoneDb)
-    throw atools::Exception(tr("Cannot read %1.").arg(filename));
+  // Read file here and open library from memory since it cannot deal with UTF-8 paths
+  QFile file(filename);
+  if(file.open(QIODevice::ReadOnly))
+  {
+    p->library = file.readAll();
+
+    if(file.error() != QFile::NoError)
+      throw atools::Exception(tr("Cannot read %1: %2").arg(filename).arg(file.errorString()));
+
+    p->timezoneDb = ZDOpenDatabaseFromMemory(p->library.data(), p->library.size());
+    if(!p->timezoneDb)
+      throw atools::Exception(tr("Cannot read %1.").arg(filename));
+  }
 
   qDebug() << Q_FUNC_INFO << "Opened" << filename << QString(ZDGetNotice(p->timezoneDb));
 }
@@ -70,6 +81,7 @@ void TimeZoneManager::clear()
 {
   ZDCloseDatabase(p->timezoneDb);
   p->timezoneDb = nullptr;
+  p->library.clear();
   qDebug() << Q_FUNC_INFO << "Closed timezone database";
 }
 

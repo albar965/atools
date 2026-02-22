@@ -855,11 +855,20 @@ ZoneDetect *ZDOpenDatabase(const char *path)
         memset(library, 0, sizeof(*library));
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
-        library->fd = CreateFile(path, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+        size_t size = strlen(path) + 1;
+        wchar_t* wcharPath = new wchar_t[size];
+        mbstowcs(wcharPath, path, size);
+
+
+        library->fd = CreateFile(wcharPath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
         if (library->fd == INVALID_HANDLE_VALUE) {
             zdError(ZD_E_DB_OPEN, (int)GetLastError());
+            delete[] wcharPath;
             goto fail;
         }
+
+        delete[] wcharPath;
 
         const DWORD fsize = GetFileSize(library->fd, NULL);
         if (fsize == INVALID_FILE_SIZE) {
@@ -874,7 +883,7 @@ ZoneDetect *ZDOpenDatabase(const char *path)
             goto fail;
         }
 
-        library->mapping = MapViewOfFile(library->fdMap, FILE_MAP_READ, 0, 0, 0);
+        library->mapping = static_cast<uint8_t *>(MapViewOfFile(library->fdMap, FILE_MAP_READ, 0, 0, 0));
         if (!library->mapping) {
             zdError(ZD_E_DB_MMAP_MSVIEW, (int)GetLastError());
             goto fail;
