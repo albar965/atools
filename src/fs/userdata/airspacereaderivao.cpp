@@ -178,8 +178,8 @@ bool AirspaceReaderIvao::readFile(const QString& filenameParam)
 
           // Get airport position from callback ====================
           Pos airportPos;
-          if(fetchAirportCoords)
-            airportPos = fetchAirportCoords(airportId);
+          if(fetchAirportCoordFunction != nullptr)
+            airportPos = fetchAirportCoordFunction(airportId.toLatin1(), fetchAirportCoordObject);
 
           Rect bounding = line.boundingRect();
 

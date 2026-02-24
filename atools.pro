@@ -279,6 +279,7 @@ HEADERS += \
   src/fs/sc/weatherrequest.h \
   src/fs/sc/xpconnecthandler.h \
   src/fs/scenery/aircraftindex.h \
+  src/fs/util/airportcoordtypes.h \
   src/fs/util/coordinates.h \
   src/fs/util/fsutil.h \
   src/fs/util/morsecode.h \

@@ -18,6 +18,7 @@
 #ifndef ATOOLS_WEATHERDOWNLOADBASE_H
 #define ATOOLS_WEATHERDOWNLOADBASE_H
 
+#include "fs/util/airportcoordtypes.h"
 #include "fs/weather/weathertypes.h"
 
 #include <QTimer>
@@ -70,7 +71,7 @@ public:
   virtual void setUpdatePeriod(int seconds);
 
   /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
-  virtual void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value);
+  virtual void setFetchAirportCoords(atools::fs::util::AirportCoordFuncType function, void* object);
 
   /* Number of unique METAR entries in the list */
   virtual int size() const;

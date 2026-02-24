@@ -91,9 +91,9 @@ void XpWeatherReader::clear()
   currentMetarFiles.clear();
 }
 
-void XpWeatherReader::setFetchAirportCoords(const std::function<geo::Pos(const QString&)>& value)
+void XpWeatherReader::setFetchAirportCoords(atools::fs::util::AirportCoordFuncType function, void *object)
 {
-  metarIndex->setFetchAirportCoords(value);
+  metarIndex->setFetchAirportCoords(function, object);
 }
 
 bool XpWeatherReader::read(const QStringList& filenames)

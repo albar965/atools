@@ -21,6 +21,8 @@
 #include "util/httpdownloader.h"
 #include "zip/gzip.h"
 
+#include <QElapsedTimer>
+
 namespace atools {
 namespace fs {
 namespace weather {
@@ -77,8 +79,23 @@ bool NoaaWeatherDownloader::isDownloading() const
 
 bool NoaaWeatherDownloader::read(const QByteArray& data, const QString& url)
 {
+#ifdef DEBUG_INFORMATION
+  QElapsedTimer timer;
+  timer.start();
+#endif
+
   QTextStream stream(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO));
-  return metarIndex->read(stream, url, true /* merge */) > 0;
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "METAR decoding decompressing took" << timer.elapsed() << "ms";
+#endif
+
+  bool result = metarIndex->read(stream, url, true /* merge */) > 0;
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "METAR decoding took" << timer.elapsed() << "ms";
+#endif
+
+  return result;
 }
 
 void NoaaWeatherDownloader::downloadFinished(const QByteArray& data, QString url)

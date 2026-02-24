@@ -18,7 +18,7 @@
 #ifndef ATOOLS_AIRSPACEREADER_BASE_H
 #define ATOOLS_AIRSPACEREADER_BASE_H
 
-#include <functional>
+#include "fs/util/airportcoordtypes.h"
 
 #include <QCoreApplication>
 #include <QList>
@@ -83,9 +83,10 @@ public:
   }
 
   /* Set to a function that returns the coordinates for an airport ident. */
-  void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
+  void setFetchAirportCoords(atools::fs::util::AirportCoordFuncType function, void *object)
   {
-    fetchAirportCoords = value;
+    fetchAirportCoordFunction = function;
+    fetchAirportCoordObject = object;
   }
 
   /* For column "file_id" in database */
@@ -141,7 +142,8 @@ protected:
   QList<AirspaceErr> errors;
 
   /* Callback to get airport coodinates by ICAO ident */
-  std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
+  atools::fs::util::AirportCoordFuncType fetchAirportCoordFunction = nullptr;
+  void *fetchAirportCoordObject = nullptr;
 };
 
 } // namespace userdata

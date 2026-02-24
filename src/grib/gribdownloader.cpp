@@ -26,6 +26,7 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QElapsedTimer>
 #include <QFile>
 #include <cmath>
 
@@ -139,8 +140,19 @@ void GribDownloader::downloadFinished(const QByteArray& data, QString downloadUr
   try
   {
     // Decode and copy the data
+
+#ifdef DEBUG_INFORMATION
+    QElapsedTimer timer;
+    timer.start();
+#endif
+
     GribReader reader(verbose);
     reader.readData(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO));
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "GRIB decoding took" << timer.elapsed() << "ms";
+#endif
+
     datasets = reader.getDatasets();
   }
   catch(atools::Exception& e)

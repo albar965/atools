@@ -19,8 +19,7 @@
 #define ATOOLS_METARINDEX_H
 
 #include "fs/weather/weathertypes.h"
-
-#include <functional>
+#include "fs/util/airportcoordtypes.h"
 
 #include <QList>
 
@@ -94,9 +93,10 @@ public:
   const Metar& getMetar(const QString& station, atools::geo::Pos pos);
 
   /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest if no position is given. */
-  void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
+  void setFetchAirportCoords(atools::fs::util::AirportCoordFuncType function, void *object)
   {
-    fetchAirportCoords = value;
+    airportCoordFunction = function;
+    airportCoordObject = object;
   }
 
   /* Maximum number of nearest airports fetched for interpolation */
@@ -125,7 +125,7 @@ public:
 
 private:
   /* Get a METAR string. Empty if not available */
-  const atools::fs::weather::Metar& fetchMetar(const QString& ident) const;
+  const atools::fs::weather::Metar& fetchMetar(const QByteArray& ident) const;
 
   /* Read NOAA or XPLANE format */
   int readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bool merge);
@@ -142,13 +142,15 @@ private:
   void updateIndex();
 
   /* Update or insert a METAR entry */
-  void updateOrInsert(const QString& metarString, const QString& ident, const QDateTime& lastTimestamp);
+  void updateOrInsert(const QByteArray& metarString, const QByteArray& ident, const QDateTime& lastTimestamp);
 
   /* Callback to get airport coodinates by ICAO ident */
-  std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
+  // std::function<atools::geo::Pos(const QByteArray&)> fetchAirportCoords;
+  atools::fs::util::AirportCoordFuncType airportCoordFunction = nullptr;
+  void *airportCoordObject = nullptr;
 
   /* Map containing all loaded METARs airport idents mapped to the position in metarVector */
-  QHash<QString, int> identIndexMap;
+  QHash<QByteArray, int> identIndexMap;
 
   /* Index containing all stations which could be resolved to a coordinate. */
   atools::geo::SpatialIndex<PosIndex> *spatialIndex = nullptr, *spatialIndexInterpolated = nullptr;

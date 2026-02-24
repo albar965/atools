@@ -80,9 +80,9 @@ void WeatherDownloadBase::setUpdatePeriod(int seconds)
   downloader->setUpdatePeriod(seconds);
 }
 
-void WeatherDownloadBase::setFetchAirportCoords(const std::function<geo::Pos(const QString&)>& value)
+void WeatherDownloadBase::setFetchAirportCoords(atools::fs::util::AirportCoordFuncType function, void *object)
 {
-  metarIndex->setFetchAirportCoords(value);
+  metarIndex->setFetchAirportCoords(function, object);
 }
 
 int WeatherDownloadBase::size() const

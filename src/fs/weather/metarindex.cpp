@@ -67,14 +67,14 @@ namespace atools {
 namespace fs {
 namespace weather {
 
-inline bool isDigit(QChar c)
+inline bool isDigit(char c)
 {
   return c >= '0' && c <= '9';
 }
 
-inline bool isLetterOrDigit(QChar c)
+inline bool isLetterOrDigit(char c)
 {
-  return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z');
+  return isDigit(c) || (c >= 'A' && c <= 'Z');
 }
 
 // ====================================================================================================
@@ -110,7 +110,7 @@ int MetarIndex::read(const QString& filename, bool merge)
 int MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
 {
   Q_ASSERT(format != UNKNOWN);
-  Q_ASSERT(fetchAirportCoords);
+  Q_ASSERT(airportCoordFunction);
 
   // Set reading flag to forbid fetching METARs while index is invalid
   atools::util::ContextSaverBool readingContext(reading);
@@ -150,16 +150,16 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
     clearCache();
 
   QDateTime latest, oldest;
-  QString latestIdent, oldestIdent;
+  QByteArray latestIdent, oldestIdent;
 
   int lineNum = 1;
-  QString line;
+  QByteArray line;
   QDateTime lastTimestamp, now = QDateTime::currentDateTimeUtc();
   int futureDates = 0, invalidDates = 0, found = 0;
 
   while(!stream.atEnd())
   {
-    line = stream.readLine().trimmed().toLatin1();
+    line = stream.readLine().toLatin1().simplified().toUpper();
 
     if(line.isEmpty() || line.size() > 256)
     {
@@ -167,7 +167,7 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
       continue;
     }
 
-    if(format == XPLANE && (line.startsWith(QStringLiteral("MDEG ")) || line.startsWith(QStringLiteral("DEG "))))
+    if(format == XPLANE && (line.startsWith("MDEG ") || line.startsWith("DEG ")))
     {
       lineNum++;
       // Ignore X-Plane's special coordinate format
@@ -177,16 +177,20 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
     if(line.size() >= 4)
     {
       // static const QRegularExpression DATE_REGEXP("^[\\d]{4}/[\\d]{2}/[\\d]{2}");
-      if(line.size() > 10 &&
+      if(line.size() > 15 &&
          // 2017/07/30 18:55 - detect only date part
-         isDigit(line.at(0)) && isDigit(line.at(1)) && isDigit(line.at(2)) && isDigit(line.at(3)) &&
-         line.at(4) == '/' && isDigit(line.at(5)) && isDigit(line.at(6)) &&
-         line.at(7) == '/' && isDigit(line.at(8)) && isDigit(line.at(9)) &&
+         line.at(0) == '2' && isDigit(line.at(1)) && isDigit(line.at(2)) && isDigit(line.at(3)) &&
+         line.at(4) == '/' &&
+         isDigit(line.at(5)) && isDigit(line.at(6)) &&
+         line.at(7) == '/' &&
+         isDigit(line.at(8)) && isDigit(line.at(9)) &&
          line.at(10) == ' ')
       {
+        // lastTimestamp = QDateTime::fromString(line, QStringLiteral("yyyy/MM/dd hh:mm")); // Slow
         // Found line containing date like "2017/10/29 11:45"
-        lastTimestamp = QDateTime::fromString(line, QStringLiteral("yyyy/MM/dd hh:mm"));
-        lastTimestamp.setTimeZone(QTimeZone::utc()); // Does not change date and time numbers
+        // ................................ 0123 56 89 12 45
+        lastTimestamp = QDateTime(QDate(line.sliced(0, 4).toInt(), line.sliced(5, 2).toInt(), line.sliced(8, 2).toInt()),
+                                  QTime(line.sliced(11, 2).toInt(), line.sliced(14, 2).toInt()), QTimeZone::utc());
         lineNum++;
         continue;
       }
@@ -207,33 +211,39 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
         continue;
       }
 
-      QString ident = line.section(' ', 0, 0);
-      // Recognize METAR airport ident
-      // static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{2,5}$");
-      if(ident.size() >= 3 &&
-         // KPRO 301855Z AUTO 11003KT 10SM CLR 26/14 A3022 RMK AO2 T02570135
-         isLetterOrDigit(line.at(0)) && isLetterOrDigit(line.at(1)) && isLetterOrDigit(line.at(2)))
+      qsizetype idx = line.indexOf(' '); // should be 4
+      if(idx != -1)
       {
-        // Found METAR line
-        if(verbose)
+        const QByteArray ident = line.sliced(0, idx);
+        // Recognize METAR airport ident
+        // static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{2,5}$");
+        if(ident.size() >= 3 &&
+           // KPRO 301855Z AUTO 11003KT 10SM CLR 26/14 A3022 RMK AO2 T02570135
+           isLetterOrDigit(ident.at(0)) && isLetterOrDigit(ident.at(1)) && isLetterOrDigit(ident.at(2)))
         {
-          if(!latest.isValid() || lastTimestamp > latest)
+          // Found METAR line
+          if(verbose)
           {
-            latest = lastTimestamp;
-            latestIdent = ident;
+            if(!latest.isValid() || lastTimestamp > latest)
+            {
+              latest = lastTimestamp;
+              latestIdent = ident;
+            }
+            if(!oldest.isValid() || lastTimestamp < oldest)
+            {
+              oldest = lastTimestamp;
+              oldestIdent = ident;
+            }
           }
-          if(!oldest.isValid() || lastTimestamp < oldest)
-          {
-            oldest = lastTimestamp;
-            oldestIdent = ident;
-          }
-        }
 
-        found++;
-        updateOrInsert(line, ident, lastTimestamp);
+          found++;
+          updateOrInsert(line, ident, lastTimestamp);
+        }
+        else
+          qWarning() << "Ident in METAR does not match in file/URL" << fileOrUrl << "line num" << lineNum << "line" << line;
       }
       else
-        qWarning() << "Ident in METAR does not match in file/URL" << fileOrUrl << "line num" << lineNum << "line" << line;
+        qWarning() << "Wrongly formatted METAR in file/URL" << fileOrUrl << "line num" << lineNum << "line" << line;
     }
     lineNum++;
   }
@@ -271,16 +281,16 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
     clearCache();
 
   QDateTime latest, oldest;
-  QString latestIdent, oldestIdent;
+  QByteArray latestIdent, oldestIdent;
 
   int lineNum = 1;
-  QString line;
+  QByteArray line;
   const QDateTime now = QDateTime::currentDateTimeUtc();
   int futureDates = 0, invalidDates = 0, found = 0;
 
   while(!stream.atEnd())
   {
-    line = stream.readLine().simplified().toUpper().toLatin1();
+    line = stream.readLine().toLatin1().simplified().toUpper();
 
     if(line.isEmpty() || line.size() > 256)
     {
@@ -290,66 +300,84 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
 
     if(line.size() >= 4)
     {
-      QString ident = line.section(' ', 0, 0).simplified().toUpper();
-      QString dateStr = line.section(' ', 1, 1).simplified().toUpper();
-
-      if(ident.size() >= 3 && ident.size() <= 4 && dateStr.size() >= 5)
+      int idx = line.indexOf(' ');
+      if(idx != -1)
       {
-        if(dateStr.endsWith('Z'))
-          dateStr.chop(1);
+        const QByteArray ident = line.sliced(0, idx);
 
-        if(dateStr.size() == 5)
-          dateStr.prepend('0');
-
-        bool ok;
-        int day = dateStr.mid(0, 2).toInt(&ok);
-        if((!ok || day < 1 || day > 31) && verbose)
-          qWarning() << Q_FUNC_INFO << "Cannot read day in METAR" << line;
-        int hour = dateStr.mid(2, 2).toInt(&ok);
-        if((!ok || hour < 0 || hour > 23) && verbose)
-          qWarning() << Q_FUNC_INFO << "Cannot read hour in METAR" << line;
-        int minute = dateStr.mid(4, 2).toInt(&ok);
-        if((!ok || minute < 0 || minute > 60) && verbose)
-          qWarning() << Q_FUNC_INFO << "Cannot read minute in METAR" << line;
-
-        QDateTime metarDateTime = atools::correctDate(day, hour, minute);
-
-        if(!metarDateTime.isValid())
+        QByteArray date = line.sliced(idx + 1);
+        int idxDate = date.indexOf(' ');
+        if(idxDate != -1)
         {
-          // Ignore invalid dates
-          invalidDates++;
-          lineNum++;
-          continue;
-        }
+          date = date.sliced(0, idxDate);
 
-        if(metarDateTime > now)
-        {
-          // Ignore METARs with future UTC time
-          futureDates++;
-          lineNum++;
-          continue;
-        }
-
-        // Found METAR line
-        if(verbose)
-        {
-          if(!latest.isValid() || metarDateTime > latest)
+          if(ident.size() >= 3 && ident.size() <= 4 && date.size() >= 5)
           {
-            latest = metarDateTime;
-            latestIdent = ident;
-          }
-          if(!oldest.isValid() || metarDateTime < oldest)
-          {
-            oldest = metarDateTime;
-            oldestIdent = ident;
-          }
-        }
+            if(date.endsWith('Z'))
+              date.chop(1);
 
-        found++;
-        updateOrInsert(line, ident, metarDateTime);
+            if(date.size() == 5)
+              date.prepend('0');
+
+            int day = -1, hour = -1, minute = -1;
+            if(date.size() >= 2)
+            {
+              day = date.sliced(0, 2).toInt();
+              if(date.size() >= 4)
+              {
+                hour = date.sliced(2, 2).toInt();
+                if(date.size() >= 6)
+                  minute = date.sliced(4, 2).toInt();
+              }
+            }
+
+            QDateTime metarDateTime = atools::correctDate(day, hour, minute);
+
+            if(!metarDateTime.isValid())
+            {
+              if(verbose)
+                qWarning() << Q_FUNC_INFO << "Invalid date in METAR" << line;
+
+              // Ignore invalid dates
+              invalidDates++;
+              lineNum++;
+              continue;
+            }
+
+            if(metarDateTime > now)
+            {
+              // Ignore METARs with future UTC time
+              futureDates++;
+              lineNum++;
+              continue;
+            }
+
+            // Found METAR line
+            if(verbose)
+            {
+              if(!latest.isValid() || metarDateTime > latest)
+              {
+                latest = metarDateTime;
+                latestIdent = ident;
+              }
+              if(!oldest.isValid() || metarDateTime < oldest)
+              {
+                oldest = metarDateTime;
+                oldestIdent = ident;
+              }
+            }
+
+            found++;
+            updateOrInsert(line, ident, metarDateTime);
+          }
+          else if(verbose)
+            qWarning() << "Invalid METAR in file/URL" << fileOrUrl << "line num" << lineNum << "line" << line;
+        }
+        else if(verbose)
+          qWarning() << "Invalid METAR in file/URL" << fileOrUrl << "line num" << lineNum << "line" << line;
       }
       else if(verbose)
-        qWarning() << "Invalid METAR in file/URL" << fileOrUrl << "line num" << lineNum << "line" << line;
+        qWarning() << "Wrongly formatted METAR in file/URL" << fileOrUrl << "line num" << lineNum << "line" << line;
     }
     lineNum++;
   }
@@ -396,19 +424,17 @@ int MetarIndex::readJson(QTextStream& stream, const QString& fileOrUrl, bool mer
     clearCache();
 
   QDateTime latest, oldest;
-  QString latestIdent, oldestIdent;
+  QByteArray latestIdent, oldestIdent;
 
   const QDateTime now = QDateTime::currentDateTimeUtc();
   int futureDates = 0, invalidDates = 0, found = 0;
 
-  QJsonDocument doc = QJsonDocument::fromJson(stream.readAll().toUtf8());
-  const QJsonArray arr = doc.array();
-  for(const QJsonValue& airportValue : arr)
+  for(const QJsonValue& airportValue : QJsonDocument::fromJson(stream.readAll().toUtf8()).array())
   {
-    QJsonObject airportObj = airportValue.toObject();
-    QString ident = airportObj.value(QStringLiteral("airportIcao")).toString().toLatin1();
-    QString metar = airportObj.value(QStringLiteral("metar")).toString().toLatin1();
-    QDateTime metarDateTime = QDateTime::fromString(airportObj.value(QStringLiteral("updatedAt")).toString(), Qt::ISODateWithMs);
+    const QJsonObject airportObj = airportValue.toObject();
+    const QByteArray ident = airportObj.value(QStringLiteral("airportIcao")).toString().toLatin1();
+    const QByteArray metar = airportObj.value(QStringLiteral("metar")).toString().toLatin1();
+    const QDateTime metarDateTime = QDateTime::fromString(airportObj.value(QStringLiteral("updatedAt")).toString(), Qt::ISODateWithMs);
 
     if(!metarDateTime.isValid())
     {
@@ -461,7 +487,7 @@ int MetarIndex::readJson(QTextStream& stream, const QString& fileOrUrl, bool mer
   return found;
 }
 
-void MetarIndex::updateOrInsert(const QString& metarString, const QString& ident, const QDateTime& lastTimestamp)
+void MetarIndex::updateOrInsert(const QByteArray& metarString, const QByteArray& ident, const QDateTime& lastTimestamp)
 {
   if(identIndexMap.contains(ident))
   {
@@ -482,7 +508,7 @@ void MetarIndex::updateOrInsert(const QString& metarString, const QString& ident
   else
   {
     // Insert new record
-    atools::geo::Pos pos = fetchAirportCoords(ident);
+    atools::geo::Pos pos = airportCoordFunction(ident, airportCoordObject);
 
     Metar metar(ident, pos, lastTimestamp, metarString);
     metar.parseAll(false /* useTimestamp */);
@@ -524,14 +550,15 @@ const atools::fs::weather::Metar& MetarIndex::getMetar(const QString& station, a
 {
   if(!reading)
   {
-    const Metar& metar = fetchMetar(station);
+    const QByteArray stationBytes = station.toLatin1();
+    const Metar& metar = fetchMetar(stationBytes);
 
     if(metar.hasAnyMetar())
       return metar;
     else
     {
-      if(!pos.isValid() && !station.isEmpty())
-        pos = fetchAirportCoords(station);
+      if(!pos.isValid() && !stationBytes.isEmpty())
+        pos = airportCoordFunction(stationBytes, airportCoordObject);
 
       if(pos.isValid())
       {
@@ -566,7 +593,7 @@ const atools::fs::weather::Metar& MetarIndex::getMetar(const QString& station, a
               }), metars.end());
 
         // Interpolate nearest metars =================================
-        Metar metarInterpolatedNew = Metar(station, pos, metars);
+        Metar metarInterpolatedNew = Metar(stationBytes, pos, metars);
         metarInterpolatedNew.parseAll(false /* useTimestamp */);
 
         // Clear full cache if too large
@@ -579,7 +606,7 @@ const atools::fs::weather::Metar& MetarIndex::getMetar(const QString& station, a
         return metarInterpolatedVector.constLast();
       }
       else
-        qWarning() << Q_FUNC_INFO << "Cannot find METAR" << pos << station;
+        qWarning() << Q_FUNC_INFO << "Cannot find METAR" << pos << stationBytes;
     } // if(metar.hasAnyMetar()) return metar; else
   } // if(!reading)
 
@@ -591,7 +618,7 @@ void MetarIndex::updateIndex()
   spatialIndex->updateIndex();
 }
 
-const Metar& MetarIndex::fetchMetar(const QString& ident) const
+const Metar& MetarIndex::fetchMetar(const QByteArray& ident) const
 {
   if(!ident.isEmpty())
   {

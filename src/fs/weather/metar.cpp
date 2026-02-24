@@ -81,13 +81,13 @@ void Metar::parseAll(bool useTimestamp)
 void Metar::clearAll()
 {
   station.resetParsed();
-  station.setMetar(QString());
+  station.setMetar(QStringLiteral());
 
   interpolated.resetParsed();
-  interpolated.setMetar(QString());
+  interpolated.setMetar(QStringLiteral());
 
   nearest.resetParsed();
-  nearest.setMetar(QString());
+  nearest.setMetar(QStringLiteral());
 }
 
 void Metar::cleanFsxP3dAll()

@@ -21,6 +21,8 @@
 #include "fs/weather/metarindex.h"
 #include "zip/gzip.h"
 
+#include <QElapsedTimer>
+
 namespace atools {
 namespace fs {
 namespace weather {
@@ -48,8 +50,15 @@ void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
   // AGGH 161200Z 14002KT 9999 FEW016 25/24 Q1010
   // AYNZ 160800Z 09005G10KT 9999 SCT030 BKN ABV050 27/24 Q1007 RMK
   // AYPY 160700Z 28010KT 9999 SCT025 OVC050 28/23 Q1008 RMK/ BUILD UPS TO S/W
+#ifdef DEBUG_INFORMATION
+  QElapsedTimer timer;
+  timer.start();
+#endif
   QTextStream stream(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO), QIODevice::ReadOnly | QIODevice::Text);
   metarIndex->read(stream, downloader->getUrl(), false /* merge */);
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "METAR decoding took" << timer.elapsed() << "ms";
+#endif
 
   if(verbose)
     qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << metarIndex->numStationMetars()
