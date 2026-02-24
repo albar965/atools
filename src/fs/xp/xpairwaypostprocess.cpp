@@ -58,9 +58,9 @@ inline bool operator!=(const AirwayPoint& seg1, const AirwayPoint& seg2)
   return !(seg1 == seg2);
 }
 
-inline size_t qHash(const AirwayPoint& seg)
+inline size_t qHash(const AirwayPoint& seg, size_t seed)
 {
-  return qHash(seg.ident) ^ qHash(seg.region) ^ static_cast<uint>(seg.type);
+  return qHashMulti(seed, seg.ident, seg.region, seg.type);
 }
 
 QDebug operator<<(QDebug out, const AirwayPoint& point)
@@ -107,9 +107,9 @@ inline bool operator!=(const AirwaySegment& seg1, const AirwaySegment& seg2)
   return !(seg1 == seg2);
 }
 
-inline size_t qHash(const AirwaySegment& seg)
+inline size_t qHash(const AirwaySegment& seg, size_t seed)
 {
-  return qHash(seg.prev) ^ qHash(seg.next);
+  return qHashMulti(seed, seg.prev.ident, seg.prev.type, seg.next.ident, seg.next.type);
 }
 
 QDebug operator<<(QDebug out, const AirwaySegment& segment)

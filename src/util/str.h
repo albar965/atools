@@ -79,9 +79,9 @@ public:
     return std::strcmp(str1.str, str2.str) < 0;
   }
 
-  QString getString() const
+  QLatin1String getString() const
   {
-    return QString::fromLatin1(str);
+    return QLatin1String(str);
   }
 
   const char *getStr() const
@@ -239,108 +239,41 @@ private:
   Str<SIZE> first, second, third;
 };
 
-/*
- * Same as above but for three strings
- */
 template<int SIZE>
-class StrQuad
+inline size_t qHash(const atools::util::Str<SIZE>& str, size_t seed)
 {
-public:
-  explicit StrQuad(const QString& firstParam, const QString& secondParam, const QString& thirdParam, const QString& fourthParam)
-    : first(firstParam), second(secondParam), third(thirdParam), fourth(fourthParam)
-  {
-  }
+  return qHash(str.getString(), seed);
+}
 
-  explicit StrQuad(const Str<SIZE>& firstParam, const Str<SIZE>& secondParam, const Str<SIZE>& thirdParam, const Str<SIZE>& fourthParam)
-    : first(firstParam), second(secondParam), third(thirdParam), fourth(fourthParam)
-  {
-  }
+template<int SIZE>
+inline size_t qHash(const atools::util::StrPair<SIZE>& str, size_t seed)
+{
+  return qHashMulti(seed, str.getFirst().getString(), str.getSecond().getString());
+}
 
-  StrQuad()
-  {
-  }
+template<int SIZE>
+inline size_t qHash(const atools::util::StrTriple<SIZE>& str, size_t seed)
+{
+  return qHashMulti(seed, str.getFirst().getString(), str.getSecond().getString(), str.getThird().getString());
+}
 
-  StrQuad(const StrQuad<SIZE>& other)
-  {
-    this->operator=(other);
-  }
-
-  StrQuad& operator=(const StrQuad<SIZE>& other)
-  {
-    first = other.first;
-    second = other.second;
-    third = other.third;
-    fourth = other.fourth;
-    return *this;
-  }
-
-  friend bool operator==(const StrQuad<SIZE>& str1, const StrQuad<SIZE>& str2)
-  {
-    return std::tie(str1.first, str1.second, str1.third, str1.fourth) == std::tie(str2.first, str2.second, str2.third, str1.fourth);
-  }
-
-  friend bool operator!=(const StrQuad<SIZE>& str1, const StrQuad<SIZE>& str2)
-  {
-    return !operator==(str1, str2);
-  }
-
-  friend bool operator<(const StrQuad<SIZE>& str1, const StrQuad<SIZE>& str2)
-  {
-    return std::tie(str1.first, str1.second, str1.third, str1.fourth) < std::tie(str2.first, str2.second, str2.third, str1.fourth);
-  }
-
-  const Str<SIZE>& getFirst() const
-  {
-    return first;
-  }
-
-  const Str<SIZE>& getSecond() const
-  {
-    return second;
-  }
-
-  const Str<SIZE>& getThird() const
-  {
-    return third;
-  }
-
-  const Str<SIZE>& getFourth() const
-  {
-    return fourth;
-  }
-
-  const static int size = SIZE;
-
-private:
-  Str<SIZE> first, second, third, fourth;
-};
-
+/* Functions without seed are needed to avoid compilation issues with qHashMulti */
 template<int SIZE>
 inline size_t qHash(const atools::util::Str<SIZE>& str)
 {
-  int retval = 0;
-  for(int i = 0; i < SIZE && str.getStr()[i] != '\0'; i++)
-    retval ^= str.getStr()[i] << ((i % 4) * 8);
-
-  return static_cast<uint>(retval);
-}
-
-template<int SIZE>
-inline size_t qHash(const atools::util::StrTriple<SIZE>& str)
-{
-  return qHash(str.getFirst()) ^ qHash(str.getSecond()) ^ qHash(str.getThird());
-}
-
-template<int SIZE>
-inline size_t qHash(const atools::util::StrQuad<SIZE>& str)
-{
-  return qHash(str.getFirst()) ^ qHash(str.getSecond()) ^ qHash(str.getThird()) ^ qHash(str.getFourth());
+  return qHash(str.getString(), 147397);
 }
 
 template<int SIZE>
 inline size_t qHash(const atools::util::StrPair<SIZE>& str)
 {
-  return qHash(str.getFirst()) ^ qHash(str.getSecond());
+  return qHashMulti(147397, str.getFirst().getString(), str.getSecond().getString());
+}
+
+template<int SIZE>
+inline size_t qHash(const atools::util::StrTriple<SIZE>& str)
+{
+  return qHashMulti(147397, str.getFirst().getString(), str.getSecond().getString(), str.getThird().getString());
 }
 
 } // namespace util

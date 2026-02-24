@@ -78,9 +78,9 @@ struct AirwayResolver::AirwaySegment
   atools::geo::Pos fromPos, toPos;
 };
 
-size_t qHash(const AirwayResolver::AirwaySegment& segment)
+size_t qHash(const AirwayResolver::AirwaySegment& segment, size_t seed)
 {
-  return static_cast<unsigned int>(segment.fromWaypointId) ^ static_cast<unsigned int>(segment.toWaypointId);
+  return qHashMulti(seed, segment.fromWaypointId, segment.toWaypointId);
 }
 
 AirwayResolver::AirwayResolver(SqlDatabase& sqlDb, atools::fs::ProgressHandler& progress)

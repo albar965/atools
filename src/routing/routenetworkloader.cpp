@@ -37,13 +37,13 @@ using atools::charAt;
 // Calculate hash for airway name for quick comparison in routing algorithm
 inline size_t airwayHash(const QString& name)
 {
-  return qHash(name) + 1; // Avoid null
+  return qHash(name, 7963) + 1; // Avoid null
 }
 
 // Calculate hash for track name and type for quick comparison in routing algorithm
 inline size_t trackHash(const QString& name, const QString& type)
 {
-  return (qHash(name) ^ (qHash(type) << 8) ^ 0x55555555) + 1; // Avoid null and add pattern to difference for airway
+  return (qHash(name, 7963) ^ (qHash(type, 7963) << 8) ^ 0x55555555) + 1; // Avoid null and add pattern to difference for airway
 }
 
 namespace atools {

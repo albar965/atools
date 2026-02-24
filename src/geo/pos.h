@@ -56,7 +56,8 @@ QDebug operator<<(QDebug out, const LineDistance& lineDist);
 class Pos
 {
 public:
-  Pos() : lonX(INVALID_VALUE), latY(INVALID_VALUE), altitude(0.f)
+  Pos()
+    : lonX(INVALID_VALUE), latY(INVALID_VALUE), altitude(0.f)
   {
   }
 
@@ -385,9 +386,9 @@ private:
 /* Invalid position */
 const atools::geo::Pos EMPTY_POS;
 
-inline size_t qHash(const atools::geo::Pos& pos)
+inline size_t qHash(const atools::geo::Pos& pos, size_t seed)
 {
-  return static_cast<unsigned int>(pos.getLonX()) ^ static_cast<unsigned int>(pos.getLatY());
+  return qHashMulti(seed, pos.getLonX(), pos.getLatY());
 }
 
 /* Primitive class to transport more accurate values */

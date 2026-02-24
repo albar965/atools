@@ -94,9 +94,9 @@ struct Track
 
 typedef QList<atools::track::Track> TrackListType;
 
-inline size_t qHash(atools::track::TrackType type)
+inline size_t qHash(atools::track::TrackType type, size_t)
 {
-  return static_cast<uint>(type);
+  return static_cast<size_t>(type);
 }
 
 QDebug operator<<(QDebug out, const atools::track::Track& record);

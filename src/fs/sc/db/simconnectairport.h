@@ -418,8 +418,6 @@ struct LegFacility
 
 };
 
-size_t qHash(const LegFacility& leg);
-
 /* STAR. Child member of the AIRPORT entry point, and is itself and
  * entry point for RUNWAY_TRANSITION, ENROUTE_TRANSITION, and APPROACH_LEG.
  * FACILITY_DATA_AIRPORT_PROC_DEFINITION_ID */
@@ -733,7 +731,7 @@ private:
 };
 
 /* Ignores runway legs. Otherwise hashes legs too. */
-size_t qHash(const RunwayTransition& trans);
+size_t qHash(const RunwayTransition& trans, size_t seed);
 
 // =============================================
 class EnrouteTransition

@@ -25,9 +25,8 @@ namespace util {
 
 using namespace atools::util::ptinternal;
 
-size_t qHash(const atools::util::Prop& prop)
+size_t qHash(const atools::util::Prop& prop, size_t seed)
 {
-  size_t hash = 43;
   switch(prop.type)
   {
     case BOOL:
@@ -38,16 +37,13 @@ size_t qHash(const atools::util::Prop& prop)
     case INT32:
     case UINT32:
     case INT64:
-      hash ^= ::qHash(prop.getValueLongLong());
-      break;
+      return qHashMulti(seed, prop.getValueLongLong(), prop.key);
 
     case FLOAT:
-      hash ^= ::qHash(prop.getValueFloat());
-      break;
+      return qHashMulti(seed, prop.getValueFloat(), prop.key);
 
     case DOUBLE:
-      hash ^= ::qHash(prop.getValueDouble());
-      break;
+      return qHashMulti(seed, prop.getValueDouble(), prop.key);
 
     case STRING8:
     case STRING16:
@@ -55,22 +51,20 @@ size_t qHash(const atools::util::Prop& prop)
     case BYTES8:
     case BYTES16:
     case BYTES32:
-      hash ^= ::qHash(prop.getValueBytes());
-      break;
+      return qHashMulti(seed, prop.getValueBytes(), prop.key);
 
     case INVALID:
     case NONE:
-      break;
+    default:
+      return ::qHash(prop.key, seed);
   }
-
-  return ::qHash(prop.key) ^ hash;
 }
 
-size_t qHash(const atools::util::Props& props)
+size_t qHash(const atools::util::Props& props, size_t seed)
 {
-  size_t retval = 43;
+  size_t retval = 147397;
   for(auto it = props.constBegin(); it != props.constEnd(); ++it)
-    retval ^= qHash(it.value());
+    retval ^= qHash(it.value(), seed);
 
   return retval;
 }

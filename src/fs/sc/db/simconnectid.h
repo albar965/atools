@@ -81,7 +81,7 @@ public:
   }
 
 private:
-  friend size_t qHash(const IcaoId& str);
+  friend size_t qHash(const IcaoId& str, size_t seed);
 
   void init(const char *identParam)
   {
@@ -98,9 +98,9 @@ private:
   char ident[SIZE];
 };
 
-inline size_t qHash(const IcaoId& id)
+inline size_t qHash(const IcaoId& id, size_t seed)
 {
-  return qHash(QLatin1String(id.ident));
+  return qHash(QLatin1String(id.ident), seed);
 }
 
 typedef QList<IcaoId> IcaoIdList;
@@ -213,7 +213,7 @@ public:
   }
 
 private:
-  friend size_t qHash(const FacilityId& str);
+  friend size_t qHash(const FacilityId& str, size_t seed);
 
   void init(const char *identParam, const char *regionParam)
   {
@@ -239,9 +239,9 @@ private:
   char ident[SIZE], region[SIZE];
 };
 
-inline size_t qHash(const FacilityId& id)
+inline size_t qHash(const FacilityId& id, size_t seed)
 {
-  return qHash(QLatin1String(id.ident)) ^ qHash(QLatin1String(id.region)) ^ static_cast<int>(id.type);
+  return qHashMulti(seed, id.type, QLatin1String(id.ident), QLatin1String(id.region));
 }
 
 typedef QList<FacilityId> FacilityIdList;

@@ -337,9 +337,9 @@ private:
         { \
           return f2 | f1; \
         } \
-        inline size_t qHash(const FlagsParam& flags) \
+        inline size_t qHash(const FlagsParam& flags, size_t seed) \
         { \
-          return ::qHash(flags.asFlagType()); \
+          return ::qHash(flags.asFlagType(), seed); \
         } \
         inline QDataStream& operator>>(QDataStream& stream, FlagsParam& flags) \
         { \

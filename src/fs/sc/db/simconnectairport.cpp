@@ -386,18 +386,18 @@ QVariant surfaceToDb(Surface surface)
   return QStringLiteral("UNKNOWN");
 }
 
-size_t qHash(const LegFacility& leg)
+size_t qHash(const LegFacility& leg, size_t seed)
 {
   return leg.type ^
          // Ignore runways
-         (leg.fixType == 'R' ? 98519 : qHash(QLatin1String(leg.fixIcao))) ^
-         qHash(QLatin1String(leg.fixRegion)) ^ (leg.fixType << 2) ^
+         (leg.fixType == 'R' ? 98519 : qHash(QLatin1String(leg.fixIcao), seed)) ^
+         qHash(QLatin1String(leg.fixRegion), seed) ^ (leg.fixType << 2) ^
          (leg.flyOver << 4) ^
          (leg.distanceMinute << 8) ^
          (leg.trueDegree << 10) ^
          (leg.turnDirection << 12) ^
-         qHash(QLatin1String(leg.originIcao)) ^
-         qHash(QLatin1String(leg.originRegion)) ^
+         qHash(QLatin1String(leg.originIcao), seed) ^
+         qHash(QLatin1String(leg.originRegion), seed) ^
          (leg.originType << 14) ^
          atools::roundToInt(leg.theta * 1000.f) ^
          atools::roundToInt(leg.rho * 1000.f) ^
@@ -408,9 +408,10 @@ size_t qHash(const LegFacility& leg)
          atools::roundToInt(leg.altitude2 * 1000.f) ^
          atools::roundToInt(leg.speedLimit * 1000.f) ^
          atools::roundToInt(leg.verticalAngle * 1000.f) ^
-         qHash(QLatin1String(leg.arcCenterFixIcao)) ^
-         qHash(QLatin1String(leg.arcCenterFixRegion)) ^
-         (leg.arcCenterFixType << 18);
+         qHash(QLatin1String(leg.arcCenterFixIcao), seed) ^
+         qHash(QLatin1String(leg.arcCenterFixRegion), seed) ^
+         (leg.arcCenterFixType << 18) ^
+         seed;
 }
 
 bool LegFacility::operator==(const LegFacility& leg) const
@@ -440,10 +441,13 @@ bool LegFacility::operator==(const LegFacility& leg) const
          arcCenterFixType == leg.arcCenterFixType;
 }
 
-size_t qHash(const RunwayTransition& trans)
+size_t qHash(const RunwayTransition& trans, size_t seed)
 {
-  return qHash(trans.getLegFacilities()) ^
-         (trans.getTransitionFacility().runwayDesignator << 8) ^ (trans.getTransitionFacility().runwayNumber << 16);
+  size_t retval = seed;
+  for(const LegFacility& leg : trans.getLegFacilities())
+    retval ^= qHash(leg, seed);
+
+  return qHashMulti(seed, trans.getTransitionFacility().runwayNumber, trans.getTransitionFacility().runwayDesignator) ^ retval;
 }
 
 bool RunwayTransition::operator==(const RunwayTransition& other) const

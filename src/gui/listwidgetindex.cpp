@@ -77,9 +77,9 @@ private:
   QObject *object;
 };
 
-inline size_t qHash(const atools::gui::ListWidgetIndexEntry& entry)
+inline size_t qHash(const atools::gui::ListWidgetIndexEntry& entry, size_t seed)
 {
-  return static_cast<unsigned int>(entry.getStackedWidgetIndex()) ^ qHash(entry.getObject());
+  return qHashMulti(seed, entry.getStackedWidgetIndex(), entry.getObject());
 }
 
 struct ListWidgetIndexMap

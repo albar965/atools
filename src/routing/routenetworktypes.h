@@ -132,16 +132,14 @@ struct Edge
   static constexpr quint16 MAX_ALTITUDE = std::numeric_limits<quint16>::max();
 
   Edge()
-    : toIndex(-1), lengthMeter(0), id(-1), airwayHash(0),
-    minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), type(atools::routing::EDGE_NONE), routeType(NO_ROUTE_TYPE),
-    hasAltLevels(false)
+    : toIndex(-1), lengthMeter(0), id(-1), airwayHash(0), minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), type(atools::routing::EDGE_NONE),
+      routeType(NO_ROUTE_TYPE), hasAltLevels(false)
   {
   }
 
   Edge(int to, float distance)
-    : toIndex(to), lengthMeter(static_cast<int>(distance)), id(-1), airwayHash(0),
-    minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), type(atools::routing::EDGE_NONE), routeType(NO_ROUTE_TYPE),
-    hasAltLevels(false)
+    : toIndex(to), lengthMeter(static_cast<int>(distance)), id(-1), airwayHash(0), minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE),
+      type(atools::routing::EDGE_NONE), routeType(NO_ROUTE_TYPE), hasAltLevels(false)
   {
   }
 
@@ -188,8 +186,7 @@ struct Edge
 struct Node
 {
   Node()
-    : index(INVALID_INDEX), id(-1), range(0),
-    type(atools::routing::NODE_NONE), subtype(atools::routing::NODE_NONE), con(CONNECTION_NONE)
+    : index(INVALID_INDEX), id(-1), range(0), type(atools::routing::NODE_NONE), subtype(atools::routing::NODE_NONE), con(CONNECTION_NONE)
   {
   }
 
@@ -293,9 +290,9 @@ struct Node
 
 };
 
-inline size_t qHash(const atools::routing::Node& node)
+inline size_t qHash(const atools::routing::Node& node, size_t)
 {
-  return static_cast<uint>(node.index);
+  return static_cast<size_t>(node.index);
 }
 
 struct Result

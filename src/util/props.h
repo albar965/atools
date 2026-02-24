@@ -274,7 +274,7 @@ private:
 
   friend QDataStream& operator<<(QDataStream& out, const atools::util::Prop& prop);
   friend QDataStream& operator>>(QDataStream& in, atools::util::Prop& prop);
-  friend size_t qHash(const atools::util::Prop& prop);
+  friend size_t qHash(const atools::util::Prop& prop, size_t seed);
   friend QDebug operator<<(QDebug out, const atools::util::Prop& prop);
 
   /* Hash key as passed in by user in constructors */
@@ -350,9 +350,6 @@ private:
   typedef quint16 propsSizeType;
   const static int MAX_PROPS_SIZE = std::numeric_limits<propsSizeType>::max();
 };
-
-size_t qHash(const atools::util::Prop& prop);
-size_t qHash(const atools::util::Props& props);
 
 template<typename TYPE>
 void Prop::readIntType(QDataStream& in, Prop& prop)

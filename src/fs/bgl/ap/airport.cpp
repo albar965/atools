@@ -54,9 +54,9 @@ bool operator!=(const ParkingKey& k1, const ParkingKey& k2)
   return !operator==(k1, k2);
 }
 
-inline size_t qHash(const ParkingKey& pair)
+inline size_t qHash(const ParkingKey& pair, size_t seed)
 {
-  return static_cast<unsigned int>(pair.number) ^ static_cast<unsigned int>(pair.name);
+  return qHashMulti(seed, pair.number, pair.name);
 }
 
 using atools::io::BinaryStream;
