@@ -26,6 +26,7 @@
 #include <QLayout>
 #include <QDebug>
 #include <QTextDocumentFragment>
+#include <QWindow>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -171,8 +172,15 @@ void adjustSelectionColors(QWidget *widget)
 #endif
 }
 
+void updateAllFonts(const QFont& font)
+{
+  for(QWindow *window: QGuiApplication::allWindows())
+    updateAllFonts(window, font);
+}
+
 void updateAllFonts(QObject *object, const QFont& font)
 {
+
   if(object != nullptr)
   {
     QWidget *widget = dynamic_cast<QWidget *>(object);

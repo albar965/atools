@@ -59,6 +59,8 @@ QSplashScreen *Application::splashScreen = nullptr;
 
 atools::util::Properties *Application::startupOptions = nullptr;
 QElapsedTimer Application::timer;
+QFont Application::lastFontChanged;
+QPalette Application::lastPaletteChanged;
 
 Application::Application(int& argc, char **argv, int)
   : QApplication(argc, argv)
@@ -69,6 +71,8 @@ Application::Application(int& argc, char **argv, int)
   // aboutToQuit is not called during OS shutdown
   // commitDataRequest is only called if a main window is shown
   connect(this, &QGuiApplication::commitDataRequest, this, &Application::applicationAboutToQuitInternal, Qt::QueuedConnection);
+  lastFontChanged = QGuiApplication::font();
+  lastPaletteChanged = QGuiApplication::palette();
 }
 
 Application::~Application()
@@ -306,9 +310,22 @@ void Application::buildCrashReport(const QString& crashReportFile, const QString
 bool Application::notify(QObject *receiver, QEvent *event)
 {
   if(event->type() == QEvent::ApplicationFontChange)
-    emit fontChanged(QGuiApplication::font());
+  {
+    // Qt sends a whole pile of font events in case of update - catch only one which actually changes the font
+    if(QGuiApplication::font() != lastFontChanged)
+    {
+      lastFontChanged = QGuiApplication::font();
+      emit fontChanged(lastFontChanged);
+    }
+  }
   else if(event->type() == QEvent::ApplicationPaletteChange)
-    emit paletteChanged(QGuiApplication::palette());
+  {
+    if(QGuiApplication::palette() != lastPaletteChanged)
+    {
+      lastPaletteChanged = QGuiApplication::palette();
+      emit paletteChanged(lastPaletteChanged);
+    }
+  }
 
 #ifdef DEBUG_LOG_ALL_MESSAGES
   if(receiver != nullptr)

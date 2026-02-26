@@ -222,6 +222,8 @@ private:
   static bool showExceptionDialog, restartProcess, tooltipsDisabled, shuttingDown, startingUp;
 
   static QElapsedTimer timer;
+  static QFont lastFontChanged; /* Remember font to avoid multiple change events sent */
+  static QPalette lastPaletteChanged;
 
 };
 

@@ -76,8 +76,8 @@ void ItemViewZoomHandler::setTableViewFontSize(double pointSize)
 
   double fontHeight = QFontMetricsF(font).height();
 
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "pointSize" << pointSize << itemView->objectName() << "new font height" << fontHeight
+#ifdef DEBUG_INFORMATION_ZOOMHANDLER
+  qDebug() << Q_FUNC_INFO << itemView->objectName() << "pointSize" << pointSize << "new font height" << fontHeight
            << "point size" << font.pointSizeF();
 #endif
 
@@ -87,8 +87,14 @@ void ItemViewZoomHandler::setTableViewFontSize(double pointSize)
   if(tableView != nullptr)
   {
     // Adjust the cell height - default is too big
-    tableView->verticalHeader()->setMinimumSectionSize(atools::roundToInt(fontHeight + sectionToFontSize + margin * 2.));
-    tableView->verticalHeader()->setDefaultSectionSize(atools::roundToInt(fontHeight + sectionToFontSize + margin * 2.));
+    int size = atools::roundToInt(fontHeight + sectionToFontSize + margin * 2.);
+
+#ifdef DEBUG_INFORMATION_ZOOMHANDLER
+    qDebug() << Q_FUNC_INFO << itemView->objectName() << "table view vertical header sizes" << size;
+#endif
+
+    tableView->verticalHeader()->setMinimumSectionSize(size);
+    tableView->verticalHeader()->setDefaultSectionSize(size);
   }
 }
 
@@ -101,7 +107,7 @@ void ItemViewZoomHandler::initTableViewZoom()
 
 void ItemViewZoomHandler::zoomPercent(int percent)
 {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ZOOMHANDLER
   qDebug() << Q_FUNC_INFO << itemView->objectName() << percent;
 #endif
 
@@ -115,7 +121,7 @@ void ItemViewZoomHandler::zoomPercent(int percent)
 
 void ItemViewZoomHandler::zoomTableView(int value)
 {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ZOOMHANDLER_ZOOMHANDLER
   qDebug() << Q_FUNC_INFO << itemView->objectName() << value;
 #endif
 

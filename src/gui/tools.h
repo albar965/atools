@@ -48,6 +48,7 @@ QString fontDescription(const QFont& font);
 void fontDescription(const QFont& font, QLabel *label);
 
 /* Updates all fonts for object and all children */
+void updateAllFonts(const QFont& font);
 void updateAllFonts(QObject *object, const QFont& font);
 
 /* Set font size in widgets and layouts recursively based on percent application font size. */
