@@ -108,7 +108,7 @@ void SqlDatabase::open(const QStringList& pragmas, bool readonlyParam)
 
   for(const QString& pragma : pragmas)
   {
-    db.exec(pragma);
+    QSqlQuery(db).exec(pragma);
     checkError(isValid(), "Database not valid after \"" + pragma + "\"");
   }
 
@@ -194,7 +194,7 @@ void SqlDatabase::executePragmas(const QStringList& pragmas)
 
   for(const QString& pragma : pragmas)
   {
-    db.exec(pragma);
+    QSqlQuery(db).exec(pragma);
     checkError(isValid(), "Database not valid after \"" + pragma + "\"");
   }
 
