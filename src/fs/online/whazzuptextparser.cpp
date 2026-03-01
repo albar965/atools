@@ -144,7 +144,7 @@ WhazzupTextParser::WhazzupTextParser(sql::SqlDatabase *sqlDb, bool verboseErrorR
 {
   // Prefix column array for both formats
   for(int i = 0; i < std::max(v::NUM_VATSIMCOLUMNS, i::NUM_IVAOCOLUMNS); i++)
-    defaultColumns.append(QString());
+    defaultColumns.append(QStringLiteral());
 }
 
 WhazzupTextParser::~WhazzupTextParser()
@@ -341,7 +341,7 @@ void WhazzupTextParser::readAtisJson(const QJsonObject& obj)
     const QJsonArray atisArray = atisObj.value(QStringLiteral("text_atis")).toArray();
     for(const QJsonValue& value : atisArray)
       atisList.append(value.toString());
-    atisList.removeAll(QString());
+    atisList.removeAll(QStringLiteral());
     columns.append(atisList.join(QStringLiteral(", ")));
   }
 }
@@ -371,9 +371,9 @@ void WhazzupTextParser::readServersJson(const QJsonArray& serversArr, bool voice
       columns.append(serverObj.value(QStringLiteral("hostname_or_ip")).toVariant().toString());
       columns.append(serverObj.value(QStringLiteral("location")).toVariant().toString());
       columns.append(serverObj.value(QStringLiteral("name")).toVariant().toString());
-      columns.append(QString()); // client_connections_allowed
-      columns.append(QString()); // allowed_connections
-      columns.append(QString()); // voice_type
+      columns.append(QStringLiteral()); // client_connections_allowed
+      columns.append(QStringLiteral()); // allowed_connections
+      columns.append(QStringLiteral()); // voice_type
     }
     else if(format == IVAO_JSON2)
     {
@@ -391,9 +391,9 @@ void WhazzupTextParser::readServersJson(const QJsonArray& serversArr, bool voice
       columns.append(serverObj.value(QStringLiteral("hostname")).toVariant().toString());
       columns.append(serverObj.value(QStringLiteral("countryId")).toVariant().toString());
       columns.append(serverObj.value(QStringLiteral("description")).toVariant().toString());
-      columns.append(QString()); // client_connections_allowed
-      columns.append(QString()); // allowed_connections
-      columns.append(voice ? QStringLiteral("T") : QString()); // voice_type
+      columns.append(QStringLiteral()); // client_connections_allowed
+      columns.append(QStringLiteral()); // allowed_connections
+      columns.append(voice ? QStringLiteral("T") : QStringLiteral()); // voice_type
     }
 
     parseServersSection(columns);
@@ -442,7 +442,7 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
       const QJsonArray atisArray = atcObj.value(QStringLiteral("text_atis")).toArray();
       for(const QJsonValue& value : atisArray)
         atisStrList.append(value.toString());
-      atisStrList.removeAll(QString());
+      atisStrList.removeAll(QStringLiteral());
       columns[v::ATIS_MESSAGE] = atisStrList.join('\n');
       columns[v::TIME_LAST_ATIS_RECEIVED] = atcObj.value(QStringLiteral("last_updated")).toVariant().toString();
       columns[v::TIME_LOGON] = atcObj.value(QStringLiteral("logon_time")).toVariant().toString();
@@ -531,7 +531,7 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
       const QJsonArray atisArr = atcObj.value(QStringLiteral("atis")).toObject().value(QStringLiteral("lines")).toArray();
       for(const QJsonValue& value : atisArr)
         atisList.append(value.toString());
-      atisList.removeAll(QString());
+      atisList.removeAll(QStringLiteral());
       columns[i::ATIS] = atisList.join('\n');
       columns[i::ATIS_TIME] = atcObj.value(QStringLiteral("atis")).toObject().value(QStringLiteral("timestamp")).toString();
 
@@ -1284,7 +1284,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
       bool ok = false;
       float gs = at(line, c::GROUNDSPEED, error).toFloat(&ok);
       insertQuery->bindValue(QStringLiteral(":on_ground"), (ok && gs < 30.f) || prefile); // Either slow or prefile
-      insertQuery->bindValue(QStringLiteral(":state"), prefile ? QStringLiteral("Prefile") : QString());
+      insertQuery->bindValue(QStringLiteral(":state"), prefile ? QStringLiteral("Prefile") : QStringLiteral());
     }
   }
 
@@ -1437,7 +1437,7 @@ void WhazzupTextParser::initQueries()
   atcInsertQuery->prepare(util.buildInsertStatement(QStringLiteral("atc"), QStringLiteral("or replace")));
 
   serverInsertQuery = new SqlQuery(db);
-  serverInsertQuery->prepare(util.buildInsertStatement(QStringLiteral("server"), QString(), {QStringLiteral("server_id")}));
+  serverInsertQuery->prepare(util.buildInsertStatement(QStringLiteral("server"), QStringLiteral(), {QStringLiteral("server_id")}));
 }
 
 void WhazzupTextParser::deInitQueries()

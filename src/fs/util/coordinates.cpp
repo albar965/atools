@@ -92,7 +92,7 @@ QString toGfpFormat(const atools::geo::Pos& pos)
            arg(atools::absInt(pos.getLonXDeg()), 3, 10, QChar('0')).
            arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f) * 10.f, 3, 'f', 0, QChar('0'));
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString toDegMinFormat(const atools::geo::Pos& pos)
@@ -106,7 +106,7 @@ QString toDegMinFormat(const atools::geo::Pos& pos)
            arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 2, 'f', 0, QChar('0')).
            arg(pos.getLonX() > 0.f ? "E" : "W");
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString toDegMinSecFormat(const atools::geo::Pos& pos)
@@ -122,7 +122,7 @@ QString toDegMinSecFormat(const atools::geo::Pos& pos)
            arg(std::abs(pos.getLonXSec()), 2, 'f', 0, QChar('0')).
            arg(pos.getLonX() > 0.f ? "E" : "W");
   else
-    return QString();
+    return QStringLiteral();
 }
 
 // Garmin format N48194W123096

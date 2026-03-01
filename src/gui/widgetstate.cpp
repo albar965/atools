@@ -132,7 +132,7 @@ void WidgetState::save(const QObject *widget) const
         if(act->isChecked())
           actions.append(act->objectName());
       }
-      actions.removeAll(QString());
+      actions.removeAll(QStringLiteral());
       saveWidget(settings, actionGroup, actions);
     }
     else if(const QHeaderView *headerView = dynamic_cast<const QHeaderView *>(widget))
@@ -201,7 +201,7 @@ void WidgetState::save(const QObject *widget) const
         settings.setValueVar(keyPrefix % QStringLiteral("_") % buttonGroup->objectName() % QStringLiteral("_selected"),
                              buttonGroup->checkedButton()->objectName());
       else
-        settings.setValueVar(keyPrefix % QStringLiteral("_") % buttonGroup->objectName() % QStringLiteral("_selected"), QString());
+        settings.setValueVar(keyPrefix % QStringLiteral("_") % buttonGroup->objectName() % QStringLiteral("_selected"), QStringLiteral());
     }
     else
       qWarning() << Q_FUNC_INFO << "Found unsupported widget type in save" << widget->metaObject()->className();

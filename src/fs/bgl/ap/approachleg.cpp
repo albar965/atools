@@ -111,7 +111,7 @@ ApproachLeg::ApproachLeg(io::BinaryStream *stream, rec::ApprRecordType recType)
 
 QString ApproachLeg::legTypeToString(leg::Type type)
 {
-  return legTypeToString(type, QString(), false);
+  return legTypeToString(type, QStringLiteral(), false);
 }
 
 QString ApproachLeg::legTypeToString(leg::Type type, const QString& src, bool warn)
@@ -198,7 +198,7 @@ QString ApproachLeg::altDescriptorToString(leg::AltDescriptor altDescr)
   switch(altDescr)
   {
     case atools::fs::bgl::leg::UNKNOWN:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::bgl::leg::A:
       return QStringLiteral("A");
@@ -223,7 +223,7 @@ QString ApproachLeg::speedDescriptorToString(leg::SpeedDescriptor speedDescr)
   {
     case leg::UNKNOWN_SPEED:
     case leg::AT:
-      return QString();
+      return QStringLiteral();
 
     case leg::AT_OR_ABOVE:
       return QStringLiteral("+");
@@ -259,7 +259,7 @@ QString ApproachLeg::turnDirToString(leg::TurnDirection turnDir)
 bool ApproachLeg::isValid() const
 {
   // Check validity by looking at the most important fields in the leg
-  return legTypeToString(type, QString(),
+  return legTypeToString(type, QStringLiteral(),
                          false) != QStringLiteral("INVALID") && altDescriptorToString(altDescriptor) != QStringLiteral("INVALID") &&
          turnDirToString(turnDirection) != QStringLiteral("INVALID") && atools::inRange(0.f, 360.f, theta) &&
          atools::inRange(0.f, 360.f, course) &&
@@ -273,7 +273,7 @@ QDebug operator<<(QDebug out, const ApproachLeg& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << " ApproachLeg["
-                          << "type " << ApproachLeg::legTypeToString(record.type, QString(), false)
+                          << "type " << ApproachLeg::legTypeToString(record.type, QStringLiteral(), false)
                           << ", alt descr " << ApproachLeg::altDescriptorToString(record.altDescriptor)
                           << ", turn " << ApproachLeg::turnDirToString(record.turnDirection)
                           << ", fix type " << ap::approachFixTypeToStr(record.fixType)

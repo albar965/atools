@@ -133,13 +133,13 @@ struct Edge
 
   Edge()
     : toIndex(-1), lengthMeter(0), id(-1), airwayHash(0), minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), type(atools::routing::EDGE_NONE),
-      routeType(NO_ROUTE_TYPE), hasAltLevels(false)
+    routeType(NO_ROUTE_TYPE), hasAltLevels(false)
   {
   }
 
   Edge(int to, float distance)
     : toIndex(to), lengthMeter(static_cast<int>(distance)), id(-1), airwayHash(0), minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE),
-      type(atools::routing::EDGE_NONE), routeType(NO_ROUTE_TYPE), hasAltLevels(false)
+    type(atools::routing::EDGE_NONE), routeType(NO_ROUTE_TYPE), hasAltLevels(false)
   {
   }
 

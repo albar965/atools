@@ -434,7 +434,7 @@ void AircraftPerf::resetToDefault(const QString& simulatorParam)
 
 void AircraftPerf::setNull()
 {
-  resetToDefault(QString());
+  resetToDefault(QStringLiteral());
   taxiFuel = reserveFuel = extraFuel =
     contingencyFuel =
       climbVertSpeed = climbSpeed = climbFuelFlow =

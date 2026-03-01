@@ -229,7 +229,7 @@ QString BinaryStream::readString(int length, Encoding encoding)
   delete[] buf;
 
   if(retval.isEmpty())
-    return QString();
+    return QStringLiteral();
   else if(encoding == UTF8)
     return QString::fromUtf8(retval);
   else if(encoding == LATIN1)

@@ -68,7 +68,7 @@ QString nodeTypeToStr(atools::routing::NodeType type)
   else if(type == atools::routing::NODE_DESTINATION)
     return "NODE_DESTINATION";
 
-  return QString();
+  return QStringLiteral();
 }
 
 QString nodeConnectionsToStr(NodeConnection con)

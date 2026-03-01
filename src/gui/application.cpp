@@ -143,7 +143,7 @@ void Application::addStartupOptionStrIf(const QString& key, const QString& value
 void Application::addStartupOptionBoolIf(const QString& key, bool value)
 {
   if(value)
-    startupOptions->setPropertyStr(key, QString());
+    startupOptions->setPropertyStr(key, QStringLiteral());
 }
 
 void Application::addStartupOptionStrList(const QString& key, const QStringList& value)

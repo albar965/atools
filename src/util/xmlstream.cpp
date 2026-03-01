@@ -74,7 +74,7 @@ void XmlStream::checkError()
   {
     // Try to get filename for report
     QFileDevice *df = dynamic_cast<QFileDevice *>(reader->device());
-    QString name = df != nullptr ? df->fileName() : QString();
+    QString name = df != nullptr ? df->fileName() : QStringLiteral();
 
     QString msg = tr("Error reading \"%1\" on line %2 column %3: %4").
                   arg(name).arg(reader->lineNumber()).arg(reader->columnNumber()).arg(reader->errorString());
@@ -89,7 +89,7 @@ void XmlStream::skipCurrentElement(bool warning)
   {
     // Try to get filename for warning
     QFileDevice *df = dynamic_cast<QFileDevice *>(reader->device());
-    QString name = df != nullptr ? df->fileName() : QString();
+    QString name = df != nullptr ? df->fileName() : QStringLiteral();
     qWarning() << Q_FUNC_INFO << "Unexpected element" << reader->name()
                << "in file" << name << "in line" << reader->lineNumber();
   }

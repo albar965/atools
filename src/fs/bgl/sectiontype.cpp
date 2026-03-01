@@ -203,7 +203,7 @@ QString sectionTypeStr(atools::fs::bgl::section::SectionType type)
     case section::ICAO_RUNWAY:
       return "ICAO_RUNWAY";
   }
-  return QString();
+  return QStringLiteral();
 }
 
 } // namespace section

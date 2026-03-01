@@ -170,7 +170,7 @@ int LogdataManager::importCsv(const QString& filepath)
 
     // Autogenerate id - exclude logbook_id from insert
     SqlQuery insertQuery(db);
-    insertQuery.prepare(SqlUtil(db).buildInsertStatement(tableName, QString(), QStringList(), true /* namedBindings */));
+    insertQuery.prepare(SqlUtil(db).buildInsertStatement(tableName, QStringLiteral(), QStringList(), true /* namedBindings */));
 
     atools::util::CsvReader reader;
 
@@ -183,7 +183,7 @@ int LogdataManager::importCsv(const QString& filepath)
 
       if(lineNum == 1)
       {
-        QString header = QString(line).simplified().replace(' ', QString()).replace('"', QString()).toLower();
+        QString header = QString(line).simplified().replace(' ', QStringLiteral()).replace('"', QStringLiteral()).toLower();
         if(header.startsWith(csv::HEADER_LINE) || header.startsWith(csv::HEADER_LINE2))
         {
           lineNum++;
@@ -370,7 +370,7 @@ int LogdataManager::importXplane(const QString& filepath,
 
   // Autogenerate id
   SqlQuery insertQuery(db);
-  insertQuery.prepare(SqlUtil(db).buildInsertStatement(tableName, QString(), QStringList(), true /* namedBindings */));
+  insertQuery.prepare(SqlUtil(db).buildInsertStatement(tableName, QStringLiteral(), QStringList(), true /* namedBindings */));
 
   int numImported = 0;
   QFile file(filepath);
@@ -570,7 +570,7 @@ int LogdataManager::exportCsv(const QString& filepath, const QList<int>& ids, bo
 
 QString LogdataManager::blobConversionFunctionEmpty(const QVariant&)
 {
-  return QString();
+  return QStringLiteral();
 }
 
 QString LogdataManager::blobConversionFunction(const QVariant& value)
@@ -578,7 +578,7 @@ QString LogdataManager::blobConversionFunction(const QVariant& value)
   if(!atools::isVariantNull(value) && value.metaType() == QMetaType::fromType<QByteArray>())
     return QString(atools::zip::gzipDecompress(value.toByteArray()));
 
-  return QString();
+  return QStringLiteral();
 }
 
 void LogdataManager::updateSchema()

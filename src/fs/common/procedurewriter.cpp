@@ -838,7 +838,7 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     if(!line.centerFixOrTaaPt.isEmpty())
     {
       NavIdInfo centerNavInfo = navaidType(line.context + ". RF recommended",
-                                           QString(), line.centerSecCode, line.centerSubCode,
+                                           QStringLiteral(), line.centerSecCode, line.centerSubCode,
                                            line.centerFixOrTaaPt, line.centerIcaoCode, line.centerPos, line.airportPos);
 
       // Constant radius arc
@@ -865,7 +865,7 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
   else if(!line.recdNavaid.isEmpty())
   {
     NavIdInfo recdNavInfo = navaidType(line.context + ". recommended",
-                                       QString(), line.recdSecCode, line.recdSubCode, line.recdNavaid, line.recdRegion,
+                                       QStringLiteral(), line.recdSecCode, line.recdSubCode, line.recdNavaid, line.recdRegion,
                                        line.recdWaypointPos, line.airportPos);
 
     rec.setValue(QStringLiteral(":recommended_fix_type"), recdNavInfo.type);
@@ -930,7 +930,7 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
       rec.setValue(QStringLiteral(":speed_limit_type"), spdDescr);
     // else null means speed at
 
-    if(!atools::contains(spdDescr, {QString(), QStringLiteral(" "), QStringLiteral("+"), QStringLiteral("-")}))
+    if(!atools::contains(spdDescr, {QStringLiteral(), QStringLiteral(" "), QStringLiteral("+"), QStringLiteral("-")}))
       qWarning() << line.context << "Invalid speed limit" << spdDescr;
   }
   // else null
@@ -1305,10 +1305,10 @@ QString ProcedureWriter::sidStarRunwayNameAndSuffix(const ProcedureInput& line)
   if(ident.startsWith(QStringLiteral("RW")))
   {
     // Get designator if there is one
-    QString desig = ident.size() > 4 ? ident.at(4) : QString();
+    QString desig = ident.size() > 4 ? ident.at(4) : QStringLiteral();
 
     if(ident.at(2).isDigit() && ident.at(3).isDigit() && !atools::contains(desig,
-                                                                           {QString(), QStringLiteral("L"), QStringLiteral("R"),
+                                                                           {QStringLiteral(), QStringLiteral("L"), QStringLiteral("R"),
                                                                             QStringLiteral("C"), QStringLiteral("-"), QStringLiteral("B"),
                                                                             QStringLiteral("T")}))
       qWarning() << line.context << "Invalid designator" << desig;
@@ -1324,7 +1324,7 @@ QString ProcedureWriter::sidStarRunwayNameAndSuffix(const ProcedureInput& line)
         return ident.mid(2, 2) + desig;
     }
   }
-  return QString();
+  return QStringLiteral();
 }
 
 void ProcedureWriter::apprRunwayNameAndSuffix(const ProcedureInput& line, QString& runway, QString& suffix)
@@ -1339,7 +1339,7 @@ void ProcedureWriter::apprRunwayNameAndSuffix(const ProcedureInput& line, QStrin
   // Check for digits to get runway - circle to land if no runway given
   bool hasRunway = rw.size() == 2 && rw.at(0).isDigit() && rw.at(1).isDigit() &&
                    atools::contains(desig,
-                                    {QString(), QStringLiteral("L"), QStringLiteral("R"), QStringLiteral("C"), QStringLiteral("-"),
+                                    {QStringLiteral(), QStringLiteral("L"), QStringLiteral("R"), QStringLiteral("C"), QStringLiteral("-"),
                                      QStringLiteral("B"), QStringLiteral("T")});
 
   if(hasRunway && ident.size() >= 4 && ident.at(3).isDigit())

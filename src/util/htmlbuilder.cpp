@@ -110,12 +110,12 @@ QString HtmlBuilder::joinP(std::initializer_list<HtmlBuilder> builders)
 
 QString HtmlBuilder::joinBr(QStringList strings)
 {
-  return atools::strJoin(strings, "<br/>");
+  return atools::strJoin(strings, QStringLiteral("<br/>"));
 }
 
 QString HtmlBuilder::joinP(QStringList strings)
 {
-  return atools::strJoin("<p>", strings, "<p/><p>", "<p/><p>", "</p>");
+  return atools::strJoin(QStringLiteral("<p>"), strings, QStringLiteral("<p/><p>"), QStringLiteral("<p/><p>"), QStringLiteral("</p>"));
 }
 
 void HtmlBuilder::initColors(const QColor& rowColor, const QColor& rowColorAlt)
@@ -129,26 +129,26 @@ void HtmlBuilder::initColors(const QColor& rowColor, const QColor& rowColorAlt)
 
   if(hasBackColor)
   {
-    tableRow.append("<tr bgcolor=\"" % rowBackColorStr % "\"><td>%1</td><td>%2</td></tr>");
-    tableRow.append("<tr bgcolor=\"" % rowBackColorAltStr % "\"><td>%1</td><td>%2</td></tr>");
+    tableRow.append(QStringLiteral("<tr bgcolor=\"") % rowBackColorStr % QStringLiteral("\"><td>%1</td><td>%2</td></tr>"));
+    tableRow.append(QStringLiteral("<tr bgcolor=\"") % rowBackColorAltStr % QStringLiteral("\"><td>%1</td><td>%2</td></tr>"));
 
     tableRowAlignRight.append(
-      "<tr bgcolor=\"" % rowBackColorStr % "\"><td>%1</td><td align=\"right\">%2</td></tr>");
+      QStringLiteral("<tr bgcolor=\"") % rowBackColorStr % QStringLiteral("\"><td>%1</td><td align=\"right\">%2</td></tr>"));
     tableRowAlignRight.append(
-      "<tr bgcolor=\"" % rowBackColorAltStr % "\"><td>%1</td><td align=\"right\">%2</td></tr>");
+      QStringLiteral("<tr bgcolor=\"") % rowBackColorAltStr % QStringLiteral("\"><td>%1</td><td align=\"right\">%2</td></tr>"));
 
-    tableRowBegin.append("<tr bgcolor=\"" % rowBackColorStr % "\">");
-    tableRowBegin.append("<tr bgcolor=\"" % rowBackColorAltStr % "\">");
+    tableRowBegin.append(QStringLiteral("<tr bgcolor=\"") % rowBackColorStr % QStringLiteral("\">"));
+    tableRowBegin.append(QStringLiteral("<tr bgcolor=\"") % rowBackColorAltStr % QStringLiteral("\">"));
   }
   else
   {
-    tableRow.append("<tr><td>%1</td><td>%2</td></tr>");
-    tableRow.append("<tr><td>%1</td><td>%2</td></tr>");
+    tableRow.append(QStringLiteral("<tr><td>%1</td><td>%2</td></tr>"));
+    tableRow.append(QStringLiteral("<tr><td>%1</td><td>%2</td></tr>"));
 
-    tableRowAlignRight.append("<tr><td>%1</td><td align=\"right\">%2</td></tr>");
-    tableRowAlignRight.append("<tr><td>%1</td><td align=\"right\">%2</td></tr>");
+    tableRowAlignRight.append(QStringLiteral("<tr><td>%1</td><td align=\"right\">%2</td></tr>"));
+    tableRowAlignRight.append(QStringLiteral("<tr><td>%1</td><td align=\"right\">%2</td></tr>"));
   }
-  tableRowHeader = "<tr><td>%1</td></tr>";
+  tableRowHeader = QStringLiteral("<tr><td>%1</td></tr>");
 }
 
 HtmlBuilder& HtmlBuilder::clear()
@@ -268,7 +268,7 @@ HtmlBuilder& HtmlBuilder::note(const QString& str, html::Flags flags)
 QString HtmlBuilder::noteMessage(const QString& str, html::Flags flags)
 {
   if(!str.isEmpty())
-    return textMessage(str, flags, QColor("#00aa00"));
+    return textMessage(str, flags, QColor(QStringLiteral("#00aa00")));
 
   return str;
 }
@@ -350,7 +350,7 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
         break;
 
       case QMetaType::Type::QStringList:
-        valueStr = value.toStringList().join(", ");
+        valueStr = value.toStringList().join(QStringLiteral(", "));
         break;
 
       case QMetaType::Type::QDate:
@@ -434,7 +434,7 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::
     htmlText.append(alt(flags.testFlag(html::ALIGN_RIGHT) ? tableRowAlignRight : tableRow).
                     arg(asText(name, flags | html::BOLD, color)).
                     // Add space to avoid formatting issues with table
-                    arg(value.isEmpty() ? "&nbsp;" : asText(value, flags, color)));
+                    arg(value.isEmpty() ? QStringLiteral("&nbsp;") : asText(value, flags, color)));
     tableRowsCur++;
     numLines++;
   }
@@ -458,23 +458,23 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, int value, html::Flags flags
 
 HtmlBuilder& HtmlBuilder::td(const QString& str, html::Flags flags, QColor color)
 {
-  htmlText.append(QLatin1String("<td") %
-                  (flags.testFlag(html::ALIGN_RIGHT) ? " align=\"right\"" : "") %
-                  (flags.testFlag(html::ALIGN_LEFT) ? " align=\"left\"" : "") %
-                  (flags.testFlag(html::ALIGN_CENTER) ? " align=\"center\"" : "") %
-                  ">");
+  htmlText.append(QStringLiteral("<td") %
+                  (flags.testFlag(html::ALIGN_RIGHT) ? QStringLiteral(" align=\"right\"") : QStringLiteral()) %
+                  (flags.testFlag(html::ALIGN_LEFT) ? QStringLiteral(" align=\"left\"") : QStringLiteral()) %
+                  (flags.testFlag(html::ALIGN_CENTER) ? QStringLiteral(" align=\"center\"") : QStringLiteral()) %
+                  QStringLiteral(">"));
   text(str, flags, color);
-  htmlText.append("</td>\n");
+  htmlText.append(QStringLiteral("</td>\n"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::tdF(html::Flags flags)
 {
-  htmlText.append(QLatin1String("<td") %
-                  (flags.testFlag(html::ALIGN_RIGHT) ? " align=\"right\"" : "") %
-                  (flags.testFlag(html::ALIGN_LEFT) ? " align=\"left\"" : "") %
-                  (flags.testFlag(html::ALIGN_CENTER) ? " align=\"center\"" : "") %
-                  ">");
+  htmlText.append(QStringLiteral("<td") %
+                  (flags.testFlag(html::ALIGN_RIGHT) ? QStringLiteral(" align=\"right\"") : QStringLiteral()) %
+                  (flags.testFlag(html::ALIGN_LEFT) ? QStringLiteral(" align=\"left\"") : QStringLiteral()) %
+                  (flags.testFlag(html::ALIGN_CENTER) ? QStringLiteral(" align=\"center\"") : QStringLiteral()) %
+                  QStringLiteral(">"));
   return *this;
 }
 
@@ -484,13 +484,13 @@ HtmlBuilder& HtmlBuilder::tdAtts(const QHash<QString, QString>& attributes)
   for(auto it = attributes.constBegin(); it != attributes.constEnd(); ++it)
     atts.append(QStringLiteral(" %1=\"%2\" ").arg(it.key()).arg(it.value()));
 
-  htmlText.append("<td " % atts % ">");
+  htmlText.append(QStringLiteral("<td ") % atts % QStringLiteral(">"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::td()
 {
-  htmlText.append("<td>");
+  htmlText.append(QStringLiteral("<td>"));
   return *this;
 }
 
@@ -502,33 +502,33 @@ HtmlBuilder& HtmlBuilder::tdW(int widthPercent)
 
 HtmlBuilder& HtmlBuilder::tdEnd()
 {
-  htmlText.append("</td>\n");
+  htmlText.append(QStringLiteral("</td>\n"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::th(const QString& str, html::Flags flags, QColor color, int colspan)
 {
-  htmlText.append(QLatin1String("<th") %
-                  (flags.testFlag(html::ALIGN_RIGHT) ? " align=\"right\"" : "") %
-                  (flags.testFlag(html::ALIGN_LEFT) ? " align=\"left\"" : "") %
-                  (flags.testFlag(html::ALIGN_CENTER) ? " align=\"center\"" : "") %
-                  (colspan != -1 ? " colspan=\"" % QString::number(colspan) % "\"" : QString()) %
-                  ">");
+  htmlText.append(QStringLiteral("<th") %
+                  (flags.testFlag(html::ALIGN_RIGHT) ? QStringLiteral(" align=\"right\"") : QStringLiteral()) %
+                  (flags.testFlag(html::ALIGN_LEFT) ? QStringLiteral(" align=\"left\"") : QStringLiteral()) %
+                  (flags.testFlag(html::ALIGN_CENTER) ? QStringLiteral(" align=\"center\"") : QStringLiteral()) %
+                  (colspan != -1 ? QStringLiteral(" colspan=\"") % QString::number(colspan) % QStringLiteral("\"") : QStringLiteral()) %
+                  QStringLiteral(">"));
   text(str, flags, color);
-  htmlText.append("</th>\n");
+  htmlText.append(QStringLiteral("</th>\n"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::tr(QColor backgroundColor)
 {
   if(backgroundColor.isValid())
-    htmlText.append("<tr bgcolor=\"" % backgroundColor.name(QColor::HexRgb) % "\">\n");
+    htmlText.append(QStringLiteral("<tr bgcolor=\"") % backgroundColor.name(QColor::HexRgb) % QStringLiteral("\">\n"));
   else
   {
     if(hasBackColor)
       htmlText.append(alt(tableRowBegin));
     else
-      htmlText.append("<tr>\n");
+      htmlText.append(QStringLiteral("<tr>\n"));
   }
   tableRowsCur++;
   numLines++;
@@ -537,7 +537,7 @@ HtmlBuilder& HtmlBuilder::tr(QColor backgroundColor)
 
 HtmlBuilder& HtmlBuilder::tr()
 {
-  htmlText.append("<tr>\n");
+  htmlText.append(QStringLiteral("<tr>\n"));
   tableRowsCur++;
   numLines++;
   return *this;
@@ -545,17 +545,21 @@ HtmlBuilder& HtmlBuilder::tr()
 
 HtmlBuilder& HtmlBuilder::trEnd()
 {
-  htmlText.append("</tr>\n");
+  htmlText.append(QStringLiteral("</tr>\n"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::table(int border, int padding, int spacing, int widthPercent, QColor bgcolor, QColor bordercolor)
 {
-  htmlText.append("<table border=\"" % QString::number(border) % "\" cellpadding=\"" %
-                  QString::number(padding) % "\" cellspacing=\"" % QString::number(spacing) % "\"" %
-                  (bgcolor.isValid() ? " bgcolor=\"" % bgcolor.name(QColor::HexRgb) % "\"" : QString()) %
-                  (bordercolor.isValid() ? " border-color=\"" % bordercolor.name(QColor::HexRgb) % "\"" : QString()) %
-                  (widthPercent > 0 ? " width=\"" % QString::number(widthPercent) % "%\"" : QString()) % ">\n<tbody>\n");
+  htmlText.append(QStringLiteral("<table border=\"") % QString::number(border) % QStringLiteral("\" cellpadding=\"") %
+                  QString::number(padding) % QStringLiteral("\" cellspacing=\"") % QString::number(spacing) % QStringLiteral("\"") %
+                  (bgcolor.isValid() ? QStringLiteral(" bgcolor=\"") % bgcolor.name(QColor::HexRgb) %
+                   QStringLiteral("\"") : QStringLiteral()) %
+                  (bordercolor.isValid() ? QStringLiteral(" border-color=\"") % bordercolor.name(QColor::HexRgb) %
+                   QStringLiteral("\"") : QStringLiteral()) %
+                  (widthPercent >
+                   0 ? QStringLiteral(" width=\"") % QString::number(widthPercent) % QStringLiteral("%\"") : QStringLiteral()) %
+                  QStringLiteral(">\n<tbody>\n"));
   tableRowsCur = 0;
   return *this;
 }
@@ -572,14 +576,14 @@ HtmlBuilder& HtmlBuilder::tableAtts(const QHash<QString, QString>& attributes)
   for(auto it = attributes.constBegin(); it != attributes.constEnd(); ++it)
     atts.append(QStringLiteral(" %1=\"%2\" ").arg(it.key()).arg(it.value()));
 
-  htmlText.append("<table " % atts % ">\n<tbody>\n");
+  htmlText.append(QStringLiteral("<table ") % atts % QStringLiteral(">\n<tbody>\n"));
   tableRowsCur = 0;
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::tableEnd()
 {
-  htmlText.append("</tbody>\n</table>\n");
+  htmlText.append(QStringLiteral("</tbody>\n</table>\n"));
   tableRowsCur = 0;
   return *this;
 }
@@ -597,14 +601,15 @@ HtmlBuilder& HtmlBuilder::tableEndIf()
 HtmlBuilder& HtmlBuilder::h(int level, const QString& str, html::Flags flags, QColor color, const QString& id)
 {
   QString num = QString::number(level);
-  htmlText.append("<h" % num % (id.isEmpty() ? QString() : " id=\"" % id % "\"") % ">" % asText(str, flags, color));
+  htmlText.append(QStringLiteral("<h") % num % (id.isEmpty() ? QStringLiteral() : QStringLiteral(" id=\"") %
+                                                id % QStringLiteral("\"")) % QStringLiteral(">") % asText(str, flags, color));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::hEnd(int level)
 {
   QString num = QString::number(level);
-  htmlText.append("</h" % num % ">\n");
+  htmlText.append(QStringLiteral("</h") % num % QStringLiteral(">\n"));
   numLines++;
   return *this;
 }
@@ -647,31 +652,31 @@ HtmlBuilder& HtmlBuilder::b(const QString& str)
 
 HtmlBuilder& HtmlBuilder::b()
 {
-  htmlText.append("<b>");
+  htmlText.append(QStringLiteral("<b>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::bEnd()
 {
-  htmlText.append("</b>");
+  htmlText.append(QStringLiteral("</b>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::i()
 {
-  htmlText.append("<i>");
+  htmlText.append(QStringLiteral("<i>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::iEnd()
 {
-  htmlText.append("</i>");
+  htmlText.append(QStringLiteral("</i>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::nbsp()
 {
-  htmlText.append("&nbsp;");
+  htmlText.append(QStringLiteral("&nbsp;"));
   return *this;
 }
 
@@ -683,13 +688,13 @@ HtmlBuilder& HtmlBuilder::u(const QString& str)
 
 HtmlBuilder& HtmlBuilder::u()
 {
-  htmlText.append("<u>");
+  htmlText.append(QStringLiteral("<u>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::uEnd()
 {
-  htmlText.append("</u>");
+  htmlText.append(QStringLiteral("</u>"));
   return *this;
 }
 
@@ -701,13 +706,13 @@ HtmlBuilder& HtmlBuilder::sub(const QString& str)
 
 HtmlBuilder& HtmlBuilder::sub()
 {
-  htmlText.append("<sub>");
+  htmlText.append(QStringLiteral("<sub>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::subEnd()
 {
-  htmlText.append("</sub>");
+  htmlText.append(QStringLiteral("</sub>"));
   return *this;
 }
 
@@ -719,13 +724,13 @@ HtmlBuilder& HtmlBuilder::sup(const QString& str)
 
 HtmlBuilder& HtmlBuilder::sup()
 {
-  htmlText.append("<sup>");
+  htmlText.append(QStringLiteral("<sup>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::supEnd()
 {
-  htmlText.append("</sup>");
+  htmlText.append(QStringLiteral("</sup>"));
   return *this;
 }
 
@@ -737,13 +742,13 @@ HtmlBuilder& HtmlBuilder::small(const QString& str)
 
 HtmlBuilder& HtmlBuilder::small()
 {
-  htmlText.append("<small>");
+  htmlText.append(QStringLiteral("<small>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::smallEnd()
 {
-  htmlText.append("</small>");
+  htmlText.append(QStringLiteral("</small>"));
   return *this;
 }
 
@@ -755,13 +760,13 @@ HtmlBuilder& HtmlBuilder::big(const QString& str)
 
 HtmlBuilder& HtmlBuilder::big()
 {
-  htmlText.append("<big>");
+  htmlText.append(QStringLiteral("<big>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::bigEnd()
 {
-  htmlText.append("</big>");
+  htmlText.append(QStringLiteral("</big>"));
   return *this;
 }
 
@@ -773,13 +778,13 @@ HtmlBuilder& HtmlBuilder::code(const QString& str)
 
 HtmlBuilder& HtmlBuilder::code()
 {
-  htmlText.append("<code>");
+  htmlText.append(QStringLiteral("<code>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::codeEnd()
 {
-  htmlText.append("</code>");
+  htmlText.append(QStringLiteral("</code>"));
   return *this;
 }
 
@@ -791,7 +796,7 @@ HtmlBuilder& HtmlBuilder::nobr(const QString& str)
 
 HtmlBuilder& HtmlBuilder::br()
 {
-  htmlText.append("<br/>");
+  htmlText.append(QStringLiteral("<br/>"));
   numLines++;
   return *this;
 }
@@ -799,11 +804,11 @@ HtmlBuilder& HtmlBuilder::br()
 HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
 {
   if(flags.testFlag(html::NOBR_WHITESPACE))
-    htmlText.append("<p style=\"white-space:pre\">");
+    htmlText.append(QStringLiteral("<p style=\"white-space:pre\">"));
   else
-    htmlText.append("<p>");
+    htmlText.append(QStringLiteral("<p>"));
   text(str, flags, color);
-  htmlText.append("</p>\n");
+  htmlText.append(QStringLiteral("</p>\n"));
   numLines++;
   return *this;
 }
@@ -811,38 +816,38 @@ HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
 HtmlBuilder& HtmlBuilder::p(html::Flags flags)
 {
   if(flags.testFlag(html::NOBR_WHITESPACE))
-    htmlText.append("<p style=\"white-space:pre\">");
+    htmlText.append(QStringLiteral("<p style=\"white-space:pre\">"));
   else
-    htmlText.append("<p>");
+    htmlText.append(QStringLiteral("<p>"));
   numLines++;
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::pEnd()
 {
-  htmlText.append("</p>\n");
+  htmlText.append(QStringLiteral("</p>\n"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::pre()
 {
-  htmlText.append("<pre>");
+  htmlText.append(QStringLiteral("<pre>"));
   numLines++;
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::preEnd()
 {
-  htmlText.append("</pre>\n");
+  htmlText.append(QStringLiteral("</pre>\n"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::pre(const QString& str, html::Flags flags, QColor color)
 {
 
-  htmlText.append("<pre>");
+  htmlText.append(QStringLiteral("<pre>"));
   text(str, flags, color);
-  htmlText.append("</pre>");
+  htmlText.append(QStringLiteral("</pre>"));
   return *this;
 }
 
@@ -861,7 +866,8 @@ HtmlBuilder& HtmlBuilder::textBr(const QString& str, html::Flags flags, QColor c
 
 HtmlBuilder& HtmlBuilder::hr(int size, int widthPercent)
 {
-  htmlText.append("<hr size=\"" % QString::number(size) % "\" width=\"" % QString::number(widthPercent) % "%\"/>\n");
+  htmlText.append(QStringLiteral("<hr size=\"") % QString::number(size) % QStringLiteral("\" width=\"") %
+                  QString::number(widthPercent) % QStringLiteral("%\"/>\n"));
   numLines++;
   return *this;
 }
@@ -873,8 +879,10 @@ HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flag
   if(flags.testFlag(html::LINK_NO_UL))
     styleTxt = "style=\"text-decoration:none;\"";
 
-  htmlText.append("<a " % styleTxt % " " % (href.isEmpty() ? QString() : " href=\"" % href % "\"") % ">" %
-                  asText(text, flags, color) % "</a>");
+  htmlText.append(QStringLiteral("<a ") % styleTxt % QStringLiteral(" ") %
+                  (href.isEmpty() ? QStringLiteral() : QStringLiteral(" href=\"") % href % QStringLiteral("\"")) %
+                  QStringLiteral(">") %
+                  asText(text, flags, color) % QStringLiteral("</a>"));
 
   return *this;
 }
@@ -883,20 +891,21 @@ QString HtmlBuilder::aUrl(const QString& text, const QString& href, html::Flags 
 {
   QStringList styles;
   if(flags.testFlag(html::LINK_NO_UL))
-    styles.append("text-decoration: none;");
+    styles.append(QStringLiteral("text-decoration: none;"));
 
   if(flags.testFlag(html::NOBR_WHITESPACE))
-    styles.append("white-space: pre;");
+    styles.append(QStringLiteral("white-space: pre;"));
 
   QString divStart, divEnd;
   if(!styles.isEmpty())
   {
-    divStart = "<div style=\"" % styles.join(' ') % "\">";
-    divEnd = "</div>";
+    divStart = QStringLiteral("<div style=\"") % styles.join(' ') % QStringLiteral("\">");
+    divEnd = QStringLiteral("</div>");
   }
 
-  return "<a" % (href.isEmpty() ? QString() : " href=\"" % href % "\"") % ">" % divStart %
-         asText(atools::elideTextShortMiddle(text, elideText), flags, color) % divEnd % "</a>";
+  return QStringLiteral("<a") % (href.isEmpty() ? QStringLiteral() : QStringLiteral(" href=\"") %
+                                 href % QStringLiteral("\"")) % QStringLiteral(">") % divStart %
+         asText(atools::elideTextShortMiddle(text, elideText), flags, color) % divEnd % QStringLiteral("</a>");
 }
 
 QString HtmlBuilder::aFilePath(const QString& filepath, html::Flags flags, QColor color, int elideText)
@@ -932,43 +941,46 @@ HtmlBuilder& HtmlBuilder::img(const QIcon& icon, const QString& alt, const QStri
 
 HtmlBuilder& HtmlBuilder::img(const QString& src, const QString& alt, const QString& style, QSize size)
 {
-  QString widthAtt = size.width() > 0 ? QStringLiteral(" width=\"") % QString::number(size.width()) % "\"" : QString();
-  QString heightAtt = size.height() > 0 ? QStringLiteral(" height=\"") % QString::number(size.height()) % "\"" : QString();
-  QString altAtt = alt.isEmpty() ? QString() : " alt=\"" % alt % "\"";
-  QString styleAtt = style.isEmpty() ? QString() : " style=\"" % style % "\"";
+  QString widthAtt = size.width() >
+                     0 ? QStringLiteral(" width=\"") % QString::number(size.width()) % QStringLiteral("\"") : QStringLiteral();
+  QString heightAtt = size.height() >
+                      0 ? QStringLiteral(" height=\"") % QString::number(size.height()) % QStringLiteral("\"") : QStringLiteral();
+  QString altAtt = alt.isEmpty() ? QStringLiteral() : QStringLiteral(" alt=\"") % alt % QStringLiteral("\"");
+  QString styleAtt = style.isEmpty() ? QStringLiteral() : QStringLiteral(" style=\"") % style % QStringLiteral("\"");
 
-  htmlText.append("<img src='" % src % "'" % styleAtt % altAtt % widthAtt % heightAtt % "/>");
+  htmlText.append(QStringLiteral("<img src='") % src %
+                  QStringLiteral("'") % styleAtt % altAtt % widthAtt % heightAtt % QStringLiteral("/>"));
 
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::ol()
 {
-  htmlText.append("<ol>");
+  htmlText.append(QStringLiteral("<ol>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::olEnd()
 {
-  htmlText.append("</ol>\n");
+  htmlText.append(QStringLiteral("</ol>\n"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::ul()
 {
-  htmlText.append("<ul>");
+  htmlText.append(QStringLiteral("<ul>"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::ulEnd()
 {
-  htmlText.append("</ul>\n");
+  htmlText.append(QStringLiteral("</ul>\n"));
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::li(const QString& str, html::Flags flags, QColor color)
 {
-  htmlText.append("<li>" % asText(str, flags, color) % "</li>\n");
+  htmlText.append(QStringLiteral("<li>") % asText(str, flags, color) % QStringLiteral("</li>\n"));
   numLines++;
   return *this;
 }
@@ -978,100 +990,100 @@ QString HtmlBuilder::asText(QString str, html::Flags flags, QColor foreground, Q
   QString prefix, suffix;
   if(flags.testFlag(html::BOLD))
   {
-    prefix.append("<b>");
-    suffix.prepend("</b>");
+    prefix.append(QStringLiteral("<b>"));
+    suffix.prepend(QStringLiteral("</b>"));
   }
 
   if(flags.testFlag(html::ITALIC))
   {
-    prefix.append("<i>");
-    suffix.prepend("</i>");
+    prefix.append(QStringLiteral("<i>"));
+    suffix.prepend(QStringLiteral("</i>"));
   }
 
   if(flags.testFlag(html::UNDERLINE))
   {
-    prefix.append("<u>");
-    suffix.prepend("</u>");
+    prefix.append(QStringLiteral("<u>"));
+    suffix.prepend(QStringLiteral("</u>"));
   }
 
   if(flags.testFlag(html::STRIKEOUT))
   {
-    prefix.append("<s>");
-    suffix.prepend("</s>");
+    prefix.append(QStringLiteral("<s>"));
+    suffix.prepend(QStringLiteral("</s>"));
   }
 
   if(flags.testFlag(html::SUBSCRIPT))
   {
-    prefix.append("<sub>");
-    suffix.prepend("</sub>");
+    prefix.append(QStringLiteral("<sub>"));
+    suffix.prepend(QStringLiteral("</sub>"));
   }
 
   if(flags.testFlag(html::SUPERSCRIPT))
   {
-    prefix.append("<sup>");
-    suffix.prepend("</sup>");
+    prefix.append(QStringLiteral("<sup>"));
+    suffix.prepend(QStringLiteral("</sup>"));
   }
 
   if(flags.testFlag(html::SMALL))
   {
-    prefix.append("<small>");
-    suffix.prepend("</small>");
+    prefix.append(QStringLiteral("<small>"));
+    suffix.prepend(QStringLiteral("</small>"));
   }
 
   if(flags.testFlag(html::BIG))
   {
-    prefix.append("<big>");
-    suffix.prepend("</big>");
+    prefix.append(QStringLiteral("<big>"));
+    suffix.prepend(QStringLiteral("</big>"));
   }
 
   if(flags.testFlag(html::CODE))
   {
-    prefix.append("<code>");
-    suffix.prepend("</code>");
+    prefix.append(QStringLiteral("<code>"));
+    suffix.prepend(QStringLiteral("</code>"));
   }
 
   if(flags.testFlag(html::PRE))
   {
-    prefix.append("<pre>");
-    suffix.prepend("</pre>");
+    prefix.append(QStringLiteral("<pre>"));
+    suffix.prepend(QStringLiteral("</pre>"));
   }
 
   if(flags.testFlag(html::NOBR))
   {
-    prefix.append("<nobr>");
-    suffix.prepend("</nobr>");
+    prefix.append(QStringLiteral("<nobr>"));
+    suffix.prepend(QStringLiteral("</nobr>"));
   }
 
   if(foreground.isValid() || (background.isValid() && background != Qt::transparent))
   {
-    prefix.append("<span style=\"");
+    prefix.append(QStringLiteral("<span style=\""));
 
     if(foreground.isValid())
-      prefix.append("color:" % foreground.name(QColor::HexRgb));
+      prefix.append(QStringLiteral("color:") % foreground.name(QColor::HexRgb));
 
     if(background.isValid() && background != Qt::transparent)
     {
       if(foreground.isValid())
-        prefix.append("; ");
-      prefix.append("background-color:" % background.name(QColor::HexRgb));
+        prefix.append(QStringLiteral("; "));
+      prefix.append(QStringLiteral("background-color:") % background.name(QColor::HexRgb));
     }
 
-    prefix.append("\">");
-    suffix.prepend("</span>");
+    prefix.append(QStringLiteral("\">"));
+    suffix.prepend(QStringLiteral("</span>"));
   }
 
   if(!(flags.testFlag(html::NO_ENTITIES)))
-    str = toEntities(str.toHtmlEscaped()).replace("\n", "<br/>");
+    str = toEntities(str.toHtmlEscaped()).replace(QStringLiteral("\n"), QStringLiteral("<br/>"));
 
   if(flags.testFlag(html::REPLACE_CRLF))
   {
-    str = str.replace("\r\n", "<br/>");
-    str = str.replace("\n", "<br/>");
-    str = str.replace("\r", "<br/>");
+    str = str.replace(QStringLiteral("\r\n"), QStringLiteral("<br/>"));
+    str = str.replace(QStringLiteral("\n"), QStringLiteral("<br/>"));
+    str = str.replace(QStringLiteral("\r"), QStringLiteral("<br/>"));
   }
 
   if(flags & html::AUTOLINK)
-    str.replace(LINK_REGEXP, "<a href=\"\\1\">\\1</a>");
+    str.replace(LINK_REGEXP, QStringLiteral("<a href=\"\\1\">\\1</a>"));
 
   return prefix % str % suffix;
 }
@@ -1144,12 +1156,12 @@ HtmlBuilder& HtmlBuilder::doc(const QString& title, const QString& css, const QS
     htmlText.append(line);
 
   // <link rel="stylesheet" href="css/style.css" type="text/css" />
-  htmlText.append("</head>\n");
+  htmlText.append(QStringLiteral("</head>\n"));
 
   if(!bodyStyle.isEmpty())
-    htmlText.append("<body style=\"" % bodyStyle % "\">\n");
+    htmlText.append(QStringLiteral("<body style=\"") % bodyStyle % QStringLiteral("\">\n"));
   else
-    htmlText.append("<body>\n");
+    htmlText.append(QStringLiteral("<body>\n"));
 
   tableRowsCur = 0;
   markIndex = -1;
@@ -1158,7 +1170,7 @@ HtmlBuilder& HtmlBuilder::doc(const QString& title, const QString& css, const QS
 
 HtmlBuilder& HtmlBuilder::docEnd()
 {
-  htmlText.append("</body>\n</html>\n");
+  htmlText.append(QStringLiteral("</body>\n</html>\n"));
   return *this;
 }
 
@@ -1184,7 +1196,7 @@ QString HtmlBuilder::toEntities(const QString& src)
   {
     if(tmp.at(i).unicode() > 128)
     {
-      QString rp = "&#" + QString::number(tmp[i].unicode()) + ";";
+      QString rp = QStringLiteral("&#") + QString::number(tmp[i].unicode()) + QStringLiteral(";");
       tmp.replace(i, 1, rp);
       len += rp.length() - 1;
       i += rp.length();

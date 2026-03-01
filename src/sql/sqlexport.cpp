@@ -133,7 +133,7 @@ QString SqlExport::printEndl() const
   if(endline)
     return QStringLiteral("\n");
   else
-    return QString();
+    return QStringLiteral();
 }
 
 } // namespace sql

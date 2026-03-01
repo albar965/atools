@@ -298,7 +298,7 @@ QString FsPaths::getMsfsOfficialPath(const QString& basePath)
   else
   {
     qWarning() << Q_FUNC_INFO << msgSteam << msgOneStore;
-    return QString();
+    return QStringLiteral();
   }
 }
 
@@ -327,7 +327,7 @@ QString FsPaths::getMsfsCommunityPath(const QString& basePath)
   else
   {
     qWarning() << Q_FUNC_INFO << msg;
-    return QString();
+    return QStringLiteral();
   }
 }
 
@@ -335,7 +335,7 @@ QString FsPaths::initBasePath(SimulatorType type)
 {
   QString fsPath;
   if(type == NAVIGRAPH || type == NONE)
-    return QString();
+    return QStringLiteral();
 
   if(type == XPLANE_11) // ===============================================================================================
   {
@@ -965,7 +965,7 @@ QString FsPaths::settingsKey(SimulatorType type)
     case ALL_SIMULATORS:
       break;
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString FsPaths::registryPath(SimulatorType type)
@@ -999,7 +999,7 @@ QString FsPaths::registryPath(SimulatorType type)
     case ALL_SIMULATORS:
       break;
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QStringList FsPaths::registryKey(SimulatorType type)
@@ -1071,7 +1071,7 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
     case ALL_SIMULATORS:
       break;
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString FsPaths::msfsBasePath(const QString& userCfgOptFile, SimulatorType type)

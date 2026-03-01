@@ -111,7 +111,7 @@ void XpFixReader::initQueries()
   SqlUtil util(&db);
 
   insertWaypointQuery = new SqlQuery(db);
-  insertWaypointQuery->prepare(util.buildInsertStatement(QStringLiteral("waypoint"), QString(), {QStringLiteral("nav_id")}));
+  insertWaypointQuery->prepare(util.buildInsertStatement(QStringLiteral("waypoint"), QStringLiteral(), {QStringLiteral("nav_id")}));
 }
 
 void XpFixReader::deInitQueries()

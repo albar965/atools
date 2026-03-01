@@ -219,7 +219,7 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
       QString idBinding(":" % idColumnName);
 
       // Autogenerate id
-      QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(), QStringList(), true /* namedBindings */);
+      QString insert = SqlUtil(db).buildInsertStatement(tableName, QStringLiteral(), QStringList(), true /* namedBindings */);
       SqlQuery insertQuery(db);
       insertQuery.prepare(insert);
 
@@ -237,7 +237,7 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
 
         if(lineNum == 1)
         {
-          QString header = QString(line).simplified().replace(' ', QString()).replace('"', QString()).toLower();
+          QString header = QString(line).simplified().replace(' ', QStringLiteral()).replace('"', QStringLiteral()).toLower();
           if(flags & CSV_HEADER || header.startsWith("type,name,ident,latitude,longitude"))
           {
             lineNum++;
@@ -333,7 +333,7 @@ int UserdataManager::importXplane(const QString& filepath)
     atools::sql::DataManagerUndoHandler undoHandler(this, id);
     QString idBinding(":" % idColumnName);
 
-    QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(), {"description", "altitude"}, true /* namedBindings */);
+    QString insert = SqlUtil(db).buildInsertStatement(tableName, QStringLiteral(), {"description", "altitude"}, true /* namedBindings */);
     SqlQuery insertQuery(db);
     insertQuery.prepare(insert);
 
@@ -370,7 +370,7 @@ int UserdataManager::importXplane(const QString& filepath)
       QStringList tags;
       tags.append(at(cols, xp::AIRPORT, true /* nowarn */));
       tags.append(atools::fs::util::waypointFlagsFromXplane(at(cols, xp::FLAGS, true /* nowarn */)).replace(' ', '_'));
-      tags.removeAll(QString());
+      tags.removeAll(QStringLiteral());
 
       insertQuery.bindValue(idBinding, id++);
       insertQuery.bindValue(":type", "Waypoint");
@@ -434,7 +434,7 @@ int UserdataManager::importGarmin(const QString& filepath)
     atools::sql::DataManagerUndoHandler undoHandler(this, id);
     QString idBinding(":" % idColumnName);
 
-    QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(),
+    QString insert = SqlUtil(db).buildInsertStatement(tableName, QStringLiteral(),
                                                       {"description", "altitude", "region"}, true /* namedBindings */);
     SqlQuery insertQuery(db);
     insertQuery.prepare(insert);

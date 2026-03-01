@@ -79,13 +79,13 @@ void DatabaseMeta::init()
         minorVersionDb = rec.valueInt("db_version_minor");
         lastLoadTime = rec.value("last_load_timestamp").toDateTime();
         sidStar = rec.valueBool("has_sid_star", false);
-        airacCycle = rec.valueStr("airac_cycle", QString());
-        validThrough = rec.valueStr("valid_through", QString());
-        dataSource = rec.valueStr("data_source", QString());
-        compilerVersion = rec.valueStr("compiler_version", QString());
+        airacCycle = rec.valueStr("airac_cycle", QStringLiteral());
+        validThrough = rec.valueStr("valid_through", QStringLiteral());
+        dataSource = rec.valueStr("data_source", QStringLiteral());
+        compilerVersion = rec.valueStr("compiler_version", QStringLiteral());
 
         properties.clear();
-        properties.readString(rec.valueStr("properties", QString()));
+        properties.readString(rec.valueStr("properties", QStringLiteral()));
         valid = true;
       }
       query.finish();

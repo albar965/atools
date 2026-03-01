@@ -39,9 +39,9 @@ Version::Version(int verMajor, int verMinor, int verPatchlevel, const QString& v
 {
   // "1.12.24.rc1" or "1.2.33.beta1"
   versionString = QStringLiteral("%1.%2%3%4%5").arg(majorVersion).arg(minorVersion).
-                  arg(patchlevelVersion >= 0 ? tr(".%1", "Patchlevel in version string").arg(patchlevelVersion) : QString()).
-                  arg(name.isEmpty() ? QString() : tr(".%1", "Name like \"beta\" in version string").arg(name)).
-                  arg(nameSubVersion >= 0 ? QString::number(nameSubVersion) : QString());
+                  arg(patchlevelVersion >= 0 ? tr(".%1", "Patchlevel in version string").arg(patchlevelVersion) : QStringLiteral()).
+                  arg(name.isEmpty() ? QStringLiteral() : tr(".%1", "Name like \"beta\" in version string").arg(name)).
+                  arg(nameSubVersion >= 0 ? QString::number(nameSubVersion) : QStringLiteral());
 }
 
 Version::Version(const QString& str)

@@ -42,7 +42,7 @@ ActionTool::~ActionTool()
 void ActionTool::setText(QAction *action, const QString& arg, const QString& suffix)
 {
   if(action->text().contains("%1"))
-    action->setText(action->text().arg(action->isEnabled() ? arg : QString()) % (action->isEnabled() ? QString() : suffix));
+    action->setText(action->text().arg(action->isEnabled() ? arg : QStringLiteral()) % (action->isEnabled() ? QStringLiteral() : suffix));
 }
 
 void ActionTool::setText(QAction *action, bool enabled, const QString& arg, const QString& suffix)
@@ -50,7 +50,7 @@ void ActionTool::setText(QAction *action, bool enabled, const QString& arg, cons
   action->setEnabled(enabled);
 
   if(action->text().contains("%1"))
-    action->setText(action->text().arg(enabled ? arg : QString()) % (enabled ? QString() : suffix));
+    action->setText(action->text().arg(enabled ? arg : QStringLiteral()) % (enabled ? QStringLiteral() : suffix));
 }
 
 void ActionTool::finishTexts(const QString& objectText)
@@ -58,7 +58,7 @@ void ActionTool::finishTexts(const QString& objectText)
   for(QAction *action : std::as_const(stateSaver->actions))
   {
     if(action->text().contains("%1"))
-      action->setText(action->text().arg(action->isEnabled() ? objectText : QString()));
+      action->setText(action->text().arg(action->isEnabled() ? objectText : QStringLiteral()));
   }
 }
 

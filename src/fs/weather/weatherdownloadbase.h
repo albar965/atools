@@ -71,7 +71,7 @@ public:
   virtual void setUpdatePeriod(int seconds);
 
   /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
-  virtual void setFetchAirportCoords(atools::fs::util::AirportCoordFuncType function, void* object);
+  virtual void setFetchAirportCoords(atools::fs::util::AirportCoordFuncType function, void *object);
 
   /* Number of unique METAR entries in the list */
   virtual int size() const;

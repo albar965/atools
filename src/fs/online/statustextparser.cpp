@@ -141,7 +141,7 @@ QString StatusTextParser::getRandomUrl(bool& gzipped, bool& json)
     return urlList.at(curUrlIndex);
   }
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString StatusTextParser::getRandomVoiceUrl()
@@ -152,7 +152,7 @@ QString StatusTextParser::getRandomVoiceUrl()
     return urlListVoice.at(curVoiceUrlIndex);
   }
   else
-    return QString();
+    return QStringLiteral();
 }
 
 } // namespace online

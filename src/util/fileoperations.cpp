@@ -77,7 +77,7 @@ void FileOperations::copyDirectory(const QString& from, const QString& to, bool 
 
   // Check source folder
   errors.append(atools::checkDirMsg(from));
-  errors.removeAll(QString());
+  errors.removeAll(QStringLiteral());
 
   if(!hasErrors())
   {
@@ -85,7 +85,7 @@ void FileOperations::copyDirectory(const QString& from, const QString& to, bool 
     QDir toDirParent(to);
     toDirParent.cdUp();
     errors.append(atools::checkDirMsg(toDirParent.absolutePath()));
-    errors.removeAll(QString());
+    errors.removeAll(QStringLiteral());
 
     if(!hasErrors())
     {
@@ -195,7 +195,7 @@ void FileOperations::removeDirectory(const QString& directory, bool keepDirs, bo
   else
   {
     errors.append(atools::checkDirMsg(directory));
-    errors.removeAll(QString());
+    errors.removeAll(QStringLiteral());
 
     if(!hasErrors())
     {
@@ -223,7 +223,7 @@ void FileOperations::removeDirectoryToTrash(const QString& directory)
     qDebug() << Q_FUNC_INFO << "Current" << QDir().canonicalPath();
 
   errors.append(atools::checkDirMsg(directory));
-  errors.removeAll(QString());
+  errors.removeAll(QStringLiteral());
 
   if(!hasErrors())
   {

@@ -461,7 +461,7 @@ QString DataManagerBase::at(const QStringList& line, int index, bool nowarn)
 
   if(!nowarn)
     qWarning() << "Index" << index << "not found in file";
-  return QString();
+  return QStringLiteral();
 }
 
 bool DataManagerBase::hasBlob(int id, const QString& colName) const

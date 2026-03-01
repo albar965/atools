@@ -65,7 +65,7 @@ void MaterialLib::readCommunity(const QString& basePath)
       qCritical() << "Caught unknown exception reading" << filepath;
       progressHandler->reportError();
       if(sceneryErrors != nullptr)
-        sceneryErrors->appendFileError(SceneryFileError(filepath, QString()));
+        sceneryErrors->appendFileError(SceneryFileError(filepath, QStringLiteral()));
     }
   }
 }
@@ -95,7 +95,7 @@ void MaterialLib::readOfficial(const QString& basePath)
       qCritical() << "Caught unknown exception reading" << filepath;
       progressHandler->reportError();
       if(sceneryErrors != nullptr)
-        sceneryErrors->appendFileError(SceneryFileError(filepath, QString()));
+        sceneryErrors->appendFileError(SceneryFileError(filepath, QStringLiteral()));
     }
   }
 
@@ -121,7 +121,7 @@ void MaterialLib::readOfficial(const QString& basePath)
       qCritical() << "Caught unknown exception reading" << filepath;
       progressHandler->reportError();
       if(sceneryErrors != nullptr)
-        sceneryErrors->appendFileError(SceneryFileError(filepath, QString()));
+        sceneryErrors->appendFileError(SceneryFileError(filepath, QStringLiteral()));
     }
   }
 }

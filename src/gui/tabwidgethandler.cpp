@@ -168,7 +168,7 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
   QMenu menu;
 
   // Create close this tab action
-  QAction *closeAction = new QAction(QString(), &menu);
+  QAction *closeAction = new QAction(QStringLiteral(), &menu);
   int index = tabWidget->tabBar()->tabAt(pos);
   if(index != -1 && tabWidget->count() > 1)
     // Enabled

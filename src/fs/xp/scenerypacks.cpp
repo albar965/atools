@@ -55,7 +55,7 @@ bool SceneryPacks::exists(const QString& basePath, QStringList& errors, QString&
 {
   filepath = atools::buildPathNoCase({basePath, "Custom Scenery", "scenery_packs.ini"});
   errors.append(atools::checkFileMsg(filepath));
-  errors.removeAll(QString());
+  errors.removeAll(QStringLiteral());
   return errors.isEmpty();
 }
 

@@ -40,7 +40,7 @@ SqlException::SqlException(const SqlDatabase *db, const QString& message)
   QStringList msgList;
   messageDb(msgList, db);
   msgList.append(message);
-  msgList.removeAll(QString());
+  msgList.removeAll(QStringLiteral());
   setMessage(msgList.join('\n'));
 }
 
@@ -50,7 +50,7 @@ SqlException::SqlException(const SqlQuery *query, const QString& message)
   messageDb(msgList, query != nullptr ? query->getDatabase() : nullptr);
   messageQuery(msgList, query);
   msgList.append(message);
-  msgList.removeAll(QString());
+  msgList.removeAll(QStringLiteral());
   setMessage(msgList.join('\n'));
 }
 
@@ -59,7 +59,7 @@ SqlException::SqlException(const SqlRecord *record, const QString& message)
   QStringList msgList;
   messageRecord(msgList, record);
   msgList.append(message);
-  msgList.removeAll(QString());
+  msgList.removeAll(QStringLiteral());
   setMessage(msgList.join('\n'));
 }
 

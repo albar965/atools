@@ -173,7 +173,7 @@ bool AirspaceReaderIvao::readFile(const QString& filenameParam)
 
           // Build ident string like "LEPA_S_TWR" as used in IVAO data JSON ==================
           QStringList ident({airportId, middleIdent, position});
-          ident.removeAll(QString());
+          ident.removeAll(QStringLiteral());
           insertAirspaceQuery->bindValue(QStringLiteral(":name"), ident.join('_'));
 
           // Get airport position from callback ====================
@@ -235,7 +235,7 @@ QString AirspaceReaderIvao::positionToDbType(const QString& position)
     return QStringLiteral("A");
 
   if(position == QStringLiteral("ATIS"))
-    return QString();
+    return QStringLiteral();
 
   if(position == QStringLiteral("CTR"))
     return QStringLiteral("C");
@@ -255,7 +255,7 @@ QString AirspaceReaderIvao::positionToDbType(const QString& position)
   if(position == QStringLiteral("TWR"))
     return QStringLiteral("T");
 
-  return QString();
+  return QStringLiteral();
 }
 
 } // namespace userdata

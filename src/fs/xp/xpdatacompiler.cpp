@@ -87,7 +87,7 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
   : options(opts), db(sqlDb), progress(progressHandler), errors(navdatabaseErrors)
 {
   // Build base for earth_fix.dat earth_awy.dat and earth_nav.dat - these files have to match and exist in the same folder
-  basePath = buildBasePath(options, QString());
+  basePath = buildBasePath(options, QStringLiteral());
 
   qInfo() << Q_FUNC_INFO << "Using X-Plane data path" << basePath;
 
@@ -630,7 +630,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
                                   minFileVersion));
       }
 
-      metadataWriter->writeFile(filename, QString(), curSceneryId, ++curFileId);
+      metadataWriter->writeFile(filename, QStringLiteral(), curSceneryId, ++curFileId);
       progress->incNumFiles();
       retval = true;
 
@@ -660,7 +660,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
     }
     else
     {
-      metadataWriter->writeFile(filename, QString(), curSceneryId, ++curFileId);
+      metadataWriter->writeFile(filename, QStringLiteral(), curSceneryId, ++curFileId);
       progress->incNumFiles();
       retval = true;
     }
@@ -728,7 +728,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
 
   QFileInfoList entries;
   if(!userInclude)
-    entries = QDir(path, QString(), QDir::Name, filters).entryInfoList();
+    entries = QDir(path, QStringLiteral(), QDir::Name, filters).entryInfoList();
   else
   {
     // Read entries recursively for user added folder ===================
@@ -738,7 +738,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
 
     while(!queue.isEmpty())
     {
-      const QFileInfoList entryInfoList = QDir(queue.dequeue().absoluteFilePath(), QString(), QDir::Name, filters).entryInfoList();
+      const QFileInfoList entryInfoList = QDir(queue.dequeue().absoluteFilePath(), QStringLiteral(), QDir::Name, filters).entryInfoList();
       for(const QFileInfo& fileinfo : entryInfoList)
       {
         if(atools::checkFile(Q_FUNC_INFO, QFileInfo(buildPathNoCase({fileinfo.absoluteFilePath(), "Earth nav data", "apt.dat"})), false))

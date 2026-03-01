@@ -402,7 +402,7 @@ static const QHash<QString, QString> NAME_CODE_MAP({
 QString runwayFlags(QString runway, bool& prefixRw, bool& noPrefixNull, bool& suffixTrue)
 {
   if(runway.isEmpty())
-    return QString();
+    return QStringLiteral();
 
   prefixRw = runway.startsWith(QStringLiteral("RW"));
   if(prefixRw)
@@ -491,7 +491,7 @@ bool isNameMilitary(QString airportName)
 QString capWaypointNameString(const QString& ident, const QString& name, bool emptyIfEqual)
 {
   if(ident == name)
-    return emptyIfEqual ? QString() : name;
+    return emptyIfEqual ? QStringLiteral() : name;
   else
   {
     if(name.contains('('))
@@ -873,7 +873,7 @@ QString runwayBestFitFromList(const QString& runwayName, const QStringList& airp
     }
   }
 
-  return QString();
+  return QStringLiteral();
 }
 
 QString runwayBestFit(const QString& runwayName, const QStringList& airportRunwayNames)
@@ -904,7 +904,7 @@ QString runwayBestFit(const QString& runwayName, const QStringList& airportRunwa
     }
   }
 
-  return QString();
+  return QStringLiteral();
 }
 
 QString runwayDesignatorLong(const QString& designatorName)
@@ -1242,7 +1242,7 @@ QString runwayNumber(const QString& runwayName)
   if(atools::fs::util::runwayNameSplitNum(runwayName, &number))
     return QString::number(number);
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString runwayDesignator(const QString& runwayName)
@@ -1251,7 +1251,7 @@ QString runwayDesignator(const QString& runwayName)
   if(atools::fs::util::runwayNameSplitNum(runwayName, nullptr, &designator))
     return atools::fs::util::runwayDesignatorLong(designator);
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString capAdminName(const QString& str)

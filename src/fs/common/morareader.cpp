@@ -285,7 +285,7 @@ void MoraReader::writeToTable(const QList<quint16>& grid, int columns, int rows,
   dataAvailable = true;
 
   SqlQuery moraWriteQuery(db);
-  moraWriteQuery.prepare(SqlUtil(db).buildInsertStatement("mora_grid", QString(), {"mora_grid_id"}));
+  moraWriteQuery.prepare(SqlUtil(db).buildInsertStatement("mora_grid", QStringLiteral(), {"mora_grid_id"}));
 
   QByteArray bytes;
   QDataStream out(&bytes, QIODevice::WriteOnly);

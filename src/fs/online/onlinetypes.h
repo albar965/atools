@@ -38,7 +38,7 @@ struct OnlineAircraft
   OnlineAircraft(int databaseId, const QString& vidParam, const QString& registrationParam, const QString& registrationKeyParam,
                  float groundSpeedParam, float headingParam, const atools::geo::Pos& posParam)
     : id(databaseId), vid(vidParam), registration(registrationParam), registrationKey(registrationKeyParam),
-      groundSpeedKts(groundSpeedParam), headingTrue(headingParam), pos(posParam)
+    groundSpeedKts(groundSpeedParam), headingTrue(headingParam), pos(posParam)
   {
   }
 

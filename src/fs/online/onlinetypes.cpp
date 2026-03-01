@@ -82,7 +82,7 @@ QString facilityTypeToDb(fac::FacilityType type)
   switch(type)
   {
     case atools::fs::online::fac::OBSERVER:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::online::fac::FLIGHT_INFORMATION:
       return QStringLiteral("FIR");
@@ -106,7 +106,7 @@ QString facilityTypeToDb(fac::FacilityType type)
       return QStringLiteral("D");
 
     case atools::fs::online::fac::UNKNOWN:
-      return QString();
+      return QStringLiteral();
   }
   return QString::number(type);
 }
@@ -364,7 +364,7 @@ QString simulatorText(sim::Simulator simulator)
   switch(simulator)
   {
     case atools::fs::online::sim::UNKNOWN:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::online::sim::MICROSOFT_FLIGHT_SIMULATOR_95:
       return QObject::tr("FS95");

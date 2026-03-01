@@ -77,7 +77,7 @@ void MetadataWriter::initQueries()
   atools::sql::SqlUtil util(&db);
 
   insertSceneryQuery = new atools::sql::SqlQuery(db);
-  insertSceneryQuery->prepare(util.buildInsertStatement("scenery_area", QString(), {"remote_path", "exclude"}));
+  insertSceneryQuery->prepare(util.buildInsertStatement("scenery_area", QStringLiteral(), {"remote_path", "exclude"}));
 
   insertFileQuery = new atools::sql::SqlQuery(db);
   insertFileQuery->prepare(util.buildInsertStatement("bgl_file"));

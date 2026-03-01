@@ -483,7 +483,7 @@ void XpAirportReader::bindTaxiEdge(const QStringList& line, const atools::fs::xp
   airportRect.extend(start);
   airportRect.extend(end);
 
-  QString name = line.size() > te::NAME ? at(line, te::NAME).simplified() : QString();
+  QString name = line.size() > te::NAME ? at(line, te::NAME).simplified() : QStringLiteral();
 
   // Filter out the various garbage names
   QString nameCompare = name.toUpper();
@@ -793,7 +793,7 @@ void XpAirportReader::writeStartupLocation(const QStringList& line, const atools
     // else if(type == QStringLiteral("misc"))
 
     // Need at least an empty string bound
-    insertParkingQuery->bindValue(QStringLiteral(":type"), QString());
+    insertParkingQuery->bindValue(QStringLiteral(":type"), QStringLiteral());
   }
 
   // has_jetway integer not null,     -- 1 if the parking has a jetway attached
@@ -969,7 +969,7 @@ void XpAirportReader::writeStartup(const QStringList& line, const atools::fs::xp
   insertParkingQuery->bindNullStr(":airline_codes");
   insertParkingQuery->bindValue(":name", mid(line, s::NAME, true /* ignore error */));
   insertParkingQuery->bindValue(":has_jetway", 0);
-  insertParkingQuery->bindValue(":type", QString());
+  insertParkingQuery->bindValue(":type", QStringLiteral());
 
   finishStartupLocation();
 }
@@ -1539,7 +1539,7 @@ void XpAirportReader::bindAirport(const QStringList& line, AirportRowCode rowCod
     bool military = atools::fs::util::isNameMilitary(name);
 
     // Remove [H], [S], [g], [x] and [mil] indicators
-    name.replace(REPLACE_SPECIAL_REGEXP, QString());
+    name.replace(REPLACE_SPECIAL_REGEXP, QStringLiteral());
 
     // Check military before converting to caps
     name = atools::fs::util::capAirportName(name.simplified());
@@ -1809,7 +1809,7 @@ void XpAirportReader::initQueries()
   insertRunwayQuery->prepare(util.buildInsertStatement(QStringLiteral("runway")));
 
   insertRunwayEndQuery = new SqlQuery(db);
-  insertRunwayEndQuery->prepare(util.buildInsertStatement(QStringLiteral("runway_end"), QString(), {QStringLiteral("num_strobes")}));
+  insertRunwayEndQuery->prepare(util.buildInsertStatement(QStringLiteral("runway_end"), QStringLiteral(), {QStringLiteral("num_strobes")}));
 
   insertHelipadQuery = new SqlQuery(db);
   insertHelipadQuery->prepare(util.buildInsertStatement(QStringLiteral("helipad")));
@@ -1821,15 +1821,15 @@ void XpAirportReader::initQueries()
   insertStartQuery->prepare(util.buildInsertStatement(QStringLiteral("start")));
 
   insertParkingQuery = new SqlQuery(db);
-  insertParkingQuery->prepare(util.buildInsertStatement(QStringLiteral("parking"), QString(), {QStringLiteral("pushback")}));
+  insertParkingQuery->prepare(util.buildInsertStatement(QStringLiteral("parking"), QStringLiteral(), {QStringLiteral("pushback")}));
 
   insertApronQuery = new SqlQuery(db);
-  insertApronQuery->prepare(util.buildInsertStatement(QStringLiteral("apron"), QString(),
+  insertApronQuery->prepare(util.buildInsertStatement(QStringLiteral("apron"), QStringLiteral(),
                                                       {QStringLiteral("vertices"), QStringLiteral("vertices2"),
                                                        QStringLiteral("triangles")}));
 
   insertTaxiQuery = new SqlQuery(db);
-  insertTaxiQuery->prepare(util.buildInsertStatement(QStringLiteral("taxi_path"), QString(),
+  insertTaxiQuery->prepare(util.buildInsertStatement(QStringLiteral("taxi_path"), QStringLiteral(),
                                                      {QStringLiteral("start_dir"), QStringLiteral("end_dir")}));
 
   insertAirportFileQuery = new SqlQuery(db);

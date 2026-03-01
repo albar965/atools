@@ -229,7 +229,7 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
               {
                 // Center - only firboundaries.json
                 ident.append(id.replace('-', '_').replace(QStringLiteral("__"), QStringLiteral("_")) % QStringLiteral("_CTR"));
-                ident.removeAll(QString());
+                ident.removeAll(QStringLiteral());
                 insertAirspaceQuery->bindValue(QStringLiteral(":type"), QStringLiteral("C"));
                 insertAirspaceQuery->bindValue(QStringLiteral(":name"), ident.join('_'));
                 insertAirspaceQuery->bindValue(QStringLiteral(":description"),
@@ -263,7 +263,7 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
                   insertAirspaceQuery->bindValue(QStringLiteral(":type"), QStringLiteral("A"));
                 }
 
-                ident.removeAll(QString());
+                ident.removeAll(QStringLiteral());
                 insertAirspaceQuery->bindValue(QStringLiteral(":name"), ident.join('_'));
                 insertAirspaceQuery->bindValue(QStringLiteral(":description"), propertiesObj.value(QStringLiteral("name")).toString());
               }

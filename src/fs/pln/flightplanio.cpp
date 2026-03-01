@@ -1528,16 +1528,16 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
     {
       // Clear airway of departure airport to avoid problems from third party tools
       // like PFPX that abuse the airway name to add approach procedures
-      plan.first().setAirway(QString());
+      plan.first().setAirway(QStringLiteral());
 
       if(plan.size() > 1)
       {
         // Clear airway to first waypoint
-        plan[1].setAirway(QString());
+        plan[1].setAirway(QStringLiteral());
 
         if(plan.constLast().getWaypointType() == entry::AIRPORT)
           // Clear airway to destination
-          plan.last().setAirway(QString());
+          plan.last().setAirway(QStringLiteral());
       }
 
       // Collect MSFS procedure information from all legs ========================================
@@ -1589,8 +1589,8 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
         if(i == plan.size() - 1)
         {
           // Clear procedure information in destination airport to prevent deletion further down
-          entry.setApproach(QString(), QString(), QString());
-          entry.setRunway(QString(), QString());
+          entry.setApproach(QStringLiteral(), QStringLiteral(), QStringLiteral());
+          entry.setRunway(QStringLiteral(), QStringLiteral());
         }
       } // for(int i = 0; i < plan.size(); i++)
     } // if(!plan.isEmpty() && format != atools::fs::pln::MSFS_PLN_2024)
@@ -1854,7 +1854,7 @@ void FlightplanIO::writeElementPosIf(QXmlStreamWriter& writer, const atools::geo
   else
   {
     QFileDevice *df = dynamic_cast<QFileDevice *>(writer.device());
-    QString filename = df != nullptr ? df->fileName() : QString();
+    QString filename = df != nullptr ? df->fileName() : QStringLiteral();
     qWarning() << Q_FUNC_INFO << "Position invalid" << "in file" << filename;
   }
 }
@@ -2122,9 +2122,9 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     writer.writeTextElement("DepartureID", plan.departureIdent);
     // Use parking position
     writer.writeTextElement("DepartureLLA", plan.getDepartureParkingPosition().isValid() ?
-                            plan.getDepartureParkingPosition().toLongString(starDeg) : QString());
+                            plan.getDepartureParkingPosition().toLongString(starDeg) : QStringLiteral());
     writer.writeTextElement("DestinationID", plan.destinationIdent);
-    writer.writeTextElement("DestinationLLA", plan.destinationPos.isValid() ? plan.destinationPos.toLongString(starDeg) : QString());
+    writer.writeTextElement("DestinationLLA", plan.destinationPos.isValid() ? plan.destinationPos.toLongString(starDeg) : QStringLiteral());
     writer.writeTextElement("Descr", plan.getDescr());
   }
   else
@@ -2757,18 +2757,18 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
     }
 
     // Departure - SID ============================================
-    saveFlpKeyValue(stream, pln, QString(), "SID", SID);
-    saveFlpKeyValue(stream, pln, QString(), alternateFmt ? "SIDEnrTrans" : "SID_Trans", SID_TRANS);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), "SID", SID);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), alternateFmt ? "SIDEnrTrans" : "SID_Trans", SID_TRANS);
 
     // Arrival STAR ============================================
-    saveFlpKeyValue(stream, pln, QString(), "STAR", STAR);
-    saveFlpKeyValue(stream, pln, QString(), alternateFmt ? "EnrSTARTrans" : "STAR_Trans", STAR_TRANS);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), "STAR", STAR);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), alternateFmt ? "EnrSTARTrans" : "STAR_Trans", STAR_TRANS);
     if(alternateFmt)
       stream << "STARApprTrans=" << Qt::endl;
 
     // Arrival approach and transition ============================================
-    saveFlpKeyValue(stream, pln, QString(), alternateFmt ? "Appr_Trans" : "APPR_Trans", TRANSITION);
-    saveFlpKeyValue(stream, pln, QString(), "RwyArrFinal", APPROACH_ARINC);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), alternateFmt ? "Appr_Trans" : "APPR_Trans", TRANSITION);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), "RwyArrFinal", APPROACH_ARINC);
 
     if(alternateFmt)
     {
@@ -3851,7 +3851,7 @@ void FlightplanIO::saveFpr(const atools::fs::pln::Flightplan& plan, const QStrin
       leg->legSegType = fpr::NavSystem_LEG_SEGMENT_FP_CRS;
 
       writeBinaryString(leg->legType, "TF", sizeof(leg->legType));
-      writeBinaryString(leg->transition, QString(), sizeof(leg->transition));
+      writeBinaryString(leg->transition, QStringLiteral(), sizeof(leg->transition));
       writeBinaryString(leg->waypoint.designator, entry.getIdent(), sizeof(leg->waypoint.designator));
       writeBinaryString(leg->waypoint.fullName, entry.getName(), sizeof(leg->waypoint.fullName));
 
@@ -4096,8 +4096,8 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
 
       if(i > 0 && i < plan.size() - 1)
       {
-        entry.setAirway(QString());
-        entry.setRegion(QString());
+        entry.setAirway(QStringLiteral());
+        entry.setRegion(QStringLiteral());
         entry.setIdent(entry.getIdent());
         entry.setWaypointType(entry::USER);
       }
@@ -4215,7 +4215,7 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
       writer.writeTextElement("lat", QString::number(pos.getLatY(), 'f', 6));
       writer.writeTextElement("lon", QString::number(pos.getLonX(), 'f', 6));
 
-      writer.writeTextElement("comment", QString());
+      writer.writeTextElement("comment", QStringLiteral());
 
       writer.writeEndElement(); // waypoint
     }
@@ -4639,7 +4639,7 @@ QString FlightplanIO::gnsType(const atools::fs::pln::FlightplanEntry& entry) con
       return "NDB";
       // <xsd:enumeration value="INT-VRP" /> ignored
   }
-  return QString();
+  return QStringLiteral();
 }
 
 void FlightplanIO::writeBinaryString(char *mem, QString str, int length) const

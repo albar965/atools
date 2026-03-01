@@ -179,7 +179,7 @@ void DfdCompiler::writeAirports()
     airportWriteQuery->bindValue(":airport_id", ++curAirportId);
 
     // Add ident to id mapping
-    airportIndex->addAirportId(ident, QString(), QString(), QString(), curAirportId, pos);
+    airportIndex->addAirportId(ident, QStringLiteral(), QStringLiteral(), QStringLiteral(), curAirportId, pos);
 
     airportWriteQuery->bindValue(":file_id", FILE_ID);
     airportWriteQuery->bindValue(":ident", ident);
@@ -457,7 +457,7 @@ void DfdCompiler::pairRunways(QList<std::pair<SqlRecord, SqlRecord> >& runwaypai
 
     // Get designator: R
     // Calculate opposed name
-    QString opposedDesig = rname.size() > 2 ? rname.at(2) : QString();
+    QString opposedDesig = rname.size() > 2 ? rname.at(2) : QStringLiteral();
     if(opposedDesig == "R")
       opposedDesig = "L";
     else if(opposedDesig == "L")
@@ -468,7 +468,7 @@ void DfdCompiler::pairRunways(QList<std::pair<SqlRecord, SqlRecord> >& runwaypai
       opposedRnum -= 36;
 
     // Build opposed name: RW29L
-    QString opposedRname = "RW" + (opposedRnum < 10 ? "0" : QString()) + QString::number(opposedRnum) + opposedDesig;
+    QString opposedRname = "RW" + (opposedRnum < 10 ? "0" : QStringLiteral()) + QString::number(opposedRnum) + opposedDesig;
 
     // Try to find the other end in the list
     bool foundEnd = false;
@@ -553,7 +553,7 @@ void DfdCompiler::writePathpoints()
     "   p.runway_identifier = r.runway_identifier and p.icao_code = r.icao_code  and p.airport_identifier = r.airport_identifier ", db);
 
   SqlQuery insert(db);
-  insert.prepare(SqlUtil(db).buildInsertStatement("ils", QString(),
+  insert.prepare(SqlUtil(db).buildInsertStatement("ils", QStringLiteral(),
                                                   // Exclude unused columns
                                                   {"range", "dme_range", "dme_altitude", "dme_lonx", "dme_laty", "gs_range", "loc_width"}));
 
@@ -663,7 +663,7 @@ void DfdCompiler::writeAirspaces()
                       "controlled_airspace_name as name, "
                       "airspace_type as type, "
                       "airspace_classification, " +
-                      (newCols.isEmpty() ? QString() : (newCols.join(", ") + ", ")) +
+                      (newCols.isEmpty() ? QStringLiteral() : (newCols.join(", ") + ", ")) +
                       "seqno, "
                       "boundary_via, "
                       "flightlevel, "
@@ -690,7 +690,7 @@ void DfdCompiler::writeAirspaces()
                        "restrictive_airspace_designation, "
                        "restrictive_airspace_name as name, "
                        "restrictive_type as type, " +
-                       (newCols.isEmpty() ? QString() : (newCols.join(", ") + ", ")) +
+                       (newCols.isEmpty() ? QStringLiteral() : (newCols.join(", ") + ", ")) +
                        "seqno, "
                        "boundary_via, "
                        "flightlevel, "
@@ -1208,7 +1208,7 @@ void DfdCompiler::writeAirways()
 
   // Insert into airway and let SQLite autogenerate an ID
   SqlQuery insert(db);
-  insert.prepare(SqlUtil(db).buildInsertStatement("airway", QString(), {"airway_id"}));
+  insert.prepare(SqlUtil(db).buildInsertStatement("airway", QStringLiteral(), {"airway_id"}));
 
   SqlRecord lastRec;
   QString lastName;
@@ -1393,7 +1393,7 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   // procInput.secCode = query.valueStr(""); // Not available
   // procInput.subCode = query.valueStr(""); // Not available
   procInput.descCode = query.valueStr("waypoint_description_code");
-  procInput.aircraftCategory = query.valueStr("aircraft_category", QString());
+  procInput.aircraftCategory = query.valueStr("aircraft_category", QStringLiteral());
 
   if(!query.isNull("waypoint_longitude") && !query.isNull("waypoint_latitude"))
     procInput.waypointPos = PosD(query.valueDouble("waypoint_longitude"), query.valueDouble("waypoint_latitude"));
@@ -1434,7 +1434,7 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   procInput.rteHoldTime = procInput.rteHoldDist = 0.f;
   if(procInput.pathTerm.startsWith("H"))
   {
-    QString distTimeFlag = query.valueStr("distance_time", QString()).trimmed().toUpper();
+    QString distTimeFlag = query.valueStr("distance_time", QStringLiteral()).trimmed().toUpper();
     if(distTimeFlag == "D")
       procInput.rteHoldDist = distTime;
     else if(distTimeFlag == "T")
@@ -1510,8 +1510,8 @@ void DfdCompiler::compileMagDeclBgl()
 
 void DfdCompiler::writeFileAndSceneryMetadata()
 {
-  metadataWriter->writeSceneryArea(QString(), "Navigraph", SCENERY_ID);
-  metadataWriter->writeFile(QString(), QString(), SCENERY_ID, FILE_ID);
+  metadataWriter->writeSceneryArea(QStringLiteral(), "Navigraph", SCENERY_ID);
+  metadataWriter->writeFile(QStringLiteral(), QStringLiteral(), SCENERY_ID, FILE_ID);
   db.commit();
 }
 
@@ -1606,7 +1606,7 @@ void DfdCompiler::writeAirportMsa()
     );
 
   SqlQuery insertQuery(db);
-  insertQuery.prepare(SqlUtil(db).buildInsertStatement("airport_msa", QString(), {"airport_msa_id"}));
+  insertQuery.prepare(SqlUtil(db).buildInsertStatement("airport_msa", QStringLiteral(), {"airport_msa_id"}));
 
   atools::fs::common::BinaryMsaGeometry geo;
 
@@ -1777,7 +1777,7 @@ void DfdCompiler::initQueries()
 
   airportWriteQuery = new SqlQuery(db);
   airportWriteQuery->prepare(
-    SqlUtil(db).buildInsertStatement("airport", QString(), {
+    SqlUtil(db).buildInsertStatement("airport", QStringLiteral(), {
           "tower_frequency", "atis_frequency", "awos_frequency", "asos_frequency", "unicom_frequency",
           "city", "state",
           "largest_parking_ramp", "largest_parking_gate",
@@ -1793,11 +1793,11 @@ void DfdCompiler::initQueries()
   runwayQuery->prepare("select * from src.tbl_runways order by icao_code, airport_identifier, runway_identifier");
 
   runwayWriteQuery = new SqlQuery(db);
-  runwayWriteQuery->prepare(SqlUtil(db).buildInsertStatement("runway", QString(),
+  runwayWriteQuery->prepare(SqlUtil(db).buildInsertStatement("runway", QStringLiteral(),
                                                              {"surface", "shoulder", "edge_light", "center_light"}));
 
   runwayEndWriteQuery = new SqlQuery(db);
-  runwayEndWriteQuery->prepare(SqlUtil(db).buildInsertStatement("runway_end", QString(), {
+  runwayEndWriteQuery->prepare(SqlUtil(db).buildInsertStatement("runway_end", QStringLiteral(), {
           "left_vasi_type", "left_vasi_pitch", "right_vasi_type", "right_vasi_pitch", "app_light_system_type", "num_strobes"}));
 
   airportUpdateQuery = new SqlQuery(db);
@@ -1819,7 +1819,7 @@ void DfdCompiler::initQueries()
   metadataQuery->prepare(SqlUtil(db).buildSelectStatement("src.tbl_header"));
 
   airspaceWriteQuery = new SqlQuery(db);
-  airspaceWriteQuery->prepare(SqlUtil(db).buildInsertStatement("boundary", QString(), {
+  airspaceWriteQuery->prepare(SqlUtil(db).buildInsertStatement("boundary", QStringLiteral(), {
           "com_name", "com_type", "com_frequency"
         }));
 

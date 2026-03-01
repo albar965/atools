@@ -37,7 +37,7 @@ QString runwayTypeToStr(RunwayType type)
     case atools::fs::perf::WATER_LAND:
       return "WATERLAND";
   }
-  return QString();
+  return QStringLiteral();
 }
 
 RunwayType runwayTypeFromStr(QString str)

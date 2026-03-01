@@ -66,7 +66,7 @@ void AbstractIniReader::handleKeyValue()
       // Call both - implementor can choose to ignore one
       onKeyValue(currentSection, currentSectionSuffix, name, value);
       onKeyValue(currentSection + (currentSectionSuffix.isEmpty() ?
-                                   QString() : "." + currentSectionSuffix), name, value);
+                                   QStringLiteral() : "." + currentSectionSuffix), name, value);
     }
   }
   else

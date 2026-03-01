@@ -54,7 +54,7 @@ QString XpReader::atAirportIdent(const QStringList& line, int index)
   if(index < line.size())
   {
     const QString str = line.at(index).simplified();
-    return str == QStringLiteral("ENRT") ? QString() : str;
+    return str == QStringLiteral("ENRT") ? QStringLiteral() : str;
   }
   else
     // Have to stop reading the file since the rest can be corrupted
@@ -70,7 +70,7 @@ QString XpReader::mid(const QStringList& line, int index, bool ignoreError)
     // Have to stop reading the file since the rest can be corrupted
     throw atools::Exception(ctx->messagePrefix() +
                             QStringLiteral(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
-  return QString();
+  return QStringLiteral();
 }
 
 void XpReader::fetchWaypoint(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos)

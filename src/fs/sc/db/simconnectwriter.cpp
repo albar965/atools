@@ -75,7 +75,7 @@ inline bool valid(const geo::PosD& pos)
 }
 
 /* Binds position to query if valid or null if not */
-inline void bindPos(atools::sql::SqlQuery *query, const geo::PosD& pos, const QString& prefix = QString())
+inline void bindPos(atools::sql::SqlQuery *query, const geo::PosD& pos, const QString& prefix = QStringLiteral())
 {
   if(valid(pos))
   {
@@ -90,7 +90,7 @@ inline void bindPos(atools::sql::SqlQuery *query, const geo::PosD& pos, const QS
 }
 
 /* Binds position and altitude in meter to query  */
-inline void bindPosAlt(atools::sql::SqlQuery *query, const atools::geo::PosD& pos, const QString& prefix = QString())
+inline void bindPosAlt(atools::sql::SqlQuery *query, const atools::geo::PosD& pos, const QString& prefix = QStringLiteral())
 {
   bindPos(query, pos, prefix);
 
@@ -100,23 +100,23 @@ inline void bindPosAlt(atools::sql::SqlQuery *query, const atools::geo::PosD& po
     query->bindNullFloat(QStringLiteral(":") % prefix % QStringLiteral("altitude"));
 }
 
-inline void bindPos(atools::sql::SqlQuery *query, double lonX, double latY, const QString& prefix = QString())
+inline void bindPos(atools::sql::SqlQuery *query, double lonX, double latY, const QString& prefix = QStringLiteral())
 {
   bindPos(query, PosD(lonX, latY), prefix);
 }
 
-inline void bindPosAlt(atools::sql::SqlQuery *query, double lonX, double latY, double altitude, const QString& prefix = QString())
+inline void bindPosAlt(atools::sql::SqlQuery *query, double lonX, double latY, double altitude, const QString& prefix = QStringLiteral())
 {
   bindPosAlt(query, PosD(lonX, latY, altitude), prefix);
 }
 
-inline void bindPosNull(atools::sql::SqlQuery *query, const QString& prefix = QString())
+inline void bindPosNull(atools::sql::SqlQuery *query, const QString& prefix = QStringLiteral())
 {
   query->bindNullFloat(QStringLiteral(":") % prefix % QStringLiteral("lonx"));
   query->bindNullFloat(QStringLiteral(":") % prefix % QStringLiteral("laty"));
 }
 
-inline void bindPosAltNull(atools::sql::SqlQuery *query, const QString& prefix = QString())
+inline void bindPosAltNull(atools::sql::SqlQuery *query, const QString& prefix = QStringLiteral())
 {
   bindPosNull(query, prefix);
   query->bindNullFloat(QStringLiteral(":") % prefix % QStringLiteral("altitude"));
@@ -157,7 +157,7 @@ SimConnectWriter::~SimConnectWriter()
 
 bool SimConnectWriter::callProgressUpdate()
 {
-  return callProgress(QString(), false /* incProgress */);
+  return callProgress(QStringLiteral(), false /* incProgress */);
 }
 
 QList<RunwayTransition> SimConnectWriter::groupProcedures(const QList<RunwayTransition>& runwayTransitions,
@@ -348,7 +348,7 @@ void SimConnectWriter::initQueries()
 
   // create insert statement for table airport and exclude unneeded columns
   airportStmt = new SqlQuery(db);
-  airportStmt->prepare(util.buildInsertStatement(QStringLiteral("airport"), QString(),
+  airportStmt->prepare(util.buildInsertStatement(QStringLiteral("airport"), QStringLiteral(),
                                                  {QStringLiteral("icao"), QStringLiteral("iata"), QStringLiteral("faa"),
                                                   QStringLiteral("local"), QStringLiteral("city"), QStringLiteral("state"),
                                                   QStringLiteral("flatten"), QStringLiteral("type"),
@@ -358,11 +358,11 @@ void SimConnectWriter::initQueries()
   airportFileStmt->prepare(util.buildInsertStatement(QStringLiteral("airport_file")));
 
   runwayStmt = new SqlQuery(db);
-  runwayStmt->prepare(util.buildInsertStatement(QStringLiteral("runway"), QString(),
+  runwayStmt->prepare(util.buildInsertStatement(QStringLiteral("runway"), QStringLiteral(),
                                                 {QStringLiteral("smoothness"), QStringLiteral("shoulder")}));
 
   runwayEndStmt = new SqlQuery(db);
-  runwayEndStmt->prepare(util.buildInsertStatement(QStringLiteral("runway_end"), QString(), {QStringLiteral("num_strobes")}));
+  runwayEndStmt->prepare(util.buildInsertStatement(QStringLiteral("runway_end"), QStringLiteral(), {QStringLiteral("num_strobes")}));
 
   startStmt = new SqlQuery(db);
   startStmt->prepare(util.buildInsertStatement(QStringLiteral("start")));
@@ -377,49 +377,49 @@ void SimConnectWriter::initQueries()
   taxiPathStmt->prepare(util.buildInsertStatement(QStringLiteral("taxi_path")));
 
   parkingStmt = new SqlQuery(db);
-  parkingStmt->prepare(util.buildInsertStatement(QStringLiteral("parking"), QString(),
+  parkingStmt->prepare(util.buildInsertStatement(QStringLiteral("parking"), QStringLiteral(),
                                                  {QStringLiteral("pushback"), QStringLiteral("airline_codes")}));
 
   approachStmt = new SqlQuery(db);
-  approachStmt->prepare(util.buildInsertStatement(QStringLiteral("approach"), QString(),
+  approachStmt->prepare(util.buildInsertStatement(QStringLiteral("approach"), QStringLiteral(),
                                                   {QStringLiteral("fix_airport_ident"), QStringLiteral("aircraft_category"),
                                                    QStringLiteral("heading")}));
 
   transitionStmt = new SqlQuery(db);
-  transitionStmt->prepare(util.buildInsertStatement(QStringLiteral("transition"), QString(),
+  transitionStmt->prepare(util.buildInsertStatement(QStringLiteral("transition"), QStringLiteral(),
                                                     {QStringLiteral("fix_airport_ident"), QStringLiteral("aircraft_category"),
                                                      QStringLiteral("dme_airport_ident")}));
 
   approachLegStmt = new SqlQuery(db);
-  approachLegStmt->prepare(util.buildInsertStatement(QStringLiteral("approach_leg"), QString(),
+  approachLegStmt->prepare(util.buildInsertStatement(QStringLiteral("approach_leg"), QStringLiteral(),
                                                      {QStringLiteral("fix_lonx"), QStringLiteral("fix_laty"),
                                                       QStringLiteral("recommended_fix_fix_lonx"),
                                                       QStringLiteral("recommended_fix_fix_laty")}));
 
   transitionLegStmt = new SqlQuery(db);
-  transitionLegStmt->prepare(util.buildInsertStatement(QStringLiteral("transition_leg"), QString(),
+  transitionLegStmt->prepare(util.buildInsertStatement(QStringLiteral("transition_leg"), QStringLiteral(),
                                                        {QStringLiteral("fix_airport_ident"), QStringLiteral("fix_lonx"),
                                                         QStringLiteral("fix_laty"), QStringLiteral("recommended_fix_fix_lonx"),
                                                         QStringLiteral("recommended_fix_fix_laty")}));
 
   waypointStmt = new SqlQuery(db);
-  waypointStmt->prepare(util.buildInsertStatement(QStringLiteral("waypoint"), QString(),
+  waypointStmt->prepare(util.buildInsertStatement(QStringLiteral("waypoint"), QStringLiteral(),
                                                   {QStringLiteral("name"), QStringLiteral("airport_ident"), QStringLiteral("airport_id"),
                                                    QStringLiteral("arinc_type")}));
 
   vorStmt = new SqlQuery(db);
-  vorStmt->prepare(util.buildInsertStatement(QStringLiteral("vor"), QString(),
+  vorStmt->prepare(util.buildInsertStatement(QStringLiteral("vor"), QStringLiteral(),
                                              {QStringLiteral("airport_id"), QStringLiteral("airport_ident")}));
 
   ndbStmt = new SqlQuery(db);
   ndbStmt->prepare(util.buildInsertStatement(QStringLiteral("ndb")));
 
   ilsStmt = new SqlQuery(db);
-  ilsStmt->prepare(util.buildInsertStatement(QStringLiteral("ils"), QString(),
+  ilsStmt->prepare(util.buildInsertStatement(QStringLiteral("ils"), QStringLiteral(),
                                              {QStringLiteral("perf_indicator"), QStringLiteral("provider")}));
 
   tmpAirwayPointStmt = new SqlQuery(db);
-  tmpAirwayPointStmt->prepare(util.buildInsertStatement(QStringLiteral("tmp_airway_point"), QString(),
+  tmpAirwayPointStmt->prepare(util.buildInsertStatement(QStringLiteral("tmp_airway_point"), QStringLiteral(),
                                                         {QStringLiteral("next_airport_ident"), QStringLiteral("previous_airport_ident"),
                                                          QStringLiteral("next_maximum_altitude"),
                                                          QStringLiteral("previous_maximum_altitude")}));

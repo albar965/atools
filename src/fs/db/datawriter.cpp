@@ -178,7 +178,7 @@ QString DataWriter::getSurface(const QUuid& key)
   if(materialLib != nullptr)
     return materialLib->getSurfaceForUuid(key);
   else
-    return QString();
+    return QStringLiteral();
 }
 
 int DataWriter::getNextSceneryId() const
@@ -345,7 +345,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
         qCritical() << "Caught unknown exception reading" << currentBglFilePath;
         progressHandler->reportError();
         if(sceneryErrors != nullptr)
-          sceneryErrors->appendFileError(SceneryFileError(currentBglFilePath, QString()));
+          sceneryErrors->appendFileError(SceneryFileError(currentBglFilePath, QStringLiteral()));
       }
     }
     db.commit();

@@ -209,8 +209,8 @@ QString arincNameAppr(ApproachType type, const QString& runwayName, char suffix,
       break;
   }
 
-  QString rw = runwayName != QStringLiteral("00") && !runwayName.isEmpty() ? runwayName : QString();
-  QString sfx = suffix != '0' && suffix != 0 ? QString(QChar(suffix)) : QString();
+  QString rw = runwayName != QStringLiteral("00") && !runwayName.isEmpty() ? runwayName : QStringLiteral();
+  QString sfx = suffix != '0' && suffix != 0 ? QString(QChar(suffix)) : QStringLiteral();
   QString arinc;
 
   if((sfx == 'A' || sfx == 'D') && gpsOverlay)

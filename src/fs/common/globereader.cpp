@@ -41,7 +41,7 @@ GlobeReader::GlobeReader(const QString& dataDirParam)
 {
   dataFiles.fill(nullptr, NUM_DATAFILES);
   dataStreams.fill(nullptr, NUM_DATAFILES);
-  dataFilenames.fill(QString(), NUM_DATAFILES);
+  dataFilenames.fill(QStringLiteral(), NUM_DATAFILES);
 }
 
 GlobeReader::~GlobeReader()

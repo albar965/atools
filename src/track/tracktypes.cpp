@@ -58,7 +58,7 @@ QString typeToString(TrackType type)
     case atools::track::PACOTS:
       return QObject::tr("PACOTS");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 } // namespace track

@@ -250,7 +250,7 @@ public:
   // Call progress but do not increment progress count
   bool callProgressUpdate()
   {
-    return callProgress(QString(), false /* incProgress */);
+    return callProgress(QStringLiteral(), false /* incProgress */);
   }
 
   bool callProgress(const QString& message, bool incProgress = true);
@@ -681,7 +681,7 @@ bool SimConnectLoaderPrivate::loadDisconnectedNavaids(bool skipLoading)
 {
   // Clear and then fill navaidIds and navaidIdSet avoiding duplicates
   if(!aborted && !skipLoading)
-    fetchDisconnectedNavaidsResource(QString()); // Load VOR, NDB and waypoints if not loaded previously
+    fetchDisconnectedNavaidsResource(QStringLiteral()); // Load VOR, NDB and waypoints if not loaded previously
 
   qDebug() << Q_FUNC_INFO << "Number of disconnected to fetch" << navaidIds.size();
 

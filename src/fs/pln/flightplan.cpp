@@ -90,7 +90,7 @@ QString Flightplan::getDepartureParkingTypeStr() const
     case atools::fs::pln::HELIPAD:
       return "Helipad";
   }
-  return QString();
+  return QStringLiteral();
 }
 
 void Flightplan::setDepartureParkingType(QString type)
@@ -168,7 +168,7 @@ QString Flightplan::getFilenamePatternExample(const QString& pattern, const QStr
 
     // Build an example filename
     QString example = atools::fs::pln::Flightplan::getFilenamePattern(pattern, "IFR", "Frankfurt am Main", "EDDF",
-                                                                      "Fiumicino", "LIRF", QString(), 30000);
+                                                                      "Fiumicino", "LIRF", QStringLiteral(), 30000);
 
     // Clean name from invalid characters
     QString cleanExample = atools::cleanFilename(example, atools::MAX_FILENAME_CHARS);
@@ -187,7 +187,7 @@ QString Flightplan::getFilenamePatternExample(const QString& pattern, const QStr
     // Nothing given - return empty example
     if(errorMessage != nullptr)
       *errorMessage = tr("Pattern is empty.");
-    return QString();
+    return QStringLiteral();
   }
 }
 
@@ -272,7 +272,7 @@ QString Flightplan::getFilenamePattern(QString pattern, const QString& type, con
                  replace(pattern::DEPARTIDENT, departureIdent.simplified()).
                  replace(pattern::DESTNAME, destName.simplified().mid(0, 30)).
                  replace(pattern::DESTIDENT, destIdent.simplified()).
-                 replace(pattern::CRUISEALT, altitudeLocal > 0 ? QString::number(altitudeLocal) : QString()) + suffix;
+                 replace(pattern::CRUISEALT, altitudeLocal > 0 ? QString::number(altitudeLocal) : QStringLiteral()) + suffix;
 
   return atools::cleanFilename(name, 1000);
 }
@@ -399,7 +399,7 @@ QString Flightplan::flightplanTypeToString(atools::fs::pln::FlightplanType type)
     case atools::fs::pln::VFR:
       return "VFR";
   }
-  return QString();
+  return QStringLiteral();
 }
 
 FlightplanType Flightplan::stringFlightplanType(const QString& str)
@@ -429,7 +429,7 @@ QString Flightplan::routeTypeToString(RouteType type)
     case atools::fs::pln::DIRECT:
       return "Direct"; // Not an actual value in the XML
   }
-  return QString();
+  return QStringLiteral();
 }
 
 RouteType Flightplan::stringToRouteType(const QString& str)

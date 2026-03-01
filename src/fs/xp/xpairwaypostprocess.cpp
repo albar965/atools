@@ -132,7 +132,7 @@ QString convertType(AirwayPointType xptype)
   switch(xptype)
   {
     case atools::fs::xp::AW_NONE:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::xp::AW_FIX:
       return QStringLiteral("O");
@@ -143,7 +143,7 @@ QString convertType(AirwayPointType xptype)
     case atools::fs::xp::AW_VOR:
       return QStringLiteral("V");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 /* X-Plane to database type */
@@ -152,7 +152,7 @@ QString convertAirwayType(AirwayType type)
   switch(type)
   {
     case atools::fs::xp::NONE:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::xp::BOTH:
       return QStringLiteral("B");
@@ -163,7 +163,7 @@ QString convertAirwayType(AirwayType type)
     case atools::fs::xp::JET:
       return QStringLiteral("J");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 // ==================================================================
@@ -183,7 +183,7 @@ bool XpAirwayPostProcess::postProcessEarthAirway()
                            "next_type, next_ident, next_region from tmp_airway order by name", db); // where name = 'Y655'
 
   SqlQuery insertTmpAirwayPoint(db);
-  insertTmpAirwayPoint.prepare(SqlUtil(db).buildInsertStatement("tmp_airway_point", QString(),
+  insertTmpAirwayPoint.prepare(SqlUtil(db).buildInsertStatement("tmp_airway_point", QStringLiteral(),
                                                                 {"airway_point_id", "next_airport_ident", "previous_airport_ident"}));
 
   QString currentAirway;

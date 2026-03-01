@@ -95,7 +95,7 @@ QStringList probeFile(const QString& file, int numLinesRead)
 
     // Fill missing entries with empty strings to ease checking.
     for(int i = lines.size(); i < 6; i++)
-      lines.append(QString());
+      lines.append(QStringLiteral());
     testFile.close();
   }
   else
@@ -309,7 +309,7 @@ QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& 
   // Join items by , and blocks by linefeed
   QString txt;
   for(const QStringList& list : blocks)
-    txt.append((txt.isEmpty() ? QString() : itemSeparator % lineSeparator) % list.join(itemSeparator));
+    txt.append((txt.isEmpty() ? QStringLiteral() : itemSeparator % lineSeparator) % list.join(itemSeparator));
   return txt;
 }
 
@@ -502,7 +502,7 @@ QString at(const QStringList& columns, int index, bool error)
     return columns.at(index).trimmed();
   else if(error)
     qWarning() << "Invalid index" << index << "for" << columns;
-  return QString();
+  return QStringLiteral();
 }
 
 int atInt(const QStringList& columns, int index, bool error)
@@ -572,7 +572,7 @@ QString strFromFile(const QString& filename)
     QTextStream stream(&file);
     return stream.readAll();
   }
-  return QString();
+  return QStringLiteral();
 }
 
 void strToFile(const QString& filename, const QString& text)
@@ -896,7 +896,7 @@ QString checkDirMsg(const QFileInfo& dir, int maxLength, bool warn)
       }
     }
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString checkFileMsg(const QString& file, int maxLength, bool warn)
@@ -942,7 +942,7 @@ QString checkFileMsg(const QFileInfo& file, int maxLength, bool warn)
       }
     }
   }
-  return QString();
+  return QStringLiteral();
 }
 
 bool checkDir(const QString& funcInfo, const QString& dir, bool warn)
@@ -1293,7 +1293,7 @@ QString linkTarget(const QFileInfo& path)
 
         // Clear path if target is the same. This can happen with mounted drives which are also identified as Junctions
         if(atools::cleanPath(target) == atools::cleanPath(path.absoluteFilePath()))
-          target = QString();
+          target = QStringLiteral();
       }
 
       CloseHandle(hFile);
@@ -1428,7 +1428,7 @@ QString canonicalFilePath(const QFileInfo& path)
         tmpPath = atools::cleanPath(target);
         separatorPos = 0;
         if(known.contains(tmpPath))
-          return QString();
+          return QStringLiteral();
 
         known.insert(tmpPath);
       }

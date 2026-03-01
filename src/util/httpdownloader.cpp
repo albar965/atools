@@ -279,7 +279,7 @@ void HttpDownloader::downloadProgressInternal(qint64 bytesReceived, qint64 bytes
 
 QString HttpDownloader::curUrl()
 {
-  return reply != nullptr ? reply->url().toString() : QString();
+  return reply != nullptr ? reply->url().toString() : QStringLiteral();
 }
 
 void HttpDownloader::httpFinished()

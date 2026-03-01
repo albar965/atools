@@ -103,7 +103,7 @@ atools::fs::ResultFlags NavDatabase::compileDatabase()
   QString sceneryCfgCodec;
 
   sceneryCfgCodec = (options.getSimulatorType() == FsPaths::P3D_V4 || options.getSimulatorType() == FsPaths::P3D_V5 ||
-                     options.getSimulatorType() == FsPaths::P3D_V6) ? "UTF-8" : QString();
+                     options.getSimulatorType() == FsPaths::P3D_V6) ? "UTF-8" : QStringLiteral();
 
   atools::fs::ResultFlags result = createInternal(sceneryCfgCodec);
   if(aborted)
@@ -200,7 +200,7 @@ void NavDatabase::createSimConnectLoader()
 bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& codec, QStringList& errors)
 {
   errors.append(atools::checkFileMsg(filename));
-  errors.removeAll(QString());
+  errors.removeAll(QStringLiteral());
 
   if(errors.isEmpty())
   {
@@ -225,7 +225,7 @@ bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& c
     }
   }
 
-  errors.removeAll(QString());
+  errors.removeAll(QStringLiteral());
   return errors.isEmpty();
 }
 
@@ -264,7 +264,7 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, 
     errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "scenery"})));
 
   // Delete empty messages
-  errors.removeAll(QString());
+  errors.removeAll(QStringLiteral());
 
   return errors.isEmpty();
 }
@@ -699,7 +699,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   if(sim == FsPaths::NAVIGRAPH)
   {
     // Create a single Navigraph scenery area
-    SceneryArea area(1, tr("Navigraph"), QString());
+    SceneryArea area(1, tr("Navigraph"), QStringLiteral());
 
     // Prepare error collection for single area
     if(errors != nullptr)
@@ -713,7 +713,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
   else if(FsPaths::isAnyXplane(sim))
   {
     // Create a single X-Plane scenery area
-    SceneryArea area(1, tr("X-Plane"), QString());
+    SceneryArea area(1, tr("X-Plane"), QStringLiteral());
 
     // Prepare error collection for single area
     if(errors != nullptr)
@@ -1237,7 +1237,7 @@ bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWrit
   // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
   // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/fs-base/scenery/Base/scenery/magdec.bgl
   if(options.getSimulatorType() == FsPaths::MSFS_2024)
-    fsDataWriter->readMagDeclBgl(QString(), true /* forceWmm */); // MSFS 2024 does not have a declination file
+    fsDataWriter->readMagDeclBgl(QStringLiteral(), true /* forceWmm */); // MSFS 2024 does not have a declination file
   else
     fsDataWriter->readMagDeclBgl(buildPathNoCase({options.getMsfsOfficialPath(), "fs-base", "scenery", "Base", "scenery", "magdec.bgl"}));
 
@@ -1279,8 +1279,8 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
           int sceneryId = fsDataWriter->getNextSceneryId();
 
           atools::fs::common::MetadataWriter metadataWriter(db);
-          metadataWriter.writeSceneryArea(QString(), "SimConnect", sceneryId);
-          metadataWriter.writeFile(QString(), "Airports", sceneryId, fileId);
+          metadataWriter.writeSceneryArea(QStringLiteral(), "SimConnect", sceneryId);
+          metadataWriter.writeFile(QStringLiteral(), "Airports", sceneryId, fileId);
 
           simconnectLoader->setProgressCallback([progress](const QString& message, bool incProgress, int airportsLoaded,
                                                            int waypointsLoaded, int vorLoaded, int ilsLoaded, int ndbLoaded)->bool {
@@ -1722,7 +1722,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 #ifdef Q_OS_WIN
   else if(options.getSimulatorType() == FsPaths::MSFS_2024)
   {
-    SceneryArea areaSimConnectAirports(LAYER_NUM_SIMCONNECT_AIRPORTS, tr("SimConnect Airports"), QString());
+    SceneryArea areaSimConnectAirports(LAYER_NUM_SIMCONNECT_AIRPORTS, tr("SimConnect Airports"), QStringLiteral());
     areaSimConnectAirports.setActive(true);
     areaSimConnectAirports.setSimconnect(true);
     cfg.appendArea(areaSimConnectAirports);
@@ -1750,7 +1750,8 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   if(options.getSimulatorType() == FsPaths::MSFS)
   {
     QString path = options.getMsfsOfficialPath();
-    const QDir dirOfficial(path, QString(), QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+    const QDir dirOfficial(path, QStringLiteral(), QDir::Name | QDir::IgnoreCase,
+                           QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
     QString baseName = dirOfficial.dirName();
     const QFileInfoList entriesOfficial = dirOfficial.entryInfoList();
     for(QFileInfo fileinfo : entriesOfficial)
@@ -1802,7 +1803,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     if(options.getSimulatorType() == FsPaths::MSFS)
     {
       // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
-      const QDir dirCommunity(options.getMsfsCommunityPath(), QString(),
+      const QDir dirCommunity(options.getMsfsCommunityPath(), QStringLiteral(),
                               QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
       const QFileInfoList entriesCommunity = dirCommunity.entryInfoList();
@@ -1919,7 +1920,7 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
     QFileInfoList entries(QDir(dirs.at(i)).entryInfoList(filters));
     while(!queue.isEmpty())
     {
-      const QFileInfoList entriesDir = QDir(queue.dequeue().absoluteFilePath(), QString(), QDir::Name, filters).entryInfoList();
+      const QFileInfoList entriesDir = QDir(queue.dequeue().absoluteFilePath(), QStringLiteral(), QDir::Name, filters).entryInfoList();
       for(const QFileInfo& fileinfo : entriesDir)
       {
         bool ok = false;

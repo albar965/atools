@@ -196,7 +196,7 @@ void XpHoldingReader::initQueries()
   SqlUtil util(&db);
 
   insertQuery = new SqlQuery(db);
-  insertQuery->prepare(util.buildInsertStatement("holding", QString(), {"name"}));
+  insertQuery->prepare(util.buildInsertStatement("holding", QStringLiteral(), {"name"}));
 
   initNavQueries();
 }

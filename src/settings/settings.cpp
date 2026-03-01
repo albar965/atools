@@ -198,7 +198,7 @@ QString Settings::getOverloadedLocalPath(const QString& filename, bool ignoreMis
   else if(!ignoreMissing)
     errorMessages.append(QStringLiteral("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
 
-  return QString();
+  return QStringLiteral();
 }
 
 QString Settings::getOverloadedPath(const QString& filename, bool ignoreMissing)
@@ -215,7 +215,7 @@ QString Settings::getOverloadedPath(const QString& filename, bool ignoreMissing)
   else if(!ignoreMissing)
     errorMessages.append(QStringLiteral("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
 
-  return QString();
+  return QStringLiteral();
 }
 
 QVariant Settings::getAndStoreValue(const QString& key, const QVariant& defaultValue) const
@@ -311,7 +311,7 @@ QVariant Settings::valueVar(const QString& key, QVariant defaultValue) const
 void Settings::setValue(const QString& key, const QStringList& value)
 {
   if(value.isEmpty())
-    qSettings->setValue(key, QString());
+    qSettings->setValue(key, QStringLiteral());
   else
     qSettings->setValue(key, value);
 }

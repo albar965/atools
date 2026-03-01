@@ -387,7 +387,7 @@ QStringList ListWidgetIndex::cleanText(const QStringList& texts)
                         replace('(', ' ').replace(')', ' ').replace("...", " ").replace("->", " ").replace(" - ", " ").
                         simplified().toUpper().split(' '));
 
-    cleanTexts.removeAll(QString());
+    cleanTexts.removeAll(QStringLiteral());
   }
   return cleanTexts;
 }

@@ -33,7 +33,7 @@ QString intToIcaoInternal(quint64 icao, int numChars, int bitShift)
   value = value >> bitShift;
 
   if(value == 0)
-    return QString();
+    return QStringLiteral();
 
   // Max of 8 characters for MSFS 2024
   QVarLengthArray<quint64, 8> codedArr({0, 0, 0, 0, 0, 0, 0, 0});
@@ -46,7 +46,7 @@ QString intToIcaoInternal(quint64 icao, int numChars, int bitShift)
     while(value > 37)
     {
       if(idx >= codedArr.size())
-        return QString();
+        return QStringLiteral();
 
       coded = value % 38;
       codedArr[idx++] = coded;
@@ -54,7 +54,7 @@ QString intToIcaoInternal(quint64 icao, int numChars, int bitShift)
       if(value < 38)
       {
         if(idx >= codedArr.size())
-          return QString();
+          return QStringLiteral();
 
         coded = value;
         codedArr[idx++] = coded;
@@ -99,7 +99,7 @@ QString designatorStr(int designator)
   else
   {
     qWarning() << "Value for designator out of range in designatorStr()" << designator;
-    return QString();
+    return QStringLiteral();
   }
 }
 

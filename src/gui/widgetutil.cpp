@@ -190,7 +190,7 @@ void changeWidgetColor(QWidget *widget, QColor backgroundColor)
     widget->setStyleSheet("background-color: " + backgroundColor.name() + "; color: " + foregroundColor.name());
   }
   else
-    widget->setStyleSheet(QString());
+    widget->setStyleSheet(QStringLiteral());
 #else
   Q_UNUSED(backgroundColor)
   Q_UNUSED(widget)

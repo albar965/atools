@@ -124,7 +124,7 @@ QString AirspaceReaderBase::mid(const QStringList& line, int index, bool ignoreE
     // Have to stop reading the file since the rest can be corrupted
     throw atools::Exception(tr("In file \"%1\" on line %2: Index out of bounds: Index: %1, size: %2").
                             arg(filename).arg(lineNumber).arg(index).arg(line.size()));
-  return QString();
+  return QStringLiteral();
 }
 
 void AirspaceReaderBase::errWarn(const QString& msg)

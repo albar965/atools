@@ -134,7 +134,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
     {
       QString where = hasNav ?
                       (" where w.trackpoint_id >= " + QString::number(atools::track::TRACKPOINT_ID_OFFSET)) :
-                      QString();
+                      QStringLiteral();
 
       readNodesAirway(nodeVector,
                       nodeIdIndexMap,

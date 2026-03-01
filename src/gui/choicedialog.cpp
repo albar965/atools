@@ -69,7 +69,7 @@ ChoiceDialog::~ChoiceDialog()
 
 void ChoiceDialog::addCheckBoxHiddenInt(int id)
 {
-  addCheckBoxInt(id, QString(), QString(), false /* checked*/, true /* disabled */, true /* hidden */);
+  addCheckBoxInt(id, QStringLiteral(), QStringLiteral(), false /* checked*/, true /* disabled */, true /* hidden */);
 }
 
 void ChoiceDialog::addWidgetInt(int id, QWidget *widget)
@@ -98,7 +98,7 @@ void ChoiceDialog::addCheckBoxInt(int id, const QString& text, const QString& to
 
 void ChoiceDialog::addRadioButtonHiddenInt(int id, int groupId)
 {
-  addRadioButtonInt(id, groupId, QString(), QString(), false /* checked*/, true /* disabled */, true /* hidden */);
+  addRadioButtonInt(id, groupId, QStringLiteral(), QStringLiteral(), false /* checked*/, true /* disabled */, true /* hidden */);
 }
 
 void ChoiceDialog::addRadioButtonInt(int id, int groupId, const QString& text, const QString& tooltip, bool checked, bool disabled,

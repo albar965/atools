@@ -288,7 +288,7 @@ QString WindQuery::collectGribFiles()
   if(!gribFiles.isEmpty())
     return gribFiles.constFirst().absoluteFilePath();
   else
-    return QString();
+    return QStringLiteral();
 }
 
 void WindQuery::initFromFixedModel(float dir, float speed, float altitude)

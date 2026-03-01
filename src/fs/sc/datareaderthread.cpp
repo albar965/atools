@@ -170,7 +170,7 @@ void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& d
 
         // callsign:cid:realname:clienttype:frequency:latitude:longitude:altitude ...
         // AAL1064:1277950:Name KMIA:PILOT::37.85759:-76.72431:35099 ...
-        text << reg << QString::number(ac.getObjectId()) << name << "PILOT" << QString()
+        text << reg << QString::number(ac.getObjectId()) << name << "PILOT" << QStringLiteral()
              << QString::number(ac.getPosition().getLatY(), 'g', 8) << QString::number(ac.getPosition().getLonX(), 'g', 8)
              << QString::number(atools::roundToInt(ac.getPosition().getAltitude()));
 
@@ -182,20 +182,21 @@ void DataReaderThread::debugWriteWhazzup(const atools::fs::sc::SimConnectData& d
         // ... :server:protrevision:rating:transponder:facilitytype:visualrange:planned_revision:planned_flighttype:
         // planned_deptime:planned_ac tdeptime:planned_hrsenroute:planned_minenroute:planned_hrsfuel:planned_minfuel ...
         // ... USA-E:100:1:2444:::1:I:1503:0:2:32:4:20 ...
-        text << "USA-E" << "100" << "1" << ac.getTransponderCodeStr() << QString() << QString() << "1" << "I"
+        text << "USA-E" << "100" << "1" << ac.getTransponderCodeStr() << QStringLiteral() << QStringLiteral() << "1" << "I"
              << "1500" << "0" << "2" << "32" << "4" << "20";
 
         // ... planned_altairport:planned_remarks:planned_route:planned_depairport_lat:planned_depairport_lon:
         // planned_destairport_lat:pl anned_destairport_lon:atis_message:time_last_atis_received:time_logon:heading:QNH_iHg:QNH_Mb: ...
         // ... KPHL:PBN/A1... F /v/ SEL/AEBX:VALLY2 VALLY DCT PERMT AR16 ILM J191 PXT KORRY4:0:0:0:0 ...
-        text << "KPHL" << QString() /* remarks */ << QString() /* route */ << "0" << "0" << "0" << "0";
+        text << "KPHL" << QStringLiteral() /* remarks */ << QStringLiteral() /* route */ << "0" << "0" << "0" << "0";
 
         // ... :atis_message:time_last_atis_received:time_logon:heading:QNH_iHg:QNH_Mb:
         // ... :::20180322145209:26:30.017:1016:
-        text << QString() << QString() << QString() << QString::number(atools::roundToInt(ac.getHeadingDegTrue())) << QString() << "1013";
+        text << QStringLiteral() << QStringLiteral() << QStringLiteral() << QString::number(atools::roundToInt(ac.getHeadingDegTrue()))
+             << QStringLiteral() << "1013";
 
         for(int i = text.size(); i < 40; i++)
-          text.append(QString());
+          text.append(QStringLiteral());
 
         stream << text.join(':') << Qt::endl;
       }

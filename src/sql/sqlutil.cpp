@@ -76,7 +76,7 @@ QString SqlUtil::buildUpdateStatement(const QString& tablename, const QString& w
 
     columnList.append(name % " = " % (namedBindings ? QString(":" % name) : "?"));
   }
-  return "update " % tablename % " set " % columnList.join(", ") % (whereClause.isEmpty() ? QString() : " where " % whereClause);
+  return "update " % tablename % " set " % columnList.join(", ") % (whereClause.isEmpty() ? QStringLiteral() : " where " % whereClause);
 }
 
 QString SqlUtil::buildSelectStatement(const QString& tablename) const
@@ -168,7 +168,7 @@ int SqlUtil::getTableColumnAndDistinctRows(const QString& tablename, const QStri
 int SqlUtil::rowCount(const QString& tablename, const QString& criteria) const
 {
   SqlQuery q(db);
-  q.exec("select count(1) from " % tablename % (criteria.isEmpty() ? QString() : " where " % criteria));
+  q.exec("select count(1) from " % tablename % (criteria.isEmpty() ? QStringLiteral() : " where " % criteria));
   if(q.next())
     return q.value(0).toInt();
 
@@ -178,7 +178,7 @@ int SqlUtil::rowCount(const QString& tablename, const QString& criteria) const
 bool SqlUtil::hasRows(const QString& tablename, const QString& criteria) const
 {
   SqlQuery q(db);
-  q.exec("select 1 from " % tablename % (criteria.isEmpty() ? QString() : " where " % criteria) % " limit 1");
+  q.exec("select 1 from " % tablename % (criteria.isEmpty() ? QStringLiteral() : " where " % criteria) % " limit 1");
   return q.next();
 }
 
@@ -243,7 +243,7 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to)
 void SqlUtil::updateColumnInTable(const QString& table, const QString& idColum, const QStringList& queryColumns,
                                   const QStringList& insertcolumns, UpdateColFuncType func)
 {
-  updateColumnInTable(table, idColum, queryColumns, insertcolumns, QString(), func);
+  updateColumnInTable(table, idColum, queryColumns, insertcolumns, QStringLiteral(), func);
 }
 
 void SqlUtil::updateColumnInTable(const QString& table, const QString& idColum, const QStringList& queryColumns,
@@ -536,7 +536,7 @@ int SqlUtil::getMaxId(const QString& table, const QString& idColumn)
 
 void SqlUtil::getIds(QSet<int>& ids, const QString& table, const QString& idColumn, const QString& where)
 {
-  SqlQuery query("select " % idColumn % " from " % table % " " % (where.isEmpty() ? QString() : " where " % where), db);
+  SqlQuery query("select " % idColumn % " from " % table % " " % (where.isEmpty() ? QStringLiteral() : " where " % where), db);
   query.exec();
   while(query.next())
     ids.insert(query.valueInt(0));

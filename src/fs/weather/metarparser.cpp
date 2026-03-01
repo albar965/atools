@@ -150,7 +150,7 @@ void initTranslateableTexts()
     {QStringLiteral("FZ"), MetarParser::tr("Freezing")},
     {QStringLiteral("MI"), MetarParser::tr("Shallow")},
     {QStringLiteral("PR"), MetarParser::tr("Partial")},
-    {QString(), QString()}
+    {QStringLiteral(), QStringLiteral()}
   };
 
   phenomenon = {
@@ -178,12 +178,12 @@ void initTranslateableTexts()
     {QStringLiteral("SQ"), MetarParser::tr("Squalls")},
     {QStringLiteral("SS"), MetarParser::tr("Sandstorm")},
     {QStringLiteral("UP"), MetarParser::tr("Unknown")}, // ... due to failed automatic acquisition
-    {QString(), QString()}
+    {QStringLiteral(), QStringLiteral()}
   };
 
   special = {
     {QStringLiteral("NSW"), MetarParser::tr("No significant weather")},
-    {QString(), QString()}
+    {QStringLiteral(), QStringLiteral()}
     /* { QStringLiteral("VCSH"), "showers in the vicinity" },
      * { "VCTS", "thunderstorm in the vicinity" }, */
   };
@@ -195,7 +195,7 @@ void initTranslateableTexts()
     {QStringLiteral("YLO"), MetarParser::tr("Yellow")}, // 300 ft,  1.6 km
     {QStringLiteral("AMB"), MetarParser::tr("Amber")}, // 200 ft,  0.8 km
     {QStringLiteral("RED"), MetarParser::tr("Red")},
-    {QString(), QString()}
+    {QStringLiteral(), QStringLiteral()}
   };
 
   cloud_types = {
@@ -218,7 +218,7 @@ void initTranslateableTexts()
     {QStringLiteral("ST"), MetarParser::tr("stratus")},
     {QStringLiteral("STFRA"), MetarParser::tr("stratus fractus")},
     {QStringLiteral("TCU"), MetarParser::tr("towering cumulus")},
-    {QString(), QString()}
+    {QStringLiteral(), QStringLiteral()}
   };
 
   runway_deposit = QStringList({
@@ -232,35 +232,35 @@ void initTranslateableTexts()
           MetarParser::tr("ice"),
           MetarParser::tr("compacted snow"),
           MetarParser::tr("frozen ridges"),
-          QString()
+          QStringLiteral()
         });
 
   runway_deposit_extent = QStringList({
-          QString(),
+          QStringLiteral(),
           MetarParser::tr("1-10%"),
           MetarParser::tr("11-25%"),
-          QString(),
-          QString(),
+          QStringLiteral(),
+          QStringLiteral(),
           MetarParser::tr("26-50%"),
-          QString(),
-          QString(),
-          QString(),
+          QStringLiteral(),
+          QStringLiteral(),
+          QStringLiteral(),
           MetarParser::tr("51-100%"),
-          QString()
+          QStringLiteral()
         });
 
   runway_friction = QStringList({
-          QString(),
+          QStringLiteral(),
           MetarParser::tr("poor braking action"),
           MetarParser::tr("poor/medium braking action"),
           MetarParser::tr("medium braking action"),
           MetarParser::tr("medium/good braking action"),
           MetarParser::tr("good braking action"),
-          QString(),
-          QString(),
-          QString(),
+          QStringLiteral(),
+          QStringLiteral(),
+          QStringLiteral(),
           MetarParser::tr("friction: unreliable measurement"),
-          QString()
+          QStringLiteral()
         });
 }
 
@@ -569,8 +569,8 @@ QString MetarParser::buildMetarString(const QStringList& remarks) const
   // Temperature ====================================
   if(_temp < INVALID_METAR_VALUE && _dewp < INVALID_METAR_VALUE)
     metarStr.append(QStringLiteral("%1%2/%3%4").
-                    arg(_temp <= -0.5f ? QStringLiteral("M") : QString()).arg(std::abs(_temp), 2, 'f', 0, QChar('0')).
-                    arg(_dewp <= -0.5f ? QStringLiteral("M") : QString()).arg(std::abs(_dewp), 2, 'f', 0, QChar('0')));
+                    arg(_temp <= -0.5f ? QStringLiteral("M") : QStringLiteral()).arg(std::abs(_temp), 2, 'f', 0, QChar('0')).
+                    arg(_dewp <= -0.5f ? QStringLiteral("M") : QStringLiteral()).arg(std::abs(_dewp), 2, 'f', 0, QChar('0')));
 
   // Pressure =============================================
   if(_pressure > 0.f && _pressure < INVALID_METAR_VALUE)
@@ -578,7 +578,7 @@ QString MetarParser::buildMetarString(const QStringList& remarks) const
 
   metarStr.append(remarks);
 
-  metarStr.removeAll(QString());
+  metarStr.removeAll(QStringLiteral());
   return metarStr.join(' ');
 }
 
@@ -598,7 +598,7 @@ QString MetarParser::getIntensityStringShort(int intensityValue, const QString& 
     case HEAVY:
       return QStringLiteral("+") + weatherPhenomenon;
   }
-  return QString();
+  return QStringLiteral();
 }
 
 /*
@@ -804,7 +804,7 @@ QString MetarParser::getReportTypeString() const
   switch(t)
   {
     case atools::fs::weather::MetarParser::NONE:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::weather::MetarParser::AUTO:
       return tr("Auto");
@@ -816,7 +816,7 @@ QString MetarParser::getReportTypeString() const
       return tr("Routine delayed observation");
 
   }
-  return QString();
+  return QStringLiteral();
 }
 
 float MetarParser::getWindSpeedKts() const
@@ -841,7 +841,7 @@ QString MetarParser::getIntensityString(int intensity) const
   switch(i)
   {
     case atools::fs::weather::MetarParser::NIL:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::weather::MetarParser::LIGHT:
       return tr("Light");
@@ -852,7 +852,7 @@ QString MetarParser::getIntensityString(int intensity) const
     case atools::fs::weather::MetarParser::HEAVY:
       return tr("Heavy");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 void MetarParser::useCurrentDate()
@@ -1645,7 +1645,7 @@ QString MetarParser::getFlightRulesStringLong() const
   switch(flightRules)
   {
     case atools::fs::weather::MetarParser::UNKNOWN:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::weather::MetarParser::LIFR:
       return tr("Low Instrument Flight Rules");
@@ -1659,7 +1659,7 @@ QString MetarParser::getFlightRulesStringLong() const
     case atools::fs::weather::MetarParser::VFR:
       return tr("Visual Flight Rules");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString MetarParser::getFlightRulesString() const
@@ -1667,7 +1667,7 @@ QString MetarParser::getFlightRulesString() const
   switch(flightRules)
   {
     case atools::fs::weather::MetarParser::UNKNOWN:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::weather::MetarParser::LIFR:
       return tr("LIFR");
@@ -1681,7 +1681,7 @@ QString MetarParser::getFlightRulesString() const
     case atools::fs::weather::MetarParser::VFR:
       return tr("VFR");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 float MetarParser::getPrevailingWindSpeedKnots() const
@@ -2033,7 +2033,7 @@ QString MetarCloud::getCoverageString(MetarCloud::Coverage cloudCoverage)
   switch(cloudCoverage)
   {
     case atools::fs::weather::MetarCloud::COVERAGE_NIL:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::weather::MetarCloud::COVERAGE_CLEAR:
       return tr("Clear");
@@ -2050,7 +2050,7 @@ QString MetarCloud::getCoverageString(MetarCloud::Coverage cloudCoverage)
     case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
       return tr("Overcast");
   }
-  return QString();
+  return QStringLiteral();
 
 }
 
@@ -2060,7 +2060,7 @@ QString MetarCloud::getCoverageStringShort(MetarCloud::Coverage cloudCoverage)
   {
     case atools::fs::weather::MetarCloud::COVERAGE_NIL:
     case atools::fs::weather::MetarCloud::COVERAGE_CLEAR:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::weather::MetarCloud::COVERAGE_FEW:
       return QStringLiteral("FEW");
@@ -2074,7 +2074,7 @@ QString MetarCloud::getCoverageStringShort(MetarCloud::Coverage cloudCoverage)
     case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
       return QStringLiteral("OVC");
   }
-  return QString();
+  return QStringLiteral();
 
 }
 
@@ -2107,7 +2107,7 @@ QString MetarVisibility::getModifierString() const
       return tr("Vertical visibility");
 
     case atools::fs::weather::MetarVisibility::EQUALS:
-      return QString();
+      return QStringLiteral();
 
     case atools::fs::weather::MetarVisibility::LESS_THAN:
       return tr("Less than");
@@ -2115,7 +2115,7 @@ QString MetarVisibility::getModifierString() const
     case atools::fs::weather::MetarVisibility::GREATER_THAN:
       return tr("Greater than");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 void MetarVisibility::adjustDistance()

@@ -84,7 +84,7 @@ QString surfaceToDb(Surface value, const XpReaderContext *context)
   }
 
 #ifdef DEBUG_INFORMATION
-  qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown surface value" << value;
+  qWarning() << (context != nullptr ? context->messagePrefix() : QStringLiteral()) << "Unknown surface value" << value;
 #else
   Q_UNUSED(context)
 #endif
@@ -159,7 +159,7 @@ int markingToDb(Marking value, const XpReaderContext *context)
       return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_FIXEDDISTANCE | ALTERNATE_TOUCHDOWN | DASHES | IDENT | ALTERNATE_PRECISION;
   }
 
-  qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown markings value" << value;
+  qWarning() << (context != nullptr ? context->messagePrefix() : QStringLiteral()) << "Unknown markings value" << value;
 
   return NO_MARKING;
 }
@@ -169,7 +169,7 @@ QString alsToDb(ApproachLight value, const XpReaderContext *context)
   switch(value)
   {
     case NO_ALS:
-      return QString();
+      return QStringLiteral();
 
     case ALSF_I:
       return QStringLiteral("ALSF1");
@@ -208,8 +208,8 @@ QString alsToDb(ApproachLight value, const XpReaderContext *context)
       return QStringLiteral("RAIL");
 
   }
-  qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown ALS value" << value;
-  return QString();
+  qWarning() << (context != nullptr ? context->messagePrefix() : QStringLiteral()) << "Unknown ALS value" << value;
+  return QStringLiteral();
 }
 
 QString approachIndicatorToDb(ApproachIndicator value, const XpReaderContext *context)
@@ -253,9 +253,9 @@ QString approachIndicatorToDb(ApproachIndicator value, const XpReaderContext *co
     case NO_APPR_INDICATOR:
       break;
   }
-  qWarning() << (context != nullptr ? context->messagePrefix() : QString())
+  qWarning() << (context != nullptr ? context->messagePrefix() : QStringLiteral())
              << "Unknown ApproachIndicator value" << value;
-  return QString();
+  return QStringLiteral();
 }
 
 QString XpReaderContext::messagePrefix() const

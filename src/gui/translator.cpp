@@ -111,7 +111,7 @@ void Translator::unload()
 QList<QLocale> Translator::findTranslationFiles()
 {
   // Get files from current application path (macOS)
-  QList<QLocale> retval = findTranslationFilesInternal(QString());
+  QList<QLocale> retval = findTranslationFilesInternal(QStringLiteral());
 
   // Get files from translations folder (Linux and Windows)
   retval.append(findTranslationFilesInternal("translations"));

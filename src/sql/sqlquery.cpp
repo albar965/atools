@@ -33,7 +33,7 @@ namespace sql {
 SqlQuery::SqlQuery(QSqlResult *r)
 {
   query = QSqlQuery(r);
-  queryString = QString();
+  queryString = QStringLiteral();
   db = new SqlDatabase();
 }
 
@@ -54,14 +54,14 @@ SqlQuery::SqlQuery(const QString& queryStr, const SqlDatabase *sqlDb)
 SqlQuery::SqlQuery(const SqlDatabase *sqlDb)
 {
   query = QSqlQuery(sqlDb->getQSqlDatabase());
-  queryString = QString();
+  queryString = QStringLiteral();
   db = new SqlDatabase(*sqlDb);
 }
 
 SqlQuery::SqlQuery(const SqlDatabase& sqlDb)
 {
   query = QSqlQuery(sqlDb.getQSqlDatabase());
-  queryString = QString();
+  queryString = QStringLiteral();
   db = new SqlDatabase(sqlDb);
 }
 

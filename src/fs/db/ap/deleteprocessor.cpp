@@ -399,7 +399,7 @@ void DeleteProcessor::postProcessDelete()
 
   // Copy columns from previous airport to current airport
   copyAirportColumns.removeDuplicates();
-  copyAirportColumns.removeAll(QString());
+  copyAirportColumns.removeAll(QStringLiteral());
   copyAirportValues(copyAirportColumns);
 
   // Airport has moved more than 500 meter from previous or has moved to a far position - update bounding rectangle for current airport

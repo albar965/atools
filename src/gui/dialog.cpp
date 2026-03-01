@@ -126,9 +126,9 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
       *filterIndex = dlg.nameFilters().indexOf(dlg.selectedNameFilter());
 
     QStringList files = dlg.selectedFiles();
-    return files.isEmpty() ? QStringList({QString()}) : files;
+    return files.isEmpty() ? QStringList({QStringLiteral()}) : files;
   }
-  return QStringList({QString()});
+  return QStringList({QStringLiteral()});
 }
 
 QString Dialog::openDirectoryDialog(const QString& title, const QString& settingsPrefix, const QString& path)
@@ -136,7 +136,7 @@ QString Dialog::openDirectoryDialog(const QString& title, const QString& setting
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::Directory);
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
-  return fileDialog(dlg, title, QString(), settingsPrefix, QString(), path, QString(), false /* autonumber */).at(0);
+  return fileDialog(dlg, title, QStringLiteral(), settingsPrefix, QStringLiteral(), path, QStringLiteral(), false /* autonumber */).at(0);
 }
 
 QString Dialog::openFileDialog(const QString& title, const QString& filter, const QString& settingsPrefix, const QString& path)
@@ -144,7 +144,7 @@ QString Dialog::openFileDialog(const QString& title, const QString& filter, cons
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::ExistingFile);
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
-  return fileDialog(dlg, title, filter, settingsPrefix, QString(), path, QString(), false /* autonumber */).at(0);
+  return fileDialog(dlg, title, filter, settingsPrefix, QStringLiteral(), path, QStringLiteral(), false /* autonumber */).at(0);
 }
 
 QStringList Dialog::openFileDialogMulti(const QString& title, const QString& filter, const QString& settingsPrefix, const QString& path)
@@ -152,7 +152,7 @@ QStringList Dialog::openFileDialogMulti(const QString& title, const QString& fil
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::ExistingFiles);
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
-  return fileDialog(dlg, title, filter, settingsPrefix, QString(), path, QString(), false /* autonumber */);
+  return fileDialog(dlg, title, filter, settingsPrefix, QStringLiteral(), path, QStringLiteral(), false /* autonumber */);
 }
 
 QString Dialog::saveFileDialog(const QString& title, const QString& filter, const QString& defaultFileSuffix, const QString& settingsPrefix,
