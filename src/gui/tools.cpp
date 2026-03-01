@@ -172,13 +172,19 @@ void adjustSelectionColors(QWidget *widget)
 #endif
 }
 
-void updateAllFonts(const QFont& font)
+void updateAllFonts(const QFont& font, const QSet<QObject *>& exceptionList)
 {
   for(QWindow *window: QGuiApplication::allWindows())
-    updateAllFonts(window, font);
+  {
+#ifdef DEBUG_INFORMATION
+    if(window != nullptr)
+      qDebug() << Q_FUNC_INFO << window->objectName() << window->title();
+#endif
+    updateAllFonts(window, font, exceptionList);
+  }
 }
 
-void updateAllFonts(QObject *object, const QFont& font)
+void updateAllFonts(QObject *object, const QFont& font, const QSet<QObject *>& exceptionList)
 {
 
   if(object != nullptr)
@@ -186,12 +192,12 @@ void updateAllFonts(QObject *object, const QFont& font)
     QWidget *widget = dynamic_cast<QWidget *>(object);
     if(widget != nullptr)
     {
-      if(widget->font() != font)
+      if(widget->font() != font && !exceptionList.contains(object))
         widget->setFont(font);
 
       // Recurse for widget children
       for(QObject *obj : widget->children())
-        updateAllFonts(obj, font);
+        updateAllFonts(obj, font, exceptionList);
     }
     else
     {
@@ -201,8 +207,50 @@ void updateAllFonts(QObject *object, const QFont& font)
         // Recurse for layout children
         for(int i = 0; i < layout->count(); i++)
         {
-          updateAllFonts(layout->itemAt(i)->widget(), font);
-          updateAllFonts(layout->itemAt(i)->layout(), font);
+          updateAllFonts(layout->itemAt(i)->widget(), font, exceptionList);
+          updateAllFonts(layout->itemAt(i)->layout(), font, exceptionList);
+        }
+      }
+    }
+  }
+}
+
+void updateAllPalette(const QPalette& palette, const QSet<QObject *>& exceptionList)
+{
+  for(QWindow *window: QGuiApplication::allWindows())
+  {
+#ifdef DEBUG_INFORMATION
+    if(window != nullptr)
+      qDebug() << Q_FUNC_INFO << window->objectName() << window->title();
+#endif
+    updateAllPalette(window, palette, exceptionList);
+  }
+}
+
+void updateAllPalette(QObject *object, const QPalette& palette, const QSet<QObject *>& exceptionList)
+{
+  if(object != nullptr)
+  {
+    QWidget *widget = dynamic_cast<QWidget *>(object);
+    if(widget != nullptr)
+    {
+      if(widget->palette() != palette && !exceptionList.contains(object))
+        widget->setPalette(palette);
+
+      // Recurse for widget children
+      for(QObject *obj : widget->children())
+        updateAllPalette(obj, palette, exceptionList);
+    }
+    else
+    {
+      QLayout *layout = dynamic_cast<QLayout *>(object);
+      if(layout != nullptr)
+      {
+        // Recurse for layout children
+        for(int i = 0; i < layout->count(); i++)
+        {
+          updateAllPalette(layout->itemAt(i)->widget(), palette, exceptionList);
+          updateAllPalette(layout->itemAt(i)->layout(), palette, exceptionList);
         }
       }
     }

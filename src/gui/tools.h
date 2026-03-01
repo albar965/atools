@@ -47,9 +47,15 @@ QString fontDescription(const QFont& font);
 /* Sets label text and label font */
 void fontDescription(const QFont& font, QLabel *label);
 
-/* Updates all fonts for object and all children */
-void updateAllFonts(const QFont& font);
-void updateAllFonts(QObject *object, const QFont& font);
+/* Updates all fonts recursively for objects and their children.
+ * Workaround for Qt limitation which does not adapt all widgets and no floating windows with parent null. */
+void updateAllFonts(const QFont& font, const QSet<QObject *>& exceptionList = QSet<QObject *>());
+void updateAllFonts(QObject *object, const QFont& font, const QSet<QObject *>& exceptionList = QSet<QObject *>());
+
+/* Updates all palette recursively for objects and their children.
+ * Workaround for Qt limitation which does not adapt all widgets and no floating windows with parent null. */
+void updateAllPalette(const QPalette& palette, const QSet<QObject *>& exceptionList = QSet<QObject *>());
+void updateAllPalette(QObject *object, const QPalette& palette, const QSet<QObject *>& exceptionList = QSet<QObject *>());
 
 /* Set font size in widgets and layouts recursively based on percent application font size. */
 void setWidgetFontSize(QWidget *widget, int percent);
