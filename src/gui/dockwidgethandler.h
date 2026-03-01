@@ -22,6 +22,7 @@
 
 #include <QBitArray>
 #include <QDockWidget>
+#include <QMutex>
 
 class QMainWindow;
 class QDockWidget;
@@ -205,14 +206,14 @@ public:
     return delayedFullscreen;
   }
 
-  /* Extra non-modal dialogs which are used for auto raise. */
-  void addDialogWidget(QDialog *dialogWidget);
-  void removeDialogWidget(QDialog *dialogWidget);
+  /* Extra non-modal dialogs which are used for auto raise. Thread safe. */
+  void registerDialog(QDialog *dialog);
+  void unregisterDialog(QDialog *dialog);
 
-  void setStayOnTopDialogWidgets(bool value) const;
+  void setStayOnTopDialogs(bool value);
 
   /* Closes all widgets and removes them from the list afterwards */
-  void closeAllDialogWidgets();
+  void closeAllDialogs();
 
 private:
   /* One dock view was toggled by the accompanied action */
@@ -246,8 +247,11 @@ private:
 
   /* All handled docks and tool bars */
   QList<QDockWidget *> dockWidgets;
-  QList<QDialog *> dialogWidgets;
   QList<QToolBar *> toolBars;
+
+  /* Registered non-modal dialog windows */
+  QSet<QDialog *> dialogs;
+  QMutex dialogsMutex;
 
   /* Event filter to detect leave and enter events for auto raise */
   DockEventFilter *dockEventFilter;

@@ -668,10 +668,13 @@ void DockWidgetHandler::raiseWindows()
   for(QDockWidget *dock : std::as_const(dockWidgets))
     raiseFloatingDockWidget(dock);
 
-  for(QDialog *dialog : std::as_const(dialogWidgets))
   {
-    if(dialog->isVisible())
-      dialog->raise();
+    QMutexLocker locker(&dialogsMutex);
+    for(QDialog *dialog : std::as_const(dialogs))
+    {
+      if(dialog->isVisible())
+        dialog->raise();
+    }
   }
 }
 
@@ -944,40 +947,48 @@ bool DockWidgetHandler::isWindowLayoutFile(const QString& filename)
   return false;
 }
 
-void DockWidgetHandler::addDialogWidget(QDialog *dialogWidget)
+void DockWidgetHandler::registerDialog(QDialog *dialog)
 {
-  if(dialogWidget != nullptr)
+  QMutexLocker locker(&dialogsMutex);
+
+  if(dialog != nullptr && !dialogs.contains(dialog))
   {
-    dialogWidget->installEventFilter(dockEventFilter);
-    dialogWidgets.append(dialogWidget);
-    setStayOnTop(dialogWidget, isStayOnTopMain());
+    dialog->installEventFilter(dockEventFilter);
+    dialogs.insert(dialog);
+    setStayOnTop(dialog, isStayOnTopMain());
   }
 }
 
-void DockWidgetHandler::removeDialogWidget(QDialog *dialogWidget)
+void DockWidgetHandler::unregisterDialog(QDialog *dialog)
 {
-  if(dialogWidget != nullptr)
+  QMutexLocker locker(&dialogsMutex);
+
+  if(dialog != nullptr && dialogs.contains(dialog))
   {
-    dialogWidgets.removeAll(dialogWidget);
-    dialogWidget->removeEventFilter(dockEventFilter);
+    dialogs.remove(dialog);
+    dialog->removeEventFilter(dockEventFilter);
   }
 }
 
-void DockWidgetHandler::setStayOnTopDialogWidgets(bool value) const
+void DockWidgetHandler::setStayOnTopDialogs(bool value)
 {
-  for(QDialog *dialog : dialogWidgets)
+  QMutexLocker locker(&dialogsMutex);
+
+  for(QDialog *dialog : std::as_const(dialogs))
     setStayOnTop(dialog, value);
 }
 
-void DockWidgetHandler::closeAllDialogWidgets()
+void DockWidgetHandler::closeAllDialogs()
 {
-  for(QDialog *dialog : std::as_const(dialogWidgets))
+  QMutexLocker locker(&dialogsMutex);
+
+  for(QDialog *dialog : std::as_const(dialogs))
   {
     qDebug() << Q_FUNC_INFO << "Dialog" << dialog->objectName();
     dialog->close();
   }
 
-  dialogWidgets.clear();
+  dialogs.clear();
 }
 
 } // namespace gui
