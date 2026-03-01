@@ -20,7 +20,7 @@
 #include "atools.h"
 #include "gui/griddelegate.h"
 #include "gui/helphandler.h"
-#include "gui/itemviewzoomhandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
 #include "ui_treedialog.h"
@@ -44,7 +44,7 @@ TreeDialog::TreeDialog(QWidget *parent, const QString& title, const QString& des
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   setWindowModality(Qt::ApplicationModal);
 
-  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->treeWidget);
+  zoomHandler = new atools::gui::WidgetZoomHandler(ui->treeWidget);
   gridDelegate = new atools::gui::GridDelegate(ui->treeWidget, 1. /* borderPenWidth */, 1 /* heightIncrease */);
   ui->treeWidget->setItemDelegate(gridDelegate);
 

@@ -31,7 +31,7 @@ class QAbstractButton;
 namespace atools {
 namespace gui {
 
-class ItemViewZoomHandler;
+class WidgetZoomHandler;
 class GridDelegate;
 
 /*
@@ -187,7 +187,7 @@ private:
   /* Maps user given id to item. Not top level items. */
   QHash<int, QTreeWidgetItem *> index;
 
-  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::WidgetZoomHandler *zoomHandler = nullptr;
   atools::gui::GridDelegate *gridDelegate = nullptr;
 
 };

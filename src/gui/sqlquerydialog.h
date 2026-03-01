@@ -36,7 +36,7 @@ class SqlColumn;
 namespace gui {
 
 class SqlQueryModel;
-class ItemViewZoomHandler;
+class WidgetZoomHandler;
 
 /* Callback to modify value display or alignment. Only Qt::TextAlignmentRole and Qt::DisplayRole  */
 typedef std::function<QVariant (int column, const QVariant& data, Qt::ItemDataRole role)> SqlQueryDialogDataFunc;
@@ -85,7 +85,7 @@ private:
 
   QString helpBaseUrl, settingsPrefix, helpOnlineUrl, helpLanguageOnline;
 
-  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::WidgetZoomHandler *zoomHandler = nullptr;
 };
 
 /* Simple query model used to modify data values and alignment by callback */

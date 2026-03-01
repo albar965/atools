@@ -546,7 +546,6 @@ HEADERS += \
   src/gui/filehistoryhandler.h \
   src/gui/griddelegate.h \
   src/gui/helphandler.h \
-  src/gui/itemviewzoomhandler.h \
   src/gui/listwidgetindex.h \
   src/gui/mapposhistory.h \
   src/gui/messagebox.h \
@@ -560,6 +559,7 @@ HEADERS += \
   src/gui/treedialog.h \
   src/gui/widgetstate.h \
   src/gui/widgetutil.h \
+  src/gui/widgetzoomhandler.h \
   src/util/htmlbuilder.h \
   src/util/htmlbuilderflags.h \
   src/util/paintercontextsaver.h \
@@ -582,7 +582,6 @@ SOURCES += \
   src/gui/filehistoryhandler.cpp \
   src/gui/griddelegate.cpp \
   src/gui/helphandler.cpp \
-  src/gui/itemviewzoomhandler.cpp \
   src/gui/listwidgetindex.cpp \
   src/gui/mapposhistory.cpp \
   src/gui/messagebox.cpp \
@@ -596,6 +595,7 @@ SOURCES += \
   src/gui/treedialog.cpp \
   src/gui/widgetstate.cpp \
   src/gui/widgetutil.cpp \
+  src/gui/widgetzoomhandler.cpp \
   src/util/htmlbuilder.cpp \
   src/util/htmlbuilderflags.cpp \
   src/util/paintercontextsaver.cpp \

@@ -15,22 +15,26 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_TABLEZOOMHANDLER_H
-#define ATOOLS_TABLEZOOMHANDLER_H
+#ifndef ATOOLS_WIDGETZOOMHANDLER_H
+#define ATOOLS_WIDGETZOOMHANDLER_H
 
+#include <QMutex>
 #include <QObject>
+#include <QSet>
 
 class QAction;
-class QAbstractItemView;
 class QWidget;
 
 namespace atools {
 namespace gui {
 
 /*
- * Maintains font size/zoom functionality for table or tree widgets. Supports save and restore
+ * Maintains font size/zoom functionality for table or tree widgets. Supports save and restore.
+ * Contains special handling for tables and trees. Does not support tables and trees using different font sizes.
+ *
+ * Collects all managed widgets in contructor and unregisteres in destructor. Thread safe.
  */
-class ItemViewZoomHandler :
+class WidgetZoomHandler :
   public QObject
 {
   Q_OBJECT
@@ -38,24 +42,24 @@ class ItemViewZoomHandler :
 public:
   /* Will not support any zooming but set the initial cell and font size
    * if constructed with tableview parameter only. Otherwise font size can be changed using the given
-   * actions*/
-  ItemViewZoomHandler(QAbstractItemView *view, QAction *zoomInAction, QAction *zoomOutAction, QAction *zoomDefaultAction,
-                      QString settingsKeyStr, double marginParm)
+   * actions.*/
+  WidgetZoomHandler(QWidget *widgetParam, QAction *zoomInAction, QAction *zoomOutAction, QAction *zoomDefaultAction,
+                    QString settingsKeyStr, double marginParm)
   {
-    init(view, zoomInAction, zoomOutAction, zoomDefaultAction, settingsKeyStr, marginParm);
+    init(widgetParam, zoomInAction, zoomOutAction, zoomDefaultAction, settingsKeyStr, marginParm);
   }
 
-  ItemViewZoomHandler(QAbstractItemView *view, double marginParam)
+  WidgetZoomHandler(QWidget *widgetParam, double marginParam)
   {
-    init(view, nullptr, nullptr, nullptr, QString(), marginParam);
+    init(widgetParam, nullptr, nullptr, nullptr, QString(), marginParam);
   }
 
-  ItemViewZoomHandler(QAbstractItemView *view)
+  WidgetZoomHandler(QWidget *widgetParam)
   {
-    init(view, nullptr, nullptr, nullptr, QString(), 0.);
+    init(widgetParam, nullptr, nullptr, nullptr, QString(), 0.);
   }
 
-  virtual ~ItemViewZoomHandler() override;
+  virtual ~WidgetZoomHandler() override;
 
   /* Use zoom methods for direct changes instead actions */
   void zoomTableView(int value);
@@ -111,8 +115,17 @@ public:
     maxFontSize = value;
   }
 
+  /* Get widget as passed into the constructor */
+  QWidget *getWidget() const
+  {
+    return widget;
+  }
+
+  /* Get a copy of the list with all managed widgets */
+  static const QSet<QObject *> getRegisteredWidgets();
+
 private:
-  void init(QAbstractItemView *view, QAction *zoomInAction, QAction *zoomOutAction,
+  void init(QWidget *widgetParam, QAction *zoomInAction, QAction *zoomOutAction,
             QAction *zoomDefaultAction, QString settingsKeyStr, double marginParm);
 
   /* Change font size and store in settings */
@@ -126,18 +139,21 @@ private:
   /* Change font size and adjust row height accordingly */
   void setTableViewFontSize(double pointSize);
 
-private:
   double sectionToFontSize = 2.;
   double minFontSize = 7.;
   double maxFontSize = 16.;
   double margin = 0.;
 
-  QAbstractItemView *itemView;
+  QWidget *widget;
   QAction *actionZoomIn, *actionZoomOut, *actionZoomDefault;
   QString settingsKey;
+
+  /* Collects all managed widgets in contructor and unregisteres in destructor. Thread safe. */
+  static QSet<QObject *> registeredWidgets;
+  static QMutex registeredWidgetsMutex;
 };
 
 } // namespace gui
 } // namespace atools
 
-#endif // ATOOLS_TABLEZOOMHANDLER_H
+#endif // ATOOLS_WIDGETZOOMHANDLER_H

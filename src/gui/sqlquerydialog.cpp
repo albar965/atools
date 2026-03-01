@@ -18,7 +18,7 @@
 #include "gui/sqlquerydialog.h"
 
 #include "gui/helphandler.h"
-#include "gui/itemviewzoomhandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "sql/sqlcolumn.h"
 #include "sql/sqldatabase.h"
@@ -58,7 +58,7 @@ SqlQueryDialog::SqlQueryDialog(QWidget *parent, const QString& title, const QStr
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   setWindowModality(Qt::ApplicationModal);
 
-  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableView);
+  zoomHandler = new atools::gui::WidgetZoomHandler(ui->tableView);
   zoomHandler->zoomPercent(100);
 
   // Hide label if text is empty
