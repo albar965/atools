@@ -23,7 +23,7 @@
 #include "atools.h"
 #include "gpxtypes.h"
 #include "fs/pln/flightplan.h"
-#include "util/xmlstream.h"
+#include "util/xmlstreamreader.h"
 #include "zip/gzip.h"
 
 #include <QDateTime>
@@ -61,13 +61,12 @@ bool GpxIO::isGpxFile(const QString& file)
           lines.at(2).startsWith("<gpx", Qt::CaseInsensitive));
 }
 
-void GpxIO::readPosGpx(atools::geo::PosD& pos, QString& name, atools::util::XmlStream& xmlStream, QDateTime *timestamp)
+void GpxIO::readPosGpx(atools::geo::PosD& pos, QString& name, atools::util::XmlStreamReader& xmlStream, QDateTime *timestamp)
 {
-  bool lonOk, latOk;
+  bool lonOk = false, latOk = false;
 
-  QXmlStreamReader& reader = xmlStream.getReader();
-  double lon = reader.attributes().value("lon").toDouble(&lonOk);
-  double lat = reader.attributes().value("lat").toDouble(&latOk);
+  double lon = xmlStream.readAttributeDouble("lon");
+  double lat = xmlStream.readAttributeDouble("lat");
 
   if(lonOk && latOk)
   {
@@ -90,16 +89,16 @@ void GpxIO::readPosGpx(atools::geo::PosD& pos, QString& name, atools::util::XmlS
 
   while(xmlStream.readNextStartElement())
   {
-    if(reader.name() == QLatin1String("name"))
-      name = reader.readElementText();
-    else if(reader.name() == QLatin1String("time"))
+    if(xmlStream.name() == QLatin1String("name"))
+      name = xmlStream.readElementTextStr();
+    else if(xmlStream.name() == QLatin1String("time"))
     {
       if(timestamp != nullptr)
         // Reads with or without milliseconds and returns UTC without changed hour number
-        *timestamp = QDateTime::fromString(reader.readElementText(), Qt::ISODate);
+        *timestamp = QDateTime::fromString(xmlStream.readElementTextStr(), Qt::ISODate);
     }
-    else if(reader.name() == QLatin1String("ele")) // Elevation
-      pos.setAltitude(atools::geo::meterToFeet(reader.readElementText().toDouble()));
+    else if(xmlStream.name() == QLatin1String("ele")) // Elevation
+      pos.setAltitude(atools::geo::meterToFeet(xmlStream.readElementTextStr().toDouble()));
     else
       xmlStream.skipCurrentElement(false /* warn */);
   }
@@ -264,7 +263,7 @@ void GpxIO::loadGpxStr(atools::fs::gpx::GpxData& gpxData, const QString& string)
 {
   if(!string.isEmpty())
   {
-    atools::util::XmlStream xmlStream(string);
+    atools::util::XmlStreamReader xmlStream(string);
     loadGpxInternal(gpxData, xmlStream);
   }
 }
@@ -280,7 +279,7 @@ void GpxIO::loadGpx(atools::fs::gpx::GpxData& gpxData, const QString& filename)
   QFile gpxFile(filename);
   if(gpxFile.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    atools::util::XmlStream xmlStream(&gpxFile);
+    atools::util::XmlStreamReader xmlStream(&gpxFile);
     loadGpxInternal(gpxData, xmlStream);
     gpxFile.close();
   }
@@ -288,9 +287,8 @@ void GpxIO::loadGpx(atools::fs::gpx::GpxData& gpxData, const QString& filename)
     throw Exception(errorMsg.arg(filename).arg(gpxFile.errorString()));
 }
 
-void GpxIO::loadGpxInternal(atools::fs::gpx::GpxData& gpxData, atools::util::XmlStream& xmlStream)
+void GpxIO::loadGpxInternal(atools::fs::gpx::GpxData& gpxData, atools::util::XmlStreamReader& xmlStream)
 {
-  QXmlStreamReader& reader = xmlStream.getReader();
   xmlStream.readUntilElement("gpx");
   PosD pos;
   QString name;
@@ -299,11 +297,11 @@ void GpxIO::loadGpxInternal(atools::fs::gpx::GpxData& gpxData, atools::util::Xml
   while(xmlStream.readNextStartElement())
   {
     // Read route elements ======================================================
-    if(reader.name() == QLatin1String("rte"))
+    if(xmlStream.name() == QLatin1String("rte"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == QLatin1String("rtept"))
+        if(xmlStream.name() == QLatin1String("rtept"))
         {
           readPosGpx(pos, name, xmlStream);
           if(pos.isValidRange())
@@ -319,17 +317,17 @@ void GpxIO::loadGpxInternal(atools::fs::gpx::GpxData& gpxData, atools::util::Xml
       }
     }
     // Read track elements if needed ======================================================
-    else if(reader.name() == QLatin1String("trk"))
+    else if(xmlStream.name() == QLatin1String("trk"))
     {
       TrailPoints line;
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == QLatin1String("trkseg"))
+        if(xmlStream.name() == QLatin1String("trkseg"))
         {
           line.clear();
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == QLatin1String("trkpt"))
+            if(xmlStream.name() == QLatin1String("trkpt"))
             {
               QDateTime datetime;
               readPosGpx(pos, name, xmlStream, &datetime);

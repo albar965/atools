@@ -327,7 +327,8 @@ HEADERS += \
   src/util/updatecheck.h \
   src/util/updatechecktypes.h \
   src/util/version.h \
-  src/util/xmlstream.h \
+  src/util/xmlstreamreader.h \
+  src/util/xmlstreamwriter.h \
   src/win/activationcontext.h \
   src/zip/gzip.h \
   src/zip/zipreader.h \
@@ -413,7 +414,8 @@ SOURCES += \
   src/util/updatecheck.cpp \
   src/util/updatechecktypes.cpp \
   src/util/version.cpp \
-  src/util/xmlstream.cpp \
+  src/util/xmlstreamreader.cpp \
+  src/util/xmlstreamwriter.cpp \
   src/win/activationcontext.cpp \
   src/zip/gzip.cpp \
   src/zip/zip.cpp \

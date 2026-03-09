@@ -17,7 +17,7 @@
 
 #include "fs/scenery/contentxml.h"
 
-#include "util/xmlstream.h"
+#include "util/xmlstreamreader.h"
 #include "exception.h"
 #include "atools.h"
 #include "fs/scenery/sceneryarea.h"
@@ -77,19 +77,18 @@ void ContentXml::read(const QString& filename)
     QFile xmlFile(filename);
     if(xmlFile.open(QIODevice::ReadOnly))
     {
-      atools::util::XmlStream xmlStream(&xmlFile, filename);
-      QXmlStreamReader& reader = xmlStream.getReader();
+      atools::util::XmlStreamReader xmlStream(&xmlFile, filename);
 
-      while(xmlStream.getReader().readNextStartElement())
+      while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == QLatin1String("Content"))
+        if(xmlStream.name() == QLatin1String("Content"))
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == QLatin1String("Package"))
+            if(xmlStream.name() == QLatin1String("Package"))
             {
-              QString name = reader.attributes().value("name").toString();
-              QString activeStr = reader.attributes().value("active").toString().simplified().toLower();
+              QString name = xmlStream.readAttributeStr("name");
+              QString activeStr = xmlStream.readAttributeStr("active").simplified().toLower();
               bool active = activeStr.startsWith('y') || activeStr.startsWith('t');
 
               int num;
@@ -113,16 +112,16 @@ void ContentXml::read(const QString& filename)
 
           break;
         }
-        else if(reader.name() == QLatin1String("Priorities"))
+        else if(xmlStream.name() == QLatin1String("Priorities"))
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == QLatin1String("Package"))
+            if(xmlStream.name() == QLatin1String("Package"))
             {
-              QString name = reader.attributes().value("name").toString();
+              QString name = xmlStream.readAttributeStr("name");
 
               bool ok;
-              int priority = reader.attributes().value("priority").toInt(&ok);
+              int priority = xmlStream.readAttributeStr("priority").toInt(&ok);
 
               int num;
               QString title;

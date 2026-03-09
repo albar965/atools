@@ -19,7 +19,7 @@
 
 #include "exception.h"
 #include "atools.h"
-#include "util/xmlstream.h"
+#include "util/xmlstreamreader.h"
 
 #include <QFile>
 #include <QXmlStreamReader>
@@ -39,35 +39,35 @@ AddOnPackage::AddOnPackage(const QString& file)
     QFile xmlFile(filename);
     if(xmlFile.open(QIODevice::ReadOnly))
     {
-      atools::util::XmlStream xmlStream(&xmlFile, file);
-      QXmlStreamReader& xmlReader = xmlStream.getReader();
+      atools::util::XmlStreamReader xmlStream(&xmlFile, file);
+      QXmlStreamReader *xmlReader = xmlStream.getReader();
 
-      if(xmlReader.readNextStartElement())
+      if(xmlReader->readNextStartElement())
       {
-        if(xmlReader.name() == QStringLiteral("SimBase.Document"))
+        if(xmlReader->name() == QStringLiteral("SimBase.Document"))
         {
-          while(xmlReader.readNextStartElement())
+          while(xmlReader->readNextStartElement())
           {
-            if(xmlReader.error() != QXmlStreamReader::NoError)
-              throw Exception("Error reading \"" + filename + "\": " + xmlReader.errorString());
+            if(xmlReader->error() != QXmlStreamReader::NoError)
+              throw Exception("Error reading \"" + filename + "\": " + xmlReader->errorString());
 
-            if(xmlReader.name() == QStringLiteral("AddOn.Name"))
-              name = xmlReader.readElementText();
-            else if(xmlReader.name() == QStringLiteral("AddOn.Description"))
-              description = xmlReader.readElementText();
-            else if(xmlReader.name() == QStringLiteral("AddOn.Component"))
+            if(xmlReader->name() == QStringLiteral("AddOn.Name"))
+              name = xmlReader->readElementText();
+            else if(xmlReader->name() == QStringLiteral("AddOn.Description"))
+              description = xmlReader->readElementText();
+            else if(xmlReader->name() == QStringLiteral("AddOn.Component"))
             {
-              AddOnComponent component(xmlReader);
+              AddOnComponent component(*xmlReader);
               if(component.getCategory() == "Scenery")
                 components.append(component);
             }
             else
-              xmlReader.skipCurrentElement();
+              xmlReader->skipCurrentElement();
           }
         }
       }
-      if(xmlReader.hasError())
-        throw Exception(tr("Cannot read file %1. Reason: %2").arg(file).arg(xmlReader.errorString()));
+      if(xmlReader->hasError())
+        throw Exception(tr("Cannot read file %1. Reason: %2").arg(file).arg(xmlReader->errorString()));
     }
     else
       throw Exception(tr("Cannot open file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));

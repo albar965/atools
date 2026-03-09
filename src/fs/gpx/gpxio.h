@@ -29,7 +29,7 @@ namespace atools {
 namespace fs {
 }
 namespace util {
-class XmlStream;
+class XmlStreamReader;
 }
 namespace geo {
 
@@ -75,8 +75,8 @@ public:
 
 private:
   void saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::GpxData& gpxData);
-  void loadGpxInternal(atools::fs::gpx::GpxData& gpxData, util::XmlStream& xmlStream);
-  void readPosGpx(atools::geo::PosD& pos, QString& name, util::XmlStream& xmlStream, QDateTime *timestamp = nullptr);
+  void loadGpxInternal(atools::fs::gpx::GpxData& gpxData, util::XmlStreamReader& xmlStream);
+  void readPosGpx(atools::geo::PosD& pos, QString& name, util::XmlStreamReader& xmlStream, QDateTime *timestamp = nullptr);
 
   QString errorMsg;
 };

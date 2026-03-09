@@ -28,7 +28,7 @@ class QTextStream;
 
 namespace atools {
 namespace util {
-class XmlStream;
+class XmlStreamReader;
 }
 namespace geo {
 class LineString;
@@ -188,8 +188,8 @@ private:
   void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format, bool iniBuildsFormat) const;
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan) const;
   void saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj, bool msfs) const;
-  void loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream) const;
-  void loadGarminFplInternal(Flightplan& plan, atools::util::XmlStream& xmlStream) const;
+  void loadLnmInternal(Flightplan& plan, atools::util::XmlStreamReader& xmlStream) const;
+  void loadGarminFplInternal(Flightplan& plan, atools::util::XmlStreamReader& xmlStream) const;
   atools::fs::pln::entry::WaypointType garminToWaypointType(const QString& typeStr) const;
 
   /* Load specific formats after content detection */
@@ -210,8 +210,8 @@ private:
 
   QString gnsType(const atools::fs::pln::FlightplanEntry& entry) const;
 
-  void readWaypointPln(Flightplan& plan, atools::util::XmlStream& xmlStream) const;
-  void readAppVersionPln(int& appVersionMajor, int& appVersionBuild, atools::util::XmlStream& xmlStream) const;
+  void readWaypointPln(Flightplan& plan, atools::util::XmlStreamReader& xmlStream) const;
+  void readAppVersionPln(int& appVersionMajor, int& appVersionBuild, atools::util::XmlStreamReader& xmlStream) const;
   void posToRte(QTextStream& stream, const atools::geo::Pos& pos, bool alt) const;
 
   /* Support for FlightGear propery lists */
@@ -230,10 +230,10 @@ private:
   void insertPropertyIf(Flightplan& plan, const QString& key, const QString& value) const;
 
   /* Read "Pos" element and attributes from stream in LNM XML format */
-  atools::geo::Pos readPosLnm(atools::util::XmlStream& xmlStream) const;
+  atools::geo::Pos readPosLnm(atools::util::XmlStreamReader& xmlStream) const;
 
   /* Read waypoint elements and attributes from stream */
-  void readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries,
+  void readWaypointsLnm(atools::util::XmlStreamReader& xmlStream, QList<FlightplanEntry>& entries,
                         const QString& elementName) const;
 
   /* Number of entries including start and destination but excluding procedure points */

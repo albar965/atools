@@ -30,7 +30,7 @@ class QXmlStreamReader;
 namespace atools {
 
 namespace util {
-class XmlStream;
+class XmlStreamReader;
 }
 
 namespace fs {
@@ -440,7 +440,7 @@ private:
   void writeToSettings(QSettings& settings);
   void loadIniInternal(const QString& filename);
 
-  void loadXmlInternal(atools::util::XmlStream& xmlStream);
+  void loadXmlInternal(atools::util::XmlStreamReader& xmlStream);
   void saveXmlInternal(QXmlStreamWriter& writer) const;
 
   bool volume = false, jetFuel = false;

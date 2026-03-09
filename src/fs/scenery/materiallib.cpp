@@ -23,7 +23,7 @@
 #include "fs/navdatabaseoptions.h"
 #include "fs/progresshandler.h"
 #include "fs/scenery/layoutjson.h"
-#include "util/xmlstream.h"
+#include "util/xmlstreamreader.h"
 
 #include <QDir>
 #include <QFile>
@@ -155,18 +155,18 @@ void MaterialLib::read(const QString& filename)
         QFile xmlFile(filename);
         if(xmlFile.open(QIODevice::ReadOnly))
         {
-          atools::util::XmlStream xmlStream(&xmlFile, filename);
-          QXmlStreamReader& reader = xmlStream.getReader();
+          atools::util::XmlStreamReader xmlStream(&xmlFile, filename);
+          QXmlStreamReader *reader = xmlStream.getReader();
 
           xmlStream.readUntilElement("Library");
 
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == QLatin1String("Material"))
+            if(reader->name() == QLatin1String("Material"))
             {
-              QString surface = reader.attributes().value("SurfaceType").toString();
+              QString surface = reader->attributes().value("SurfaceType").toString();
               if(surface != "UNDEFINED")
-                surfaceMap.insert(QUuid(reader.attributes().value("Guid").toString()), surface);
+                surfaceMap.insert(QUuid(reader->attributes().value("Guid").toString()), surface);
 
               // Read only attributes
               xmlStream.skipCurrentElement();
