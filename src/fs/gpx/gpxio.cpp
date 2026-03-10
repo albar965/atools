@@ -63,12 +63,10 @@ bool GpxIO::isGpxFile(const QString& file)
 
 void GpxIO::readPosGpx(atools::geo::PosD& pos, QString& name, atools::util::XmlStreamReader& xmlStream, QDateTime *timestamp)
 {
-  bool lonOk = false, latOk = false;
+  double lon = xmlStream.readAttributeDouble("lon", geo::INVALID_DOUBLE);
+  double lat = xmlStream.readAttributeDouble("lat", geo::INVALID_DOUBLE);
 
-  double lon = xmlStream.readAttributeDouble("lon");
-  double lat = xmlStream.readAttributeDouble("lat");
-
-  if(lonOk && latOk)
+  if(lon < geo::INVALID_DOUBLE && lat < geo::INVALID_DOUBLE)
   {
     pos.setLonX(lon);
     pos.setLatY(lat);

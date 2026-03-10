@@ -119,16 +119,16 @@ void ContentXml::read(const QString& filename)
             if(xmlStream.name() == QLatin1String("Package"))
             {
               QString name = xmlStream.readAttributeStr("name");
+              const int INVALID_PRIORITY = -9999;
 
-              bool ok;
-              int priority = xmlStream.readAttributeStr("priority").toInt(&ok);
+              int priority = xmlStream.readAttributeInt("priority", INVALID_PRIORITY);
 
               int num;
               QString title;
               bool navdata = false;
               priorityTitleNavdata(name, num, title, navdata);
 
-              if(ok)
+              if(priority != INVALID_PRIORITY)
                 num = priority;
 
               SceneryArea area(num, num, title, name);
