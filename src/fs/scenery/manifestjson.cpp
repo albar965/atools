@@ -65,12 +65,12 @@ void ManifestJson::read(const QString& filename)
       else
       {
         QJsonObject obj = doc.object();
-        contentType = obj.value("content_type").toString();
-        title = obj.value("title").toString();
-        manufacturer = obj.value("manufacturer").toString();
-        creator = obj.value("creator").toString();
-        packageVersion = obj.value("package_version").toString();
-        minGameVersion = obj.value("minimum_game_version").toString();
+        contentType = obj.value(QStringLiteral("content_type")).toString();
+        title = obj.value(QStringLiteral("title")).toString();
+        manufacturer = obj.value(QStringLiteral("manufacturer")).toString();
+        creator = obj.value(QStringLiteral("creator")).toString();
+        packageVersion = obj.value(QStringLiteral("package_version")).toString();
+        minGameVersion = obj.value(QStringLiteral("minimum_game_version")).toString();
         valid = true;
       }
       file.close();

@@ -70,19 +70,19 @@ void LayoutJson::read(const QString& filename)
         qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
       else
       {
-        QJsonArray arr = doc.object().value("content").toArray();
+        QJsonArray arr = doc.object().value(QStringLiteral("content")).toArray();
         for(int i = 0; i < arr.count(); i++)
         {
-          QString path = arr.at(i).toObject().value("path").toString();
+          QString path = arr.at(i).toObject().value(QStringLiteral("path")).toString();
 
-          if(path.endsWith(".fsarchive", Qt::CaseInsensitive))
+          if(path.endsWith(QStringLiteral(".fsarchive"), Qt::CaseInsensitive))
             fsArchiveFound = true;
 
-          if(path.endsWith(".bgl", Qt::CaseInsensitive))
+          if(path.endsWith(QStringLiteral(".bgl"), Qt::CaseInsensitive))
             bglPaths.append(path);
-          else if(path.endsWith("aircraft.cfg", Qt::CaseInsensitive))
+          else if(path.endsWith(QStringLiteral("aircraft.cfg"), Qt::CaseInsensitive))
             aircraftCfgPaths.append(path);
-          else if(path.endsWith("Library.xml", Qt::CaseInsensitive))
+          else if(path.endsWith(QStringLiteral("Library.xml"), Qt::CaseInsensitive))
             materialPaths.append(path);
         }
         valid = true;

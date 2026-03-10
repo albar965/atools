@@ -35,8 +35,10 @@ namespace scenery {
 
 /* Names that indicate no translation available in MSFS */
 const static QSet<QString> NO_NAMES = {
-  "KEINE STADT", "KEIN BUNDESSTAAT", "NO CITY", "NO STATE", "SIN CIUDAD", "SIN ESTADO", "AUCUNE VILLE", "AUCUN ÉTAT",
-  "NESSUNA CITTÀ", "NESSUNO STATO", "BRAK MIEJSCOWOŚCI", "BRAK STANU", "SEM CIDADE", "SEM ESTADO"};
+  QStringLiteral("KEINE STADT"), QStringLiteral("KEIN BUNDESSTAAT"), QStringLiteral("NO CITY"), QStringLiteral("NO STATE"),
+  QStringLiteral("SIN CIUDAD"), QStringLiteral("SIN ESTADO"), QStringLiteral("AUCUNE VILLE"), QStringLiteral("AUCUN ÉTAT"),
+  QStringLiteral("NESSUNA CITTÀ"), QStringLiteral("NESSUNO STATO"), QStringLiteral("BRAK MIEJSCOWOŚCI"), QStringLiteral("BRAK STANU"),
+  QStringLiteral("SEM CIDADE"), QStringLiteral("SEM ESTADO")};
 
 /*
  *  {
@@ -64,11 +66,11 @@ void LanguageJson::readFromFile(const QString& filename, const QStringList& keyP
       if(error.error != QJsonParseError::NoError)
         qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
 
-      QJsonObject package = doc.object().value("LocalisationPackage").toObject();
+      QJsonObject package = doc.object().value(QStringLiteral("LocalisationPackage")).toObject();
 
-      language = package.value("Language").toString();
+      language = package.value(QStringLiteral("Language")).toString();
       adjustLanguage();
-      QJsonObject strings = package.value("Strings").toObject();
+      QJsonObject strings = package.value(QStringLiteral("Strings")).toObject();
 
       for(auto it = strings.constBegin(); it != strings.constEnd(); ++it)
       {
@@ -113,15 +115,15 @@ void LanguageJson::readFromDb(sql::SqlDatabase *db, const QString& languageParam
 {
   clear();
 
-  if(atools::sql::SqlUtil(db).hasTableAndRows("translation"))
+  if(atools::sql::SqlUtil(db).hasTableAndRows(QStringLiteral("translation")))
   {
     language = languageParam;
     adjustLanguage();
 
     atools::sql::SqlQuery query(db);
-    query.prepare("select key, text from translation where language = :lang and key like :key");
-    query.bindValue(":lang", language);
-    query.bindValue(":key", keyPrefix.isEmpty() ? "%" : keyPrefix);
+    query.prepare(QStringLiteral("select key, text from translation where language = :lang and key like :key"));
+    query.bindValue(QStringLiteral(":lang"), language);
+    query.bindValue(QStringLiteral(":key"), keyPrefix.isEmpty() ? QStringLiteral("%") : keyPrefix);
     query.exec();
     while(query.next())
     {
@@ -138,7 +140,7 @@ void LanguageJson::readFromDb(sql::SqlDatabase *db, const QString& languageParam
 void LanguageJson::writeToDb(sql::SqlDatabase& db) const
 {
   atools::sql::SqlQuery query(db);
-  query.prepare("insert into translation (language, key, text) values(?, ?, ?)");
+  query.prepare(QStringLiteral("insert into translation (language, key, text) values(?, ?, ?)"));
   for(auto it = names.constBegin(); it != names.constEnd(); ++it)
   {
     QString key = it.key();
@@ -149,14 +151,14 @@ void LanguageJson::writeToDb(sql::SqlDatabase& db) const
     query.exec();
 
     // Key change in SU12 - add duplicate entries in old and new format
-    if(key.startsWith("ATCCOM.ATC_NAME "))
+    if(key.startsWith(QStringLiteral("ATCCOM.ATC_NAME ")))
     {
-      query.bindValue(1, key.replace("ATCCOM.ATC_NAME ", "ATCCOM.ATC_NAME_"));
+      query.bindValue(1, key.replace(QStringLiteral("ATCCOM.ATC_NAME "), QStringLiteral("ATCCOM.ATC_NAME_")));
       query.exec();
     }
-    else if(key.startsWith("ATCCOM.AC_MODEL "))
+    else if(key.startsWith(QStringLiteral("ATCCOM.AC_MODEL ")))
     {
-      query.bindValue(1, key.replace("ATCCOM.AC_MODEL ", "ATCCOM.AC_MODEL_"));
+      query.bindValue(1, key.replace(QStringLiteral("ATCCOM.AC_MODEL "), QStringLiteral("ATCCOM.AC_MODEL_")));
       query.exec();
     }
 
@@ -167,10 +169,10 @@ void LanguageJson::writeToDb(sql::SqlDatabase& db) const
 void LanguageJson::adjustLanguage()
 {
   if(language.isEmpty())
-    language = "en-US";
+    language = QStringLiteral("en-US");
 
   language.replace('_', '-');
-  language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
+  language = language.section('-', 0, 0) + QStringLiteral("-") + language.section('-', 1, 1).toUpper();
 }
 
 #ifdef DEBUG_MODEL_SUPPORT
@@ -185,30 +187,30 @@ QString LanguageJson::valueFromMap(const QHash<QString, QString>& hash, QString 
 {
   key = key.trimmed();
   QString value;
-  if(key.startsWith("TT:"))
+  if(key.startsWith(QStringLiteral("TT:")))
   {
     // Translated string
     key.remove(0, 3);
     value = hash.value(key);
-    if(value.isEmpty() && key.endsWith(".text"))
+    if(value.isEmpty() && key.endsWith(QStringLiteral(".text")))
       // Nothing found - try tts suffix again
-      value = hash.value(key.chopped(4) + "tts");
+      value = hash.value(key.chopped(4) + QStringLiteral("tts"));
     // else return empty
   }
-  else if(key.startsWith("$$:"))
+  else if(key.startsWith(QStringLiteral("$$:")))
     value = key.mid(3);
-  else if(key.startsWith("AIRPORT"))
+  else if(key.startsWith(QStringLiteral("AIRPORT")))
     // Return empty if airport name or admin names not found
     value = hash.value(key);
-  else if(key.startsWith("ATCCOM."))
+  else if(key.startsWith(QStringLiteral("ATCCOM.")))
     // Return empty if aircraft names not found
     value = hash.value(key);
   else
   {
     value = hash.value(key);
-    if(value.isEmpty() && key.endsWith(".text"))
+    if(value.isEmpty() && key.endsWith(QStringLiteral(".text")))
       // Nothing found - try tts suffix again
-      value = hash.value(key.chopped(4) + "tts");
+      value = hash.value(key.chopped(4) + QStringLiteral("tts"));
     if(value.isEmpty())
       value = key;
   }
