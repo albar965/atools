@@ -54,12 +54,16 @@ public:
   ChoiceDialog(const ChoiceDialog& other) = delete;
   ChoiceDialog& operator=(const ChoiceDialog& other) = delete;
 
+  /* Basic id and group types big enough to allow flags. All template ids TYPE are cast to these. */
+  typedef long long ChoiceDialogIdType;
+  typedef int ChoiceDialogGroupType;
+
   /* Add a widget with the given id. ChoiceDialog does not take ownership of the widget but
    * its state and content is saved and restored. */
   template<typename TYPE>
   void addWidget(TYPE id, QWidget *widget)
   {
-    addWidgetInt(static_cast<int>(id), widget);
+    addWidgetById(static_cast<ChoiceDialogIdType>(id), widget);
   }
 
   /* Add a checkbox with the given id, text and tooltip */
@@ -67,7 +71,7 @@ public:
   void addCheckBox(TYPE id, const QString& text, const QString& tooltip = QString(), bool checked = false,
                    bool disabled = false, bool hidden = false)
   {
-    addCheckBoxInt(static_cast<int>(id), text, tooltip, checked, disabled, hidden);
+    addCheckBoxById(static_cast<ChoiceDialogIdType>(id), text, tooltip, checked, disabled, hidden);
   }
 
   /* Shortcut to add a hidden, disabled and unchecked widget.
@@ -75,7 +79,7 @@ public:
   template<typename TYPE>
   void addCheckBoxHidden(TYPE id)
   {
-    addCheckBoxHiddenInt(static_cast<int>(id));
+    addCheckBoxHiddenById(static_cast<ChoiceDialogIdType>(id));
   }
 
   /* Add a radio button with the given id, group text and tooltip.
@@ -84,7 +88,8 @@ public:
   void addRadioButton(TYPE id, GROUP groupId, const QString& text, const QString& tooltip = QString(), bool checked = false,
                       bool disabled = false, bool hidden = false)
   {
-    addRadioButtonInt(static_cast<int>(id), static_cast<int>(groupId), text, tooltip, checked, disabled, hidden);
+    addRadioButtonById(static_cast<ChoiceDialogIdType>(id), static_cast<ChoiceDialogIdType>(groupId), text, tooltip, checked, disabled,
+                       hidden);
   }
 
   /* Shortcut to add a hidden, disabled and unchecked widget.
@@ -92,14 +97,14 @@ public:
   template<typename TYPE, typename GROUP>
   void addRadioButtonHidden(TYPE id, GROUP groupId)
   {
-    addRadioButtonHiddenInt(static_cast<int>(id), static_cast<int>(groupId));
+    addRadioButtonHiddenById(static_cast<ChoiceDialogIdType>(id), static_cast<ChoiceDialogIdType>(groupId));
   }
 
   /* Enable or disable any widget added */
   template<typename TYPE>
   void enableWidget(TYPE id, bool enable = true)
   {
-    getWidgetInt(static_cast<int>(id))->setEnabled(enable);
+    getWidgetById(static_cast<ChoiceDialogIdType>(id))->setEnabled(enable);
   }
 
   template<typename TYPE>
@@ -112,12 +117,12 @@ public:
   template<typename TYPE>
   bool isButtonChecked(TYPE id) const
   {
-    return isCheckedInt(static_cast<int>(id));
+    return isCheckedById(static_cast<ChoiceDialogIdType>(id));
   }
 
   /* ok button is enabled if at least one button for these ids is checked.
    * Not for plain widgets added with addWidget(). */
-  void setRequiredAnyChecked(QSet<int> ids)
+  void setRequiredAnyChecked(QSet<ChoiceDialogIdType> ids)
   {
     required = ids;
   }
@@ -148,7 +153,7 @@ public:
 
 signals:
   /* Emitted when a button is toggled */
-  void buttonToggled(int id, bool checked);
+  void buttonToggled(ChoiceDialogIdType id, bool checked);
 
 private:
   void buttonBoxClicked(QAbstractButton *button);
@@ -157,22 +162,22 @@ private:
   void updateButtonBoxState();
 
   /* Internal methods using integer instead of enum as id */
-  bool isCheckedInt(int id) const;
-  void addWidgetInt(int id, QWidget *widget);
-  void addCheckBoxInt(int id, const QString& text, const QString& tooltip = QString(), bool checked = false,
-                      bool disabled = false, bool hidden = false);
-  void addCheckBoxHiddenInt(int id);
+  bool isCheckedById(ChoiceDialogIdType id) const;
+  void addWidgetById(ChoiceDialogIdType id, QWidget *widget);
+  void addCheckBoxById(ChoiceDialogIdType id, const QString& text, const QString& tooltip = QString(), bool checked = false,
+                       bool disabled = false, bool hidden = false);
+  void addCheckBoxHiddenById(ChoiceDialogIdType id);
 
-  void addRadioButtonInt(int id, int groupId, const QString& text, const QString& tooltip = QString(), bool checked = false,
-                         bool disabled = false, bool hidden = false);
-  void addRadioButtonHiddenInt(int id, int groupId);
+  void addRadioButtonById(ChoiceDialogIdType id, ChoiceDialogGroupType groupId, const QString& text, const QString& tooltip = QString(),
+                          bool checked = false, bool disabled = false, bool hidden = false);
+  void addRadioButtonHiddenById(ChoiceDialogIdType id, ChoiceDialogGroupType groupId);
 
-  QAbstractButton *getButtonInt(int id) const
+  QAbstractButton *getButtonById(ChoiceDialogIdType id) const
   {
-    return dynamic_cast<QAbstractButton *>(getWidgetInt(id));
+    return dynamic_cast<QAbstractButton *>(getWidgetById(id));
   }
 
-  QWidget *getWidgetInt(int id) const
+  QWidget *getWidgetById(ChoiceDialogIdType id) const
   {
     return index.value(id, nullptr);
   }
@@ -181,13 +186,13 @@ private:
   QString helpBaseUrl, settingsPrefix, helpOnlineUrl, helpLanguageOnline;
 
   /* Maps user given id to widget. */
-  QHash<int, QWidget *> index;
+  QHash<ChoiceDialogIdType, QWidget *> index;
 
   /* Maps groupId to button groups */
-  QHash<int, QButtonGroup *> buttonGroups;
+  QHash<ChoiceDialogGroupType, QButtonGroup *> buttonGroups;
 
   /* List of all buttons that have to be checked to enable the ok button */
-  QSet<int> required;
+  QSet<ChoiceDialogIdType> required;
 };
 
 } // namespace gui

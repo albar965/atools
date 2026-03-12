@@ -67,12 +67,12 @@ ChoiceDialog::~ChoiceDialog()
   delete ui;
 }
 
-void ChoiceDialog::addCheckBoxHiddenInt(int id)
+void ChoiceDialog::addCheckBoxHiddenById(ChoiceDialogIdType id)
 {
-  addCheckBoxInt(id, QStringLiteral(), QStringLiteral(), false /* checked*/, true /* disabled */, true /* hidden */);
+  addCheckBoxById(id, QStringLiteral(), QStringLiteral(), false /* checked*/, true /* disabled */, true /* hidden */);
 }
 
-void ChoiceDialog::addWidgetInt(int id, QWidget *widget)
+void ChoiceDialog::addWidgetById(ChoiceDialogIdType id, QWidget *widget)
 {
   widget->setObjectName(QString(widget->metaObject()->className()) + '_' + QString::number(id));
   widget->setProperty(ID_PROPERTY, id);
@@ -82,7 +82,7 @@ void ChoiceDialog::addWidgetInt(int id, QWidget *widget)
   ui->verticalLayoutScrollArea->insertWidget(-1, widget);
 }
 
-void ChoiceDialog::addCheckBoxInt(int id, const QString& text, const QString& tooltip, bool checked, bool disabled,
+void ChoiceDialog::addCheckBoxById(ChoiceDialogIdType id, const QString& text, const QString& tooltip, bool checked, bool disabled,
                                   bool hidden)
 {
   QCheckBox *button = new QCheckBox(text, this);
@@ -93,16 +93,16 @@ void ChoiceDialog::addCheckBoxInt(int id, const QString& text, const QString& to
   button->setHidden(hidden);
   connect(button, &QCheckBox::toggled, this, &ChoiceDialog::buttonToggledInternal);
 
-  addWidgetInt(id, button);
+  addWidgetById(id, button);
 }
 
-void ChoiceDialog::addRadioButtonHiddenInt(int id, int groupId)
+void ChoiceDialog::addRadioButtonHiddenById(ChoiceDialogIdType id, ChoiceDialogGroupType groupId)
 {
-  addRadioButtonInt(id, groupId, QStringLiteral(), QStringLiteral(), false /* checked*/, true /* disabled */, true /* hidden */);
+  addRadioButtonById(id, groupId, QStringLiteral(), QStringLiteral(), false /* checked*/, true /* disabled */, true /* hidden */);
 }
 
-void ChoiceDialog::addRadioButtonInt(int id, int groupId, const QString& text, const QString& tooltip, bool checked, bool disabled,
-                                     bool hidden)
+void ChoiceDialog::addRadioButtonById(ChoiceDialogIdType id, ChoiceDialogGroupType groupId, const QString& text, const QString& tooltip,
+                                     bool checked, bool disabled, bool hidden)
 {
   QRadioButton *button = new QRadioButton(text, this);
   button->setToolTip(tooltip);
@@ -121,7 +121,7 @@ void ChoiceDialog::addRadioButtonInt(int id, int groupId, const QString& text, c
 
   buttonGroup->addButton(button);
 
-  addWidgetInt(id, button);
+  addWidgetById(id, button);
 }
 
 void ChoiceDialog::addLine(QFrame::Shadow shadow, int width, const QColor& color)
@@ -151,9 +151,9 @@ void ChoiceDialog::addSpacer()
   ui->verticalLayoutScrollArea->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
-bool ChoiceDialog::isCheckedInt(int id) const
+bool ChoiceDialog::isCheckedById(ChoiceDialogIdType id) const
 {
-  QAbstractButton *button = getButtonInt(id);
+  QAbstractButton *button = getButtonById(id);
   return button != nullptr ? (button->isChecked() && button->isEnabled()) : false;
 }
 
@@ -180,7 +180,7 @@ void ChoiceDialog::buttonToggledInternal(bool checked)
   updateButtonBoxState();
   const QAbstractButton *button = dynamic_cast<const QAbstractButton *>(sender());
   if(button != nullptr)
-    emit buttonToggled(button->property(ID_PROPERTY).toInt(), checked);
+    emit buttonToggled(button->property(ID_PROPERTY).toLongLong(), checked);
 }
 
 void ChoiceDialog::restoreState()
@@ -200,7 +200,7 @@ void ChoiceDialog::restoreState()
   {
     const QAbstractButton *button = dynamic_cast<const QAbstractButton *>(widget);
     if(button != nullptr)
-      emit buttonToggled(button->property(ID_PROPERTY).toInt(), button->isChecked());
+      emit buttonToggled(button->property(ID_PROPERTY).toLongLong(), button->isChecked());
   }
 }
 
@@ -219,9 +219,9 @@ void ChoiceDialog::updateButtonBoxState()
   if(!required.isEmpty())
   {
     bool found = false;
-    for(int i : std::as_const(required))
+    for(ChoiceDialogIdType i : std::as_const(required))
     {
-      const QAbstractButton *button = getButtonInt(i);
+      const QAbstractButton *button = getButtonById(i);
       if(button != nullptr && button->isChecked())
         found = true;
     }
