@@ -166,7 +166,7 @@ int LogdataManager::importCsv(const QString& filepath)
   {
     int id = getCurrentId() + 1;
     atools::sql::DataManagerUndoHandler undoHandler(this, id);
-    QString idBinding(":" % idColumnName);
+    QString idBinding(QStringLiteral(":") % idColumnName);
 
     // Autogenerate id - exclude logbook_id from insert
     SqlQuery insertQuery(db);
@@ -213,37 +213,37 @@ int LogdataManager::importCsv(const QString& filepath)
       insertQuery.bindValue(idBinding, id++);
 
       // Aircraft ===============================================================
-      insertQuery.bindValue(":aircraft_name", at(values, csv::AIRCRAFT_NAME));
-      insertQuery.bindValue(":aircraft_type", at(values, csv::AIRCRAFT_TYPE));
-      insertQuery.bindValue(":aircraft_registration", at(values, csv::AIRCRAFT_REGISTRATION));
+      insertQuery.bindValue(QStringLiteral(":aircraft_name"), at(values, csv::AIRCRAFT_NAME));
+      insertQuery.bindValue(QStringLiteral(":aircraft_type"), at(values, csv::AIRCRAFT_TYPE));
+      insertQuery.bindValue(QStringLiteral(":aircraft_registration"), at(values, csv::AIRCRAFT_REGISTRATION));
 
       // Flightplan ===============================================================
-      insertQuery.bindValue(":flightplan_number", at(values, csv::FLIGHTPLAN_NUMBER));
+      insertQuery.bindValue(QStringLiteral(":flightplan_number"), at(values, csv::FLIGHTPLAN_NUMBER));
       if(!at(values, csv::FLIGHTPLAN_CRUISE_ALTITUDE).isEmpty())
-        insertQuery.bindValue(":flightplan_cruise_altitude", atFloat(values, csv::FLIGHTPLAN_CRUISE_ALTITUDE, true));
-      insertQuery.bindValue(":flightplan_file", at(values, csv::FLIGHTPLAN_FILE));
+        insertQuery.bindValue(QStringLiteral(":flightplan_cruise_altitude"), atFloat(values, csv::FLIGHTPLAN_CRUISE_ALTITUDE, true));
+      insertQuery.bindValue(QStringLiteral(":flightplan_file"), at(values, csv::FLIGHTPLAN_FILE));
 
       // Trip ===============================================================
-      insertQuery.bindValue(":performance_file", at(values, csv::PERFORMANCE_FILE));
+      insertQuery.bindValue(QStringLiteral(":performance_file"), at(values, csv::PERFORMANCE_FILE));
       if(!at(values, csv::BLOCK_FUEL).isEmpty())
-        insertQuery.bindValue(":block_fuel", atFloat(values, csv::BLOCK_FUEL, true));
+        insertQuery.bindValue(QStringLiteral(":block_fuel"), atFloat(values, csv::BLOCK_FUEL, true));
       if(!at(values, csv::TRIP_FUEL).isEmpty())
-        insertQuery.bindValue(":trip_fuel", atFloat(values, csv::TRIP_FUEL, true));
+        insertQuery.bindValue(QStringLiteral(":trip_fuel"), atFloat(values, csv::TRIP_FUEL, true));
       if(!at(values, csv::USED_FUEL).isEmpty())
-        insertQuery.bindValue(":used_fuel", atFloat(values, csv::USED_FUEL, true));
+        insertQuery.bindValue(QStringLiteral(":used_fuel"), atFloat(values, csv::USED_FUEL, true));
       if(!at(values, csv::IS_JETFUEL).isEmpty())
-        insertQuery.bindValue(":is_jetfuel", atInt(values, csv::IS_JETFUEL, true));
+        insertQuery.bindValue(QStringLiteral(":is_jetfuel"), atInt(values, csv::IS_JETFUEL, true));
       if(!at(values, csv::GROSSWEIGHT).isEmpty())
-        insertQuery.bindValue(":grossweight", atFloat(values, csv::GROSSWEIGHT, true));
+        insertQuery.bindValue(QStringLiteral(":grossweight"), atFloat(values, csv::GROSSWEIGHT, true));
       if(!at(values, csv::DISTANCE).isEmpty())
-        insertQuery.bindValue(":distance", atFloat(values, csv::DISTANCE, true));
+        insertQuery.bindValue(QStringLiteral(":distance"), atFloat(values, csv::DISTANCE, true));
       if(!at(values, csv::DISTANCE_FLOWN).isEmpty())
-        insertQuery.bindValue(":distance_flown", atFloat(values, csv::DISTANCE_FLOWN, true));
+        insertQuery.bindValue(QStringLiteral(":distance_flown"), atFloat(values, csv::DISTANCE_FLOWN, true));
 
       // Departure ===============================================================
-      insertQuery.bindValue(":departure_ident", at(values, csv::DEPARTURE_IDENT));
-      insertQuery.bindValue(":departure_name", at(values, csv::DEPARTURE_NAME));
-      insertQuery.bindValue(":departure_runway", at(values, csv::DEPARTURE_RUNWAY));
+      insertQuery.bindValue(QStringLiteral(":departure_ident"), at(values, csv::DEPARTURE_IDENT));
+      insertQuery.bindValue(QStringLiteral(":departure_name"), at(values, csv::DEPARTURE_NAME));
+      insertQuery.bindValue(QStringLiteral(":departure_runway"), at(values, csv::DEPARTURE_RUNWAY));
 
       if(!at(values, csv::DEPARTURE_LONX).isEmpty() && !at(values, csv::DEPARTURE_LATY).isEmpty())
       {
@@ -252,20 +252,21 @@ int LogdataManager::importCsv(const QString& filepath)
 
         if(departPos.isValid())
         {
-          insertQuery.bindValue(":departure_lonx", departPos.getLonX());
-          insertQuery.bindValue(":departure_laty", departPos.getLatY());
+          insertQuery.bindValue(QStringLiteral(":departure_lonx"), departPos.getLonX());
+          insertQuery.bindValue(QStringLiteral(":departure_laty"), departPos.getLatY());
         }
       }
       if(!at(values, csv::DEPARTURE_ALT).isEmpty())
-        insertQuery.bindValue(":departure_alt", atFloat(values, csv::DEPARTURE_ALT, true));
+        insertQuery.bindValue(QStringLiteral(":departure_alt"), atFloat(values, csv::DEPARTURE_ALT, true));
 
-      insertQuery.bindValue(":departure_time", QDateTime::fromString(at(values, csv::DEPARTURE_TIME, true), Qt::ISODate));
-      insertQuery.bindValue(":departure_time_sim", QDateTime::fromString(at(values, csv::DEPARTURE_TIME_SIM, true), Qt::ISODate));
+      insertQuery.bindValue(QStringLiteral(":departure_time"), QDateTime::fromString(at(values, csv::DEPARTURE_TIME, true), Qt::ISODate));
+      insertQuery.bindValue(QStringLiteral(":departure_time_sim"),
+                            QDateTime::fromString(at(values, csv::DEPARTURE_TIME_SIM, true), Qt::ISODate));
 
       // Destination ===============================================================
-      insertQuery.bindValue(":destination_ident", at(values, csv::DESTINATION_IDENT));
-      insertQuery.bindValue(":destination_name", at(values, csv::DESTINATION_NAME));
-      insertQuery.bindValue(":destination_runway", at(values, csv::DESTINATION_RUNWAY));
+      insertQuery.bindValue(QStringLiteral(":destination_ident"), at(values, csv::DESTINATION_IDENT));
+      insertQuery.bindValue(QStringLiteral(":destination_name"), at(values, csv::DESTINATION_NAME));
+      insertQuery.bindValue(QStringLiteral(":destination_runway"), at(values, csv::DESTINATION_RUNWAY));
 
       if(!at(values, csv::DESTINATION_LONX).isEmpty() && !at(values, csv::DESTINATION_LATY).isEmpty())
       {
@@ -273,26 +274,31 @@ int LogdataManager::importCsv(const QString& filepath)
                                           lineNum, true /* checkNull */);
         if(destPos.isValid())
         {
-          insertQuery.bindValue(":destination_lonx", destPos.getLonX());
-          insertQuery.bindValue(":destination_laty", destPos.getLatY());
+          insertQuery.bindValue(QStringLiteral(":destination_lonx"), destPos.getLonX());
+          insertQuery.bindValue(QStringLiteral(":destination_laty"), destPos.getLatY());
         }
       }
 
       if(!at(values, csv::DESTINATION_ALT).isEmpty())
-        insertQuery.bindValue(":destination_alt", atFloat(values, csv::DESTINATION_ALT, true));
+        insertQuery.bindValue(QStringLiteral(":destination_alt"), atFloat(values, csv::DESTINATION_ALT, true));
 
-      insertQuery.bindValue(":destination_time", QDateTime::fromString(at(values, csv::DESTINATION_TIME, true), Qt::ISODate));
-      insertQuery.bindValue(":destination_time_sim", QDateTime::fromString(at(values, csv::DESTINATION_TIME_SIM, true), Qt::ISODate));
+      insertQuery.bindValue(QStringLiteral(":destination_time"),
+                            QDateTime::fromString(at(values, csv::DESTINATION_TIME, true), Qt::ISODate));
+      insertQuery.bindValue(QStringLiteral(":destination_time_sim"),
+                            QDateTime::fromString(at(values, csv::DESTINATION_TIME_SIM, true), Qt::ISODate));
 
       // Other ===============================================================
-      insertQuery.bindValue(":route_string", at(values, csv::ROUTE_STRING));
-      insertQuery.bindValue(":simulator", at(values, csv::SIMULATOR));
-      insertQuery.bindValue(":description", at(values, csv::DESCRIPTION));
+      insertQuery.bindValue(QStringLiteral(":route_string"), at(values, csv::ROUTE_STRING));
+      insertQuery.bindValue(QStringLiteral(":simulator"), at(values, csv::SIMULATOR));
+      insertQuery.bindValue(QStringLiteral(":description"), at(values, csv::DESCRIPTION));
 
       // Add files as Gzipped BLOBS ===========================================
-      insertQuery.bindValue(":flightplan", atools::zip::gzipCompress(at(values, csv::FLIGHTPLAN, true /* nowarn */).toUtf8()));
-      insertQuery.bindValue(":aircraft_perf", atools::zip::gzipCompress(at(values, csv::AIRCRAFT_PERF, true /* nowarn */).toUtf8()));
-      insertQuery.bindValue(":aircraft_trail", atools::zip::gzipCompress(at(values, csv::AIRCRAFT_TRAIL, true /* nowarn */).toUtf8()));
+      insertQuery.bindValue(QStringLiteral(":flightplan"),
+                            atools::zip::gzipCompress(at(values, csv::FLIGHTPLAN, true /* nowarn */).toUtf8()));
+      insertQuery.bindValue(QStringLiteral(":aircraft_perf"),
+                            atools::zip::gzipCompress(at(values, csv::AIRCRAFT_PERF, true /* nowarn */).toUtf8()));
+      insertQuery.bindValue(QStringLiteral(":aircraft_trail"),
+                            atools::zip::gzipCompress(at(values, csv::AIRCRAFT_TRAIL, true /* nowarn */).toUtf8()));
 
       // Fill null fields with empty strings to avoid issues when searching
       // Also turn empty BLOBs to NULL
@@ -378,7 +384,7 @@ int LogdataManager::importXplane(const QString& filepath,
   {
     int id = getCurrentId() + 1;
     atools::sql::DataManagerUndoHandler undoHandler(this, id);
-    QString idBinding(":" % idColumnName);
+    QString idBinding(QStringLiteral(":") % idColumnName);
 
     QString filename = QFileInfo(filepath).fileName();
 
@@ -387,20 +393,20 @@ int LogdataManager::importXplane(const QString& filepath,
     while(!stream.atEnd())
     {
       QString readline = stream.readLine();
-      if(readline == "99") // Check for end of file marker
+      if(readline == QStringLiteral("99")) // Check for end of file marker
         break;
 
-      QStringList line = readline.simplified().split(" ");
+      QStringList line = readline.simplified().split(QStringLiteral(" "));
 
       if(line.size() >= 9) // Reg and type might be omitted
       {
         // 2 190620    FHAW    FHAW   0   0.1   0.0   0.0   0.0  N7779E  Car_B1900D
-        if(line.at(PREFIX) != "2")
+        if(line.at(PREFIX) != QStringLiteral("2"))
           qWarning() << Q_FUNC_INFO << "Unknown prefix" << line.at(PREFIX) << "at line" << lineNum;
 
         // Time ========================
         int travelTimeSecs = atools::roundToInt(atFloat(line, TIME, true) * 3600.f);
-        QDateTime departureTime = QDateTime::fromString("20" % at(line, DATE), "yyyyMMdd");
+        QDateTime departureTime = QDateTime::fromString(QStringLiteral("20") % at(line, DATE), QStringLiteral("yyyyMMdd"));
         QDateTime destinationTime = departureTime.addSecs(travelTimeSecs);
 
         // Resolve departure and destination ================================
@@ -413,19 +419,19 @@ int LogdataManager::importXplane(const QString& filepath,
         insertQuery.bindValue(idBinding, id++);
 
         // Departure =====================================================
-        insertQuery.bindValue(":departure_ident", departure);
-        insertQuery.bindValue(":departure_name", departureName);
+        insertQuery.bindValue(QStringLiteral(":departure_ident"), departure);
+        insertQuery.bindValue(QStringLiteral(":departure_name"), departureName);
 
         if(departurePos.isValid())
         {
           // Leave position null, otherwise
-          insertQuery.bindValue(":departure_lonx", departurePos.getLonX());
-          insertQuery.bindValue(":departure_laty", departurePos.getLatY());
-          insertQuery.bindValue(":departure_alt", departurePos.getAltitude());
+          insertQuery.bindValue(QStringLiteral(":departure_lonx"), departurePos.getLonX());
+          insertQuery.bindValue(QStringLiteral(":departure_laty"), departurePos.getLatY());
+          insertQuery.bindValue(QStringLiteral(":departure_alt"), departurePos.getAltitude());
         }
 
-        insertQuery.bindValue(":departure_time_sim", departureTime);
-        insertQuery.bindValue(":departure_time", departureTime);
+        insertQuery.bindValue(QStringLiteral(":departure_time_sim"), departureTime);
+        insertQuery.bindValue(QStringLiteral(":departure_time"), departureTime);
 
         // Destination =====================================================
         // Get name and coordinates from database
@@ -433,36 +439,36 @@ int LogdataManager::importXplane(const QString& filepath,
         atools::geo::Pos destinationPos;
         fetchAirport(destinationPos, destinationName, destination);
 
-        insertQuery.bindValue(":destination_ident", destination);
-        insertQuery.bindValue(":destination_name", destinationName);
+        insertQuery.bindValue(QStringLiteral(":destination_ident"), destination);
+        insertQuery.bindValue(QStringLiteral(":destination_name"), destinationName);
 
         if(destinationPos.isValid())
         {
-          insertQuery.bindValue(":destination_lonx", destinationPos.getLonX());
-          insertQuery.bindValue(":destination_laty", destinationPos.getLatY());
-          insertQuery.bindValue(":destination_alt", destinationPos.getAltitude());
+          insertQuery.bindValue(QStringLiteral(":destination_lonx"), destinationPos.getLonX());
+          insertQuery.bindValue(QStringLiteral(":destination_laty"), destinationPos.getLatY());
+          insertQuery.bindValue(QStringLiteral(":destination_alt"), destinationPos.getAltitude());
         }
-        insertQuery.bindValue(":destination_time_sim", destinationTime);
-        insertQuery.bindValue(":destination_time", destinationTime);
+        insertQuery.bindValue(QStringLiteral(":destination_time_sim"), destinationTime);
+        insertQuery.bindValue(QStringLiteral(":destination_time"), destinationTime);
 
         // Aircraft ====================================================
         if(TAIL_NUMBER < line.size())
         {
           QString tailNum = at(line, TAIL_NUMBER);
-          insertQuery.bindValue(":aircraft_registration", tailNum.replace("_", " "));
+          insertQuery.bindValue(QStringLiteral(":aircraft_registration"), tailNum.replace(QStringLiteral("_"), QStringLiteral(" ")));
         }
 
         if(AIRCRAFT_TYPE < line.size())
         {
           QString aircraftType = at(line, AIRCRAFT_TYPE);
-          insertQuery.bindValue(":aircraft_type", aircraftType.replace("_", " "));
+          insertQuery.bindValue(QStringLiteral(":aircraft_type"), aircraftType.replace(QStringLiteral("_"), QStringLiteral(" ")));
         }
 
         // ===================================================================
         if(departurePos.isValid() && destinationPos.isValid())
-          insertQuery.bindValue(":distance", atools::geo::meterToNm(departurePos.distanceMeterTo(destinationPos)));
+          insertQuery.bindValue(QStringLiteral(":distance"), atools::geo::meterToNm(departurePos.distanceMeterTo(destinationPos)));
 
-        insertQuery.bindValue(":simulator", "X-Plane 11");
+        insertQuery.bindValue(QStringLiteral(":simulator"), QStringLiteral("X-Plane 11"));
 
         // Description ===================================================================
         /*: The text "Imported from X-Plane logbook" has to match the one in LogdataController::importXplane */
@@ -476,7 +482,7 @@ int LogdataManager::importXplane(const QString& filepath,
                             arg(atFloat(line, TIME_CROSS_COUNTRY, true), 0, 'f', 1).
                             arg(atFloat(line, TIME_IFR, true), 0, 'f', 1).
                             arg(atFloat(line, TIME_NIGHT, true), 0, 'f', 1));
-        insertQuery.bindValue(":description", description);
+        insertQuery.bindValue(QStringLiteral(":description"), description);
 
         // Fill null fields with empty strings to avoid issues when searching
         // Also turn empty BLOBs to NULL
@@ -782,13 +788,13 @@ void LogdataManager::getFlightStatsSimulator(QList<std::pair<int, QString> >& nu
 void LogdataManager::fixEmptyStrField(sql::SqlRecord& rec, const QString& name)
 {
   if(rec.contains(name) && rec.isNull(name))
-    rec.setValue(name, "");
+    rec.setValue(name, QStringLiteral());
 }
 
 void LogdataManager::fixEmptyStrField(sql::SqlQuery& query, const QString& name)
 {
   if(query.boundValue(name, true /* ignoreInvalid */).isNull())
-    query.bindValue(name, "");
+    query.bindValue(name, QStringLiteral());
 }
 
 void LogdataManager::fixEmptyBlobField(sql::SqlRecord& rec, const QString& name)

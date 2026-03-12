@@ -85,10 +85,10 @@ QString toGfpFormat(const atools::geo::Pos& pos)
 {
   if(pos.isValid())
     return COORDS_FLIGHTPLAN_FORMAT_GFP.
-           arg(pos.getLatY() > 0.f ? "N" : "S").
+           arg(pos.getLatY() > 0.f ? QStringLiteral("N") : QStringLiteral("S")).
            arg(atools::absInt(pos.getLatYDeg()), 2, 10, QChar('0')).
            arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f) * 10.f, 3, 'f', 0, QChar('0')).
-           arg(pos.getLonX() > 0.f ? "E" : "W").
+           arg(pos.getLonX() > 0.f ? QStringLiteral("E") : QStringLiteral("W")).
            arg(atools::absInt(pos.getLonXDeg()), 3, 10, QChar('0')).
            arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f) * 10.f, 3, 'f', 0, QChar('0'));
   else
@@ -101,10 +101,10 @@ QString toDegMinFormat(const atools::geo::Pos& pos)
     return COORDS_FLIGHTPLAN_FORMAT_DEG_MIN.
            arg(atools::absInt(pos.getLatYDeg()), 2, 10, QChar('0')).
            arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 2, 'f', 0, QChar('0')).
-           arg(pos.getLatY() > 0.f ? "N" : "S").
+           arg(pos.getLatY() > 0.f ? QStringLiteral("N") : QStringLiteral("S")).
            arg(atools::absInt(pos.getLonXDeg()), 3, 10, QChar('0')).
            arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 2, 'f', 0, QChar('0')).
-           arg(pos.getLonX() > 0.f ? "E" : "W");
+           arg(pos.getLonX() > 0.f ? QStringLiteral("E") : QStringLiteral("W"));
   else
     return QStringLiteral();
 }
@@ -116,11 +116,11 @@ QString toDegMinSecFormat(const atools::geo::Pos& pos)
            arg(atools::absInt(pos.getLatYDeg()), 2, 10, QChar('0')).
            arg(atools::absInt(pos.getLatYMin()), 2, 10, QChar('0')).
            arg(std::abs(pos.getLatYSec()), 2, 'f', 0, QChar('0')).
-           arg(pos.getLatY() > 0.f ? "N" : "S").
+           arg(pos.getLatY() > 0.f ? QStringLiteral("N") : QStringLiteral("S")).
            arg(atools::absInt(pos.getLonXDeg()), 3, 10, QChar('0')).
            arg(atools::absInt(pos.getLonXMin()), 2, 10, QChar('0')).
            arg(std::abs(pos.getLonXSec()), 2, 'f', 0, QChar('0')).
-           arg(pos.getLonX() > 0.f ? "E" : "W");
+           arg(pos.getLonX() > 0.f ? QStringLiteral("E") : QStringLiteral("W"));
   else
     return QStringLiteral();
 }
@@ -150,8 +150,8 @@ atools::geo::Pos fromGfpFormat(const QString& str)
       if(latOk && lonOk && latMinOk && lonMinOk &&
          -90 <= latYDeg && latYDeg <= 90 &&
          -180 <= lonXDeg && lonXDeg <= 180)
-        return atools::geo::Pos(lonXDeg, static_cast<int>(lonXMin), lonXSec, ew == "W",
-                                latYDeg, static_cast<int>(latYMin), latYSec, ns == "S");
+        return atools::geo::Pos(lonXDeg, static_cast<int>(lonXMin), lonXSec, ew == QStringLiteral("W"),
+                                latYDeg, static_cast<int>(latYMin), latYSec, ns == QStringLiteral("S"));
     }
   }
   return atools::geo::EMPTY_POS;
@@ -178,8 +178,8 @@ atools::geo::Pos fromDegFormat(const QString& str)
       if(latOk && lonOk &&
          -90.f <= latYDeg && latYDeg <= 90.f &&
          -180.f <= lonXDeg && lonXDeg <= 180.f)
-        return atools::geo::Pos(lonXDeg, 0, 0.f, ew == "W",
-                                latYDeg, 0, 0.f, ns == "S");
+        return atools::geo::Pos(lonXDeg, 0, 0.f, ew == QStringLiteral("W"),
+                                latYDeg, 0, 0.f, ns == QStringLiteral("S"));
     }
   }
   return atools::geo::EMPTY_POS;
@@ -208,8 +208,8 @@ atools::geo::Pos fromDegMinFormat(const QString& str)
       if(latOk && lonOk && latMinOk && lonMinOk &&
          -90 <= latYDeg && latYDeg <= 90 &&
          -180 <= lonXDeg && lonXDeg <= 180)
-        return atools::geo::Pos(lonXDeg, lonXMin, 0.f, ew == "W",
-                                latYDeg, latYMin, 0.f, ns == "S");
+        return atools::geo::Pos(lonXDeg, lonXMin, 0.f, ew == QStringLiteral("W"),
+                                latYDeg, latYMin, 0.f, ns == QStringLiteral("S"));
     }
   }
 
@@ -271,8 +271,8 @@ atools::geo::Pos fromDegMinPairFormat(const QString& str)
   if(latOk && lonOk && latMinOk && lonMinOk &&
      -90 <= latYDeg && latYDeg <= 90 &&
      -180 <= lonXDeg && lonXDeg <= 180)
-    return atools::geo::Pos(lonXDeg, lonXMin, 0.f, ew == "W",
-                            latYDeg, latYMin, 0.f, ns == "S");
+    return atools::geo::Pos(lonXDeg, lonXMin, 0.f, ew == QStringLiteral("W"),
+                            latYDeg, latYMin, 0.f, ns == QStringLiteral("S"));
   else
     return atools::geo::EMPTY_POS;
 }
@@ -404,8 +404,8 @@ atools::geo::Pos degMinFormatFromCapture(const QStringList& captured)
     if(latOk && lonOk && latMinOk && lonMinOk &&
        -90 <= latYDeg && latYDeg <= 90 &&
        -180 <= lonXDeg && lonXDeg <= 180)
-      return atools::geo::Pos((lonXDeg + lonXMin / 60.f) * (ew == "W" ? -1.f : 1.f),
-                              (latYDeg + latYMin / 60.f) * (ns == "S" ? -1.f : 1.f));
+      return atools::geo::Pos((lonXDeg + lonXMin / 60.f) * (ew == QStringLiteral("W") ? -1.f : 1.f),
+                              (latYDeg + latYMin / 60.f) * (ns == QStringLiteral("S") ? -1.f : 1.f));
   }
   return atools::geo::EMPTY_POS;
 }
@@ -428,8 +428,8 @@ atools::geo::Pos degMinSecFormatFromCapture(const QStringList& captured)
     if(latOk && lonOk && latMinOk && lonMinOk && latSecOk && lonSecOk &&
        -90 <= latYDeg && latYDeg <= 90 &&
        -180 <= lonXDeg && lonXDeg <= 180)
-      return atools::geo::Pos(lonXDeg, lonXMin, lonXSec, ew == "W",
-                              latYDeg, latYMin, latYSec, ns == "S");
+      return atools::geo::Pos(lonXDeg, lonXMin, lonXSec, ew == QStringLiteral("W"),
+                              latYDeg, latYMin, latYSec, ns == QStringLiteral("S"));
   }
   return atools::geo::EMPTY_POS;
 }
@@ -454,45 +454,45 @@ QString safeCaptured(const QRegularExpressionMatch& match, const QString& str)
 
 atools::geo::Pos degMinSecFromMatch(const QRegularExpressionMatch& match)
 {
-  QString ns = safeCaptured(match, "NS");
-  int latYDeg = safeCaptured(match, "LATY_DEG").toInt();
-  int latYMin = safeCaptured(match, "LATY_MIN").toInt();
-  float latYSec = safeCaptured(match, "LATY_DEC_SEC").toFloat();
+  QString ns = safeCaptured(match, QStringLiteral("NS"));
+  int latYDeg = safeCaptured(match, QStringLiteral("LATY_DEG")).toInt();
+  int latYMin = safeCaptured(match, QStringLiteral("LATY_MIN")).toInt();
+  float latYSec = safeCaptured(match, QStringLiteral("LATY_DEC_SEC")).toFloat();
 
-  QString ew = safeCaptured(match, "EW");
-  int lonXDeg = safeCaptured(match, "LONX_DEG").toInt();
-  int lonXMin = safeCaptured(match, "LONX_MIN").toInt();
-  float lonXSec = safeCaptured(match, "LONX_DEC_SEC").toFloat();
+  QString ew = safeCaptured(match, QStringLiteral("EW"));
+  int lonXDeg = safeCaptured(match, QStringLiteral("LONX_DEG")).toInt();
+  int lonXMin = safeCaptured(match, QStringLiteral("LONX_MIN")).toInt();
+  float lonXSec = safeCaptured(match, QStringLiteral("LONX_DEC_SEC")).toFloat();
 
-  float latY = (latYDeg + latYMin / 60.f + latYSec / 3600.f) * (ns == "S" ? -1.f : 1.f);
-  float lonX = (lonXDeg + lonXMin / 60.f + lonXSec / 3600.f) * (ew == "W" ? -1.f : 1.f);
+  float latY = (latYDeg + latYMin / 60.f + latYSec / 3600.f) * (ns == QStringLiteral("S") ? -1.f : 1.f);
+  float lonX = (lonXDeg + lonXMin / 60.f + lonXSec / 3600.f) * (ew == QStringLiteral("W") ? -1.f : 1.f);
   return Pos(lonX, latY);
 }
 
 atools::geo::Pos degMinDesignatorFromMatch(const QRegularExpressionMatch& match)
 {
-  QString ns = safeCaptured(match, "NS");
-  int latYDeg = safeCaptured(match, "LATY_DEG").toInt();
-  float latYMin = safeCaptured(match, "LATY_DEC_MIN").toFloat();
+  QString ns = safeCaptured(match, QStringLiteral("NS"));
+  int latYDeg = safeCaptured(match, QStringLiteral("LATY_DEG")).toInt();
+  float latYMin = safeCaptured(match, QStringLiteral("LATY_DEC_MIN")).toFloat();
 
-  QString ew = safeCaptured(match, "EW");
-  int lonXDeg = safeCaptured(match, "LONX_DEG").toInt();
-  float lonXMin = safeCaptured(match, "LONX_DEC_MIN").toFloat();
+  QString ew = safeCaptured(match, QStringLiteral("EW"));
+  int lonXDeg = safeCaptured(match, QStringLiteral("LONX_DEG")).toInt();
+  float lonXMin = safeCaptured(match, QStringLiteral("LONX_DEC_MIN")).toFloat();
 
-  float latY = (latYDeg + latYMin / 60.f) * (ns == "S" ? -1.f : 1.f);
-  float lonX = (lonXDeg + lonXMin / 60.f) * (ew == "W" ? -1.f : 1.f);
+  float latY = (latYDeg + latYMin / 60.f) * (ns == QStringLiteral("S") ? -1.f : 1.f);
+  float lonX = (lonXDeg + lonXMin / 60.f) * (ew == QStringLiteral("W") ? -1.f : 1.f);
   return Pos(lonX, latY);
 }
 
 atools::geo::Pos degMinFromMatchGoogle(const QRegularExpressionMatch& match)
 {
-  bool latNegative = safeCaptured(match, "LATY_DEG_SIGN") == "-";
-  int latYDeg = std::abs(safeCaptured(match, "LATY_DEG").toInt());
-  float latYMin = std::abs(safeCaptured(match, "LATY_DEC_MIN").toFloat());
+  bool latNegative = safeCaptured(match, QStringLiteral("LATY_DEG_SIGN")) == QStringLiteral("-");
+  int latYDeg = std::abs(safeCaptured(match, QStringLiteral("LATY_DEG")).toInt());
+  float latYMin = std::abs(safeCaptured(match, QStringLiteral("LATY_DEC_MIN")).toFloat());
 
-  bool lonNegative = safeCaptured(match, "LONX_DEG_SIGN") == "-";
-  int lonXDeg = std::abs(safeCaptured(match, "LONX_DEG").toInt());
-  float lonXMin = std::abs(safeCaptured(match, "LONX_DEC_MIN").toFloat());
+  bool lonNegative = safeCaptured(match, QStringLiteral("LONX_DEG_SIGN")) == QStringLiteral("-");
+  int lonXDeg = std::abs(safeCaptured(match, QStringLiteral("LONX_DEG")).toInt());
+  float lonXMin = std::abs(safeCaptured(match, QStringLiteral("LONX_DEC_MIN")).toFloat());
 
   float latY = (latNegative ? -1.f : 1.f) * (latYDeg + latYMin / 60.f);
   float lonX = (lonNegative ? -1.f : 1.f) * (lonXDeg + lonXMin / 60.f);
@@ -502,11 +502,11 @@ atools::geo::Pos degMinFromMatchGoogle(const QRegularExpressionMatch& match)
 atools::geo::Pos degFromMatchSigned(const QRegularExpressionMatch& match)
 {
   bool ok;
-  float latYDeg = safeCaptured(match, "LATY_DEC_DEG_SIGN").toFloat(&ok);
+  float latYDeg = safeCaptured(match, QStringLiteral("LATY_DEC_DEG_SIGN")).toFloat(&ok);
   if(!ok)
     return atools::geo::EMPTY_POS;
 
-  float lonXDeg = safeCaptured(match, "LONX_DEC_DEG_SIGN").toFloat(&ok);
+  float lonXDeg = safeCaptured(match, QStringLiteral("LONX_DEC_DEG_SIGN")).toFloat(&ok);
   if(!ok)
     return atools::geo::EMPTY_POS;
 
@@ -515,14 +515,14 @@ atools::geo::Pos degFromMatchSigned(const QRegularExpressionMatch& match)
 
 atools::geo::Pos degFromMatch(const QRegularExpressionMatch& match)
 {
-  float latYDeg = safeCaptured(match, "LATY_DEC_DEG").toFloat();
-  QString ns = safeCaptured(match, "NS");
+  float latYDeg = safeCaptured(match, QStringLiteral("LATY_DEC_DEG")).toFloat();
+  QString ns = safeCaptured(match, QStringLiteral("NS"));
 
-  float lonXDeg = safeCaptured(match, "LONX_DEC_DEG").toFloat();
-  QString ew = safeCaptured(match, "EW");
+  float lonXDeg = safeCaptured(match, QStringLiteral("LONX_DEC_DEG")).toFloat();
+  QString ew = safeCaptured(match, QStringLiteral("EW"));
 
-  float latY = latYDeg * (ns == "S" ? -1.f : 1.f);
-  float lonX = lonXDeg * (ew == "W" ? -1.f : 1.f);
+  float latY = latYDeg * (ns == QStringLiteral("S") ? -1.f : 1.f);
+  float lonX = lonXDeg * (ew == QStringLiteral("W") ? -1.f : 1.f);
   return Pos(lonX, latY);
 }
 
@@ -616,32 +616,32 @@ geo::Pos fromAnyFormatInternal(const QString& coords, bool replaceDecimals, bool
   // N49° 26' 41.57" E9° 12' 5.49"
   static const QRegularExpression FORMAT_DEG_MIN_SEC_REGEXP(
     "^" + NS + SP + LATY_DEG + SP + DEG + SP + LATY_MIN + SP + MIN + SP + LATY_DEC_SEC + SP + SEC + SP +
-    "" + EW + SP + LONX_DEG + SP + DEG + SP + LONX_MIN + SP + MIN + SP + LONX_DEC_SEC + SP + SECEND + "$");
+    EW + SP + LONX_DEG + SP + DEG + SP + LONX_MIN + SP + MIN + SP + LONX_DEC_SEC + SP + SECEND + "$");
 
   // 49° 26' 41,57" N 9° 12' 5,49" E
   static const QRegularExpression FORMAT_DEG_MIN_SEC_REGEXP2(
     "^" + LATY_DEG + SP + DEG + SP + LATY_MIN + SP + MIN + SP + LATY_DEC_SEC + SP + SECEND + SP + NS + SP +
-    "" + LONX_DEG + SP + DEG + SP + LONX_MIN + SP + MIN + SP + LONX_DEC_SEC + SP + SECEND + SP + EW + "$");
+    LONX_DEG + SP + DEG + SP + LONX_MIN + SP + MIN + SP + LONX_DEC_SEC + SP + SECEND + SP + EW + "$");
 
   // 49° 26,69' N 9° 12,09' E
   static const QRegularExpression FORMAT_DEG_MIN_REGEXP2(
     "^" + LATY_DEG + SP + DEG + SP + LATY_DEC_MIN + SP + MIN + SP + NS + SP +
-    "" + LONX_DEG + SP + DEG + SP + LONX_DEC_MIN + SP + MIN + SP + EW + "$");
+    LONX_DEG + SP + DEG + SP + LONX_DEC_MIN + SP + MIN + SP + EW + "$");
 
   // N54* 16.82' W008* 35.95'
   static const QRegularExpression FORMAT_DEG_MIN_REGEXP(
     "^" + NS + SP + LATY_DEG + SP + DEG + SP + LATY_DEC_MIN + SP + MIN + SP +
-    "" + EW + SP + LONX_DEG + SP + DEG + SP + LONX_DEC_MIN + SP + MINEND + SP + "$");
+    EW + SP + LONX_DEG + SP + DEG + SP + LONX_DEC_MIN + SP + MINEND + SP + "$");
 
   // 49,4449° N 9,2015° E
   static const QRegularExpression FORMAT_DEG_REGEXP(
     "^" + LATY_DEC_DEG + SP + DEGEND + SP + NS + SP +
-    "" + LONX_DEC_DEG + SP + DEGEND + SP + EW + "$");
+    LONX_DEC_DEG + SP + DEGEND + SP + EW + "$");
 
   // N 49,4449° E 9,2015°
   static const QRegularExpression FORMAT_DEG_REGEXP2(
     "^" + NS + SP + LATY_DEC_DEG + SP + DEG + SP +
-    "" + EW + SP + LONX_DEC_DEG + SP + DEGEND + "$");
+    EW + SP + LONX_DEC_DEG + SP + DEGEND + "$");
 
   // Signed Lat lon or lon lat
   static const QRegularExpression FORMAT_NUMBER_SIGNED(
@@ -740,7 +740,7 @@ atools::geo::Pos fromAnyFormat(const QString& coords, bool *hemisphere)
 {
   Pos pos = fromAnyFormatInternal(coords, true /* replaceDecimal */, hemisphere);
 
-  if(!pos.isValid() && coords.count(", ") == 1)
+  if(!pos.isValid() && coords.count(QStringLiteral(", ")) == 1)
     // Nothing found - modify format
     // Comma/space as number separator
     pos = fromAnyFormatInternal(coords, true /* replaceDecimal */, hemisphere);
@@ -749,11 +749,11 @@ atools::geo::Pos fromAnyFormat(const QString& coords, bool *hemisphere)
   {
     if(coords.count(',') == 3)
       // Comma as decimal separator and comma as number separator
-      pos = fromAnyFormatInternal(coords.section(',', 0, 1) + " " +
+      pos = fromAnyFormatInternal(coords.section(',', 0, 1) + QStringLiteral(" ") +
                                   coords.section(',', 2, 3), true /* replaceDecimal */, hemisphere);
     else if(coords.count(',') == 1 && coords.count('.') == 2)
       // Period as decimal separator and comma as number separator
-      pos = fromAnyFormatInternal(coords.section(',', 0, 0) + " " +
+      pos = fromAnyFormatInternal(coords.section(',', 0, 0) + QStringLiteral(" ") +
                                   coords.section(',', 1, 1), true /* replaceDecimal */, hemisphere);
   }
 

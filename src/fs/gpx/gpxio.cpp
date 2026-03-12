@@ -49,22 +49,20 @@ GpxIO::GpxIO()
 bool GpxIO::isGpxFile(const QString& file)
 {
   // Get first 30 non empty lines - always returns a list of 30
-  QStringList lines = probeFile(file, 30 /* numLinesRead */);
+  const QStringList probe = atools::probeFile(file, 30 /* numLinesRead */);
 
-  if(lines.isEmpty())
+  if(probe.isEmpty())
     throw Exception(tr("Cannot open empty GPX file \"%1\".").arg(file));
 
-  // Next or same line with "<gpx"
-  return lines.constFirst().startsWith("<?xml", Qt::CaseInsensitive) &&
-         (lines.at(0).startsWith("<gpx", Qt::CaseInsensitive) ||
-          lines.at(1).startsWith("<gpx", Qt::CaseInsensitive) ||
-          lines.at(2).startsWith("<gpx", Qt::CaseInsensitive));
+  // Find gpx in the whole string in case it is not formatted
+  return probe.constFirst().startsWith(QStringLiteral("<?xml"), Qt::CaseInsensitive) &&
+         !probe.filter(QStringLiteral("<gpx")).isEmpty();
 }
 
 void GpxIO::readPosGpx(atools::geo::PosD& pos, QString& name, atools::util::XmlStreamReader& xmlStream, QDateTime *timestamp)
 {
-  double lon = xmlStream.readAttributeDouble("lon", geo::INVALID_DOUBLE);
-  double lat = xmlStream.readAttributeDouble("lat", geo::INVALID_DOUBLE);
+  double lon = xmlStream.readAttributeDouble(QStringLiteral("lon"), geo::INVALID_DOUBLE);
+  double lat = xmlStream.readAttributeDouble(QStringLiteral("lat"), geo::INVALID_DOUBLE);
 
   if(lon < geo::INVALID_DOUBLE && lat < geo::INVALID_DOUBLE)
   {
@@ -136,7 +134,7 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
   writer.setAutoFormattingIndent(2);
 
   // <?xml version="1.0" encoding="UTF-8"?>
-  writer.writeStartDocument("1.0");
+  writer.writeStartDocument(QStringLiteral("1.0"));
 
   // <gpx
   // xmlns="http://www.topografix.com/GPX/1/1"
@@ -145,13 +143,14 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
   // xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
 
-  writer.writeStartElement("gpx");
+  writer.writeStartElement(QStringLiteral("gpx"));
 
-  writer.writeDefaultNamespace("http://www.topografix.com/GPX/1/1");
-  writer.writeAttribute("version", "1.1");
-  writer.writeAttribute("creator", "Little Navmap");
-  writer.writeNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-  writer.writeAttribute("xsi:schemaLocation", "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
+  writer.writeDefaultNamespace(QStringLiteral("http://www.topografix.com/GPX/1/1"));
+  writer.writeAttribute(QStringLiteral("version"), QStringLiteral("1.1"));
+  writer.writeAttribute(QStringLiteral("creator"), QStringLiteral("Little Navmap"));
+  writer.writeNamespace(QStringLiteral("http://www.w3.org/2001/XMLSchema-instance"), QStringLiteral("xsi"));
+  writer.writeAttribute(QStringLiteral("xsi:schemaLocation"),
+                        QStringLiteral("http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"));
 
   // writer.writeComment(programFileInfo());
 
@@ -161,19 +160,19 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
   // </link>
   // <time>2009-10-17T22:58:43Z</time>
   // </metadata>
-  writer.writeStartElement("metadata");
-  writer.writeStartElement("link");
-  writer.writeAttribute("href", "https://www.littlenavmap.org");
-  writer.writeTextElement("text", atools::programFileInfo());
+  writer.writeStartElement(QStringLiteral("metadata"));
+  writer.writeStartElement(QStringLiteral("link"));
+  writer.writeAttribute(QStringLiteral("href"), QStringLiteral("https://www.littlenavmap.org"));
+  writer.writeTextElement(QStringLiteral("text"), atools::programFileInfo());
   writer.writeEndElement(); // link
   writer.writeEndElement(); // metadata
 
   const Flightplan& flightplan = gpxData.getFlightplan();
   if(!flightplan.isEmpty())
   {
-    writer.writeStartElement("rte");
-    writer.writeTextElement("name", flightplan.getTitle() + tr(" - Flight Plan"));
-    writer.writeTextElement("desc", flightplan.getDescription());
+    writer.writeStartElement(QStringLiteral("rte"));
+    writer.writeTextElement(QStringLiteral("name"), flightplan.getTitle() + tr(" - Flight Plan"));
+    writer.writeTextElement(QStringLiteral("desc"), flightplan.getDescription());
 
     // Write route ========================================================
     for(int i = 0; i < flightplan.size(); i++)
@@ -201,13 +200,13 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
       }
 
       // Write route point ===========
-      writer.writeStartElement("rtept");
-      writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 7));
-      writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 7));
-      writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(entry.getAltitude())));
+      writer.writeStartElement(QStringLiteral("rtept"));
+      writer.writeAttribute(QStringLiteral("lon"), QString::number(entry.getPosition().getLonX(), 'f', 7));
+      writer.writeAttribute(QStringLiteral("lat"), QString::number(entry.getPosition().getLatY(), 'f', 7));
+      writer.writeTextElement(QStringLiteral("ele"), QString::number(atools::geo::feetToMeter(entry.getAltitude())));
 
-      writer.writeTextElement("name", entry.getIdent());
-      writer.writeTextElement("desc", entry.getWaypointTypeAsFsxString());
+      writer.writeTextElement(QStringLiteral("name"), entry.getIdent());
+      writer.writeTextElement(QStringLiteral("desc"), entry.getWaypointTypeAsFsxString());
 
       writer.writeEndElement(); // rtept
     }
@@ -218,32 +217,33 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
   // Write track ========================================================
   if(gpxData.hasTrails())
   {
-    writer.writeStartElement("trk");
+    writer.writeStartElement(QStringLiteral("trk"));
 
     if(!flightplan.isEmpty())
-      writer.writeTextElement("name", QCoreApplication::applicationName() + tr(" - Track"));
+      writer.writeTextElement(QStringLiteral("name"), QCoreApplication::applicationName() + tr(" - Track"));
 
     for(const TrailPoints& track : gpxData.getTrails())
     {
       if(track.isEmpty())
         continue;
 
-      writer.writeStartElement("trkseg");
+      writer.writeStartElement(QStringLiteral("trkseg"));
 
       for(const TrailPoint& pos : track)
       {
-        writer.writeStartElement("trkpt");
+        writer.writeStartElement(QStringLiteral("trkpt"));
 
-        writer.writeAttribute("lon", QString::number(pos.pos.getLonX(), 'f', 6));
-        writer.writeAttribute("lat", QString::number(pos.pos.getLatY(), 'f', 6));
-        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(pos.pos.getAltitude())));
+        writer.writeAttribute(QStringLiteral("lon"), QString::number(pos.pos.getLonX(), 'f', 6));
+        writer.writeAttribute(QStringLiteral("lat"), QString::number(pos.pos.getLatY(), 'f', 6));
+        writer.writeTextElement(QStringLiteral("ele"), QString::number(atools::geo::feetToMeter(pos.pos.getAltitude())));
 
         if(pos.timestampMs > 0)
         {
           // (UTC/Zulu) in ISO 8601 format: "yyyy-mm-ddThh:mm:ssZ" or "yyyy-MM-ddTHH:mm:ss.zzzZ"
           // <time>2011-01-16T23:59:01Z</time>
           // Changes time number to local if Qt::UTC is omitted
-          writer.writeTextElement("time", QDateTime::fromMSecsSinceEpoch(pos.timestampMs, QTimeZone::UTC).toString(Qt::ISODateWithMs));
+          writer.writeTextElement(QStringLiteral("time"),
+                                  QDateTime::fromMSecsSinceEpoch(pos.timestampMs, QTimeZone::UTC).toString(Qt::ISODateWithMs));
         }
 
         writer.writeEndElement(); // trkpt
@@ -287,7 +287,7 @@ void GpxIO::loadGpx(atools::fs::gpx::GpxData& gpxData, const QString& filename)
 
 void GpxIO::loadGpxInternal(atools::fs::gpx::GpxData& gpxData, atools::util::XmlStreamReader& xmlStream)
 {
-  xmlStream.readUntilElement("gpx");
+  xmlStream.readUntilElement(QStringLiteral("gpx"));
   PosD pos;
   QString name;
   gpxData.clear();

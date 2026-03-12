@@ -899,7 +899,7 @@ bool WhazzupTextParser::readInternalDelimited(QTextStream& stream, const QDateTi
     QString line = stream.readLine().trimmed();
     if(line.startsWith(QStringLiteral("!")))
       // Remember section
-      sections.insert(line.mid(1).toUpper().trimmed().replace(':', ""));
+      sections.insert(line.mid(1).toUpper().trimmed().replace(':', QStringLiteral()));
   }
 
   // Delete tables for available sections and keep others

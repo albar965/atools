@@ -72,7 +72,7 @@ QString gitRevision()
   return GIT_REVISION_ATOOLS;
 }
 
-QStringList probeFile(const QString& file, int numLinesRead)
+const QStringList probeFile(const QString& file, int numLinesRead)
 {
   QFile testFile(file);
 
@@ -1025,22 +1025,22 @@ bool checkFile(const QString& funcInfo, const QFileInfo& file, bool warn)
   return true;
 }
 
-bool strStartsWith(const QStringList& list, const QString& str)
+bool strStartsWithAnyInList(const QStringList& list, const QString& str)
 {
-  for(const QString& s : list)
+  for(const QString& string : list)
   {
-    if(str.startsWith(s))
+    if(str.startsWith(string))
       return true;
   }
 
   return false;
 }
 
-bool strAnyStartsWith(const QStringList& list, const QString& str)
+bool strAnyInListStartsWith(const QStringList& list, const QString& str)
 {
-  for(const QString& s : list)
+  for(const QString& string : list)
   {
-    if(s.startsWith(str))
+    if(string.startsWith(str))
       return true;
   }
 

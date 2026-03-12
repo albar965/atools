@@ -183,78 +183,79 @@ atools::fs::pln::FileFormat FlightplanIO::load(atools::fs::pln::Flightplan& plan
 FileFormat FlightplanIO::detectFormat(const QString& file)
 {
   // Get first 40 non empty lines in lower case - always returns a list of 40
-  QStringList lines = probeFile(file, 40 /* numLinesRead */);
+  const QStringList probe = atools::probeFile(file, 40 /* numLinesRead */);
 
-  if(lines.isEmpty())
+  if(probe.isEmpty())
     throw Exception(tr("Cannot open empty flight plan file \"%1\".").arg(file));
 
-  if(lines.constFirst().startsWith("[corte]"))
+  if(probe.constFirst().startsWith(QStringLiteral("[corte]")))
     // FLP: [CoRte]
     return FLP;
-  else if(lines.at(0).startsWith("<?xml version") &&
-          atools::strAnyStartsWith(lines, "<simbase.document") &&
-          atools::strAnyStartsWith(lines, "<flightplan.flightplan"))
+  else if(probe.at(0).startsWith(QStringLiteral("<?xml version")) &&
+          atools::strAnyInListStartsWith(probe, QStringLiteral("<simbase.document")) &&
+          atools::strAnyInListStartsWith(probe, QStringLiteral("<flightplan.flightplan")))
   {
     // FSX PLN or MSFS PLN
-    if(atools::strAnyStartsWith(lines, "<appversionmajor>12"))
+    if(atools::strAnyInListStartsWith(probe, QStringLiteral("<appversionmajor>12")))
       // Major version 12 is MSFS 2024
       return MSFS_PLN_2024;
-    else if(atools::strAnyStartsWith(lines, "<appversionmajor>11"))
+    else if(atools::strAnyInListStartsWith(probe, QStringLiteral("<appversionmajor>11")))
       // Major version 11 is MSFS
       return MSFS_PLN;
     else
       // Major version 10 is FSX and P3D
       return FSX_PLN;
   }
-  else if(lines.at(0).startsWith("<?xml version") &&
-          lines.at(1).startsWith("<littlenavmap") &&
-          lines.at(2).startsWith("<flightplan"))
+  else if(probe.at(0).startsWith(QStringLiteral("<?xml version")) &&
+          probe.at(1).startsWith(QStringLiteral("<littlenavmap")) &&
+          probe.at(2).startsWith(QStringLiteral("<flightplan")))
+    // Assume LNM XML files to be formatted
     return LNM_PLN;
-  else if(lines.at(0).startsWith("[flightplan]") && FS9_MATCH.match(lines.at(1)).hasMatch())
+  else if(probe.at(0).startsWith(QStringLiteral("[flightplan]")) && FS9_MATCH.match(probe.at(1)).hasMatch())
     // FS9 ini format
     return FS9_PLN;
-  else if(lines.at(0).startsWith("[fscfp]"))
+  else if(probe.at(0).startsWith(QStringLiteral("[fscfp]")))
     // FSC ini format
     return FSC_PLN;
-  else if((lines.at(0) == "i" || lines.at(0) == "a") &&
-          lines.at(1).startsWith("3 version") &&
-          lines.at(2).at(0).isDigit() &&
-          lines.at(3).at(0).isDigit())
+  else if((probe.at(0) == QStringLiteral("i") || probe.at(0) == QStringLiteral("a")) &&
+          probe.at(1).startsWith(QStringLiteral("3 version")) &&
+          probe.at(2).at(0).isDigit() &&
+          probe.at(3).at(0).isDigit())
     // Old format
     // I
     // 3 version
     // 1
     // 4
     return FMS3;
-  else if((lines.at(0) == "i" || lines.at(0) == "a") &&
-          lines.at(1).startsWith("1100 version") &&
-          lines.at(2).startsWith("cycle"))
+  else if((probe.at(0) == QStringLiteral("i") || probe.at(0) == QStringLiteral("a")) &&
+          probe.at(1).startsWith(QStringLiteral("1100 version")) &&
+          probe.at(2).startsWith(QStringLiteral("cycle")))
     // New v11 format
     // I
     // 1100 Version
     // CYCLE 1710
     return FMS11;
-  else if(lines.at(0).startsWith("<?xml version") &&
-          (lines.at(1).startsWith("<propertylist") || lines.at(0).contains("<propertylist")) &&
-          (lines.at(2).startsWith("<version") || lines.at(0).contains("<version") ||
-           lines.at(2).startsWith("<departure") || lines.at(0).contains("<departure") ||
-           lines.at(2).startsWith("<source") || lines.at(0).contains("<source"))
-          /* && lines.at(2).startsWith("<version type=\"int\">")*/)
+  else if(probe.at(0).startsWith(QStringLiteral("<?xml version")) &&
+          (probe.at(1).startsWith(QStringLiteral("<propertylist")) || probe.at(0).contains(QStringLiteral("<propertylist"))) &&
+          (probe.at(2).startsWith(QStringLiteral("<version")) || probe.at(0).contains(QStringLiteral("<version")) ||
+           probe.at(2).startsWith(QStringLiteral("<departure")) || probe.at(0).contains(QStringLiteral("<departure")) ||
+           probe.at(2).startsWith(QStringLiteral("<source")) || probe.at(0).contains(QStringLiteral("<source")))
+          /* && lines.at(2).startsWith(QStringLiteral("<version type=\")int\">")*/)
     // <?xml version="1.0" encoding="UTF-8"?>
     // <PropertyList>
     // <version type="int">1</version>
     return FLIGHTGEAR;
-  else if((lines.at(0).startsWith("<?xml version") &&
-           (lines.at(1).startsWith("<flight-plan") &&
-            !lines.filter("<waypoint-table").isEmpty())) ||
-          (lines.at(0).startsWith("<flight-plan") &&
-           !lines.filter("<waypoint-table").isEmpty()))
+  else if((probe.at(0).startsWith(QStringLiteral("<?xml version")) &&
+           (probe.at(1).startsWith(QStringLiteral("<flight-plan")) &&
+            !probe.filter(QStringLiteral("<waypoint-table")).isEmpty())) ||
+          (probe.at(0).startsWith(QStringLiteral("<flight-plan")) &&
+           !probe.filter(QStringLiteral("<waypoint-table")).isEmpty()))
     // <?xml version="1.0" encoding="utf-8"?>
     // <flight-plan xmlns="http://www8.garmin.com/xmlschemas/FlightPlan/v1">
     // <created>2010-11-20T20:54:34Z</created>
     // <waypoint-table>
     return GARMIN_FPL;
-  else if(lines.at(0).startsWith("fpn/ri:"))
+  else if(probe.at(0).startsWith(QStringLiteral("fpn/ri:")))
     // FPN/RI:F:BIKF:F:RIMUM:F:CELLO:F:6119N:F:BILTO:F:NETKI:F:AMDEP:F:UMLER:F:RIVAK:F:KORUL:F:MAVOS:F:LEAS
     // FPN/RI:DA:KYKM:D:WENAS7.PERTT:R:09O:F:COBDI,N47072W120397:F:N47406W120509:F: ...
     // ... ROZSE,N48134W121018:F:DIABO,N48500W120562.J503.FOLDY,N49031W120427:AA:CYLW:A:PIGLU4.YDC(16O):AP:I16-Z.HUMEK
@@ -299,19 +300,19 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
         QString key = line.section('=', 0, 0).toLower().trimmed();
         QString value = line.section('=', 1, 1).trimmed();
 
-        if(key == "arptdep")
+        if(key == QStringLiteral("arptdep"))
         {
           plan.departureIdent = value;
           departure.setIdent(value);
           departure.setWaypointType(atools::fs::pln::entry::AIRPORT);
         }
-        else if(key == "arptarr")
+        else if(key == QStringLiteral("arptarr"))
         {
           plan.destinationIdent = value;
           destination.setIdent(value);
           destination.setWaypointType(atools::fs::pln::entry::AIRPORT);
         }
-        else if(key.startsWith("dctwpt"))
+        else if(key.startsWith(QStringLiteral("dctwpt")))
         {
           QRegularExpressionMatch localMatch = FLP_DCT_WPT.match(key);
           int num = localMatch.captured(1).toInt();
@@ -331,11 +332,11 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
 
           if(coords.isEmpty())
             entry.setIdent(value);
-          else if(coords.toLower() == "coordinates")
+          else if(coords.toLower() == QStringLiteral("coordinates"))
             entry.setPosition(Pos(value.section(',', 1, 1).toFloat(),
                                   value.section(',', 0, 0).toFloat()));
         }
-        else if(key.startsWith("airway"))
+        else if(key.startsWith(QStringLiteral("airway")))
         {
           QRegularExpressionMatch match = FLP_DCT_AWY.match(key);
           int num = match.captured(1).toInt();
@@ -353,7 +354,7 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
 
           if(fromTo.isEmpty())
             entry.setAirway(value);
-          else if(fromTo.toLower() == "from")
+          else if(fromTo.toLower() == QStringLiteral("from"))
           {
             if(plan.isEmpty() || plan.constLast().getIdent() != value)
             {
@@ -362,34 +363,34 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
               plan.append(from);
             }
           }
-          else if(fromTo.toLower() == "to")
+          else if(fromTo.toLower() == QStringLiteral("to"))
             entry.setIdent(value);
         }
         else if(!value.isEmpty())
         {
-          if(key == "rwydep")
+          if(key == QStringLiteral("rwydep"))
             insertPropertyIf(plan, SID_RW, value.mid(plan.departureIdent.size()));
-          else if(key == "sid")
+          else if(key == QStringLiteral("sid"))
             insertPropertyIf(plan, SID, value);
-          else if(key == "sid_trans" || key == "sidenrtrans") // TODO Might result in loading errors for SID transitions
+          else if(key == QStringLiteral("sid_trans") || key == QStringLiteral("sidenrtrans")) // TODO Might result in loading errors for SID transitions
           {
-            if(value != "VECTORS")
+            if(value != QStringLiteral("VECTORS"))
               insertPropertyIf(plan, SID_TRANS, value);
           }
           else if(key == STAR)
             insertPropertyIf(plan, STAR, value);
-          else if(key == "star_trans" || key == "enrstartrans") // TODO Might result in loading errors for STAR transitions
+          else if(key == QStringLiteral("star_trans") || key == QStringLiteral("enrstartrans")) // TODO Might result in loading errors for STAR transitions
           {
-            if(value != "VECTORS")
+            if(value != QStringLiteral("VECTORS"))
               insertPropertyIf(plan, STAR_TRANS, value);
           }
-          else if(key == "rwyarr")
+          else if(key == QStringLiteral("rwyarr"))
             insertPropertyIf(plan, APPROACH_RW, value.mid(plan.destinationIdent.size()));
-          else if(key == "rwyarrfinal")
+          else if(key == QStringLiteral("rwyarrfinal"))
             insertPropertyIf(plan, APPROACH_ARINC, value);
-          else if(key == "appr_trans")
+          else if(key == QStringLiteral("appr_trans"))
           {
-            if(value != "VECTORS")
+            if(value != QStringLiteral("VECTORS"))
               insertPropertyIf(plan, TRANSITION, value);
           }
         }
@@ -457,7 +458,7 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
 
     stream.readLine(); // I
     bool ok = false;
-    version = stream.readLine().section(" ", 0, 0).toInt(&ok); // 3 version
+    version = stream.readLine().section(QStringLiteral(" "), 0, 0).toInt(&ok); // 3 version
     if(!ok)
       throw Exception(tr("Invalid FMS file. Cannot read version number: %1").arg(flpFile.fileName()));
 
@@ -484,10 +485,10 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
       QString line = stream.readLine().simplified();
       if(line.size() > 4)
       {
-        if(line.startsWith("0 ----")) // End of file indicator
+        if(line.startsWith(QStringLiteral("0 ----"))) // End of file indicator
           break;
 
-        const QList<QString> list = line.split(" ");
+        const QList<QString> list = line.split(QStringLiteral(" "));
 
         QString airway;
         if(v11Format)
@@ -495,60 +496,62 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
           // Read keywords from version 11
           QString key = list.value(0);
           QString value = list.value(1);
-          if(key == "CYCLE")
+          if(key == QStringLiteral("CYCLE"))
           {
-            insertPropertyIf(plan, SIMDATA, "XP11");
+            insertPropertyIf(plan, SIMDATA, QStringLiteral("XP11"));
             insertPropertyIf(plan, SIMDATA_CYCLE, value);
             continue;
           }
-          else if(key == "DEPRWY")
+          else if(key == QStringLiteral("DEPRWY"))
           {
             insertPropertyIf(plan, SID_RW, value.mid(2));
             continue;
           }
-          else if(key == "SID")
+          else if(key == QStringLiteral("SID"))
           {
             insertPropertyIf(plan, SID, value);
             continue;
           }
-          else if(key == "SIDTRANS")
+          else if(key == QStringLiteral("SIDTRANS"))
           {
             insertPropertyIf(plan, SID_TRANS, value);
             continue;
           }
-          else if(key == "STAR")
+          else if(key == QStringLiteral("STAR"))
           {
             insertPropertyIf(plan, STAR, value);
             continue;
           }
-          else if(key == "STARTRANS")
+          else if(key == QStringLiteral("STARTRANS"))
           {
             insertPropertyIf(plan, STAR_TRANS, value);
             continue;
           }
-          else if(key == "APP")
+          else if(key == QStringLiteral("APP"))
           {
             insertPropertyIf(plan, APPROACH_ARINC, value);
             continue;
           }
-          else if(key == "APPTRANS")
+          else if(key == QStringLiteral("APPTRANS"))
           {
             insertPropertyIf(plan, TRANSITION, value);
             continue;
           }
-          else if(key == "DESRWY")
+          else if(key == QStringLiteral("DESRWY"))
           {
             destinationRwy = value.mid(2);
             continue;
           }
-          else if(key == "ADES" || key == "DES" || key == "ADEP" || key == "DEP" || key == "NUMENR")
+          else if(key == QStringLiteral("ADES") || key == QStringLiteral("DES") || key == QStringLiteral("ADEP") ||
+                  key == QStringLiteral("DEP") || key == QStringLiteral("NUMENR"))
             // Ignored keywords
             continue;
 
           // Airway column
           QString col2 = list.value(2);
-          if(!col2.isEmpty() && col2 != "DRCT" && col2 != "DIRECT" &&
-             col2 != "ADEP" && col2 != "DEP" && col2 != "ADES" && col2 != "DES")
+          if(!col2.isEmpty() && col2 != QStringLiteral("DRCT") && col2 != QStringLiteral("DIRECT") &&
+             col2 != QStringLiteral("ADEP") && col2 != QStringLiteral("DEP") && col2 != QStringLiteral("ADES") &&
+             col2 != QStringLiteral("DES"))
             airway = col2;
         }
 
@@ -740,23 +743,23 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
         if(value.isEmpty())
           continue;
 
-        if(key == "DEPARTAPCODE")
+        if(key == QStringLiteral("DEPARTAPCODE"))
         {
           departure.setIdent(value);
           departure.setWaypointType(atools::fs::pln::entry::AIRPORT);
         }
-        else if(key == "DESTAPCODE")
+        else if(key == QStringLiteral("DESTAPCODE"))
         {
           destination.setIdent(value);
           destination.setWaypointType(atools::fs::pln::entry::AIRPORT);
         }
-        else if(key == "SID")
+        else if(key == QStringLiteral("SID"))
           sidAndRw = value.remove('(').remove(')').simplified(); // SID=RADYR2 (26R)
-        else if(key == "STAR")
+        else if(key == QStringLiteral("STAR"))
           starAndRw = value.remove('(').remove(')').simplified(); // STAR=ELN81A
-        else if(key == "WP")
+        else if(key == QStringLiteral("WP"))
         {
-          QStringList values = value.split(",");
+          QStringList values = value.split(QStringLiteral(","));
           QString type = values.value(1).toLower();
           QString ident = values.value(2);
 
@@ -766,9 +769,9 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
           entry.setAirway(values.value(16)); // Either airway or procedure - store procedure temporarily in airway field
           entry.setPosition(Pos(values.value(5).toFloat(), values.value(4).toFloat()));
 
-          if(type == "fix" || type == "int")
+          if(type == QStringLiteral("fix") || type == QStringLiteral("int"))
             entry.setWaypointType(atools::fs::pln::entry::WAYPOINT);
-          else if(type == "uwp" || !atools::fs::util::isValidIdent(ident))
+          else if(type == QStringLiteral("uwp") || !atools::fs::util::isValidIdent(ident))
             entry.setWaypointType(atools::fs::pln::entry::USER);
 
           plan.append(entry);
@@ -919,38 +922,38 @@ void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& fil
     while(!stream.atEnd())
     {
       QString line = stream.readLine().simplified();
-      if(!line.isEmpty() && !line.startsWith("[flightplan]"))
+      if(!line.isEmpty() && !line.startsWith(QStringLiteral("[flightplan]")))
       {
         QString key = line.section('=', 0, 0).toLower().trimmed();
         QString value = line.section('=', 1, 1).trimmed();
 
-        if(key == "type")
+        if(key == QStringLiteral("type"))
           // type=IFR
           plan.flightplanType = Flightplan::stringFlightplanType(value);
-        else if(key == "cruising_altitude")
+        else if(key == QStringLiteral("cruising_altitude"))
           plan.cruiseAltitudeFt = value.toFloat();
-        else if(key == "departure_id")
+        else if(key == QStringLiteral("departure_id"))
         {
           // departure_id=EGPB, N59* 52.88', W001* 17.63', +000020.00
           plan.departureIdent = value.section(',', 0, 0).trimmed();
           plan.departurePos = Pos(value.section(',', 1, 3).trimmed());
         }
-        else if(key == "departure_position")
+        else if(key == QStringLiteral("departure_position"))
           // departure_position=1
           plan.departureParkingName = value;
-        else if(key == "departure_name")
+        else if(key == QStringLiteral("departure_name"))
           // departure_name=SUMBURGH
           plan.departureName = value;
-        else if(key == "destination_id")
+        else if(key == QStringLiteral("destination_id"))
         {
           // destination_id=EISG, N54* 16.82', W008* 35.95', +000011.00
           plan.destinationIdent = value.section(',', 0, 0).trimmed();
           plan.destinationPos = Pos(value.section(',', 1, 3).trimmed());
         }
-        else if(key == "destination_name")
+        else if(key == QStringLiteral("destination_name"))
           // destination_name=SLIGO
           plan.destinationName = value;
-        else if(key.startsWith("waypoint."))
+        else if(key.startsWith(QStringLiteral("waypoint.")))
         {
           FlightplanEntry entry;
 
@@ -990,7 +993,7 @@ void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& fil
 
           plan.append(entry);
         }
-        // else if(key == "alternate_name") ignore
+        // else if(key == QStringLiteral("alternate_name")) ignore
       }
     }
     plnFile.close();
@@ -1003,9 +1006,9 @@ atools::geo::Pos FlightplanIO::readPosLnm(atools::util::XmlStreamReader& xmlStre
 {
   bool lonOk, latOk, altOk;
   QXmlStreamReader *reader = xmlStream.getReader();
-  float lon = reader->attributes().value("Lon").toFloat(&lonOk);
-  float lat = reader->attributes().value("Lat").toFloat(&latOk);
-  float alt = reader->attributes().value("Alt").toFloat(&altOk);
+  float lon = reader->attributes().value(QStringLiteral("Lon")).toFloat(&lonOk);
+  float lat = reader->attributes().value(QStringLiteral("Lat")).toFloat(&latOk);
+  float alt = reader->attributes().value(QStringLiteral("Alt")).toFloat(&altOk);
 
   // Read only attributes
   reader->skipCurrentElement();
@@ -1118,8 +1121,8 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
 
   QList<FlightplanEntry> alternates, waypoints;
 
-  xmlStream.readUntilElement("LittleNavmap");
-  xmlStream.readUntilElement("Flightplan");
+  xmlStream.readUntilElement(QStringLiteral("LittleNavmap"));
+  xmlStream.readUntilElement(QStringLiteral("Flightplan"));
 
   // ==================================================================================
   // Read all elements - order does not matter
@@ -1159,12 +1162,12 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
     // Simulator and navdata type and cycle =========================================
     else if(reader->name() == QStringLiteral("SimData"))
     {
-      insertPropertyIf(plan, SIMDATA_CYCLE, reader->attributes().value("Cycle").toString());
+      insertPropertyIf(plan, SIMDATA_CYCLE, reader->attributes().value(QStringLiteral("Cycle")).toString());
       insertPropertyIf(plan, SIMDATA, reader->readElementText());
     }
     else if(reader->name() == QStringLiteral("NavData"))
     {
-      insertPropertyIf(plan, NAVDATA_CYCLE, reader->attributes().value("Cycle").toString());
+      insertPropertyIf(plan, NAVDATA_CYCLE, reader->attributes().value(QStringLiteral("Cycle")).toString());
       insertPropertyIf(plan, NAVDATA, reader->readElementText());
     }
     // Used aircraft performance =========================================
@@ -1185,7 +1188,7 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
     // Alternate airports list =========================================
     else if(reader->name() == QStringLiteral("Alternates"))
     {
-      readWaypointsLnm(xmlStream, alternates, "Alternate");
+      readWaypointsLnm(xmlStream, alternates, QStringLiteral("Alternate"));
       for(FlightplanEntry& entry : alternates)
       {
         entry.setWaypointType(atools::fs::pln::entry::AIRPORT);
@@ -1286,7 +1289,7 @@ void FlightplanIO::loadLnmInternal(atools::fs::pln::Flightplan& plan, atools::ut
       }
     }
     else if(reader->name() == QStringLiteral("Waypoints"))
-      readWaypointsLnm(xmlStream, waypoints, "Waypoint");
+      readWaypointsLnm(xmlStream, waypoints, QStringLiteral("Waypoint"));
     else
       xmlStream.skipCurrentElement(true /* warn */);
   }
@@ -1323,7 +1326,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
 
     // Read header ===========================================================
     // Skip all the useless entries until we hit the document
-    xmlStream.readUntilElement("SimBase.Document");
+    xmlStream.readUntilElement(QStringLiteral("SimBase.Document"));
 
     if(format == MSFS_PLN_2024)
       // Skip all until the flightplan is found
@@ -1338,7 +1341,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       // <CruisingAlt>20000.000</CruisingAlt>
       // <AppVersion>
       // ...
-      xmlStream.readUntilElement("FlightPlan.FlightPlan");
+      xmlStream.readUntilElement(QStringLiteral("FlightPlan.FlightPlan"));
     else
     {
       // Other formats have the Descr before FlightPlan.FlightPlan
@@ -1359,7 +1362,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       // <DestinationName>EDDS</DestinationName>
       // <AppVersion>
 
-      xmlStream.readUntilElement("Descr");
+      xmlStream.readUntilElement(QStringLiteral("Descr"));
 
       // Read a comment from the legacy LNM PLN format if present ===============
       while(!reader->atEnd())
@@ -1368,12 +1371,12 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
         if(reader->isComment())
         {
           QString comment = reader->text().toString().trimmed();
-          if(comment.startsWith("LNMDATA"))
+          if(comment.startsWith(QStringLiteral("LNMDATA")))
           {
             comment.remove(0, 7);
-            const QStringList data = comment.split("|");
+            const QStringList data = comment.split(QStringLiteral("|"));
             for(const QString& prop : data)
-              insertPropertyIf(plan, prop.section("=", 0, 0).trimmed(), prop.section("=", 1, 1).trimmed());
+              insertPropertyIf(plan, prop.section(QStringLiteral("="), 0, 0).trimmed(), prop.section(QStringLiteral("="), 1, 1).trimmed());
           }
         }
         if(reader->isStartElement())
@@ -1381,7 +1384,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       }
 
       // Skip all until the flightplan is found
-      xmlStream.readUntilElement("FlightPlan.FlightPlan");
+      xmlStream.readUntilElement(QStringLiteral("FlightPlan.FlightPlan"));
     }
 
     // Collect MSFS procedure information from all legs and version information ==================================
@@ -1417,7 +1420,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
         if(!destPosTxt.isEmpty())
           plan.destinationPos = geo::Pos(destPosTxt);
       }
-      // else if(name == "Descr")
+      // else if(name == QStringLiteral("Descr"))
       // plan.description = reader.readElementText();
       else if(name == QStringLiteral("DeparturePosition"))
         plan.departureParkingName = reader->readElementText();
@@ -1667,7 +1670,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
             destinationIcao, destinationRunway, star, starTransition;
     float maxAlt = std::numeric_limits<float>::min();
 
-    xmlStream.readUntilElement("PropertyList");
+    xmlStream.readUntilElement(QStringLiteral("PropertyList"));
 
     while(xmlStream.readNextStartElement())
     {
@@ -1766,20 +1769,20 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
             if(position.isValid())
               entry.setPosition(position);
 
-            if(wptype == "runway")
+            if(wptype == QStringLiteral("runway"))
             {
               // Runway entry for airport =================================================
               QString id = wpicao.isEmpty() ? wpident : wpicao;
               entry.setIdent(id);
               plan.append(entry);
             }
-            else if(wptype == "navaid")
+            else if(wptype == QStringLiteral("navaid"))
             {
               // Normal navaid =================================
               entry.setIdent(wpident);
               plan.append(entry);
             }
-            else if(wptype == "basic")
+            else if(wptype == QStringLiteral("basic"))
             {
               // Basic waypoint: only lat/lon tags are meaningfull
               // (might be a custom waypoint, or navaid missing from database)
@@ -1846,10 +1849,10 @@ void FlightplanIO::writeElementPosIf(QXmlStreamWriter& writer, const atools::geo
 {
   if(pos.isValid())
   {
-    writer.writeStartElement("Pos");
-    writer.writeAttribute("Lon", QString::number(pos.getLonX(), 'f', 6));
-    writer.writeAttribute("Lat", QString::number(pos.getLatY(), 'f', 6));
-    writer.writeAttribute("Alt", QString::number(pos.getAltitude(), 'f', 2));
+    writer.writeStartElement(QStringLiteral("Pos"));
+    writer.writeAttribute(QStringLiteral("Lon"), QString::number(pos.getLonX(), 'f', 6));
+    writer.writeAttribute(QStringLiteral("Lat"), QString::number(pos.getLatY(), 'f', 6));
+    writer.writeAttribute(QStringLiteral("Alt"), QString::number(pos.getAltitude(), 'f', 2));
     writer.writeEndElement(); // Pos
   }
   else
@@ -1863,17 +1866,17 @@ void FlightplanIO::writeElementPosIf(QXmlStreamWriter& writer, const atools::geo
 void FlightplanIO::writeWaypointLnm(QXmlStreamWriter& writer, const FlightplanEntry& entry, const QString& elementName) const
 {
   writer.writeStartElement(elementName);
-  writeTextElementIf(writer, "Name", entry.getName());
-  writeTextElementIf(writer, "Ident", entry.getIdent());
-  writeTextElementIf(writer, "Region", entry.getRegion());
+  writeTextElementIf(writer, QStringLiteral("Name"), entry.getName());
+  writeTextElementIf(writer, QStringLiteral("Ident"), entry.getIdent());
+  writeTextElementIf(writer, QStringLiteral("Region"), entry.getRegion());
 
   if(entry.isAirway())
-    writeTextElementIf(writer, "Airway", entry.getAirway());
+    writeTextElementIf(writer, QStringLiteral("Airway"), entry.getAirway());
   else if(entry.isTrack())
-    writeTextElementIf(writer, "Track", entry.getAirway());
+    writeTextElementIf(writer, QStringLiteral("Track"), entry.getAirway());
 
-  writeTextElementIf(writer, "Type", entry.getWaypointTypeAsLnmString());
-  writeTextElementIf(writer, "Comment", entry.getComment());
+  writeTextElementIf(writer, QStringLiteral("Type"), entry.getWaypointTypeAsLnmString());
+  writeTextElementIf(writer, QStringLiteral("Comment"), entry.getComment());
   writeElementPosIf(writer, entry.getPosition());
   writer.writeEndElement(); // elementName
 }
@@ -1909,43 +1912,43 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   writer.setAutoFormatting(true);
   writer.setAutoFormattingIndent(2);
 
-  writer.writeStartDocument("1.0");
-  writer.writeStartElement("LittleNavmap");
+  writer.writeStartDocument(QStringLiteral("1.0"));
+  writer.writeStartElement(QStringLiteral("LittleNavmap"));
 
   // Schema namespace and reference to XSD ======================
-  writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-  writer.writeAttribute("xsi:noNamespaceSchemaLocation", "https://www.littlenavmap.org/schema/lnmpln.xsd");
+  writer.writeAttribute(QStringLiteral("xmlns:xsi"), QStringLiteral("http://www.w3.org/2001/XMLSchema-instance"));
+  writer.writeAttribute(QStringLiteral("xsi:noNamespaceSchemaLocation"), QStringLiteral("https://www.littlenavmap.org/schema/lnmpln.xsd"));
 
-  writer.writeStartElement("Flightplan");
+  writer.writeStartElement(QStringLiteral("Flightplan"));
 
   // Save header and metadata =======================================================
-  writer.writeStartElement("Header");
-  writeTextElementIf(writer, "FlightplanType", Flightplan::flightplanTypeToString(plan.flightplanType));
-  writeTextElementIf(writer, "CruisingAlt", QString::number(atools::roundToInt(plan.cruiseAltitudeFt)));
-  writeTextElementIf(writer, "CruisingAltF", QString::number(plan.cruiseAltitudeFt, 'f', 8));
-  writeTextElementIf(writer, "Comment", plan.comment);
-  writeTextElementIf(writer, "CreationDate", atools::currentIsoWithOffset(false /* milliseconds */));
-  writeTextElementIf(writer, "FileVersion", QStringLiteral("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
-  writeTextElementIf(writer, "ProgramName", QCoreApplication::applicationName());
-  writeTextElementIf(writer, "ProgramVersion", QCoreApplication::applicationVersion());
-  writeTextElementIf(writer, "Documentation", "https://www.littlenavmap.org/lnmpln.html");
+  writer.writeStartElement(QStringLiteral("Header"));
+  writeTextElementIf(writer, QStringLiteral("FlightplanType"), Flightplan::flightplanTypeToString(plan.flightplanType));
+  writeTextElementIf(writer, QStringLiteral("CruisingAlt"), QString::number(atools::roundToInt(plan.cruiseAltitudeFt)));
+  writeTextElementIf(writer, QStringLiteral("CruisingAltF"), QString::number(plan.cruiseAltitudeFt, 'f', 8));
+  writeTextElementIf(writer, QStringLiteral("Comment"), plan.comment);
+  writeTextElementIf(writer, QStringLiteral("CreationDate"), atools::currentIsoWithOffset(false /* milliseconds */));
+  writeTextElementIf(writer, QStringLiteral("FileVersion"), QStringLiteral("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
+  writeTextElementIf(writer, QStringLiteral("ProgramName"), QCoreApplication::applicationName());
+  writeTextElementIf(writer, QStringLiteral("ProgramVersion"), QCoreApplication::applicationVersion());
+  writeTextElementIf(writer, QStringLiteral("Documentation"), QStringLiteral("https://www.littlenavmap.org/lnmpln.html"));
   writer.writeEndElement(); // Header
 
   // Nav and sim metadata =======================================================
   QString cycle = plan.properties.value(SIMDATA_CYCLE);
   QString source = plan.properties.value(SIMDATA);
-  writer.writeStartElement("SimData");
+  writer.writeStartElement(QStringLiteral("SimData"));
   if(!cycle.isEmpty())
-    writer.writeAttribute("Cycle", plan.properties.value(SIMDATA_CYCLE));
+    writer.writeAttribute(QStringLiteral("Cycle"), plan.properties.value(SIMDATA_CYCLE));
   if(!source.isEmpty())
     writer.writeCharacters(source);
   writer.writeEndElement(); // SimData
 
   cycle = plan.properties.value(NAVDATA_CYCLE);
   source = plan.properties.value(NAVDATA);
-  writer.writeStartElement("NavData");
+  writer.writeStartElement(QStringLiteral("NavData"));
   if(!cycle.isEmpty())
-    writer.writeAttribute("Cycle", plan.properties.value(NAVDATA_CYCLE));
+    writer.writeAttribute(QStringLiteral("Cycle"), plan.properties.value(NAVDATA_CYCLE));
   if(!source.isEmpty())
     writer.writeCharacters(source);
   writer.writeEndElement(); // NavData
@@ -1954,22 +1957,22 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   if(!plan.properties.value(AIRCRAFT_PERF_FILE).isEmpty() || !plan.properties.value(AIRCRAFT_PERF_TYPE).isEmpty() ||
      !plan.properties.value(AIRCRAFT_PERF_NAME).isEmpty())
   {
-    writer.writeStartElement("AircraftPerformance");
-    writeTextElementIf(writer, "FilePath", QFileInfo(plan.properties.value(AIRCRAFT_PERF_FILE)).fileName());
-    writeTextElementIf(writer, "Type", plan.properties.value(AIRCRAFT_PERF_TYPE));
-    writeTextElementIf(writer, "Name", plan.properties.value(AIRCRAFT_PERF_NAME));
+    writer.writeStartElement(QStringLiteral("AircraftPerformance"));
+    writeTextElementIf(writer, QStringLiteral("FilePath"), QFileInfo(plan.properties.value(AIRCRAFT_PERF_FILE)).fileName());
+    writeTextElementIf(writer, QStringLiteral("Type"), plan.properties.value(AIRCRAFT_PERF_TYPE));
+    writeTextElementIf(writer, QStringLiteral("Name"), plan.properties.value(AIRCRAFT_PERF_NAME));
     writer.writeEndElement(); // AircraftPerformance
   }
 
   // Departure name and position =======================================================
   if(!plan.departureParkingName.isEmpty())
   {
-    writer.writeStartElement("Departure");
+    writer.writeStartElement(QStringLiteral("Departure"));
     writeElementPosIf(writer, plan.departureParkingPos);
-    writeTextElementIf(writer, "Start", plan.departureParkingName);
-    writeTextElementIf(writer, "Type", plan.getDepartureParkingTypeStr());
+    writeTextElementIf(writer, QStringLiteral("Start"), plan.departureParkingName);
+    writeTextElementIf(writer, QStringLiteral("Type"), plan.getDepartureParkingTypeStr());
     if(plan.departureParkingHeading < INVALID_HEADING)
-      writeTextElementIf(writer, "Heading", QString::number(plan.departureParkingHeading));
+      writeTextElementIf(writer, QStringLiteral("Heading"), QString::number(plan.departureParkingHeading));
     writer.writeEndElement(); // Departure
   }
 
@@ -1977,44 +1980,44 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   if(!plan.properties.value(SID).isEmpty() || !plan.properties.value(STAR).isEmpty() ||
      !plan.properties.value(APPROACH).isEmpty() || !plan.properties.value(DEPARTURE_CUSTOM_DISTANCE).isEmpty())
   {
-    writer.writeStartElement("Procedures");
+    writer.writeStartElement(QStringLiteral("Procedures"));
     if(!plan.properties.value(SID).isEmpty() || !plan.properties.value(DEPARTURE_CUSTOM_DISTANCE).isEmpty())
     {
-      writer.writeStartElement("SID");
-      writeTextElementIf(writer, "Name", plan.properties.value(SID));
-      writeTextElementIf(writer, "Runway", plan.properties.value(SID_RW));
-      writeTextElementIf(writer, "Transition", plan.properties.value(SID_TRANS));
-      writeTextElementIf(writer, "Type", plan.properties.value(SID_TYPE));
-      writeTextElementIf(writer, "CustomDistance", plan.properties.value(DEPARTURE_CUSTOM_DISTANCE));
+      writer.writeStartElement(QStringLiteral("SID"));
+      writeTextElementIf(writer, QStringLiteral("Name"), plan.properties.value(SID));
+      writeTextElementIf(writer, QStringLiteral("Runway"), plan.properties.value(SID_RW));
+      writeTextElementIf(writer, QStringLiteral("Transition"), plan.properties.value(SID_TRANS));
+      writeTextElementIf(writer, QStringLiteral("Type"), plan.properties.value(SID_TYPE));
+      writeTextElementIf(writer, QStringLiteral("CustomDistance"), plan.properties.value(DEPARTURE_CUSTOM_DISTANCE));
       writer.writeEndElement(); // SID
     }
 
     if(!plan.properties.value(STAR).isEmpty())
     {
-      writer.writeStartElement("STAR");
-      writeTextElementIf(writer, "Name", plan.properties.value(STAR));
-      writeTextElementIf(writer, "Runway", plan.properties.value(STAR_RW));
-      writeTextElementIf(writer, "Transition", plan.properties.value(STAR_TRANS));
+      writer.writeStartElement(QStringLiteral("STAR"));
+      writeTextElementIf(writer, QStringLiteral("Name"), plan.properties.value(STAR));
+      writeTextElementIf(writer, QStringLiteral("Runway"), plan.properties.value(STAR_RW));
+      writeTextElementIf(writer, QStringLiteral("Transition"), plan.properties.value(STAR_TRANS));
       writer.writeEndElement(); // STAR
     }
 
     if(!plan.properties.value(APPROACH).isEmpty())
     {
-      writer.writeStartElement("Approach");
-      writeTextElementIf(writer, "Name", plan.properties.value(APPROACH));
-      writeTextElementIf(writer, "ARINC", plan.properties.value(APPROACH_ARINC));
-      writeTextElementIf(writer, "Runway", plan.properties.value(APPROACH_RW));
-      writeTextElementIf(writer, "Type", plan.properties.value(APPROACH_TYPE));
-      writeTextElementIf(writer, "Suffix", plan.properties.value(APPROACH_SUFFIX));
+      writer.writeStartElement(QStringLiteral("Approach"));
+      writeTextElementIf(writer, QStringLiteral("Name"), plan.properties.value(APPROACH));
+      writeTextElementIf(writer, QStringLiteral("ARINC"), plan.properties.value(APPROACH_ARINC));
+      writeTextElementIf(writer, QStringLiteral("Runway"), plan.properties.value(APPROACH_RW));
+      writeTextElementIf(writer, QStringLiteral("Type"), plan.properties.value(APPROACH_TYPE));
+      writeTextElementIf(writer, QStringLiteral("Suffix"), plan.properties.value(APPROACH_SUFFIX));
 
       // Transition =============================================
-      writeTextElementIf(writer, "Transition", plan.properties.value(TRANSITION));
-      writeTextElementIf(writer, "TransitionType", plan.properties.value(TRANSITION_TYPE));
+      writeTextElementIf(writer, QStringLiteral("Transition"), plan.properties.value(TRANSITION));
+      writeTextElementIf(writer, QStringLiteral("TransitionType"), plan.properties.value(TRANSITION_TYPE));
 
       // Custom approach data =============================================
-      writeTextElementIf(writer, "CustomDistance", plan.properties.value(APPROACH_CUSTOM_DISTANCE));
-      writeTextElementIf(writer, "CustomAltitude", plan.properties.value(APPROACH_CUSTOM_ALTITUDE));
-      writeTextElementIf(writer, "CustomOffsetAngle", plan.properties.value(APPROACH_CUSTOM_OFFSET));
+      writeTextElementIf(writer, QStringLiteral("CustomDistance"), plan.properties.value(APPROACH_CUSTOM_DISTANCE));
+      writeTextElementIf(writer, QStringLiteral("CustomAltitude"), plan.properties.value(APPROACH_CUSTOM_ALTITUDE));
+      writeTextElementIf(writer, QStringLiteral("CustomOffsetAngle"), plan.properties.value(APPROACH_CUSTOM_OFFSET));
       writer.writeEndElement(); // Approach
     }
     writer.writeEndElement(); // Procedures
@@ -2025,24 +2028,24 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   const QList<const FlightplanEntry *> alternates = plan.getAlternates();
   if(!alternates.isEmpty())
   {
-    writer.writeStartElement("Alternates");
+    writer.writeStartElement(QStringLiteral("Alternates"));
 
     if(!alternates.isEmpty())
     {
       // Write alternates with full information
       for(const FlightplanEntry *entry : alternates)
-        writeWaypointLnm(writer, *entry, "Alternate");
+        writeWaypointLnm(writer, *entry, QStringLiteral("Alternate"));
     }
     writer.writeEndElement(); // Alternates
   }
 
   // Waypoints =======================================================
-  writer.writeStartElement("Waypoints");
+  writer.writeStartElement(QStringLiteral("Waypoints"));
   for(const FlightplanEntry& entry : plan)
   {
     // Write all as waypoints except procedures and alternates
     if(!entry.isNoSave())
-      writeWaypointLnm(writer, entry, "Waypoint");
+      writeWaypointLnm(writer, entry, QStringLiteral("Waypoint"));
   }
   writer.writeEndElement(); // Waypoints
 
@@ -2099,43 +2102,44 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   writer.setAutoFormatting(true);
   writer.setAutoFormattingIndent(4);
 
-  writer.writeStartDocument("1.0");
-  writer.writeStartElement("SimBase.Document");
+  writer.writeStartDocument(QStringLiteral("1.0"));
+  writer.writeStartElement(QStringLiteral("SimBase.Document"));
   if(!msfs24)
   {
-    writer.writeAttribute("Type", "AceXML");
-    writer.writeAttribute("version", "1,0");
-    writer.writeTextElement("Descr", "AceXML Document");
+    writer.writeAttribute(QStringLiteral("Type"), QStringLiteral("AceXML"));
+    writer.writeAttribute(QStringLiteral("version"), QStringLiteral("1,0"));
+    writer.writeTextElement(QStringLiteral("Descr"), QStringLiteral("AceXML Document"));
   }
 
-  writer.writeStartElement("FlightPlan.FlightPlan");
+  writer.writeStartElement(QStringLiteral("FlightPlan.FlightPlan"));
 
   if(!msfs24)
   {
     // FSX, P3D and MSFS 2020 ===========================================================================
-    writer.writeTextElement("Title", plan.getTitle());
-    writer.writeTextElement("FPType", Flightplan::flightplanTypeToString(plan.flightplanType));
-    writer.writeTextElement("RouteType", Flightplan::routeTypeToString(plan.getRouteType()));
-    writer.writeTextElement("CruisingAlt", QString::number(atools::roundToInt(plan.cruiseAltitudeFt)));
-    writer.writeTextElement("DepartureID", plan.departureIdent);
+    writer.writeTextElement(QStringLiteral("Title"), plan.getTitle());
+    writer.writeTextElement(QStringLiteral("FPType"), Flightplan::flightplanTypeToString(plan.flightplanType));
+    writer.writeTextElement(QStringLiteral("RouteType"), Flightplan::routeTypeToString(plan.getRouteType()));
+    writer.writeTextElement(QStringLiteral("CruisingAlt"), QString::number(atools::roundToInt(plan.cruiseAltitudeFt)));
+    writer.writeTextElement(QStringLiteral("DepartureID"), plan.departureIdent);
     // Use parking position
-    writer.writeTextElement("DepartureLLA", plan.getDepartureParkingPosition().isValid() ?
+    writer.writeTextElement(QStringLiteral("DepartureLLA"), plan.getDepartureParkingPosition().isValid() ?
                             plan.getDepartureParkingPosition().toLongString(starDeg) : QStringLiteral());
-    writer.writeTextElement("DestinationID", plan.destinationIdent);
-    writer.writeTextElement("DestinationLLA", plan.destinationPos.isValid() ? plan.destinationPos.toLongString(starDeg) : QStringLiteral());
-    writer.writeTextElement("Descr", plan.getDescr());
+    writer.writeTextElement(QStringLiteral("DestinationID"), plan.destinationIdent);
+    writer.writeTextElement(QStringLiteral("DestinationLLA"),
+                            plan.destinationPos.isValid() ? plan.destinationPos.toLongString(starDeg) : QStringLiteral());
+    writer.writeTextElement(QStringLiteral("Descr"), plan.getDescr());
   }
   else
   {
     // MSFS 2024 ===========================================================================
-    writer.writeTextElement("DepartureID", plan.departureIdent);
-    writer.writeTextElement("DestinationID", plan.destinationIdent);
-    writer.writeTextElement("Title", plan.departureIdent % " - " % plan.destinationIdent);
-    writer.writeTextElement("Descr", QStringLiteral("Flight from %1 to %2 created by %3 %4").
+    writer.writeTextElement(QStringLiteral("DepartureID"), plan.departureIdent);
+    writer.writeTextElement(QStringLiteral("DestinationID"), plan.destinationIdent);
+    writer.writeTextElement(QStringLiteral("Title"), plan.departureIdent % QStringLiteral(" - ") % plan.destinationIdent);
+    writer.writeTextElement(QStringLiteral("Descr"), QStringLiteral("Flight from %1 to %2 created by %3 %4").
                             arg(plan.departureIdent).arg(plan.destinationIdent).
                             arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion()));
-    writer.writeTextElement("FPType", Flightplan::flightplanTypeToString(plan.flightplanType));
-    writer.writeTextElement("CruisingAlt", QString::number(plan.cruiseAltitudeFt, 'f', 3));
+    writer.writeTextElement(QStringLiteral("FPType"), Flightplan::flightplanTypeToString(plan.flightplanType));
+    writer.writeTextElement(QStringLiteral("CruisingAlt"), QString::number(plan.cruiseAltitudeFt, 'f', 3));
   }
 
   if(!msfs24)
@@ -2165,22 +2169,23 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       parking = plan.departureParkingName;
 
     if(!parking.isEmpty())
-      writer.writeTextElement("DeparturePosition", parking);
+      writer.writeTextElement(QStringLiteral("DeparturePosition"), parking);
 
-    writer.writeTextElement("DepartureName", atools::normalizeStr(plan.departNameOrIdent()));
-    writer.writeTextElement("DestinationName", atools::normalizeStr(plan.destNameOrIdent()));
+    writer.writeTextElement(QStringLiteral("DepartureName"), atools::normalizeStr(plan.departNameOrIdent()));
+    writer.writeTextElement(QStringLiteral("DestinationName"), atools::normalizeStr(plan.destNameOrIdent()));
   }
 
   // Write app version exactly since add-ons can blow up on this
-  writer.writeStartElement("AppVersion");
-  writer.writeTextElement("AppVersionMajor", msfs24 ? "12" : (msfs || pms50 ? "11" : "10"));
+  writer.writeStartElement(QStringLiteral("AppVersion"));
+  writer.writeTextElement(QStringLiteral("AppVersionMajor"),
+                          msfs24 ? QStringLiteral("12") : (msfs || pms50 ? QStringLiteral("11") : QStringLiteral("10")));
   if(msfs24)
   {
-    writer.writeTextElement("AppVersionMinor", "1");
-    writer.writeTextElement("AppVersionBuild", "282174");
+    writer.writeTextElement(QStringLiteral("AppVersionMinor"), QStringLiteral("1"));
+    writer.writeTextElement(QStringLiteral("AppVersionBuild"), QStringLiteral("282174"));
   }
   else
-    writer.writeTextElement("AppVersionBuild", msfs || pms50 ? "282174" : "61472");
+    writer.writeTextElement(QStringLiteral("AppVersionBuild"), msfs || pms50 ? QStringLiteral("282174") : QStringLiteral("61472"));
   writer.writeEndElement(); // AppVersion
 
   // MSFS 2024 ================================
@@ -2192,11 +2197,11 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   // </DepartureDetails>
   if(msfs24 && !properties.value(pln::SID).isEmpty())
   {
-    writer.writeStartElement("DepartureDetails");
-    writeTextElementIf(writer, "RunwayNumberFP", util::runwayNumber(properties.value(pln::SID_RW)));
-    writeTextElementIf(writer, "RunwayDesignatorFP", util::runwayDesignator(properties.value(pln::SID_RW)));
-    writeTextElementIf(writer, "DepartureFP", properties.value(pln::SID));
-    writeTextElementIf(writer, "TransitionFP", properties.value(pln::SID_TRANS));
+    writer.writeStartElement(QStringLiteral("DepartureDetails"));
+    writeTextElementIf(writer, QStringLiteral("RunwayNumberFP"), util::runwayNumber(properties.value(pln::SID_RW)));
+    writeTextElementIf(writer, QStringLiteral("RunwayDesignatorFP"), util::runwayDesignator(properties.value(pln::SID_RW)));
+    writeTextElementIf(writer, QStringLiteral("DepartureFP"), properties.value(pln::SID));
+    writeTextElementIf(writer, QStringLiteral("TransitionFP"), properties.value(pln::SID_TRANS));
     writer.writeEndElement(); // DepartureDetails
   }
 
@@ -2219,7 +2224,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     // <ICAOIdent>JOT</ICAOIdent>
     // </ICAO>
     // </ATCWaypoint>
-    writer.writeStartElement("ATCWaypoint");
+    writer.writeStartElement(QStringLiteral("ATCWaypoint"));
 
     // Trim to max allowed length for FSX/P3D and remove any special chars otherwise FSX/P3D will ignore the plan
     QString ident = (msfs || msfs24) ? atools::fs::util::adjustMsfsUserWpName(entry.getIdent(), userWpLength, &wpNum) :
@@ -2228,15 +2233,15 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     bool anyProcedureName = !entry.getSid().isEmpty() || !entry.getStar().isEmpty() || !entry.getApproach().isEmpty();
 
     // if(pms50 && entry.getWaypointType() == atools::fs::pln::entry::USER && !anyProcedureName)
-    // writer.writeAttribute("id", atools::fs::util::toDegMinFormat(entry.getPosition()));
+    // writer.writeAttribute(QStringLiteral("id"), atools::fs::util::toDegMinFormat(entry.getPosition()));
     // else
     if(!msfs24 || userWaypoint)
-      writer.writeAttribute("id", ident);
+      writer.writeAttribute(QStringLiteral("id"), ident);
 
-    writer.writeTextElement("ATCWaypointType", entry.getWaypointTypeAsFsxString());
+    writer.writeTextElement(QStringLiteral("ATCWaypointType"), entry.getWaypointTypeAsFsxString());
 
     if(!entry.getPosition().isValid())
-      throw atools::Exception("Invalid position in flightplan for id " % entry.getIdent());
+      throw atools::Exception(QStringLiteral("Invalid position in flightplan for id ") % entry.getIdent());
 
     // MSFS 2024
     // <ATCWaypoint>
@@ -2248,54 +2253,54 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     // </ATCWaypoint>
     if(msfs24 && userWaypoint)
       // Coordinates for MSFS 2024 userpoints only ================
-      writer.writeTextElement("WorldPosition", entry.getPosition().toLongString(false /* starDeg */));
+      writer.writeTextElement(QStringLiteral("WorldPosition"), entry.getPosition().toLongString(false /* starDeg */));
     else
-      writer.writeTextElement("WorldPosition", entry.getPosition().toLongString(starDeg));
+      writer.writeTextElement(QStringLiteral("WorldPosition"), entry.getPosition().toLongString(starDeg));
 
-    writeTextElementIf(writer, "ATCAirway", entry.getAirway());
+    writeTextElementIf(writer, QStringLiteral("ATCAirway"), entry.getAirway());
 
     // MSFS procedure fields =================================================
     if((msfs || pms50) && index > 0)
     {
       // Write additional procedure information for MSFS but not for departure airport
-      writeTextElementIf(writer, "DepartureFP", entry.getSid());
-      writeTextElementIf(writer, "ArrivalFP", entry.getStar());
-      writeTextElementIf(writer, "SuffixFP", entry.getApproachSuffix());
-      writeTextElementIf(writer, "ApproachTypeFP", approachToMsfs(entry.getApproach()));
-      writeTextElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
-      writeTextElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
+      writeTextElementIf(writer, QStringLiteral("DepartureFP"), entry.getSid());
+      writeTextElementIf(writer, QStringLiteral("ArrivalFP"), entry.getStar());
+      writeTextElementIf(writer, QStringLiteral("SuffixFP"), entry.getApproachSuffix());
+      writeTextElementIf(writer, QStringLiteral("ApproachTypeFP"), approachToMsfs(entry.getApproach()));
+      writeTextElementIf(writer, QStringLiteral("RunwayNumberFP"), entry.getRunwayNumber());
+      writeTextElementIf(writer, QStringLiteral("RunwayDesignatorFP"), entry.getRunwayDesignator());
     }
 
     // ICAO elements =================================================
     if(pms50 && entry.getWaypointType() == atools::fs::pln::entry::USER && !anyProcedureName)
     {
       // Write PMS50 user waypoint
-      writer.writeStartElement("ICAO");
-      // writeTextElementIf(writer, "ICAOIdent", atools::fs::util::toDegMinFormat(entry.getPosition()));
-      writeTextElementIf(writer, "ICAOIdent", entry.getIdent());
+      writer.writeStartElement(QStringLiteral("ICAO"));
+      // writeTextElementIf(writer, QStringLiteral("ICAOIdent"), atools::fs::util::toDegMinFormat(entry.getPosition()));
+      writeTextElementIf(writer, QStringLiteral("ICAOIdent"), entry.getIdent());
       writer.writeEndElement(); // ICAO
     }
     else if(msfs || msfs24 || pms50)
     {
       // Write always for MSFS ==================
-      writer.writeStartElement("ICAO");
+      writer.writeStartElement(QStringLiteral("ICAO"));
 
       if(msfs24)
       {
         if(!userWaypoint)
-          writeTextElementIf(writer, "ICAORegion", entry.getRegion());
-        writeTextElementIf(writer, "ICAOIdent", ident);
+          writeTextElementIf(writer, QStringLiteral("ICAORegion"), entry.getRegion());
+        writeTextElementIf(writer, QStringLiteral("ICAOIdent"), ident);
         if(!userWaypoint)
-          writeTextElementIf(writer, "ICAOAirport", entry.getAirport()); // Write airport for waypoint if available
+          writeTextElementIf(writer, QStringLiteral("ICAOAirport"), entry.getAirport()); // Write airport for waypoint if available
       }
       else
       {
         if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
           // Avoid region since it is not reliable for airports in MSFS and
           // the sim garbles the flight plan when loading
-          writeTextElementIf(writer, "ICAORegion", entry.getRegion());
-        writeTextElementIf(writer, "ICAOIdent", ident);
-        writeTextElementIf(writer, "ICAOAirport", entry.getAirport()); // Write airport for waypoint if available
+          writeTextElementIf(writer, QStringLiteral("ICAORegion"), entry.getRegion());
+        writeTextElementIf(writer, QStringLiteral("ICAOIdent"), ident);
+        writeTextElementIf(writer, QStringLiteral("ICAOAirport"), entry.getAirport()); // Write airport for waypoint if available
       }
 
       writer.writeEndElement(); // ICAO
@@ -2306,23 +2311,23 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       if(entry.getWaypointType() != atools::fs::pln::entry::USER)
       {
         // Write for FSX/P3D only if values are valid ==================
-        writer.writeStartElement("ICAO");
-        writeTextElementIf(writer, "ICAORegion", entry.getRegion());
-        writeTextElementIf(writer, "ICAOIdent", ident);
+        writer.writeStartElement(QStringLiteral("ICAO"));
+        writeTextElementIf(writer, QStringLiteral("ICAORegion"), entry.getRegion());
+        writeTextElementIf(writer, QStringLiteral("ICAOIdent"), ident);
         writer.writeEndElement(); // ICAO
       }
     }
     else if(!entry.getIdent().isEmpty()) // FSX and P3D and simavionics
     {
       // Write for FSX/P3D only if values are valid ==================
-      writer.writeStartElement("ICAO");
+      writer.writeStartElement(QStringLiteral("ICAO"));
 
       if(entry.getWaypointType() != atools::fs::pln::entry::USER && entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
         // No region for user waypoints and airports
-        writeTextElementIf(writer, "ICAORegion", entry.getRegion());
+        writeTextElementIf(writer, QStringLiteral("ICAORegion"), entry.getRegion());
 
-      writeTextElementIf(writer, "ICAOIdent", ident);
-      writeTextElementIf(writer, "ICAOAirport", entry.getAirport()); // Write airport for waypoint if available
+      writeTextElementIf(writer, QStringLiteral("ICAOIdent"), ident);
+      writeTextElementIf(writer, QStringLiteral("ICAOAirport"), entry.getAirport()); // Write airport for waypoint if available
       writer.writeEndElement(); // ICAO
     }
 
@@ -2340,11 +2345,11 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     // </ArrivalDetails>
     if(!properties.value(pln::STAR).isEmpty())
     {
-      writer.writeStartElement("ArrivalDetails");
-      writeTextElementIf(writer, "RunwayNumberFP", util::runwayNumber(properties.value(pln::STAR_RW)));
-      writeTextElementIf(writer, "RunwayDesignatorFP", atools::fs::util::runwayDesignator(properties.value(pln::STAR_RW)));
-      writeTextElementIf(writer, "ArrivalFP", properties.value(pln::STAR));
-      writeTextElementIf(writer, "TransitionFP", properties.value(pln::STAR_TRANS));
+      writer.writeStartElement(QStringLiteral("ArrivalDetails"));
+      writeTextElementIf(writer, QStringLiteral("RunwayNumberFP"), util::runwayNumber(properties.value(pln::STAR_RW)));
+      writeTextElementIf(writer, QStringLiteral("RunwayDesignatorFP"), atools::fs::util::runwayDesignator(properties.value(pln::STAR_RW)));
+      writeTextElementIf(writer, QStringLiteral("ArrivalFP"), properties.value(pln::STAR));
+      writeTextElementIf(writer, QStringLiteral("TransitionFP"), properties.value(pln::STAR_TRANS));
       writer.writeEndElement(); // ArrivalDetails
     }
 
@@ -2356,12 +2361,12 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     // </ApproachDetails>
     if(!properties.value(pln::APPROACH_TYPE).isEmpty())
     {
-      writer.writeStartElement("ApproachDetails");
-      writeTextElementIf(writer, "ApproachTypeFP", approachToMsfs(properties.value(pln::APPROACH_TYPE)));
-      writeTextElementIf(writer, "RunwayNumberFP", util::runwayNumber(properties.value(pln::APPROACH_RW)));
-      writeTextElementIf(writer, "RunwayDesignatorFP", util::runwayDesignator(properties.value(pln::APPROACH_RW)));
-      writeTextElementIf(writer, "SuffixFP", properties.value(pln::APPROACH_SUFFIX));
-      writeTextElementIf(writer, "TransitionFP", properties.value(pln::TRANSITION));
+      writer.writeStartElement(QStringLiteral("ApproachDetails"));
+      writeTextElementIf(writer, QStringLiteral("ApproachTypeFP"), approachToMsfs(properties.value(pln::APPROACH_TYPE)));
+      writeTextElementIf(writer, QStringLiteral("RunwayNumberFP"), util::runwayNumber(properties.value(pln::APPROACH_RW)));
+      writeTextElementIf(writer, QStringLiteral("RunwayDesignatorFP"), util::runwayDesignator(properties.value(pln::APPROACH_RW)));
+      writeTextElementIf(writer, QStringLiteral("SuffixFP"), properties.value(pln::APPROACH_SUFFIX));
+      writeTextElementIf(writer, QStringLiteral("TransitionFP"), properties.value(pln::TRANSITION));
       writer.writeEndElement(); // ApproachDetails
     }
   }
@@ -2371,15 +2376,15 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   writer.writeEndDocument();
 
   // Fixed Qt's retarded change where they think encoding is not needed in a string
-  xmlString.replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+  xmlString.replace(QStringLiteral("<?xml version=\"1.0\"?>"), QStringLiteral("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
 
 #ifndef Q_OS_WIN32
   // Convert EOL always to Windows (0x0a -> 0x0d0a)
-  xmlString.replace("\n", "\r\n");
+  xmlString.replace(QStringLiteral("\n"), QStringLiteral("\r\n"));
 #endif
 
   // Breaks XML standard but gives better compatibility for third party applications
-  xmlString.replace("&quot;", "\"");
+  xmlString.replace(QStringLiteral("&quot;"), QStringLiteral("\""));
 
   // Write XML to file ===================
   QFile xmlFile(filename);
@@ -2396,10 +2401,10 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
 
 QString FlightplanIO::approachToMsfs(const QString& type) const
 {
-  if(type == "LOC")
-    return "LOCALIZER";
-  else if(type == "LOCB")
-    return "LOCALIZER_BACK_COURSE";
+  if(type == QStringLiteral("LOC"))
+    return QStringLiteral("LOCALIZER");
+  else if(type == QStringLiteral("LOCB"))
+    return QStringLiteral("LOCALIZER_BACK_COURSE");
   else
     // GPS (not saved by MSFS), VOR, VORDME, RNAV, NDBDME, NDB, ILS
     // TACAN not supported
@@ -2408,10 +2413,10 @@ QString FlightplanIO::approachToMsfs(const QString& type) const
 
 QString FlightplanIO::msfsToApproachType(const QString& type) const
 {
-  if(type == "LOCALIZER")
-    return "LOC";
-  else if(type == "LOCALIZER_BACK_COURSE")
-    return "LOCB";
+  if(type == QStringLiteral("LOCALIZER"))
+    return QStringLiteral("LOC");
+  else if(type == QStringLiteral("LOCALIZER_BACK_COURSE"))
+    return QStringLiteral("LOCB");
   else
     return type;
 }
@@ -2478,41 +2483,41 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
     writer.setAutoFormatting(true);
     writer.setAutoFormattingIndent(2);
 
-    writer.writeStartDocument("1.0");
-    writer.writeStartElement("PropertyList");
-    writePropertyInt(writer, "version", 2);
+    writer.writeStartDocument(QStringLiteral("1.0"));
+    writer.writeStartElement(QStringLiteral("PropertyList"));
+    writePropertyInt(writer, QStringLiteral("version"), 2);
 
     // <source type="string">https://flightplandatabase.com/plan/1551256</source>
-    writePropertyStr(writer, "source", atools::programFileInfo());
+    writePropertyStr(writer, QStringLiteral("source"), atools::programFileInfo());
 
-    writer.writeStartElement("departure");
-    writePropertyStr(writer, "airport", plan.getDepartureIdent());
+    writer.writeStartElement(QStringLiteral("departure"));
+    writePropertyStr(writer, QStringLiteral("airport"), plan.getDepartureIdent());
 
     // Writer departure procedure information ===============================================================
     if(!plan.properties.value(SID_RW).isEmpty())
-      writePropertyStr(writer, "runway", plan.properties.value(SID_RW));
+      writePropertyStr(writer, QStringLiteral("runway"), plan.properties.value(SID_RW));
     if(!plan.properties.value(SID).isEmpty())
-      writePropertyStr(writer, "sid", plan.properties.value(SID));
+      writePropertyStr(writer, QStringLiteral("sid"), plan.properties.value(SID));
     if(!plan.properties.value(SID_TRANS).isEmpty())
-      writePropertyStr(writer, "transition", plan.properties.value(SID_TRANS));
+      writePropertyStr(writer, QStringLiteral("transition"), plan.properties.value(SID_TRANS));
 
     writer.writeEndElement(); // departure
 
     // Writer arrival procedure information ===============================================================
-    writer.writeStartElement("destination");
-    writePropertyStr(writer, "airport", plan.getDestinationIdent());
+    writer.writeStartElement(QStringLiteral("destination"));
+    writePropertyStr(writer, QStringLiteral("airport"), plan.getDestinationIdent());
 
     if(!plan.properties.value(STAR_RW).isEmpty())
-      writePropertyStr(writer, "runway", plan.properties.value(STAR_RW));
+      writePropertyStr(writer, QStringLiteral("runway"), plan.properties.value(STAR_RW));
     if(!plan.properties.value(STAR).isEmpty())
-      writePropertyStr(writer, "star", plan.properties.value(STAR));
+      writePropertyStr(writer, QStringLiteral("star"), plan.properties.value(STAR));
     if(!plan.properties.value(STAR_TRANS).isEmpty())
-      writePropertyStr(writer, "transition", plan.properties.value(STAR_TRANS));
+      writePropertyStr(writer, QStringLiteral("transition"), plan.properties.value(STAR_TRANS));
 
     writer.writeEndElement(); // destination
 
     // route ===================================================================================
-    writer.writeStartElement("route");
+    writer.writeStartElement(QStringLiteral("route"));
 
     int index = 0;
     for(int i = 0; i < plan.size(); i++)
@@ -2523,23 +2528,23 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
         // Do not save procedure points
         continue;
 
-      writer.writeStartElement("wp");
-      writer.writeAttribute("n", QString::number(index++));
+      writer.writeStartElement(QStringLiteral("wp"));
+      writer.writeAttribute(QStringLiteral("n"), QString::number(index++));
 
       bool hasProcedure = false;
       if(i == 0)
       {
         // Departure airport ===========================================
         // <departure type="bool">true</departure>
-        writePropertyBool(writer, "departure");
+        writePropertyBool(writer, QStringLiteral("departure"));
         if(!plan.properties.value(SID_RW).isEmpty())
         {
           // <type type="string">runway</type>
           // <ident type="string">07R</ident>
           // <icao type="string">EDDF</icao>
-          writePropertyStr(writer, "type", "runway");
-          writePropertyStr(writer, "ident", plan.properties.value(SID_RW));
-          writePropertyStr(writer, "icao", entry.getIdent());
+          writePropertyStr(writer, QStringLiteral("type"), QStringLiteral("runway"));
+          writePropertyStr(writer, QStringLiteral("ident"), plan.properties.value(SID_RW));
+          writePropertyStr(writer, QStringLiteral("icao"), entry.getIdent());
           hasProcedure = true;
         }
       }
@@ -2547,16 +2552,16 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
       {
         // Destination airport ===========================================
         // <approach type="bool">true</approach>
-        writePropertyBool(writer, "approach");
+        writePropertyBool(writer, QStringLiteral("approach"));
 
         if(!plan.properties.value(STAR_RW).isEmpty())
         {
           // <type type="string">runway</type>
           // <ident type="string">07</ident>
           // <icao type="string">LIRF</icao>
-          writePropertyStr(writer, "type", "runway");
-          writePropertyStr(writer, "ident", plan.properties.value(STAR_RW));
-          writePropertyStr(writer, "icao", entry.getIdent());
+          writePropertyStr(writer, QStringLiteral("type"), QStringLiteral("runway"));
+          writePropertyStr(writer, QStringLiteral("ident"), plan.properties.value(STAR_RW));
+          writePropertyStr(writer, QStringLiteral("icao"), entry.getIdent());
           hasProcedure = true;
         }
       }
@@ -2564,31 +2569,31 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
       if(!hasProcedure)
       {
         if(entry.getWaypointType() == entry::USER)
-          writePropertyStr(writer, "type", "basic");
+          writePropertyStr(writer, QStringLiteral("type"), QStringLiteral("basic"));
         else
-          writePropertyStr(writer, "type", "navaid");
+          writePropertyStr(writer, QStringLiteral("type"), QStringLiteral("navaid"));
       }
 
       if(i > 0 && i < plan.size() - 1)
       {
         // Write altitude except for first and last =====================
         // <alt-restrict type="string">at</alt-restrict>
-        writePropertyStr(writer, "alt-restrict", "at");
+        writePropertyStr(writer, QStringLiteral("alt-restrict"), QStringLiteral("at"));
 
         // <altitude-ft type="double">19100</altitude-ft>
-        writer.writeStartElement("altitude-ft");
-        writer.writeAttribute("type", "double");
+        writer.writeStartElement(QStringLiteral("altitude-ft"));
+        writer.writeAttribute(QStringLiteral("type"), QStringLiteral("double"));
         writer.writeCharacters(QString::number(atools::roundToInt(entry.getPosition().getAltitude())));
         writer.writeEndElement();
       }
 
       if(!hasProcedure)
-        writePropertyStr(writer, "ident", entry.getIdent());
+        writePropertyStr(writer, QStringLiteral("ident"), entry.getIdent());
 
       // <lon type="double">8.541722452</lon>
       // <lat type="double">50.03219323</lat>
-      writePropertyFloat(writer, "lon", entry.getPosition().getLonX());
-      writePropertyFloat(writer, "lat", entry.getPosition().getLatY());
+      writePropertyFloat(writer, QStringLiteral("lon"), entry.getPosition().getLonX());
+      writePropertyFloat(writer, QStringLiteral("lat"), entry.getPosition().getLatY());
 
       writer.writeEndElement(); // wp
     }
@@ -2739,10 +2744,10 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
     // CoRte ==============================================
     stream << "[CoRte]" << Qt::endl;
     stream << "ArptDep=" << pln.departureIdent << Qt::endl;
-    saveFlpKeyValue(stream, pln, pln.departureIdent, "RwyDep", SID_RW);
+    saveFlpKeyValue(stream, pln, pln.departureIdent, QStringLiteral("RwyDep"), SID_RW);
 
     stream << "ArptArr=" << pln.destinationIdent << Qt::endl;
-    saveFlpKeyValue(stream, pln, pln.destinationIdent, "RwyArr", APPROACH_RW);
+    saveFlpKeyValue(stream, pln, pln.destinationIdent, QStringLiteral("RwyArr"), APPROACH_RW);
 
     if(alternateFmt)
     {
@@ -2755,18 +2760,19 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
     }
 
     // Departure - SID ============================================
-    saveFlpKeyValue(stream, pln, QStringLiteral(), "SID", SID);
-    saveFlpKeyValue(stream, pln, QStringLiteral(), alternateFmt ? "SIDEnrTrans" : "SID_Trans", SID_TRANS);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), QStringLiteral("SID"), SID);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), alternateFmt ? QStringLiteral("SIDEnrTrans") : QStringLiteral("SID_Trans"), SID_TRANS);
 
     // Arrival STAR ============================================
-    saveFlpKeyValue(stream, pln, QStringLiteral(), "STAR", STAR);
-    saveFlpKeyValue(stream, pln, QStringLiteral(), alternateFmt ? "EnrSTARTrans" : "STAR_Trans", STAR_TRANS);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), QStringLiteral("STAR"), STAR);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), alternateFmt ? QStringLiteral("EnrSTARTrans") : QStringLiteral("STAR_Trans"),
+                    STAR_TRANS);
     if(alternateFmt)
       stream << "STARApprTrans=" << Qt::endl;
 
     // Arrival approach and transition ============================================
-    saveFlpKeyValue(stream, pln, QStringLiteral(), alternateFmt ? "Appr_Trans" : "APPR_Trans", TRANSITION);
-    saveFlpKeyValue(stream, pln, QStringLiteral(), "RwyArrFinal", APPROACH_ARINC);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), alternateFmt ? QStringLiteral("Appr_Trans") : QStringLiteral("APPR_Trans"), TRANSITION);
+    saveFlpKeyValue(stream, pln, QStringLiteral(), QStringLiteral("RwyArrFinal"), APPROACH_ARINC);
 
     if(alternateFmt)
     {
@@ -3057,7 +3063,7 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& filename, con
       // Wpt=Enroute|39|TAQ|TARQUINIA|VORDME|111.80|LI|42.215056|11.732611|0|L865
       stream << "Wpt=Enroute|" << num << "|" << identOrDegMinFormat(entry) << "|" << entry.getName().toUpper() << "|";
       entry::WaypointType waypointType = entry.getWaypointType();
-      QString frequency("0");
+      QString frequency(QStringLiteral("0"));
 
       switch(waypointType)
       {
@@ -3140,28 +3146,28 @@ void FlightplanIO::saveQwRte(const Flightplan& plan, const QString& filename) co
         // Do not save procedure points
         continue;
 
-      QString frequency("---"), type;
+      QString frequency(QStringLiteral("---")), type;
       entry::WaypointType waypointType = entry.getWaypointType();
       switch(waypointType)
       {
         case atools::fs::pln::entry::WAYPOINT:
         case atools::fs::pln::entry::UNKNOWN:
         case atools::fs::pln::entry::USER:
-          type = "WPT";
+          type = QStringLiteral("WPT");
           break;
 
         case atools::fs::pln::entry::AIRPORT:
-          type = "APT";
+          type = QStringLiteral("APT");
           break;
 
         case atools::fs::pln::entry::VOR:
-          type = "WPT";
+          type = QStringLiteral("WPT");
           if(entry.getFrequency() > 0)
             frequency = QStringLiteral("%1").arg(entry.getFrequency() / 1000., 0, 'f', 2, QChar('0'));
           break;
 
         case atools::fs::pln::entry::NDB:
-          type = "WPT";
+          type = QStringLiteral("WPT");
           if(entry.getFrequency() > 0)
             frequency = QStringLiteral("%1").arg(entry.getFrequency() / 100., 0, 'f', 1, QChar('0'));
           break;
@@ -3266,12 +3272,12 @@ void FlightplanIO::saveTfdi(const Flightplan& plan, const QString& filename, con
     writer.setAutoFormatting(true);
     writer.setAutoFormattingIndent(4);
 
-    writer.writeStartDocument("1.0");
-    writer.writeStartElement("Version1");
-    writer.writeTextElement("Departure", plan.departureIdent);
-    writer.writeTextElement("Arrival", plan.destinationIdent);
-    writer.writeTextElement("CruiseLevel", QString::number(atools::roundToInt(plan.cruiseAltitudeFt)));
-    writer.writeStartElement("Legs");
+    writer.writeStartDocument(QStringLiteral("1.0"));
+    writer.writeStartElement(QStringLiteral("Version1"));
+    writer.writeTextElement(QStringLiteral("Departure"), plan.departureIdent);
+    writer.writeTextElement(QStringLiteral("Arrival"), plan.destinationIdent);
+    writer.writeTextElement(QStringLiteral("CruiseLevel"), QString::number(atools::roundToInt(plan.cruiseAltitudeFt)));
+    writer.writeStartElement(QStringLiteral("Legs"));
 
     int wpIdent = 0;
     for(int i = 1; i < plan.size() - 1; i++)
@@ -3281,42 +3287,42 @@ void FlightplanIO::saveTfdi(const Flightplan& plan, const QString& filename, con
         // Do not save entries like procedure points
         continue;
 
-      writer.writeStartElement("Leg");
+      writer.writeStartElement(QStringLiteral("Leg"));
 
       if(entry.getAirway().isEmpty())
       {
         switch(entry.getWaypointType())
         {
           case atools::fs::pln::entry::AIRPORT:
-            writer.writeAttribute("Type", "Airport");
-            writer.writeAttribute("ICAO", entry.getIdent());
+            writer.writeAttribute(QStringLiteral("Type"), QStringLiteral("Airport"));
+            writer.writeAttribute(QStringLiteral("ICAO"), entry.getIdent());
             break;
           case atools::fs::pln::entry::WAYPOINT:
-            writer.writeAttribute("Type", "Waypoint");
-            writer.writeAttribute("Ident", entry.getIdent());
+            writer.writeAttribute(QStringLiteral("Type"), QStringLiteral("Waypoint"));
+            writer.writeAttribute(QStringLiteral("Ident"), entry.getIdent());
             break;
           case atools::fs::pln::entry::VOR:
           case atools::fs::pln::entry::NDB:
-            writer.writeAttribute("Type", "Navaid");
-            writer.writeAttribute("Ident", entry.getIdent());
+            writer.writeAttribute(QStringLiteral("Type"), QStringLiteral("Navaid"));
+            writer.writeAttribute(QStringLiteral("Ident"), entry.getIdent());
             break;
           case atools::fs::pln::entry::UNKNOWN:
           case atools::fs::pln::entry::USER:
-            writer.writeAttribute("Type", "PilotDefinedWaypoint");
-            writer.writeAttribute("Ident", QStringLiteral("WP%1").arg(wpIdent++));
+            writer.writeAttribute(QStringLiteral("Type"), QStringLiteral("PilotDefinedWaypoint"));
+            writer.writeAttribute(QStringLiteral("Ident"), QStringLiteral("WP%1").arg(wpIdent++));
             break;
         }
-        writer.writeAttribute("Latitude", QString::number(entry.getPosition().getLatY(), 'f', 4));
-        writer.writeAttribute("Longitude", QString::number(entry.getPosition().getLonX(), 'f', 4));
+        writer.writeAttribute(QStringLiteral("Latitude"), QString::number(entry.getPosition().getLatY(), 'f', 4));
+        writer.writeAttribute(QStringLiteral("Longitude"), QString::number(entry.getPosition().getLonX(), 'f', 4));
       }
       else
       {
-        writer.writeAttribute("Type", "AirwayLeg");
-        writer.writeAttribute("Level", jetAirways.at(i) ? "H" : "L");
-        writer.writeAttribute("Wpt2Ident", entry.getIdent());
-        writer.writeAttribute("Wpt2Latitude", QString::number(entry.getPosition().getLatY(), 'f', 4));
-        writer.writeAttribute("Wpt2Longitude", QString::number(entry.getPosition().getLonX(), 'f', 4));
-        writer.writeAttribute("Airway", entry.getAirway());
+        writer.writeAttribute(QStringLiteral("Type"), QStringLiteral("AirwayLeg"));
+        writer.writeAttribute(QStringLiteral("Level"), jetAirways.at(i) ? QStringLiteral("H") : QStringLiteral("L"));
+        writer.writeAttribute(QStringLiteral("Wpt2Ident"), entry.getIdent());
+        writer.writeAttribute(QStringLiteral("Wpt2Latitude"), QString::number(entry.getPosition().getLatY(), 'f', 4));
+        writer.writeAttribute(QStringLiteral("Wpt2Longitude"), QString::number(entry.getPosition().getLonX(), 'f', 4));
+        writer.writeAttribute(QStringLiteral("Airway"), entry.getAirway());
       }
       writer.writeEndElement(); // Leg
     }
@@ -3457,17 +3463,17 @@ void FlightplanIO::saveCivaFms(atools::fs::pln::Flightplan plan, const QString& 
       QString filename;
       if(fileNumber == 0)
         // Omit number for first file
-        filename = fi.path() % QDir::separator() % fi.baseName() % "." % fi.completeSuffix();
+        filename = fi.path() % QDir::separator() % fi.baseName() % QStringLiteral(".") % fi.completeSuffix();
       else
         // Add number for all other files
-        filename = fi.path() % QDir::separator() % fi.baseName() % QString::number(fileNumber) % "." % fi.completeSuffix();
+        filename = fi.path() % QDir::separator() % fi.baseName() % QString::number(fileNumber) % QStringLiteral(".") % fi.completeSuffix();
 
       splitPlan.adjustDepartureAndDestination(true);
       saveFmsInternal(splitPlan, filename, false /* version11Format */, false /* iniBuildsFormat */);
 
       // Clear and add last one for overlap
       splitPlan.clearAll();
-      entry.setIdent("WP1");
+      entry.setIdent(QStringLiteral("WP1"));
       splitPlan.append(entry);
       fileNumber++;
     }
@@ -3525,7 +3531,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       cycle = plan.properties.value(SIMDATA_CYCLE);
     if(cycle.isEmpty())
       // Fake a cycle by using current year and month
-      cycle = QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyMM");
+      cycle = QLocale(QLocale::C).toString(QDateTime::currentDateTime(), QStringLiteral("yyMM"));
 
     if(version11Format)
     {
@@ -3655,7 +3661,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
           stream << atools::fs::util::toDegMinFormat(entry.getPosition()) << " ";
         else
           // Replace spaces
-          stream << ident.replace(SPACE_REGEXP, "_") << " ";
+          stream << ident.replace(SPACE_REGEXP, QStringLiteral("_")) << " ";
 
         // Disabled user waypoints as coordinates
         // +12.345_+009.459 Correct for a waypoint at 12.345°/0.459°.
@@ -3678,11 +3684,11 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       if(version11Format || iniBuildsFormat)
       {
         if(index == 0)
-          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADEP " : "DEP ");
+          stream << (entry.getWaypointType() == entry::AIRPORT ? QStringLiteral("ADEP ") : QStringLiteral("DEP "));
         else if(index == numEntries - 1)
-          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADES " : "DES ");
+          stream << (entry.getWaypointType() == entry::AIRPORT ? QStringLiteral("ADES ") : QStringLiteral("DES "));
         else
-          stream << (entry.getAirway().isEmpty() ? "DRCT " : entry.getAirway() + " ");
+          stream << (entry.getAirway().isEmpty() ? QStringLiteral("DRCT ") : entry.getAirway() + QStringLiteral(" "));
       }
 
       // Coordinates for all formats ================
@@ -3708,7 +3714,7 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
   int userWaypointNum = 1;
 
   const int NO_DATA_NUM = -1000000;
-  const QString NO_DATA_STR("-");
+  const QString NO_DATA_STR(QStringLiteral("-"));
   enum
   {
     RTE_AIRPORT = 1, RTE_OTHER = 2, RTE_WAYPOINT = 5
@@ -3731,7 +3737,7 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
       arg(QCoreApplication::applicationVersion()).
       arg(atools::gitRevision()).
       arg(atools::currentIsoWithOffset(false /* milliseconds */)).
-      replace("-", " ") << Qt::endl << Qt::endl;
+      replace(QStringLiteral("-"), QStringLiteral(" ")) << Qt::endl << Qt::endl;
 
     stream << numEntriesSave(plan) << Qt::endl << Qt::endl;
 
@@ -3766,7 +3772,7 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
       }
 
       QString nextAirway = plan.at(i + 1).getAirway();
-      stream << (nextAirway.isEmpty() ? "DIRECT" : nextAirway) << Qt::endl;
+      stream << (nextAirway.isEmpty() ? QStringLiteral("DIRECT") : nextAirway) << Qt::endl;
 
       posToRte(stream, entry.getPosition(), false);
       stream << Qt::endl << 0 << Qt::endl << 0 << Qt::endl << 0 << Qt::endl << Qt::endl; // Restriction fields
@@ -3784,7 +3790,7 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
 
 #ifndef Q_OS_WIN32
     // Convert EOL always to Windows (0x0a -> 0x0d0a)
-    rteString.replace("\n", "\r\n");
+    rteString.replace(QStringLiteral("\n"), QStringLiteral("\r\n"));
 #endif
 
     QByteArray utf8 = rteString.toUtf8();
@@ -3848,7 +3854,7 @@ void FlightplanIO::saveFpr(const atools::fs::pln::Flightplan& plan, const QStrin
       leg->legHash = hashSeed + i;
       leg->legSegType = fpr::NavSystem_LEG_SEGMENT_FP_CRS;
 
-      writeBinaryString(leg->legType, "TF", sizeof(leg->legType));
+      writeBinaryString(leg->legType, QStringLiteral("TF"), sizeof(leg->legType));
       writeBinaryString(leg->transition, QStringLiteral(), sizeof(leg->transition));
       writeBinaryString(leg->waypoint.designator, entry.getIdent(), sizeof(leg->waypoint.designator));
       writeBinaryString(leg->waypoint.fullName, entry.getName(), sizeof(leg->waypoint.fullName));
@@ -3970,15 +3976,15 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename) 
       // 51.330874 000.034811
       QString latY = QStringLiteral("%1").arg(std::abs(entry.getPosition().getLatY()), 9, 'f', 6);
       if(entry.getPosition().getLatY() < 0.f)
-        latY.prepend("-");
+        latY.prepend(QStringLiteral("-"));
       else
-        latY.prepend(" ");
+        latY.prepend(QStringLiteral(" "));
 
       QString lonX = QStringLiteral("%1").arg(std::abs(entry.getPosition().getLonX()), 10, 'f', 6, '0');
       if(entry.getPosition().getLonX() < 0.f)
-        lonX.prepend("-");
+        lonX.prepend(QStringLiteral("-"));
       else
-        lonX.prepend(" ");
+        lonX.prepend(QStringLiteral(" "));
 
       stream << identOrDegMinFormat(entry) << ",0,";
 
@@ -3993,7 +3999,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename) 
 
 #ifndef Q_OS_WIN32
     // Convert EOL always to Windows (0x0a -> 0x0d0a)
-    textString.replace("\n", "\r\n");
+    textString.replace(QStringLiteral("\n"), QStringLiteral("\r\n"));
 #endif
 
     QByteArray utf8 = textString.toUtf8();
@@ -4010,13 +4016,13 @@ QString FlightplanIO::coordStringFs9(const atools::geo::Pos& pos) const
   const static QString LONG_FORMAT("%1%2* %3', %4%5* %6', %7%8");
 
   return LONG_FORMAT.
-         arg(pos.getLatY() > 0.f ? "N" : "S").
+         arg(pos.getLatY() > 0.f ? QStringLiteral("N") : QStringLiteral("S")).
          arg(atools::absInt(pos.getLatYDeg()), 2, 10, QChar('0')).
          arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 2, 'f', 0, QChar('0')).
-         arg(pos.getLonX() > 0.f ? "E" : "W").
+         arg(pos.getLonX() > 0.f ? QStringLiteral("E") : QStringLiteral("W")).
          arg(atools::absInt(pos.getLonXDeg()), 3, 10, QChar('0')).
          arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 2, 'f', 0, QChar('0')).
-         arg(pos.getAltitude() >= 0.f ? "+" : "-").
+         arg(pos.getAltitude() >= 0.f ? QStringLiteral("+") : QStringLiteral("-")).
          arg(pos.getAltitude(), 6, 'f', 2, QChar('0'));
 }
 
@@ -4111,12 +4117,12 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
     writer.setAutoFormatting(true);
     writer.setAutoFormattingIndent(2);
 
-    writer.writeStartDocument("1.0");
-    writer.writeStartElement("flight-plan");
-    writer.writeAttribute("xmlns", "http://www8.garmin.com/xmlschemas/FlightPlan/v1");
+    writer.writeStartDocument(QStringLiteral("1.0"));
+    writer.writeStartElement(QStringLiteral("flight-plan"));
+    writer.writeAttribute(QStringLiteral("xmlns"), QStringLiteral("http://www8.garmin.com/xmlschemas/FlightPlan/v1"));
     // 2017-01-15T15:20:54Z
-    writer.writeTextElement("file-description", atools::programFileInfoNoDate());
-    writer.writeTextElement("created", atools::currentIsoWithOffset(false /* milliseconds */));
+    writer.writeTextElement(QStringLiteral("file-description"), atools::programFileInfoNoDate());
+    writer.writeTextElement(QStringLiteral("created"), atools::currentIsoWithOffset(false /* milliseconds */));
 
     // <xsd:simpleType name="Identifier_t">
     // <xsd:restriction base="xsd:string">
@@ -4150,7 +4156,7 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
         ident = entry.getIdent();
 
         // Remove all invalid characters
-        ident.replace(INVALID_REGEXP, "");
+        ident.replace(INVALID_REGEXP, QStringLiteral());
         ident = ident.left(12);
 
         if(ident.isEmpty() || addedUserWaypoints.contains(ident))
@@ -4176,7 +4182,7 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
         {
           // Same identifier but different location - add as user waypoint
           wptDat[0] = QStringLiteral("UPT%1").arg(wpNum++, 2, 10, QChar('0'));
-          wptDat[1] = "USER WAYPOINT";
+          wptDat[1] = QStringLiteral("USER WAYPOINT");
           userWaypointNameIndex.insert(curIdx, ident);
           addedUserWaypoints.insert(ident);
         }
@@ -4189,7 +4195,7 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
     }
 
     // Write waypoint list =============================
-    writer.writeStartElement("waypoint-table");
+    writer.writeStartElement(QStringLiteral("waypoint-table"));
     // <identifier>LFAT</identifier>
     // <type>AIRPORT</type>
     // <country-code>LF</country-code>
@@ -4198,22 +4204,22 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
     for(auto it = waypointList.constBegin(); it != waypointList.constEnd(); ++it)
     {
       QStringList key = it.key();
-      writer.writeStartElement("waypoint");
+      writer.writeStartElement(QStringLiteral("waypoint"));
 
-      writer.writeTextElement("identifier", key.value(0).toUpper());
-      writer.writeTextElement("type", key.value(1));
+      writer.writeTextElement(QStringLiteral("identifier"), key.value(0).toUpper());
+      writer.writeTextElement(QStringLiteral("type"), key.value(1));
 
       QString region = key.value(2).toUpper();
-      if(region.isEmpty() && key.value(1) != "USER WAYPOINT")
+      if(region.isEmpty() && key.value(1) != QStringLiteral("USER WAYPOINT"))
         qDebug() << Q_FUNC_INFO << "Region is empty for" << key << "in" << filename;
 
-      writer.writeTextElement("country-code", region);
+      writer.writeTextElement(QStringLiteral("country-code"), region);
 
       const Pos pos = waypointList.value(key);
-      writer.writeTextElement("lat", QString::number(pos.getLatY(), 'f', 6));
-      writer.writeTextElement("lon", QString::number(pos.getLonX(), 'f', 6));
+      writer.writeTextElement(QStringLiteral("lat"), QString::number(pos.getLatY(), 'f', 6));
+      writer.writeTextElement(QStringLiteral("lon"), QString::number(pos.getLonX(), 'f', 6));
 
-      writer.writeTextElement("comment", QStringLiteral());
+      writer.writeTextElement(QStringLiteral("comment"), QStringLiteral());
 
       writer.writeEndElement(); // waypoint
     }
@@ -4221,10 +4227,10 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
     writer.writeEndElement(); // waypoint-table
 
     // Write route =============================
-    writer.writeStartElement("route");
+    writer.writeStartElement(QStringLiteral("route"));
 
-    writer.writeTextElement("route-name", plan.getDepartureIdent() % " / " % plan.getDestinationIdent());
-    writer.writeTextElement("flight-plan-index", "1");
+    writer.writeTextElement(QStringLiteral("route-name"), plan.getDepartureIdent() % QStringLiteral(" / ") % plan.getDestinationIdent());
+    writer.writeTextElement(QStringLiteral("flight-plan-index"), QStringLiteral("1"));
 
     // <route-point>
     // <waypoint-identifier>LFAT</waypoint-identifier>
@@ -4238,21 +4244,21 @@ void FlightplanIO::saveGarminFpl(atools::fs::pln::Flightplan plan, const QString
         // Do not save procedure points
         continue;
 
-      writer.writeStartElement("route-point");
+      writer.writeStartElement(QStringLiteral("route-point"));
 
       if(userWaypointNameIndex.contains(curIdx))
       {
         // Probably renamed user waypoint
-        writer.writeTextElement("waypoint-identifier", userWaypointNameIndex.value(curIdx).toUpper());
-        writer.writeTextElement("waypoint-type", "USER WAYPOINT");
+        writer.writeTextElement(QStringLiteral("waypoint-identifier"), userWaypointNameIndex.value(curIdx).toUpper());
+        writer.writeTextElement(QStringLiteral("waypoint-type"), QStringLiteral("USER WAYPOINT"));
       }
       else
       {
-        writer.writeTextElement("waypoint-identifier", entry.getIdent().toUpper());
-        writer.writeTextElement("waypoint-type", gnsType(entry));
+        writer.writeTextElement(QStringLiteral("waypoint-identifier"), entry.getIdent().toUpper());
+        writer.writeTextElement(QStringLiteral("waypoint-type"), gnsType(entry));
       }
 
-      writer.writeTextElement("waypoint-country-code", entry.getRegion().toUpper());
+      writer.writeTextElement(QStringLiteral("waypoint-country-code"), entry.getRegion().toUpper());
 
       writer.writeEndElement(); // route-point
       curIdx++;
@@ -4300,7 +4306,7 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
 
     // Read line and remove header
     QString line = stream.readLine();
-    line.replace("FPN/RI:", "");
+    line.replace(QStringLiteral("FPN/RI:"), QStringLiteral());
 
     // Loop through keys and values
     QString lastKey;
@@ -4309,15 +4315,19 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
     {
       const QString& value = valueList.at(i);
 
-      if(lastKey.isEmpty() && atools::contains(value, {"F" /* direct */,
-                                                       "DA" /* departure airport */, "D" /* SID */, "R" /* runway */,
-                                                       "AA" /* arrival airport */, "A" /* STAR */, "AP" /* Approach */}))
+      if(lastKey.isEmpty() && atools::contains(value, {QStringLiteral("F") /* direct */,
+                                                       QStringLiteral("DA") /* departure airport */,
+                                                       QStringLiteral("D") /* SID */,
+                                                       QStringLiteral("R") /* runway */,
+                                                       QStringLiteral("AA") /* arrival airport */,
+                                                       QStringLiteral("A") /* STAR */,
+                                                       QStringLiteral("AP") /* Approach */}))
         // Known key in colons - remember and continue ============
         lastKey = value;
       else
       {
         // Value - decide by last key ====================
-        if(lastKey == "F")
+        if(lastKey == QStringLiteral("F"))
         {
           // Direct ==================================================
           if(value.contains('.'))
@@ -4358,7 +4368,7 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
             plan.append(entry);
           }
         }
-        else if(lastKey == "DA")
+        else if(lastKey == QStringLiteral("DA"))
         {
           // Departure airport ...KYKM... ====================
           FlightplanEntry entry;
@@ -4366,21 +4376,21 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
           entry.setWaypointType(atools::fs::pln::entry::AIRPORT);
           plan.append(entry);
         }
-        else if(lastKey == "D")
+        else if(lastKey == QStringLiteral("D"))
         {
           // SID ...WENAS7.PERTT... ====================
           QString sid = value.section('(', 0, 0);
           insertPropertyIf(plan, SID, sid.section('.', 0, 0));
           insertPropertyIf(plan, SID_TRANS, sid.section('.', 1, 1));
         }
-        else if(lastKey == "R")
+        else if(lastKey == QStringLiteral("R"))
         {
           // Runway ...09O... ====================
           QString rw = value;
           rw.remove('O');
           insertPropertyIf(plan, SID_RW, rw);
         }
-        else if(lastKey == "AA")
+        else if(lastKey == QStringLiteral("AA"))
         {
           // arrival airport ...CYLW... ====================
           FlightplanEntry entry;
@@ -4388,7 +4398,7 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
           entry.setWaypointType(atools::fs::pln::entry::AIRPORT);
           plan.append(entry);
         }
-        else if(lastKey == "A")
+        else if(lastKey == QStringLiteral("A"))
         {
           // STAR ...PIGLU4.YDC(16O)... ====================
           QString star = value.section('(', 0, 0);
@@ -4398,7 +4408,7 @@ void FlightplanIO::loadGarminGfp(atools::fs::pln::Flightplan& plan, const QStrin
           rw.remove('O');
           insertPropertyIf(plan, STAR_RW, rw);
         }
-        else if(lastKey == "AP")
+        else if(lastKey == QStringLiteral("AP"))
         {
           // Approach ...I16-Z.HUMEK ====================
           insertPropertyIf(plan, APPROACH_ARINC, value.section('.', 0, 0));
@@ -4449,7 +4459,7 @@ void FlightplanIO::loadGarminFplInternal(atools::fs::pln::Flightplan& plan, atoo
   // Waypoint key is list of ident,region and type
   QHash<QStringList, FlightplanEntry> waypointIndex;
 
-  xmlStream.readUntilElement("flight-plan");
+  xmlStream.readUntilElement(QStringLiteral("flight-plan"));
   while(xmlStream.readNextStartElement())
   {
     if(reader->name() == QStringLiteral("waypoint-table"))
@@ -4552,13 +4562,13 @@ void FlightplanIO::loadGarminFplInternal(atools::fs::pln::Flightplan& plan, atoo
 
 atools::fs::pln::entry::WaypointType FlightplanIO::garminToWaypointType(const QString& typeStr) const
 {
-  if(typeStr == "AIRPORT")
+  if(typeStr == QStringLiteral("AIRPORT"))
     return atools::fs::pln::entry::AIRPORT;
-  else if(typeStr == "VOR")
+  else if(typeStr == QStringLiteral("VOR"))
     return atools::fs::pln::entry::VOR;
-  else if(typeStr == "NDB")
+  else if(typeStr == QStringLiteral("NDB"))
     return atools::fs::pln::entry::NDB;
-  else if(typeStr == "INT")
+  else if(typeStr == QStringLiteral("INT"))
     return atools::fs::pln::entry::WAYPOINT;
 
   return atools::fs::pln::entry::USER;
@@ -4622,19 +4632,19 @@ QString FlightplanIO::gnsType(const atools::fs::pln::FlightplanEntry& entry) con
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::USER:
-      return "USER WAYPOINT";
+      return QStringLiteral("USER WAYPOINT");
 
     case atools::fs::pln::entry::AIRPORT:
-      return "AIRPORT";
+      return QStringLiteral("AIRPORT");
 
     case atools::fs::pln::entry::WAYPOINT:
-      return "INT";
+      return QStringLiteral("INT");
 
     case atools::fs::pln::entry::VOR:
-      return "VOR";
+      return QStringLiteral("VOR");
 
     case atools::fs::pln::entry::NDB:
-      return "NDB";
+      return QStringLiteral("NDB");
       // <xsd:enumeration value="INT-VRP" /> ignored
   }
   return QStringLiteral();
@@ -4660,9 +4670,9 @@ void FlightplanIO::posToRte(QTextStream& stream, const geo::Pos& pos, bool alt) 
   stream.setRealNumberNotation(QTextStream::FixedNotation);
   stream.setRealNumberPrecision(4);
 
-  stream << 1 << (pos.getLatY() > 0.f ? " N " : " S ")
+  stream << 1 << (pos.getLatY() > 0.f ? QStringLiteral(" N ") : QStringLiteral(" S "))
          << std::abs(pos.getLatY())
-         << (pos.getLonX() > 0.f ? " E " : " W ")
+         << (pos.getLonX() > 0.f ? QStringLiteral(" E ") : QStringLiteral(" W "))
          << std::abs(pos.getLonX());
 
   stream.setRealNumberPrecision(0);
@@ -4714,34 +4724,34 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
   FlightplanEntry entry;
   QXmlStreamReader *reader = xmlStream.getReader();
 
-  entry.setIdent(reader->attributes().value("id").toString());
+  entry.setIdent(reader->attributes().value(QStringLiteral("id")).toString());
   QString runway, designator, approach, approachTransition, suffix;
 
   while(xmlStream.readNextStartElement())
   {
     QString name = reader->name().toString();
-    if(name == "ATCWaypointType")
+    if(name == QStringLiteral("ATCWaypointType"))
       entry.setWaypointType(reader->readElementText());
-    else if(name == "WorldPosition")
+    else if(name == QStringLiteral("WorldPosition"))
       entry.setPosition(geo::Pos(reader->readElementText()));
-    else if(name == "ATCAirway")
+    else if(name == QStringLiteral("ATCAirway"))
       entry.setAirway(reader->readElementText());
 
     // MSFS
-    else if(name == "RunwayNumberFP")
+    else if(name == QStringLiteral("RunwayNumberFP"))
       runway = reader->readElementText();
-    else if(name == "RunwayDesignatorFP")
+    else if(name == QStringLiteral("RunwayDesignatorFP"))
       designator = reader->readElementText();
-    else if(name == "DepartureFP")
+    else if(name == QStringLiteral("DepartureFP"))
       entry.setSid(reader->readElementText());
-    else if(name == "ArrivalFP")
+    else if(name == QStringLiteral("ArrivalFP"))
       entry.setStar(reader->readElementText());
-    else if(name == "ApproachTypeFP")
+    else if(name == QStringLiteral("ApproachTypeFP"))
       approach = reader->readElementText();
-    else if(name == "SuffixFP")
+    else if(name == QStringLiteral("SuffixFP"))
       suffix = reader->readElementText();
 
-    else if(name == "ICAO")
+    else if(name == QStringLiteral("ICAO"))
     {
       while(xmlStream.readNextStartElement())
       {
@@ -4770,7 +4780,7 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
 void FlightplanIO::writePropertyFloat(QXmlStreamWriter& writer, const QString& name, float value) const
 {
   writer.writeStartElement(name);
-  writer.writeAttribute("type", "double");
+  writer.writeAttribute(QStringLiteral("type"), QStringLiteral("double"));
   writer.writeCharacters(QString::number(value, 'f', 8));
   writer.writeEndElement();
 }
@@ -4778,7 +4788,7 @@ void FlightplanIO::writePropertyFloat(QXmlStreamWriter& writer, const QString& n
 void FlightplanIO::writePropertyInt(QXmlStreamWriter& writer, const QString& name, int value) const
 {
   writer.writeStartElement(name);
-  writer.writeAttribute("type", "int");
+  writer.writeAttribute(QStringLiteral("type"), QStringLiteral("int"));
   writer.writeCharacters(QString::number(value));
   writer.writeEndElement();
 }
@@ -4786,15 +4796,15 @@ void FlightplanIO::writePropertyInt(QXmlStreamWriter& writer, const QString& nam
 void FlightplanIO::writePropertyBool(QXmlStreamWriter& writer, const QString& name, bool value) const
 {
   writer.writeStartElement(name);
-  writer.writeAttribute("type", "bool");
-  writer.writeCharacters(value ? "true" : "false");
+  writer.writeAttribute(QStringLiteral("type"), QStringLiteral("bool"));
+  writer.writeCharacters(value ? QStringLiteral("true") : QStringLiteral("false"));
   writer.writeEndElement();
 }
 
 void FlightplanIO::writePropertyStr(QXmlStreamWriter& writer, const QString& name, const QString& value) const
 {
   writer.writeStartElement(name);
-  writer.writeAttribute("type", "string");
+  writer.writeAttribute(QStringLiteral("type"), QStringLiteral("string"));
   writer.writeCharacters(value);
   writer.writeEndElement();
 }
@@ -4810,7 +4820,7 @@ QString FlightplanIO::identOrDegMinFormat(const atools::fs::pln::FlightplanEntry
 
 QString FlightplanIO::xplaneRunway(QString runway) const
 {
-  if(runway.startsWith("RW"))
+  if(runway.startsWith(QStringLiteral("RW")))
     runway = runway.mid(2);
 
   if(runway.size() == 1)

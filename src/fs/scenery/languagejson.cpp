@@ -75,7 +75,7 @@ void LanguageJson::readFromFile(const QString& filename, const QStringList& keyP
       for(auto it = strings.constBegin(); it != strings.constEnd(); ++it)
       {
         QString key = it.key();
-        if(keyPrefixes.isEmpty() || atools::strStartsWith(keyPrefixes, key))
+        if(keyPrefixes.isEmpty() || atools::strStartsWithAnyInList(keyPrefixes, key))
         {
           QString txt = it.value().toString();
 

@@ -115,10 +115,10 @@ QString strJoin(const QString& prefix, const QStringList& list, const QString& s
                 const QString& suffix = QString());
 
 /* true if str starts with any of the strings in the list  */
-bool strStartsWith(const QStringList& list, const QString& str);
+bool strStartsWithAnyInList(const QStringList& list, const QString& str);
 
 /* true if any string in the list starts str */
-bool strAnyStartsWith(const QStringList& list, const QString& str);
+bool strAnyInListStartsWith(const QStringList& list, const QString& str);
 
 /* Return a string list split at space boundaries except in quotes */
 QStringList splitStringAtQuotes(const QString& str, QChar quote = '"', QChar spaceSeparator = ' ');
@@ -226,7 +226,7 @@ QString buildPath(const QStringList& paths);
  *  Returns a list with always numLinesRead strings.
  *  Empty lines are removed and line length is limited to 80 characters.
  *  All trimmed and converted to lower case. */
-QStringList probeFile(const QString& file, int numLinesRead = 6);
+const QStringList probeFile(const QString& file, int numLinesRead = 6);
 
 /* Calculate the step size for an axis along a range for number of steps.
  * Steps will stick to the 1, 2, and 5 range */

@@ -178,70 +178,70 @@ void AircraftPerf::saveXmlInternal(QXmlStreamWriter& writer) const
   writer.setAutoFormatting(true);
   writer.setAutoFormattingIndent(2);
 
-  writer.writeStartDocument("1.0");
-  writer.writeStartElement("LittleNavmap");
+  writer.writeStartDocument(QStringLiteral("1.0"));
+  writer.writeStartElement(QStringLiteral("LittleNavmap"));
 
   // Schema namespace and reference to XSD ======================
-  writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-  writer.writeAttribute("xsi:noNamespaceSchemaLocation", "https://www.littlenavmap.org/schema/lnmperf.xsd");
+  writer.writeAttribute(QStringLiteral("xmlns:xsi"), QStringLiteral("http://www.w3.org/2001/XMLSchema-instance"));
+  writer.writeAttribute(QStringLiteral("xsi:noNamespaceSchemaLocation"), QStringLiteral("https://www.littlenavmap.org/schema/lnmperf.xsd"));
 
-  writer.writeStartElement("AircraftPerf");
+  writer.writeStartElement(QStringLiteral("AircraftPerf"));
 
   // Save header and metadata =======================================================
-  writer.writeStartElement("Header");
-  writer.writeTextElement("CreationDate", atools::currentIsoWithOffset(false /* milliseconds */));
-  writer.writeTextElement("FileVersion", QStringLiteral("%1.%2").arg(LNMPERF_VERSION_MAJOR).arg(LNMPERF_VERSION_MINOR));
-  writer.writeTextElement("ProgramName", QCoreApplication::applicationName());
-  writer.writeTextElement("ProgramVersion", QCoreApplication::applicationVersion());
-  writer.writeTextElement("Documentation", "https://www.littlenavmap.org/lnmperf.html");
+  writer.writeStartElement(QStringLiteral("Header"));
+  writer.writeTextElement(QStringLiteral("CreationDate"), atools::currentIsoWithOffset(false /* milliseconds */));
+  writer.writeTextElement(QStringLiteral("FileVersion"), QStringLiteral("%1.%2").arg(LNMPERF_VERSION_MAJOR).arg(LNMPERF_VERSION_MINOR));
+  writer.writeTextElement(QStringLiteral("ProgramName"), QCoreApplication::applicationName());
+  writer.writeTextElement(QStringLiteral("ProgramVersion"), QCoreApplication::applicationVersion());
+  writer.writeTextElement(QStringLiteral("Documentation"), QStringLiteral("https://www.littlenavmap.org/lnmperf.html"));
   writer.writeEndElement(); // Header
 
   // Options =======================================================
-  writer.writeStartElement("Options");
-  writer.writeTextElement("Name", name);
-  writer.writeTextElement("AircraftType", type);
-  writer.writeTextElement("Simulator", simulator);
-  writer.writeTextElement("Description", description);
-  writer.writeTextElement("FuelAsVolume", QString::number(volume));
-  writer.writeTextElement("JetFuel", QString::number(jetFuel));
+  writer.writeStartElement(QStringLiteral("Options"));
+  writer.writeTextElement(QStringLiteral("Name"), name);
+  writer.writeTextElement(QStringLiteral("AircraftType"), type);
+  writer.writeTextElement(QStringLiteral("Simulator"), simulator);
+  writer.writeTextElement(QStringLiteral("Description"), description);
+  writer.writeTextElement(QStringLiteral("FuelAsVolume"), QString::number(volume));
+  writer.writeTextElement(QStringLiteral("JetFuel"), QString::number(jetFuel));
   writer.writeEndElement(); // Options
 
   // Performance =======================================================
-  writer.writeStartElement("Perf");
+  writer.writeStartElement(QStringLiteral("Perf"));
 
   // Performance general ============================
-  writer.writeTextElement("ContingencyFuelPercent", QString::number(contingencyFuel, 'f', 1));
-  writer.writeTextElement("ExtraFuelLbsGal", QString::number(extraFuel, 'f', 3));
-  writer.writeTextElement("MinRunwayLengthFt", QString::number(minRunwayLength, 'f', 3));
-  writer.writeTextElement("ReserveFuelLbsGal", QString::number(reserveFuel, 'f', 3));
-  writer.writeTextElement("RunwayType", runwayTypeToStr(runwayType));
-  writer.writeTextElement("TaxiFuelLbsGal", QString::number(taxiFuel, 'f', 3));
-  writer.writeTextElement("UsableFuelLbsGal", QString::number(usableFuel, 'f', 3));
+  writer.writeTextElement(QStringLiteral("ContingencyFuelPercent"), QString::number(contingencyFuel, 'f', 1));
+  writer.writeTextElement(QStringLiteral("ExtraFuelLbsGal"), QString::number(extraFuel, 'f', 3));
+  writer.writeTextElement(QStringLiteral("MinRunwayLengthFt"), QString::number(minRunwayLength, 'f', 3));
+  writer.writeTextElement(QStringLiteral("ReserveFuelLbsGal"), QString::number(reserveFuel, 'f', 3));
+  writer.writeTextElement(QStringLiteral("RunwayType"), runwayTypeToStr(runwayType));
+  writer.writeTextElement(QStringLiteral("TaxiFuelLbsGal"), QString::number(taxiFuel, 'f', 3));
+  writer.writeTextElement(QStringLiteral("UsableFuelLbsGal"), QString::number(usableFuel, 'f', 3));
 
   // Performance alternate ============================
-  writer.writeStartElement("Alternate");
-  writer.writeTextElement("FuelFlowLbsGalPerHour", QString::number(alternateFuelFlow, 'f', 3));
-  writer.writeTextElement("SpeedKtsTAS", QString::number(alternateSpeed, 'f', 3));
+  writer.writeStartElement(QStringLiteral("Alternate"));
+  writer.writeTextElement(QStringLiteral("FuelFlowLbsGalPerHour"), QString::number(alternateFuelFlow, 'f', 3));
+  writer.writeTextElement(QStringLiteral("SpeedKtsTAS"), QString::number(alternateSpeed, 'f', 3));
   writer.writeEndElement(); // Alternate
 
   // Performance climb ============================
-  writer.writeStartElement("Climb");
-  writer.writeTextElement("FuelFlowLbsGalPerHour", QString::number(climbFuelFlow, 'f', 3));
-  writer.writeTextElement("SpeedKtsTAS", QString::number(climbSpeed, 'f', 3));
-  writer.writeTextElement("VertSpeedFtPerMin", QString::number(climbVertSpeed, 'f', 3));
+  writer.writeStartElement(QStringLiteral("Climb"));
+  writer.writeTextElement(QStringLiteral("FuelFlowLbsGalPerHour"), QString::number(climbFuelFlow, 'f', 3));
+  writer.writeTextElement(QStringLiteral("SpeedKtsTAS"), QString::number(climbSpeed, 'f', 3));
+  writer.writeTextElement(QStringLiteral("VertSpeedFtPerMin"), QString::number(climbVertSpeed, 'f', 3));
   writer.writeEndElement(); // Climb
 
   // Performance cruise ============================
-  writer.writeStartElement("Cruise");
-  writer.writeTextElement("FuelFlowLbsGalPerHour", QString::number(cruiseFuelFlow, 'f', 3));
-  writer.writeTextElement("SpeedKtsTAS", QString::number(cruiseSpeed, 'f', 3));
+  writer.writeStartElement(QStringLiteral("Cruise"));
+  writer.writeTextElement(QStringLiteral("FuelFlowLbsGalPerHour"), QString::number(cruiseFuelFlow, 'f', 3));
+  writer.writeTextElement(QStringLiteral("SpeedKtsTAS"), QString::number(cruiseSpeed, 'f', 3));
   writer.writeEndElement(); // Cruise
 
   // Performance descent ============================
-  writer.writeStartElement("Descent");
-  writer.writeTextElement("FuelFlowLbsGalPerHour", QString::number(descentFuelFlow, 'f', 3));
-  writer.writeTextElement("SpeedKtsTAS", QString::number(descentSpeed, 'f', 3));
-  writer.writeTextElement("VertSpeedFtPerMin", QString::number(descentVertSpeed, 'f', 3));
+  writer.writeStartElement(QStringLiteral("Descent"));
+  writer.writeTextElement(QStringLiteral("FuelFlowLbsGalPerHour"), QString::number(descentFuelFlow, 'f', 3));
+  writer.writeTextElement(QStringLiteral("SpeedKtsTAS"), QString::number(descentSpeed, 'f', 3));
+  writer.writeTextElement(QStringLiteral("VertSpeedFtPerMin"), QString::number(descentVertSpeed, 'f', 3));
   writer.writeEndElement(); // Descent
 
   writer.writeEndElement(); // Perf
@@ -277,8 +277,8 @@ void AircraftPerf::loadXmlGz(const QByteArray& bytes)
 
 void AircraftPerf::loadXmlInternal(atools::util::XmlStreamReader& xmlStream)
 {
-  xmlStream.readUntilElement("LittleNavmap");
-  xmlStream.readUntilElement("AircraftPerf");
+  xmlStream.readUntilElement(QStringLiteral("LittleNavmap"));
+  xmlStream.readUntilElement(QStringLiteral("AircraftPerf"));
 
   while(xmlStream.readNextStartElement())
   {
@@ -412,13 +412,14 @@ void AircraftPerf::saveIni(const QString& filename)
 
 FileFormat AircraftPerf::detectFormat(const QString& filename)
 {
-  QStringList lines = atools::probeFile(filename, 30);
+  const QStringList probe = atools::probeFile(filename, 30);
 
-  if(lines.at(0).startsWith("<?xml version") &&
-     lines.at(1).startsWith("<littlenavmap") &&
-     lines.at(2).startsWith("<aircraftperf>"))
+  // Assume LNM XML files to be formatted
+  if(probe.at(0).startsWith(QStringLiteral("<?xml version")) &&
+     probe.at(1).startsWith(QStringLiteral("<littlenavmap")) &&
+     probe.at(2).startsWith(QStringLiteral("<aircraftperf>")))
     return FORMAT_XML;
-  else if(lines.contains("[options]") && lines.contains("[perf]"))
+  else if(probe.contains(QStringLiteral("[options]")) && probe.contains(QStringLiteral("[perf]")))
     return FORMAT_INI;
   else
     return FORMAT_NONE;
@@ -611,90 +612,90 @@ float AircraftPerf::toFuelGal(float fuelGalLbs) const
 
 void AircraftPerf::readFromSettings(const QSettings& settings)
 {
-  name = settings.value("Options/Name").toString();
-  type = settings.value("Options/AircraftType").toString();
-  description = settings.value("Options/Description").toString();
-  simulator = settings.value("Options/Simulator").toString();
+  name = settings.value(QStringLiteral("Options/Name")).toString();
+  type = settings.value(QStringLiteral("Options/AircraftType")).toString();
+  description = settings.value(QStringLiteral("Options/Description")).toString();
+  simulator = settings.value(QStringLiteral("Options/Simulator")).toString();
 
-  volume = settings.value("Options/FuelAsVolume").toBool();
-  jetFuel = settings.value("Options/JetFuel").toBool();
+  volume = settings.value(QStringLiteral("Options/FuelAsVolume")).toBool();
+  jetFuel = settings.value(QStringLiteral("Options/JetFuel")).toBool();
 
-  usableFuel = settings.value("Perf/UsableFuel").toFloat();
+  usableFuel = settings.value(QStringLiteral("Perf/UsableFuel")).toFloat();
 
-  if(settings.contains("Perf/TaxiFuelLbs"))
-    taxiFuel = settings.value("Perf/TaxiFuelLbs").toFloat();
-  if(settings.contains("Perf/TaxiFuelLbsGal"))
-    taxiFuel = settings.value("Perf/TaxiFuelLbsGal").toFloat();
+  if(settings.contains(QStringLiteral("Perf/TaxiFuelLbs")))
+    taxiFuel = settings.value(QStringLiteral("Perf/TaxiFuelLbs")).toFloat();
+  if(settings.contains(QStringLiteral("Perf/TaxiFuelLbsGal")))
+    taxiFuel = settings.value(QStringLiteral("Perf/TaxiFuelLbsGal")).toFloat();
 
-  if(settings.contains("Perf/ReserveFuelLbs"))
-    reserveFuel = settings.value("Perf/ReserveFuelLbs").toFloat();
-  if(settings.contains("Perf/ReserveFuelLbsGal"))
-    reserveFuel = settings.value("Perf/ReserveFuelLbsGal").toFloat();
+  if(settings.contains(QStringLiteral("Perf/ReserveFuelLbs")))
+    reserveFuel = settings.value(QStringLiteral("Perf/ReserveFuelLbs")).toFloat();
+  if(settings.contains(QStringLiteral("Perf/ReserveFuelLbsGal")))
+    reserveFuel = settings.value(QStringLiteral("Perf/ReserveFuelLbsGal")).toFloat();
 
-  if(settings.contains("Perf/ExtraFuelLbs"))
-    extraFuel = settings.value("Perf/ExtraFuelLbs").toFloat();
-  if(settings.contains("Perf/ExtraFuelLbsGal"))
-    extraFuel = settings.value("Perf/ExtraFuelLbsGal").toFloat();
+  if(settings.contains(QStringLiteral("Perf/ExtraFuelLbs")))
+    extraFuel = settings.value(QStringLiteral("Perf/ExtraFuelLbs")).toFloat();
+  if(settings.contains(QStringLiteral("Perf/ExtraFuelLbsGal")))
+    extraFuel = settings.value(QStringLiteral("Perf/ExtraFuelLbsGal")).toFloat();
 
-  contingencyFuel = settings.value("Perf/ContingencyFuelPercent").toFloat();
+  contingencyFuel = settings.value(QStringLiteral("Perf/ContingencyFuelPercent")).toFloat();
 
-  climbVertSpeed = settings.value("Perf/ClimbVertSpeedFtPerMin").toFloat();
-  climbSpeed = settings.value("Perf/ClimbSpeedKtsTAS").toFloat();
-  climbFuelFlow = settings.value("Perf/ClimbFuelFlowLbsGalPerHour").toFloat();
+  climbVertSpeed = settings.value(QStringLiteral("Perf/ClimbVertSpeedFtPerMin")).toFloat();
+  climbSpeed = settings.value(QStringLiteral("Perf/ClimbSpeedKtsTAS")).toFloat();
+  climbFuelFlow = settings.value(QStringLiteral("Perf/ClimbFuelFlowLbsGalPerHour")).toFloat();
 
-  cruiseSpeed = settings.value("Perf/CruiseSpeedKtsTAS").toFloat();
-  cruiseFuelFlow = settings.value("Perf/CruiseFuelFlowLbsGalPerHour").toFloat();
+  cruiseSpeed = settings.value(QStringLiteral("Perf/CruiseSpeedKtsTAS")).toFloat();
+  cruiseFuelFlow = settings.value(QStringLiteral("Perf/CruiseFuelFlowLbsGalPerHour")).toFloat();
 
-  descentSpeed = settings.value("Perf/DescentSpeedKtsTAS").toFloat();
-  descentVertSpeed = settings.value("Perf/DescentVertSpeedFtPerMin").toFloat();
-  descentFuelFlow = settings.value("Perf/DescentFuelFlowLbsGalPerHour").toFloat();
+  descentSpeed = settings.value(QStringLiteral("Perf/DescentSpeedKtsTAS")).toFloat();
+  descentVertSpeed = settings.value(QStringLiteral("Perf/DescentVertSpeedFtPerMin")).toFloat();
+  descentFuelFlow = settings.value(QStringLiteral("Perf/DescentFuelFlowLbsGalPerHour")).toFloat();
 
-  alternateSpeed = settings.value("Perf/AlternateSpeed", cruiseSpeed).toFloat();
-  alternateFuelFlow = settings.value("Perf/AlternateFuelFlow", cruiseFuelFlow).toFloat();
+  alternateSpeed = settings.value(QStringLiteral("Perf/AlternateSpeed"), cruiseSpeed).toFloat();
+  alternateFuelFlow = settings.value(QStringLiteral("Perf/AlternateFuelFlow"), cruiseFuelFlow).toFloat();
 
-  minRunwayLength = settings.value("Perf/MinRunwayLength").toFloat();
-  runwayType = runwayTypeFromStr(settings.value("Perf/RunwayType", "Soft").toString());
+  minRunwayLength = settings.value(QStringLiteral("Perf/MinRunwayLength")).toFloat();
+  runwayType = runwayTypeFromStr(settings.value(QStringLiteral("Perf/RunwayType"), QStringLiteral("Soft")).toString());
 }
 
 void AircraftPerf::writeToSettings(QSettings& settings)
 {
-  settings.remove("Perf/TaxiFuelLbs");
-  settings.remove("Perf/ReserveFuelLbs");
-  settings.remove("Perf/ExtraFuelLbs");
+  settings.remove(QStringLiteral("Perf/TaxiFuelLbs"));
+  settings.remove(QStringLiteral("Perf/ReserveFuelLbs"));
+  settings.remove(QStringLiteral("Perf/ExtraFuelLbs"));
 
-  settings.setValue("Options/Metadata", atools::programFileInfo());
-  settings.setValue("Options/ProgramVersion", QCoreApplication::applicationVersion());
-  settings.setValue("Options/FormatVersion", FORMAT_VERSION);
-  settings.setValue("Options/Name", name);
-  settings.setValue("Options/AircraftType", type);
-  settings.setValue("Options/Description", description);
-  settings.setValue("Options/Simulator", simulator);
+  settings.setValue(QStringLiteral("Options/Metadata"), atools::programFileInfo());
+  settings.setValue(QStringLiteral("Options/ProgramVersion"), QCoreApplication::applicationVersion());
+  settings.setValue(QStringLiteral("Options/FormatVersion"), FORMAT_VERSION);
+  settings.setValue(QStringLiteral("Options/Name"), name);
+  settings.setValue(QStringLiteral("Options/AircraftType"), type);
+  settings.setValue(QStringLiteral("Options/Description"), description);
+  settings.setValue(QStringLiteral("Options/Simulator"), simulator);
 
-  settings.setValue("Options/FuelAsVolume", volume);
-  settings.setValue("Options/JetFuel", jetFuel);
+  settings.setValue(QStringLiteral("Options/FuelAsVolume"), volume);
+  settings.setValue(QStringLiteral("Options/JetFuel"), jetFuel);
 
-  settings.setValue("Perf/UsableFuel", QString::number(usableFuel));
-  settings.setValue("Perf/TaxiFuelLbsGal", QString::number(taxiFuel));
-  settings.setValue("Perf/ReserveFuelLbsGal", QString::number(reserveFuel));
-  settings.setValue("Perf/ExtraFuelLbsGal", QString::number(extraFuel));
-  settings.setValue("Perf/ContingencyFuelPercent", QString::number(contingencyFuel));
+  settings.setValue(QStringLiteral("Perf/UsableFuel"), QString::number(usableFuel));
+  settings.setValue(QStringLiteral("Perf/TaxiFuelLbsGal"), QString::number(taxiFuel));
+  settings.setValue(QStringLiteral("Perf/ReserveFuelLbsGal"), QString::number(reserveFuel));
+  settings.setValue(QStringLiteral("Perf/ExtraFuelLbsGal"), QString::number(extraFuel));
+  settings.setValue(QStringLiteral("Perf/ContingencyFuelPercent"), QString::number(contingencyFuel));
 
-  settings.setValue("Perf/ClimbVertSpeedFtPerMin", QString::number(climbVertSpeed));
-  settings.setValue("Perf/ClimbSpeedKtsTAS", QString::number(climbSpeed));
-  settings.setValue("Perf/ClimbFuelFlowLbsGalPerHour", QString::number(climbFuelFlow));
+  settings.setValue(QStringLiteral("Perf/ClimbVertSpeedFtPerMin"), QString::number(climbVertSpeed));
+  settings.setValue(QStringLiteral("Perf/ClimbSpeedKtsTAS"), QString::number(climbSpeed));
+  settings.setValue(QStringLiteral("Perf/ClimbFuelFlowLbsGalPerHour"), QString::number(climbFuelFlow));
 
-  settings.setValue("Perf/CruiseSpeedKtsTAS", QString::number(cruiseSpeed));
-  settings.setValue("Perf/CruiseFuelFlowLbsGalPerHour", QString::number(cruiseFuelFlow));
+  settings.setValue(QStringLiteral("Perf/CruiseSpeedKtsTAS"), QString::number(cruiseSpeed));
+  settings.setValue(QStringLiteral("Perf/CruiseFuelFlowLbsGalPerHour"), QString::number(cruiseFuelFlow));
 
-  settings.setValue("Perf/DescentSpeedKtsTAS", QString::number(descentSpeed));
-  settings.setValue("Perf/DescentVertSpeedFtPerMin", QString::number(descentVertSpeed));
-  settings.setValue("Perf/DescentFuelFlowLbsGalPerHour", QString::number(descentFuelFlow));
+  settings.setValue(QStringLiteral("Perf/DescentSpeedKtsTAS"), QString::number(descentSpeed));
+  settings.setValue(QStringLiteral("Perf/DescentVertSpeedFtPerMin"), QString::number(descentVertSpeed));
+  settings.setValue(QStringLiteral("Perf/DescentFuelFlowLbsGalPerHour"), QString::number(descentFuelFlow));
 
-  settings.setValue("Perf/AlternateSpeed", QString::number(alternateSpeed));
-  settings.setValue("Perf/AlternateFuelFlow", QString::number(alternateFuelFlow));
+  settings.setValue(QStringLiteral("Perf/AlternateSpeed"), QString::number(alternateSpeed));
+  settings.setValue(QStringLiteral("Perf/AlternateFuelFlow"), QString::number(alternateFuelFlow));
 
-  settings.setValue("Perf/MinRunwayLength", QString::number(minRunwayLength));
-  settings.setValue("Perf/RunwayType", runwayTypeToStr(runwayType));
+  settings.setValue(QStringLiteral("Perf/MinRunwayLength"), QString::number(minRunwayLength));
+  settings.setValue(QStringLiteral("Perf/RunwayType"), runwayTypeToStr(runwayType));
 }
 
 } // namespace perf

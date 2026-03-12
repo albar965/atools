@@ -35,19 +35,13 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
-MaterialLib::MaterialLib(const NavDatabaseOptions& opts, ProgressHandler *progress, SceneryErrors *errors)
-  : options(opts), progressHandler(progress), sceneryErrors(errors)
-{
-
-}
-
 void MaterialLib::readCommunity(const QString& basePath)
 {
   LayoutJson layout;
-  layout.read(basePath + atools::SEP + "layout.json");
+  layout.read(basePath % atools::SEP % QStringLiteral("layout.json"));
   for(const QString& str : layout.getMaterialPaths())
   {
-    QString filepath = basePath + atools::SEP + str;
+    QString filepath = basePath % atools::SEP % str;
 
     try
     {
@@ -73,11 +67,11 @@ void MaterialLib::readCommunity(const QString& basePath)
 void MaterialLib::readOfficial(const QString& basePath)
 {
   LayoutJson layout;
-  layout.read(basePath + atools::SEP + "asobo-material-lib" + atools::SEP + "layout.json");
+  layout.read(basePath % atools::SEP % QStringLiteral("asobo-material-lib") % atools::SEP % QStringLiteral("layout.json"));
 
   for(const QString& str : layout.getMaterialPaths())
   {
-    QString filepath = basePath + atools::SEP + "asobo-material-lib" + atools::SEP + str;
+    QString filepath = basePath % atools::SEP % QStringLiteral("asobo-material-lib") % atools::SEP % str;
 
     try
     {
@@ -100,11 +94,11 @@ void MaterialLib::readOfficial(const QString& basePath)
   }
 
   layout.clear();
-  layout.read(basePath + atools::SEP + "fs-base-material-lib" + atools::SEP + "layout.json");
+  layout.read(basePath % atools::SEP % QStringLiteral("fs-base-material-lib") % atools::SEP % QStringLiteral("layout.json"));
 
   for(const QString& str : layout.getMaterialPaths())
   {
-    QString filepath = basePath + atools::SEP + "fs-base-material-lib" + atools::SEP + str;
+    QString filepath = basePath % atools::SEP % QStringLiteral("fs-base-material-lib") % atools::SEP % str;
     try
     {
       read(filepath);
@@ -146,11 +140,11 @@ void MaterialLib::read(const QString& filename)
   {
     if(atools::checkFile(Q_FUNC_INFO, filename))
     {
-      QStringList probe = atools::probeFile(filename, 10);
+      const QStringList probe = atools::probeFile(filename, 10);
 
       // Test if this is not another file type like aircraft checklist definitions
-      if(!probe.filter("<Library", Qt::CaseInsensitive).isEmpty() &&
-         !probe.filter("<Material", Qt::CaseInsensitive).isEmpty())
+      if(atools::strAnyInListStartsWith(probe, QStringLiteral("<library")) &&
+         atools::strAnyInListStartsWith(probe, QStringLiteral("<material")))
       {
         QFile xmlFile(filename);
         if(xmlFile.open(QIODevice::ReadOnly))
@@ -158,15 +152,15 @@ void MaterialLib::read(const QString& filename)
           atools::util::XmlStreamReader xmlStream(&xmlFile, filename);
           QXmlStreamReader *reader = xmlStream.getReader();
 
-          xmlStream.readUntilElement("Library");
+          xmlStream.readUntilElement(QStringLiteral("Library"));
 
           while(xmlStream.readNextStartElement())
           {
-            if(reader->name() == QLatin1String("Material"))
+            if(reader->name() == QStringLiteral("Material"))
             {
-              QString surface = reader->attributes().value("SurfaceType").toString();
-              if(surface != "UNDEFINED")
-                surfaceMap.insert(QUuid(reader->attributes().value("Guid").toString()), surface);
+              QString surface = reader->attributes().value(QStringLiteral("SurfaceType")).toString();
+              if(surface != QStringLiteral("UNDEFINED"))
+                surfaceMap.insert(QUuid(reader->attributes().value(QStringLiteral("Guid")).toString()), surface);
 
               // Read only attributes
               xmlStream.skipCurrentElement();

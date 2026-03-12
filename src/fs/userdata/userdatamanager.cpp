@@ -119,14 +119,14 @@ UserdataManager::~UserdataManager()
 void UserdataManager::updateSchema()
 {
   SqlUtil util(db);
-  if(!util.hasTableAndColumn(tableName, "temp"))
+  if(!util.hasTableAndColumn(tableName, QStringLiteral("temp")))
   {
     qDebug() << Q_FUNC_INFO << "Adding temp colum to userdata";
 
     SqlTransaction transaction(db);
     // Add missing column and index
-    addColumnIf("temp ", "integer");
-    db->exec("create index if not exists idx_userdata_temp on " % tableName % "(temp)");
+    addColumnIf(QStringLiteral("temp "), QStringLiteral("integer"));
+    db->exec(QStringLiteral("create index if not exists idx_userdata_temp on ") % tableName % QStringLiteral("(temp)"));
     transaction.commit();
   }
 
@@ -161,8 +161,9 @@ int UserdataManager::cleanupUserdata(const QStringList& duplicateColumns, bool d
 QString UserdataManager::getCleanupPreview(const QStringList& duplicateColumns, bool duplicateCoordinates, bool empty,
                                            const QList<sql::SqlColumn>& columns)
 {
-  return "select " % SqlColumn::getColumnList(columns) % " from " % tableName % " where " % idColumnName %
-         " in (" % cleanupWhere(duplicateColumns, duplicateCoordinates, empty) % ")";
+  return QStringLiteral("select ") % SqlColumn::getColumnList(columns) % QStringLiteral(" from ") % tableName % QStringLiteral(" where ") %
+         idColumnName %
+         QStringLiteral(" in (") % cleanupWhere(duplicateColumns, duplicateCoordinates, empty) % QStringLiteral(")");
 }
 
 QString UserdataManager::cleanupWhere(const QStringList& duplicateColumns, bool duplicateCoordinates, bool empty)
@@ -172,8 +173,8 @@ QString UserdataManager::cleanupWhere(const QStringList& duplicateColumns, bool 
   // Sub-query to delete empty rows ==================================================
   if(empty)
     // Query for empty using empty column values as prepared by preCleanup() - avoid null compare
-    whereStmt.append("select " % idColumnName % " from " % tableName %
-                     " where name = '' and ident = '' and region = '' and description = '' and tags = ''");
+    whereStmt.append(QStringLiteral("select ") % idColumnName % QStringLiteral(" from ") % tableName %
+                     QStringLiteral(" where name = '' and ident = '' and region = '' and description = '' and tags = ''"));
 
   // Sub-query to remove duplicates ========================================
   if(!duplicateColumns.isEmpty())
@@ -182,21 +183,22 @@ QString UserdataManager::cleanupWhere(const QStringList& duplicateColumns, bool 
     for(const QString& column : duplicateColumns)
       joinCols.append(QStringLiteral(" u1.%1 = u2.%1 ").arg(column));
 
-    QString queryStr("select u1.userdata_id from userdata u1 join userdata u2 on " % joinCols.join(" and ") %
-                     " where u1.userdata_id < u2.userdata_id");
+    QString queryStr(QStringLiteral("select u1.userdata_id from userdata u1 join userdata u2 on ") %
+                     joinCols.join(QStringLiteral(" and ")) %
+                     QStringLiteral(" where u1.userdata_id < u2.userdata_id"));
 
     if(duplicateCoordinates)
-      queryStr.append(" and (abs(u1.lonx - u2.lonx) + abs(u1.laty - u2.laty)) < 0.0001");
+      queryStr.append(QStringLiteral(" and (abs(u1.lonx - u2.lonx) + abs(u1.laty - u2.laty)) < 0.0001"));
 
     whereStmt.append(queryStr);
   }
-  return whereStmt.join(" union ");
+  return whereStmt.join(QStringLiteral(" union "));
 }
 
 void UserdataManager::clearTemporary()
 {
   qDebug() << Q_FUNC_INFO;
-  deleteRows("temp", 1);
+  deleteRows(QStringLiteral("temp"), 1);
 }
 
 // VRP,  1NM NORTH SALERNO TOWN, 1NSAL, 40.6964,            14.785,         0,0, IT, FROM SOR VOR: 069° 22NM
@@ -216,7 +218,7 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
     QFile file(filepath);
     if(file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-      QString idBinding(":" % idColumnName);
+      QString idBinding(QStringLiteral(":") % idColumnName);
 
       // Autogenerate id
       QString insert = SqlUtil(db).buildInsertStatement(tableName, QStringLiteral(), QStringList(), true /* namedBindings */);
@@ -238,7 +240,7 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
         if(lineNum == 1)
         {
           QString header = QString(line).simplified().replace(' ', QStringLiteral()).replace('"', QStringLiteral()).toLower();
-          if(flags & CSV_HEADER || header.startsWith("type,name,ident,latitude,longitude"))
+          if(flags & CSV_HEADER || header.startsWith(QStringLiteral("type,name,ident,latitude,longitude")))
           {
             lineNum++;
             // Ignore header
@@ -261,43 +263,43 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
           throw atools::Exception(tr("File contains invalid data.\n\"%1\"\nLine %2.").arg(line).arg(lineNum));
 
         insertQuery.bindValue(idBinding, id++);
-        insertQuery.bindValue(":type", at(values, csv::TYPE));
-        insertQuery.bindValue(":name", at(values, csv::NAME));
-        insertQuery.bindValue(":ident", at(values, csv::IDENT));
-        insertQuery.bindValue(":region", at(values, csv::REGION, true /* no warning */));
-        insertQuery.bindValue(":description", at(values, csv::DESCRIPTION));
-        insertQuery.bindValue(":tags", at(values, csv::TAGS));
-        insertQuery.bindValue(":import_file_path", absfilepath);
-        insertQuery.bindValue(":temp", 0);
+        insertQuery.bindValue(QStringLiteral(":type"), at(values, csv::TYPE));
+        insertQuery.bindValue(QStringLiteral(":name"), at(values, csv::NAME));
+        insertQuery.bindValue(QStringLiteral(":ident"), at(values, csv::IDENT));
+        insertQuery.bindValue(QStringLiteral(":region"), at(values, csv::REGION, true /* no warning */));
+        insertQuery.bindValue(QStringLiteral(":description"), at(values, csv::DESCRIPTION));
+        insertQuery.bindValue(QStringLiteral(":tags"), at(values, csv::TAGS));
+        insertQuery.bindValue(QStringLiteral(":import_file_path"), absfilepath);
+        insertQuery.bindValue(QStringLiteral(":temp"), 0);
 
         // YYYY-MM-DDTHH:mm:ss
         QDateTime lastEdit = QDateTime::fromString(at(values, csv::LAST_EDIT, true /* no warning */), Qt::ISODate);
         if(lastEdit.isValid())
-          insertQuery.bindValue(":last_edit_timestamp", lastEdit.toString(Qt::ISODate));
+          insertQuery.bindValue(QStringLiteral(":last_edit_timestamp"), lastEdit.toString(Qt::ISODate));
         else
-          insertQuery.bindValue(":last_edit_timestamp", now.toString(Qt::ISODate));
+          insertQuery.bindValue(QStringLiteral(":last_edit_timestamp"), now.toString(Qt::ISODate));
 
         bool ok;
         float visibleFrom = at(values, csv::VISIBLE_FROM, true /* no warning */).toFloat(&ok);
         if(visibleFrom > 0.f && ok)
-          insertQuery.bindValue(":visible_from", visibleFrom);
+          insertQuery.bindValue(QStringLiteral(":visible_from"), visibleFrom);
         else
-          insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
+          insertQuery.bindValue(QStringLiteral(":visible_from"), VISIBLE_FROM_DEFAULT_NM);
 
         QString altStr = at(values, csv::ALT).trimmed();
         float alt = 0.f;
-        if(altStr.endsWith("f"))
+        if(altStr.endsWith(QStringLiteral("f")))
           alt = altStr.left(altStr.size() - 1).toFloat();
-        else if(altStr.endsWith("m"))
+        else if(altStr.endsWith(QStringLiteral("m")))
           alt = atools::geo::meterToFeet(altStr.left(altStr.size() - 1).toFloat());
         else
           alt = altStr.toFloat();
 
-        insertQuery.bindValue(":altitude", alt);
+        insertQuery.bindValue(QStringLiteral(":altitude"), alt);
 
         validateCoordinates(line, at(values, csv::LONX), at(values, csv::LATY), lineNum, false /* checkNull */);
-        insertQuery.bindValue(":lonx", at(values, csv::LONX, true));
-        insertQuery.bindValue(":laty", at(values, csv::LATY, true));
+        insertQuery.bindValue(QStringLiteral(":lonx"), at(values, csv::LONX, true));
+        insertQuery.bindValue(QStringLiteral(":laty"), at(values, csv::LATY, true));
 
         insertQuery.exec();
         undoHandler.inserted();
@@ -331,9 +333,11 @@ int UserdataManager::importXplane(const QString& filepath)
   {
     int id = getCurrentId() + 1;
     atools::sql::DataManagerUndoHandler undoHandler(this, id);
-    QString idBinding(":" % idColumnName);
+    QString idBinding(QStringLiteral(":") % idColumnName);
 
-    QString insert = SqlUtil(db).buildInsertStatement(tableName, QStringLiteral(), {"description", "altitude"}, true /* namedBindings */);
+    QString insert = SqlUtil(db).buildInsertStatement(tableName, QStringLiteral(),
+                                                      {QStringLiteral("description"), QStringLiteral("altitude")},
+                                                      true /* namedBindings */);
     SqlQuery insertQuery(db);
     insertQuery.prepare(insert);
 
@@ -343,11 +347,11 @@ int UserdataManager::importXplane(const QString& filepath)
     QTextStream stream(&file);
 
     QString line = stream.readLine().simplified();
-    if(line != "I" && line != "A")
+    if(line != QStringLiteral("I") && line != QStringLiteral("A"))
       throw atools::Exception(tr("File is not an X-Plane user_fix.dat file."));
 
     line = stream.readLine().simplified();
-    if(!line.startsWith("11") && !line.startsWith("12"))
+    if(!line.startsWith(QStringLiteral("11")) && !line.startsWith(QStringLiteral("12")))
       throw atools::Exception(tr("File is not an X-Plane user_fix.dat file."));
 
     line = stream.readLine().simplified();
@@ -360,7 +364,7 @@ int UserdataManager::importXplane(const QString& filepath)
       line = stream.readLine().simplified();
       if(line.isEmpty())
         continue;
-      if(line == "99")
+      if(line == QStringLiteral("99"))
         break;
 
       QStringList cols = line.split(' ');
@@ -373,19 +377,19 @@ int UserdataManager::importXplane(const QString& filepath)
       tags.removeAll(QStringLiteral());
 
       insertQuery.bindValue(idBinding, id++);
-      insertQuery.bindValue(":type", "Waypoint");
-      insertQuery.bindValue(":ident", at(cols, xp::IDENT));
-      insertQuery.bindValue(":region", at(cols, xp::REGION));
-      insertQuery.bindValue(":tags", tags.join(' '));
-      insertQuery.bindValue(":name", cols.mid(xp::NAME).join(' ')); // Get rest of line as name
-      insertQuery.bindValue(":last_edit_timestamp", now.toString(Qt::ISODate));
-      insertQuery.bindValue(":import_file_path", absfilepath);
-      insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
-      insertQuery.bindValue(":temp", 0);
+      insertQuery.bindValue(QStringLiteral(":type"), QStringLiteral("Waypoint"));
+      insertQuery.bindValue(QStringLiteral(":ident"), at(cols, xp::IDENT));
+      insertQuery.bindValue(QStringLiteral(":region"), at(cols, xp::REGION));
+      insertQuery.bindValue(QStringLiteral(":tags"), tags.join(' '));
+      insertQuery.bindValue(QStringLiteral(":name"), cols.mid(xp::NAME).join(' ')); // Get rest of line as name
+      insertQuery.bindValue(QStringLiteral(":last_edit_timestamp"), now.toString(Qt::ISODate));
+      insertQuery.bindValue(QStringLiteral(":import_file_path"), absfilepath);
+      insertQuery.bindValue(QStringLiteral(":visible_from"), VISIBLE_FROM_DEFAULT_NM);
+      insertQuery.bindValue(QStringLiteral(":temp"), 0);
 
       validateCoordinates(line, at(cols, xp::LONX), at(cols, xp::LATY), lineNum, false /* checkNull */);
-      insertQuery.bindValue(":lonx", at(cols, xp::LONX));
-      insertQuery.bindValue(":laty", at(cols, xp::LATY));
+      insertQuery.bindValue(QStringLiteral(":lonx"), at(cols, xp::LONX));
+      insertQuery.bindValue(QStringLiteral(":laty"), at(cols, xp::LATY));
 
       insertQuery.exec();
       undoHandler.inserted();
@@ -432,10 +436,11 @@ int UserdataManager::importGarmin(const QString& filepath)
   {
     int id = getCurrentId() + 1;
     atools::sql::DataManagerUndoHandler undoHandler(this, id);
-    QString idBinding(":" % idColumnName);
+    QString idBinding(QStringLiteral(":") % idColumnName);
 
     QString insert = SqlUtil(db).buildInsertStatement(tableName, QStringLiteral(),
-                                                      {"description", "altitude", "region"}, true /* namedBindings */);
+                                                      {QStringLiteral("description"), QStringLiteral("altitude"), QStringLiteral("region")},
+                                                      true /* namedBindings */);
     SqlQuery insertQuery(db);
     insertQuery.prepare(insert);
 
@@ -451,20 +456,20 @@ int UserdataManager::importGarmin(const QString& filepath)
       if(line.isEmpty())
         continue;
 
-      QStringList cols = line.split(",");
+      QStringList cols = line.split(QStringLiteral(","));
 
       insertQuery.bindValue(idBinding, id++);
-      insertQuery.bindValue(":type", "Waypoint");
-      insertQuery.bindValue(":name", at(cols, gm::NAME));
-      insertQuery.bindValue(":ident", at(cols, gm::IDENT));
-      insertQuery.bindValue(":last_edit_timestamp", now.toString(Qt::ISODate));
-      insertQuery.bindValue(":import_file_path", absfilepath);
-      insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
-      insertQuery.bindValue(":temp", 0);
+      insertQuery.bindValue(QStringLiteral(":type"), QStringLiteral("Waypoint"));
+      insertQuery.bindValue(QStringLiteral(":name"), at(cols, gm::NAME));
+      insertQuery.bindValue(QStringLiteral(":ident"), at(cols, gm::IDENT));
+      insertQuery.bindValue(QStringLiteral(":last_edit_timestamp"), now.toString(Qt::ISODate));
+      insertQuery.bindValue(QStringLiteral(":import_file_path"), absfilepath);
+      insertQuery.bindValue(QStringLiteral(":visible_from"), VISIBLE_FROM_DEFAULT_NM);
+      insertQuery.bindValue(QStringLiteral(":temp"), 0);
 
       validateCoordinates(line, at(cols, gm::LONX), at(cols, gm::LATY), lineNum, false /* checkNull */);
-      insertQuery.bindValue(":lonx", at(cols, gm::LONX));
-      insertQuery.bindValue(":laty", at(cols, gm::LATY));
+      insertQuery.bindValue(QStringLiteral(":lonx"), at(cols, gm::LONX));
+      insertQuery.bindValue(QStringLiteral(":laty"), at(cols, gm::LATY));
 
       insertQuery.exec();
       undoHandler.inserted();
@@ -535,10 +540,10 @@ int UserdataManager::exportCsv(const QString& filepath, const QList<int>& ids, a
       float magvar = 0.f;
       if(magDec->isValid())
         // Can be invalid if not database is loaded (no declination data) and backup is done
-        magvar = magDec->getMagVar(Pos(record.valueFloat("Longitude"), record.valueFloat("Latitude")));
+        magvar = magDec->getMagVar(Pos(record.valueFloat(QStringLiteral("Longitude")), record.valueFloat(QStringLiteral("Latitude"))));
 
       // Need to cast otherwise it is not recognized as a floating point number
-      record.setValue("Magnetic Declination", static_cast<double>(magvar));
+      record.setValue(QStringLiteral("Magnetic Declination"), static_cast<double>(magvar));
 
       // Write row
       stream << sqlExport.getResultSetRow(record) << Qt::endl;
@@ -573,7 +578,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QList<int>& ids
         while(!inStream.atEnd())
         {
           QString line = inStream.readLine();
-          if(line.simplified() == "99")
+          if(line.simplified() == QStringLiteral("99"))
             break;
           tempOutStream << line << Qt::endl;
         }
@@ -637,17 +642,17 @@ int UserdataManager::exportXplane(const QString& filepath, const QList<int>& ids
     query.exec();
     while(query.next())
     {
-      QString region = query.query.valueStr("region").toUpper();
+      QString region = query.query.valueStr(QStringLiteral("region")).toUpper();
 
-      stream << QString::number(query.query.valueDouble("laty"), 'f', 8)
-             << " " << QString::number(query.query.valueDouble("lonx"), 'f', 8)
-             << " " << atools::fs::util::adjustIdent(query.query.valueStr("ident"), 5, query.query.valueInt(idColumnName));
+      stream << QString::number(query.query.valueDouble(QStringLiteral("laty")), 'f', 8)
+             << " " << QString::number(query.query.valueDouble(QStringLiteral("lonx")), 'f', 8)
+             << " " << atools::fs::util::adjustIdent(query.query.valueStr(QStringLiteral("ident")), 5, query.query.valueInt(idColumnName));
 
       if(xp12)
       {
-        QString airportIdent = query.query.valueStr("tags").section(' ', 0, 0);
+        QString airportIdent = query.query.valueStr(QStringLiteral("tags")).section(' ', 0, 0);
         if(airportIdent.isEmpty())
-          airportIdent = "ENRT"; // En-route
+          airportIdent = QStringLiteral("ENRT"); // En-route
         stream << " " << airportIdent;
       }
       else
@@ -700,13 +705,13 @@ int UserdataManager::exportGarmin(const QString& filepath, const QList<int>& ids
     query.exec();
     while(query.next())
     {
-      stream << atools::fs::util::adjustIdent(query.query.valueStr("ident"), 6, query.query.valueInt(idColumnName))
+      stream << atools::fs::util::adjustIdent(query.query.valueStr(QStringLiteral("ident")), 6, query.query.valueInt(idColumnName))
              << ","
-             << query.query.valueStr("name").simplified().toUpper().replace(ADJUST_NAME_REGEXP, "").left(25)
+             << query.query.valueStr(QStringLiteral("name")).simplified().toUpper().replace(ADJUST_NAME_REGEXP, "").left(25)
              << ","
-             << QString::number(query.query.valueDouble("laty"), 'f', 8)
+             << QString::number(query.query.valueDouble(QStringLiteral("laty")), 'f', 8)
              << ","
-             << QString::number(query.query.valueDouble("lonx"), 'f', 8)
+             << QString::number(query.query.valueDouble(QStringLiteral("lonx")), 'f', 8)
              << Qt::endl;
       numExported++;
     }
