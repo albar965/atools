@@ -33,6 +33,7 @@ using atools::settings::Settings;
 namespace atools {
 namespace gui {
 
+// Commands are set if the property exists
 const QLatin1String DataExchange::STARTUP_COMMAND_QUIT("quit");
 const QLatin1String DataExchange::STARTUP_COMMAND_ACTIVATE("activate");
 
@@ -165,7 +166,7 @@ DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
         if(QDateTime::fromMSecsSinceEpoch(datetime).msecsTo(QDateTime::currentDateTimeUtc()) < MAX_TIME_DIFFENCE_MS)
         {
           if(!properties.contains(STARTUP_COMMAND_QUIT))
-            properties.setPropertyBool(STARTUP_COMMAND_ACTIVATE, true); // Always raise other window except on qut
+            properties.setPropertyStr(STARTUP_COMMAND_ACTIVATE, QStringLiteral()); // Always raise other window except on qut
 
           if(verbose)
             qDebug() << Q_FUNC_INFO << "Sending" << properties;
