@@ -24,7 +24,9 @@
 #include <QFileDevice>
 #include <QDebug>
 #include <QXmlStreamWriter>
+#if defined(QT_WIDGETS_LIB)
 #include <QColor>
+#endif
 
 namespace atools {
 namespace util {
@@ -125,11 +127,14 @@ void XmlStreamWriter::writeTextElement(const QString& name, bool value)
   checkError();
 }
 
+#if defined(QT_WIDGETS_LIB)
 void XmlStreamWriter::writeTextElement(const QString& name, const QColor& value)
 {
   writer->writeTextElement(name, value.name());
   checkError();
 }
+
+#endif
 
 void XmlStreamWriter::writeTextElement(const QString& posName, const atools::geo::Pos& pos, bool writeAltitude)
 {

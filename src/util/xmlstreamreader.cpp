@@ -24,7 +24,6 @@
 #include <QFileDevice>
 #include <QDebug>
 #include <QXmlStreamReader>
-#include <QColor>
 
 namespace atools {
 namespace util {

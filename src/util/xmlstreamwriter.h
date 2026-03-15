@@ -104,8 +104,9 @@ public:
   {
     writeAttribute(name, QString::number(value));
   }
-
+#if defined(QT_WIDGETS_LIB)
   void writeTextElement(const QString& name, const QColor& value);
+#endif
 
   /* Write pos element and attributes */
   void writeTextElement(const QString& posName, const atools::geo::Pos& pos, bool writeAltitude = false);

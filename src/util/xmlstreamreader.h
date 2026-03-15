@@ -18,9 +18,11 @@
 #ifndef ATOOLS_XMLSTREAMREADER_H
 #define ATOOLS_XMLSTREAMREADER_H
 
-#include <QColor>
 #include <QCoreApplication>
 #include <QXmlStreamReader>
+#if defined(QT_WIDGETS_LIB)
+#include <QColor>
+#endif
 
 class QIODevice;
 
@@ -82,10 +84,13 @@ public:
   double readElementTextDouble();
 
   /* Read #RRGGBB color description */
+#if defined(QT_WIDGETS_LIB)
   QColor readElementTextColor()
   {
     return QColor::fromString(readElementTextStr());
   }
+
+#endif
 
   /* Reads Pos attributes from current element and skips it */
   atools::geo::Pos readElementPos();
