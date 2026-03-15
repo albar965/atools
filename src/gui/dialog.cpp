@@ -25,7 +25,7 @@
 #include <QMessageBox>
 #include <QCheckBox>
 #include <QStandardPaths>
-#include <QDebug>
+#include <QStringBuilder>
 
 namespace atools {
 namespace gui {
@@ -42,7 +42,7 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
     *filterIndex = -1;
 
   dlg.setNameFilter(filter);
-  dlg.setWindowTitle(QCoreApplication::applicationName() + " - " + title);
+  dlg.setWindowTitle(QCoreApplication::applicationName() % tr(" - ") % title);
   dlg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
   if(!defaultFileSuffix.isEmpty())
@@ -54,9 +54,9 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
   if(!settingsPrefix.isEmpty())
   {
     // Key for dialog state
-    settingName = settingsPrefix + "FileDialog";
+    settingName = settingsPrefix % QStringLiteral("FileDialog");
     // Key for dialog directory
-    settingNameDir = settingName + "Dir";
+    settingNameDir = settingName % QStringLiteral("Dir");
 
     // Read state
     if(settings.contains(settingName))
@@ -97,14 +97,14 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
   if(autoNumberFilename && dir.isDir() && !name.isEmpty())
   {
     // Choose separator depending on filename
-    QString sep = name.contains(" ") ? " " : "_";
-    QFileInfo base(dir.filePath() + QDir::separator() + name);
+    QString sep = name.contains(QStringLiteral(" ")) ? QStringLiteral(" ") : QStringLiteral("_");
+    QFileInfo base(dir.filePath() % QDir::separator() % name);
     QFileInfo fi(base);
 
     int i = 1;
     while(fi.exists() && i < 100)
-      fi.setFile(dir.filePath() + QDir::separator() + base.baseName() + QStringLiteral("%1%2").arg(sep).arg(i++) + "." +
-                 base.completeSuffix());
+      fi.setFile(dir.filePath() % QDir::separator() % base.baseName() %
+                 QStringLiteral("%1%2").arg(sep).arg(i++) % QStringLiteral(".") % base.completeSuffix());
 
     name = fi.fileName();
   }

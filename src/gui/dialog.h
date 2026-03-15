@@ -19,6 +19,7 @@
 #define ATOOLS_GUI_DIALOG_H
 
 #include <QMessageBox>
+#include <QCoreApplication>
 
 class QWidget;
 class QFileDialog;
@@ -58,6 +59,8 @@ typedef QList<DialogButton> DialogButtonList;
  */
 class Dialog
 {
+  Q_DECLARE_TR_FUNCTIONS(Dialog)
+
 public:
   /*
    * @param parentWidget widget for all dialogs
