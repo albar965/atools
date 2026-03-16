@@ -1536,6 +1536,10 @@ void XpAirportReader::bindAirport(const QStringList& line, AirportRowCode rowCod
 
     QString name = mid(line, ap::NAME, true /* ignore error */).simplified();
     airportClosed = atools::fs::util::isNameClosed(name);
+
+    if(airportClosed)
+      airportIndex->addClosedAirport(curAirportId);
+
     bool military = atools::fs::util::isNameMilitary(name);
 
     // Remove [H], [S], [g], [x] and [mil] indicators

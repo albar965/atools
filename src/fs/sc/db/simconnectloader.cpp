@@ -828,7 +828,7 @@ bool SimConnectLoaderPrivate::requestAirportList()
   // Filter airport idents if requested =============================
   if(!airportIcaoFiltersInc.isEmpty())
   {
-    airportIds.erase(std::remove_if(airportIds.begin(), airportIds.end(), [ = ](const IcaoId& id) -> bool {
+    airportIds.erase(std::remove_if(airportIds.begin(), airportIds.end(), [this](const IcaoId& id) -> bool {
               bool foundMatch = false;
               for(const QRegularExpression& regexp : std::as_const(airportIcaoFiltersInc))
               {
@@ -1910,7 +1910,7 @@ void SimConnectLoader::setProgressCallback(const SimConnectLoaderProgressCallbac
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->progressCallback = callback;
-  p->writer->setProgressCallback([ = ](const QString& message, bool incProgress)->bool {
+  p->writer->setProgressCallback([this](const QString& message, bool incProgress)->bool {
             p->aborted = p->callProgress(message, incProgress);
             return p->aborted;
           });

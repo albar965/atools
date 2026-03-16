@@ -78,7 +78,7 @@ struct AirwayResolver::AirwaySegment
   atools::geo::Pos fromPos, toPos;
 };
 
-size_t qHash(const AirwayResolver::AirwaySegment& segment, size_t seed)
+inline size_t qHash(const AirwayResolver::AirwaySegment& segment, size_t seed)
 {
   return qHashMulti(seed, segment.fromWaypointId, segment.toWaypointId);
 }
