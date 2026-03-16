@@ -60,14 +60,27 @@ int AirportIndex::getAirportId(const QString& ident, bool allIdents) const
 
   if(allIdents)
   {
+    // Exclude closed airports for search using all idents
+    if(closedAirports.contains(id))
+      id = -1;
+
     if(id == -1)
       id = icaoToAirportMap.value(Name(ident), EMPTY_IDPOS).first;
+
+    if(id != -1 && closedAirports.contains(id))
+      id = -1;
 
     if(id == -1)
       id = faaToAirportMap.value(Name(ident), EMPTY_IDPOS).first;
 
+    if(id != -1 && closedAirports.contains(id))
+      id = -1;
+
     if(id == -1)
       id = localToAirportMap.value(Name(ident), EMPTY_IDPOS).first;
+
+    if(id != -1 && closedAirports.contains(id))
+      id = -1;
   }
 
   return id;
@@ -177,6 +190,7 @@ void AirportIndex::clear()
   airportIdents.clear();
   idNameToEnd.clear();
   airportIlsIdMap.clear();
+  closedAirports.clear();
 }
 
 } // namespace common

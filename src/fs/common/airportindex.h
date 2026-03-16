@@ -84,6 +84,17 @@ public:
   void addSkippedAirportIls(const QString& airportIdent, const QString& airportRegion, const QString& ilsIdent);
   bool hasSkippedAirportIls(const QString& airportIdent, const QString& airportRegion, const QString& ilsIdent) const;
 
+  void addClosedAirport(int airportId)
+  {
+    if(airportId != -1)
+      closedAirports.insert(airportId);
+  }
+
+  bool isAirportClosed(int airportId)
+  {
+    return closedAirports.contains(airportId);
+  }
+
   void clearSkippedIls()
   {
     skippedIlsSet.clear();
@@ -100,6 +111,8 @@ public:
 
 private:
   int runwayEndId(int airportId, const QString& runwayName) const;
+
+  QSet<int> closedAirports;
 
   // Airport ident, ICAO and FAA to airport_id and pos
   QHash<Name, IdPos> identToAirportMap, icaoToAirportMap, faaToAirportMap, localToAirportMap;
