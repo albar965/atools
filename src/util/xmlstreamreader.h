@@ -101,6 +101,7 @@ public:
   /* Reads a chain of element texts with the give name from current element */
   QList<int> readElementListInt(const QString& entryName);
   QList<float> readElementListFloat(const QString& entryName);
+  QList<double> readElementListDouble(const QString& entryName);
   QStringList readElementListStr(const QString& entryName);
 
   /* As above for attributes */

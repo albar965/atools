@@ -87,10 +87,24 @@ public:
   void writeTextElement(const QString& name, bool value);
 
   /* Write any numeric type that can be converted to a string */
-  template<typename TYPE>
-  void writeTextElement(const QString& name, TYPE value)
+  void writeTextElement(const QString& name, int value)
   {
     writeTextElement(name, QString::number(value));
+  }
+
+  void writeTextElement(const QString& name, long long value)
+  {
+    writeTextElement(name, QString::number(value));
+  }
+
+  void writeTextElement(const QString& name, float value)
+  {
+    writeTextElement(name, QString::number(value, 'f', 10));
+  }
+
+  void writeTextElement(const QString& name, double value)
+  {
+    writeTextElement(name, QString::number(value, 'f', 10));
   }
 
   void writeAttribute(const QString& name, const QString& value);
@@ -98,14 +112,29 @@ public:
   /* Write attribute  and text true/false */
   void writeAttribute(const QString& name, bool value);
 
-  /* Write any numeric type that can be converted to a string */
-  template<typename TYPE>
-  void writeAttribute(const QString& name, TYPE value)
+  void writeAttribute(const QString& name, int value)
   {
     writeAttribute(name, QString::number(value));
   }
+
+  void writeAttribute(const QString& name, long long value)
+  {
+    writeAttribute(name, QString::number(value));
+  }
+
+  void writeAttribute(const QString& name, float value)
+  {
+    writeAttribute(name, QString::number(value, 'f', 10));
+  }
+
+  void writeAttribute(const QString& name, double value)
+  {
+    writeAttribute(name, QString::number(value, 'f', 10));
+  }
+
 #if defined(QT_WIDGETS_LIB)
   void writeTextElement(const QString& name, const QColor& value);
+
 #endif
 
   /* Write pos element and attributes */

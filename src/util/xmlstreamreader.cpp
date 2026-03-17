@@ -205,6 +205,20 @@ QList<float> XmlStreamReader::readElementListFloat(const QString& entryName)
   return values;
 }
 
+QList<double> XmlStreamReader::readElementListDouble(const QString& entryName)
+{
+  QList<double> values;
+
+  while(readNextStartElement())
+  {
+    if(name() == entryName)
+      values.append(readElementTextDouble());
+    else
+      skipCurrentElement();
+  }
+  return values;
+}
+
 QStringList XmlStreamReader::readElementListStr(const QString& entryName)
 {
   QStringList values;
