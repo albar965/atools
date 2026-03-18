@@ -720,10 +720,13 @@ QSet<TYPE> strListToNumSet(const QStringList& strings, bool *ok = nullptr)
   return retval;
 }
 
-QStringList floatVectorToStrList(const QList<float>& vector);
+QStringList floatListToStrList(const QList<float>& list);
+QStringList doubleListToStrList(const QList<double>& list);
 
-QList<float> strListToFloatVector(const QStringList& strings, bool *ok = nullptr);
+QList<float> strListToFloatList(const QStringList& strings, bool *ok = nullptr);
+QList<double> strListToDoubleList(const QStringList& strings, bool *ok = nullptr);
 QStringList floatSetToStrList(const QSet<float>& set);
+QStringList doubleSetToStrList(const QSet<double>& set);
 
 QSet<float> strListToFloatSet(const QStringList& strings, bool *ok = nullptr);
 

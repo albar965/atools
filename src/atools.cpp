@@ -610,15 +610,23 @@ QString tempDir()
   return QStandardPaths::standardLocations(QStandardPaths::TempLocation).value(0);
 }
 
-QStringList floatVectorToStrList(const QList<float>& vector)
+QStringList floatListToStrList(const QList<float>& list)
 {
   QStringList retval;
-  for(float value : vector)
+  for(float value : list)
     retval.append(QString::number(value));
   return retval;
 }
 
-QList<float> strListToFloatVector(const QStringList& strings, bool *ok)
+QStringList doubleListToStrList(const QList<double>& list)
+{
+  QStringList retval;
+  for(double value : list)
+    retval.append(QString::number(value));
+  return retval;
+}
+
+QList<float> strListToFloatList(const QStringList& strings, bool *ok)
 {
   if(ok != nullptr)
     *ok = true;
@@ -636,10 +644,36 @@ QList<float> strListToFloatVector(const QStringList& strings, bool *ok)
   return retval;
 }
 
+QList<double> strListToDoubleList(const QStringList& strings, bool *ok)
+{
+  if(ok != nullptr)
+    *ok = true;
+  QList<double> retval;
+  for(const QString& str : strings)
+  {
+    bool localOk;
+    double val = str.toDouble(&localOk);
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.append(val);
+  }
+  return retval;
+}
+
 QStringList floatSetToStrList(const QSet<float>& set)
 {
   QStringList retval;
   for(float value : set)
+    retval.append(QString::number(value));
+  return retval;
+}
+
+QStringList doubleSetToStrList(const QSet<double>& set)
+{
+  QStringList retval;
+  for(double value : set)
     retval.append(QString::number(value));
   return retval;
 }

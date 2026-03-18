@@ -468,7 +468,7 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
         for(int f : frequencies)
           frequenciesMhz.append(f / 1000.f);
 
-        columns[c::FREQUENCY] = atools::floatVectorToStrList(frequenciesMhz).join('&');
+        columns[c::FREQUENCY] = atools::floatListToStrList(frequenciesMhz).join('&');
 
         // Use center of bounding rectangle as position
         columns[c::LONGITUDE] = QString::number(rect.getCenter().getLonX());
