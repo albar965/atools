@@ -215,6 +215,18 @@ public:
   /* Closes all widgets and removes them from the list afterwards */
   void closeAllDialogs();
 
+  /* Get all registered dock widgets */
+  const QList<QDockWidget *>& getDockWidgets() const
+  {
+    return dockWidgets;
+  }
+
+  /* Update title bar font for all dockwidgets using a stylesheet. */
+  void fontChanged(const QFont& font);
+
+  /* Update title bar font for the given dock window using a stylesheet. */
+  static void fontChangedWidget(QDockWidget *dock, const QFont& font);
+
 private:
   /* One dock view was toggled by the accompanied action */
   void dockViewToggled();

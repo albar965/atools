@@ -116,6 +116,8 @@ void WidgetZoomHandler::setTableViewFontSize(double pointSize)
 
     tableView->verticalHeader()->setMinimumSectionSize(size);
     tableView->verticalHeader()->setDefaultSectionSize(size);
+    tableView->verticalHeader()->setFont(widgetFont);
+    tableView->horizontalHeader()->setFont(widgetFont);
   }
   else
   {
@@ -157,6 +159,8 @@ void WidgetZoomHandler::setTableViewFontSize(double pointSize)
       }
     }
   }
+
+  widget->updateGeometry();
 }
 
 void WidgetZoomHandler::initTableViewZoom()
