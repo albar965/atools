@@ -17,9 +17,10 @@
 
 #include "gui/dockwidgethandler.h"
 
+#include "atools.h"
 #include "exception.h"
 #include "gui/dialog.h"
-#include "gui/widgetutil.h"
+#include "gui/tools.h"
 
 #include <QAction>
 #include <QDockWidget>
@@ -134,7 +135,7 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
     qDebug() << Q_FUNC_INFO << "mainWindow->frameGeometry()" << mainWindow->frameGeometry();
 
   // Center window on main screen if it is not fully visible
-  util::ensureVisibility(mainWindow);
+  atools::gui::ensureVisibility(mainWindow);
 }
 
 void MainWindowState::fromWindow(const QMainWindow *mainWindow)
@@ -812,7 +813,7 @@ void DockWidgetHandler::resetWindowState(const QSize& size, const QString& filen
       // Move to origin and apply size
       mainWindow->resize(size);
 
-      atools::gui::util::centerWidgetOnScreen(mainWindow, QSize());
+      atools::gui::centerWidgetOnScreen(mainWindow, QSize());
 
       // Reload state now. This has to be done after resizing the window.
       mainWindow->restoreState(bytes);

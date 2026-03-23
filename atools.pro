@@ -561,7 +561,6 @@ HEADERS += \
   src/gui/translator.h \
   src/gui/treedialog.h \
   src/gui/widgetstate.h \
-  src/gui/widgetutil.h \
   src/gui/widgetzoomhandler.h \
   src/util/htmlbuilder.h \
   src/util/htmlbuilderflags.h \
@@ -598,7 +597,6 @@ SOURCES += \
   src/gui/translator.cpp \
   src/gui/treedialog.cpp \
   src/gui/widgetstate.cpp \
-  src/gui/widgetutil.cpp \
   src/gui/widgetzoomhandler.cpp \
   src/util/htmlbuilder.cpp \
   src/util/htmlbuilderflags.cpp \

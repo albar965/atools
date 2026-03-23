@@ -29,6 +29,8 @@ class QLabel;
 class QItemSelectionModel;
 class QAction;
 class QObject;
+class QTextEdit;
+class QTabWidget;
 
 namespace atools {
 namespace gui {
@@ -65,6 +67,62 @@ QList<int> selectedRows(QItemSelectionModel *model, bool reverse);
 
 /* true if action is enabled AND checked */
 bool checked(const QAction *action);
+
+/* Returns indexes in reverse order so that items can be deleted from the end of the list. */
+const QList<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionModel);
+
+/* Changes the background color of the widget using stylesheets and adapts text color for readability */
+void changeWidgetColor(QWidget *widget, QColor backgroundColor);
+
+/* @return true if no scrollbar is pressed in the text edit */
+bool canTextEditUpdate(const QTextEdit *textEdit);
+
+/* Update text edit and keep selection and scrollbar position */
+void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, bool keepSelection, bool clearSelection = false);
+
+/* Change tab height using given factor on font size */
+void changeTabBarSize(QTabWidget *tabWidget, double factor = 1.6);
+void changeTabBarSize(QList<QTabWidget *> tabWidgets, double factor = 1.6);
+
+/*
+ * Shows or hides all widgets in a list of layouts.
+ * @param layouts all widgets in these layouts will have their visibility changed
+ * @param visible hide or show widgets
+ * @param disable disable hidden widgets if true. Enable if unhidden
+ * @param otherWidgets other widgets not part of the layout that will have their visibility changed
+ */
+void showHideLayoutElements(const QList<QLayout *> layouts,
+                            const QList<QWidget *>& otherWidgets, bool visible, bool disable);
+
+/*
+ * Check is a list of widgets has their state at default (i.e. a checkbox is
+ * unchecked or a combo box is at index 0)
+ * @param widgets that will be checked
+ * @return true if any widget in the list does not have its default state
+ */
+bool anyWidgetChanged(const QList<const QObject *>& widgets);
+
+/* Centers the widget on the primary screen (not its parent) */
+void centerWidgetOnScreen(QWidget *widget, const QSize& size);
+
+/* Moves widget to be visible on main screen */
+void ensureVisibility(QWidget *widget);
+
+/*
+ * @return true if all actions that are checkable are checked
+ */
+bool allChecked(const QList<const QAction *>& actions);
+
+/*
+ * @return true if all actions that are checkable are not checked
+ */
+bool noneChecked(const QList<const QAction *>& actions);
+
+/* Add a " (changed)"/" (changed, unused)" to an action text or removes it. Latter text if action is not checked. */
+void changeIndication(QAction *action, bool changed);
+
+/* Remember text, clear label and set text again to force update after style changes */
+void labelForcedUpdate(QLabel *label);
 
 } // namespace gui
 } // namespace atools
