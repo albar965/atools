@@ -70,6 +70,10 @@ public:
   {
   }
 
+  /* Do not allow copying */
+  Dialog(const Dialog& other) = delete;
+  Dialog& operator=(const Dialog& other) = delete;
+
   /*
    * Creates an open file dialog and returns the selected file otherwise an
    * empty string. Stores dialog settings and current directory in the settings

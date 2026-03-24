@@ -58,6 +58,10 @@ public:
                           const QString& helpBaseUrlParam = QString(), const QString& confirmationButtonText = QString());
   virtual ~SqlQueryDialog() override;
 
+  /* Do not allow copying */
+  SqlQueryDialog(const SqlQueryDialog& other) = delete;
+  SqlQueryDialog& operator=(const SqlQueryDialog& other) = delete;
+
   /* Initializes query and prepares dialog to show. Uses given columns and column headers.
    * Shows nothing if query result count is zero. Dialog shows a close button and returns rejected in this case.
    * Call this before exec(). Dialog can only be used once. */

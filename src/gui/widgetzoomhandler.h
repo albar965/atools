@@ -61,6 +61,10 @@ public:
 
   virtual ~WidgetZoomHandler() override;
 
+  /* Do not allow copying */
+  WidgetZoomHandler(const WidgetZoomHandler& other) = delete;
+  WidgetZoomHandler& operator=(const WidgetZoomHandler& other) = delete;
+
   /* Use zoom methods for direct changes instead actions */
   void zoomTableView(int value);
 

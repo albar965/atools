@@ -36,6 +36,10 @@ public:
   explicit HelpHandler(QWidget *parent, const QString& aboutMessage, const QString& gitRevision);
   virtual ~HelpHandler() override;
 
+  /* Do not allow copying */
+  HelpHandler(const HelpHandler& other) = delete;
+  HelpHandler& operator=(const HelpHandler& other) = delete;
+
   /*
    * Get a help file where the ${LANG} variable in filepath will replaced with the
    * system UI language.

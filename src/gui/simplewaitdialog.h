@@ -39,6 +39,10 @@ public:
   explicit SimpleWaitDialog(QWidget *parent, const QString& message);
   virtual ~SimpleWaitDialog() override;
 
+  /* Do not allow copying */
+  SimpleWaitDialog(const SimpleWaitDialog& other) = delete;
+  SimpleWaitDialog& operator=(const SimpleWaitDialog& other) = delete;
+
   /* Set label text inside box, refresh and update dialog size */
   void setLabelText(const QString& labelText);
 

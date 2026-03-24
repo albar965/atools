@@ -40,6 +40,10 @@ public:
   explicit GridDelegate(QObject *parent, double borderPenWidthParam = 1.5, int heightIncreaseParam = 3);
   virtual ~GridDelegate() override;
 
+  /* Do not allow copying */
+  GridDelegate(const GridDelegate& other) = delete;
+  GridDelegate& operator=(const GridDelegate& other) = delete;
+
   /* Updates pen */
   void styleChanged();
 

@@ -50,6 +50,10 @@ public:
   explicit ListWidgetIndex(QListWidget *listWidgetParam, QStackedWidget *stackedWidgetParam);
   ~ListWidgetIndex();
 
+  /* Do not allow copying */
+  ListWidgetIndex(const ListWidgetIndex& other) = delete;
+  ListWidgetIndex& operator=(const ListWidgetIndex& other) = delete;
+
   /* Finds a phrase or word and handles all widgets.
    * Not matching list widget elements are hidden when searching and child widgets are highlighted using
    * the set color including alpha channnel.

@@ -48,6 +48,10 @@ public:
                      QAction *clearMenuAction);
   virtual ~FileHistoryHandler() override;
 
+  /* Do not allow copying */
+  FileHistoryHandler(const FileHistoryHandler& other) = delete;
+  FileHistoryHandler& operator=(const FileHistoryHandler& other) = delete;
+
   /* Save state and all entries to settings */
   void saveState() const;
 

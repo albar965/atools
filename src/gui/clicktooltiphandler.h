@@ -37,6 +37,10 @@ public:
   explicit ClickToolTipHandler(QLabel *parentLabel);
   virtual ~ClickToolTipHandler() override;
 
+  /* Do not allow copying */
+  ClickToolTipHandler(const ClickToolTipHandler& other) = delete;
+  ClickToolTipHandler& operator=(const ClickToolTipHandler& other) = delete;
+
 private:
   virtual bool eventFilter(QObject *object, QEvent *event) override;
 

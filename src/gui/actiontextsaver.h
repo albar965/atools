@@ -38,6 +38,10 @@ public:
   explicit ActionTextSaver(QList<QAction *> actions);
   ~ActionTextSaver();
 
+  /* Do not allow copying */
+  ActionTextSaver(const ActionTextSaver& other) = delete;
+  ActionTextSaver& operator=(const ActionTextSaver& other) = delete;
+
 private:
   friend class atools::gui::ActionTool;
 

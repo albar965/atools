@@ -49,6 +49,10 @@ public:
   /* Detaches and deletes shared memory */
   virtual ~DataExchange() override;
 
+  /* Do not allow copying */
+  DataExchange(const DataExchange& other) = delete;
+  DataExchange& operator=(const DataExchange& other) = delete;
+
   /* Found other instance and sent message. This instance can exit now. */
   bool isExit() const
   {

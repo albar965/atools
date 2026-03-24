@@ -44,6 +44,10 @@ public:
 
   }
 
+  /* Do not allow copying */
+  ComboBoxHandler(const ComboBoxHandler& other) = delete;
+  ComboBoxHandler& operator=(const ComboBoxHandler& other) = delete;
+
   /* Save or restore text entries of combo box list using given settingsKeyParam.
    * Does not save state or content of the line edit. This has to be done separately. */
   void saveState();

@@ -41,6 +41,10 @@ class DesktopServices
 public:
   DesktopServices(QWidget *parentWidgetParam);
 
+  /* Do not allow copying */
+  DesktopServices(const DesktopServices& other) = delete;
+  DesktopServices& operator=(const DesktopServices& other) = delete;
+
   /* Open a file in the default application or open the path and select the file in the file manager. */
   static void openFile(QWidget *parent, QString path, bool showInFileManager = false);
 

@@ -83,7 +83,7 @@ void ChoiceDialog::addWidgetById(ChoiceDialogIdType id, QWidget *widget)
 }
 
 void ChoiceDialog::addCheckBoxById(ChoiceDialogIdType id, const QString& text, const QString& tooltip, bool checked, bool disabled,
-                                  bool hidden)
+                                   bool hidden)
 {
   QCheckBox *button = new QCheckBox(text, this);
   button->setToolTip(tooltip);
@@ -102,7 +102,7 @@ void ChoiceDialog::addRadioButtonHiddenById(ChoiceDialogIdType id, ChoiceDialogG
 }
 
 void ChoiceDialog::addRadioButtonById(ChoiceDialogIdType id, ChoiceDialogGroupType groupId, const QString& text, const QString& tooltip,
-                                     bool checked, bool disabled, bool hidden)
+                                      bool checked, bool disabled, bool hidden)
 {
   QRadioButton *button = new QRadioButton(text, this);
   button->setToolTip(tooltip);

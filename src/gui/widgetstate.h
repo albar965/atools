@@ -74,6 +74,10 @@ public:
    */
   WidgetState(const QString& settingsKeyPrefix = QString(), bool saveVisibility = false, bool blockSignals = false);
 
+  /* Do not allow copying */
+  WidgetState(const WidgetState& other) = delete;
+  WidgetState& operator=(const WidgetState& other) = delete;
+
   void save(const QList<QObject *>& widgets) const;
   void save(const QList<const QObject *>& widgets) const;
   void save(const QObject *widget) const;

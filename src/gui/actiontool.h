@@ -38,6 +38,10 @@ public:
   explicit ActionTool(QList<QAction *> actions);
   ~ActionTool();
 
+  /* Do not allow copying */
+  ActionTool(const ActionTool& other) = delete;
+  ActionTool& operator=(const ActionTool& other) = delete;
+
   /* Sets the %1 placeholder with arg. An empty placeholder is used if the
    * action is disabled and the suffix is attached for disabled. */
   static void setText(QAction *action, const QString& arg = QString(), const QString& suffix = QString());

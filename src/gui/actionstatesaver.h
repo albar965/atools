@@ -37,6 +37,10 @@ public:
   explicit ActionStateSaver(QList<QAction *> actionList);
   ~ActionStateSaver();
 
+  /* Do not allow copying */
+  ActionStateSaver(const ActionStateSaver& other) = delete;
+  ActionStateSaver& operator=(const ActionStateSaver& other) = delete;
+
 private:
   friend class atools::gui::ActionTool;
 

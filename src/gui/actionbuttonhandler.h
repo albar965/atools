@@ -43,6 +43,10 @@ public:
   explicit ActionButtonHandler(QObject *parent);
   virtual ~ActionButtonHandler() override;
 
+  /* Do not allow copying */
+  ActionButtonHandler(const ActionButtonHandler& other) = delete;
+  ActionButtonHandler& operator=(const ActionButtonHandler& other) = delete;
+
   /* Set action which will toggle between all and selected features. */
   void setAllAction(QAction *action);
 

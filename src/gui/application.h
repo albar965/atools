@@ -51,6 +51,10 @@ public:
   Application(int& argc, char **argv, int = ApplicationFlags);
   virtual ~Application() override;
 
+  /* Do not allow copying */
+  Application(const Application& other) = delete;
+  Application& operator=(const Application& other) = delete;
+
   /* Instance of this or null if not applicable */
   static atools::gui::Application *applicationInstance();
 
