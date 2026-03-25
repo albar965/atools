@@ -549,6 +549,7 @@ HEADERS += \
   src/gui/filehistoryhandler.h \
   src/gui/griddelegate.h \
   src/gui/helphandler.h \
+  src/gui/linktooltiphandler.h \
   src/gui/listwidgetindex.h \
   src/gui/mapposhistory.h \
   src/gui/messagebox.h \
@@ -585,6 +586,7 @@ SOURCES += \
   src/gui/filehistoryhandler.cpp \
   src/gui/griddelegate.cpp \
   src/gui/helphandler.cpp \
+  src/gui/linktooltiphandler.cpp \
   src/gui/listwidgetindex.cpp \
   src/gui/mapposhistory.cpp \
   src/gui/messagebox.cpp \

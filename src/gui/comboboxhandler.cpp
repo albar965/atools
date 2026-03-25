@@ -35,6 +35,9 @@ ComboBoxHandler::ComboBoxHandler(QComboBox *comboBoxParam, QPushButton *deleteBu
   // Cannot be set in designer
   comboBox->lineEdit()->setClearButtonEnabled(true);
 
+  // Set in case it is not correct in Qt Designer
+  comboBox->setContextMenuPolicy(Qt::CustomContextMenu);
+
   // Called when pressing return or leaving focus
   connect(comboBox->lineEdit(), &QLineEdit::editingFinished, this, &ComboBoxHandler::editingFinished);
   connect(comboBox->lineEdit(), &QLineEdit::textChanged, this, &ComboBoxHandler::updateButtonState);
