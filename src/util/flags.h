@@ -354,6 +354,23 @@ private:
           return stream; \
         }
 
+/* ============================================================================
+ * Helper macros to build flag to string functions
+ *
+ * Example:
+ * QStringList mapAirspaceTypeToString(const map::MapAirspaceTypes& flags)
+ * {
+ *   ATOOLS_FLAGS_TO_STR_BEGIN(AIRSPACE_NONE);
+ *   ATOOLS_FLAGS_TO_STR(CLASS_A);
+ *   ATOOLS_FLAGS_TO_STR(CLASS_B);
+ *   ATOOLS_FLAGS_TO_STR_END;
+ * }
+ */
+
+#define ATOOLS_FLAGS_TO_STR_BEGIN(flag) QStringList list; if(flags == flag) list.append(QStringLiteral(# flag)); else {
+#define ATOOLS_FLAGS_TO_STR(flag) if(flags.testFlag(flag)) list.append(QStringLiteral(# flag));
+#define ATOOLS_FLAGS_TO_STR_END } return list;
+
 } // namespace util
 } // namespace atools
 
