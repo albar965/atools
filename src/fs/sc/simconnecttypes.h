@@ -96,5 +96,6 @@ void registerMetaTypes();
 } // namespace atools
 
 Q_DECLARE_METATYPE(atools::fs::sc::SimConnectStatus)
+Q_DECLARE_TYPEINFO(atools::fs::sc::AircraftFlags, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_SC_TYPES_H

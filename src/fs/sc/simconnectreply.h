@@ -139,5 +139,6 @@ private:
 } // namespace atools
 
 Q_DECLARE_METATYPE(atools::fs::sc::SimConnectReply)
+Q_DECLARE_TYPEINFO(atools::fs::sc::Command, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_FS_SIMCONNECTREPLY_H

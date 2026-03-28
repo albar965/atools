@@ -611,4 +611,6 @@ private:
 } // namespace fs
 } // namespace atools
 
+Q_DECLARE_TYPEINFO(atools::fs::type::OptionFlags, Q_PRIMITIVE_TYPE);
+
 #endif // ATOOLS_FS_NAVDATABASEOPTIONS_H

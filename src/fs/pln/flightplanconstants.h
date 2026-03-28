@@ -196,4 +196,6 @@ const float INVALID_ALTITUDE = std::numeric_limits<float>::max();
 } // namespace fs
 } // namespace atools
 
+Q_DECLARE_TYPEINFO(atools::fs::pln::entry::Flags, Q_PRIMITIVE_TYPE);
+
 #endif // ATOOLS_FLIGHTPLANCONSTANTS_H

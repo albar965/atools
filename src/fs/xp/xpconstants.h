@@ -278,4 +278,6 @@ QString approachIndicatorToDb(atools::fs::xp::ApproachIndicator value, const XpR
 } // namespace fs
 } // namespace atools
 
+Q_DECLARE_TYPEINFO(atools::fs::xp::ContextFlags, Q_PRIMITIVE_TYPE);
+
 #endif // ATOOLS_FS_XP_XPCONSTANTS_H

@@ -94,7 +94,7 @@ enum NodeConnection : quint8
 };
 
 ATOOLS_DECLARE_FLAGS_8(NodeConnections, NodeConnection)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(NodeConnections)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::routing::NodeConnections)
 
 QString nodeConnectionsToStr(NodeConnection con);
 
@@ -329,5 +329,9 @@ struct Result
 
 Q_DECLARE_TYPEINFO(atools::routing::Node, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(atools::routing::Edge, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(atools::routing::Modes, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(atools::routing::NodeConnections, Q_PRIMITIVE_TYPE);
+
+
 
 #endif // ATOOLS_ROUTENETWORKBASE_H

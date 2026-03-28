@@ -120,4 +120,6 @@ private:
 } // namespace fs
 } // namespace atools
 
+Q_DECLARE_TYPEINFO(atools::fs::userdata::Flags, Q_PRIMITIVE_TYPE);
+
 #endif // ATOOLS_FS_USERDATAMANAGER_H

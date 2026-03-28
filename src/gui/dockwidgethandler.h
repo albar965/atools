@@ -313,4 +313,6 @@ private:
 } // namespace gui
 } // namespace atools
 
+Q_DECLARE_TYPEINFO(atools::gui::DockFlags, Q_PRIMITIVE_TYPE);
+
 #endif // ATOOLS_DOCKWIDGETHANDLER_H

@@ -43,4 +43,6 @@ Q_DECLARE_LOGGING_CATEGORY(gui)
 } // namespace fs
 } // namespace atools
 
+Q_DECLARE_TYPEINFO(atools::fs::ns::NavServerOptions, Q_PRIMITIVE_TYPE);
+
 #endif // ATOOLS_NS_COMMON_H

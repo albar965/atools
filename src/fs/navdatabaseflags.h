@@ -41,4 +41,6 @@ ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::ResultFlags)
 } // namespace fs
 } // namespace atools
 
+Q_DECLARE_TYPEINFO(atools::fs::ResultFlags, Q_PRIMITIVE_TYPE);
+
 #endif // ATOOLS_FS_NAVDATABASEFLAGS_H

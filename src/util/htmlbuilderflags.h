@@ -62,4 +62,6 @@ ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(atools::util::html::Flags)
 } // namespace util
 } // namespace atools
 
+Q_DECLARE_TYPEINFO(atools::util::html::Flags, Q_PRIMITIVE_TYPE);
+
 #endif // ATOOLS_HTMLBUILDERFLAGS_H
