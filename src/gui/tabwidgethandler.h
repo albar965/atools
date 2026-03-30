@@ -25,14 +25,10 @@ class QTabWidget;
 class QToolButton;
 class QAction;
 
+class Tab;
+
 namespace atools {
 namespace gui {
-
-struct TabData
-{
-  QWidget *widget;
-  int id;
-};
 
 /*
  * Enhances tab widgets with a right corner widget and a context menu above the tabs that allow to enable and
@@ -63,6 +59,8 @@ public:
   /* Save or restore open/close and order of tabs. Call init before. */
   void saveState() const;
   void restoreState();
+
+  void fontChanged(const QFont&, const QSize& minButtonSize);
 
   /* Id of currently open tab or -1 if none */
   int getCurrentTabId() const;
@@ -152,30 +150,6 @@ private:
   /* Re-enables the close button after the widget had ony one tab */
   void fixSingleTab();
 
-  /* Contains all information for tabs */
-  struct Tab
-  {
-    Tab()
-      : widget(nullptr)
-    {
-    }
-
-    Tab(QWidget *tabParam, const QString& titleParam, const QString& tooltipParam, QAction *actionParam)
-      : widget(tabParam), title(titleParam), tooltip(tooltipParam), action(actionParam)
-    {
-    }
-
-    /* true if initialized and not default constructed */
-    bool isValid() const
-    {
-      return widget != nullptr;
-    }
-
-    QWidget *widget; /* The tab widget. Contains id as property ID_PROPERTY */
-    QString title, tooltip; /* Saved texts needed when adding tab */
-    QAction *action; /* Action for tool button or menu. Has id in "data" field. */
-  };
-
   /* Contains all (also closed) tabs. Index corresponds to tab id as given in tabIdsParam */
   QList<Tab> tabs;
 
@@ -185,6 +159,8 @@ private:
 
   QTabWidget *tabWidget;
   QToolButton *toolButtonCorner = nullptr;
+
+  QList<QWidget *> additionalWidgets;
 
   /* Prefix used when saving settings */
   QString settingsPrefix;

@@ -996,6 +996,9 @@ void DockWidgetHandler::fontChanged(const QFont& font)
 {
   for(QDockWidget *dock : std::as_const(dockWidgets))
     fontChangedWidget(dock, font);
+
+  for(QToolBar *toolbar : std::as_const(toolBars))
+    atools::gui::updateAllFonts(toolbar, QApplication::font());
 }
 
 void DockWidgetHandler::fontChangedWidget(QDockWidget *dock, const QFont& font)

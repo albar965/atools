@@ -221,7 +221,8 @@ public:
     return dockWidgets;
   }
 
-  /* Update title bar font for all dockwidgets using a stylesheet. */
+  /* Update title bar font for all dockwidgets using a stylesheet.
+   * Also update toolbar font recursively for all its children. */
   void fontChanged(const QFont& font);
 
   /* Update title bar font for the given dock window using a stylesheet. */

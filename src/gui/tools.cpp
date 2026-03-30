@@ -459,6 +459,7 @@ void changeTabBarSize(QTabWidget *tabWidget, double factor)
 {
   tabWidget->setStyleSheet(QStringLiteral("QTabBar::tab { height: %1px; }").
                            arg(QString::number(atools::roundToInt(QFontMetricsF(QApplication::font()).height() * factor))));
+  tabWidget->updateGeometry();
 }
 
 void changeWidgetColor(QWidget *widget, QColor backgroundColor)

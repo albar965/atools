@@ -17,8 +17,9 @@
 
 #include "gui/tabwidgethandler.h"
 
-#include "settings/settings.h"
 #include "atools.h"
+#include "gui/tools.h"
+#include "settings/settings.h"
 
 #include <QTabWidget>
 #include <QTabBar>
@@ -34,14 +35,60 @@
 #include <QApplication>
 #endif
 
+/* Contains all information for tabs */
+class Tab
+{
+public:
+  Tab()
+    : widget(nullptr), action(nullptr)
+  {
+  }
+
+  explicit Tab(QWidget *tabParam, const QString& titleParam, const QString& tooltipParam, QAction *actionParam)
+    : widget(tabParam), title(titleParam), tooltip(tooltipParam), action(actionParam)
+  {
+  }
+
+  /* true if initialized and not default constructed */
+  bool isValid() const
+  {
+    return widget != nullptr;
+  }
+
+  QWidget *getWidget() const
+  {
+    return widget;
+  }
+
+  const QString& getTitle() const
+  {
+    return title;
+  }
+
+  const QString& getTooltip() const
+  {
+    return tooltip;
+  }
+
+  QAction *getAction() const
+  {
+    return action;
+  }
+
+private:
+  QWidget *widget; /* The tab widget. Contains id as property ID_PROPERTY */
+  QString title, tooltip; /* Saved texts needed when adding tab */
+  QAction *action; /* Action for tool button or menu. Has id in "data" field. */
+};
+
 const static char ID_PROPERTY[] = "tabid";
 
 namespace atools {
 namespace gui {
 
-TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QList<QWidget *>& additionalWidgets,
+TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QList<QWidget *>& additionalWidgetsParam,
                                    const QIcon& icon, const QString& toolButtonTooltip)
-  : QObject(tabWidgetParam), tabWidget(tabWidgetParam)
+  : QObject(tabWidgetParam), tabWidget(tabWidgetParam), additionalWidgets(additionalWidgetsParam)
 {
   styleChanged();
 
@@ -129,10 +176,11 @@ void TabWidgetHandler::clear()
 {
   for(const Tab& tab : std::as_const(tabs))
   {
-    toolButtonCorner->menu()->removeAction(tab.action);
-    delete tab.action;
+    toolButtonCorner->menu()->removeAction(tab.getAction());
+    delete tab.getAction();
   }
   tabs.clear();
+  additionalWidgets.clear();
 }
 
 void TabWidgetHandler::reset()
@@ -153,7 +201,7 @@ void TabWidgetHandler::resetInternal()
 {
   clearTabWidget();
   for(const Tab& tab : std::as_const(tabs))
-    addTab(tab.action->data().toInt());
+    addTab(tab.getAction()->data().toInt());
 
   // Activate first
   tabWidget->setCurrentIndex(0);
@@ -192,7 +240,7 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
   menu.addSeparator();
 
   for(const Tab& tab : std::as_const(tabs))
-    menu.addAction(tab.action);
+    menu.addAction(tab.getAction());
 
   // Open menu
   QAction *action = menu.exec(menuPos);
@@ -259,11 +307,11 @@ void TabWidgetHandler::restoreState()
         if(tab.isValid())
         {
           // Add tab to widget
-          int idx = tabWidget->addTab(tab.widget, tab.title);
+          int idx = tabWidget->addTab(tab.getWidget(), tab.getTitle());
           if(idx != -1)
           {
-            tabWidget->setTabToolTip(idx, tab.tooltip);
-            tabWidget->setCurrentWidget(tab.widget);
+            tabWidget->setTabToolTip(idx, tab.getTooltip());
+            tabWidget->setCurrentWidget(tab.getWidget());
           }
         }
       }
@@ -282,6 +330,15 @@ void TabWidgetHandler::restoreState()
   // Update actions
   updateTabs();
   updateWidgets();
+}
+
+void TabWidgetHandler::fontChanged(const QFont&, const QSize& minButtonSize)
+{
+  toolButtonCorner->setMinimumSize(minButtonSize);
+  toolButtonCorner->updateGeometry();
+
+  for(QWidget *widget : std::as_const(additionalWidgets))
+    widget->setMinimumSize(minButtonSize);
 }
 
 void TabWidgetHandler::saveState() const
@@ -364,7 +421,7 @@ void TabWidgetHandler::tabCloseRequestedInternal(int index)
     tabWidget->removeTab(index);
 
     // Update action but disable signals to avoid recursion
-    QAction *action = tabs.at(index).action;
+    QAction *action = tabs.at(index).getAction();
     QSignalBlocker actionBlocker(action);
     action->setChecked(true);
 
@@ -444,9 +501,9 @@ int TabWidgetHandler::insertTab(int index, int id)
 
   // Add at index
   const Tab& tab = tabs.at(id);
-  int idx = tabWidget->insertTab(index, tab.widget, tab.title);
-  tabWidget->setTabToolTip(idx, tab.tooltip);
-  tabWidget->setCurrentWidget(tab.widget);
+  int idx = tabWidget->insertTab(index, tab.getWidget(), tab.getTitle());
+  tabWidget->setTabToolTip(idx, tab.getTooltip());
+  tabWidget->setCurrentWidget(tab.getWidget());
 
   emit tabOpened(id);
   return idx;
@@ -459,8 +516,8 @@ int TabWidgetHandler::addTab(int id)
 
   // Append to list
   const Tab& tab = tabs.at(id);
-  int idx = tabWidget->addTab(tab.widget, tab.title);
-  tabWidget->setTabToolTip(idx, tab.tooltip);
+  int idx = tabWidget->addTab(tab.getWidget(), tab.getTitle());
+  tabWidget->setTabToolTip(idx, tab.getTooltip());
 
   emit tabOpened(id);
   return idx;
@@ -493,7 +550,7 @@ const QList<int> TabWidgetHandler::missingTabIds() const
 
   for(int id = 0; id < tabs.size(); id++)
   {
-    QWidget *widget = tabs.at(id).widget;
+    QWidget *widget = tabs.at(id).getWidget();
     int index = tabWidget->indexOf(widget);
     if(index == -1)
       retval.append(id);
@@ -515,7 +572,7 @@ int TabWidgetHandler::idForWidget(QWidget *widget) const
 
 int TabWidgetHandler::getIndexForId(int id) const
 {
-  return tabWidget->indexOf(tabs.at(id).widget);
+  return tabWidget->indexOf(tabs.at(id).getWidget());
 }
 
 bool TabWidgetHandler::isLocked() const
@@ -555,9 +612,9 @@ void TabWidgetHandler::updateWidgets()
 {
   for(const Tab& tab : std::as_const(tabs))
   {
-    QSignalBlocker actionBlocker(tab.action);
-    tab.action->setChecked(false);
-    tab.action->setDisabled(false);
+    QSignalBlocker actionBlocker(tab.getAction());
+    tab.getAction()->setChecked(false);
+    tab.getAction()->setDisabled(false);
   }
 
   actionCloseExcept->setDisabled(tabWidget->count() == 1);
@@ -571,7 +628,7 @@ void TabWidgetHandler::updateWidgets()
 
     if(atools::inRange(tabs, id))
     {
-      QAction *action = tabs.at(id).action;
+      QAction *action = tabs.at(id).getAction();
       QSignalBlocker actionBlocker(action);
       action->setChecked(true);
       action->setDisabled(true);
@@ -584,7 +641,7 @@ void TabWidgetHandler::updateWidgets()
       int id = idForIndex(index);
       if(atools::inRange(tabs, id))
       {
-        QAction *action = tabs.at(id).action;
+        QAction *action = tabs.at(id).getAction();
         QSignalBlocker actionBlocker(action);
         action->setChecked(true);
       }
