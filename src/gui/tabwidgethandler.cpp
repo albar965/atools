@@ -30,6 +30,8 @@
 #include <QMenu>
 #include <QStyle>
 #include <QHBoxLayout>
+#include <QPushButton>
+#include <QStringBuilder>
 
 #if defined(Q_OS_MACOS)
 #include <QApplication>
@@ -110,7 +112,7 @@ TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QList<QWidg
   layout->setSpacing(2);
 
   // Add additional
-  for(QWidget *additionalWidget : additionalWidgets)
+  for(QWidget *additionalWidget : std::as_const(additionalWidgets))
     layout->addWidget(additionalWidget, 0, Qt::AlignRight);
 
   // Add toolbutton at the right
@@ -180,7 +182,6 @@ void TabWidgetHandler::clear()
     delete tab.getAction();
   }
   tabs.clear();
-  additionalWidgets.clear();
 }
 
 void TabWidgetHandler::reset()
@@ -266,8 +267,8 @@ void TabWidgetHandler::init(const QList<int>& tabIdsParam, const QString& settin
 
     // Get name with mnemonic
     QString name = tabWidget->tabText(index);
-    if(!name.contains("&"))
-      name = "&" + name;
+    if(!name.contains(QStringLiteral("&")))
+      name = QStringLiteral("&") % name;
 
     // Create and fill action
     QAction *action = new QAction(name, toolButtonCorner->menu());
@@ -289,7 +290,7 @@ void TabWidgetHandler::restoreState()
   settings::Settings& settings = atools::settings::Settings::instance();
 
   // A list of tab ids in the same order as contained by the tab widget
-  const QStringList tabList = settings.valueStrList(settingsPrefix + "TabIds");
+  const QStringList tabList = settings.valueStrList(settingsPrefix % QStringLiteral("TabIds"));
 
   if(!tabList.isEmpty())
   {
@@ -319,12 +320,12 @@ void TabWidgetHandler::restoreState()
   }
 
   // Restore current tab from separate setting
-  setCurrentTab(settings.valueInt(settingsPrefix + "CurrentTabId", 0));
+  setCurrentTab(settings.valueInt(settingsPrefix % QStringLiteral("CurrentTabId"), 0));
 
   {
     // Restore lock state
     QSignalBlocker blocker(actionLockLayout);
-    actionLockLayout->setChecked(settings.valueBool(settingsPrefix + "Locked", false));
+    actionLockLayout->setChecked(settings.valueBool(settingsPrefix % QStringLiteral("Locked"), false));
   }
 
   // Update actions
@@ -335,10 +336,20 @@ void TabWidgetHandler::restoreState()
 void TabWidgetHandler::fontChanged(const QFont&, const QSize& minButtonSize)
 {
   toolButtonCorner->setMinimumSize(minButtonSize);
+  toolButtonCorner->setIconSize(minButtonSize * 0.7);
   toolButtonCorner->updateGeometry();
 
   for(QWidget *widget : std::as_const(additionalWidgets))
+  {
     widget->setMinimumSize(minButtonSize);
+
+    QAbstractButton *button = dynamic_cast<QAbstractButton *>(widget);
+    if(button != nullptr)
+    {
+      qDebug() << Q_FUNC_INFO << button->objectName();
+      button->setIconSize(minButtonSize * 0.8);
+    }
+  }
 }
 
 void TabWidgetHandler::saveState() const
@@ -351,13 +362,13 @@ void TabWidgetHandler::saveState() const
     tabList.append(QString::number(idForIndex(index)));
 
   // Save tabs
-  settings.setValue(settingsPrefix + "TabIds", tabList);
+  settings.setValue(settingsPrefix % QStringLiteral("TabIds"), tabList);
 
   // Save current tab
-  settings.setValue(settingsPrefix + "CurrentTabId", getCurrentTabId());
+  settings.setValue(settingsPrefix % QStringLiteral("CurrentTabId"), getCurrentTabId());
 
   // Save lock state
-  settings.setValue(settingsPrefix + "Locked", isLocked());
+  settings.setValue(settingsPrefix % QStringLiteral("Locked"), isLocked());
 }
 
 int TabWidgetHandler::getCurrentTabId() const
@@ -589,7 +600,7 @@ void TabWidgetHandler::styleChanged()
   if(style != nullptr)
   {
     QString name = style->objectName();
-    if(name.contains("macintosh", Qt::CaseInsensitive) || name.contains("macos", Qt::CaseInsensitive))
+    if(name.contains(QStringLiteral("macintosh"), Qt::CaseInsensitive) || name.contains(QStringLiteral("macos"), Qt::CaseInsensitive))
       tabWidget->setElideMode(Qt::ElideRight);
     else
       tabWidget->setElideMode(Qt::ElideNone);

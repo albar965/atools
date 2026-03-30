@@ -60,8 +60,6 @@ public:
   void saveState() const;
   void restoreState();
 
-  void fontChanged(const QFont&, const QSize& minButtonSize);
-
   /* Id of currently open tab or -1 if none */
   int getCurrentTabId() const;
 
@@ -93,6 +91,9 @@ public:
 
   /* Changes tab bar attributes for macOS style */
   void styleChanged();
+
+  /* Adjust tab button and additional widgets */
+  void fontChanged(const QFont&, const QSize& minButtonSize);
 
 signals:
   /* Current tab has changed */
