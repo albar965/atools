@@ -329,60 +329,64 @@ void WindQuery::deinit()
 
 Wind WindQuery::getWindForPos(atools::geo::Pos pos, bool interpolateValue) const
 {
-  pos.normalize();
-
-  if(!pos.isValid())
+  if(hasWindData())
   {
-    qWarning() << Q_FUNC_INFO << "invalid pos";
-    return EMPTY_WIND;
-  }
-  // Calculate grid position
-  QPoint gPos = gridPos(pos);
+    pos.normalize();
 
-  if(verbose)
-    qDebug() << Q_FUNC_INFO << pos << gPos;
-
-  // Get next layers below and above altitude
-  WindAltLayer lower, upper;
-  layersByAlt(lower, upper, pos.getAltitude());
-
-  if(!interpolateValue || pos.nearGrid(1.f, atools::geo::Pos::POS_EPSILON_500M))
-  {
-    // No need to interpolate within grid - use position as is
-    WindData lW = windForLayer(lower, gPos);
-
-    if(upper != lower)
+    if(!pos.isValid())
     {
-      WindData uW = windForLayer(upper, gPos);
-      // Interpolate between upper and lower layer
-      return interpolateWind(lW, uW, lower.altitude, upper.altitude, pos.getAltitude()).toWind();
+      qWarning() << Q_FUNC_INFO << "invalid pos";
+      return EMPTY_WIND;
+    }
+    // Calculate grid position
+    QPoint gPos = gridPos(pos);
+
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << pos << gPos;
+
+    // Get next layers below and above altitude
+    WindAltLayer lower, upper;
+    layersByAlt(lower, upper, pos.getAltitude());
+
+    if(!interpolateValue || pos.nearGrid(1.f, atools::geo::Pos::POS_EPSILON_500M))
+    {
+      // No need to interpolate within grid - use position as is
+      WindData lW = windForLayer(lower, gPos);
+
+      if(upper != lower)
+      {
+        WindData uW = windForLayer(upper, gPos);
+        // Interpolate between upper and lower layer
+        return interpolateWind(lW, uW, lower.altitude, upper.altitude, pos.getAltitude()).toWind();
+      }
+      else
+        return lW.toWind();
     }
     else
-      return lW.toWind();
-  }
-  else
-  {
-    Rect global = globalRect(pos);
-    GridRect grid = gridRect(global);
-
-    // Interpolate wind within a grid rectangle for the lower layer
-    WindRect windRectLower;
-    windRectForLayer(windRectLower, lower, grid);
-    WindData lWind = interpolateRect(windRectLower, global, pos);
-
-    if(upper != lower)
     {
-      // Interpolate wind within a grid rectangle for the upper layer if layers differ
-      WindRect windRectUpper;
-      windRectForLayer(windRectUpper, upper, grid);
-      WindData uWind = interpolateRect(windRectUpper, global, pos);
+      Rect global = globalRect(pos);
+      GridRect grid = gridRect(global);
 
-      // Interpolate between upper and lower wind
-      return interpolateWind(lWind, uWind, lower.altitude, upper.altitude, pos.getAltitude()).toWind();
+      // Interpolate wind within a grid rectangle for the lower layer
+      WindRect windRectLower;
+      windRectForLayer(windRectLower, lower, grid);
+      WindData lWind = interpolateRect(windRectLower, global, pos);
+
+      if(upper != lower)
+      {
+        // Interpolate wind within a grid rectangle for the upper layer if layers differ
+        WindRect windRectUpper;
+        windRectForLayer(windRectUpper, upper, grid);
+        WindData uWind = interpolateRect(windRectUpper, global, pos);
+
+        // Interpolate between upper and lower wind
+        return interpolateWind(lWind, uWind, lower.altitude, upper.altitude, pos.getAltitude()).toWind();
+      }
+      else
+        return lWind.toWind();
     }
-    else
-      return lWind.toWind();
   }
+  return Wind();
 }
 
 WindPosList WindQuery::getWindForRect(const atools::geo::Rect& rect, float altFeet) const
