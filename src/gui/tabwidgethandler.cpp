@@ -335,9 +335,7 @@ void TabWidgetHandler::restoreState()
 
 void TabWidgetHandler::fontChanged(const QFont&, const QSize& minButtonSize)
 {
-  toolButtonCorner->setMinimumSize(minButtonSize);
-  toolButtonCorner->setIconSize(minButtonSize * 0.7);
-  toolButtonCorner->updateGeometry();
+  atools::gui::setWidgetAndIconSize({toolButtonCorner}, minButtonSize);
 
   for(QWidget *widget : std::as_const(additionalWidgets))
   {
@@ -345,10 +343,7 @@ void TabWidgetHandler::fontChanged(const QFont&, const QSize& minButtonSize)
 
     QAbstractButton *button = dynamic_cast<QAbstractButton *>(widget);
     if(button != nullptr)
-    {
-      qDebug() << Q_FUNC_INFO << button->objectName();
       button->setIconSize(minButtonSize * 0.8);
-    }
   }
 }
 

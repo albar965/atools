@@ -62,6 +62,9 @@ void updateAllPalette(QObject *object, const QPalette& palette, const QSet<QObje
 /* Set font size in widgets and layouts recursively based on percent application font size. */
 void setWidgetFontSize(QWidget *widget, int percent);
 
+/* Set button to minimum size and adjust icon size if needed */
+void setWidgetAndIconSize(const QList<QWidget *>& widgets, const QSize& size, int iconSizePercent = 75);
+
 /* Get a list of all selected rows in given order ignoring any selection ranges */
 QList<int> selectedRows(QItemSelectionModel *model, bool reverse);
 
@@ -82,7 +85,7 @@ void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, 
 
 /* Change tab height using given factor on font size */
 void changeTabBarSize(QTabWidget *tabWidget, double factor = 1.6);
-void changeTabBarSize(QList<QTabWidget *> tabWidgets, double factor = 1.6);
+void changeTabBarSize(const QList<QTabWidget *> tabWidgets, double factor = 1.6);
 
 /*
  * Shows or hides all widgets in a list of layouts.

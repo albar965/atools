@@ -449,7 +449,7 @@ void changeIndication(QAction *action, bool changed)
     action->setText(action->text() + (action->isChecked() ? changeText : changeUnusedText));
 }
 
-void changeTabBarSize(QList<QTabWidget *> tabWidgets, double factor)
+void changeTabBarSize(const QList<QTabWidget *> tabWidgets, double factor)
 {
   for(QTabWidget *tabWidget : tabWidgets)
     changeTabBarSize(tabWidget, factor);
@@ -539,6 +539,20 @@ void ensureVisibility(QWidget *mainWindow)
     qDebug() << Q_FUNC_INFO << "Getting window back on screen" << QGuiApplication::primaryScreen()->name()
              << QGuiApplication::primaryScreen()->availableGeometry() << "window frame" << mainWindow->frameGeometry();
     centerWidgetOnScreen(mainWindow, QSize());
+  }
+}
+
+void setWidgetAndIconSize(const QList<QWidget *>& widgets, const QSize& size, int iconSizePercent)
+{
+  for(QWidget *widget : widgets)
+  {
+    widget->setMinimumSize(size);
+
+    QAbstractButton *button = dynamic_cast<QAbstractButton *>(widget);
+    if(button != nullptr && !button->icon().isNull())
+      button->setIconSize(size * iconSizePercent / 100);
+
+    widget->updateGeometry();
   }
 }
 

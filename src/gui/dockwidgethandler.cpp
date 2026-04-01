@@ -1003,9 +1003,12 @@ void DockWidgetHandler::fontChanged(const QFont& font)
 
 void DockWidgetHandler::fontChangedWidget(QDockWidget *dock, const QFont& font)
 {
-  dock->setStyleSheet(QStringLiteral("QDockWidget { font-size: %1px; }").
-                      arg(QString::number(atools::roundToInt(QFontMetricsF(font).height() * 0.8))));
-  dock->updateGeometry();
+  if(dock != nullptr)
+  {
+    dock->setStyleSheet(QStringLiteral("QDockWidget { font-size: %1px; }").
+                        arg(QString::number(atools::roundToInt(QFontMetricsF(font).height() * 0.8))));
+    dock->updateGeometry();
+  }
 }
 
 } // namespace gui
