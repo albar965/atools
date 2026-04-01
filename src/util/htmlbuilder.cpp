@@ -50,8 +50,7 @@ HtmlBuilder::HtmlBuilder(const QColor& rowColor, const QColor& rowColorAlt)
   idBits.fill(false, MAX_ID + 1);
 }
 
-HtmlBuilder::HtmlBuilder(bool backgroundColorUsed)
-  : hasBackColor(backgroundColorUsed)
+void HtmlBuilder::init()
 {
   if(hasBackColor)
     // Create darker colors dynamically from default palette
@@ -63,9 +62,10 @@ HtmlBuilder::HtmlBuilder(bool backgroundColorUsed)
   idBits.fill(false, MAX_ID + 1);
 }
 
-HtmlBuilder::HtmlBuilder(const atools::util::HtmlBuilder& other)
+HtmlBuilder& HtmlBuilder::operator=(const QString& other)
 {
-  this->operator=(other);
+  htmlText = other;
+  return *this;
 }
 
 HtmlBuilder& HtmlBuilder::operator=(const atools::util::HtmlBuilder& other)
@@ -108,9 +108,22 @@ QString HtmlBuilder::joinP(std::initializer_list<HtmlBuilder> builders)
   return joinP(texts);
 }
 
+QString HtmlBuilder::joinHr(std::initializer_list<HtmlBuilder> builders)
+{
+  QStringList texts;
+  for(const HtmlBuilder& builder : builders)
+    texts.append(builder.getHtml());
+  return joinHr(texts);
+}
+
 QString HtmlBuilder::joinBr(QStringList strings)
 {
   return atools::strJoin(strings, QStringLiteral("<br/>"));
+}
+
+QString HtmlBuilder::joinHr(QStringList strings)
+{
+  return atools::strJoin(strings, QStringLiteral("<small><hr/></small>"));
 }
 
 QString HtmlBuilder::joinP(QStringList strings)

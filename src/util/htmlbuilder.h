@@ -41,28 +41,49 @@ class HtmlBuilder
   Q_DECLARE_TR_FUNCTIONS(HtmlBuilder)
 
 public:
+  explicit HtmlBuilder()
+    : hasBackColor(false)
+  {
+    init();
+  }
+
   /*
    * @param hasBackColor if true a alternating background color taken from the
    * system palette (gray/lightgray) is used for tables.
    */
-  HtmlBuilder(bool backgroundColorUsed = false);
+  explicit HtmlBuilder(bool backgroundColorUsed)
+    : hasBackColor(backgroundColorUsed)
+  {
+    init();
+  }
 
   /* Pass alternating table row colors in */
   HtmlBuilder(const QColor& rowColor, const QColor& rowColorAlt);
 
-  HtmlBuilder(const atools::util::HtmlBuilder& other);
+  HtmlBuilder(const atools::util::HtmlBuilder& other)
+  {
+    this->operator=(other);
+  }
+
+  HtmlBuilder(const QString& other)
+  {
+    this->operator=(other);
+  }
+
+  HtmlBuilder& operator=(const atools::util::HtmlBuilder& other);
+  HtmlBuilder& operator=(const QString& other);
 
   const QString& getHtml() const
   {
     return htmlText;
   }
 
-  HtmlBuilder& operator=(const atools::util::HtmlBuilder& other);
-
   /* Joins the list of builders using <br> or <p> */
   static QString joinBr(std::initializer_list<atools::util::HtmlBuilder> builders);
+  static QString joinHr(std::initializer_list<atools::util::HtmlBuilder> builders);
   static QString joinP(std::initializer_list<atools::util::HtmlBuilder> builders);
   static QString joinBr(QStringList strings);
+  static QString joinHr(QStringList strings);
   static QString joinP(QStringList strings);
 
   /* Clears this instance except settings */
@@ -444,6 +465,8 @@ private:
   {
     return currentId == -1 || idBits.testBit(currentId);
   }
+
+  void init();
 
   QString rowBackColorStr, rowBackColorAltStr, tableRowHeader;
   QColor rowBackColor, rowBackColorAlt;
