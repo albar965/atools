@@ -180,7 +180,7 @@ QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<Q
 
 QString ratingString(int value, int maxValue)
 {
-  return QString(QObject::tr("★", "Star for rating")).repeated(value) % QString(QObject::tr("−", "For empty rating")).
+  return QString(QObject::tr("★", "Star for rating")).repeated(value) % QString(QObject::tr("☆", "For empty rating")).
          repeated(maxValue - value);
 }
 
