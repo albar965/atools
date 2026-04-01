@@ -42,10 +42,7 @@ class LinkTooltipHandler :
   Q_OBJECT
 
 public:
-  LinkTooltipHandler(QObject *parent)
-    :QObject(parent)
-  {
-  }
+  LinkTooltipHandler(QObject *parent);
 
   virtual ~LinkTooltipHandler() override
   {
@@ -88,13 +85,13 @@ public:
     showToolTips = showToolTipsParam;
   }
 
-  /* Tooltip for all https, http and ftp URLs */
+  /* Tooltip for all https, http and ftp URLs. Already has default text. */
   void setWebUrlToolTip(const QString& newWebUrlToolTip)
   {
     webUrlToolTip = newWebUrlToolTip;
   }
 
-  /* Tooltip for all file URLs */
+  /* Tooltip for all file URLs. Already has default text. */
   void setFileUrlToolTip(const QString& newFileUrlToolTip)
   {
     fileUrlToolTip = newFileUrlToolTip;

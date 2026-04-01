@@ -43,6 +43,20 @@ void LinkTooltipHandler::clear()
   textBrowsers.clear();
 }
 
+LinkTooltipHandler::LinkTooltipHandler(QObject *parent)
+  :QObject(parent)
+{
+  setWebUrlToolTip(tr("Open the link in a web browser"));
+
+#if  defined(Q_OS_WIN)
+  setFileUrlToolTip(tr("Show the file in Windows Explorer"));
+#elif defined(Q_OS_MACOS)
+  setFileUrlToolTip(tr("Show the file in Apple Finder"));
+#else
+  setFileUrlToolTip(tr("Show the file in a file manager"));
+#endif
+}
+
 void LinkTooltipHandler::addWidgets(const QList<QWidget *>& widgets)
 {
   for(QWidget *widget : widgets)
