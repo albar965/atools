@@ -104,8 +104,15 @@ void LinkTooltipHandler::linkHovered(const QString& link)
     else if(URL_SCHEMES_FILE.contains(url.scheme()))
       toolTip = fileUrlToolTip;
     else if(url.scheme() == QStringLiteral("lnm"))
-      // "showairport" in "lnm://show?id=%1&type=%2&tooltip=showairport"
-      toolTip = urlKeyToolTipHash.value(QUrlQuery(url).queryItemValue(QStringLiteral("tooltip")));
+    {
+      const QString key = QUrlQuery(url).queryItemValue(QStringLiteral("tooltip"));
+      if(!key.isEmpty())
+        // Use value tooltip "showairport" in "lnm://show?id=%1&type=%2&tooltip=showairport"
+        toolTip = urlKeyToolTipHash.value(key);
+      else
+        // "showairport" in "lnm://showairport"
+        toolTip = urlKeyToolTipHash.value(url.host());
+    }
 
     if(!toolTip.isEmpty())
       QToolTip::showText(QCursor::pos(), toolTip);

@@ -34,6 +34,7 @@ typedef  QHash<QString, QString> LinkToolTipHashType;
  * Either a connection or an event filter is used to show the tooltips.
  *
  * Example key "showairport": "lnm://show?id=%1&type=%2&tooltip=showairport"
+ * Falls back to "showairport" in "lnm://showairport" if the tooltip key is empty
  */
 class LinkTooltipHandler :
   public QObject
@@ -64,7 +65,7 @@ public:
   }
 
   /* Add key and tooltip text value.
-   * Example key "showairport": "lnm://show?id=%1&type=%2&tooltip=showairport"
+   * Example key "showairport": "lnm://show?id=%1&type=%2&tooltip=showairport" or "lnm://showairport"
    * Call addUrlTooltip("infoairport", tr("Click to show the airport information"));
    */
   void addUrlTooltip(const QString& key, const QString& tooltip)
