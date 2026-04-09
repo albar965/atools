@@ -46,7 +46,7 @@ const static float SAME_ELEVATION_EPSILON_M = 1.f;
 /* Calculate file index and byte offset within file */
 
 // inline since it is used only once
-inline qint64 calcFileOffsetFromColRow(int gridCol, int gridRow, int& fileIndex)
+inline int calcFileOffsetFromColRow(int gridCol, int gridRow, int& fileIndex)
 {
   // Normalize / rollover values
   while(gridCol >= GlobeReader::GRID_COLUMNS)
@@ -95,20 +95,20 @@ inline qint64 calcFileOffsetFromColRow(int gridCol, int gridRow, int& fileIndex)
   fileIndex = fileRow * 4 + fileCol;
 
   // Word offset in file
-  qint64 offset = fileColOffset + fileRowOffset * GlobeReader::TILE_COLUMNS;
+  int offset = fileColOffset + fileRowOffset * GlobeReader::TILE_COLUMNS;
 
   // Byte offset in file
   return offset * 2;
 }
 
-inline qint64 calcFileOffset(double lonx, double laty, int& fileIndex)
+inline int calcFileOffset(double lonx, double laty, int& fileIndex)
 {
   return calcFileOffsetFromColRow(static_cast<int>(GlobeReader::GRID_COLUMNS * (lonx + 180.) / 360.),
                                   static_cast<int>(GlobeReader::GRID_ROWS * (180. - (static_cast<double>(laty) + 90.)) / 180.), fileIndex);
 }
 
 // Test method
-qint64 GlobeReader::calcFileOffsetTest(double lonx, double laty, int& fileIndex)
+int GlobeReader::calcFileOffsetTest(double lonx, double laty, int& fileIndex)
 {
   return calcFileOffsetFromColRow(static_cast<int>(GlobeReader::GRID_COLUMNS * (lonx + 180.) / 360.),
                                   static_cast<int>(GlobeReader::GRID_ROWS * (180. - (static_cast<double>(laty) + 90.)) / 180.), fileIndex);
@@ -116,7 +116,7 @@ qint64 GlobeReader::calcFileOffsetTest(double lonx, double laty, int& fileIndex)
 
 // =========================================================
 GlobeReader::GlobeReader(const QString& dataDirParam)
-  : fileCache(cacheMaxFiles), dataDir(dataDirParam)
+  : fileCache(CACHE_MAX_BYTES_DEFAULT), dataDir(dataDirParam)
 {
   // Fill lists with empty values
   dataFiles.fill(nullptr, NUM_DATAFILES);
@@ -248,8 +248,7 @@ float GlobeReader::getElevation(const atools::geo::Pos& pos, float sampleRadiusM
 
 float GlobeReader::elevationMax(const geo::Pos& pos, float sampleRadiusMeter)
 {
-  int fileIndex;
-  qint64 fileOffset;
+  int fileIndex, fileOffset;
   if(sampleRadiusMeter < 0.01f)
   {
     // Get at exact position ====================
@@ -351,7 +350,17 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
   }
 }
 
-inline float fileBytesToElevation(QByteArray *fileBytes, qint64 fileOffset)
+void GlobeReader::setCacheMaxBytes(qsizetype maxBytes)
+{
+  fileCache.setMaxCost(std::min(maxBytes, FILE_SIZE_LARGE * 2L));
+}
+
+void GlobeReader::clearCache()
+{
+  fileCache.clear();
+}
+
+inline float fileBytesToElevation(QByteArray *fileBytes, int fileOffset)
 {
   if(fileBytes != nullptr && !fileBytes->isEmpty())
   {
@@ -366,12 +375,13 @@ inline float fileBytesToElevation(QByteArray *fileBytes, qint64 fileOffset)
     return ELEVATION_INVALID;
 }
 
-float GlobeReader::elevationFromIndexAndOffset(int fileIndex, qint64 fileOffset)
+float GlobeReader::elevationFromIndexAndOffset(int fileIndex, int fileOffset)
 {
+  float elevation = ELEVATION_INVALID;
   QByteArray *fileBytes = fileCache.object(fileIndex);
   if(fileBytes != nullptr)
     // File found in cache
-    return fileBytesToElevation(fileBytes, fileOffset);
+    elevation = fileBytesToElevation(fileBytes, fileOffset);
   else
   {
     // File not in cache
@@ -390,18 +400,20 @@ float GlobeReader::elevationFromIndexAndOffset(int fileIndex, qint64 fileOffset)
       }
       else
       {
-        // Insert into cache and return elevation
-        fileCache.insert(fileIndex, fileBytes);
-        return fileBytesToElevation(fileBytes, fileOffset);
+        // Insert into cache and return elevation - cost is bytes
+        fileCache.insert(fileIndex, fileBytes, fileBytes->size());
+        elevation = fileBytesToElevation(fileBytes, fileOffset);
       }
     }
     else
-    {
       // Add empty entry to indicate missing file
       fileCache.insert(fileIndex, new QByteArray());
-    }
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "totalCost" << fileCache.totalCost() << "maxCost" << fileCache.maxCost();
+#endif
   }
-  return ELEVATION_INVALID;
+  return elevation;
 }
 
 } // namespace common

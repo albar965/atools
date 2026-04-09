@@ -82,18 +82,18 @@ public:
   }
 
   /* Maximum number of files to keep in cache. Size of each is 98.88 Mb to 123.60 Mb  */
-  void setCacheMaxFiles(int newCacheMaxFiles)
-  {
-    cacheMaxFiles = newCacheMaxFiles;
-  }
+  void setCacheMaxBytes(qsizetype maxBytes);
+
+  /* Clear memory cache */
+  void clearCache();
 
 private:
   friend class ::DtmTest;
-  friend qint64 calcFileOffsetFromColRow(int gridCol, int gridRow, int& fileIndex);
-  friend qint64 calcFileOffset(double lonx, double laty, int& fileIndex);
+  friend int calcFileOffsetFromColRow(int gridCol, int gridRow, int& fileIndex);
+  friend int calcFileOffset(double lonx, double laty, int& fileIndex);
 
   /* Test method */
-  qint64 calcFileOffsetTest(double lonx, double laty, int& fileIndex);
+  int calcFileOffsetTest(double lonx, double laty, int& fileIndex);
 
   /* Source data parameters*/
   const static qint64 FILE_SIZE_SMALL = 103680000;
@@ -109,10 +109,11 @@ private:
   static bool fileEntryValid(const QFileInfo& fileEntry);
   void closeFile(int i);
   void openFile(int i);
-  float elevationFromIndexAndOffset(int fileIndex, qint64 fileOffset);
+  float elevationFromIndexAndOffset(int fileIndex, int fileOffset);
   float elevationMax(const atools::geo::Pos& pos, float sampleRadiusMeter);
 
-  int cacheMaxFiles = 8;
+  /* Use max 1 Gb as default */
+  const qsizetype CACHE_MAX_BYTES_DEFAULT = 1'000'000'000;
   QCache<int, QByteArray> fileCache;
 
   QString dataDir;
