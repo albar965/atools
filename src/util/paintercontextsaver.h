@@ -18,7 +18,7 @@
 #ifndef ATOOLS_UTIL_PAINTERCONTEXTSAVER_H
 #define ATOOLS_UTIL_PAINTERCONTEXTSAVER_H
 
-class QPainter;
+#include <QPainter>
 
 namespace atools {
 namespace util {
@@ -29,8 +29,24 @@ namespace util {
 class PainterContextSaver
 {
 public:
-  PainterContextSaver(QPainter *painterToSave);
-  ~PainterContextSaver();
+  PainterContextSaver(QPainter& painterToSave)
+    : painter(&painterToSave)
+  {
+    painter->save();
+  }
+
+  PainterContextSaver(QPainter *painterToSave)
+    : painter(painterToSave)
+  {
+    if(painter != nullptr)
+      painter->save();
+  }
+
+  ~PainterContextSaver()
+  {
+    if(painter != nullptr)
+      painter->restore();
+  }
 
 private:
   QPainter *painter = nullptr;
