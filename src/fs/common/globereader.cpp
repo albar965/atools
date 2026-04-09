@@ -36,11 +36,90 @@ namespace atools {
 namespace fs {
 namespace common {
 
-GlobeReader::GlobeReader(const QString& dataDirParam)
-  : dataDir(dataDirParam)
+/* Distance between sampling points meter */
+const static float INTERPOLATION_SEGMENT_LENGTH_M = 400.f;
+const static float INTERPOLATION_SEGMENT_LENGTH_PRECISION_M = 200.f;
+
+/* Points are considered equal if they are equal within this range in meter */
+const static float SAME_ELEVATION_EPSILON_M = 1.f;
+
+/* Calculate file index and byte offset within file */
+
+// inline since it is used only once
+inline qint64 calcFileOffsetFromColRow(int gridCol, int gridRow, int& fileIndex)
 {
+  // Normalize / rollover values
+  while(gridCol >= GlobeReader::GRID_COLUMNS)
+    gridCol -= GlobeReader::GRID_COLUMNS;
+
+  while(gridCol < 0)
+    gridCol += GlobeReader::GRID_COLUMNS;
+
+  while(gridRow >= GlobeReader::GRID_ROWS)
+    gridRow -= GlobeReader::GRID_ROWS;
+
+  while(gridRow < 0)
+    gridRow += GlobeReader::GRID_ROWS;
+
+  // Column in file/tile grid
+  int fileCol = gridCol / GlobeReader::TILE_COLUMNS;
+  // Column in file
+  int fileColOffset = gridCol % GlobeReader::TILE_COLUMNS;
+
+  // Row in file/tile grid and row in file
+  int fileRow, fileRowOffset;
+  if(gridRow < GlobeReader::TILE_ROWS_SMALL)
+  {
+    fileRow = 0;
+    fileRowOffset = gridRow;
+  }
+  else if(gridRow < GlobeReader::TILE_ROWS_SMALL + GlobeReader::TILE_ROWS_LARGE)
+  {
+    fileRow = 1;
+    fileRowOffset = gridRow - GlobeReader::TILE_ROWS_SMALL;
+  }
+  else if(gridRow < GlobeReader::TILE_ROWS_SMALL + GlobeReader::TILE_ROWS_LARGE * 2)
+  {
+    fileRow = 2;
+    fileRowOffset = gridRow - (GlobeReader::TILE_ROWS_SMALL + GlobeReader::TILE_ROWS_LARGE);
+  }
+  else if(gridRow < GlobeReader::TILE_ROWS_SMALL * 2 + GlobeReader::TILE_ROWS_LARGE * 2)
+  {
+    fileRow = 3;
+    fileRowOffset = gridRow - (GlobeReader::TILE_ROWS_SMALL + GlobeReader::TILE_ROWS_LARGE * 2);
+  }
+  else
+    throw atools::Exception(QStringLiteral("Invalid grid row %1").arg(gridRow));
+
+  // Index in file array
+  fileIndex = fileRow * 4 + fileCol;
+
+  // Word offset in file
+  qint64 offset = fileColOffset + fileRowOffset * GlobeReader::TILE_COLUMNS;
+
+  // Byte offset in file
+  return offset * 2;
+}
+
+inline qint64 calcFileOffset(double lonx, double laty, int& fileIndex)
+{
+  return calcFileOffsetFromColRow(static_cast<int>(GlobeReader::GRID_COLUMNS * (lonx + 180.) / 360.),
+                                  static_cast<int>(GlobeReader::GRID_ROWS * (180. - (static_cast<double>(laty) + 90.)) / 180.), fileIndex);
+}
+
+// Test method
+qint64 GlobeReader::calcFileOffsetTest(double lonx, double laty, int& fileIndex)
+{
+  return calcFileOffsetFromColRow(static_cast<int>(GlobeReader::GRID_COLUMNS * (lonx + 180.) / 360.),
+                                  static_cast<int>(GlobeReader::GRID_ROWS * (180. - (static_cast<double>(laty) + 90.)) / 180.), fileIndex);
+}
+
+// =========================================================
+GlobeReader::GlobeReader(const QString& dataDirParam)
+  : fileCache(cacheMaxFiles), dataDir(dataDirParam)
+{
+  // Fill lists with empty values
   dataFiles.fill(nullptr, NUM_DATAFILES);
-  dataStreams.fill(nullptr, NUM_DATAFILES);
   dataFilenames.fill(QStringLiteral(), NUM_DATAFILES);
 }
 
@@ -80,8 +159,7 @@ bool GlobeReader::openFiles()
   QDir dir(dataDir);
 
   // Read only filenames here
-  const QFileInfoList entries = dir.entryInfoList({QStringLiteral("????")}, QDir::Files, QDir::Name | QDir::IgnoreCase);
-  for(const QFileInfo& fileEntry : entries)
+  for(const QFileInfo& fileEntry : dir.entryInfoList({QStringLiteral("????")}, QDir::Files, QDir::Name | QDir::IgnoreCase))
   {
     if(fileEntryValid(fileEntry))
     {
@@ -105,14 +183,10 @@ void GlobeReader::openFile(int i)
     {
       qDebug() << Q_FUNC_INFO << name;
       dataFiles[i] = new QFile(name);
-      if(dataFiles[i]->open(QIODevice::ReadOnly))
-      {
-        dataStreams[i] = new QDataStream(dataFiles[i]);
-        dataStreams[i]->setByteOrder(QDataStream::LittleEndian);
-      }
-      else
+      if(!dataFiles[i]->open(QIODevice::ReadOnly))
       {
         closeFile(i);
+
         // Clear filename to avoid reopening
         dataFilenames[i].clear();
         qWarning() << "Cannot open file" << name;
@@ -125,12 +199,6 @@ void GlobeReader::openFile(int i)
 
 void GlobeReader::closeFile(int i)
 {
-  if(dataStreams[i] != nullptr)
-  {
-    delete dataStreams[i];
-    dataStreams[i] = nullptr;
-  }
-
   if(dataFiles[i] != nullptr)
   {
     dataFiles[i]->close();
@@ -148,85 +216,90 @@ void GlobeReader::closeFiles()
 float GlobeReader::getElevation(const atools::geo::Pos& pos, float sampleRadiusMeter)
 {
   if(!valid || !pos.isValid())
-    return atools::fs::common::INVALID;
+    return ELEVATION_INVALID;
 
-  if(sampleRadiusMeter > 0.4f)
-    // Get maximum around pos using two rectangles
-    return std::max(elevationMax(pos, sampleRadiusMeter), elevationMax(pos, sampleRadiusMeter / 2.f));
-  else if(sampleRadiusMeter > 0.f)
-    // Get maximum around pos
-    return elevationMax(pos, sampleRadiusMeter);
+  // Used different numbers of probe rectangles depeding on sample radius
+  const static QVarLengthArray<float, 5> FACTOR_POINT({0.f}); // Get value at position
+  const static QVarLengthArray<float, 5> FACTOR_ONE_RECT({1.f}); // Get maximum around pos using one rectangles
+  const static QVarLengthArray<float, 5> FACTOR_TWO_RECT({1.f, 0.5f}); // Get maximum around pos using two rectangles
+  const static QVarLengthArray<float, 5> FACTOR_THREE_RECT({1.f, 0.75f, 0.5f, 0.25f}); // Get maximum around pos using four rectangles
+
+  const QVarLengthArray<float, 5> *factor = &FACTOR_POINT;
+  if(sampleRadiusMeter < 0.001f)
+    factor = &FACTOR_POINT;
+  else if(sampleRadiusMeter < 0.5f)
+    factor = &FACTOR_ONE_RECT;
+  else if(sampleRadiusMeter < atools::geo::nmToMeter(4.f))
+    factor = &FACTOR_TWO_RECT;
   else
+    factor = &FACTOR_THREE_RECT;
+
+  // Calculate maximum from up to five samples
+  float maxAlt = ELEVATION_OCEAN;
+  for(float f : *factor)
   {
-    int fileIndex;
-    qint64 fileOffset = calcFileOffset(pos.getLonX(), pos.getLatY(), fileIndex);
-    return elevationFromIndexAndOffset(fileIndex, fileOffset);
+    float elevation = elevationMax(pos, f * sampleRadiusMeter);
+    if(elevation < ELEVATION_INVALID)
+      maxAlt = std::max(elevation, maxAlt);
   }
+
+  return maxAlt;
 }
 
 float GlobeReader::elevationMax(const geo::Pos& pos, float sampleRadiusMeter)
 {
-  // Collect file indexes and offsets - use set to remove duplicates
-  QSet<std::pair<int, qint64> > indexes;
-
-  // Center point
   int fileIndex;
-  qint64 fileOffset = calcFileOffset(pos.getLonX(), pos.getLatY(), fileIndex);
-  indexes.insert(std::make_pair(fileIndex, fileOffset));
-
-  // Build a rectangle around the position
-  atools::geo::Rect rect(pos, sampleRadiusMeter, true /* fast */);
-
-  // Get split if crossing anti-meridian
-  for(const atools::geo::Rect& splitRect : rect.splitAtAntiMeridian())
+  qint64 fileOffset;
+  if(sampleRadiusMeter < 0.01f)
   {
-    // Top left
-    fileOffset = calcFileOffset(splitRect.getTopLeft().getLonX(), splitRect.getTopLeft().getLatY(), fileIndex);
-    indexes.insert(std::make_pair(fileIndex, fileOffset));
-
-    // Top right
-    fileOffset = calcFileOffset(splitRect.getTopRight().getLonX(), splitRect.getTopRight().getLatY(), fileIndex);
-    indexes.insert(std::make_pair(fileIndex, fileOffset));
-
-    // Bottom right
-    fileOffset = calcFileOffset(splitRect.getBottomRight().getLonX(), splitRect.getBottomRight().getLatY(), fileIndex);
-    indexes.insert(std::make_pair(fileIndex, fileOffset));
-
-    // Bottom left
-    fileOffset = calcFileOffset(splitRect.getBottomLeft().getLonX(), splitRect.getBottomLeft().getLatY(), fileIndex);
-    indexes.insert(std::make_pair(fileIndex, fileOffset));
-  }
-
-  // Calculate maximum from up to five samples
-  float maxAlt = 0.f;
-  for(const std::pair<int, qint64>& index : indexes)
-  {
-    float elevation = elevationFromIndexAndOffset(index.first, index.second);
-    if(elevation > atools::fs::common::OCEAN && elevation < atools::fs::common::INVALID)
-      maxAlt = std::max(elevation, maxAlt);
-  }
-  return maxAlt;
-}
-
-float GlobeReader::elevationFromIndexAndOffset(int fileIndex, qint64 fileOffset)
-{
-  openFile(fileIndex);
-  QFile *dataFile = dataFiles[fileIndex];
-
-  if(dataFile != nullptr)
-  {
-    dataFile->seek(fileOffset);
-    QDataStream *dataStream = dataStreams[fileIndex];
-
-    qint16 elevation;
-    *dataStream >> elevation;
-    return elevation;
+    // Get at exact position ====================
+    fileOffset = calcFileOffset(pos.getLonX(), pos.getLatY(), fileIndex);
+    return elevationFromIndexAndOffset(fileIndex, fileOffset);
   }
   else
-    return INVALID;
+  {
+    // Get from rectangle ====================
+    QVarLengthArray<Pos, 10> positions;
+
+    // Center position
+    positions.append(pos);
+
+    // Build a rectangle around the position ==================
+    atools::geo::Rect rect(pos, sampleRadiusMeter, true /* fast */);
+
+    for(const atools::geo::Rect& splitRect : rect.splitAtAntiMeridian())
+    {
+      positions.append(splitRect.getTopLeft());
+      positions.append(splitRect.getTopRight());
+      positions.append(splitRect.getBottomRight());
+      positions.append(splitRect.getBottomLeft());
+
+      if(sampleRadiusMeter > atools::geo::nmToMeter(1.))
+      {
+        // Also use center for bigger rectangles
+        positions.append(splitRect.getTopCenter());
+        positions.append(splitRect.getRightCenter());
+        positions.append(splitRect.getBottomCenter());
+        positions.append(splitRect.getLeftCenter());
+      }
+    }
+
+    float maxAlt = ELEVATION_OCEAN;
+    for(const Pos& pos : positions)
+    {
+      // Get maximum for all positions
+      fileOffset = calcFileOffset(pos.getLonX(), pos.getLatY(), fileIndex);
+      float elevation = elevationFromIndexAndOffset(fileIndex, fileOffset);
+      if(elevation < ELEVATION_INVALID)
+        maxAlt = std::max(elevation, maxAlt);
+    }
+
+    return maxAlt;
+  }
 }
 
-void GlobeReader::getElevations(atools::geo::LineString& elevations, const atools::geo::LineString& linestring, float sampleRadiusMeter)
+void GlobeReader::getElevations(atools::geo::LineString& elevations, const atools::geo::LineString& linestring, float sampleRadiusMeter,
+                                bool precision)
 {
   if(linestring.isEmpty() || !valid)
     return;
@@ -238,12 +311,13 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
     LineString positions;
     for(int i = 0; i < linestring.size() - 1; i++)
     {
-      Line line = Line(linestring.at(i), linestring.at(i + 1));
+      const Line line = Line(linestring.at(i), linestring.at(i + 1));
 
       float length = line.lengthMeter();
 
       positions.clear();
-      line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH_M), positions);
+      int numPoints = static_cast<int>(length / (precision ? INTERPOLATION_SEGMENT_LENGTH_PRECISION_M : INTERPOLATION_SEGMENT_LENGTH_M));
+      line.interpolatePoints(length, numPoints, positions);
 
       Pos lastDropped;
       for(const Pos& pos : std::as_const(positions))
@@ -277,70 +351,57 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
   }
 }
 
-qint64 GlobeReader::calcFileOffset(const atools::geo::Pos& pos, int& fileIndex)
+inline float fileBytesToElevation(QByteArray *fileBytes, qint64 fileOffset)
 {
-  return calcFileOffset(pos.getLonX(), pos.getLatY(), fileIndex);
-}
-
-qint64 GlobeReader::calcFileOffset(double lonx, double laty, int& fileIndex)
-{
-  int gridCol = static_cast<int>(GRID_COLUMNS * (lonx + 180.) / 360.);
-  int gridRow = static_cast<int>(GRID_ROWS * (180. - (static_cast<double>(laty) + 90.)) / 180.);
-
-  return calcFileOffset(gridCol, gridRow, fileIndex);
-}
-
-qint64 GlobeReader::calcFileOffset(int gridCol, int gridRow, int& fileIndex)
-{
-  // Normalize / rollover values
-  while(gridCol >= GRID_COLUMNS)
-    gridCol -= GRID_COLUMNS;
-  while(gridCol < 0)
-    gridCol += GRID_COLUMNS;
-
-  while(gridRow >= GRID_ROWS)
-    gridRow -= GRID_ROWS;
-  while(gridRow < 0)
-    gridRow += GRID_ROWS;
-
-  // Column in file/tile grid
-  int fileCol = gridCol / TILE_COLUMNS;
-  // Column in file
-  int fileColOffset = gridCol % TILE_COLUMNS;
-
-  // Row in file/tile grid and row in file
-  int fileRow, fileRowOffset;
-  if(gridRow < TILE_ROWS_SMALL)
+  if(fileBytes != nullptr && !fileBytes->isEmpty())
   {
-    fileRow = 0;
-    fileRowOffset = gridRow;
-  }
-  else if(gridRow < TILE_ROWS_SMALL + TILE_ROWS_LARGE)
-  {
-    fileRow = 1;
-    fileRowOffset = gridRow - TILE_ROWS_SMALL;
-  }
-  else if(gridRow < TILE_ROWS_SMALL + TILE_ROWS_LARGE * 2)
-  {
-    fileRow = 2;
-    fileRowOffset = gridRow - (TILE_ROWS_SMALL + TILE_ROWS_LARGE);
-  }
-  else if(gridRow < TILE_ROWS_SMALL * 2 + TILE_ROWS_LARGE * 2)
-  {
-    fileRow = 3;
-    fileRowOffset = gridRow - (TILE_ROWS_SMALL + TILE_ROWS_LARGE * 2);
+    // LittleEndian
+    const char *data = fileBytes->constData();
+    unsigned short e0 = (static_cast<unsigned short>(data[fileOffset])) & 0xff;
+    unsigned short e1 = (static_cast<unsigned short>(data[fileOffset + 1]) << 8) & 0xff00;
+
+    return static_cast<float>(static_cast<qint16>(e0 | e1));
   }
   else
-    throw atools::Exception(QStringLiteral("Invalid grid row %1").arg(gridRow));
+    return ELEVATION_INVALID;
+}
 
-  // Index in file array
-  fileIndex = fileRow * 4 + fileCol;
+float GlobeReader::elevationFromIndexAndOffset(int fileIndex, qint64 fileOffset)
+{
+  QByteArray *fileBytes = fileCache.object(fileIndex);
+  if(fileBytes != nullptr)
+    // File found in cache
+    return fileBytesToElevation(fileBytes, fileOffset);
+  else
+  {
+    // File not in cache
+    openFile(fileIndex);
+    QFile *dataFile = dataFiles[fileIndex];
 
-  // Word offset in file
-  qint64 offset = fileColOffset + fileRowOffset * TILE_COLUMNS;
-
-  // Byte offset in file
-  return offset * 2;
+    if(dataFile != nullptr)
+    {
+      fileBytes = new QByteArray;
+      *fileBytes = dataFile->readAll();
+      if(!dataFile->atEnd() || dataFile->error() != QFileDevice::NoError)
+      {
+        // Add empty entry to indicate error reading file
+        fileCache.insert(fileIndex, new QByteArray());
+        qWarning() << Q_FUNC_INFO << "Error reading" << dataFile->fileName() << dataFile->errorString();
+      }
+      else
+      {
+        // Insert into cache and return elevation
+        fileCache.insert(fileIndex, fileBytes);
+        return fileBytesToElevation(fileBytes, fileOffset);
+      }
+    }
+    else
+    {
+      // Add empty entry to indicate missing file
+      fileCache.insert(fileIndex, new QByteArray());
+    }
+  }
+  return ELEVATION_INVALID;
 }
 
 } // namespace common

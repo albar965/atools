@@ -18,6 +18,7 @@
 #ifndef ATOOLS_DTM_GLOBEREADER_H
 #define ATOOLS_DTM_GLOBEREADER_H
 
+#include <QCache>
 #include <QFile>
 #include <QList>
 
@@ -33,11 +34,20 @@ class LineString;
 namespace fs {
 namespace common {
 
-static Q_DECL_CONSTEXPR float INVALID = std::numeric_limits<float>::max();
-static Q_DECL_CONSTEXPR float OCEAN = -500.f;
+const float ELEVATION_INVALID = std::numeric_limits<float>::max();
+const float ELEVATION_OCEAN = -500.f;
 
 /*
  * DTM reader class for the GLOBE data which can be get at https://www.ngdc.noaa.gov/mgg/topo/globeget.html
+ * https://www.ngdc.noaa.gov/mgg/topo/report/globedocumentationmanual.pdf
+ *
+ * Latitude-longitude grid spacing is 30 arc-seconds.
+ *
+ * Files ?10G and ?10B ("?" is the wildcard notation for tile letters "A" through "P") are provided as
+ * 16-bit signed integer data in a simple binary raster using LittleEndian.
+ * There are no header or trailer bytes embedded in the image.
+ * The data is stored in row major order (all the data for row 1, followed by all the data for
+ * row 2, etc.). All files have 10800 columns, and either 4800 or 6000 rows.
  */
 class GlobeReader
 {
@@ -59,10 +69,11 @@ public:
    * "sampleRadiusMeter" defines a rectangle where five points are sampled and the maximum is used.*/
   float getElevation(const atools::geo::Pos& pos, float sampleRadiusMeter = 0.f);
 
-  /* Get elevations along a great circle line. Will create a point every 500 meters and delete
+  /* Get elevations in meter along a great circle line. Will create a point every 500 meters and delete
    * consecutive ones with same elevation
    * "sampleRadiusMeter" defines a rectangle where five points are sampled and the maximum is used.*/
-  void getElevations(geo::LineString& elevations, const atools::geo::LineString& linestring, float sampleRadiusMeter = 0.f);
+  void getElevations(geo::LineString& elevations, const atools::geo::LineString& linestring, float sampleRadiusMeter = 0.f,
+                     bool precision = false);
 
   /* true if folder exists and files were found */
   bool isValid() const
@@ -70,39 +81,43 @@ public:
     return valid;
   }
 
+  /* Maximum number of files to keep in cache. Size of each is 98.88 Mb to 123.60 Mb  */
+  void setCacheMaxFiles(int newCacheMaxFiles)
+  {
+    cacheMaxFiles = newCacheMaxFiles;
+  }
+
 private:
   friend class ::DtmTest;
+  friend qint64 calcFileOffsetFromColRow(int gridCol, int gridRow, int& fileIndex);
+  friend qint64 calcFileOffset(double lonx, double laty, int& fileIndex);
 
-  /* Source data parameters */
-  static Q_DECL_CONSTEXPR int NUM_DATAFILES = 16;
-  static Q_DECL_CONSTEXPR qint64 FILE_SIZE_SMALL = 103680000;
-  static Q_DECL_CONSTEXPR qint64 FILE_SIZE_LARGE = 129600000;
-  static Q_DECL_CONSTEXPR int TILE_COLUMNS = 10800;
-  static Q_DECL_CONSTEXPR int TILE_ROWS_SMALL = 4800;
-  static Q_DECL_CONSTEXPR int TILE_ROWS_LARGE = 6000;
-  static Q_DECL_CONSTEXPR int GRID_COLUMNS = 4 * TILE_COLUMNS;
-  static Q_DECL_CONSTEXPR int GRID_ROWS = 2 * 6000 + 2 * 4800;
+  /* Test method */
+  qint64 calcFileOffsetTest(double lonx, double laty, int& fileIndex);
 
-  /* Distance between sampling points meter */
-  static Q_DECL_CONSTEXPR float INTERPOLATION_SEGMENT_LENGTH_M = 100.f;
+  /* Source data parameters*/
+  const static qint64 FILE_SIZE_SMALL = 103680000;
+  const static qint64 FILE_SIZE_LARGE = 129600000;
+  const static int TILE_COLUMNS = 10800;
+  const static int TILE_ROWS_SMALL = 4800;
+  const static int TILE_ROWS_LARGE = 6000;
 
-  /* Points are considered equal if they are equal within this range in meter */
-  static Q_DECL_CONSTEXPR float SAME_ELEVATION_EPSILON_M = 1.f;
+  const static int NUM_DATAFILES = 16;
+  const static int GRID_COLUMNS = 4 * TILE_COLUMNS;
+  const static int GRID_ROWS = 2 * 6000 + 2 * 4800;
 
-  /* Calculate file index and byte offset within file */
-  qint64 calcFileOffset(int gridCol, int gridRow, int& fileIndex);
-  qint64 calcFileOffset(const atools::geo::Pos& pos, int& fileIndex);
-  qint64 calcFileOffset(double lonx, double laty, int& fileIndex);
   static bool fileEntryValid(const QFileInfo& fileEntry);
   void closeFile(int i);
   void openFile(int i);
   float elevationFromIndexAndOffset(int fileIndex, qint64 fileOffset);
   float elevationMax(const atools::geo::Pos& pos, float sampleRadiusMeter);
 
+  int cacheMaxFiles = 8;
+  QCache<int, QByteArray> fileCache;
+
   QString dataDir;
   QList<QString> dataFilenames;
   QList<QFile *> dataFiles;
-  QList<QDataStream *> dataStreams;
 
   bool valid = false;
 };
