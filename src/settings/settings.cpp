@@ -16,14 +16,14 @@
 *****************************************************************************/
 
 #include "settings/settings.h"
+
 #include "atools.h"
 
-#include <QSettings>
 #include <QCoreApplication>
-#include <QFileInfo>
 #include <QDir>
 #include <QDateTime>
 #include <QCoreApplication>
+#include <QStringBuilder>
 
 namespace atools {
 namespace settings {
@@ -42,7 +42,7 @@ Settings::Settings()
 
   if(!overridePath.isEmpty())
     // qSettings object is used to determine paths
-    qSettings = new QSettings(overridePath + QDir::separator() + appNameForFiles() + ".ini", QSettings::IniFormat);
+    qSettings = new QSettings(overridePath % QDir::separator() % appNameForFiles() % QStringLiteral(".ini"), QSettings::IniFormat);
   else
     // Default settings path in roaming or other well known paths
     qSettings = new QSettings(QSettings::IniFormat, QSettings::UserScope, orgNameForDirs(), appNameForFiles());
@@ -141,13 +141,13 @@ void Settings::clearAndShutdown()
 
   // Create a backup
   QFileInfo file(getFilename());
-  QString newFile = file.path() + QDir::separator() + file.baseName() +
-                    "_" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss") + ".ini";
+  QString newFile = file.path() % QDir::separator() % file.baseName() % QStringLiteral("_") %
+                    QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd-HHmmss")) % QStringLiteral(".ini");
 
   if(QFile::copy(file.filePath(), newFile))
-    qInfo() << "Copied settings from" << file.filePath() << "to" << newFile;
+    qInfo() << Q_FUNC_INFO << "Copied settings from" << file.filePath() << "to" << newFile;
   else
-    qWarning() << "Copying from" << file.filePath() << "to" << newFile << "failed";
+    qWarning() << Q_FUNC_INFO << "Copying from" << file.filePath() << "to" << newFile << "failed";
 
   // Remove all key/value pairs and continue shutdown
   clearSettings();
@@ -163,12 +163,7 @@ void Settings::shutdown()
     settingsInstance = nullptr;
   }
   else
-    qWarning() << "Settings::shutdown called more than once";
-}
-
-QString Settings::getFilename()
-{
-  return getQSettings()->fileName();
+    qWarning() << Q_FUNC_INFO << "Settings::shutdown called more than once";
 }
 
 QString Settings::getConfigFilename(const QString& extension, const QString& subdir)
@@ -177,11 +172,11 @@ QString Settings::getConfigFilename(const QString& extension, const QString& sub
   if(subdir.isEmpty())
     path = getPath();
   else
-    path = getPath() + QDir::separator() + subdir;
+    path = getPath() % QDir::separator() % subdir;
 
   QDir(path).mkpath(path);
 
-  return path + QDir::separator() + appNameForFiles() + extension;
+  return path % QDir::separator() % appNameForFiles() % extension;
 }
 
 QString Settings::getOverloadedLocalPath(const QString& filename, bool ignoreMissing)
@@ -203,7 +198,7 @@ QString Settings::getOverloadedLocalPath(const QString& filename, bool ignoreMis
 
 QString Settings::getOverloadedPath(const QString& filename, bool ignoreMissing)
 {
-  QString configDirFile = getPath() + QDir::separator() + QFileInfo(filename).fileName();
+  QString configDirFile = getPath() % QDir::separator() % QFileInfo(filename).fileName();
 
   if(QFileInfo::exists(configDirFile))
     // User placed a copy of the file in the configuration directory - use the
@@ -250,16 +245,6 @@ void Settings::clearSettings()
   syncSettings();
 }
 
-bool Settings::contains(const QString& key) const
-{
-  return qSettings->contains(key);
-}
-
-void Settings::remove(const QString& key)
-{
-  qSettings->remove(key);
-}
-
 QStringList Settings::valueStrList(const QString& key, const QStringList& defaultValue) const
 {
   if(!contains(key))
@@ -271,109 +256,6 @@ QStringList Settings::valueStrList(const QString& key, const QStringList& defaul
     return QStringList();
   else
     return list;
-}
-
-QString Settings::valueStr(const QString& key, const QString& defaultValue) const
-{
-  return qSettings->value(key, defaultValue).toString();
-}
-
-bool Settings::valueBool(const QString& key, bool defaultValue) const
-{
-  return qSettings->value(key, defaultValue).toBool();
-}
-
-int Settings::valueInt(const QString& key, int defaultValue) const
-{
-  return qSettings->value(key, defaultValue).toInt();
-}
-
-int Settings::valueLongLong(const QString& key, long long defaultValue) const
-{
-  return qSettings->value(key, defaultValue).toLongLong();
-}
-
-float Settings::valueFloat(const QString& key, float defaultValue) const
-{
-  return qSettings->value(key, defaultValue).toFloat();
-}
-
-double Settings::valueDouble(const QString& key, double defaultValue) const
-{
-  return qSettings->value(key, defaultValue).toDouble();
-}
-
-QVariant Settings::valueVar(const QString& key, QVariant defaultValue) const
-{
-  return qSettings->value(key, defaultValue);
-}
-
-void Settings::setValue(const QString& key, const QStringList& value)
-{
-  if(value.isEmpty())
-    qSettings->setValue(key, QStringLiteral());
-  else
-    qSettings->setValue(key, value);
-}
-
-void Settings::setValue(const QString& key, const QString& value)
-{
-  qSettings->setValue(key, value);
-}
-
-void Settings::setValue(const QString& key, bool value)
-{
-  qSettings->setValue(key, value);
-}
-
-void Settings::setValue(const QString& key, int value)
-{
-  qSettings->setValue(key, QString::number(value));
-}
-
-void Settings::setValue(const QString& key, long long value)
-{
-  qSettings->setValue(key, QString::number(value));
-}
-
-void Settings::setValue(const QString& key, float value)
-{
-  qSettings->setValue(key, QString::number(value, 'f', 10));
-}
-
-void Settings::setValue(const QString& key, double value)
-{
-  qSettings->setValue(key, QString::number(value, 'f', 18));
-}
-
-void Settings::setValueVar(const QString& key, const QVariant& value)
-{
-  qSettings->setValue(key, value);
-}
-
-QStringList Settings::childGroups() const
-{
-  return qSettings->childGroups();
-}
-
-QString Settings::getPath()
-{
-  return QFileInfo(getQSettings()->fileName()).path();
-}
-
-QString Settings::getDirName()
-{
-  return QFileInfo(getPath()).fileName();
-}
-
-QString Settings::orgNameForDirs()
-{
-  return organizationName.replace(' ', '_');
-}
-
-QString Settings::appNameForFiles()
-{
-  return applicationName.replace(' ', '_').toLower();
 }
 
 } // namespace atools

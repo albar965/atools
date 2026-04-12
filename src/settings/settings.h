@@ -18,10 +18,11 @@
 #ifndef ATOOLS_SETTINGS_SETTINGS_H
 #define ATOOLS_SETTINGS_SETTINGS_H
 
+#include <QFileInfo>
 #include <QString>
 #include <QVariant>
 
-class QSettings;
+#include <QSettings>
 
 namespace atools {
 namespace settings {
@@ -89,15 +90,24 @@ public:
 
   /* Get the organization specific settings directory.
    * E.g. "C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel" */
-  static QString getPath();
+  static QString getPath()
+  {
+    return QFileInfo(getQSettings()->fileName()).path();
+  }
 
   /* Get the organization specific settings directory.
    * E.g. "C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel\little_navmap.ini" */
-  static QString getFilename();
+  static QString getFilename()
+  {
+    return getQSettings()->fileName();
+  }
 
   /* Get the organization specific settings directory only last path part.
    * E.g. "ABarthel" for "C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel" */
-  static QString getDirName();
+  static QString getDirName()
+  {
+    return QFileInfo(getPath()).fileName();
+  }
 
   /* Returns the filename of the given path if the file exists in the settings
    * directory or the given path if the file exists. Otherwise throws Exception.
@@ -135,17 +145,52 @@ public:
     return instance().qSettings;
   }
 
-  bool contains(const QString& key) const;
-  void remove(const QString& key);
+  bool contains(const QString& key) const
+  {
+    return qSettings->contains(key);
+  }
+
+  void remove(const QString& key)
+  {
+    qSettings->remove(key);
+  }
 
   QStringList valueStrList(const QString& key, const QStringList& defaultValue = QStringList()) const;
-  QString valueStr(const QString& key, const QString& defaultValue = QString()) const;
-  bool valueBool(const QString& key, bool defaultValue = false) const;
-  int valueInt(const QString& key, int defaultValue = 0) const;
-  int valueLongLong(const QString& key, long long defaultValue = 0LL) const;
-  float valueFloat(const QString& key, float defaultValue = 0.f) const;
-  double valueDouble(const QString& key, double defaultValue = 0.) const;
-  QVariant valueVar(const QString& key, QVariant defaultValue = QVariant()) const;
+
+  QString valueStr(const QString& key, const QString& defaultValue = QString()) const
+  {
+    return qSettings->value(key, defaultValue).toString();
+  }
+
+  bool valueBool(const QString& key, bool defaultValue = false) const
+  {
+    return qSettings->value(key, defaultValue).toBool();
+  }
+
+  int valueInt(const QString& key, int defaultValue = 0) const
+  {
+    return qSettings->value(key, defaultValue).toInt();
+  }
+
+  int valueLongLong(const QString& key, long long defaultValue = 0LL) const
+  {
+    return qSettings->value(key, defaultValue).toLongLong();
+  }
+
+  float valueFloat(const QString& key, float defaultValue = 0.f) const
+  {
+    return qSettings->value(key, defaultValue).toFloat();
+  }
+
+  double valueDouble(const QString& key, double defaultValue = 0.) const
+  {
+    return qSettings->value(key, defaultValue).toDouble();
+  }
+
+  QVariant valueVar(const QString& key, QVariant defaultValue = QVariant()) const
+  {
+    return qSettings->value(key, defaultValue);
+  }
 
   template<typename TYPE>
   TYPE valueEnum(const QString& key, TYPE defaultValue = TYPE()) const
@@ -167,16 +212,53 @@ public:
     setValue(key, static_cast<long long>(value));
   }
 
-  void setValue(const QString& key, const QStringList& value);
-  void setValue(const QString& key, const QString& value);
-  void setValue(const QString& key, bool value);
-  void setValue(const QString& key, int value);
-  void setValue(const QString& key, long long value);
-  void setValue(const QString& key, float value);
-  void setValue(const QString& key, double value);
-  void setValueVar(const QString& key, const QVariant& value);
+  void setValue(const QString& key, const QStringList& value)
+  {
+    if(value.isEmpty())
+      qSettings->setValue(key, QStringLiteral());
+    else
+      qSettings->setValue(key, value);
+  }
 
-  QStringList childGroups() const;
+  void setValue(const QString& key, const QString& value)
+  {
+    qSettings->setValue(key, value);
+  }
+
+  void setValue(const QString& key, bool value)
+  {
+    qSettings->setValue(key, value);
+  }
+
+  void setValue(const QString& key, int value)
+  {
+    qSettings->setValue(key, QString::number(value));
+  }
+
+  void setValue(const QString& key, long long value)
+  {
+    qSettings->setValue(key, QString::number(value));
+  }
+
+  void setValue(const QString& key, float value)
+  {
+    qSettings->setValue(key, QString::number(value, 'f', 10));
+  }
+
+  void setValue(const QString& key, double value)
+  {
+    qSettings->setValue(key, QString::number(value, 'f', 18));
+  }
+
+  void setValueVar(const QString& key, const QVariant& value)
+  {
+    qSettings->setValue(key, value);
+  }
+
+  QStringList childGroups() const
+  {
+    return qSettings->childGroups();
+  }
 
 private:
   Settings();
@@ -189,10 +271,16 @@ private:
 
   static QString overridePath, organizationName, applicationName;
   static QStringList infoMessages, errorMessages;
-  static QString appNameForFiles();
+  static QString appNameForFiles()
+  {
+    return applicationName.replace(' ', '_').toLower();
+  }
 
   static Settings *settingsInstance;
-  static QString orgNameForDirs();
+  static QString orgNameForDirs()
+  {
+    return organizationName.replace(' ', '_');
+  }
 
 };
 
