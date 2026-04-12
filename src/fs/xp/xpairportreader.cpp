@@ -1708,9 +1708,6 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
       }
     }
 
-    if(airportRect.isPoint())
-      airportRect.inflate(1.f / 60.f, 1.f / 60.f);
-
     // Center position
     Pos center = airportPos.isValid() ? airportPos : airportRect.getCenter();
 
