@@ -144,7 +144,7 @@ void UpdateCheck::readUpdateMessage(atools::util::Updates& updates, QString upda
     }
     else
     {
-      if(channels & currentChannel)
+      if(channels.testAnyFlag(currentChannel))
       {
         QString key = line.section('=', 0, 0).trimmed().toLower();
         QString rawValue = line.section('=', 1).trimmed();

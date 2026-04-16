@@ -41,17 +41,17 @@ public:
   typedef FLAGTYPE FlagType;
 
   /* Constructors ======================================= */
-  Flags()
+  Flags() noexcept
     : value(0L)
   {
   }
 
-  Flags(ENUM enumValue)
+  Flags(ENUM enumValue) noexcept
     : value(FLAGTYPE(enumValue))
   {
   }
 
-  Flags(FLAGTYPE flagValue)
+  Flags(FLAGTYPE flagValue) noexcept
     : value(flagValue)
   {
   }
@@ -74,19 +74,19 @@ public:
 
 #endif
 
-  Flags(const Flags& other)
+  Flags(const Flags& other) noexcept
   {
     value = other.value;
   }
 
-  Flags(std::initializer_list<ENUM> list)
+  Flags(std::initializer_list<ENUM> list) noexcept
     : value(0L)
   {
     for(ENUM val : list)
       *this |= val;
   }
 
-  Flags(std::initializer_list<Flags> list)
+  Flags(std::initializer_list<Flags> list) noexcept
     : value(0L)
   {
     for(Flags val : list)
@@ -94,35 +94,35 @@ public:
   }
 
   /* Assignment ======================================= */
-  Flags& operator=(ENUM other)
+  Flags& operator=(ENUM other) noexcept
   {
     value = other;
     return *this;
   }
 
-  Flags& operator=(Flags other)
+  Flags& operator=(Flags other) noexcept
   {
     value = other.value;
     return *this;
   }
 
   /* Comparison ======================================= */
-  bool operator==(const ENUM& other) const
+  bool operator==(const ENUM& other) const noexcept
   {
     return value == other;
   }
 
-  bool operator==(const Flags& other) const
+  bool operator==(const Flags& other) const noexcept
   {
     return value == other.value;
   }
 
-  bool operator!=(const ENUM& other) const
+  bool operator!=(const ENUM& other) const noexcept
   {
     return value != other;
   }
 
-  bool operator!=(const Flags& other) const
+  bool operator!=(const Flags& other) const noexcept
   {
     return value != other.value;
   }
@@ -143,59 +143,59 @@ public:
 
 #endif
 
-  Flags& operator&=(Flags other)
+  Flags& operator&=(Flags other) noexcept
   {
     value &= other.value;
     return *this;
   }
 
-  Flags& operator&=(ENUM mask)
+  Flags& operator&=(ENUM mask) noexcept
   {
     value &= FLAGTYPE(mask);
     return *this;
   }
 
-  Flags& operator|=(Flags other)
+  Flags& operator|=(Flags other) noexcept
   {
     value |= other.value;
     return *this;
   }
 
-  Flags& operator|=(ENUM other)
+  Flags& operator|=(ENUM other) noexcept
   {
     value |= FLAGTYPE(other);
     return *this;
   }
 
-  Flags& operator^=(Flags other)
+  Flags& operator^=(Flags other) noexcept
   {
     value ^= other.value;
     return *this;
   }
 
-  Flags& operator^=(ENUM other)
+  Flags& operator^=(ENUM other) noexcept
   {
     value ^= FLAGTYPE(other);
     return *this;
   }
 
   /* Const bit operators ======================================= */
-  Flags operator|(Flags other) const
+  Flags operator|(Flags other) const noexcept
   {
     return Flags(value | other.value);
   }
 
-  Flags operator|(ENUM other) const
+  Flags operator|(ENUM other) const noexcept
   {
     return Flags(value | FLAGTYPE(other));
   }
 
-  Flags operator^(Flags other) const
+  Flags operator^(Flags other) const noexcept
   {
     return Flags(value ^ other.value);
   }
 
-  Flags operator^(ENUM other) const
+  Flags operator^(ENUM other) const noexcept
   {
     return Flags(value ^ FLAGTYPE(other));
   }
@@ -214,40 +214,40 @@ public:
 
 #endif
 
-  Flags operator&(Flags other) const
+  Flags operator&(Flags other) const noexcept
   {
     return Flags(value & other.value);
   }
 
-  Flags operator&(ENUM other) const
+  Flags operator&(ENUM other) const noexcept
   {
     return Flags(value & FLAGTYPE(other));
   }
 
   /* Negate ======================================= */
-  Flags operator~() const
+  Flags operator~() const noexcept
   {
     return Flags(~value);
   }
 
   /* Not ======================================= */
-  bool operator!() const
+  bool operator!() const noexcept
   {
     return !value;
   }
 
   /* Casts ======================================= */
-  ENUM asEnum() const
+  ENUM asEnum() const noexcept
   {
     return static_cast<ENUM>(value);
   }
 
-  FLAGTYPE asFlagType() const
+  FLAGTYPE asFlagType() const noexcept
   {
     return value;
   }
 
-  operator ENUM() const
+  operator ENUM() const noexcept
   {
     return static_cast<ENUM>(value);
   }
@@ -288,12 +288,27 @@ public:
 #endif
 
   /* Set/get methods ======================================= */
-  bool testFlag(ENUM flag) const
+  bool testFlag(ENUM flag) const noexcept
   {
-    return (value & FLAGTYPE(flag)) == FLAGTYPE(flag) && (FLAGTYPE(flag) != 0 || value == FLAGTYPE(flag));
+    return testFlags(flag);
   }
 
-  Flags& setFlag(ENUM flag, bool on = true)
+  bool testFlags(atools::util::Flags<ENUM, FLAGTYPE> flags) const noexcept
+  {
+    return flags.value ? ((value & flags.value) == flags.value) : value == FLAGTYPE(0LL);
+  }
+
+  bool testAnyFlag(ENUM flag) const noexcept
+  {
+    return testAnyFlags(flag);
+  }
+
+  bool testAnyFlags(atools::util::Flags<ENUM, FLAGTYPE> flags) const noexcept
+  {
+    return (value & flags.value) != FLAGTYPE(0LL);
+  }
+
+  Flags& setFlag(ENUM flag, bool on = true) noexcept
   {
     if(on)
       value |= FLAGTYPE(flag);
