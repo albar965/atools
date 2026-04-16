@@ -19,6 +19,7 @@
 
 #include "atools.h"
 #include "gui/application.h"
+#include "gui/dataexchangeflags.h"
 #include "settings/settings.h"
 #include "util/properties.h"
 
@@ -33,17 +34,16 @@ using atools::settings::Settings;
 namespace atools {
 namespace gui {
 
-// Commands are set if the property exists
-const QLatin1String DataExchange::STARTUP_COMMAND_QUIT("quit");
-const QLatin1String DataExchange::STARTUP_COMMAND_ACTIVATE("activate");
-
-static const int SHARED_MEMORY_SIZE = 8192;
+static const qsizetype SHARED_MEMORY_SIZE = 8192;
 static const int FETCH_TIMER_INTERVAL_MS = 500;
-static const int MAX_TIME_DIFFENCE_MS = 1000;
+static const qint64 MAX_TIME_DIFFENCE_MS = 1000;
 
 DataExchangeFetcher::DataExchangeFetcher(bool verboseParam)
   : verbose(verboseParam)
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
+
   setObjectName("DataExchangeFetcher");
   timer = new QTimer(this);
   timer->setSingleShot(true);
@@ -52,7 +52,9 @@ DataExchangeFetcher::DataExchangeFetcher(bool verboseParam)
 
 DataExchangeFetcher::~DataExchangeFetcher()
 {
-  timer->stop();
+  if(timer != nullptr)
+    timer->stop();
+
   ATOOLS_DELETE_LOG(timer);
 }
 
@@ -61,12 +63,15 @@ void DataExchangeFetcher::startTimer()
   if(verbose)
     qDebug() << Q_FUNC_INFO;
 
-  timer->start(FETCH_TIMER_INTERVAL_MS);
+  if(timer != nullptr)
+    timer->start(FETCH_TIMER_INTERVAL_MS);
+  else
+    qWarning() << Q_FUNC_INFO << "Timer is null";
 }
 
 void DataExchangeFetcher::fetchSharedMemory()
 {
-  // sharedMemory is accessed exclusively by the thread here
+  // sharedMemory is accessed exclusively by this thread here
 
   atools::util::Properties properties;
 
@@ -75,6 +80,9 @@ void DataExchangeFetcher::fetchSharedMemory()
     // Already attached
     if(sharedMemory->lock())
     {
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << "locked";
+
       // Read size only for now
       quint32 size;
       // Create a view on the shared memory for reading - does not copy
@@ -88,6 +96,9 @@ void DataExchangeFetcher::fetchSharedMemory()
         in.skipRawData(sizeof(qint64));
         in >> properties;
       }
+
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << "Updating timestamp" << QDateTime::currentMSecsSinceEpoch();
 
       // Write back a null size and update timestamp to allow the other process detect a crash
       QByteArray bytesEmpty;
@@ -112,13 +123,15 @@ void DataExchangeFetcher::fetchSharedMemory()
 }
 
 // ================================================================================================
-DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
+DataExchange::DataExchange(const QString& programGuid, bool noDataExchange, bool verboseParam)
   : QObject(nullptr), verbose(verboseParam)
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << programGuid << "noDataExchange" << noDataExchange;
   exit = false;
 
   // Copy command line parameters and add activate option to bring other to front
-  atools::util::Properties properties(atools::gui::Application::getStartupOptionsConst());
+  atools::util::Properties properties(atools::gui::Application::getStartupOptions());
 
   // sharedMemory is accessess exclusively by the constructor here
   // Detect other running application instance with same settings - this is unsafe on Unix since sharedMemory can remain after crashes
@@ -153,7 +166,7 @@ DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
         qDebug() << Q_FUNC_INFO << "Attached" << sharedMemory->key() << sharedMemory->nativeKey();
 
       // Read timestamp to detect freeze or crash
-      if(sharedMemory->lock())
+      if(!noDataExchange && sharedMemory->lock())
       {
         qint64 datetime;
         quint32 size;
@@ -162,11 +175,20 @@ DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
         QDataStream in(&sizeBytes, QIODevice::ReadOnly);
         in >> size >> datetime;
 
+        qint64 timeDiff = QDateTime::fromMSecsSinceEpoch(datetime).msecsTo(QDateTime::currentDateTimeUtc());
+
+        if(verbose)
+          qDebug() << Q_FUNC_INFO << "Time difference" << timeDiff;
+
         // If timestamp is older than MAX_TIME_DIFFENCE_MS other might be crashed or frozen, start normally - otherwise send message
-        if(QDateTime::fromMSecsSinceEpoch(datetime).msecsTo(QDateTime::currentDateTimeUtc()) < MAX_TIME_DIFFENCE_MS)
+        if(timeDiff < MAX_TIME_DIFFENCE_MS)
         {
-          if(!properties.contains(STARTUP_COMMAND_QUIT))
-            properties.setPropertyStr(STARTUP_COMMAND_ACTIVATE, QStringLiteral()); // Always raise other window except on qut
+          if(verbose)
+            qDebug() << Q_FUNC_INFO << "Sending commands";
+
+          if(!properties.contains(atools::gui::dataexchange::STARTUP_COMMAND_QUIT))
+            // Always raise other window except on quit
+            properties.setPropertyStr(atools::gui::dataexchange::STARTUP_COMMAND_ACTIVATE, QStringLiteral());
 
           if(verbose)
             qDebug() << Q_FUNC_INFO << "Sending" << properties;
@@ -190,6 +212,8 @@ DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
             qWarning() << Q_FUNC_INFO << "sharedMemory is too small" << sharedMemory->size();
 
         } // if(QDateTime::fromMSecsSinceEpoch(date ...
+        else if(verbose)
+          qDebug() << Q_FUNC_INFO << "Starting normally";
 
         sharedMemory->unlock();
       } // if(sharedMemory->lock())
@@ -199,7 +223,7 @@ DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
   if(verbose && sharedMemory != nullptr)
     qDebug() << Q_FUNC_INFO << "key" << sharedMemory->key() << "native key" << sharedMemory->nativeKey();
 
-  if(properties.contains(STARTUP_COMMAND_QUIT))
+  if(properties.contains(atools::gui::dataexchange::STARTUP_COMMAND_QUIT))
     exit = true;
 
   if(verbose)
@@ -208,11 +232,17 @@ DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
 
 DataExchange::~DataExchange()
 {
+  disable();
+}
+
+void DataExchange::disable()
+{
   if(dataFetcherThread != nullptr)
   {
     dataFetcherThread->quit();
     dataFetcherThread->wait();
   }
+
   ATOOLS_DELETE_LATER_LOG(dataFetcherThread);
   ATOOLS_DELETE_LATER_LOG(dataFetcher);
 

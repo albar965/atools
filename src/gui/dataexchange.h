@@ -44,7 +44,7 @@ public:
   /* Creates or attaches to a shared memory segment and sets exit flag.
    * Sends a message to the other instance if attaching.
    *  Sets a timestamp if creating. */
-  explicit DataExchange(bool verboseParam, const QString& programGuid);
+  explicit DataExchange(const QString& programGuid, bool noDataExchange, bool verboseParam);
 
   /* Detaches and deletes shared memory */
   virtual ~DataExchange() override;
@@ -63,9 +63,8 @@ public:
    * Sends messages below if another instance left messages. */
   void startTimer();
 
-  /* Common commands also used internally */
-  const static QLatin1String STARTUP_COMMAND_QUIT; /* Terminate application */
-  const static QLatin1String STARTUP_COMMAND_ACTIVATE; /* Show and raise application window */
+  /* Disable data exchange, release the shared memory and reset the time stamp */
+  void disable();
 
 signals:
   /* Sent via queued connection from thread if timer found messages from other instance.
@@ -119,7 +118,7 @@ private:
    * Called by timer->timeout() in thread context. */
   void fetchSharedMemory();
 
-  QTimer *timer;
+  QTimer *timer = nullptr;
 
   /* Pointer to SHM */
   QSharedMemory *sharedMemory = nullptr;

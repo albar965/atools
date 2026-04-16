@@ -196,7 +196,6 @@ void updateAllFonts(const QFont& font, const QSet<QObject *>& exceptionList)
 
 void updateAllFonts(QObject *object, const QFont& font, const QSet<QObject *>& exceptionList)
 {
-
   if(object != nullptr)
   {
     QWidget *widget = dynamic_cast<QWidget *>(object);

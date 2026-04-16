@@ -542,6 +542,7 @@ HEADERS += \
   src/gui/clicktooltiphandler.h \
   src/gui/comboboxhandler.h \
   src/gui/dataexchange.h \
+  src/gui/dataexchangeflags.h \
   src/gui/desktopservices.h \
   src/gui/dialog.h \
   src/gui/dockwidgethandler.h \

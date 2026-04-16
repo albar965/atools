@@ -150,16 +150,24 @@ public:
     showExceptionDialog = value;
   }
 
-  static bool isRestartProcess()
+  /* Restart process and probably reset settings */
+  static bool isRestartApplication()
   {
-    return restartProcess;
+    return restartApplication;
+  }
+
+  /* Reset settings and restart */
+  static bool isRestartApplicationResetSettings()
+  {
+    return restartApplication && resetSettings;
   }
 
   /* Set to true to restart the same process with the same arguments after shutdown.
    *  Useful for settings reset. */
-  static void setRestartProcess(bool value)
+  static void setRestartApplication(bool restart, bool reset)
   {
-    restartProcess = value;
+    restartApplication = restart;
+    resetSettings = reset;
   }
 
   /* true if display of tooltips is disabled for the whole application */
@@ -179,7 +187,7 @@ public:
   static void setShuttingDown(bool value = true);
 
   /* Command line options. Have to be populated by the application. */
-  static const atools::util::Properties& getStartupOptionsConst();
+  static const atools::util::Properties& getStartupOptions();
   static bool hasStartupOption(const QString& key);
   static QString getStartupOptionStr(const QString& key);
   static QStringList getStartupOptionStrList(const QString& key);
@@ -223,7 +231,7 @@ private:
 
   static atools::util::Properties *startupOptions;
 
-  static bool showExceptionDialog, restartProcess, tooltipsDisabled, shuttingDown, startingUp;
+  static bool showExceptionDialog, restartApplication, resetSettings, tooltipsDisabled, shuttingDown, startingUp;
 
   static QElapsedTimer timer;
   static QFont lastFontChanged; /* Remember font to avoid multiple change events sent */

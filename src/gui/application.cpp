@@ -32,7 +32,6 @@
 #include <QUrl>
 #include <QThread>
 #include <QTimer>
-#include <QProcess>
 #include <QFileInfo>
 #include <QDir>
 #include <QSplashScreen>
@@ -53,7 +52,8 @@ QString Application::lockFile;
 bool Application::safeMode = false;
 
 bool Application::showExceptionDialog = true;
-bool Application::restartProcess = false;
+bool Application::restartApplication = false;
+bool Application::resetSettings = false;
 bool Application::tooltipsDisabled = false;
 QSplashScreen *Application::splashScreen = nullptr;
 
@@ -77,24 +77,14 @@ Application::Application(int& argc, char **argv, int)
 
 Application::~Application()
 {
-  ATOOLS_DELETE(splashScreen);
-
-  if(restartProcess)
-  {
-    qDebug() << Q_FUNC_INFO << "Starting" << QCoreApplication::applicationFilePath();
-    restartProcess = false;
-    bool result = QProcess::startDetached(QCoreApplication::applicationFilePath(), QCoreApplication::arguments());
-    if(result)
-      qInfo() << Q_FUNC_INFO << "Success.";
-    else
-      qWarning() << Q_FUNC_INFO << "FAILED.";
-  }
-  ATOOLS_DELETE(startupOptions);
+  ATOOLS_DELETE_LOG(splashScreen);
+  ATOOLS_DELETE_LOG(startupOptions);
 }
 
 void Application::applicationAboutToQuitInternal()
 {
   qInfo() << Q_FUNC_INFO;
+
   emit applicationAboutToQuit();
 }
 
@@ -109,7 +99,7 @@ void Application::setShuttingDown(bool value)
   shuttingDown = value;
 }
 
-const atools::util::Properties& Application::getStartupOptionsConst()
+const atools::util::Properties& Application::getStartupOptions()
 {
   return *startupOptions;
 }
