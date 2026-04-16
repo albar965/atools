@@ -157,17 +157,24 @@ public:
   }
 
   /* Reset settings and restart */
-  static bool isRestartApplicationResetSettings()
+  static bool isResetSettings()
   {
-    return restartApplication && resetSettings;
+    return resetSettings;
+  }
+
+  /* Reset settings and restart */
+  static bool isResetWindowLayout()
+  {
+    return resetWindowLayout;
   }
 
   /* Set to true to restart the same process with the same arguments after shutdown.
    *  Useful for settings reset. */
-  static void setRestartApplication(bool restart, bool reset)
+  static void setRestartApplication(bool restartApplicationParam, bool resetSettingsParam, bool resetWindowLayoutParam)
   {
-    restartApplication = restart;
-    resetSettings = reset;
+    restartApplication = restartApplicationParam;
+    resetSettings = resetSettingsParam;
+    resetWindowLayout = resetWindowLayoutParam;
   }
 
   /* true if display of tooltips is disabled for the whole application */
@@ -231,7 +238,7 @@ private:
 
   static atools::util::Properties *startupOptions;
 
-  static bool showExceptionDialog, restartApplication, resetSettings, tooltipsDisabled, shuttingDown, startingUp;
+  static bool showExceptionDialog, restartApplication, resetSettings, resetWindowLayout, tooltipsDisabled, shuttingDown, startingUp;
 
   static QElapsedTimer timer;
   static QFont lastFontChanged; /* Remember font to avoid multiple change events sent */

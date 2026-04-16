@@ -54,6 +54,7 @@ bool Application::safeMode = false;
 bool Application::showExceptionDialog = true;
 bool Application::restartApplication = false;
 bool Application::resetSettings = false;
+bool Application::resetWindowLayout = false;
 bool Application::tooltipsDisabled = false;
 QSplashScreen *Application::splashScreen = nullptr;
 
