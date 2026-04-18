@@ -32,6 +32,7 @@ class QObject;
 class QTextEdit;
 class QTabWidget;
 
+class QLineEdit;
 namespace atools {
 namespace gui {
 
@@ -43,11 +44,14 @@ QFont getBestFixedFont();
 /* Make selection color of inactive table elements the same as active on Windows */
 void adjustSelectionColors(QWidget *widget);
 
-/* Return a user readable text for the given font */
-QString fontDescription(const QFont& font);
+/* Return a user readable text for the given fontInfo */
+QString fontDescription(const QFontInfo& fontInfo);
 
-/* Sets label text and label font */
-void fontDescription(const QFont& font, QLabel *label);
+/* Sets lineEdit text and lineEdit font */
+void fontDescription(const QFont& font, QLineEdit *lineEdit, const QString& prefix);
+
+/* Returns a font style string usable for style sheets */
+QString fontStyleString(const QFont& fnt);
 
 /* Updates all fonts recursively for objects and their children.
  * Workaround for Qt limitation which does not adapt all widgets and no floating windows with parent null. */

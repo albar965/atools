@@ -45,24 +45,69 @@
 namespace atools {
 namespace gui {
 
-void fontDescription(const QFont& font, QLabel *label)
+QString fontStyleString(const QFont& fnt)
 {
-  label->setFont(font);
-  label->setText(fontDescription(font));
+  QString style;
+  switch(fnt.style())
+  {
+    case QFont::StyleItalic:
+      style = QStringLiteral("italic");
+      break;
+
+    case QFont::StyleOblique:
+      style = QStringLiteral("oblique");
+      break;
+
+    default:
+      style = QStringLiteral("normal");
+      break;
+  }
+
+  return QStringLiteral("font-family: \"%1\"; font-weight: %2; font-size: %3pt; font-style: %4").
+         arg(fnt.family()).arg(fnt.weight()).arg(fnt.pointSizeF(), 0, 'f', 0).arg(style);
 }
 
-QString fontDescription(const QFont& font)
+void fontDescription(const QFont& font, QLineEdit *lineEdit, const QString& prefix)
+{
+  lineEdit->setFont(font);
+  lineEdit->setText(prefix % fontDescription(lineEdit->fontInfo()));
+}
+
+QString fontDescription(const QFontInfo& font)
 {
   QStringList fontText;
 
   fontText.append(font.family());
   if(font.pointSizeF() > 0.)
-    fontText.append(QObject::tr("%1 pt").arg(font.pointSizeF()));
+    fontText.append(QObject::tr("%1 pt").arg(font.pointSize()));
   else if(font.pixelSize() > 0)
     fontText.append(QObject::tr("%1 px").arg(font.pixelSize()));
 
+  // int stretch = font.stretch();
+  // if(stretch > 0)
+  // {
+  // if(stretch <= QFont::UltraCondensed)
+  // fontText.append(QObject::tr("ultra condensed"));
+  // else if(stretch <= QFont::ExtraCondensed)
+  // fontText.append(QObject::tr("extra condensed"));
+  // else if(stretch <= QFont::Condensed)
+  // fontText.append(QObject::tr("condensed"));
+  // else if(stretch <= QFont::SemiCondensed)
+  // fontText.append(QObject::tr("semi condensed"));
+  // else if(stretch <= QFont::Unstretched)
+  // fontText.append(QObject::tr("normal"));
+  // else if(stretch <= QFont::SemiExpanded)
+  // fontText.append(QObject::tr("semi expanded"));
+  // else if(stretch <= QFont::Expanded)
+  // fontText.append(QObject::tr("expanded"));
+  // else if(stretch <= QFont::ExtraExpanded)
+  // fontText.append(QObject::tr("extra expanded"));
+  // else if(stretch <= QFont::UltraExpanded)
+  // fontText.append(QObject::tr("ultra expanded"));
+  // }
+
   int weight = font.weight();
-  if(weight == QFont::Thin)
+  if(weight <= QFont::Thin)
     fontText.append(QObject::tr("thin"));
   else if(weight <= QFont::ExtraLight)
     fontText.append(QObject::tr("extra light"));
@@ -83,23 +128,20 @@ QString fontDescription(const QFont& font)
 
   if(font.italic())
     fontText.append(QObject::tr("italic"));
+
   if(font.overline())
     fontText.append(QObject::tr("overline"));
+
   if(font.underline())
     fontText.append(QObject::tr("underline"));
+
   if(font.strikeOut())
     fontText.append(QObject::tr("strike out"));
 
   if(font.fixedPitch())
     fontText.append(QObject::tr("fixed pitch"));
 
-  QString prefix;
-  if(font == QFontDatabase::systemFont(QFontDatabase::GeneralFont))
-    prefix = QObject::tr("System font: %1");
-  else
-    prefix = QObject::tr("User selected font: %1");
-
-  return prefix.arg(fontText.join(QObject::tr(", ")));
+  return fontText.join(QObject::tr(", "));
 }
 
 QList<int> selectedRows(QItemSelectionModel *model, bool reverse)
