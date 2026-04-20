@@ -1001,6 +1001,15 @@ void DockWidgetHandler::fontChanged(const QFont& font)
     atools::gui::updateAllFonts(toolbar, QApplication::font());
 }
 
+void DockWidgetHandler::styleChanged()
+{
+  for(QDockWidget *dock : std::as_const(dockWidgets))
+    atools::gui::updateAllPalette(dock, QApplication::palette());
+
+  for(QToolBar *toolbar : std::as_const(toolBars))
+    atools::gui::updateAllPalette(toolbar, QApplication::palette());
+}
+
 void DockWidgetHandler::fontChangedWidget(QDockWidget *dock, const QFont& font)
 {
   if(dock != nullptr)

@@ -221,9 +221,18 @@ public:
     return dockWidgets;
   }
 
+  /* Get all registered tool bars */
+  const QList<QToolBar *>& getToolBars() const
+  {
+    return toolBars;
+  }
+
   /* Update title bar font for all dockwidgets using a stylesheet.
    * Also update toolbar font recursively for all its children. */
   void fontChanged(const QFont& font);
+
+  /* Update for application style change */
+  void styleChanged();
 
   /* Update title bar font for the given dock window using a stylesheet. */
   static void fontChangedWidget(QDockWidget *dock, const QFont& font);
