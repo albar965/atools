@@ -57,6 +57,7 @@ bool Application::resetSettings = false;
 bool Application::resetWindowLayout = false;
 bool Application::tooltipsDisabled = false;
 QSplashScreen *Application::splashScreen = nullptr;
+QString Application::splashScreenMessage;
 
 atools::util::Properties *Application::startupOptions = nullptr;
 QElapsedTimer Application::timer;
@@ -472,14 +473,14 @@ QString Application::getReportPathHtml()
   return fileStr;
 }
 
-void Application::initSplashScreen(const QString& imageFile, const QString& revision)
+void Application::initSplashScreen(const QString& imageFile, const QString& revision, const QFont& font)
 {
   qDebug() << Q_FUNC_INFO;
 
   if(showSplash)
   {
-    QPixmap pixmap(imageFile);
-    splashScreen = new QSplashScreen(pixmap);
+    splashScreen = new QSplashScreen(QPixmap(imageFile));
+    splashScreen->setFont(font);
     splashScreen->show();
 
     processEvents();
@@ -492,12 +493,18 @@ void Application::initSplashScreen(const QString& imageFile, const QString& revi
     QString applicationVersion = QApplication::applicationVersion();
 #endif
 
-    splashScreen->showMessage(QObject::tr("Version %5 (revision %6)").
-                              arg(applicationVersion).arg(revision),
-                              Qt::AlignRight | Qt::AlignBottom, Qt::black);
-
-    processEvents(QEventLoop::ExcludeUserInputEvents);
+    splashScreenMessage = QObject::tr("Version %5 (revision %6).").arg(applicationVersion).arg(revision);
+    splashScreen->showMessage(splashScreenMessage, Qt::AlignRight | Qt::AlignBottom, Qt::black);
+    processEventsExtended();
   }
+}
+
+void Application::showSplashScreenMessage(const QString& message)
+{
+  qDebug() << Q_FUNC_INFO << message;
+
+  if(splashScreen != nullptr)
+    splashScreen->showMessage(message % QStringLiteral("          ") % splashScreenMessage, Qt::AlignRight | Qt::AlignBottom, Qt::black);
 }
 
 void Application::finishSplashScreen(QMainWindow *mainWindow)

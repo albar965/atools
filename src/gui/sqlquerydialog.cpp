@@ -103,7 +103,7 @@ void SqlQueryDialog::initQuery(atools::sql::SqlDatabase *db, const QString& quer
   {
     // Results found - build header ============================
     int i = 0;
-    for(const atools::sql::SqlColumn& col: columns)
+    for(const atools::sql::SqlColumn& col : columns)
       sqlQueryModel->setHeaderData(i++, Qt::Horizontal, col.getDisplayName());
 
     ui->tableView->setModel(sqlQueryModel);

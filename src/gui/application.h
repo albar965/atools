@@ -76,7 +76,10 @@ public:
                            const QString& helpDocument, const QString& helpLanguageOnline);
 
   /* Init and open with given resource */
-  static void initSplashScreen(const QString& imageFile, const QString& revision);
+  static void initSplashScreen(const QString& imageFile, const QString& revision, const QFont& font);
+
+  /* Shows a message appended to the base message */
+  static void showSplashScreenMessage(const QString& message);
 
   /* Called by main application once startup is done */
   static void finishSplashScreen(QMainWindow *mainWindow);
@@ -231,6 +234,7 @@ private:
   static QString contactUrl;
 
   static QSplashScreen *splashScreen;
+  static QString splashScreenMessage;
   static bool showSplash;
 
   static QString lockFile;
