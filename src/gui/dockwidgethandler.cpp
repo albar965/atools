@@ -786,6 +786,11 @@ void DockWidgetHandler::normalStateToWindow()
   fullscreen = false;
 }
 
+void DockWidgetHandler::normalStateToWindowInitial()
+{
+  normalState->toWindow(mainWindow, nullptr);
+}
+
 void DockWidgetHandler::fullscreenStateToWindow()
 {
   fullscreenState->toWindow(mainWindow, nullptr);

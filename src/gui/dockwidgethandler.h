@@ -96,6 +96,9 @@ public:
    * Moves window to saved screen (position).*/
   void normalStateToWindow();
 
+  /* As above but does not set or change fullscreen flags */
+  void normalStateToWindowInitial();
+
   /* As above but assigns the fullscreen state to the main window
    * Changes fullscreen to true.
    * Moves window to saved screen (position).*/
