@@ -17,6 +17,7 @@
 
 #include "gui/comboboxhandler.h"
 
+#include "atools.h"
 #include "settings/settings.h"
 
 #include <QComboBox>
@@ -26,7 +27,7 @@
 
 namespace atools {
 namespace gui {
-
+const static int MAX_CHARACTERS_MENU = 20;
 using atools::settings::Settings;
 
 ComboBoxHandler::ComboBoxHandler(QComboBox *comboBoxParam, QPushButton *deleteButtonParam, const QString& settingsKeyParam)
@@ -59,7 +60,8 @@ void ComboBoxHandler::showContextMenu(const QPoint& point)
   menu->setToolTipsVisible(menuTooltipsVisible);
 
   // Delete action, child of menu
-  QAction *deleteCurrentAction = new QAction(tr("Delete &current List Entry %1").arg(comboBox->currentText()), menu);
+  QAction *deleteCurrentAction = new QAction(tr("Delete &current List Entry \"%1\"").
+                                             arg(atools::elideTextShort(comboBox->currentText(), MAX_CHARACTERS_MENU)), menu);
   deleteCurrentAction->setEnabled(comboBox->count() > 0 && !comboBox->currentText().isEmpty());
 
   // Delete all action, child of menu
