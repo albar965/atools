@@ -564,6 +564,7 @@ HEADERS += \
   src/gui/treedialog.h \
   src/gui/widgetstate.h \
   src/gui/widgetzoomhandler.h \
+  src/util/csvexporter.h \
   src/util/htmlbuilder.h \
   src/util/htmlbuilderflags.h \
   src/util/paintercontextsaver.h \
@@ -601,6 +602,7 @@ SOURCES += \
   src/gui/treedialog.cpp \
   src/gui/widgetstate.cpp \
   src/gui/widgetzoomhandler.cpp \
+  src/util/csvexporter.cpp \
   src/util/htmlbuilder.cpp \
   src/util/htmlbuilderflags.cpp \
   src/util/paintercontextsaver.cpp \

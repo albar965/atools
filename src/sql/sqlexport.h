@@ -33,7 +33,6 @@ class SqlRecord;
 /*
  * Allows to export CSV files according to RFC:
  * https://tools.ietf.org/html/rfc4180
- *
  */
 class SqlExport
 {
