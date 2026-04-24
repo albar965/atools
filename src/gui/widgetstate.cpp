@@ -226,12 +226,12 @@ void WidgetState::clear(QObject *widget) const
       clearWidgetVisible(settings, label);
     else if(const QLineEdit *lineEdit = dynamic_cast<const QLineEdit *>(widget))
     {
-      clearWidget(settings, lineEdit, lineEdit->text());
+      clearWidget(settings, lineEdit);
       clearWidgetVisible(settings, lineEdit);
     }
     else if(const QTextEdit *textEdit = dynamic_cast<const QTextEdit *>(widget))
     {
-      clearWidget(settings, textEdit, textEdit->toHtml());
+      clearWidget(settings, textEdit);
       clearWidgetVisible(settings, textEdit);
     }
     else if(const QSpinBox *spinBox = dynamic_cast<const QSpinBox *>(widget))
@@ -266,25 +266,25 @@ void WidgetState::clear(QObject *widget) const
     else if(const QActionGroup *actionGroup = dynamic_cast<const QActionGroup *>(widget))
       clearWidget(settings, actionGroup);
     else if(const QHeaderView *headerView = dynamic_cast<const QHeaderView *>(widget))
-      clearWidget(settings, headerView, headerView->saveState());
+      clearWidget(settings, headerView);
     else if(const QTableView *tableView = dynamic_cast<const QTableView *>(widget))
-      clearWidget(settings, tableView, tableView->horizontalHeader()->saveState());
+      clearWidget(settings, tableView);
     else if(const QTableWidget *tableWidget = dynamic_cast<const QTableWidget *>(widget))
-      clearWidget(settings, tableWidget, tableWidget->horizontalHeader()->saveState());
+      clearWidget(settings, tableWidget);
     else if(const QListView *listView = dynamic_cast<const QListView *>(widget))
       clearWidget(settings, listView);
     else if(const QTreeView *treeView = dynamic_cast<const QTreeView *>(widget))
-      clearWidget(settings, treeView, treeView->header()->saveState());
+      clearWidget(settings, treeView);
     else if(const QTreeWidget *treeWidget = dynamic_cast<const QTreeWidget *>(widget))
-      clearWidget(settings, treeWidget, treeWidget->header()->saveState());
+      clearWidget(settings, treeWidget);
     else if(const QFileDialog *fileDialog = dynamic_cast<const QFileDialog *>(widget))
-      clearWidget(settings, fileDialog, fileDialog->saveState());
+      clearWidget(settings, fileDialog);
     else if(const QMainWindow *mainWindow = dynamic_cast<const QMainWindow *>(widget))
     {
       settings.remove(keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_pos"));
       settings.remove(keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_size"));
       settings.remove(keyPrefix % QStringLiteral("_") % mainWindow->objectName() % QStringLiteral("_maximized"));
-      clearWidget(settings, mainWindow, mainWindow->saveState());
+      clearWidget(settings, mainWindow);
     }
     else if(const QDialog *dialog = dynamic_cast<const QDialog *>(widget))
     {
