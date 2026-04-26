@@ -37,10 +37,6 @@ class SqlRecord;
 class SqlExport
 {
 public:
-  SqlExport()
-  {
-  }
-
   /*
    * Writes the full result set from the given query to the output stream.
    *

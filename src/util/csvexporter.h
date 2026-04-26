@@ -43,28 +43,16 @@ class CsvExporter
   Q_DECLARE_TR_FUNCTIONS(CsvExporter)
 
 public:
-  explicit CsvExporter(QTableView *viewParam)
-    :view(viewParam)
-  {
-  }
+  explicit CsvExporter(QTableView *viewParam);
+  ~CsvExporter();
 
   /* Copies selection in table as CSV. */
-  void exportTableSelection();
+  QString exportTableSelection();
+  void exportTableSelection(QTextStream& stream);
 
   /* Copies full table content as CSV. */
-  void exportTable();
-
-  /* Get result */
-  const QString& getCsv() const
-  {
-    return result;
-  }
-
-  /* true if result is not empty */
-  bool hasCsv() const
-  {
-    return !result.isEmpty();
-  }
+  QString exportTable();
+  void exportTable(QTextStream& stream);
 
   /* Number of rows exported to result */
   int getNumRowsExported() const
@@ -76,12 +64,6 @@ public:
   void setHeader(bool headerParam)
   {
     header = headerParam;
-  }
-
-  /* Export full rows or only selected cells */
-  void setRows(bool rowsParam)
-  {
-    rows = rowsParam;
   }
 
   /* Include rows which are hidden in the view */
@@ -120,20 +102,30 @@ public:
     dataFunction = dataFunctionParam;
   }
 
-private:
-  QString buildHeader(const atools::sql::SqlExport& exporter);
-  bool isExported(int logicalCol);
-  int index(int columnIndex);
+  /* Locical columns to exclude from export */
+  void setSkipColumIndexes(const QSet<int>& skipColumIndexesParam)
+  {
+    skipColumIndexes = skipColumIndexesParam;
+  }
 
-  bool header = true, rows = true, includeHidden = false, includeFolded = false, useLogicalIndex = true;
+private:
+  QString buildHeader() const;
+  bool isExported(int logicalCol) const;
+
+  /* Return logical index based on visual index if enabled */
+  int logicalIndex(int visualIndex) const;
+  void exportColumns(QTextStream& stream, int row);
+
+  bool header = true, includeHidden = false, includeFolded = false, useLogicalIndex = true;
   QTableView *view = nullptr;
   QStringList additionalHeaders;
+  atools::sql::SqlExport *exporter = nullptr;
 
-  QString result;
   int numRowsExported = 0;
 
   std::function<QStringList(int)> additionalFieldFunction = nullptr;
   std::function<QVariant(int, int)> dataFunction = nullptr;
+  QSet<int> skipColumIndexes;
 };
 
 } // namespace util

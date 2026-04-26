@@ -28,18 +28,98 @@ using atools::sql::SqlExport;
 namespace atools {
 namespace util {
 
-bool CsvExporter::isExported(int columnIndex)
+bool CsvExporter::isExported(int columnIndex) const
 {
   return (includeHidden || !view->isColumnHidden(columnIndex)) &&
          (includeFolded || view->columnWidth(columnIndex) > view->horizontalHeader()->minimumSectionSize());
 }
 
-int CsvExporter::index(int columnIndex)
+int CsvExporter::logicalIndex(int visualIndex) const
 {
-  return useLogicalIndex ? view->horizontalHeader()->logicalIndex(columnIndex) : columnIndex;
+  // Returns the logicalIndex for the section at the given visualIndex position
+  // visualIndex is not affected by hidden sections
+  return useLogicalIndex ? view->horizontalHeader()->logicalIndex(visualIndex) : visualIndex;
 }
 
-void CsvExporter::exportTableSelection()
+CsvExporter::CsvExporter(QTableView *viewParam)
+  :view(viewParam)
+{
+  exporter = new atools::sql::SqlExport;
+  exporter->setSeparatorChar(';');
+  exporter->setEndline(false);
+}
+
+CsvExporter::~CsvExporter()
+{
+  delete exporter;
+}
+
+void CsvExporter::exportColumns(QTextStream& stream, int row)
+{
+  QVariantList variantList;
+  QAbstractItemModel *model = view->model();
+  for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
+  {
+    // Convert view position to model position - needed to keep order
+    int columnLogicalIndex = logicalIndex(viewCol);
+
+    if(columnLogicalIndex == -1 || skipColumIndexes.contains(columnLogicalIndex))
+      continue;
+
+    if(isExported(columnLogicalIndex))
+    {
+      if(dataFunction)
+        variantList.append(dataFunction(row, columnLogicalIndex));
+      else
+        variantList.append(model->data(model->index(row, columnLogicalIndex)));
+    }
+  }
+
+  stream << exporter->getResultSetRow(variantList) %
+    (additionalHeaders.isEmpty() ||
+     !additionalFieldFunction ? QStringLiteral() : ';' % additionalFieldFunction(row).join(';')) << Qt::endl;
+
+  numRowsExported++;
+}
+
+QString CsvExporter::exportTableSelection()
+{
+  QString result;
+  QTextStream stream(&result, QIODevice::WriteOnly);
+  exportTableSelection(stream);
+  return result;
+}
+
+void CsvExporter::exportTableSelection(QTextStream& stream)
+{
+  numRowsExported = 0;
+  QItemSelectionModel *selection = view->selectionModel();
+
+  // Copy full selected rows ==========================================
+  if(header)
+    stream << buildHeader() << Qt::endl;
+
+  if(selection != nullptr && selection->hasSelection())
+  {
+    for(const QItemSelectionRange& rng : selection->selection())
+    {
+      // Add data
+      for(int row = rng.top(); row <= rng.bottom(); ++row)
+        exportColumns(stream, row);
+    }
+    stream.flush();
+  }
+}
+
+QString CsvExporter::exportTable()
+{
+  QString result;
+  QTextStream stream(&result, QIODevice::WriteOnly);
+  exportTable(stream);
+  return result;
+}
+
+void CsvExporter::exportTable(QTextStream& stream)
 {
   numRowsExported = 0;
   atools::sql::SqlExport exporter;
@@ -48,125 +128,34 @@ void CsvExporter::exportTableSelection()
 
   QAbstractItemModel *model = view->model();
 
-  QItemSelectionModel *selection = view->selectionModel();
-  if(selection != nullptr && selection->hasSelection())
-  {
-    if(rows)
-    {
-      // Copy full selected rows ==========================================
-      QTextStream stream(&result, QIODevice::WriteOnly);
-      if(header)
-        stream << buildHeader(exporter) << Qt::endl;
-
-      for(const QItemSelectionRange& rng : selection->selection())
-      {
-        // Add data
-        for(int row = rng.top(); row <= rng.bottom(); ++row)
-        {
-          QVariantList variantList;
-          for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
-          {
-            // Convert view position to model position - needed to keep order
-            int columnIndex = index(viewCol);
-
-            if(columnIndex == -1)
-              continue;
-
-            if(isExported(columnIndex))
-            {
-              if(dataFunction)
-                variantList.append(dataFunction(row, columnIndex));
-              else
-                variantList.append(model->data(model->index(row, columnIndex)));
-            }
-          }
-
-          stream << exporter.getResultSetRow(variantList) %
-            (additionalHeaders.isEmpty() ||
-             !additionalFieldFunction ? QStringLiteral() : ';' % additionalFieldFunction(row).join(';')) << Qt::endl;
-
-          numRowsExported++;
-        }
-      }
-      stream.flush();
-    }
-    else
-    {
-      // Copy selected fields - not a real CSV ==========================================
-      QStringList resultList;
-      for(const QModelIndex& index : selection->selectedIndexes())
-      {
-        if(dataFunction)
-          resultList.append(dataFunction(index.row(), index.column()).toString());
-        else
-          resultList.append(model->data(index).toString());
-        numRowsExported++;
-      }
-      result = resultList.join(';');
-    }
-  }
-}
-
-void CsvExporter::exportTable()
-{
-  atools::sql::SqlExport exporter;
-  exporter.setSeparatorChar(';');
-  exporter.setEndline(false);
-
-  QAbstractItemModel *model = view->model();
-
   // Copy full rows
-  QTextStream stream(&result, QIODevice::WriteOnly);
   if(header)
-    stream << buildHeader(exporter) << Qt::endl;
+    stream << buildHeader() << Qt::endl;
 
   for(int row = 0; row < model->rowCount(); row++)
-  {
-    QVariantList variantList;
-    for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
-    {
-      // Convert view position to model position - needed to keep order
-      int columnIndex = index(viewCol);
+    exportColumns(stream, row);
 
-      if(columnIndex == -1)
-        continue;
-
-      if(isExported(columnIndex))
-      {
-        if(dataFunction)
-          variantList.append(dataFunction(row, columnIndex));
-        else
-          variantList.append(model->data(model->index(row, columnIndex)));
-      }
-    }
-
-    stream << exporter.getResultSetRow(variantList) %
-      (additionalHeaders.isEmpty() ||
-       !additionalFieldFunction ? QStringLiteral() : ';' % additionalFieldFunction(row).join(';')) << Qt::endl;
-
-    numRowsExported++;
-  }
   stream.flush();
 }
 
-QString CsvExporter::buildHeader(const atools::sql::SqlExport& exporter)
+QString CsvExporter::buildHeader() const
 {
   QAbstractItemModel *model = view->model();
   QStringList headers;
   for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
   {
     // Convert view position to model position - needed to keep order
-    int columnIndex = index(viewCol);
+    int columnLogicalIndex = logicalIndex(viewCol);
 
-    if(columnIndex == -1)
+    if(columnLogicalIndex == -1 || skipColumIndexes.contains(columnLogicalIndex))
       continue;
 
-    if(isExported(columnIndex))
-      headers.append(model->headerData(columnIndex, Qt::Horizontal).toString().
+    if(isExported(columnLogicalIndex))
+      headers.append(model->headerData(columnLogicalIndex, Qt::Horizontal).toString().
                      replace(QStringLiteral("-\n"), QStringLiteral()).replace('\n', ' '));
   }
 
-  return exporter.getResultSetHeader(headers) %
+  return exporter->getResultSetHeader(headers) %
          (additionalHeaders.isEmpty() ||
           !additionalFieldFunction ? QStringLiteral() : ';' % additionalHeaders.join(';'));
 }
