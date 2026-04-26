@@ -371,6 +371,11 @@ int TabWidgetHandler::getCurrentTabId() const
   return tabWidget->currentWidget() == nullptr ? -1 : tabWidget->currentWidget()->property(ID_PROPERTY).toInt();
 }
 
+QString TabWidgetHandler::getCurrentTabText() const
+{
+  return tabWidget->currentIndex() == -1 ? QStringLiteral() : tabWidget->tabText(tabWidget->currentIndex());
+}
+
 void TabWidgetHandler::setCurrentTab(int id, bool left)
 {
   int index = getIndexForId(id);

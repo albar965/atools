@@ -62,6 +62,7 @@ public:
 
   /* Id of currently open tab or -1 if none */
   int getCurrentTabId() const;
+  QString getCurrentTabText() const;
 
   template<typename TYPE>
   TYPE getCurrentTabId() const
