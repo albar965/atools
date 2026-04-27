@@ -19,6 +19,7 @@
 #define LNM_CSV_EXPORTER_H
 
 #include <QCoreApplication>
+#include <QSet>
 
 namespace atools {
 namespace sql {
