@@ -42,14 +42,6 @@ void FlightplanEntry::setWaypointTypeFromLnm(const QString& value)
   waypointType = stringToWaypointTypeLnm(value);
 }
 
-bool FlightplanEntry::operator==(const FlightplanEntry& other)
-{
-  return waypointType == other.waypointType &&
-         region == other.region &&
-         ident == other.ident &&
-         name == other.name;
-}
-
 const QString& FlightplanEntry::waypointTypeToFsxString(entry::WaypointType type)
 {
   static const QString airportName("Airport"), unknownName("Unknown"), isecName("Intersection"),

@@ -171,13 +171,6 @@ public:
     return !airway.isEmpty() && !(flags & entry::TRACK);
   }
 
-  bool operator==(const atools::fs::pln::FlightplanEntry& other);
-
-  bool operator!=(const atools::fs::pln::FlightplanEntry& other)
-  {
-    return !operator==(other);
-  }
-
   /* Name is not saved with PLN file */
   const QString& getName() const
   {
