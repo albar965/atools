@@ -563,6 +563,7 @@ HEADERS += \
   src/gui/translator.h \
   src/gui/treedialog.h \
   src/gui/widgetstate.h \
+  src/gui/widgettool.h \
   src/gui/widgetzoomhandler.h \
   src/util/csvexporter.h \
   src/util/htmlbuilder.h \
@@ -601,6 +602,7 @@ SOURCES += \
   src/gui/translator.cpp \
   src/gui/treedialog.cpp \
   src/gui/widgetstate.cpp \
+  src/gui/widgettool.cpp \
   src/gui/widgetzoomhandler.cpp \
   src/util/csvexporter.cpp \
   src/util/htmlbuilder.cpp \
