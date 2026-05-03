@@ -29,7 +29,7 @@ class ContextSaver
 {
 public:
   /* Sets value and resets back to previous value on destruction. */
-  ContextSaver(TYPE& valueReference, TYPE value)
+  explicit ContextSaver(TYPE& valueReference, TYPE value)
     : valueSaved(valueReference), valueRef(valueReference)
   {
     // Set new value
@@ -37,7 +37,7 @@ public:
   }
 
   /* Sets value and resets back to resetValue on destruction. */
-  ContextSaver(TYPE& valueReference, TYPE value, TYPE resetValue)
+  explicit ContextSaver(TYPE& valueReference, TYPE value, TYPE resetValue)
     : valueSaved(resetValue), valueRef(valueReference)
   {
     // Set new value
@@ -63,7 +63,7 @@ class ContextSaverBool
 {
 public:
   /* Sets value and resets back to resetValue on destruction. */
-  ContextSaverBool(bool& valueReference, bool value = true, bool resetValue = false)
+  explicit ContextSaverBool(bool& valueReference, bool value = true, bool resetValue = false)
     : atools::util::ContextSaver<bool>(valueReference, value, resetValue)
   {
 
