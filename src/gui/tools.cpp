@@ -597,5 +597,15 @@ void setWidgetAndIconSize(const QList<QWidget *>& widgets, const QSize& size, in
   }
 }
 
+QBrush editableTableCellBrush(bool darkStyle, int row)
+{
+  const int COLORSCALELIGHT = 110;
+  const int COLORSCALEDARK = 180;
+  QColor base = QApplication::palette().color(QPalette::Base), alternateBase = QApplication::palette().color(QPalette::AlternateBase);
+  base = darkStyle ? base.lighter(COLORSCALEDARK) : base.darker(COLORSCALELIGHT);
+  alternateBase = darkStyle ? alternateBase.lighter(COLORSCALEDARK) : alternateBase.darker(COLORSCALELIGHT);
+  return (row % 2) == 0 ? base : alternateBase;
+}
+
 } // namespace gui
 } // namespace atools

@@ -81,6 +81,9 @@ const QList<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectio
 /* Changes the background color of the widget using stylesheets and adapts text color for readability */
 void changeWidgetColor(QWidget *widget, QColor backgroundColor);
 
+/* Returns darker or lighter cell colors to indicate editable cells in tables */
+QBrush editableTableCellBrush(bool darkStyle, int row);
+
 /* @return true if no scrollbar is pressed in the text edit */
 bool canTextEditUpdate(const QTextEdit *textEdit);
 

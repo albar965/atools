@@ -558,6 +558,7 @@ HEADERS += \
   src/gui/signalblocker.h \
   src/gui/simplewaitdialog.h \
   src/gui/sqlquerydialog.h \
+  src/gui/tableeditdelegate.h \
   src/gui/tabwidgethandler.h \
   src/gui/tools.h \
   src/gui/translator.h \
@@ -597,6 +598,7 @@ SOURCES += \
   src/gui/signalblocker.cpp \
   src/gui/simplewaitdialog.cpp \
   src/gui/sqlquerydialog.cpp \
+  src/gui/tableeditdelegate.cpp \
   src/gui/tabwidgethandler.cpp \
   src/gui/tools.cpp \
   src/gui/translator.cpp \
