@@ -224,7 +224,7 @@ PolygonLineDistances PolygonLineDistance::getLongPolygonLines(const QPolygonF& p
     } // if(maxAngle > 0.)
 
     // Sort by length or from index if length is equal
-    std::sort(distLines.begin(), distLines.end(), [](const PolygonLineDistance& ld1, const PolygonLineDistance& ld2)->bool {
+    std::sort(distLines.begin(), distLines.end(), [](const PolygonLineDistance& ld1, const PolygonLineDistance& ld2) -> bool {
           return atools::almostEqual(ld1.length, ld2.length, 0.001) ? ld1.indexFrom<ld2.indexFrom : ld1.length> ld2.length;
         });
 

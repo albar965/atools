@@ -161,7 +161,7 @@ QStringList XpWeatherReader::collectWeatherFiles()
 
     // Sort by timestamp - put latest at begin of list
     if(metarFiles.size() > 1)
-      std::sort(metarFiles.begin(), metarFiles.end(), [](const QFileInfo& file1, const QFileInfo& file2)->bool {
+      std::sort(metarFiles.begin(), metarFiles.end(), [](const QFileInfo& file1, const QFileInfo& file2) -> bool {
               return atools::fs::util::xpMetarFilenameToDate(file1.fileName()) > atools::fs::util::xpMetarFilenameToDate(file2.fileName());
             });
   }

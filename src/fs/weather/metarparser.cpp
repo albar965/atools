@@ -410,14 +410,14 @@ atools::fs::weather::MetarParser MetarParser::merge(const atools::fs::weather::M
     // MetarVisibility _dir_visibility[8];
 
     // Interpolate wind U/V components and convert them back to speed/degree =====================
-    double windU = mergeField<double>(metars, distancesMeter, [](const MetarParser& m)->double {
+    double windU = mergeField<double>(metars, distancesMeter, [](const MetarParser& m) -> double {
             if(valid(m._wind_speed) && valid(m._wind_dir))
               return atools::geo::windUComponent(m._wind_speed, m._wind_dir);
             else
               return INVALID_METAR_VALUE;
           });
 
-    double windV = mergeField<double>(metars, distancesMeter, [](const MetarParser& m)->double {
+    double windV = mergeField<double>(metars, distancesMeter, [](const MetarParser& m) -> double {
             if(valid(m._wind_speed) && valid(m._wind_dir))
               return atools::geo::windVComponent(m._wind_speed, m._wind_dir);
             else
@@ -436,27 +436,27 @@ atools::fs::weather::MetarParser MetarParser::merge(const atools::fs::weather::M
     retval._wind_dir = atools::geo::normalizeRange(retval._wind_dir, 0, 360);
 
     // Interpolate gusts as scalar and not vector =============
-    retval._gust_speed = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {return m._gust_speed;});
+    retval._gust_speed = mergeField<float>(metars, distancesMeter, [](const MetarParser& m) -> float {return m._gust_speed;});
 
     // Temperature and dewpoint ==============================================================
-    retval._temp = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {return m._temp;});
+    retval._temp = mergeField<float>(metars, distancesMeter, [](const MetarParser& m) -> float {return m._temp;});
 
-    retval._dewp = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {return m._dewp;});
+    retval._dewp = mergeField<float>(metars, distancesMeter, [](const MetarParser& m) -> float {return m._dewp;});
 
     // Pressure =============================================================================
-    retval._pressure = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {return m._pressure;});
+    retval._pressure = mergeField<float>(metars, distancesMeter, [](const MetarParser& m) -> float {return m._pressure;});
 
     // Precipitation ============================================================================
-    retval._rain = atools::roundToInt(mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+    retval._rain = atools::roundToInt(mergeField<float>(metars, distancesMeter, [](const MetarParser& m) -> float {
             return static_cast<float>(m._rain);
           }));
 
-    retval._snow = atools::roundToInt(mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+    retval._snow = atools::roundToInt(mergeField<float>(metars, distancesMeter, [](const MetarParser& m) -> float {
             return static_cast<float>(m._snow);
           }));
 
     // Visibility - only min and equals used ==================================================================
-    retval._min_visibility.visibilityMeter = atools::roundToInt(mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+    retval._min_visibility.visibilityMeter = atools::roundToInt(mergeField<float>(metars, distancesMeter, [](const MetarParser& m) -> float {
             return m._min_visibility.visibilityMeter;
           }));
     retval._min_visibility.direction = -1;
@@ -469,22 +469,22 @@ atools::fs::weather::MetarParser MetarParser::merge(const atools::fs::weather::M
     retval._max_visibility.tendency = MetarVisibility::NONE;
 
     // Interpolate lowest cloud and maximum cover altitude ===================================
-    retval.lowestCoverageCloud.altitudeMeter = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+    retval.lowestCoverageCloud.altitudeMeter = mergeField<float>(metars, distancesMeter, [](const MetarParser& m) -> float {
             return m.lowestCoverageCloud.altitudeMeter;
           });
 
-    retval.maxCoverageCloud.altitudeMeter = mergeField<float>(metars, distancesMeter, [](const MetarParser& m)->float {
+    retval.maxCoverageCloud.altitudeMeter = mergeField<float>(metars, distancesMeter, [](const MetarParser& m) -> float {
             return m.maxCoverageCloud.altitudeMeter;
           });
 
     // Interpolate lowest cloud and maximum coverage ===================================
     retval.lowestCoverageCloud.coverage =
-      static_cast<MetarCloud::Coverage>(mergeField<int>(metars, distancesMeter, [](const MetarParser& m)->int {
+      static_cast<MetarCloud::Coverage>(mergeField<int>(metars, distancesMeter, [](const MetarParser& m) -> int {
             return static_cast<int>(m.lowestCoverageCloud.coverage);
           }));
 
     retval.maxCoverageCloud.coverage =
-      static_cast<MetarCloud::Coverage>(mergeField<int>(metars, distancesMeter, [](const MetarParser& m)->int {
+      static_cast<MetarCloud::Coverage>(mergeField<int>(metars, distancesMeter, [](const MetarParser& m) -> int {
             return static_cast<int>(m.maxCoverageCloud.coverage);
           }));
 

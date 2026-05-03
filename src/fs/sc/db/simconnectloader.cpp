@@ -1910,7 +1910,7 @@ void SimConnectLoader::setProgressCallback(const SimConnectLoaderProgressCallbac
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->progressCallback = callback;
-  p->writer->setProgressCallback([this](const QString& message, bool incProgress)->bool {
+  p->writer->setProgressCallback([this](const QString& message, bool incProgress) -> bool {
             p->aborted = p->callProgress(message, incProgress);
             return p->aborted;
           });

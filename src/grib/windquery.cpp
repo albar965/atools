@@ -276,7 +276,7 @@ QString WindQuery::collectGribFiles()
 
     // Sort by timestamp - put latest at begin of list
     if(gribFiles.size() > 1)
-      std::sort(gribFiles.begin(), gribFiles.end(), [](const QFileInfo& file1, const QFileInfo& file2)->bool {
+      std::sort(gribFiles.begin(), gribFiles.end(), [](const QFileInfo& file1, const QFileInfo& file2) -> bool {
             return atools::fs::util::xpGribFilenameToDate(file1.fileName()) > atools::fs::util::xpGribFilenameToDate(file2.fileName());
           });
   }
