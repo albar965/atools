@@ -34,9 +34,7 @@ namespace util {
 
 // Closed airport by name
 const static QRegularExpression REGEXP_CLOSED("(\\[X\\]|\\bCLSD\\b|\\bCLOSED\\b)");
-const static QRegularExpression REGEXP_DIGIT("\\d");
 const static QRegularExpression REGEXP_WAYPOINT_DME("(\\w+) \\((\\w+) ([\\d\\.]+) DME\\)");
-const static QRegularExpression REGEXP_WHITESPACE("\\s");
 
 /* ICAO speed and altitude matches */
 const static QRegularExpression REGEXP_SPDALT("^([NMK])(\\d{2,4})(([FSAM])(\\d{2,4}))?$");
@@ -105,17 +103,43 @@ static const QList<QRegularExpression> REGEXP_MIL({
         QRegularExpression(QStringLiteral("\\bROYAL MARINES\\b")),
       });
 
+#define AIRPORT_WORDS "AAC", "AAF", "AB", "AS", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CFB", "CGS", "DGAC", \
+        "FAA", "FBO", "GTS", "HSC", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK", \
+        "NOLF", "NRC", "NRC", "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RLA", "RNAS", \
+        "USFS", "CGAS", "TV", "NVC", "USAF", \
+        "I", "II", "III", "IV", "V", "VI", "VII"
+
+const static QSet<QString> FORCE_UPPER_AIRPORT_WORDS({AIRPORT_WORDS});
+
+// Force abbreviations to upper case
+const static QSet<QString> FORCE_UPPER_NAV_STRING_WORDS({
+        // Navaids
+        "VOR", "VORDME", "TACAN", "VOT", "VORTAC", "DME", "NDB", "GA", "RNAV", "GPS",
+        "ILS", "NDBDME",
+
+        AIRPORT_WORDS,
+
+        // Frequencies
+        "ATIS", "AWOS", "ASOS", "AWIS", "CTAF", "FSS", "CAT", "LOC",
+
+        // Navaid and precision approach types
+        "H", "HH", "MH", "VASI", "PAPI",
+
+        // Airspace abbreviations
+        "ALS", "ATZ", "CAE", "CTA", "CTR", "FIR", "UIR", "FIZ", "FTZ",
+        "MATZ", "MOA", "RMZ", "TIZ", "TMA", "TMZ", "TRA", "TRSA", "TWEB", "ARSA", "FBZ", "PJE", "UAF",
+        "AAS", "CARS", "FIS", "AFIS", "ATF", "VDF", "PCL", "RCO", "RCAG",
+        "NOTAM", "CERAP", "ARTCC",
+        "TCA", "MCTR", "VFR", "IFR", "DFS", "TNA", "CAE", "LANTA", "TSRA" "OCA",
+        "TMAD", "CON", "ATS", "MTMA",
+        "TRSA", "SFB", "AAF", "DC", "CGAS", "RT", "ASPC", "UAC", "LTA",
+        "I", "II", "III", "IV", "V", "VI", "NM"});
+
 QString capAirportName(const QString& str)
 {
   // Force acronyms in airports to upper case
-  const static QSet<QString> FORCE_UPPER({
-          "AAC", "AAF", "AB", "AS", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CFB", "CGS", "DGAC",
-          "FAA", "FBO", "GTS", "HSC", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK",
-          "NOLF", "NRC", "NRC", "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RLA", "RNAS",
-          "USFS", "CGAS", "TV", "NVC", "USAF",
-          "I", "II", "III", "IV", "V", "VI"});
 
-  return atools::capString(str, FORCE_UPPER).
+  return atools::capString(str, FORCE_UPPER_AIRPORT_WORDS).
          replace(QStringLiteral("-O-"), QStringLiteral("-o-")).
          replace(QStringLiteral("-N-"), QStringLiteral("-n-")).
          replace(QStringLiteral("-A-"), QStringLiteral("-a-")).
@@ -500,7 +524,6 @@ QString capWaypointNameString(const QString& ident, const QString& name, bool em
       if(match.hasMatch())
         // Special case "IKR138012 (KRE 11.2 DME)"
         return match.captured(1) % QStringLiteral(" (") % match.captured(2).toUpper() % ' ' + match.captured(3) % QStringLiteral(" DME)");
-
     }
   }
 
@@ -509,30 +532,17 @@ QString capWaypointNameString(const QString& ident, const QString& name, bool em
 
 QString capNavString(const QString& str)
 {
-  if(str.contains(REGEXP_DIGIT) && !str.contains(REGEXP_WHITESPACE))
-    // Do not capitalize words that contains numbers but not spaces (airspace names)
-    return str;
+  if(!str.contains(' '))
+  {
+    for(const QChar c : str)
+    {
+      if(c.isDigit())
+        // Do not capitalize words that contain numbers but not spaces (airspace names)
+        return str;
+    }
+  }
 
-  // Force abbreviations to upper case
-  const static QSet<QString> FORCE_UPPER({
-          // Navaids
-          "VOR", "VORDME", "TACAN", "VOT", "VORTAC", "DME", "NDB", "GA", "RNAV", "GPS",
-          "ILS", "NDBDME",
-          // Frequencies
-          "ATIS", "AWOS", "ASOS", "AWIS", "CTAF", "FSS", "CAT", "LOC",
-          // Navaid and precision approach types
-          "H", "HH", "MH", "VASI", "PAPI",
-          // Airspace abbreviations
-          "ALS", "ATZ", "CAE", "CTA", "CTR", "FIR", "UIR", "FIZ", "FTZ",
-          "MATZ", "MOA", "RMZ", "TIZ", "TMA", "TMZ", "TRA", "TRSA", "TWEB", "ARSA", "FBZ", "PJE", "UAF",
-          "AAS", "CARS", "FIS", "AFIS", "ATF", "VDF", "PCL", "RCO", "RCAG",
-          "NOTAM", "CERAP", "ARTCC",
-          "TCA", "MCTR", "VFR", "IFR", "DFS", "TNA", "CAE", "LANTA",
-          "TSRA" "AFB", "OCA", "ARB", "MCAS", "NAS", "NOLF", "NS", "NAWS", "USAF", "TMAD", "CON", "ATS", "MTMA",
-          "TRSA", "SFB", "AAF", "DC", "CGAS", "RT", "ASPC", "UAC", "LTA",
-          "I", "II", "III", "IV", "V", "VI", "NM"});
-
-  return atools::capString(str, FORCE_UPPER).trimmed();
+  return atools::capString(str, FORCE_UPPER_NAV_STRING_WORDS).trimmed();
 }
 
 QString adjustFsxUserWpName(QString name, int length)

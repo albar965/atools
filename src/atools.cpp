@@ -114,7 +114,6 @@ QString capWord(QString str)
 void capWord(QString& word, QChar last, const QSet<QString>& toUpper, const QSet<QString>& toLower, const QSet<QString>& ignore)
 {
   const static QLocale locale;
-  const static QRegularExpression NUMBER_LETTER_REGEXP(QStringLiteral("\\d+\\w+"));
 
   if(toUpper.contains(word.toUpper()))
     // Forced to upper
@@ -129,9 +128,10 @@ void capWord(QString& word, QChar last, const QSet<QString>& toUpper, const QSet
       word[0] = word.at(0).toLower();
     else if(!word.isEmpty())
     {
-      if(word.size() >= 2 && NUMBER_LETTER_REGEXP.match(word).hasMatch())
-        // Words that start with a number and end in one character remain upper case
-        word = word.toUpper();
+      if(word.size() >= 2 && ((word.at(0).isDigit() && word.at(word.size() - 1).isLetter()) ||
+                              (word.at(0).isLetter() && word.at(word.size() - 1).isDigit())))
+        // Words that start with a number and end in one character or vice versa remain upper case
+        word = locale.toUpper(word);
       else
       {
         // Capitalize normal word
