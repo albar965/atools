@@ -304,7 +304,7 @@ HtmlBuilder& HtmlBuilder::message(const QString& str, html::Flags flags, QColor 
 QString HtmlBuilder::textMessage(const QString& str, html::Flags flags, QColor foreground, QColor background)
 {
   if(!str.isEmpty())
-    return asText(str, flags, foreground, background);
+    return txt(str, flags, foreground, background);
 
   return str;
 }
@@ -383,8 +383,8 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
         valueStr = QStringLiteral("Error: Invalid variant type \"%1\"").arg(value.typeName());
 
     }
-    htmlText.append(alt(flags.testFlag(html::ALIGN_RIGHT) ? tableRowAlignRight : tableRow).arg(asText(name, flags, color),
-                                                                                               value.toString()));
+    htmlText.append(alt(flags.testFlag(html::ALIGN_RIGHT) ? tableRowAlignRight : tableRow).
+                    arg(txt(name, flags, color, QColor()), value.toString()));
     tableRowsCur++;
     numLines++;
   }
@@ -399,8 +399,8 @@ HtmlBuilder& HtmlBuilder::row2If(const QString& name, const QString& value, html
     if(!value.isEmpty())
     {
       htmlText.append(alt(flags.testFlag(html::ALIGN_RIGHT) ? tableRowAlignRight : tableRow).
-                      arg(asText(name, flags | atools::util::html::BOLD, color)).
-                      arg(asText(value, flags, color)));
+                      arg(txt(name, flags | atools::util::html::BOLD, color, QColor())).
+                      arg(txt(value, flags, color, QColor())));
       tableRowsCur++;
       numLines++;
     }
@@ -445,9 +445,9 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::
   {
     flags |= row2AlignRightFlag ? html::ALIGN_RIGHT : html::NONE;
     htmlText.append(alt(flags.testFlag(html::ALIGN_RIGHT) ? tableRowAlignRight : tableRow).
-                    arg(asText(name, flags | html::BOLD, color)).
+                    arg(txt(name, flags | html::BOLD, color, QColor())).
                     // Add space to avoid formatting issues with table
-                    arg(value.isEmpty() ? QStringLiteral("&nbsp;") : asText(value, flags, color)));
+                    arg(value.isEmpty() ? QStringLiteral("&nbsp;") : txt(value, flags, color, QColor())));
     tableRowsCur++;
     numLines++;
   }
@@ -615,7 +615,7 @@ HtmlBuilder& HtmlBuilder::h(int level, const QString& str, html::Flags flags, QC
 {
   QString num = QString::number(level);
   htmlText.append(QStringLiteral("<h") % num % (id.isEmpty() ? QStringLiteral() : QStringLiteral(" id=\"") %
-                                                id % QStringLiteral("\"")) % QStringLiteral(">") % asText(str, flags, color));
+                                                id % QStringLiteral("\"")) % QStringLiteral(">") % txt(str, flags, color, QColor()));
   return *this;
 }
 
@@ -885,22 +885,7 @@ HtmlBuilder& HtmlBuilder::hr(int size, int widthPercent)
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flags flags, QColor color)
-{
-  QString styleTxt;
-
-  if(flags.testFlag(html::LINK_NO_UL))
-    styleTxt = "style=\"text-decoration:none;\"";
-
-  htmlText.append(QStringLiteral("<a ") % styleTxt % QStringLiteral(" ") %
-                  (href.isEmpty() ? QStringLiteral() : QStringLiteral(" href=\"") % href % QStringLiteral("\"")) %
-                  QStringLiteral(">") %
-                  asText(text, flags, color) % QStringLiteral("</a>"));
-
-  return *this;
-}
-
-QString HtmlBuilder::aUrl(const QString& text, const QString& href, html::Flags flags, QColor color, int elideText)
+QString HtmlBuilder::anchor(const QString& text, const QString& href, html::Flags flags, QColor color, int elideText)
 {
   QStringList styles;
   if(flags.testFlag(html::LINK_NO_UL))
@@ -909,16 +894,31 @@ QString HtmlBuilder::aUrl(const QString& text, const QString& href, html::Flags 
   if(flags.testFlag(html::NOBR_WHITESPACE))
     styles.append(QStringLiteral("white-space: pre;"));
 
-  QString divStart, divEnd;
+  QString styleStart, styleEnd;
   if(!styles.isEmpty())
   {
-    divStart = QStringLiteral("<div style=\"") % styles.join(' ') % QStringLiteral("\">");
-    divEnd = QStringLiteral("</div>");
+    styleStart = QStringLiteral("<span style=\"") % styles.join(' ') % QStringLiteral("\">");
+    styleEnd = QStringLiteral("</span>");
   }
 
-  return QStringLiteral("<a") % (href.isEmpty() ? QStringLiteral() : QStringLiteral(" href=\"") %
-                                 href % QStringLiteral("\"")) % QStringLiteral(">") % divStart %
-         asText(atools::elideTextShortMiddle(text, elideText), flags, color) % divEnd % QStringLiteral("</a>");
+  if(flags.testFlag(html::LINK_DISABLED))
+    return styleStart % txt(atools::elideTextShortMiddle(text, elideText), flags,
+                            QApplication::palette().color(QPalette::Disabled, QPalette::WindowText), QColor()) % styleEnd;
+  else
+    return QStringLiteral("<a") % (href.isEmpty() ? QStringLiteral() : QStringLiteral(" href=\"") %
+                                   href % QStringLiteral("\"")) % QStringLiteral(">") % styleStart %
+           txt(atools::elideTextShortMiddle(text, elideText), flags, color, QColor()) % styleEnd % QStringLiteral("</a>");
+}
+
+HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flags flags, QColor color, int elideText)
+{
+  htmlText.append(anchor(text, href, flags, color, elideText));
+  return *this;
+}
+
+QString HtmlBuilder::aUrl(const QString& text, const QString& href, html::Flags flags, QColor color, int elideText)
+{
+  return anchor(text, href, flags, color, elideText);
 }
 
 QString HtmlBuilder::aFilePath(const QString& filepath, html::Flags flags, QColor color, int elideText)
@@ -993,12 +993,12 @@ HtmlBuilder& HtmlBuilder::ulEnd()
 
 HtmlBuilder& HtmlBuilder::li(const QString& str, html::Flags flags, QColor color)
 {
-  htmlText.append(QStringLiteral("<li>") % asText(str, flags, color) % QStringLiteral("</li>\n"));
+  htmlText.append(QStringLiteral("<li>") % txt(str, flags, color, QColor()) % QStringLiteral("</li>\n"));
   numLines++;
   return *this;
 }
 
-QString HtmlBuilder::asText(QString str, html::Flags flags, QColor foreground, QColor background)
+QString HtmlBuilder::txt(QString str, html::Flags flags, QColor foreground, QColor background)
 {
   QString prefix, suffix;
   if(flags.testFlag(html::BOLD))
@@ -1135,13 +1135,13 @@ HtmlBuilder& HtmlBuilder::textBar(int length, html::Flags flags, QColor color)
 
 HtmlBuilder& HtmlBuilder::text(const QString& str, html::Flags flags, QColor color)
 {
-  htmlText.append(asText(str, flags, color));
+  htmlText.append(txt(str, flags, color, QColor()));
   return *this;
 }
 
 QString HtmlBuilder::textStr(const QString& str, html::Flags flags, QColor color)
 {
-  return asText(str, flags, color);
+  return txt(str, flags, color, QColor());
 }
 
 HtmlBuilder& HtmlBuilder::textHtml(const HtmlBuilder& other)

@@ -192,7 +192,7 @@ public:
   HtmlBuilder& textBar(int length = 10, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Add link (anchor/href). Only allowed style is LINK_NO_UL */
-  HtmlBuilder& a(const QString& text, const QString& href, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& a(const QString& text, const QString& href, html::Flags flags = html::NONE, QColor color = QColor(), int elideText = 500);
 
   /* Returns anchor with unchanged URL and elided text. Creates a "<div>" if a style NOBR_WHITESPACE or LINK_NO_UL is given. */
   static QString aUrl(const QString& text, const QString& href, html::Flags flags = html::NONE,
@@ -457,7 +457,8 @@ public:
 private:
   /* Select alternating entries based on the index from the string list */
   const QString& alt(const QStringList& list) const;
-  static QString asText(QString str, html::Flags flags, QColor foreground, QColor background = QColor());
+  static QString txt(QString str, html::Flags flags, QColor foreground, QColor background);
+  static QString anchor(const QString& text, const QString& href, html::Flags flags, QColor color, int elideText);
 
   void initColors(const QColor& rowColor, const QColor& rowColorAlt);
 
