@@ -33,10 +33,11 @@ namespace track {
 const QHash<atools::track::TrackType, QString> TrackDownloader::URL =
 {
   // NAT
-  // curl  "https://notams.aim.faa.gov/nat.html" > NAT.html
-  {NAT, "https://notams.aim.faa.gov/nat.html"},
+  // curl https://nms.aim.faa.gov/datanat/nat.json > nat.json
+  // jq . -r nat.json nat_fmt.json
+  {NAT, "https://nms.aim.faa.gov/datanat/nat.json"},
 
-  // PACOTS
+  // PACOTS DISABLED FOR NOW
   // https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do
   // ["queryType"] = "pacificTracks", ["actionType"] = "advancedNOTAMFunctions"
   // curl --data "queryType=pacificTracks&actionType=advancedNOTAMFunctions" https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do >PACOTS.html

@@ -24,21 +24,14 @@
 #include <QDebug>
 #include <QRegularExpression>
 #include <QTimeZone>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 namespace atools {
 namespace track {
 
 const static std::initializer_list<char> INVALID_CHARS = {'/', '-', ';', ':', '<', '>', '=', '(', ')'};
-
-TrackReader::TrackReader()
-{
-
-}
-
-TrackReader::~TrackReader()
-{
-
-}
 
 void TrackReader::readTracks(const QString& filename, TrackType type)
 {
@@ -61,8 +54,6 @@ void TrackReader::readTracks(const QByteArray& data, TrackType type)
 
 void TrackReader::readTracks(QTextStream& stream, TrackType type)
 {
-  QStringList lines = readLines(stream);
-
   switch(type)
   {
     case atools::track::UNKNOWN:
@@ -71,13 +62,13 @@ void TrackReader::readTracks(QTextStream& stream, TrackType type)
 
     case atools::track::NAT:
       // Read NAT - <PRE> is not reliable since the HTML is not valid
-      extractNatTracks(extractSections(lines, "(NAT-", ")"));
+      extractNatTracks(extractJsonSections(stream.readAll()));
       break;
 
     case atools::track::PACOTS:
       {
         // Get all lines of <PRE> elements.
-        QStringList sections = extractSections(lines, "<PRE>", "</PRE>");
+        const QStringList sections = extractSections(readLines(stream), "<PRE>", "</PRE>");
 
         // Get tracks
         // A0766/21 - (TDM TRK E 210222190001
@@ -459,6 +450,70 @@ int TrackReader::monthFromStr(const QString& str)
     return 12;
   else
     return -1;
+}
+
+/*
+[
+  {
+    "accountability_id": "EGGXZOZX",
+    "origin_id": "EGGXZOZX",
+    "notam_number_formatted": "EGGX0505/26",
+    "icao_id": "EGGX",
+    "location_code": "EGGX",
+    "last_updated": "041953",
+    "condition_message": "NAT-1/2 TRACKS FLS 340/400 INCLUSIVE\r\nMAY 05/1130Z TO MAY 05/1900Z\r\nPART ONE OF TWO PARTS-\r\nA SUNOT 58/20 58/30 58/40 57/50 HOIST\r\nEAST LVLS NIL\r\nWEST LVLS 340 350 360 370 380 390\r\nEUR RTS WEST NIL\r\nNAR N750B N748B-\r\nB PIKIL 57/20 57/30 57/40 56/50 JANJO\r\nEAST LVLS NIL\r\nWEST LVLS 340 350 360 370 380 390\r\nEUR RTS WEST NIL\r\nNAR N714B N712B-\r\nC RESNO 56/20 56/30 56/40 55/50 LOMSI\r\nEAST LVLS NIL\r\nWEST LVLS 340 350 360 370 380 390\r\nEUR RTS WEST NIL\r\nNAR N672A N668A-\r\nD DOGAL 55/20 55/30 55/40 54/50 NEEKO\r\nEAST LVLS NIL\r\nWEST LVLS 340 350 360 370 380 390\r\nEUR RTS WEST NIL\r\nNAR N624C N622E-\r\nE MALOT 54/20 54/30 54/40 53/50 RIKAL\r\nEAST LVLS NIL\r\nWEST LVLS 340 350 360 370 380 390\r\nEUR RTS WEST NIL\r\nNAR N576B N572A-\r\nEND OF PART ONE OF TWO PARTS",
+    "notam_number": "",
+    "start_datetime": "2026-05-05T11:30:00Z",
+    "end_datetime": "2026-05-05T19:00:00Z",
+    "series": "",
+    "classification_code": "INTL",
+    "transaction_type": "NAT_TRACK",
+    "part_no": 1,
+    "entry_datetime": "2026-05-05T11:30:00.000Z"
+  },
+  {
+    "accountability_id": "EGGXZOZX",
+    "origin_id": "EGGXZOZX",
+    "notam_number_formatted": "EGGX0505/26",
+    "icao_id": "EGGX",
+    "location_code": "EGGX",
+    "last_updated": "041953",
+    "condition_message": "NAT-2/2 TRACKS FLS 340/400 INCLUSIVE\r\nMAY 05/1130Z TO MAY 05/1900Z\r\nPART TWO OF TWO PARTS-\r\nF LIMRI 53/20 53/30 53/40 52/50 TUDEP\r\nEAST LVLS NIL\r\nWEST LVLS 340 350 360 370 380 390\r\nEUR RTS WEST NIL\r\nNAR N532A N526A-\r\nREMARKS.\r\n1. TMI IS 125.\r\n2. SEND RCL 90 TO 30 MINUTES PRIOR TO OCEANIC ENTRY POINT.\r\nINCLUDE MAX LEVEL IN RCL.\r\n3. PBCS OTS LEVELS 350-390. PBCS TRACKS AS FOLLOWS\r\nNO ASSIGNED PBCS TRACKS\r\nEND OF PBCS OTS\r\n4. SLOP SHOULD BE USED IN NAT AIRSPACE. LEFT SLOP PROHIBITED.\r\n5. 10 MINUTES AFTER PASSING OEP SQUAWK 2000 UNLESS OTHERWISE\r\nINSTRUCTED.\r\n6. ADS C AND CPDLC ARE MANDATED FOR LEVELS 290 TO 410 IN NAT\r\nAIRSPACE.\r\n7. UK AIP ENR 2.2 PARA 3.5.2 STATES THAT NAT OPERATORS SHALL FILE\r\nPRM'S.\r\n8. OPERATORS ARE REMINDED TO ONLY USE NAT TRACK DESIGNATORS IN FLIGHT\r\nPLANS WHEN FLYING THE WHOLE LENGTH OF THE NAT TRACK.\r\n9. DATA LINK EQUIPPED FLIGHTS NOT LOGGED ONTO DOMESTIC AIRSPACE,\r\nPRIOR TO ENTERING THE SHANWICK OCA, MUST INITIATE A LOGON TO\r\nEGGX 10 TO 25 MINS PRIOR TO OCA ENTRY.\r\n10. EGGX HAS DELAYED IMPLENTATION OF OCR UNTIL FURTHER NOTICE.\r\n11. NOTIFY ANY GNSS INTERFERENCE IN RCL CONFIRMING RNP CAPABILITY.\r\nEND OF PART TWO OF TWO PARTS",
+    "notam_number": "",
+    "start_datetime": "2026-05-05T11:30:00Z",
+    "end_datetime": "2026-05-05T19:00:00Z",
+    "series": "",
+    "classification_code": "INTL",
+    "transaction_type": "NAT_TRACK",
+    "part_no": 2,
+    "entry_datetime": "2026-05-05T11:30:00.000Z"
+  }
+]
+*/
+QStringList TrackReader::extractJsonSections(const QString& json)
+{
+  QStringList lines;
+  QJsonParseError error;
+  QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8(), &error);
+  if(error.error != QJsonParseError::NoError)
+    qWarning() << Q_FUNC_INFO << "Error reading JSON" << error.errorString() << "at offset" << error.offset;
+  else
+  {
+    const QJsonArray array = doc.array();
+    for(const QJsonValue& value : array)
+    {
+      if(value.isObject())
+      {
+        // Replace line feed and carriage returns with LF and split again to get all lines
+        lines.append(value.toObject().value(QStringLiteral("condition_message")).toString().
+                     replace(QStringLiteral("\r\n"), QStringLiteral("\n")).
+                     replace(QStringLiteral("\r"), QStringLiteral("\n")).
+                     replace(QStringLiteral("\n"), QStringLiteral("\n")).split("\n"));
+      }
+    }
+  }
+
+  return lines;
 }
 
 QStringList TrackReader::extractSections(const QStringList& lines, const QString& begin, const QString& end)

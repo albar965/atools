@@ -40,9 +40,6 @@ class TrackReader
   Q_DECLARE_TR_FUNCTIONS(TrackReader)
 
 public:
-  TrackReader();
-  ~TrackReader();
-
   /* Read tracks from HTML or text pages. throws an exception on error.
    * Track objects are added to the internal list without clearing it before.*/
   void readTracks(const QString& filename, atools::track::TrackType type);
@@ -72,6 +69,9 @@ private:
   /* Extract all sections between begin and end. begin and end are included.
    * Returns a list of lines with all text between sections cleared. */
   QStringList extractSections(const QStringList& lines, const QString& begin, const QString& end);
+
+  /* Extract sections from JSON NAT file and returns all lines for all messages in one list */
+  QStringList extractJsonSections(const QString& json);
 
   /* Convert month acronyms of full names into month numbers. */
   int monthFromStr(const QString& str);
