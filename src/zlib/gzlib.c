@@ -5,6 +5,11 @@
 
 #include "gzguts.h"
 
+/* Fix error undeclared function 'lseek' */
+#if defined(__APPLE__) || defined(__unix__)
+#include <unistd.h>
+#endif
+
 #if defined(__DJGPP__)
 #  define LSEEK llseek
 #elif defined(_WIN32) && !defined(__BORLANDC__) && !defined(UNDER_CE)
