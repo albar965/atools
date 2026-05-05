@@ -27,6 +27,11 @@ class QTextBrowser;
 namespace atools {
 namespace gui {
 
+/* Callback functions to get tooltip */
+typedef std::function<QString (const QString&)> LinkToolTipFunctionType;
+typedef  QHash<QString, LinkToolTipFunctionType> LinkToolTipHashFunctionType;
+
+/* Tooltip strings */
 typedef  QHash<QString, QString> LinkToolTipHashType;
 
 /*
@@ -70,10 +75,29 @@ public:
     urlKeyToolTipHash.insert(key, tooltip);
   }
 
-  /* Remove tooltip key/value pairs */
+  void addUrlTooltip(const QStringList& keys, const QString& tooltip)
+  {
+    for(const QString& key : keys)
+      urlKeyToolTipHash.insert(key, tooltip);
+  }
+
+  /* Same as above but use a function with the parameter key to build the (HTML) tooltip */
+  void addUrlTooltipFunction(const QString& key, LinkToolTipFunctionType tooltipFunction)
+  {
+    urlKeyToolTipFunctionHash.insert(key, tooltipFunction);
+  }
+
+  void addUrlTooltipFunction(const QStringList& keys, LinkToolTipFunctionType tooltipFunction)
+  {
+    for(const QString& key : keys)
+      urlKeyToolTipFunctionHash.insert(key, tooltipFunction);
+  }
+
+  /* Remove tooltip key/value pairs for texts and functions */
   void clearUrlTooltips()
   {
     urlKeyToolTipHash.clear();
+    urlKeyToolTipFunctionHash.clear();
   }
 
   /* Clear internal lists, disconnect signals and remove event handlers for all widgets */
@@ -105,6 +129,7 @@ private:
   QList<QTextBrowser *> textBrowsers;
 
   atools::gui::LinkToolTipHashType urlKeyToolTipHash;
+  atools::gui::LinkToolTipHashFunctionType urlKeyToolTipFunctionHash;
   QString webUrlToolTip, fileUrlToolTip;
   bool showToolTips = true;
 };
