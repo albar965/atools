@@ -5,6 +5,11 @@
 
 #include "gzguts.h"
 
+/* Fix errors undeclared functions 'read' and 'close' */
+#if defined(__APPLE__) || defined(__unix__)
+#include <unistd.h>
+#endif
+
 /* Use read() to load a buffer -- return -1 on error, otherwise 0.  Read from
    state->fd, and update state->eof, state->err, and state->msg as appropriate.
    This function needs to loop on read(), since read() is not guaranteed to

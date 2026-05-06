@@ -5,6 +5,11 @@
 
 #include "gzguts.h"
 
+/* Fix errors undeclared functions 'write' and 'close' */
+#if defined(__APPLE__) || defined(__unix__)
+#include <unistd.h>
+#endif
+
 /* Initialize state for writing a gzip file.  Mark initialization by setting
    state->size to non-zero.  Return -1 on a memory allocation failure, or 0 on
    success. */
