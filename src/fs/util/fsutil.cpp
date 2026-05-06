@@ -106,7 +106,7 @@ static const QList<QRegularExpression> REGEXP_MIL({
 #define AIRPORT_WORDS "AAC", "AAF", "AB", "AS", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CFB", "CGS", "DGAC", \
         "FAA", "FBO", "GTS", "HSC", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK", \
         "NOLF", "NRC", "NRC", "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RLA", "RNAS", \
-        "USFS", "CGAS", "TV", "NVC", "USAF", \
+        "USFS", "CGAS", "TV", "NVC", "USAF", "PCFD", "VFD", "RFD", "FD", "FDA" \
         "I", "II", "III", "IV", "V", "VI", "VII"
 
 const static QSet<QString> FORCE_UPPER_AIRPORT_WORDS({AIRPORT_WORDS});
