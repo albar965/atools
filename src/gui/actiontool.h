@@ -25,11 +25,13 @@ class QAction;
 namespace atools {
 namespace gui {
 
+class ActionIconSaver;
 class ActionTextSaver;
 class ActionStateSaver;
 
 /*
- * Combines the functionality of ActionTextSaver and ActionStateSaver and provides additional methods to modify actions for context menus.
+ * Combines the functionality of ActionTextSaver, ActionStateSaver and ActionIconSaver
+ * and provides additional methods to modify actions for context menus.
  */
 class ActionTool
 {
@@ -61,7 +63,7 @@ public:
 private:
   atools::gui::ActionTextSaver *textSaver;
   atools::gui::ActionStateSaver *stateSaver;
-
+  atools::gui::ActionIconSaver *iconSaver;
 };
 
 } // namespace gui

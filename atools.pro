@@ -535,6 +535,7 @@ src/track/tracktypes.cpp
 !isEqual(ATOOLS_NO_GUI, "true") {
 HEADERS += \
   src/gui/actionbuttonhandler.h \
+  src/gui/actioniconsaver.h \
   src/gui/actionstatesaver.h \
   src/gui/actiontextsaver.h \
   src/gui/actiontool.h \
@@ -576,6 +577,7 @@ HEADERS += \
 
 SOURCES += \
   src/gui/actionbuttonhandler.cpp \
+  src/gui/actioniconsaver.cpp \
   src/gui/actionstatesaver.cpp \
   src/gui/actiontextsaver.cpp \
   src/gui/actiontool.cpp \

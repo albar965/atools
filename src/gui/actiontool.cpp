@@ -18,8 +18,8 @@
 #include "gui/actiontool.h"
 
 #include "gui/actiontextsaver.h"
-
 #include "gui/actionstatesaver.h"
+#include "gui/actioniconsaver.h"
 
 #include <QAction>
 #include <QStringBuilder>
@@ -31,12 +31,14 @@ ActionTool::ActionTool(QList<QAction *> actions)
 {
   textSaver = new ActionTextSaver(actions);
   stateSaver = new ActionStateSaver(actions);
+  iconSaver = new ActionIconSaver(actions);
 }
 
 ActionTool::~ActionTool()
 {
   delete textSaver;
   delete stateSaver;
+  delete iconSaver;
 }
 
 void ActionTool::setText(QAction *action, const QString& arg, const QString& suffix)
@@ -72,7 +74,6 @@ void ActionTool::disableAll()
 {
   for(QAction *action : std::as_const(stateSaver->actions))
     action->setDisabled(true);
-
 }
 
 } // namespace gui

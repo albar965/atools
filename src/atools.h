@@ -323,6 +323,18 @@ float atFloat(const QStringList& columns, int index, bool error);
 double atDouble(const QStringList& columns, int index, bool error);
 
 template<typename TYPE>
+inline TYPE *atPtrOrNull(QList<TYPE>& list, int index)
+{
+  return inRange(list, index) ? nullptr : &list[index];
+}
+
+template<typename TYPE>
+inline const TYPE *constAtPtrOrNull(const QList<TYPE>& list, int index)
+{
+  return inRange(list, index) ? nullptr : list.at(index);
+}
+
+template<typename TYPE>
 inline TYPE *firstPtrOrNull(QList<TYPE>& list)
 {
   return list.isEmpty() ? nullptr : &list.first();
