@@ -210,10 +210,6 @@ void TabWidgetHandler::resetInternal()
 
 void TabWidgetHandler::tableContextMenu(const QPoint& pos)
 {
-  QPoint menuPos = QCursor::pos();
-  // Move menu position off the cursor to avoid accidental selection on touchpads
-  menuPos += QPoint(3, 3);
-
   QMenu menu;
 
   // Create close this tab action
@@ -244,7 +240,7 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
     menu.addAction(tab.getAction());
 
   // Open menu
-  QAction *action = menu.exec(menuPos);
+  QAction *action = menu.exec(pos + QPoint(3, 3));
   if(action == closeAction)
     // Use internal which does not check locked status
     tabCloseRequestedInternal(index);
