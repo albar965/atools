@@ -954,15 +954,18 @@ HtmlBuilder& HtmlBuilder::img(const QIcon& icon, const QString& alt, const QStri
 
 HtmlBuilder& HtmlBuilder::img(const QString& src, const QString& alt, const QString& style, QSize size)
 {
-  QString widthAtt = size.width() >
-                     0 ? QStringLiteral(" width=\"") % QString::number(size.width()) % QStringLiteral("\"") : QStringLiteral();
-  QString heightAtt = size.height() >
-                      0 ? QStringLiteral(" height=\"") % QString::number(size.height()) % QStringLiteral("\"") : QStringLiteral();
+  QString widthAtt = size.width() > 0 ?
+                     QStringLiteral(" width=\"") % QString::number(size.width()) % QStringLiteral("\"") : QStringLiteral();
+  QString heightAtt = size.height() > 0 ?
+                      QStringLiteral(" height=\"") % QString::number(size.height()) % QStringLiteral("\"") : QStringLiteral();
   QString altAtt = alt.isEmpty() ? QStringLiteral() : QStringLiteral(" alt=\"") % alt % QStringLiteral("\"");
   QString styleAtt = style.isEmpty() ? QStringLiteral() : QStringLiteral(" style=\"") % style % QStringLiteral("\"");
 
+  // Pack image in div to avoid wrong formatting with hr
+  htmlText.append(QStringLiteral("<div>"));
   htmlText.append(QStringLiteral("<img src='") % src %
                   QStringLiteral("'") % styleAtt % altAtt % widthAtt % heightAtt % QStringLiteral("/>"));
+  htmlText.append(QStringLiteral("</div>"));
 
   return *this;
 }
@@ -1101,7 +1104,7 @@ QString HtmlBuilder::txt(QString str, html::Flags flags, QColor foreground, QCol
   return prefix % str % suffix;
 }
 
-bool HtmlBuilder::checklength(int maxLines, const QString& msg)
+bool HtmlBuilder::checkLength(int maxLines, const QString& msg)
 {
   QString dotText(QStringLiteral("<b>%1</b>").arg(msg));
   if(numLines > maxLines)
@@ -1113,24 +1116,16 @@ bool HtmlBuilder::checklength(int maxLines, const QString& msg)
   return false;
 }
 
-bool HtmlBuilder::checklengthTextBar(int maxLines, const QString& msg, int length)
+bool HtmlBuilder::checkLengthHr(int maxLines, const QString& msg)
 {
   QString dotText(QStringLiteral("<b>%1</b>").arg(msg));
   if(numLines > maxLines)
   {
     if(!htmlText.endsWith(dotText))
-      textBar(length).b(msg);
+      hr().b(msg);
     return true;
   }
   return false;
-}
-
-HtmlBuilder& HtmlBuilder::textBar(int length, html::Flags flags, QColor color)
-{
-  QString str;
-  str.resize(length, QChar(L'—'));
-  text(str, flags, color).br();
-  return *this;
 }
 
 HtmlBuilder& HtmlBuilder::text(const QString& str, html::Flags flags, QColor color)

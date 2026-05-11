@@ -188,9 +188,6 @@ public:
   /* Add horizontal ruler */
   HtmlBuilder& hr(int size = 1, int widthPercent = 100);
 
-  /* Ruler made of a number of dashes and br */
-  HtmlBuilder& textBar(int length = 10, html::Flags flags = html::NONE, QColor color = QColor());
-
   /* Add link (anchor/href). Only allowed style is LINK_NO_UL */
   HtmlBuilder& a(const QString& text, const QString& href, html::Flags flags = html::NONE, QColor color = QColor(), int elideText = 500);
 
@@ -345,8 +342,8 @@ public:
    * @param msg text to add if too long
    * @return true if text is too long
    */
-  bool checklength(int maxLines, const QString& msg);
-  bool checklengthTextBar(int maxLines, const QString& msg, int length);
+  bool checkLength(int maxLines, const QString& msg);
+  bool checkLengthHr(int maxLines, const QString& msg);
 
   bool isEmpty() const
   {
