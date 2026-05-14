@@ -139,7 +139,7 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
       {
         // Log addresses to output window =============================
         // Header
-        atools::util::HtmlBuilder html;
+        atools::util::HtmlBuilder html(false /* backgroundColorUsed */, false /* darkStyle */);
         if(hosts.size() > 1)
           html.text(tr("Server is listening on hostnames (IP-addresses) on port "));
         else

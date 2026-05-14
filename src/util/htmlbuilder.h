@@ -41,24 +41,18 @@ class HtmlBuilder
   Q_DECLARE_TR_FUNCTIONS(HtmlBuilder)
 
 public:
-  explicit HtmlBuilder()
-    : hasBackColor(false)
-  {
-    init();
-  }
-
   /*
    * @param hasBackColor if true a alternating background color taken from the
    * system palette (gray/lightgray) is used for tables.
    */
-  explicit HtmlBuilder(bool backgroundColorUsed)
+  explicit HtmlBuilder(bool backgroundColorUsed, bool darkStyle)
     : hasBackColor(backgroundColorUsed)
   {
-    init();
+    init(darkStyle);
   }
 
   /* Pass alternating table row colors in */
-  HtmlBuilder(const QColor& rowColor, const QColor& rowColorAlt);
+  explicit HtmlBuilder(const QColor& rowColor, const QColor& rowColorAlt);
 
   HtmlBuilder(const atools::util::HtmlBuilder& other)
   {
@@ -143,7 +137,12 @@ public:
                              const QString& separator = "<br/>");
 
   /* Add bold text */
-  HtmlBuilder& b(const QString& str);
+  HtmlBuilder& b(const QString& str)
+  {
+    text(str, html::BOLD);
+    return *this;
+  }
+
   HtmlBuilder& b();
   HtmlBuilder& bEnd();
 
@@ -218,10 +217,17 @@ public:
   HtmlBuilder& text(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Builds a text string (not paragraph) using the given flags */
-  static QString textStr(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+  static QString textStr(const QString& str, html::Flags flags = html::NONE, QColor color = QColor())
+  {
+    return txt(str, flags, color, QColor());
+  }
 
   /* Add other`s HTML not escaping entities */
-  HtmlBuilder& textHtml(const atools::util::HtmlBuilder& other);
+  HtmlBuilder& textHtml(const atools::util::HtmlBuilder& other)
+  {
+    text(other.getHtml(), html::NO_ENTITIES);
+    return *this;
+  }
 
   /* Add string enclosed in a paragraph */
   HtmlBuilder& p(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
@@ -241,10 +247,19 @@ public:
   HtmlBuilder& br();
 
   /* Add text and break */
-  HtmlBuilder& textBr(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& textBr(const QString& str, html::Flags flags = html::NONE, QColor color = QColor())
+  {
+    text(str, flags, color);
+    return br();
+  }
 
   /* Add break and text */
-  HtmlBuilder& brText(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& brText(const QString& str, html::Flags flags = html::NONE, QColor color = QColor())
+  {
+    br();
+    text(str, flags, color);
+    return *this;
+  }
 
   /* Add non breaking space */
   HtmlBuilder& nbsp();
@@ -254,19 +269,48 @@ public:
   HtmlBuilder& hEnd(int level);
 
   /* Add HTML header. Adds closing tag. */
-  HtmlBuilder& h1(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString());
-  HtmlBuilder& h2(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString());
-  HtmlBuilder& h3(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString());
-  HtmlBuilder& h4(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString());
-  HtmlBuilder& h5(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString());
+  HtmlBuilder& h1(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString())
+  {
+    h(1, str, flags, color, id).hEnd(1);
+    return *this;
+  }
+
+  HtmlBuilder& h2(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString())
+  {
+    h(2, str, flags, color, id).hEnd(2);
+    return *this;
+  }
+
+  HtmlBuilder& h3(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString())
+  {
+    h(3, str, flags, color, id).hEnd(3);
+    return *this;
+  }
+
+  HtmlBuilder& h4(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString())
+  {
+    h(4, str, flags, color, id).hEnd(4);
+    return *this;
+  }
+
+  HtmlBuilder& h5(const QString& str, html::Flags flags = html::NONE, QColor color = QColor(), const QString& id = QString())
+  {
+    h(5, str, flags, color, id).hEnd(5);
+    return *this;
+  }
 
   /* Add table and table body */
-  HtmlBuilder& table(int border = 0, int padding = 2, int spacing = 0, int widthPercent = 0, QColor bgcolor = QColor(),
+  HtmlBuilder& table(int border = 0, int padding = 2, int spacing = 0, int widthPercent = 0, QColor background = QColor(),
                      QColor bordercolor = QColor());
 
   /* Sets a stream mark and opens a table for use wit htableEndIf(). */
   HtmlBuilder& tableIf(int border = 0, int padding = 2, int spacing = 0, int widthPercent = 0, QColor bgcolor = QColor(),
-                       QColor bordercolor = QColor());
+                       QColor bordercolor = QColor())
+  {
+    mark();
+    return table(border, padding, spacing, widthPercent, bgcolor, bordercolor);
+  }
+
   HtmlBuilder& tableAtts(const QHash<QString, QString>& attributes);
 
   HtmlBuilder& tableEnd();
@@ -289,31 +333,67 @@ public:
   /* all row2 methods add two rows to a table.
    * The first one contains bold text (like a heading) the second one contains text according to attributes.
    * Text background may alternate depending on configuration */
-  HtmlBuilder& row2(const QString& name, const atools::util::HtmlBuilder& value, html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& row2(const QString& name, const QString& value = QString(), html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& row2(const QString& name, float value, int precision = -1, html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& row2(const QString& name, double value, int precision = -1, html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& row2(const QString& name, int value, html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& row2Var(const QString& name, const QVariant& value, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& row2(const QString& name, const atools::util::HtmlBuilder& value, html::Flags flags = html::NONE, QColor color = QColor(),
+                    QColor background = QColor())
+  {
+    return row2(name, value.getHtml(), flags | html::NO_ENTITIES, color, background);
+  }
+
+  HtmlBuilder& row2(const QString& name, const QString& value = QString(), html::Flags flags = html::NONE, QColor color = QColor(),
+                    QColor background = QColor());
+
+  HtmlBuilder& row2(const QString& name, float value, int precision = -1, html::Flags flags = html::NONE, QColor color = QColor(),
+                    QColor background = QColor())
+  {
+    return row2(name, locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision), flags, color, background);
+  }
+
+  HtmlBuilder& row2(const QString& name, double value, int precision = -1, html::Flags flags = html::NONE, QColor color = QColor(),
+                    QColor background = QColor())
+  {
+    return row2(name, locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision), flags, color, background);
+  }
+
+  HtmlBuilder& row2(const QString& name, int value, html::Flags flags = html::NONE, QColor color = QColor(),
+                    QColor background = QColor())
+  {
+    return row2(name, locale.toString(value), flags, color, background);
+  }
+
+  HtmlBuilder& row2Var(const QString& name, const QVariant& value, html::Flags flags = html::NONE, QColor color = QColor(),
+                       QColor background = QColor());
 
   /* Set alignment globally for the value colums for all row2 methods */
-  HtmlBuilder& row2AlignRight(bool alignRight = true);
+  HtmlBuilder& row2AlignFlags(atools::util::html::Flag alignFlag)
+  {
+    row2Align = alignFlag;
+    return *this;
+  }
+
+  HtmlBuilder& row2AlignClear()
+  {
+    row2Align = html::NONE;
+    return *this;
+  }
 
   /* Adds row if string is not empty*/
-  HtmlBuilder& row2If(const QString& name, const QString& value, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& row2If(const QString& name, const QString& value, html::Flags flags = html::NONE, QColor color = QColor(),
+                      QColor background = QColor());
 
   /* Adds row if value > 0 */
-  HtmlBuilder& row2If(const QString& name, int value, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& row2If(const QString& name, int value, html::Flags flags = html::NONE, QColor color = QColor(),
+                      QColor background = QColor());
 
   /* Adds row if value is valid and not null */
-  HtmlBuilder& row2IfVar(const QString& name, const QVariant& value, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& row2IfVar(const QString& name, const QVariant& value, html::Flags flags = html::NONE, QColor color = QColor(),
+                         QColor background = QColor());
 
   /* Display two column row with value as warning or error */
   HtmlBuilder& row2Warning(const QString& name, const QString& value, html::Flags flags = html::NONE);
-  HtmlBuilder& row2Error(const QString& name, const QString& value, html::Flags flags = html::NONE);
+  HtmlBuilder& row2Error(const QString& name, const QString& value, html::Flags flags = html::NONE, QColor background = QColor());
 
   /* Add/end table row Text background may alternate depending on configuration */
-  HtmlBuilder& tr(QColor backgroundColor);
+  HtmlBuilder& tr(QColor background);
 
   /* Table row without alternating background color */
   HtmlBuilder& tr();
@@ -451,34 +531,42 @@ public:
 
 private:
   /* Select alternating entries based on the index from the string list */
-  const QString& alt(const QStringList& list) const;
+  // const QString& alt(const QStringList& list) const;
   static QString txt(QString str, html::Flags flags, QColor foreground, QColor background);
   static QString anchor(const QString& text, const QString& href, html::Flags flags, QColor color, int elideText);
 
   /* Add image. Optionally surround by divEnclose tags to avoid issues with hr. */
   HtmlBuilder& img(const QString& src, const QString& alt, const QString& style, QSize size, bool divEnclose);
 
-  void initColors(const QColor& rowColor, const QColor& rowColorAlt);
+  void initColors(const QColor& rowColor, const QColor& rowColorAlt)
+  {
+    rowBackColor = rowColor;
+    rowBackColorAlt = rowColorAlt;
+  }
 
   bool isId() const
   {
     return currentId == -1 || idBits.testBit(currentId);
   }
 
-  void init();
+  void init(bool dark);
 
-  QString rowBackColorStr, rowBackColorAltStr, tableRowHeader;
   QColor rowBackColor, rowBackColorAlt;
-  QStringList tableRow, tableRowAlignRight, tableRowBegin;
+  QColor alternatingColor()
+  {
+    return (tableRowsCur % 2) == 0 ? rowBackColor : rowBackColorAlt;
+  }
 
   int defaultPrecision = 0, numLines = 0;
   QString htmlText;
 
   QLocale locale;
   QLocale::FormatType dateFormat = QLocale::ShortFormat;
-  bool hasBackColor = false, row2AlignRightFlag = false;
+  bool hasBackColor = false;
   int markIndex = -1, /* Last marked stream position */
       tableRowsCur = 0; /* Number of rows in currently opened table */
+
+  atools::util::html::Flag row2Align = atools::util::html::NONE;
 
   QBitArray idBits;
   int currentId = -1;
