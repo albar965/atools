@@ -144,7 +144,9 @@ QString Approach::getRunwayName() const
 
 bool Approach::isValid() const
 {
-  bool valid = !legs.isEmpty();
+  // P3D v5 stores GPS SID/STAR records as approaches with the route in transition legs only.
+  const bool sidOrStar = type == ap::GPS && gpsOverlay && (suffix == 'A' || suffix == 'D');
+  bool valid = !legs.isEmpty() || (sidOrStar && !transitions.isEmpty());
   valid &= ap::approachTypeToStr(type) != QStringLiteral("UNKN");
   for(const ApproachLeg& leg : std::as_const(legs))
     valid &= leg.isValid();
