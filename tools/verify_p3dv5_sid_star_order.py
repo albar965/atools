@@ -9,6 +9,7 @@ GPS overlay SID/STAR shape and the database ordering consumed by LNM.
 from __future__ import annotations
 
 import argparse
+import os
 import sqlite3
 import sys
 from pathlib import Path
@@ -30,6 +31,22 @@ NO_FIX_DEPARTURE_TYPES = {
     "VR",  # heading to radial
 }
 
+SID_FIRST_NAMED_TYPES = {
+    "IF",  # initial fix
+    "CF",  # course to fix
+    "DF",  # direct to fix
+    "FA",  # fix to altitude
+    "FC",  # fix to distance
+    "FD",  # fix to DME distance
+    "FM",  # fix to manual termination
+}
+
+STAR_ENTRY_TYPES = {
+    "IF",  # initial fix
+    "FD",  # fix to DME distance
+    "FC",  # fix to distance
+}
+
 
 def query_one(con: sqlite3.Connection, sql: str, params: tuple = ()) -> sqlite3.Row:
     row = con.execute(sql, params).fetchone()
@@ -40,8 +57,52 @@ def query_one(con: sqlite3.Connection, sql: str, params: tuple = ()) -> sqlite3.
 
 def print_rows(title: str, rows: list[sqlite3.Row]) -> None:
     print(title)
-    for row in rows:
-        print("  " + ", ".join(f"{key}={row[key]}" for key in row.keys()))
+    if rows:
+        for row in rows:
+            print("  " + ", ".join(f"{key}={row[key]}" for key in row.keys()))
+    else:
+        print("  none")
+
+
+def csv_placeholders(items: list[str] | tuple[str, ...] | set[str]) -> str:
+    return ",".join("?" for _ in items)
+
+
+def resolve_default_db(explicit: Path | None) -> Path | None:
+    if explicit is not None:
+        return explicit
+
+    env_db = os.environ.get("LNM_P3DV5_DB")
+    if env_db:
+        return Path(env_db)
+
+    here = Path.cwd()
+    candidates = [
+        here / "../test-profile-p3dv5-cli/little_navmap_p3dv5.sqlite",
+        here / "test-profile-p3dv5-cli/little_navmap_p3dv5.sqlite",
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return candidates[0]
+
+
+def resolve_default_atools(explicit: Path | None) -> Path | None:
+    if explicit is not None:
+        return explicit
+    here = Path.cwd()
+    if (here / "src/fs/bgl/ap/transition.cpp").exists():
+        return here
+    return None
+
+
+def resolve_default_lnm(explicit: Path | None) -> Path | None:
+    if explicit is not None:
+        return explicit
+    sibling = Path.cwd() / "../littlenavmap"
+    if (sibling / "src/query/procedurequery.cpp").exists():
+        return sibling
+    return None
 
 
 def source_contains(path: Path, needles: list[str]) -> tuple[bool, str]:
@@ -124,6 +185,57 @@ def run_db_checks(db_path: Path, sample_airports: list[str]) -> bool:
         f"db_version={metadata['db_version_major']}.{metadata['db_version_minor']}"
     )
 
+    mode_counts = list(
+        con.execute(
+            """
+            with per_approach as (
+              select a.approach_id,
+                     a.type,
+                     a.suffix,
+                     a.has_gps_overlay,
+                     count(distinct al.approach_leg_id) as approach_legs,
+                     count(distinct t.transition_id) as transitions,
+                     count(tl.transition_leg_id) as transition_legs
+              from approach a
+              left join approach_leg al on al.approach_id = a.approach_id
+              left join transition t on t.approach_id = a.approach_id
+              left join transition_leg tl on tl.transition_id = t.transition_id
+              group by a.approach_id
+            )
+            select case
+                     when type = 'GPS' and has_gps_overlay = 1 and suffix = 'D' then 'SID'
+                     when type = 'GPS' and has_gps_overlay = 1 and suffix = 'A' then 'STAR'
+                     else 'APPR'
+                   end as category,
+                   count(*) as approaches,
+                   sum(approach_legs) as approach_legs,
+                   sum(transitions) as transitions,
+                   sum(transition_legs) as transition_legs,
+                   sum(case
+                         when type = 'GPS' and has_gps_overlay = 1 and suffix in ('A', 'D')
+                              and (approach_legs <> 0 or transition_legs = 0)
+                         then 1
+                         when not (type = 'GPS' and has_gps_overlay = 1 and suffix in ('A', 'D'))
+                              and approach_legs = 0
+                         then 1
+                         else 0
+                       end) as storage_mode_violations
+            from per_approach
+            group by category
+            order by category
+            """
+        )
+    )
+    print_rows(
+        "Storage mode by category "
+        "(SID/STAR are transition-only; APPR has main approach legs):",
+        mode_counts,
+    )
+
+    ok = True
+    if any(row["storage_mode_violations"] for row in mode_counts):
+        ok = False
+
     counts = list(
         con.execute(
             f"""
@@ -144,7 +256,6 @@ def run_db_checks(db_path: Path, sample_airports: list[str]) -> bool:
     )
     print_rows("P3D v5 GPS overlay SID/STAR counts:", counts)
 
-    ok = True
     by_suffix = {row["suffix"]: row for row in counts}
     for suffix in ("A", "D"):
         row = by_suffix.get(suffix)
@@ -199,7 +310,38 @@ def run_db_checks(db_path: Path, sample_airports: list[str]) -> bool:
     if non_contiguous:
         ok = False
 
-    sid_anchor = query_one(
+    appr_forward = query_one(
+        con,
+        """
+        with first_last as (
+          select a.approach_id,
+                 min(al.approach_leg_id) as first_id,
+                 max(al.approach_leg_id) as last_id
+          from approach a
+          join approach_leg al on al.approach_id = a.approach_id
+          where not (a.type = 'GPS' and a.has_gps_overlay = 1 and a.suffix in ('A', 'D'))
+            and al.is_missed = 0
+          group by a.approach_id
+        )
+        select count(*) as approaches,
+               sum(case when first.type = 'IF' then 1 else 0 end) as first_initial_fix,
+               sum(case when first.type <> 'IF' then 1 else 0 end) as first_leg_violations
+        from first_last fl
+        join approach_leg first on first.approach_leg_id = fl.first_id
+        """
+    )
+    print(
+        "APPR forward pattern: "
+        f"approaches={appr_forward['approaches']}, "
+        f"first initial-fix={appr_forward['first_initial_fix']}, "
+        f"violations={appr_forward['first_leg_violations']}"
+    )
+    if appr_forward["first_leg_violations"]:
+        ok = False
+
+    no_fix_departure_types = sorted(NO_FIX_DEPARTURE_TYPES)
+    sid_first_named_types = sorted(SID_FIRST_NAMED_TYPES)
+    sid_forward = query_one(
         con,
         f"""
         with first_last as (
@@ -213,26 +355,49 @@ def run_db_checks(db_path: Path, sample_airports: list[str]) -> bool:
           group by t.transition_id
         )
         select count(*) as transitions,
-               sum(case when first.fix_type = 'R'
-                        or (first.fix_type is null and first.type in ({",".join("?" for _ in NO_FIX_DEPARTURE_TYPES)}))
-                        then 1 else 0 end) as first_runway_or_implicit,
-               sum(case when last.fix_type = 'R'
-                        or (last.fix_type is null and last.type in ({",".join("?" for _ in NO_FIX_DEPARTURE_TYPES)}))
-                        then 1 else 0 end) as last_runway_or_implicit
+               sum(case when first.fix_type = 'R' then 1 else 0 end) as first_explicit_runway,
+               sum(case when first.fix_type is null
+                             and first.type in ({csv_placeholders(no_fix_departure_types)})
+                        then 1 else 0 end) as first_departure_start,
+               sum(case when first.type in ({csv_placeholders(sid_first_named_types)})
+                             and coalesce(first.fix_ident, '') <> ''
+                        then 1 else 0 end) as first_named_start,
+               sum(case when not (
+                          first.fix_type = 'R'
+                          or (first.fix_type is null
+                              and first.type in ({csv_placeholders(no_fix_departure_types)}))
+                          or (first.type in ({csv_placeholders(sid_first_named_types)})
+                              and coalesce(first.fix_ident, '') <> '')
+                        )
+                        then 1 else 0 end) as first_leg_violations,
+               sum(case when last.fix_ident is not null
+                             and coalesce(last.fix_type, '') <> 'R'
+                        then 1 else 0 end) as last_named_non_runway_fix,
+               sum(case when last.fix_type = 'R' then 1 else 0 end) as last_explicit_runway
         from first_last fl
         join transition_leg first on first.transition_leg_id = fl.first_id
         join transition_leg last on last.transition_leg_id = fl.last_id
         """,
-        tuple(sorted(NO_FIX_DEPARTURE_TYPES)) * 2,
+        tuple(no_fix_departure_types)
+        + tuple(sid_first_named_types)
+        + tuple(no_fix_departure_types)
+        + tuple(sid_first_named_types),
     )
     print(
-        "SID order diagnostics: "
-        f"transitions={sid_anchor['transitions']}, "
-        f"first runway/implicit={sid_anchor['first_runway_or_implicit']}, "
-        f"last runway/implicit={sid_anchor['last_runway_or_implicit']}"
+        "SID forward pattern: "
+        f"transitions={sid_forward['transitions']}, "
+        f"first explicit-runway={sid_forward['first_explicit_runway']}, "
+        f"first departure-start={sid_forward['first_departure_start']}, "
+        f"first named-start={sid_forward['first_named_start']}, "
+        f"violations={sid_forward['first_leg_violations']}, "
+        f"last named non-runway fix={sid_forward['last_named_non_runway_fix']}, "
+        f"last explicit runway={sid_forward['last_explicit_runway']}"
     )
+    if sid_forward["first_leg_violations"]:
+        ok = False
 
-    star_if = query_one(
+    star_entry_types = sorted(STAR_ENTRY_TYPES)
+    star_forward = query_one(
         con,
         f"""
         with first_last as (
@@ -246,19 +411,27 @@ def run_db_checks(db_path: Path, sample_airports: list[str]) -> bool:
           group by t.transition_id
         )
         select count(*) as transitions,
-               sum(case when first.type in ('IF', 'FD', 'FC') then 1 else 0 end) as first_entry_like,
-               sum(case when last.type in ('IF', 'FD', 'FC') then 1 else 0 end) as last_entry_like
+               sum(case when first.type in ({csv_placeholders(star_entry_types)})
+                        then 1 else 0 end) as first_entry_like,
+               sum(case when first.type not in ({csv_placeholders(star_entry_types)})
+                        then 1 else 0 end) as first_leg_violations,
+               sum(case when last.type in ({csv_placeholders(star_entry_types)})
+                        then 1 else 0 end) as last_entry_like
         from first_last fl
         join transition_leg first on first.transition_leg_id = fl.first_id
         join transition_leg last on last.transition_leg_id = fl.last_id
         """,
+        tuple(star_entry_types) * 3,
     )
     print(
-        "STAR order diagnostics: "
-        f"transitions={star_if['transitions']}, "
-        f"first entry-like={star_if['first_entry_like']}, "
-        f"last entry-like={star_if['last_entry_like']}"
+        "STAR forward pattern: "
+        f"transitions={star_forward['transitions']}, "
+        f"first entry-like={star_forward['first_entry_like']}, "
+        f"violations={star_forward['first_leg_violations']}, "
+        f"last entry-like={star_forward['last_entry_like']}"
     )
+    if star_forward["first_leg_violations"]:
+        ok = False
 
     if sample_airports:
         placeholders = ",".join("?" for _ in sample_airports)
@@ -283,24 +456,107 @@ def run_db_checks(db_path: Path, sample_airports: list[str]) -> bool:
         )
         print_rows("Sample airports:", samples)
 
+        print("Forward-order examples:")
+        examples = [
+            ("EDDF", "D", "RW18"),
+            ("EDDF", "A", "EMPAX"),
+            ("ZBAA", "D", "RW36L"),
+            ("ZBAA", "A", "BOBAK"),
+        ]
+        for airport, suffix, transition_ident in examples:
+            print_example(con, airport, suffix, transition_ident)
+
     con.close()
     return ok
 
 
+def print_example(
+    con: sqlite3.Connection, airport: str, suffix: str, transition_ident: str
+) -> None:
+    row = con.execute(
+        """
+        select ar.ident as airport,
+               a.suffix,
+               t.transition_id,
+               t.fix_ident as transition_name,
+               count(tl.transition_leg_id) as leg_count
+        from airport ar
+        join approach a on a.airport_id = ar.airport_id
+        join transition t on t.approach_id = a.approach_id
+        join transition_leg tl on tl.transition_id = t.transition_id
+        where ar.ident = ?
+          and a.suffix = ?
+          and a.type = 'GPS'
+          and a.has_gps_overlay = 1
+          and t.fix_ident = ?
+        group by ar.ident, a.approach_id, t.transition_id
+        order by a.approach_id, t.transition_id
+        limit 1
+        """,
+        (airport, suffix, transition_ident),
+    ).fetchone()
+    if row is None:
+        print(f"  {airport} {suffix} {transition_ident}: not found")
+        return
+
+    legs = list(
+        con.execute(
+            """
+            select type, fix_type, fix_ident
+            from transition_leg
+            where transition_id = ?
+            order by transition_leg_id
+            """,
+            (row["transition_id"],),
+        )
+    )
+
+    def leg_text(leg: sqlite3.Row) -> str:
+        fix = leg["fix_ident"] or ""
+        fix_type = leg["fix_type"] or ""
+        return f"{leg['type']} {fix_type} {fix}".strip()
+
+    if len(legs) <= 6:
+        sequence = " -> ".join(leg_text(leg) for leg in legs)
+    else:
+        head = " -> ".join(leg_text(leg) for leg in legs[:4])
+        tail = " -> ".join(leg_text(leg) for leg in legs[-2:])
+        sequence = f"{head} -> ... -> {tail}"
+
+    kind = "SID" if suffix == "D" else "STAR"
+    print(
+        f"  {airport} {kind} {transition_ident}: "
+        f"{row['leg_count']} legs: {sequence}"
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--db", required=True, type=Path, help="Compiled Little Navmap SQLite database")
+    parser.add_argument(
+        "--db",
+        type=Path,
+        help=(
+            "Compiled Little Navmap SQLite database. Defaults to "
+            "$LNM_P3DV5_DB or ../test-profile-p3dv5-cli/little_navmap_p3dv5.sqlite."
+        ),
+    )
     parser.add_argument("--atools-src", type=Path, help="Optional atools source tree for source order checks")
     parser.add_argument("--lnm-src", type=Path, help="Optional Little Navmap source tree for read order checks")
     parser.add_argument("--sample-airport", action="append", default=["EDDF", "ZBAA"])
     args = parser.parse_args()
 
-    if not args.db.exists():
-        print(f"FAIL database does not exist: {args.db}", file=sys.stderr)
+    db_path = resolve_default_db(args.db)
+    if db_path is None or not db_path.exists():
+        print(f"FAIL database does not exist: {db_path}", file=sys.stderr)
+        print("Provide --db or set LNM_P3DV5_DB.", file=sys.stderr)
         return 2
 
-    ok = run_source_checks(args.atools_src, args.lnm_src)
-    ok = run_db_checks(args.db, args.sample_airport) and ok
+    atools_src = resolve_default_atools(args.atools_src)
+    lnm_src = resolve_default_lnm(args.lnm_src)
+
+    print(f"Database: {db_path}")
+    ok = run_source_checks(atools_src, lnm_src)
+    ok = run_db_checks(db_path, args.sample_airport) and ok
 
     print("PASS" if ok else "FAIL")
     return 0 if ok else 1
