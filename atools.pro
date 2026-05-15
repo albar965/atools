@@ -402,7 +402,6 @@ SOURCES += \
   src/util/filechecker.cpp \
   src/util/fileoperations.cpp \
   src/util/filesystemwatcher.cpp \
-  src/util/flags.cpp \
   src/util/heap.cpp \
   src/util/httpdownloader.cpp \
   src/util/locker.cpp \

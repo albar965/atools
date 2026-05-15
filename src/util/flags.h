@@ -41,17 +41,17 @@ public:
   typedef FLAGTYPE FlagType;
 
   /* Constructors ======================================= */
-  Flags() noexcept
+  constexpr Flags() noexcept
     : value(0L)
   {
   }
 
-  Flags(ENUM enumValue) noexcept
+  constexpr Flags(ENUM enumValue) noexcept
     : value(FLAGTYPE(enumValue))
   {
   }
 
-  Flags(FLAGTYPE flagValue) noexcept
+  constexpr Flags(FLAGTYPE flagValue) noexcept
     : value(flagValue)
   {
   }
@@ -74,19 +74,19 @@ public:
 
 #endif
 
-  Flags(const Flags& other) noexcept
+  constexpr Flags(const Flags& other) noexcept
   {
     value = other.value;
   }
 
-  Flags(std::initializer_list<ENUM> list) noexcept
+  constexpr Flags(std::initializer_list<ENUM> list) noexcept
     : value(0L)
   {
     for(ENUM val : list)
       *this |= val;
   }
 
-  Flags(std::initializer_list<Flags> list) noexcept
+  constexpr Flags(std::initializer_list<Flags> list) noexcept
     : value(0L)
   {
     for(Flags val : list)
@@ -94,35 +94,35 @@ public:
   }
 
   /* Assignment ======================================= */
-  Flags& operator=(ENUM other) noexcept
+  constexpr Flags& operator=(ENUM other) noexcept
   {
     value = other;
     return *this;
   }
 
-  Flags& operator=(Flags other) noexcept
+  constexpr Flags& operator=(Flags other) noexcept
   {
     value = other.value;
     return *this;
   }
 
   /* Comparison ======================================= */
-  bool operator==(const ENUM& other) const noexcept
+  constexpr bool operator==(const ENUM& other) const noexcept
   {
     return value == other;
   }
 
-  bool operator==(const Flags& other) const noexcept
+  constexpr bool operator==(const Flags& other) const noexcept
   {
     return value == other.value;
   }
 
-  bool operator!=(const ENUM& other) const noexcept
+  constexpr bool operator!=(const ENUM& other) const noexcept
   {
     return value != other;
   }
 
-  bool operator!=(const Flags& other) const noexcept
+  constexpr bool operator!=(const Flags& other) const noexcept
   {
     return value != other.value;
   }
@@ -143,59 +143,59 @@ public:
 
 #endif
 
-  Flags& operator&=(Flags other) noexcept
+constexpr  Flags& operator&=(Flags other) noexcept
   {
     value &= other.value;
     return *this;
   }
 
-  Flags& operator&=(ENUM mask) noexcept
+ constexpr Flags& operator&=(ENUM mask) noexcept
   {
     value &= FLAGTYPE(mask);
     return *this;
   }
 
-  Flags& operator|=(Flags other) noexcept
+ constexpr Flags& operator|=(Flags other) noexcept
   {
     value |= other.value;
     return *this;
   }
 
-  Flags& operator|=(ENUM other) noexcept
+constexpr  Flags& operator|=(ENUM other) noexcept
   {
     value |= FLAGTYPE(other);
     return *this;
   }
 
-  Flags& operator^=(Flags other) noexcept
+ constexpr Flags& operator^=(Flags other) noexcept
   {
     value ^= other.value;
     return *this;
   }
 
-  Flags& operator^=(ENUM other) noexcept
+ constexpr Flags& operator^=(ENUM other) noexcept
   {
     value ^= FLAGTYPE(other);
     return *this;
   }
 
   /* Const bit operators ======================================= */
-  Flags operator|(Flags other) const noexcept
+ constexpr Flags operator|(Flags other) const noexcept
   {
     return Flags(value | other.value);
   }
 
-  Flags operator|(ENUM other) const noexcept
+ constexpr Flags operator|(ENUM other) const noexcept
   {
     return Flags(value | FLAGTYPE(other));
   }
 
-  Flags operator^(Flags other) const noexcept
+ constexpr Flags operator^(Flags other) const noexcept
   {
     return Flags(value ^ other.value);
   }
 
-  Flags operator^(ENUM other) const noexcept
+ constexpr Flags operator^(ENUM other) const noexcept
   {
     return Flags(value ^ FLAGTYPE(other));
   }
@@ -214,40 +214,40 @@ public:
 
 #endif
 
-  Flags operator&(Flags other) const noexcept
+ constexpr Flags operator&(Flags other) const noexcept
   {
     return Flags(value & other.value);
   }
 
-  Flags operator&(ENUM other) const noexcept
+constexpr  Flags operator&(ENUM other) const noexcept
   {
     return Flags(value & FLAGTYPE(other));
   }
 
   /* Negate ======================================= */
-  Flags operator~() const noexcept
+ constexpr Flags operator~() const noexcept
   {
     return Flags(~value);
   }
 
   /* Not ======================================= */
-  bool operator!() const noexcept
+ constexpr bool operator!() const noexcept
   {
     return !value;
   }
 
   /* Casts ======================================= */
-  ENUM asEnum() const noexcept
+ constexpr ENUM asEnum() const noexcept
   {
     return static_cast<ENUM>(value);
   }
 
-  FLAGTYPE asFlagType() const noexcept
+ constexpr FLAGTYPE asFlagType() const noexcept
   {
     return value;
   }
 
-  operator ENUM() const noexcept
+ constexpr operator ENUM() const noexcept
   {
     return static_cast<ENUM>(value);
   }
@@ -288,27 +288,33 @@ public:
 #endif
 
   /* Set/get methods ======================================= */
-  bool testFlag(ENUM flag) const noexcept
+  /* Returns true if the flag flag is set, otherwise false. */
+  constexpr bool testFlag(ENUM flag) const noexcept
   {
     return testFlags(flag);
   }
 
-  bool testFlags(atools::util::Flags<ENUM, FLAGTYPE> flags) const noexcept
+  /* Returns true if this flags object matches the given flags */
+  constexpr bool testFlags(atools::util::Flags<ENUM, FLAGTYPE> flags) const noexcept
   {
     return flags.value ? ((value & flags.value) == flags.value) : value == FLAGTYPE(0LL);
   }
 
-  bool testAnyFlag(ENUM flag) const noexcept
+  /* Returns true if any flag set in flag is also set in this flags object, otherwise false.
+   * If flag has no flags set, the return will always be false. */
+  constexpr bool testAnyFlag(ENUM flag) const noexcept
   {
     return testAnyFlags(flag);
   }
 
-  bool testAnyFlags(atools::util::Flags<ENUM, FLAGTYPE> flags) const noexcept
+  /* Returns true if any flag set in flags is also set in this flags object,
+   * otherwise false. If flags has no flags set, the return will always be false. */
+  constexpr bool testAnyFlags(atools::util::Flags<ENUM, FLAGTYPE> flags) const noexcept
   {
     return (value & flags.value) != FLAGTYPE(0LL);
   }
 
-  Flags& setFlag(ENUM flag, bool on = true) noexcept
+  constexpr Flags& setFlag(ENUM flag, bool on = true) noexcept
   {
     if(on)
       value |= FLAGTYPE(flag);
@@ -343,19 +349,22 @@ private:
 
 #define ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(FlagsParam) \
         inline atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType> \
-        operator|(FlagsParam::EnumType f1, FlagsParam::EnumType f2) \
+        constexpr operator|(FlagsParam::EnumType f1, FlagsParam::EnumType f2) \
         { \
           return atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType>(f1) | f2; \
         } \
-        inline atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType> \
+        \
+        constexpr inline atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType> \
         operator|(FlagsParam::EnumType f1, atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType> f2) \
         { \
           return f2 | f1; \
         } \
-        inline size_t qHash(const FlagsParam& flags, size_t seed) \
+        \
+        constexpr inline size_t qHash(const FlagsParam& flags, size_t seed) \
         { \
           return ::qHash(flags.asFlagType(), seed); \
         } \
+        \
         inline QDataStream& operator>>(QDataStream& stream, FlagsParam& flags) \
         { \
           FlagsParam::FlagType value; \
@@ -363,6 +372,7 @@ private:
           flags = value; \
           return stream; \
         } \
+        \
         inline QDataStream& operator<<(QDataStream& stream, FlagsParam flags) \
         { \
           stream << flags.asFlagType(); \
