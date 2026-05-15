@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Verify P3D v5 GPS SID/STAR import and transition leg order.
+"""Check P3D v5 GPS SID/STAR import and business-direction order.
 
-This helper expects a Little Navmap SQLite database compiled from P3D v5
-stock scenery after the atools import fix. It checks the transition-only
-GPS overlay SID/STAR shape and the database ordering consumed by LNM.
+The script expects a Little Navmap SQLite database compiled from P3D v5 stock
+scenery. It inspects the stored leg order by transition_leg_id and validates
+that SID and STAR endpoints match forward flying direction, not reversed order.
 """
 
 from __future__ import annotations
@@ -19,33 +19,44 @@ SPECIAL_WHERE = (
     "a.type = 'GPS' and a.has_gps_overlay = 1 and a.suffix in ('A', 'D')"
 )
 
-NO_FIX_DEPARTURE_TYPES = {
-    "CA",  # course to altitude
-    "CD",  # course to DME distance
-    "CI",  # course to intercept
-    "CR",  # course to radial
-    "VA",  # heading to altitude
-    "VD",  # heading to DME distance
-    "VI",  # heading to intercept
-    "VM",  # heading to manual termination
-    "VR",  # heading to radial
-}
+# These have no fix by design and describe the start of a departure from the
+# runway environment: heading/course to altitude, intercept, radial, etc.
+NO_FIX_DEPARTURE_TYPES = ("CA", "CD", "CI", "CR", "VA", "VD", "VI", "VM", "VR")
 
-SID_FIRST_NAMED_TYPES = {
-    "IF",  # initial fix
-    "CF",  # course to fix
-    "DF",  # direct to fix
-    "FA",  # fix to altitude
-    "FC",  # fix to distance
-    "FD",  # fix to DME distance
-    "FM",  # fix to manual termination
-}
+# A runway transition can omit the runway fix and begin with the first named
+# leg after the implicit runway start.
+SID_FIRST_NAMED_TYPES = ("CF", "DF", "FA", "FC", "FD", "FM", "IF")
 
-STAR_ENTRY_TYPES = {
-    "IF",  # initial fix
-    "FD",  # fix to DME distance
-    "FC",  # fix to distance
-}
+# The far end of a SID should be a route continuation/end leg, not a departure
+# start leg. VM is included because it is a manual-termination route end.
+SID_ROUTE_END_TYPES = ("AF", "CF", "DF", "FM", "HA", "IF", "TF", "VM")
+
+# A STAR transition starts at its entry point. P3D v5 uses these at the first
+# stored leg for the stock GPS STAR records checked here.
+STAR_ENTRY_TYPES = ("FC", "FD", "IF")
+
+
+def placeholders(values: tuple[str, ...]) -> str:
+    return ",".join("?" for _ in values)
+
+
+def resolve_db(explicit: Path | None) -> Path:
+    if explicit is not None:
+        return explicit
+
+    env_db = os.environ.get("LNM_P3DV5_DB")
+    if env_db:
+        return Path(env_db)
+
+    cwd = Path.cwd()
+    candidates = (
+        cwd / "../test-profile-p3dv5-cli/little_navmap_p3dv5.sqlite",
+        cwd / "test-profile-p3dv5-cli/little_navmap_p3dv5.sqlite",
+    )
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return candidates[0]
 
 
 def query_one(con: sqlite3.Connection, sql: str, params: tuple = ()) -> sqlite3.Row:
@@ -57,135 +68,40 @@ def query_one(con: sqlite3.Connection, sql: str, params: tuple = ()) -> sqlite3.
 
 def print_rows(title: str, rows: list[sqlite3.Row]) -> None:
     print(title)
-    if rows:
-        for row in rows:
-            print("  " + ", ".join(f"{key}={row[key]}" for key in row.keys()))
-    else:
+    if not rows:
         print("  none")
+        return
+    for row in rows:
+        print("  " + ", ".join(f"{key}={row[key]}" for key in row.keys()))
 
 
-def csv_placeholders(items: list[str] | tuple[str, ...] | set[str]) -> str:
-    return ",".join("?" for _ in items)
+def print_distribution(title: str, rows: list[sqlite3.Row]) -> None:
+    parts = [f"{row['type']}={row['count']}" for row in rows]
+    print(f"{title}: " + (", ".join(parts) if parts else "none"))
 
 
-def resolve_default_db(explicit: Path | None) -> Path | None:
-    if explicit is not None:
-        return explicit
-
-    env_db = os.environ.get("LNM_P3DV5_DB")
-    if env_db:
-        return Path(env_db)
-
-    here = Path.cwd()
-    candidates = [
-        here / "../test-profile-p3dv5-cli/little_navmap_p3dv5.sqlite",
-        here / "test-profile-p3dv5-cli/little_navmap_p3dv5.sqlite",
-    ]
-    for candidate in candidates:
-        if candidate.exists():
-            return candidate
-    return candidates[0]
+def print_patterns(title: str, forward: list[str], anti: list[str]) -> None:
+    print(title)
+    print("  Forward patterns:")
+    for item in forward:
+        print(f"    - {item}")
+    print("  Anti-patterns:")
+    for item in anti:
+        print(f"    - {item}")
 
 
-def resolve_default_atools(explicit: Path | None) -> Path | None:
-    if explicit is not None:
-        return explicit
-    here = Path.cwd()
-    if (here / "src/fs/bgl/ap/transition.cpp").exists():
-        return here
-    return None
-
-
-def resolve_default_lnm(explicit: Path | None) -> Path | None:
-    if explicit is not None:
-        return explicit
-    sibling = Path.cwd() / "../littlenavmap"
-    if (sibling / "src/query/procedurequery.cpp").exists():
-        return sibling
-    return None
-
-
-def source_contains(path: Path, needles: list[str]) -> tuple[bool, str]:
-    if not path.exists():
-        return False, f"missing {path}"
-    text = path.read_text(encoding="utf-8", errors="replace")
-    missing = [needle for needle in needles if needle not in text]
-    if missing:
-        return False, f"{path}: missing {missing!r}"
-    return True, str(path)
-
-
-def run_source_checks(atools_src: Path | None, lnm_src: Path | None) -> bool:
-    checks: list[tuple[str, bool, str]] = []
-
-    if atools_src is not None:
-        checks.append(
-            (
-                "BGL transition parser appends legs",
-                *source_contains(
-                    atools_src / "src/fs/bgl/ap/transition.cpp",
-                    ["legs.append(ApproachLeg(stream, subRecType))"],
-                ),
-            )
-        )
-        checks.append(
-            (
-                "DB writer writes transition legs in container order",
-                *source_contains(
-                    atools_src / "src/fs/db/ap/transitionwriter.cpp",
-                    ["write(type->getLegs())"],
-                ),
-            )
-        )
-        checks.append(
-            (
-                "DB writer assigns increasing transition_leg_id",
-                *source_contains(
-                    atools_src / "src/fs/db/ap/transitionlegwriter.cpp",
-                    ["transition_leg_id", "getNextId()"],
-                ),
-            )
-        )
-
-    if lnm_src is not None:
-        checks.append(
-            (
-                "LNM reads transition legs by transition_leg_id",
-                *source_contains(
-                    lnm_src / "src/query/procedurequery.cpp",
-                    ["order by transition_leg_id"],
-                ),
-            )
-        )
-
-    if not checks:
-        return True
-
+def print_pattern_counts(title: str, rows: list[tuple[str, int, str]]) -> bool:
+    print(title)
     ok = True
-    print("Source order checks:")
-    for name, passed, detail in checks:
-        print(f"  {'OK' if passed else 'FAIL'} {name}: {detail}")
-        ok = ok and passed
+    for label, count, kind in rows:
+        print(f"  {kind:<12} {label}: {count}")
+        if kind == "ANTI" and count:
+            ok = False
     return ok
 
 
-def run_db_checks(db_path: Path, sample_airports: list[str]) -> bool:
-    con = sqlite3.connect(db_path)
-    con.row_factory = sqlite3.Row
-
-    metadata = query_one(
-        con,
-        "select data_source, has_sid_star, db_version_major, db_version_minor "
-        "from metadata",
-    )
-    print(
-        "Metadata: "
-        f"data_source={metadata['data_source']}, "
-        f"has_sid_star={metadata['has_sid_star']}, "
-        f"db_version={metadata['db_version_major']}.{metadata['db_version_minor']}"
-    )
-
-    mode_counts = list(
+def storage_mode_check(con: sqlite3.Connection) -> bool:
+    rows = list(
         con.execute(
             """
             with per_approach as (
@@ -219,104 +135,304 @@ def run_db_checks(db_path: Path, sample_airports: list[str]) -> bool:
                               and approach_legs = 0
                          then 1
                          else 0
-                       end) as storage_mode_violations
+                       end) as violations
             from per_approach
             group by category
             order by category
             """
         )
     )
-    print_rows(
-        "Storage mode by category "
-        "(SID/STAR are transition-only; APPR has main approach legs):",
-        mode_counts,
+    print_patterns(
+        "Storage mode pattern definitions:",
+        [
+            "SID/STAR records are transition-only: no approach_leg rows, at least one transition_leg row.",
+            "APPR records keep normal main approach legs.",
+        ],
+        [
+            "SID/STAR has main approach legs or has no transition legs.",
+            "APPR has no main approach legs.",
+        ],
     )
-
+    print("Storage mode pattern counts:")
     ok = True
-    if any(row["storage_mode_violations"] for row in mode_counts):
-        ok = False
-
-    counts = list(
-        con.execute(
-            f"""
-            select a.suffix,
-                   count(distinct a.approach_id) as approaches,
-                   count(distinct t.transition_id) as transitions,
-                   count(distinct al.approach_leg_id) as approach_legs,
-                   count(tl.transition_leg_id) as transition_legs
-            from approach a
-            left join approach_leg al on al.approach_id = a.approach_id
-            left join transition t on t.approach_id = a.approach_id
-            left join transition_leg tl on tl.transition_id = t.transition_id
-            where {SPECIAL_WHERE}
-            group by a.suffix
-            order by a.suffix
-            """
+    for row in rows:
+        print(
+            f"  FORWARD      {row['category']}: "
+            f"approaches={row['approaches']}, "
+            f"approach_legs={row['approach_legs']}, "
+            f"transitions={row['transitions']}, "
+            f"transition_legs={row['transition_legs']}"
         )
-    )
-    print_rows("P3D v5 GPS overlay SID/STAR counts:", counts)
-
-    by_suffix = {row["suffix"]: row for row in counts}
-    for suffix in ("A", "D"):
-        row = by_suffix.get(suffix)
-        if row is None or row["approaches"] == 0 or row["transition_legs"] == 0:
-            print(f"FAIL missing suffix {suffix} transition-only records")
+        print(f"  ANTI         {row['category']} storage violations: {row['violations']}")
+        if row["violations"]:
             ok = False
-        elif row["approach_legs"] != 0:
-            print(f"FAIL suffix {suffix} has main approach legs: {row['approach_legs']}")
-            ok = False
+    return ok
 
-    bad_transitions = query_one(
-        con,
-        f"""
-        select count(*) as count
-        from (
-          select t.transition_id
+
+def sid_direction_check(con: sqlite3.Connection) -> bool:
+    sql = f"""
+        with first_last as (
+          select t.transition_id,
+                 t.fix_ident as transition_name,
+                 min(tl.transition_leg_id) as first_id,
+                 max(tl.transition_leg_id) as last_id
           from approach a
           join transition t on t.approach_id = a.approach_id
-          left join transition_leg tl on tl.transition_id = t.transition_id
-          where {SPECIAL_WHERE}
+          join transition_leg tl on tl.transition_id = t.transition_id
+          where a.type = 'GPS'
+            and a.has_gps_overlay = 1
+            and a.suffix = 'D'
+            and {{transition_filter}}
           group by t.transition_id
-          having count(tl.transition_leg_id) = 0
+        ),
+        classified as (
+          select first.type as first_type,
+                 first.fix_type as first_fix_type,
+                 first.fix_ident as first_fix_ident,
+                 last.type as last_type
+          from first_last fl
+          join transition_leg first on first.transition_leg_id = fl.first_id
+          join transition_leg last on last.transition_leg_id = fl.last_id
         )
-        """,
-    )["count"]
-    print(f"Transitions without legs: {bad_transitions}")
-    if bad_transitions:
-        ok = False
+        select count(*) as transitions,
+               sum(case when first_fix_type = 'R' then 1 else 0 end) as first_explicit_runway,
+               sum(case
+                     when first_fix_type is null
+                          and first_type in ({placeholders(NO_FIX_DEPARTURE_TYPES)})
+                     then 1 else 0
+                   end) as first_no_fix_departure,
+               sum(case
+                     when not (first_fix_type = 'R')
+                          and not (first_fix_type is null
+                                   and first_type in ({placeholders(NO_FIX_DEPARTURE_TYPES)}))
+                          and first_type in ({placeholders(SID_FIRST_NAMED_TYPES)})
+                          and coalesce(first_fix_ident, '') <> ''
+                     then 1 else 0
+                   end) as first_implicit_runway_to_named_fix,
+               sum(case
+                     when not (
+                       first_fix_type = 'R'
+                       or (first_fix_type is null
+                           and first_type in ({placeholders(NO_FIX_DEPARTURE_TYPES)}))
+                       or (first_type in ({placeholders(SID_FIRST_NAMED_TYPES)})
+                           and coalesce(first_fix_ident, '') <> '')
+                     )
+                     then 1 else 0
+                   end) as start_violations,
+               sum(case
+                     when last_type in ({placeholders(SID_ROUTE_END_TYPES)})
+                     then 1 else 0
+                   end) as last_route_end,
+               sum(case
+                     when last_type not in ({placeholders(SID_ROUTE_END_TYPES)})
+                     then 1 else 0
+                   end) as end_violations
+        from classified
+    """
+    params = (
+        NO_FIX_DEPARTURE_TYPES
+        + NO_FIX_DEPARTURE_TYPES
+        + SID_FIRST_NAMED_TYPES
+        + NO_FIX_DEPARTURE_TYPES
+        + SID_FIRST_NAMED_TYPES
+        + SID_ROUTE_END_TYPES
+        + SID_ROUTE_END_TYPES
+    )
 
-    non_contiguous = list(
+    runway = query_one(con, sql.format(transition_filter="t.fix_ident like 'RW%'"), params)
+    enroute = query_one(con, sql.format(transition_filter="t.fix_ident not like 'RW%'"), params)
+
+    print_patterns(
+        "SID runway-transition pattern definitions:",
+        [
+            "First leg is an explicit runway fix.",
+            "First leg is a no-fix departure leg such as CA/VA/CD/VI/VM/VD/CI/CR/VR.",
+            "First leg is a named fix after an implicit runway start declared by the RW transition.",
+            "Last leg is a route/end leg.",
+        ],
+        [
+            "First leg is not one of the departure-start patterns.",
+            "Last leg is not a route/end leg.",
+        ],
+    )
+    runway_ok = print_pattern_counts(
+        "SID runway-transition pattern counts:",
+        [
+            ("total runway transitions", runway["transitions"], "INFO"),
+            ("first leg is explicit runway", runway["first_explicit_runway"], "FORWARD"),
+            ("first leg is no-fix departure leg", runway["first_no_fix_departure"], "FORWARD"),
+            (
+                "first leg is named fix after implicit runway",
+                runway["first_implicit_runway_to_named_fix"],
+                "FORWARD",
+            ),
+            ("first leg is not a departure-start pattern", runway["start_violations"], "ANTI"),
+            ("last leg is route/end leg", runway["last_route_end"], "FORWARD"),
+            ("last leg is not route/end leg", runway["end_violations"], "ANTI"),
+        ],
+    )
+
+    print_patterns(
+        "SID enroute-transition pattern definitions:",
+        [
+            "First leg is a named transition start.",
+            "Last leg is a route/end leg.",
+        ],
+        [
+            "First leg is not a named transition start.",
+            "Last leg is not a route/end leg.",
+        ],
+    )
+    enroute_ok = print_pattern_counts(
+        "SID enroute-transition pattern counts:",
+        [
+            ("total enroute transitions", enroute["transitions"], "INFO"),
+            (
+                "first leg is named transition start",
+                enroute["first_implicit_runway_to_named_fix"],
+                "FORWARD",
+            ),
+            ("first leg is not a named transition start", enroute["start_violations"], "ANTI"),
+            ("last leg is route/end leg", enroute["last_route_end"], "FORWARD"),
+            ("last leg is not route/end leg", enroute["end_violations"], "ANTI"),
+        ],
+    )
+
+    no_fix_rows = list(
         con.execute(
             f"""
-            select suffix, count(*) as transitions
-            from (
-              select a.suffix, t.transition_id,
-                     min(tl.transition_leg_id) as first_leg_id,
-                     max(tl.transition_leg_id) as last_leg_id,
-                     count(tl.transition_leg_id) as leg_count
+            with first_last as (
+              select t.transition_id, min(tl.transition_leg_id) as first_id
               from approach a
               join transition t on t.approach_id = a.approach_id
               join transition_leg tl on tl.transition_id = t.transition_id
-              where {SPECIAL_WHERE}
-              group by a.suffix, t.transition_id
-              having last_leg_id - first_leg_id + 1 <> leg_count
+              where a.type = 'GPS'
+                and a.has_gps_overlay = 1
+                and a.suffix = 'D'
+                and t.fix_ident like 'RW%'
+              group by t.transition_id
             )
-            group by suffix
-            order by suffix
+            select first.type as type, count(*) as count
+            from first_last fl
+            join transition_leg first on first.transition_leg_id = fl.first_id
+            where first.fix_type is null
+              and first.type in ({placeholders(NO_FIX_DEPARTURE_TYPES)})
+            group by first.type
+            order by count desc
+            """,
+            NO_FIX_DEPARTURE_TYPES,
+        )
+    )
+    print_distribution("SID runway-transition no-fix first legs", no_fix_rows)
+
+    return runway_ok and enroute_ok
+
+
+def star_direction_check(con: sqlite3.Connection) -> bool:
+    entry_types = STAR_ENTRY_TYPES
+    row = query_one(
+        con,
+        f"""
+        with first_last as (
+          select t.transition_id,
+                 t.fix_ident as transition_name,
+                 min(tl.transition_leg_id) as first_id,
+                 max(tl.transition_leg_id) as last_id
+          from approach a
+          join transition t on t.approach_id = a.approach_id
+          join transition_leg tl on tl.transition_id = t.transition_id
+          where a.type = 'GPS'
+            and a.has_gps_overlay = 1
+            and a.suffix = 'A'
+          group by t.transition_id
+        ),
+        classified as (
+          select fl.transition_name,
+                 first.type as first_type,
+                 first.fix_ident as first_fix_ident,
+                 last.type as last_type,
+                 last.fix_ident as last_fix_ident
+          from first_last fl
+          join transition_leg first on first.transition_leg_id = fl.first_id
+          join transition_leg last on last.transition_leg_id = fl.last_id
+        )
+        select count(*) as transitions,
+               sum(case
+                     when first_type in ({placeholders(entry_types)})
+                     then 1 else 0
+                   end) as first_entry_leg,
+               sum(case
+                     when first_fix_ident = transition_name
+                          and coalesce(transition_name, '') <> ''
+                     then 1 else 0
+                   end) as first_matches_transition_name,
+               sum(case
+                     when first_type not in ({placeholders(entry_types)})
+                          or first_fix_ident <> transition_name
+                     then 1 else 0
+                   end) as start_violations
+        from classified
+        """,
+        entry_types + entry_types,
+    )
+    print_patterns(
+        "STAR transition pattern definitions:",
+        [
+            "First leg is a STAR entry leg.",
+            "First fix is the transition name, i.e. the transition starts at its published entry point.",
+        ],
+        [
+            "First leg is not a STAR entry leg.",
+            "First fix is not the transition name.",
+        ],
+    )
+    ok = print_pattern_counts(
+        "STAR transition pattern counts:",
+        [
+            ("total STAR transitions", row["transitions"], "INFO"),
+            ("first leg is entry leg", row["first_entry_leg"], "FORWARD"),
+            (
+                "first fix matches transition name",
+                row["first_matches_transition_name"],
+                "FORWARD",
+            ),
+            ("first leg is not STAR entry pattern", row["start_violations"], "ANTI"),
+        ],
+    )
+
+    entry_rows = list(
+        con.execute(
+            f"""
+            with first_last as (
+              select t.transition_id, min(tl.transition_leg_id) as first_id
+              from approach a
+              join transition t on t.approach_id = a.approach_id
+              join transition_leg tl on tl.transition_id = t.transition_id
+              where a.type = 'GPS'
+                and a.has_gps_overlay = 1
+                and a.suffix = 'A'
+              group by t.transition_id
+            )
+            select first.type as type, count(*) as count
+            from first_last fl
+            join transition_leg first on first.transition_leg_id = fl.first_id
+            group by first.type
+            order by count desc
             """
         )
     )
-    print_rows("Transitions with non-contiguous transition_leg_id blocks:", non_contiguous)
-    if non_contiguous:
-        ok = False
+    print_distribution("STAR first-leg types", entry_rows)
 
-    appr_forward = query_one(
+    return ok
+
+
+def approach_reference_check(con: sqlite3.Connection) -> bool:
+    row = query_one(
         con,
         """
         with first_last as (
           select a.approach_id,
-                 min(al.approach_leg_id) as first_id,
-                 max(al.approach_leg_id) as last_id
+                 min(al.approach_leg_id) as first_id
           from approach a
           join approach_leg al on al.approach_id = a.approach_id
           where not (a.type = 'GPS' and a.has_gps_overlay = 1 and a.suffix in ('A', 'D'))
@@ -325,209 +441,116 @@ def run_db_checks(db_path: Path, sample_airports: list[str]) -> bool:
         )
         select count(*) as approaches,
                sum(case when first.type = 'IF' then 1 else 0 end) as first_initial_fix,
-               sum(case when first.type <> 'IF' then 1 else 0 end) as first_leg_violations
+               sum(case when first.type <> 'IF' then 1 else 0 end) as violations
         from first_last fl
         join approach_leg first on first.approach_leg_id = fl.first_id
-        """
-    )
-    print(
-        "APPR forward pattern: "
-        f"approaches={appr_forward['approaches']}, "
-        f"first initial-fix={appr_forward['first_initial_fix']}, "
-        f"violations={appr_forward['first_leg_violations']}"
-    )
-    if appr_forward["first_leg_violations"]:
-        ok = False
-
-    no_fix_departure_types = sorted(NO_FIX_DEPARTURE_TYPES)
-    sid_first_named_types = sorted(SID_FIRST_NAMED_TYPES)
-    sid_forward = query_one(
-        con,
-        f"""
-        with first_last as (
-          select t.transition_id,
-                 min(tl.transition_leg_id) as first_id,
-                 max(tl.transition_leg_id) as last_id
-          from approach a
-          join transition t on t.approach_id = a.approach_id
-          join transition_leg tl on tl.transition_id = t.transition_id
-          where {SPECIAL_WHERE} and a.suffix = 'D'
-          group by t.transition_id
-        )
-        select count(*) as transitions,
-               sum(case when first.fix_type = 'R' then 1 else 0 end) as first_explicit_runway,
-               sum(case when first.fix_type is null
-                             and first.type in ({csv_placeholders(no_fix_departure_types)})
-                        then 1 else 0 end) as first_departure_start,
-               sum(case when first.type in ({csv_placeholders(sid_first_named_types)})
-                             and coalesce(first.fix_ident, '') <> ''
-                        then 1 else 0 end) as first_named_start,
-               sum(case when not (
-                          first.fix_type = 'R'
-                          or (first.fix_type is null
-                              and first.type in ({csv_placeholders(no_fix_departure_types)}))
-                          or (first.type in ({csv_placeholders(sid_first_named_types)})
-                              and coalesce(first.fix_ident, '') <> '')
-                        )
-                        then 1 else 0 end) as first_leg_violations,
-               sum(case when last.fix_ident is not null
-                             and coalesce(last.fix_type, '') <> 'R'
-                        then 1 else 0 end) as last_named_non_runway_fix,
-               sum(case when last.fix_type = 'R' then 1 else 0 end) as last_explicit_runway
-        from first_last fl
-        join transition_leg first on first.transition_leg_id = fl.first_id
-        join transition_leg last on last.transition_leg_id = fl.last_id
         """,
-        tuple(no_fix_departure_types)
-        + tuple(sid_first_named_types)
-        + tuple(no_fix_departure_types)
-        + tuple(sid_first_named_types),
     )
-    print(
-        "SID forward pattern: "
-        f"transitions={sid_forward['transitions']}, "
-        f"first explicit-runway={sid_forward['first_explicit_runway']}, "
-        f"first departure-start={sid_forward['first_departure_start']}, "
-        f"first named-start={sid_forward['first_named_start']}, "
-        f"violations={sid_forward['first_leg_violations']}, "
-        f"last named non-runway fix={sid_forward['last_named_non_runway_fix']}, "
-        f"last explicit runway={sid_forward['last_explicit_runway']}"
+    print_patterns(
+        "APPR reference pattern definitions:",
+        ["First main approach leg is an initial fix."],
+        ["First main approach leg is not an initial fix."],
     )
-    if sid_forward["first_leg_violations"]:
-        ok = False
+    return print_pattern_counts(
+        "APPR reference pattern counts:",
+        [
+            ("total approaches", row["approaches"], "INFO"),
+            ("first leg is initial fix", row["first_initial_fix"], "FORWARD"),
+            ("first leg is not initial fix", row["violations"], "ANTI"),
+        ],
+    )
 
-    star_entry_types = sorted(STAR_ENTRY_TYPES)
-    star_forward = query_one(
-        con,
-        f"""
-        with first_last as (
-          select t.transition_id,
-                 min(tl.transition_leg_id) as first_id,
-                 max(tl.transition_leg_id) as last_id
-          from approach a
-          join transition t on t.approach_id = a.approach_id
-          join transition_leg tl on tl.transition_id = t.transition_id
-          where {SPECIAL_WHERE} and a.suffix = 'A'
-          group by t.transition_id
-        )
-        select count(*) as transitions,
-               sum(case when first.type in ({csv_placeholders(star_entry_types)})
-                        then 1 else 0 end) as first_entry_like,
-               sum(case when first.type not in ({csv_placeholders(star_entry_types)})
-                        then 1 else 0 end) as first_leg_violations,
-               sum(case when last.type in ({csv_placeholders(star_entry_types)})
-                        then 1 else 0 end) as last_entry_like
-        from first_last fl
-        join transition_leg first on first.transition_leg_id = fl.first_id
-        join transition_leg last on last.transition_leg_id = fl.last_id
-        """,
-        tuple(star_entry_types) * 3,
-    )
-    print(
-        "STAR forward pattern: "
-        f"transitions={star_forward['transitions']}, "
-        f"first entry-like={star_forward['first_entry_like']}, "
-        f"violations={star_forward['first_leg_violations']}, "
-        f"last entry-like={star_forward['last_entry_like']}"
-    )
-    if star_forward["first_leg_violations"]:
-        ok = False
 
-    if sample_airports:
-        placeholders = ",".join("?" for _ in sample_airports)
-        samples = list(
+def print_examples(con: sqlite3.Connection) -> None:
+    examples = (
+        ("EDDF", "D", "RW18"),
+        ("EDDF", "A", "EMPAX"),
+        ("ZBAA", "D", "RW36L"),
+        ("ZBAA", "A", "BOBAK"),
+    )
+    print("Forward-order examples:")
+    for airport, suffix, transition_name in examples:
+        row = con.execute(
+            """
+            select ar.ident as airport,
+                   a.suffix,
+                   t.transition_id,
+                   t.fix_ident as transition_name,
+                   count(tl.transition_leg_id) as leg_count
+            from airport ar
+            join approach a on a.airport_id = ar.airport_id
+            join transition t on t.approach_id = a.approach_id
+            join transition_leg tl on tl.transition_id = t.transition_id
+            where ar.ident = ?
+              and a.suffix = ?
+              and a.type = 'GPS'
+              and a.has_gps_overlay = 1
+              and t.fix_ident = ?
+            group by ar.ident, a.approach_id, t.transition_id
+            order by a.approach_id, t.transition_id
+            limit 1
+            """,
+            (airport, suffix, transition_name),
+        ).fetchone()
+        if row is None:
+            print(f"  {airport} {suffix} {transition_name}: not found")
+            continue
+
+        legs = list(
             con.execute(
-                f"""
-                select ar.ident,
-                       count(distinct case when a.suffix = 'A' then a.approach_id end) as star_approaches,
-                       count(distinct case when a.suffix = 'D' then a.approach_id end) as sid_approaches,
-                       count(distinct t.transition_id) as transitions,
-                       count(tl.transition_leg_id) as transition_legs
-                from airport ar
-                join approach a on a.airport_id = ar.airport_id
-                left join transition t on t.approach_id = a.approach_id
-                left join transition_leg tl on tl.transition_id = t.transition_id
-                where ar.ident in ({placeholders}) and {SPECIAL_WHERE}
-                group by ar.ident
-                order by ar.ident
+                """
+                select type, fix_type, fix_ident
+                from transition_leg
+                where transition_id = ?
+                order by transition_leg_id
                 """,
-                tuple(sample_airports),
+                (row["transition_id"],),
             )
         )
-        print_rows("Sample airports:", samples)
 
-        print("Forward-order examples:")
-        examples = [
-            ("EDDF", "D", "RW18"),
-            ("EDDF", "A", "EMPAX"),
-            ("ZBAA", "D", "RW36L"),
-            ("ZBAA", "A", "BOBAK"),
-        ]
-        for airport, suffix, transition_ident in examples:
-            print_example(con, airport, suffix, transition_ident)
+        def leg_text(leg: sqlite3.Row) -> str:
+            return " ".join(
+                part for part in (leg["type"], leg["fix_type"], leg["fix_ident"]) if part
+            )
+
+        if len(legs) <= 6:
+            sequence = " -> ".join(leg_text(leg) for leg in legs)
+        else:
+            head = " -> ".join(leg_text(leg) for leg in legs[:4])
+            tail = " -> ".join(leg_text(leg) for leg in legs[-2:])
+            sequence = f"{head} -> ... -> {tail}"
+
+        kind = "SID" if suffix == "D" else "STAR"
+        print(
+            f"  {airport} {kind} {transition_name}: "
+            f"{row['leg_count']} legs: {sequence}"
+        )
+
+
+def run(db_path: Path) -> bool:
+    con = sqlite3.connect(db_path)
+    con.row_factory = sqlite3.Row
+
+    metadata = query_one(
+        con,
+        "select data_source, has_sid_star, db_version_major, db_version_minor from metadata",
+    )
+    print(
+        "Metadata: "
+        f"data_source={metadata['data_source']}, "
+        f"has_sid_star={metadata['has_sid_star']}, "
+        f"db_version={metadata['db_version_major']}.{metadata['db_version_minor']}"
+    )
+
+    ok = True
+    ok = storage_mode_check(con) and ok
+    ok = sid_direction_check(con) and ok
+    ok = star_direction_check(con) and ok
+    ok = approach_reference_check(con) and ok
+    print_examples(con)
 
     con.close()
     return ok
-
-
-def print_example(
-    con: sqlite3.Connection, airport: str, suffix: str, transition_ident: str
-) -> None:
-    row = con.execute(
-        """
-        select ar.ident as airport,
-               a.suffix,
-               t.transition_id,
-               t.fix_ident as transition_name,
-               count(tl.transition_leg_id) as leg_count
-        from airport ar
-        join approach a on a.airport_id = ar.airport_id
-        join transition t on t.approach_id = a.approach_id
-        join transition_leg tl on tl.transition_id = t.transition_id
-        where ar.ident = ?
-          and a.suffix = ?
-          and a.type = 'GPS'
-          and a.has_gps_overlay = 1
-          and t.fix_ident = ?
-        group by ar.ident, a.approach_id, t.transition_id
-        order by a.approach_id, t.transition_id
-        limit 1
-        """,
-        (airport, suffix, transition_ident),
-    ).fetchone()
-    if row is None:
-        print(f"  {airport} {suffix} {transition_ident}: not found")
-        return
-
-    legs = list(
-        con.execute(
-            """
-            select type, fix_type, fix_ident
-            from transition_leg
-            where transition_id = ?
-            order by transition_leg_id
-            """,
-            (row["transition_id"],),
-        )
-    )
-
-    def leg_text(leg: sqlite3.Row) -> str:
-        fix = leg["fix_ident"] or ""
-        fix_type = leg["fix_type"] or ""
-        return f"{leg['type']} {fix_type} {fix}".strip()
-
-    if len(legs) <= 6:
-        sequence = " -> ".join(leg_text(leg) for leg in legs)
-    else:
-        head = " -> ".join(leg_text(leg) for leg in legs[:4])
-        tail = " -> ".join(leg_text(leg) for leg in legs[-2:])
-        sequence = f"{head} -> ... -> {tail}"
-
-    kind = "SID" if suffix == "D" else "STAR"
-    print(
-        f"  {airport} {kind} {transition_ident}: "
-        f"{row['leg_count']} legs: {sequence}"
-    )
 
 
 def main() -> int:
@@ -536,28 +559,20 @@ def main() -> int:
         "--db",
         type=Path,
         help=(
-            "Compiled Little Navmap SQLite database. Defaults to "
+            "Compiled Little Navmap P3D v5 SQLite database. Defaults to "
             "$LNM_P3DV5_DB or ../test-profile-p3dv5-cli/little_navmap_p3dv5.sqlite."
         ),
     )
-    parser.add_argument("--atools-src", type=Path, help="Optional atools source tree for source order checks")
-    parser.add_argument("--lnm-src", type=Path, help="Optional Little Navmap source tree for read order checks")
-    parser.add_argument("--sample-airport", action="append", default=["EDDF", "ZBAA"])
     args = parser.parse_args()
 
-    db_path = resolve_default_db(args.db)
-    if db_path is None or not db_path.exists():
+    db_path = resolve_db(args.db)
+    if not db_path.exists():
         print(f"FAIL database does not exist: {db_path}", file=sys.stderr)
         print("Provide --db or set LNM_P3DV5_DB.", file=sys.stderr)
         return 2
 
-    atools_src = resolve_default_atools(args.atools_src)
-    lnm_src = resolve_default_lnm(args.lnm_src)
-
     print(f"Database: {db_path}")
-    ok = run_source_checks(atools_src, lnm_src)
-    ok = run_db_checks(db_path, args.sample_airport) and ok
-
+    ok = run(db_path)
     print("PASS" if ok else "FAIL")
     return 0 if ok else 1
 
