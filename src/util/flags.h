@@ -143,59 +143,59 @@ public:
 
 #endif
 
-constexpr  Flags& operator&=(Flags other) noexcept
+  constexpr Flags& operator&=(Flags other) noexcept
   {
     value &= other.value;
     return *this;
   }
 
- constexpr Flags& operator&=(ENUM mask) noexcept
+  constexpr Flags& operator&=(ENUM mask) noexcept
   {
     value &= FLAGTYPE(mask);
     return *this;
   }
 
- constexpr Flags& operator|=(Flags other) noexcept
+  constexpr Flags& operator|=(Flags other) noexcept
   {
     value |= other.value;
     return *this;
   }
 
-constexpr  Flags& operator|=(ENUM other) noexcept
+  constexpr Flags& operator|=(ENUM other) noexcept
   {
     value |= FLAGTYPE(other);
     return *this;
   }
 
- constexpr Flags& operator^=(Flags other) noexcept
+  constexpr Flags& operator^=(Flags other) noexcept
   {
     value ^= other.value;
     return *this;
   }
 
- constexpr Flags& operator^=(ENUM other) noexcept
+  constexpr Flags& operator^=(ENUM other) noexcept
   {
     value ^= FLAGTYPE(other);
     return *this;
   }
 
   /* Const bit operators ======================================= */
- constexpr Flags operator|(Flags other) const noexcept
+  constexpr Flags operator|(Flags other) const noexcept
   {
     return Flags(value | other.value);
   }
 
- constexpr Flags operator|(ENUM other) const noexcept
+  constexpr Flags operator|(ENUM other) const noexcept
   {
     return Flags(value | FLAGTYPE(other));
   }
 
- constexpr Flags operator^(Flags other) const noexcept
+  constexpr Flags operator^(Flags other) const noexcept
   {
     return Flags(value ^ other.value);
   }
 
- constexpr Flags operator^(ENUM other) const noexcept
+  constexpr Flags operator^(ENUM other) const noexcept
   {
     return Flags(value ^ FLAGTYPE(other));
   }
@@ -214,40 +214,40 @@ constexpr  Flags& operator|=(ENUM other) noexcept
 
 #endif
 
- constexpr Flags operator&(Flags other) const noexcept
+  constexpr Flags operator&(Flags other) const noexcept
   {
     return Flags(value & other.value);
   }
 
-constexpr  Flags operator&(ENUM other) const noexcept
+  constexpr Flags operator&(ENUM other) const noexcept
   {
     return Flags(value & FLAGTYPE(other));
   }
 
   /* Negate ======================================= */
- constexpr Flags operator~() const noexcept
+  constexpr Flags operator~() const noexcept
   {
     return Flags(~value);
   }
 
   /* Not ======================================= */
- constexpr bool operator!() const noexcept
+  constexpr bool operator!() const noexcept
   {
     return !value;
   }
 
   /* Casts ======================================= */
- constexpr ENUM asEnum() const noexcept
+  constexpr ENUM asEnum() const noexcept
   {
     return static_cast<ENUM>(value);
   }
 
- constexpr FLAGTYPE asFlagType() const noexcept
+  constexpr FLAGTYPE asFlagType() const noexcept
   {
     return value;
   }
 
- constexpr operator ENUM() const noexcept
+  constexpr operator ENUM() const noexcept
   {
     return static_cast<ENUM>(value);
   }
@@ -330,7 +330,8 @@ private:
 /* Definition macros ======================================= */
 
 /* ============================================================================
- * Declare specific flags type using typedef */
+ * Declare specific flags type using typedef.
+ * Example within namespace: ATOOLS_DECLARE_FLAGS_32(MouseStates, ms::MouseState) */
 
 #define ATOOLS_DECLARE_FLAGS_8(FlagsParam, EnumParam) \
         typedef atools::util::Flags<EnumParam, quint8> FlagsParam;
@@ -345,7 +346,8 @@ private:
         typedef atools::util::Flags<EnumParam, quint64> FlagsParam;
 
 /* ============================================================================
- * Declare operator|(), qHash() and stream operators operator>> and operator<< */
+ * Declare operator|(), qHash() and stream operators operator>> and operator<<.
+ * Example within namespace: ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(ms::MouseStates) */
 
 #define ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(FlagsParam) \
         inline atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType> \
@@ -353,18 +355,18 @@ private:
         { \
           return atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType>(f1) | f2; \
         } \
-        \
+ \
         constexpr inline atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType> \
         operator|(FlagsParam::EnumType f1, atools::util::Flags<FlagsParam::EnumType, FlagsParam::FlagType> f2) \
         { \
           return f2 | f1; \
         } \
-        \
+ \
         constexpr inline size_t qHash(const FlagsParam& flags, size_t seed) \
         { \
           return ::qHash(flags.asFlagType(), seed); \
         } \
-        \
+ \
         inline QDataStream& operator>>(QDataStream& stream, FlagsParam& flags) \
         { \
           FlagsParam::FlagType value; \
@@ -372,7 +374,7 @@ private:
           flags = value; \
           return stream; \
         } \
-        \
+ \
         inline QDataStream& operator<<(QDataStream& stream, FlagsParam flags) \
         { \
           stream << flags.asFlagType(); \
@@ -382,7 +384,7 @@ private:
 /* ============================================================================
  * Helper macros to build flag to string functions
  *
- * Example:
+ * Example within namespace:
  * QStringList mapAirspaceTypeToString(const map::MapAirspaceTypes& flags)
  * {
  *   ATOOLS_FLAGS_TO_STR_BEGIN(AIRSPACE_NONE);
@@ -395,6 +397,30 @@ private:
 #define ATOOLS_FLAGS_TO_STR_BEGIN(flag) QStringList list; if(flags == flag) list.append(QStringLiteral(# flag)); else {
 #define ATOOLS_FLAGS_TO_STR(flag) if(flags.testFlag(flag)) list.append(QStringLiteral(# flag));
 #define ATOOLS_FLAGS_TO_STR_END } return list;
+
+/* ============================================================================
+ * Declare debug operator>> and operator<<.
+ * Example within namespace: ATOOLS_DECLARE_DEBUG_OPERATORS_FOR_FLAGS(MouseStates, ms::MouseState)
+ * and
+ * ATOOLS_DEFINE_DEBUG_OPERATORS_FOR_FLAGS(MouseStates, MouseState, mapMouseStateToString)
+ */
+#define ATOOLS_DECLARE_DEBUG_OPERATORS_FOR_FLAGS(FlagsParam, EnumParam) \
+        QDebug operator<<(QDebug out, EnumParam type); \
+        QDebug operator<<(QDebug out, const FlagsParam& type);
+
+#define ATOOLS_DEFINE_DEBUG_OPERATORS_FOR_FLAGS(FlagsParam, EnumParam, ConversionFunction) \
+        QDebug operator<<(QDebug out, EnumParam type) \
+        { \
+          out << FlagsParam(type); \
+          return out; \
+        } \
+ \
+        QDebug operator<<(QDebug out, const FlagsParam& type) \
+        { \
+          QDebugStateSaver saver(out); \
+          out.nospace().noquote() << ConversionFunction(type).join("|"); \
+          return out; \
+        }
 
 } // namespace util
 } // namespace atools
