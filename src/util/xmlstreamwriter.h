@@ -133,6 +133,7 @@ public:
   }
 
 #if defined(QT_WIDGETS_LIB)
+  /* Write color in ARGB text format */
   void writeTextElement(const QString& name, const QColor& value);
 
 #endif

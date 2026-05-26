@@ -130,7 +130,7 @@ void XmlStreamWriter::writeTextElement(const QString& name, bool value)
 #if defined(QT_WIDGETS_LIB)
 void XmlStreamWriter::writeTextElement(const QString& name, const QColor& value)
 {
-  writer->writeTextElement(name, value.name());
+  writer->writeTextElement(name, value.name(QColor::HexArgb));
   checkError();
 }
 

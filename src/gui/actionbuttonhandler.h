@@ -27,7 +27,7 @@ namespace atools {
 namespace gui {
 
 /*
- * ZHandler takes care of none/all/selection actions in toolbar buttons.
+ * ActionButtonHandler takes care of none/all/selection actions in toolbar buttons.
  *
  * A press on all/none will show all or no features and a second press on all/none will revert to the selection.
  * There is no need to connect actions directly. Use this handlers signals instead.
