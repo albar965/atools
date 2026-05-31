@@ -32,7 +32,7 @@ namespace atools {
 namespace util {
 
 XmlStreamWriter::XmlStreamWriter(QIODevice *device, const QString& filenameParam)
-  : filename(filenameParam)
+  : filename(filenameParam), locale(QLocale(QLocale::C))
 {
   // Let the stream reader detect the encoding in the PI
   writer = new QXmlStreamWriter(device);
@@ -42,7 +42,7 @@ XmlStreamWriter::XmlStreamWriter(QIODevice *device, const QString& filenameParam
 }
 
 XmlStreamWriter::XmlStreamWriter(QByteArray *data, const QString& filenameParam)
-  : filename(filenameParam)
+  : filename(filenameParam), locale(QLocale(QLocale::C))
 {
   writer = new QXmlStreamWriter(data);
   writer->setAutoFormatting(true);
@@ -51,7 +51,7 @@ XmlStreamWriter::XmlStreamWriter(QByteArray *data, const QString& filenameParam)
 }
 
 XmlStreamWriter::XmlStreamWriter(QString *data, const QString& filenameParam)
-  : filename(filenameParam)
+  : filename(filenameParam), locale(QLocale(QLocale::C))
 {
   writer = new QXmlStreamWriter(data);
   writer->setAutoFormatting(true);
@@ -60,6 +60,7 @@ XmlStreamWriter::XmlStreamWriter(QString *data, const QString& filenameParam)
 }
 
 XmlStreamWriter::XmlStreamWriter(QXmlStreamWriter *streamwriter)
+  : locale(QLocale(QLocale::C))
 {
   writer = streamwriter;
   deleteWriter = false;
@@ -141,10 +142,10 @@ void XmlStreamWriter::writeTextElement(const QString& posName, const atools::geo
   if(pos.isValid())
   {
     writer->writeStartElement(posName);
-    writer->writeAttribute(QStringLiteral("Lon"), QString::number(pos.getLonX(), 'f', 6));
-    writer->writeAttribute(QStringLiteral("Lat"), QString::number(pos.getLatY(), 'f', 6));
+    writer->writeAttribute(QStringLiteral("Lon"), locale.toString(pos.getLonX(), 'g', 8));
+    writer->writeAttribute(QStringLiteral("Lat"), locale.toString(pos.getLatY(), 'g', 8));
     if(writeAltitude)
-      writer->writeAttribute(QStringLiteral("Alt"), QString::number(pos.getAltitude(), 'f', 2));
+      writer->writeAttribute(QStringLiteral("Alt"), locale.toString(pos.getAltitude(), 'g', 8));
     writer->writeEndElement(); // posName
     checkError();
   }

@@ -20,6 +20,7 @@
 
 #include <QCoreApplication>
 
+#include <QLocale>
 #include <QXmlStreamWriter>
 
 class QIODevice;
@@ -99,12 +100,12 @@ public:
 
   void writeTextElement(const QString& name, float value)
   {
-    writeTextElement(name, QString::number(value, 'f', 10));
+    writeTextElement(name, locale.toString(value, 'g', 10));
   }
 
   void writeTextElement(const QString& name, double value)
   {
-    writeTextElement(name, QString::number(value, 'f', 10));
+    writeTextElement(name, locale.toString(value, 'g', 10));
   }
 
   void writeAttribute(const QString& name, const QString& value);
@@ -124,12 +125,12 @@ public:
 
   void writeAttribute(const QString& name, float value)
   {
-    writeAttribute(name, QString::number(value, 'f', 10));
+    writeAttribute(name, locale.toString(value, 'g', 10));
   }
 
   void writeAttribute(const QString& name, double value)
   {
-    writeAttribute(name, QString::number(value, 'f', 10));
+    writeAttribute(name, locale.toString(value, 'g', 10));
   }
 
 #if defined(QT_WIDGETS_LIB)
@@ -177,6 +178,9 @@ private:
   QXmlStreamWriter *writer = nullptr;
   bool deleteWriter = true;
   QString errorMsg = tr("Cannot open file %1. Reason: %2"), filename;
+
+  /* CLocale to ensure system independent number format */
+  QLocale locale;
 };
 
 } // namespace util
