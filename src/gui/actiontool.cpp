@@ -21,11 +21,10 @@
 #include "gui/actionstatesaver.h"
 #include "gui/actioniconsaver.h"
 
-#include <QAction>
-#include <QStringBuilder>
-
 namespace atools {
 namespace gui {
+
+QString ActionTool::ellipsisStr;
 
 ActionTool::ActionTool(QList<QAction *> actions)
 {
@@ -41,18 +40,31 @@ ActionTool::~ActionTool()
   delete iconSaver;
 }
 
-void ActionTool::setText(QAction *action, const QString& arg, const QString& suffix)
+void ActionTool::initTranslateableTexts()
 {
-  if(action->text().contains("%1"))
-    action->setText(action->text().arg(action->isEnabled() ? arg : QStringLiteral()) % (action->isEnabled() ? QStringLiteral() : suffix));
+  ellipsisStr = tr(" ...", "Ending ellipsis for menu items");
 }
 
 void ActionTool::setText(QAction *action, bool enabled, const QString& arg, const QString& suffix)
 {
-  action->setEnabled(enabled);
+  if(action->isEnabled() != enabled)
+    action->setEnabled(enabled);
 
-  if(action->text().contains("%1"))
-    action->setText(action->text().arg(enabled ? arg : QStringLiteral()) % (enabled ? QStringLiteral() : suffix));
+  if(enabled)
+  {
+    // No suffix added if enabled
+    if(action->text().contains("%1"))
+      action->setText(action->text().arg(arg));
+  }
+  else
+  {
+    // Disabled with added suffix before ellipsis
+    if(action->text().contains("%1"))
+      action->setText(addTextBeforeEllipsis(action->text().arg(arg), suffix));
+    else
+      action->setText(addTextBeforeEllipsis(action->text(), suffix));
+  }
+  action->setText(action->text().replace(QStringLiteral("  "), QStringLiteral(" ")));
 }
 
 void ActionTool::finishTexts(const QString& objectText)
@@ -61,6 +73,7 @@ void ActionTool::finishTexts(const QString& objectText)
   {
     if(action->text().contains("%1"))
       action->setText(action->text().arg(action->isEnabled() ? objectText : QStringLiteral()));
+    action->setText(action->text().replace(QStringLiteral("  "), QStringLiteral(" ")));
   }
 }
 
@@ -74,6 +87,20 @@ void ActionTool::disableAll()
 {
   for(QAction *action : std::as_const(stateSaver->actions))
     action->setDisabled(true);
+}
+
+QString ActionTool::addTextBeforeEllipsis(const QString& str, const QString& suffix)
+{
+  if(hasEllipsis(str))
+  {
+    QString retval;
+    retval = removeEllipsis(str);
+    retval = retval % suffix;
+    retval = addEllipsis(retval);
+    return retval;
+  }
+  else
+    return str % suffix;
 }
 
 } // namespace gui

@@ -18,9 +18,8 @@
 #ifndef ATOOLS_GUI_ACTIONTOOL_H
 #define ATOOLS_GUI_ACTIONTOOL_H
 
-#include <QList>
-
-class QAction;
+#include <QCoreApplication>
+#include <QAction>
 
 namespace atools {
 namespace gui {
@@ -35,10 +34,15 @@ class ActionStateSaver;
  */
 class ActionTool
 {
+  Q_DECLARE_TR_FUNCTIONS(ActionTool)
+
 public:
   /* All texts and disabled/enabled state is restored on destruction of this object */
   explicit ActionTool(QList<QAction *> actions);
   ~ActionTool();
+
+  /* Inititialize translations */
+  static void initTranslateableTexts();
 
   /* Do not allow copying */
   ActionTool(const ActionTool& other) = delete;
@@ -46,10 +50,13 @@ public:
 
   /* Sets the %1 placeholder with arg. An empty placeholder is used if the
    * action is disabled and the suffix is attached for disabled. */
-  static void setText(QAction *action, const QString& arg = QString(), const QString& suffix = QString());
+  static void setText(QAction *action, const QString& arg = QString(), const QString& suffix = QString())
+  {
+    setText(action, action->isEnabled(), arg, suffix);
+  }
 
   /* Sets the %1 placeholder with arg. An empty placeholder is used if enabled is false
-   *  and the suffix is attached for disabled. */
+   *  and the suffix is attached for disabled. Suffix is added before ellipsis " ...". */
   static void setText(QAction *action, bool enabled, const QString& arg = QString(), const QString& suffix = QString());
 
   /* Look for placeholders %1 in all texts and replace these with objectText if
@@ -60,10 +67,39 @@ public:
   void enableAll();
   void disableAll();
 
+  /* Add text before " ..."  */
+  static QString addTextBeforeEllipsis(const QString& str, const QString& suffix);
+
+  /* Add " ..." if string does not contain it */
+  static QString addEllipsis(const QString& str)
+  {
+    return hasEllipsis(str) ? str : str % ellipsisStr;
+  }
+
+  /* Remove " ..." */
+  static QString removeEllipsis(const QString& str)
+  {
+    return hasEllipsis(str) ? str.chopped(ellipsisStr.size()) : str;
+  }
+
+  /* True if string ends with " ..." */
+  static bool hasEllipsis(const QString& str)
+  {
+    return str.endsWith(ellipsisStr);
+  }
+
+  /* Usually " ..." depending on translation. Call initTranslateableTexts() before. */
+  static const QString& getEllipsisStr()
+  {
+    return ellipsisStr;
+  }
+
 private:
   atools::gui::ActionTextSaver *textSaver;
   atools::gui::ActionStateSaver *stateSaver;
   atools::gui::ActionIconSaver *iconSaver;
+
+  static QString ellipsisStr;
 };
 
 } // namespace gui
