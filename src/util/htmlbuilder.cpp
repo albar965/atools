@@ -382,8 +382,21 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::
 {
   if(isId())
   {
-    tr(background).td(txt(name, flags | html::BOLD, color, background), html::NO_ENTITIES).
-    td(txt(value, flags, color, background), flags | row2Align | html::NO_ENTITIES).trEnd();
+    tr(background);
+
+    if(!name.isEmpty())
+      td(txt(name, flags | html::BOLD, color, background), html::NO_ENTITIES);
+    else
+      // Add non breaking space to avoid issues with formatting like hr
+      td().nbsp().tdEnd();
+
+    if(!value.isEmpty())
+      td(txt(value, flags, color, background), flags | row2Align | html::NO_ENTITIES);
+    else
+      // Add non breaking space to avoid issues with formatting like hr
+      td().nbsp().tdEnd();
+
+    trEnd();
   }
   return *this;
 }
