@@ -125,18 +125,6 @@ public:
     return pos1.angleDegTo(pos2);
   }
 
-  /* Distance to other point for rhumb line */
-  float distanceMeterRhumb() const
-  {
-    return pos1.distanceMeterToRhumb(pos2);
-  }
-
-  /* Angleto other point using a rhumb line */
-  float angleDegRhumb() const
-  {
-    return pos1.angleDegToRhumb(pos2);
-  }
-
   /* Find point between start and end on GC route if distance between points is already known.
    *  fraction is 0 <= fraction <= 1 where 0 equals this and 1 equal other pos */
   atools::geo::Pos interpolate(float distanceMeter, float fraction) const
@@ -169,7 +157,7 @@ public:
   /* Create a parallel line to this one.
    * Positive distance: Parallel to the right (looking from pos1 to pos2)
    * Negative distance: Parallel to the left (looking from pos1 to pos2) */
-  atools::geo::Line parallel(float distanceMeter);
+  atools::geo::Line parallel(float distanceMeter) const;
 
   /* Make line longer or shorted
    * Positive distance: Move pos outward - line will be longer
@@ -248,12 +236,12 @@ public:
     return atools::geo::isEastCourse(pos1.getLonX(), pos2.getLonX());
   }
 
-  float getInitialBearing()
+  float getInitialBearing() const
   {
     return pos1.initialBearing(pos2);
   }
 
-  float getFinalBearing()
+  float getFinalBearing() const
   {
     return pos1.finalBearing(pos2);
   }

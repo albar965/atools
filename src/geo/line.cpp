@@ -127,7 +127,7 @@ Pos Line::intersectionWithCircle(const Pos& center, float radiusMeter, float acc
   return result;
 }
 
-Line Line::parallel(float distanceMeter)
+Line Line::parallel(float distanceMeter) const
 {
   if(almostEqual(distanceMeter, 0.f))
     return *this;
