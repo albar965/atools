@@ -180,7 +180,12 @@ public:
   }
 
   /* Set actions which texts and state will be updated after undo steps accordingly. */
-  void setActions(QAction *undoActionParam, QAction *redoActionParam);
+  void setActions(QAction *undoActionParam, QAction *redoActionParam)
+  {
+    setActionLists({undoActionParam}, {redoActionParam});
+  }
+
+  void setActionLists(const QList<QAction *>& undoActionParam, const QList<QAction *>& redoActionParam);
 
   void updateUndoRedoActions();
 
@@ -267,14 +272,14 @@ protected:
   struct QueryWrapper
   {
     /* Returns records in order of id vector */
-    QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase *sqlDb, const QList<int>& idVector, const QString& idColName)
+    QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase * sqlDb, const QList<int>& idVector, const QString& idColName)
       : query(sqlDb), ids(idVector), hasIds(!ids.isEmpty())
     {
       query.prepare(queryStr + (hasIds ? QLatin1String(" where ") + idColName + QLatin1String(" = :id") : QString()));
     }
 
     /* Returns records in arbitrary order */
-    QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase *sqlDb, const QSet<int>& idSet, const QString& idColName)
+    QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase * sqlDb, const QSet<int>& idSet, const QString& idColName)
       : query(sqlDb), ids(idSet.constBegin(), idSet.constEnd()), hasIds(!ids.isEmpty())
     {
       query.prepare(queryStr + (hasIds ? QLatin1String(" where ") + idColName + QLatin1String(" = :id") : QString()));
@@ -390,7 +395,7 @@ private:
   int currentUndoGroupId = 0;
 
   atools::sql::SqlUtil *util = nullptr;
-  QAction *undoAction = nullptr, *redoAction = nullptr;
+  QList<QAction *> undoActions, redoActions;
 
   atools::sql::SqlQuery *queryUndoCurrent = nullptr, *queryTruncateUndoData = nullptr, *selectMinMax = nullptr,
                         *queryTruncateUndoDataCurrent = nullptr, *querySelectUndoByGroup = nullptr, *updateUndoById = nullptr,

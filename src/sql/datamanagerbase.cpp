@@ -177,10 +177,10 @@ bool DataManagerBase::addColumnIf(const QString& colName, const QString& colType
   return retval;
 }
 
-void DataManagerBase::setActions(QAction *undoActionParam, QAction *redoActionParam)
+void DataManagerBase::setActionLists(const QList<QAction *>& undoActionParam, const QList<QAction *>& redoActionParam)
 {
-  undoAction = undoActionParam;
-  redoAction = redoActionParam;
+  undoActions = undoActionParam;
+  redoActions = redoActionParam;
   updateUndoRedoActions();
 }
 
@@ -749,18 +749,18 @@ void DataManagerBase::undoRedo(bool undo)
 
 void DataManagerBase::updateUndoRedoActions()
 {
-  if(undoAction != nullptr || redoAction != nullptr)
+  if(!undoActions.isEmpty() || !redoActions.isEmpty())
   {
     bool undo, redo;
     canUndoRedo(undo, redo);
 
-    if(undoAction != nullptr)
+    for(QAction *undoAction : std::as_const(undoActions))
     {
       undoAction->setEnabled(undo);
       undoAction->setText(undo ? tr("&%1").arg(undoStepName()) : tr("&Undo %1").arg(textSuffixSingular));
     }
 
-    if(redoAction != nullptr)
+    for(QAction *redoAction : std::as_const(redoActions))
     {
       redoAction->setEnabled(redo);
       redoAction->setText(redo ? tr("&%1").arg(redoStepName()) : tr("&Redo %1").arg(textSuffixSingular));
