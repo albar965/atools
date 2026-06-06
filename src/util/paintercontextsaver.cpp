@@ -16,15 +16,3 @@
 *****************************************************************************/
 
 #include "paintercontextsaver.h"
-
-#include <QPainter>
-
-namespace atools {
-namespace util {
-
-
-
-
-
-} // namespace util
-} // namespace atools
