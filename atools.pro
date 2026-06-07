@@ -567,6 +567,8 @@ HEADERS += \
   src/gui/widgetstate.h \
   src/gui/widgettool.h \
   src/gui/widgetzoomhandler.h \
+  src/qrcode/qrcodegen/qrcodegen.h \
+  src/qrcode/qrcodegenerator.h \
   src/util/csvexporter.h \
   src/util/htmlbuilder.h \
   src/util/htmlbuilderflags.h \
@@ -608,6 +610,8 @@ SOURCES += \
   src/gui/widgetstate.cpp \
   src/gui/widgettool.cpp \
   src/gui/widgetzoomhandler.cpp \
+  src/qrcode/qrcodegen/qrcodegen.cpp \
+  src/qrcode/qrcodegenerator.cpp \
   src/util/csvexporter.cpp \
   src/util/htmlbuilder.cpp \
   src/util/htmlbuilderflags.cpp \
