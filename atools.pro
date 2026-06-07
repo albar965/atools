@@ -551,6 +551,7 @@ HEADERS += \
   src/gui/filehistoryhandler.h \
   src/gui/griddelegate.h \
   src/gui/helphandler.h \
+  src/gui/imagedialog.h \
   src/gui/linktooltiphandler.h \
   src/gui/listwidgetindex.h \
   src/gui/mapposhistory.h \
@@ -594,6 +595,7 @@ SOURCES += \
   src/gui/filehistoryhandler.cpp \
   src/gui/griddelegate.cpp \
   src/gui/helphandler.cpp \
+  src/gui/imagedialog.cpp \
   src/gui/linktooltiphandler.cpp \
   src/gui/listwidgetindex.cpp \
   src/gui/mapposhistory.cpp \
@@ -623,6 +625,7 @@ SOURCES += \
 !isEqual(ATOOLS_NO_GUI, "true") {
 FORMS += \
   src/gui/choicedialog.ui \
+  src/gui/imagedialog.ui \
   src/gui/messagebox.ui \
   src/gui/simplewaitdialog.ui \
   src/gui/sqlquerydialog.ui \
