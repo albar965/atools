@@ -18,7 +18,6 @@
 #include "gui/translator.h"
 #include "atools.h"
 
-#include <QDebug>
 #include <QFileInfo>
 #include <QCoreApplication>
 #include <QTranslator>
@@ -27,6 +26,7 @@
 #include <QLocale>
 #include <QCoreApplication>
 #include <QRegularExpression>
+#include <QStringBuilder>
 
 namespace atools {
 
@@ -35,7 +35,7 @@ namespace gui {
 QList<QTranslator *> Translator::translators;
 bool Translator::loaded = false;
 
-void Translator::load(const QString& language)
+void Translator::load(const QString& language, const QStringList& modules)
 {
   if(!loaded)
   {
@@ -49,18 +49,19 @@ void Translator::load(const QString& language)
 
     if(loadDefault)
     {
-      // Load atools translations if main app language was found
-      loadApp("atools", appPath, language);
+      // Load module translations only if main app language was found
+      for(const QString& module : modules)
+        loadApp(module, appPath, language);
 
       // Load the Qt translations only if a language was found for the application to avoid mixed language dialogs
       QString translationsPath = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
       // First application path
-      if(!loadAndInstall("qt", appPath, language))
+      if(!loadAndInstall(QStringLiteral("qt"), appPath, language))
         // second official translations path
-        loadAndInstall("qt", translationsPath, language);
+        loadAndInstall(QStringLiteral("qt"), translationsPath, language);
 
-      if(!loadAndInstall("qtbase", appPath, language))
-        loadAndInstall("qtbase", translationsPath, language);
+      if(!loadAndInstall(QStringLiteral("qtbase"), appPath, language))
+        loadAndInstall(QStringLiteral("qtbase"), translationsPath, language);
     }
     loaded = true;
 
@@ -73,16 +74,16 @@ void Translator::load(const QString& language)
 bool Translator::loadApp(const QString& appBaseName, const QString& appPath, const QString& language)
 {
   // try resources first
-  if(!loadAndInstall(appBaseName, ":/" + appBaseName, language))
+  if(!loadAndInstall(appBaseName, QStringLiteral(":/") % appBaseName, language))
   {
     // try resources translations second
-    if(!loadAndInstall(appBaseName, ":/" + appBaseName + "/translations", language))
+    if(!loadAndInstall(appBaseName, QStringLiteral(":/") % appBaseName % QStringLiteral("/translations"), language))
     {
       // Executable directory
       if(!loadAndInstall(appBaseName, appPath, language))
       {
         // Last try in executable directory + "translations"
-        if(!loadAndInstall(appBaseName, appPath + QDir::separator() + "translations", language))
+        if(!loadAndInstall(appBaseName, appPath % QDir::separator() % QStringLiteral("translations"), language))
         {
           // No translations for this application found - force English to avoid mixed language in dialogs
           return false;
@@ -114,10 +115,10 @@ QList<QLocale> Translator::findTranslationFiles()
   QList<QLocale> retval = findTranslationFilesInternal(QStringLiteral());
 
   // Get files from translations folder (Linux and Windows)
-  retval.append(findTranslationFilesInternal("translations"));
+  retval.append(findTranslationFilesInternal(QStringLiteral("translations")));
 
   // Always add English
-  retval.append(QLocale("en"));
+  retval.append(QLocale(QStringLiteral("en")));
 
   // Sort by language and country ==================
   std::sort(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
@@ -146,11 +147,11 @@ QList<QLocale> Translator::findTranslationFilesInternal(const QString& path)
 {
   static const QString APP_NAME = QFileInfo(QCoreApplication::applicationFilePath()).baseName();
   static const QString FILTER = QStringLiteral("%1_*.qm").arg(APP_NAME);
-  static const QRegularExpression QM_FILE_LANG(APP_NAME + "_(.+).qm");
-  static const QRegularExpression QM_FILE_LANG_REGION(APP_NAME + "_(.+)_(.+).qm");
+  static const QRegularExpression QM_FILE_LANG(APP_NAME % QStringLiteral("_(.+).qm"));
+  static const QRegularExpression QM_FILE_LANG_REGION(APP_NAME % QStringLiteral("_(.+)_(.+).qm"));
 
   // Setup directory for file detection =====================================
-  QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + path);
+  QDir dir(QCoreApplication::applicationDirPath() % QDir::separator() % path);
   dir.setFilter(QDir::Files | QDir::Hidden);
   dir.setNameFilters({FILTER});
 
@@ -165,7 +166,7 @@ QList<QLocale> Translator::findTranslationFilesInternal(const QString& path)
     // Try language/region match ========
     QRegularExpressionMatch match = QM_FILE_LANG_REGION.match(fi.fileName());
     if(match.hasMatch())
-      locale = QLocale(match.captured(1) + "_" + match.captured(2));
+      locale = QLocale(match.captured(1) % QStringLiteral("_") % match.captured(2));
     else
     {
       // Try language match ========
@@ -192,13 +193,13 @@ bool Translator::loadAndInstall(const QString& name, const QString& dir, const Q
   QLocale locale;
   if(language.isEmpty())
     // Use only one language here since the translation API will try to load second and third languages
-    locale = QLocale(QLocale().uiLanguages().isEmpty() ? "en" : QLocale().uiLanguages().value(0));
+    locale = QLocale(QLocale().uiLanguages().isEmpty() ? QStringLiteral("en") : QLocale().uiLanguages().value(0));
   else
     // Override system language for translations only
     locale = QLocale(language);
 
   QTranslator *t = new QTranslator();
-  if(!t->load(locale, name, "_", dir))
+  if(!t->load(locale, name, QStringLiteral("_"), dir))
     qDebug() << "Qt translation file" << name << "not loaded from dir" << dir << "locale" << locale.name();
   else if(QCoreApplication::installTranslator(t))
   {

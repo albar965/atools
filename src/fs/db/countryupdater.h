@@ -37,7 +37,7 @@ namespace fs {
 namespace db {
 
 /*
- * Corrects airport country names bei either using a list of known misspellings, converting codes
+ * Corrects airport country names by either using a list of known misspellings, converting codes
  * which were added instead of names or using time zones to detect name.
  */
 class CountryUpdater

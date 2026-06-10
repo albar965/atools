@@ -51,7 +51,7 @@ public:
    * @param language If given will override the system language.
    * Format is "language[_script][_country][.codeset][@modifier]".
    */
-  static void load(const QString& language = QString());
+  static void load(const QString& language, const QStringList& modules = QStringList());
 
   /* Unloads all translations and frees associated resources */
   static void unload();
@@ -62,18 +62,12 @@ public:
   static QList<QLocale> findTranslationFiles();
 
 private:
-  Translator()
-  {
-
-  }
-
   static bool loadAndInstall(const QString& name, const QString& dir, const QString& language);
   static bool loadApp(const QString& appBaseName, const QString& appPath, const QString& language);
   static QList<QLocale> findTranslationFilesInternal(const QString& path);
 
   static QList<QTranslator *> translators;
   static bool loaded;
-
 };
 
 } // namespace gui
