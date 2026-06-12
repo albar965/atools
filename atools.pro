@@ -1108,11 +1108,11 @@ OTHER_FILES += \
   uncrustify.cfg
 
 TRANSLATIONS = \
-  atools_de.ts \
-  atools_fr.ts \
-  atools_it.ts \
-  atools_zh.ts \
-  atools_pt_BR.ts
+  translations/atools_de.ts \
+  translations/atools_fr.ts \
+  translations/atools_it.ts \
+  translations/atools_zh.ts \
+  translations/atools_pt_BR.ts
 
 # atools_es.ts
 # atools_nl.ts
@@ -1144,7 +1144,8 @@ unix:!macx {
   deploy.commands += echo $$VERSION_NUMBER > $$DEPLOY_DIR/version.txt &&
   deploy.commands += echo $$GIT_REVISION_FULL > $$DEPLOY_DIR/revision.txt &&
   deploy.commands += $$copyHeaderFilesCommands($$DEPLOY_DIR_INCLUDE)
-  deploy.commands += cp -Rvf $$PWD/atools*.qm $$DEPLOY_DIR &&
+  deploy.commands += mkdir -p $$OUT_PWD/translations &&
+  deploy.commands += cp -avfu $$PWD/translations/*.qm $$OUT_PWD/translations &&
   deploy.commands += cp -Rvf $$OUT_PWD/libatools.a $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vf $$PWD/CHANGELOG.txt $$DEPLOY_DIR &&
   deploy.commands += cp -vf $$PWD/README.txt $$DEPLOY_DIR &&
@@ -1175,12 +1176,13 @@ win32 {
   deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/lib) &&
   deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/include) &&
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/translations) &&
   deploy.commands += echo $$VERSION_NUMBER > $$p($$DEPLOY_BASE/$$TARGET_NAME/version.txt) &&
   deploy.commands += echo $$GIT_REVISION_FULL > $$p($$DEPLOY_BASE/$$TARGET_NAME/revision.txt) &&
   deploy.commands += xcopy /T /E $$p($$PWD/src) $$p($$DEPLOY_BASE/$$TARGET_NAME/include) &&
   deploy.commands += $$copyHeaderFilesCommands($$DEPLOY_BASE/$$TARGET_NAME/include)
   deploy.commands += xcopy $$p($$OUT_PWD/libatools.a) $$p($$DEPLOY_BASE/$$TARGET_NAME/lib) &&
-  deploy.commands += xcopy $$p($${PWD}/*.qm) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$PWD/translations/*.qm) $$p($$DEPLOY_BASE/$$TARGET_NAME/translations) &&
   deploy.commands += xcopy $$p($$PWD/CHANGELOG.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/README.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/LICENSE.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME)

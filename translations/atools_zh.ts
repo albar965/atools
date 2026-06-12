@@ -2,14 +2,23 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>ActionTool</name>
+    <message>
+        <location filename="../src/gui/actiontool.cpp" line="45"/>
+        <source> ...</source>
+        <comment>Ending ellipsis for menu items</comment>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AddOnPackage</name>
     <message>
-        <location filename="src/fs/scenery/addonpackage.cpp" line="70"/>
+        <location filename="../src/fs/scenery/addonpackage.cpp" line="70"/>
         <source>Cannot read file %1. Reason: %2</source>
         <translation>无法读取文件 %1。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/addonpackage.cpp" line="73"/>
+        <location filename="../src/fs/scenery/addonpackage.cpp" line="73"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>无法打开文件 %1。原因是： %2</translation>
     </message>
@@ -17,38 +26,38 @@
 <context>
     <name>AircraftPerf</name>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="95"/>
+        <location filename="../src/fs/perf/aircraftperf.cpp" line="95"/>
         <source>Example Performance Profile</source>
         <translation>性能文件示例</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="96"/>
+        <location filename="../src/fs/perf/aircraftperf.cpp" line="96"/>
         <source>C172</source>
         <translation>C172</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="132"/>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="399"/>
+        <location filename="../src/fs/perf/aircraftperf.cpp" line="132"/>
+        <location filename="../src/fs/perf/aircraftperf.cpp" line="397"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
         <translation>无法打开要读取的航空器性能文件“%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="145"/>
+        <location filename="../src/fs/perf/aircraftperf.cpp" line="145"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading. Invalid format.</source>
         <translation>无法打开要读取的航空器性能文件“%1”。格式无效。</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="173"/>
+        <location filename="../src/fs/perf/aircraftperf.cpp" line="173"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>无法打开文件 %1。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="264"/>
+        <location filename="../src/fs/perf/aircraftperf.cpp" line="264"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件“%1”。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="412"/>
+        <location filename="../src/fs/perf/aircraftperf.cpp" line="410"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
         <translation>无法打开要写入的航空器性能文件“%1”。</translation>
     </message>
@@ -56,9 +65,9 @@
 <context>
     <name>AirspaceReaderIvao</name>
     <message>
-        <location filename="src/fs/userdata/airspacereaderivao.cpp" line="227"/>
-        <location filename="src/fs/userdata/airspacereaderopenair.cpp" line="85"/>
-        <location filename="src/fs/userdata/airspacereadervatsim.cpp" line="299"/>
+        <location filename="../src/fs/userdata/airspacereaderivao.cpp" line="227"/>
+        <location filename="../src/fs/userdata/airspacereaderopenair.cpp" line="85"/>
+        <location filename="../src/fs/userdata/airspacereadervatsim.cpp" line="299"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
         <translation>无法打开文件 &quot;%1&quot;。原因是：%2 (%3)</translation>
     </message>
@@ -66,7 +75,7 @@
 <context>
     <name>AirspaceWriter</name>
     <message>
-        <location filename="src/fs/userdata/airspacereaderbase.cpp" line="125"/>
+        <location filename="../src/fs/userdata/airspacereaderbase.cpp" line="125"/>
         <source>In file &quot;%1&quot; on line %2: Index out of bounds: Index: %1, size: %2</source>
         <translation>文件“%1”第 %2 行：索引超出范围：索引 %1，大小：%2</translation>
     </message>
@@ -74,7 +83,7 @@
 <context>
     <name>AirwayResolver</name>
     <message>
-        <location filename="src/fs/db/airwayresolver.cpp" line="157"/>
+        <location filename="../src/fs/db/airwayresolver.cpp" line="157"/>
         <source>Creating airways: %1...</source>
         <translation>正在创建航路：%1...</translation>
     </message>
@@ -86,7 +95,7 @@
 <context>
     <name>BglFile</name>
     <message>
-        <location filename="src/fs/bgl/bglfile.cpp" line="317"/>
+        <location filename="../src/fs/bgl/bglfile.cpp" line="317"/>
         <source>Multiple duplicate airport idents &quot;%1&quot; in file &quot;%2&quot;. File is malformed.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -94,37 +103,37 @@
 <context>
     <name>BinaryStream</name>
     <message>
-        <location filename="src/io/binarystream.cpp" line="245"/>
+        <location filename="../src/io/binarystream.cpp" line="245"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="src/io/binarystream.cpp" line="249"/>
+        <location filename="../src/io/binarystream.cpp" line="249"/>
         <source>No error</source>
         <translation>无错误</translation>
     </message>
     <message>
-        <location filename="src/io/binarystream.cpp" line="253"/>
+        <location filename="../src/io/binarystream.cpp" line="253"/>
         <source>Read past file end</source>
         <translation>读取超出文件末尾</translation>
     </message>
     <message>
-        <location filename="src/io/binarystream.cpp" line="257"/>
+        <location filename="../src/io/binarystream.cpp" line="257"/>
         <source>Read corrupted data</source>
         <translation>读取到损坏的数据</translation>
     </message>
     <message>
-        <location filename="src/io/binarystream.cpp" line="261"/>
+        <location filename="../src/io/binarystream.cpp" line="261"/>
         <source>Write failed</source>
         <translation>写入失败</translation>
     </message>
     <message>
-        <location filename="src/io/binarystream.cpp" line="266"/>
+        <location filename="../src/io/binarystream.cpp" line="266"/>
         <source>Size limit exceeded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/io/binarystream.cpp" line="271"/>
+        <location filename="../src/io/binarystream.cpp" line="271"/>
         <source>%1 for file &quot;%2&quot; failed. Reason: %3 (%4).</source>
         <translation>%1 文件 “%2” 失败。原因：%3 (%4)。</translation>
     </message>
@@ -132,7 +141,7 @@
 <context>
     <name>ChoiceDialog</name>
     <message>
-        <location filename="src/gui/choicedialog.ui" line="14"/>
+        <location filename="../src/gui/choicedialog.ui" line="14"/>
         <source>Little Navmap - </source>
         <translation>Little Navmap - </translation>
     </message>
@@ -144,22 +153,22 @@
         <translation type="vanished">基地机场</translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/contentxml.cpp" line="184"/>
+        <location filename="../src/fs/scenery/contentxml.cpp" line="183"/>
         <source>Base</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/contentxml.cpp" line="190"/>
+        <location filename="../src/fs/scenery/contentxml.cpp" line="189"/>
         <source>Generic Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/contentxml.cpp" line="197"/>
+        <location filename="../src/fs/scenery/contentxml.cpp" line="196"/>
         <source>Base Navigation</source>
         <translation>基地导航</translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/contentxml.cpp" line="158"/>
+        <location filename="../src/fs/scenery/contentxml.cpp" line="157"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件“%1”。原因是：%2</translation>
     </message>
@@ -167,17 +176,17 @@
 <context>
     <name>DataWriter</name>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="396"/>
+        <location filename="../src/fs/db/datawriter.cpp" line="396"/>
         <source>Cannot read file. Falling back to world magnetic model.</source>
         <translation>无法读取文件。已退回到全球磁场模型。</translation>
     </message>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="409"/>
+        <location filename="../src/fs/db/datawriter.cpp" line="409"/>
         <source>File not valid. Falling back to world magnetic model.</source>
         <translation>文件无效。已退回到全球磁场模型。</translation>
     </message>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="416"/>
+        <location filename="../src/fs/db/datawriter.cpp" line="416"/>
         <source>File not found. Falling back to world magnetic model.</source>
         <translation>文件未找到。已退回到全球磁场模型。</translation>
     </message>
@@ -185,30 +194,38 @@
 <context>
     <name>DesktopServices</name>
     <message>
-        <location filename="src/gui/desktopservices.cpp" line="108"/>
+        <location filename="../src/gui/desktopservices.cpp" line="108"/>
         <source>Error opening path &quot;%1&quot;.</source>
         <translation>打开路径“%1”时出错。</translation>
     </message>
     <message>
-        <location filename="src/gui/desktopservices.cpp" line="112"/>
+        <location filename="../src/gui/desktopservices.cpp" line="112"/>
         <source>File does not exist &quot;%1&quot;.</source>
         <translation>文件“%1”不存在。</translation>
     </message>
     <message>
-        <location filename="src/gui/desktopservices.cpp" line="124"/>
+        <location filename="../src/gui/desktopservices.cpp" line="124"/>
         <source>Error opening URL &quot;%1&quot;.</source>
         <translation>打开网址“%1”时出错。</translation>
     </message>
     <message>
-        <location filename="src/gui/desktopservices.cpp" line="145"/>
+        <location filename="../src/gui/desktopservices.cpp" line="145"/>
         <source>Error running program &quot;%1&quot; with arguments %2.</source>
         <translation>运行程序“%1”时出错，参数 %2。</translation>
     </message>
 </context>
 <context>
+    <name>Dialog</name>
+    <message>
+        <location filename="../src/gui/dialog.cpp" line="45"/>
+        <source> - </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ErrorHandler</name>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="34"/>
+        <location filename="../src/gui/errorhandler.cpp" line="34"/>
         <source>%1
 Caught exception
 
@@ -219,14 +236,14 @@ Caught exception
 %2</translation>
     </message>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="42"/>
+        <location filename="../src/gui/errorhandler.cpp" line="42"/>
         <source>%1
 Caught unknown exception</source>
         <translation>%1
 捕获到未知异常</translation>
     </message>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="51"/>
+        <location filename="../src/gui/errorhandler.cpp" line="51"/>
         <source>%1
 Sql error occured
 &quot;%2&quot;</source>
@@ -235,7 +252,7 @@ Sql error occured
 “%2”</translation>
     </message>
     <message>
-        <location filename="src/gui/errorhandler.cpp" line="60"/>
+        <location filename="../src/gui/errorhandler.cpp" line="60"/>
         <source>%1
 IO error occured
 File: &quot;%2&quot;
@@ -249,39 +266,39 @@ File: &quot;%2&quot;
 <context>
     <name>FileOperations</name>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="97"/>
-        <location filename="src/util/fileoperations.cpp" line="172"/>
+        <location filename="../src/util/fileoperations.cpp" line="97"/>
+        <location filename="../src/util/fileoperations.cpp" line="172"/>
         <source>Cannot create directory &quot;%1&quot;.</source>
         <translation>无法创建目录 &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="131"/>
+        <location filename="../src/util/fileoperations.cpp" line="131"/>
         <source>Cannot remove file &quot;%1&quot;.</source>
         <translation>无法移除文件 &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="145"/>
+        <location filename="../src/util/fileoperations.cpp" line="145"/>
         <source>Cannot create link &quot;%1&quot; to &quot;%2&quot;.</source>
         <translation>无法创建至 &quot;%2&quot; 的快捷方式 &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="158"/>
+        <location filename="../src/util/fileoperations.cpp" line="158"/>
         <source>Cannot copy file &quot;%1&quot; to &quot;%2&quot;.</source>
         <translation>无法复制文件 &quot;%1&quot; 至 &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="194"/>
+        <location filename="../src/util/fileoperations.cpp" line="194"/>
         <source>Cannot remove standard directory, root drive or system folder &quot;%1&quot;.</source>
         <translation>无法删除标准目录、根驱动器或系统文件夹 &quot;%1&quot;。</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="208"/>
-        <location filename="src/util/fileoperations.cpp" line="269"/>
+        <location filename="../src/util/fileoperations.cpp" line="208"/>
+        <location filename="../src/util/fileoperations.cpp" line="269"/>
         <source>Cannot remove directory &quot;%1&quot;.</source>
         <translation>无法移除目录 &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="232"/>
+        <location filename="../src/util/fileoperations.cpp" line="232"/>
         <source>Cannot move directory &quot;%1&quot; to trash.</source>
         <translation>无法移动目录 &quot;%1&quot; 至回收站。</translation>
     </message>
@@ -290,12 +307,12 @@ File: &quot;%2&quot;
         <translation type="vanished">Qt 库不支持回收站。</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="278"/>
+        <location filename="../src/util/fileoperations.cpp" line="278"/>
         <source>Cannot remove &quot;%1&quot;.</source>
         <translation>无法移除 &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/util/fileoperations.cpp" line="285"/>
+        <location filename="../src/util/fileoperations.cpp" line="285"/>
         <source>Directory does not exist &quot;%1&quot;.</source>
         <translation>目录 &quot;%1&quot; 不存在。</translation>
     </message>
@@ -303,12 +320,12 @@ File: &quot;%2&quot;
 <context>
     <name>FileResolver</name>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="198"/>
+        <location filename="../src/fs/scenery/fileresolver.cpp" line="198"/>
         <source>&quot;%2&quot; is not a directory.</source>
         <translation>“%2” 不是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="205"/>
+        <location filename="../src/fs/scenery/fileresolver.cpp" line="205"/>
         <source>&quot;%2&quot; does not exist.</source>
         <translation>“%2” 不存在。</translation>
     </message>
@@ -316,39 +333,39 @@ File: &quot;%2&quot;
 <context>
     <name>Flightplan</name>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="240"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="240"/>
         <source>Empty Flight Plan</source>
         <translation>空飞行计划</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="68"/>
-        <location filename="src/fs/pln/flightplan.cpp" line="244"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="68"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="244"/>
         <source>IFR</source>
         <translation>IFR</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="70"/>
-        <location filename="src/fs/pln/flightplan.cpp" line="246"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="70"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="246"/>
         <source>VFR</source>
         <translation>VFR</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="162"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="162"/>
         <source>File pattern has no extension. It should end with &quot;.%1&quot;.</source>
         <translation>文件规则无后缀名，应该以 &quot;%1&quot; 结尾。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="165"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="165"/>
         <source>File pattern uses a wrong extension &quot;.%1&quot;. It should end with &quot;.%2&quot;.</source>
         <translation>文件规则后缀名 &quot;%1&quot; 错误，应该以 &quot;%2&quot; 结尾。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="178"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="178"/>
         <source>Pattern contains invalid characters, double spaces or is longer than %1 characters.%2Not allowed are: %3</source>
         <translation>规则包含无效字符、双空格或长度超过 %1 个字符。%2不允许的字符包括：%3包含无效字符，</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="189"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="189"/>
         <source>Pattern is empty.</source>
         <translation>规则为空。</translation>
     </message>
@@ -356,33 +373,33 @@ File: &quot;%2&quot;
 <context>
     <name>FlightplanEntry</name>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="87"/>
+        <location filename="../src/fs/pln/flightplanentry.cpp" line="79"/>
         <source>Airport</source>
         <translation>机场</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="90"/>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="105"/>
+        <location filename="../src/fs/pln/flightplanentry.cpp" line="82"/>
+        <location filename="../src/fs/pln/flightplanentry.cpp" line="97"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="93"/>
+        <location filename="../src/fs/pln/flightplanentry.cpp" line="85"/>
         <source>Waypoint</source>
         <translation>航路点</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="96"/>
+        <location filename="../src/fs/pln/flightplanentry.cpp" line="88"/>
         <source>VOR</source>
         <translation>VOR</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="99"/>
+        <location filename="../src/fs/pln/flightplanentry.cpp" line="91"/>
         <source>NDB</source>
         <translation>NDB</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="102"/>
+        <location filename="../src/fs/pln/flightplanentry.cpp" line="94"/>
         <source>User</source>
         <translation>用户</translation>
     </message>
@@ -390,69 +407,69 @@ File: &quot;%2&quot;
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="116"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="116"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>无法打开文件“%1”。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="128"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="128"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP.</source>
         <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</oldsource>
         <translation>无法打开飞行计划文件“%1”。没有检测到受支持的飞行计划文件。只支持 PLN 文件（FSX XML、FS9 INI 和 FSC）、X-Plane 的 FMS 文件、FLP 文件和 FlightGear 的 FGFP 文件。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="189"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="189"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
         <translation>无法打开空飞行计划文件“%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="462"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="463"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>无效的 FMS 文件。无法读取版本号：%1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="477"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="478"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>无效的 FMS 文件。无效版本 %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="569"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="572"/>
         <source>Invalid FMS file. Invalid coordinate in %1</source>
         <translation>无效的 FMS 文件。无效坐标于 %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="581"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="584"/>
         <source>Invalid FMS file. Cannot read waypoint type in %1</source>
         <translation>无效的 FMS 文件。无法读取航点类型于 %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="607"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="610"/>
         <source>Invalid FMS file. Invalid waypoint type in %1</source>
         <translation>无效的 FMS 文件。无效的航点类型于 %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="616"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="619"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>无效的 FMS 文件。航段数量不是 %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="988"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="991"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>无效的飞行计划文件“%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1018"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="1021"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
         <oldsource>Invalid position in LNMPLN.</oldsource>
         <translation>LNMPLN 中的位置“%1”无效。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1021"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="1024"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
         <translation>LNMPLN 中的位置“%1”无效。坐标超出范围：%1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1030"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="1033"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
         <translation>LNMPLN 中的位置“%1”无效。坐标超出范围。</translation>
     </message>
@@ -469,24 +486,24 @@ File: &quot;%2&quot;
         <translation type="vanished">GPX中的位置无效。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1111"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1629"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="4283"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="1115"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="1633"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="4287"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件“%1”。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1305"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="1309"/>
         <source>Invalid LNMPLN flight plan. No waypoints found.</source>
         <translation>无效 LNMPLN 飞行计划，未找到航点。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1307"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="1311"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation>无效 LNMPLN 飞行计划文件 &quot;%1&quot;，未找到航点。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1835"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="1839"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开 FlightGear 文件“%1”。原因是：%2</translation>
     </message>
@@ -499,12 +516,12 @@ File: &quot;%2&quot;
         <translation type="vanished"> 航迹</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3731"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="3735"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>由 %1 在 %4 创建的 PMDG RTE ，版本 %2（修订版本 %3） </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3876"/>
+        <location filename="../src/fs/pln/flightplanio.cpp" line="3880"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>写入 %1 时遇到了内部错误：文件大小无效 %2 != %3 这个文件将不可用。</translation>
     </message>
@@ -512,27 +529,27 @@ File: &quot;%2&quot;
 <context>
     <name>GpxIO</name>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="46"/>
+        <location filename="../src/fs/gpx/gpxio.cpp" line="46"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>无法打开文件 %1。原因是： %2</translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="55"/>
+        <location filename="../src/fs/gpx/gpxio.cpp" line="55"/>
         <source>Cannot open empty GPX file &quot;%1&quot;.</source>
         <translation>无法打开空GPX文件“%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="89"/>
+        <location filename="../src/fs/gpx/gpxio.cpp" line="84"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
         <translation>GPX 文件有无效位置“%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="178"/>
+        <location filename="../src/fs/gpx/gpxio.cpp" line="174"/>
         <source> - Flight Plan</source>
         <translation> - 飞行计划</translation>
     </message>
     <message>
-        <location filename="src/fs/gpx/gpxio.cpp" line="227"/>
+        <location filename="../src/fs/gpx/gpxio.cpp" line="223"/>
         <source> - Track</source>
         <translation> - 航迹</translation>
     </message>
@@ -540,43 +557,43 @@ File: &quot;%2&quot;
 <context>
     <name>GribReader</name>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="89"/>
+        <location filename="../src/grib/gribreader.cpp" line="89"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="109"/>
+        <location filename="../src/grib/gribreader.cpp" line="109"/>
         <source>Not a valid GRIB file: &quot;%1&quot;</source>
         <translation>不是一个有效的 GRIB 文件: &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="142"/>
+        <location filename="../src/grib/gribreader.cpp" line="142"/>
         <source>Cannot seek in file %1</source>
         <translation>无法在文件 %1 中寻找</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="147"/>
-        <location filename="src/grib/gribreader.cpp" line="152"/>
+        <location filename="../src/grib/gribreader.cpp" line="147"/>
+        <location filename="../src/grib/gribreader.cpp" line="152"/>
         <source>Cannot read file %1</source>
         <translation>无法读取文件 %1</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="461"/>
+        <location filename="../src/grib/gribreader.cpp" line="461"/>
         <source>Cannot open file %1</source>
         <translation>无法打开文件 %1</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="468"/>
+        <location filename="../src/grib/gribreader.cpp" line="468"/>
         <source>Wrong GRIB file type</source>
         <translation>错误的 GRIB 文件类型</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="474"/>
+        <location filename="../src/grib/gribreader.cpp" line="474"/>
         <source>GRIB data empty</source>
         <translation>GRIB 数据是空的</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="477"/>
+        <location filename="../src/grib/gribreader.cpp" line="477"/>
         <source>Not a GRIB file</source>
         <translation>不是一个 GRIB 文件</translation>
     </message>
@@ -584,14 +601,27 @@ File: &quot;%2&quot;
 <context>
     <name>HtmlBuilder</name>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="324"/>
+        <location filename="../src/util/htmlbuilder.cpp" line="291"/>
         <source>Yes</source>
         <translation>是</translation>
     </message>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="324"/>
+        <location filename="../src/util/htmlbuilder.cpp" line="291"/>
         <source>No</source>
         <translation>否</translation>
+    </message>
+</context>
+<context>
+    <name>ImageDialog</name>
+    <message>
+        <location filename="../src/gui/imagedialog.ui" line="14"/>
+        <source>Dialog</source>
+        <translation type="unfinished">对话</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/imagedialog.ui" line="20"/>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -637,33 +667,33 @@ Night time: %5</source>
 <context>
     <name>MagDecReader</name>
     <message>
-        <location filename="src/fs/common/magdecreader.cpp" line="116"/>
+        <location filename="../src/fs/common/magdecreader.cpp" line="116"/>
         <source>Number of longitude values is not valid when reading magdec.bgl: %1</source>
         <translation>读取 magdec.bgl：%1 遇到了错误：经度值的数量无效</translation>
     </message>
     <message>
-        <location filename="src/fs/common/magdecreader.cpp" line="123"/>
+        <location filename="../src/fs/common/magdecreader.cpp" line="123"/>
         <source>Number of latitude values is not valid when reading magdec.bgl: %1</source>
         <translation>读取 magdec.bgl：%1 遇到了错误：纬度值的数量无效</translation>
     </message>
     <message>
-        <location filename="src/fs/common/magdecreader.cpp" line="143"/>
+        <location filename="../src/fs/common/magdecreader.cpp" line="143"/>
         <source>Cannot read %1. Reason: %2</source>
         <translation>无法读取 %1。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/fs/common/magdecreader.cpp" line="164"/>
-        <location filename="src/fs/common/magdecreader.cpp" line="246"/>
+        <location filename="../src/fs/common/magdecreader.cpp" line="164"/>
+        <location filename="../src/fs/common/magdecreader.cpp" line="246"/>
         <source>MagDecReader is invalid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/common/magdecreader.cpp" line="198"/>
+        <location filename="../src/fs/common/magdecreader.cpp" line="198"/>
         <source>Cannot read declination from database.</source>
         <translation>无法从数据库读取磁偏角。</translation>
     </message>
     <message>
-        <location filename="src/fs/common/magdecreader.cpp" line="229"/>
+        <location filename="../src/fs/common/magdecreader.cpp" line="229"/>
         <source>Magnetic declination values are invalid</source>
         <translation type="unfinished"></translation>
     </message>
@@ -671,22 +701,22 @@ Night time: %5</source>
 <context>
     <name>MagDecTool</name>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="107"/>
+        <location filename="../src/wmm/magdectool.cpp" line="107"/>
         <source>Magnetic coeffizient file &quot;%1&quot; not found.</source>
         <translation>磁场系数文件“%1”未找到。</translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="112"/>
+        <location filename="../src/wmm/magdectool.cpp" line="112"/>
         <source>Error in MAG_SetDefaults.</source>
         <translation>MAG_SetDefaults 有错误。</translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="121"/>
+        <location filename="../src/wmm/magdectool.cpp" line="121"/>
         <source>Error in MAG_GridInternal.</source>
         <translation>MAG_GridInternal 有错误。</translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="213"/>
+        <location filename="../src/wmm/magdectool.cpp" line="213"/>
         <source>Cannot open geoid buffer &quot;%1&quot;.</source>
         <translation>无法打开大地 geoid 缓冲 “%1”。</translation>
     </message>
@@ -694,7 +724,7 @@ Night time: %5</source>
 <context>
     <name>MessageBox</name>
     <message>
-        <location filename="src/gui/messagebox.ui" line="14"/>
+        <location filename="../src/gui/messagebox.ui" line="14"/>
         <source>Dialog</source>
         <translation>对话</translation>
     </message>
@@ -702,27 +732,27 @@ Night time: %5</source>
 <context>
     <name>MetarCloud</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2039"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="2039"/>
         <source>Clear</source>
         <translation>晴天</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2042"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="2042"/>
         <source>Few</source>
         <translation>少云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2045"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="2045"/>
         <source>Scattered</source>
         <translation>疏云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2048"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="2048"/>
         <source>Broken</source>
         <translation>多云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2051"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="2051"/>
         <source>Overcast</source>
         <translation>阴天</translation>
     </message>
@@ -730,402 +760,402 @@ Night time: %5</source>
 <context>
     <name>MetarParser</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="145"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="145"/>
         <source>Showers of</source>
         <translation>阵性</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="146"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="146"/>
         <source>Thunderstorm with</source>
         <translation>雷暴及</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="147"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="147"/>
         <source>Patches of</source>
         <translation>散在</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="148"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="148"/>
         <source>Blowing</source>
         <translation>风吹</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="149"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="149"/>
         <source>Low drifting</source>
         <translation>低吹</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="150"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="150"/>
         <source>Freezing</source>
         <translation>冻</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="151"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="151"/>
         <source>Shallow</source>
         <translation>浅薄</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="152"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="152"/>
         <source>Partial</source>
         <translation>部分</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="157"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="157"/>
         <source>Drizzle</source>
         <translation>毛毛雨</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="158"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="158"/>
         <source>Hail</source>
         <translation>雹</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="159"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="159"/>
         <source>Small hail and/or snow pellets</source>
         <translation>霰、小雹小雪丸</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="160"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="160"/>
         <source>Ice crystals</source>
         <translation>冰晶</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="161"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="161"/>
         <source>Ice pellets</source>
         <translation>冰丸</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="162"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="162"/>
         <source>Rain</source>
         <translation>降雨</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="163"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="163"/>
         <source>Snow grains</source>
         <translation>雪粒</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="164"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="164"/>
         <source>Snow</source>
         <translation>降雪</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="165"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="165"/>
         <source>Unknown precipitation</source>
         <translation>不明降水</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="166"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="166"/>
         <source>Mist</source>
         <translation>薄雾</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="167"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="167"/>
         <source>Widespread dust</source>
         <translation>扬尘</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="168"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="168"/>
         <source>Fog</source>
         <translation>雾</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="169"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="169"/>
         <source>Fog bank</source>
         <translation>浓雾</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="170"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="170"/>
         <source>Smoke</source>
         <translation>烟</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="171"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="171"/>
         <source>Haze</source>
         <translation>霾</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="172"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="172"/>
         <source>Spray</source>
         <translation>水雾</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="173"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="173"/>
         <source>Sand</source>
         <translation>沙</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="174"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="174"/>
         <source>Volcanic ash</source>
         <translation>火山灰</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="175"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="175"/>
         <source>Duststorm</source>
         <translation>尘暴</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="176"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="176"/>
         <source>Funnel cloud/tornado waterspout</source>
         <translation>漏斗云、水龙卷</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="177"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="177"/>
         <source>Well-developed dust/sand whirls</source>
         <translation>发展显著的尘/沙旋风</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="178"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="178"/>
         <source>Squalls</source>
         <translation>飑</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="179"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="179"/>
         <source>Sandstorm</source>
         <translation>沙暴</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="180"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="180"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="185"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="185"/>
         <source>No significant weather</source>
         <translation>无明显天气</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="192"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="192"/>
         <source>Blue</source>
         <translation>蓝</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="193"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="193"/>
         <source>White</source>
         <translation>白</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="194"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="194"/>
         <source>Green</source>
         <translation>绿</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="195"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="195"/>
         <source>Yellow</source>
         <translation>黄</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="196"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="196"/>
         <source>Amber</source>
         <translation>琥珀</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="197"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="197"/>
         <source>Red</source>
         <translation>红</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="202"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="202"/>
         <source>altocumulus</source>
         <translation>高积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="203"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="203"/>
         <source>altocumulus castellanus</source>
         <translation>堡状高积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="204"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="204"/>
         <source>altocumulus standing lenticular</source>
         <translation>荚状高积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="205"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="205"/>
         <source>altostratus</source>
         <translation>高层云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="206"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="206"/>
         <source>cumulonimbus</source>
         <translation>积雨云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="207"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="207"/>
         <source>cumulonimbus mammatus</source>
         <translation>乳状积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="208"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="208"/>
         <source>cirrocumulus</source>
         <translation>卷积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="209"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="209"/>
         <source>cirrocumulus standing lenticular</source>
         <translation>荚状卷积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="210"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="210"/>
         <source>cirrus</source>
         <translation>卷云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="211"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="211"/>
         <source>cirrostratus</source>
         <translation>卷层云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="212"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="212"/>
         <source>cumulus</source>
         <translation>积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="213"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="213"/>
         <source>cumulus fractus</source>
         <translation>碎积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="214"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="214"/>
         <source>nimbostratus</source>
         <translation>雨层云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="215"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="215"/>
         <source>stratoaltocumulus</source>
         <translation>层积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="216"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="216"/>
         <source>stratocumulus</source>
         <translation>层积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="217"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="217"/>
         <source>stratocumulus standing lenticular</source>
         <translation>荚状层积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="218"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="218"/>
         <source>stratus</source>
         <translation>层云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="219"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="219"/>
         <source>stratus fractus</source>
         <translation>碎层云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="220"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="220"/>
         <source>towering cumulus</source>
         <translation>塔状积云</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="225"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="225"/>
         <source>clear and dry</source>
         <translation>晴天且干燥</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="226"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="226"/>
         <source>damp</source>
         <translation>潮湿</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="227"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="227"/>
         <source>wet or puddles</source>
         <translation>湿或有块状积水</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="228"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="228"/>
         <source>frost</source>
         <translation>霜</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="229"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="229"/>
         <source>dry snow</source>
         <translation>干雪</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="230"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="230"/>
         <source>wet snow</source>
         <translation>湿雪</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="231"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="231"/>
         <source>slush</source>
         <translation>雪水</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="232"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="232"/>
         <source>ice</source>
         <translation>冰</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="233"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="233"/>
         <source>compacted snow</source>
         <translation>压实的雪</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="234"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="234"/>
         <source>frozen ridges</source>
         <translation>冷冻高压脊</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="240"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="240"/>
         <source>1-10%</source>
         <translation>ridges</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="241"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="241"/>
         <source>11-25%</source>
         <translation>11-25%</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="244"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="244"/>
         <source>26-50%</source>
         <translation>26-50%</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="248"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="248"/>
         <source>51-100%</source>
         <translation>51-100%</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="254"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="254"/>
         <source>poor braking action</source>
         <translation>刹车作用差</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="255"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="255"/>
         <source>poor/medium braking action</source>
         <translation>中到差的刹车作用</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="256"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="256"/>
         <source>medium braking action</source>
         <translation>中等刹车作用</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="257"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="257"/>
         <source>medium/good braking action</source>
         <translation>中等到好的刹车作用</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="258"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="258"/>
         <source>good braking action</source>
         <translation>刹车作用好</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="262"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="262"/>
         <source>friction: unreliable measurement</source>
         <translation>摩擦：数值不可靠</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="652"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="652"/>
         <source>METAR &quot;%1&quot; has errors.</source>
         <translation>METAR &quot;%1&quot; 存在错误。</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="704"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="704"/>
         <source>METAR &quot;%1&quot; is incomplete.</source>
         <translation>METAR &quot;%1&quot; 不完整。</translation>
     </message>
@@ -1139,102 +1169,102 @@ Night time: %5</source>
         <translation type="vanished">METAR 数据不完整 </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="810"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="810"/>
         <source>Auto</source>
         <translation>自动</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="813"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="813"/>
         <source>Corrected</source>
         <translation>已修正的</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="816"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="816"/>
         <source>Routine delayed observation</source>
         <translation>常规的延迟观察</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="847"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="847"/>
         <source>Light</source>
         <translation>轻度</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="850"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="850"/>
         <source>Moderate</source>
         <translation>中度</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="853"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="853"/>
         <source>Heavy</source>
         <translation>重度</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1350"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1350"/>
         <source>Light </source>
         <translation>轻度 </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1352"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1352"/>
         <source>Heavy </source>
         <translation>重度 </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1354"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1354"/>
         <source>in the vicinity </source>
         <translation>周边 </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1356"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1356"/>
         <source>Moderate </source>
         <translation>中度 </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1651"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1651"/>
         <source>Low Instrument Flight Rules</source>
         <translation>低于仪表飞行规则</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1654"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1654"/>
         <source>Instrument Flight Rules</source>
         <translation>仪表飞行规则</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1657"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1657"/>
         <source>Marginal Visual Flight Rules</source>
         <translation>临界目视飞行规则</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1660"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1660"/>
         <source>Visual Flight Rules</source>
         <translation>目视飞行规则</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1673"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1673"/>
         <source>LIFR</source>
         <translation>LIFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1676"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1676"/>
         <source>IFR</source>
         <translation>IFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1679"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1679"/>
         <source>MVFR</source>
         <translation>MVFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1682"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1682"/>
         <source>VFR</source>
         <translation>VFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1765"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1765"/>
         <source>cleared</source>
         <translation>已清空</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1801"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="1801"/>
         <source>runway not in use</source>
         <translation>跑道不在使用中</translation>
     </message>
@@ -1242,17 +1272,17 @@ Night time: %5</source>
 <context>
     <name>MetarVisibility</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2107"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="2107"/>
         <source>Vertical visibility</source>
         <translation>垂直能见度</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2113"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="2113"/>
         <source>Less than</source>
         <translation>低于</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="2116"/>
+        <location filename="../src/fs/weather/metarparser.cpp" line="2116"/>
         <source>Greater than</source>
         <translation>高于</translation>
     </message>
@@ -1288,7 +1318,7 @@ Night time: %5</source>
         <translation type="vanished">移除元数据</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="169"/>
+        <location filename="../src/fs/navdatabase.cpp" line="169"/>
         <source>Creating Database Schema</source>
         <translation>正在创建数据库架构</translation>
     </message>
@@ -1325,12 +1355,12 @@ Night time: %5</source>
         <translation type="vanished">目录不存在</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="702"/>
+        <location filename="../src/fs/navdatabase.cpp" line="702"/>
         <source>Navigraph</source>
         <translation>Navigraph</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="716"/>
+        <location filename="../src/fs/navdatabase.cpp" line="716"/>
         <source>X-Plane</source>
         <translation>X-Plane</translation>
     </message>
@@ -1339,64 +1369,64 @@ Night time: %5</source>
         <translation type="vanished">创建航路</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="155"/>
+        <location filename="../src/fs/navdatabase.cpp" line="155"/>
         <source>Cleaning Database</source>
         <translation>清理数据库</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="214"/>
+        <location filename="../src/fs/navdatabase.cpp" line="214"/>
         <source>&quot;%1&quot; does not contain any scenery areas</source>
         <translation>“%1”不包含任何地景区域</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="224"/>
+        <location filename="../src/fs/navdatabase.cpp" line="224"/>
         <source>Unknown exception while reading file</source>
         <translation>读取文件时发生了未知异常</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="806"/>
+        <location filename="../src/fs/navdatabase.cpp" line="806"/>
         <source>Merging VOR and TACAN to VORTAC</source>
         <translation>合并 VOR 及 TACAN 到 VORTAC</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="811"/>
+        <location filename="../src/fs/navdatabase.cpp" line="811"/>
         <source>Updating waypoints</source>
         <translation>正在更新航路点</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="817"/>
+        <location filename="../src/fs/navdatabase.cpp" line="817"/>
         <source>Updating Navaids</source>
         <translation>正在更新导航台</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="824"/>
+        <location filename="../src/fs/navdatabase.cpp" line="824"/>
         <source>Cleaning up waypoints</source>
         <translation>正在清理航路点</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="829"/>
+        <location filename="../src/fs/navdatabase.cpp" line="829"/>
         <source>Updating approaches</source>
         <translation>正在更新进近</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="833"/>
+        <location filename="../src/fs/navdatabase.cpp" line="833"/>
         <source>Updating Airports</source>
         <translation>正在更新机场</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="838"/>
-        <location filename="src/fs/navdatabase.cpp" line="843"/>
-        <location filename="src/fs/navdatabase.cpp" line="850"/>
+        <location filename="../src/fs/navdatabase.cpp" line="838"/>
+        <location filename="../src/fs/navdatabase.cpp" line="843"/>
+        <location filename="../src/fs/navdatabase.cpp" line="850"/>
         <source>Updating ILS</source>
         <translation>正在更新 ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="855"/>
+        <location filename="../src/fs/navdatabase.cpp" line="855"/>
         <source>Updating ILS Count</source>
         <translation>正在更新 ILS 的数量</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="859"/>
+        <location filename="../src/fs/navdatabase.cpp" line="859"/>
         <source>Collecting navaids for search</source>
         <translation>正在收集助航设备以供搜索</translation>
     </message>
@@ -1413,117 +1443,117 @@ Night time: %5</source>
         <translation type="vanished">正在创建航路边缘航路点</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="864"/>
+        <location filename="../src/fs/navdatabase.cpp" line="864"/>
         <source>Calculating airport rating</source>
         <translation>计算机场评分</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="870"/>
+        <location filename="../src/fs/navdatabase.cpp" line="870"/>
         <source>Creating indexes for airport</source>
         <translation>正在创建机场索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="875"/>
+        <location filename="../src/fs/navdatabase.cpp" line="875"/>
         <source>Clean up runways</source>
         <translation>清理跑道</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="881"/>
+        <location filename="../src/fs/navdatabase.cpp" line="881"/>
         <source>Creating indexes for search</source>
         <translation>正在创建索引以供搜索</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="886"/>
+        <location filename="../src/fs/navdatabase.cpp" line="886"/>
         <source>Loading translations</source>
         <translation>载入翻译</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="927"/>
+        <location filename="../src/fs/navdatabase.cpp" line="927"/>
         <source>Creating Database preparation Script</source>
         <translation>正在创建数据库准备脚本</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="951"/>
+        <location filename="../src/fs/navdatabase.cpp" line="951"/>
         <source>Dropping All Indexes</source>
         <translation>正在丢弃所有索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="958"/>
+        <location filename="../src/fs/navdatabase.cpp" line="958"/>
         <source>Vacuum Database</source>
         <translatorcomment>???: 疑似空数据库
 Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation>整理数据库</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="966"/>
+        <location filename="../src/fs/navdatabase.cpp" line="966"/>
         <source>Analyze Database</source>
         <translation>分析数据库</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1022"/>
-        <location filename="src/fs/navdatabase.cpp" line="1050"/>
-        <location filename="src/fs/navdatabase.cpp" line="1156"/>
-        <location filename="src/fs/navdatabase.cpp" line="1395"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1022"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1050"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1156"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1395"/>
         <source>Creating indexes</source>
         <translation>正在创建索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1025"/>
-        <location filename="src/fs/navdatabase.cpp" line="1055"/>
-        <location filename="src/fs/navdatabase.cpp" line="1159"/>
-        <location filename="src/fs/navdatabase.cpp" line="1398"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1025"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1055"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1159"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1398"/>
         <source>Creating boundary indexes</source>
         <translation>正在创建边界索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1031"/>
-        <location filename="src/fs/navdatabase.cpp" line="1172"/>
-        <location filename="src/fs/navdatabase.cpp" line="1414"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1031"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1172"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1414"/>
         <source>Clean up</source>
         <translation>清理</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1039"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1039"/>
         <source>Creating waypoints for procedures</source>
         <translation>正在为程序创建航路点</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1061"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1061"/>
         <source>Updating Navids in Waypoint</source>
         <translation>正在更新航路点中的助航设备</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1182"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1182"/>
         <source>Preparing Airways</source>
         <translation>正在准备航路</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1422"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1422"/>
         <source>Basic Validation</source>
         <translation>基础验证</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1530"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1530"/>
         <source>Creating table statistics</source>
         <translation>正在创建表格统计</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1536"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1536"/>
         <source>Creating report on values</source>
         <translation>正在创建数值的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1542"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1542"/>
         <source>Creating report on duplicates</source>
         <translation>正在创建重复项的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1580"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1580"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>正在创建重复坐标的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1697"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1697"/>
         <source>Base</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1532,40 +1562,40 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation type="vanished">基地机场</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1708"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1708"/>
         <source>Generic Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1725"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1725"/>
         <source>SimConnect Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1736"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1736"/>
         <source>Base Navigation</source>
         <translatorcomment>基地导航？</translatorcomment>
         <translation type="unfinished">基地导航</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1786"/>
-        <location filename="src/fs/navdatabase.cpp" line="1835"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1786"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1835"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1831"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1831"/>
         <source>Community</source>
         <translation>社区</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1957"/>
-        <location filename="src/fs/navdatabase.cpp" line="1968"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1957"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1968"/>
         <source>Custom scenery path %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="2253"/>
+        <location filename="../src/fs/navdatabase.cpp" line="2253"/>
         <source>Counting files for %1 ...</source>
         <translation>正在为 %1 计数文件...</translation>
     </message>
@@ -1573,34 +1603,33 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="src/atools.cpp" line="102"/>
+        <location filename="../src/atools.cpp" line="102"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>读取“%1”时发生了错误：%2</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="183"/>
+        <location filename="../src/atools.cpp" line="183"/>
         <source>★</source>
         <comment>Star for rating</comment>
         <translation>★</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="183"/>
         <source>−</source>
         <comment>For empty rating</comment>
-        <translation>−</translation>
+        <translation type="vanished">−</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="327"/>
-        <location filename="src/atools.cpp" line="335"/>
-        <location filename="src/atools.cpp" line="343"/>
-        <location filename="src/atools.h" line="184"/>
+        <location filename="../src/atools.cpp" line="327"/>
+        <location filename="../src/atools.cpp" line="335"/>
+        <location filename="../src/atools.cpp" line="343"/>
+        <location filename="../src/atools.h" line="184"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="371"/>
-        <location filename="src/atools.cpp" line="376"/>
+        <location filename="../src/atools.cpp" line="371"/>
+        <location filename="../src/atools.cpp" line="376"/>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
@@ -1608,7 +1637,7 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
 </translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="373"/>
+        <location filename="../src/atools.cpp" line="373"/>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
@@ -1616,494 +1645,500 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
 …</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="374"/>
+        <location filename="../src/atools.cpp" line="374"/>
         <source>…</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.h" line="190"/>
+        <location filename="../src/atools.h" line="190"/>
         <source>.</source>
         <comment>Dot used to shorten texts</comment>
         <translation>.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="460"/>
+        <location filename="../src/atools.cpp" line="183"/>
+        <source>☆</source>
+        <comment>For empty rating</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/atools.cpp" line="460"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>由 %1 在 %4 创建，版本 %2（修订版本 %3）</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="470"/>
+        <location filename="../src/atools.cpp" line="470"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>由 %1 创建，版本 %2（修订版本 %3）</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="495"/>
-        <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
-        <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
-        <location filename="src/fs/weather/weathertypes.cpp" line="84"/>
+        <location filename="../src/atools.cpp" line="495"/>
+        <location filename="../src/fs/weather/weathertypes.cpp" line="76"/>
+        <location filename="../src/fs/weather/weathertypes.cpp" line="80"/>
+        <location filename="../src/fs/weather/weathertypes.cpp" line="84"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>无法打开文件“%1”。原因是：%2。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="872"/>
+        <location filename="../src/atools.cpp" line="906"/>
         <source>Directory name is empty.</source>
         <translation>目录名是空的。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="881"/>
+        <location filename="../src/atools.cpp" line="915"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation>目录“%1”不存在。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="889"/>
+        <location filename="../src/atools.cpp" line="923"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation>文件“%1”不是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="895"/>
+        <location filename="../src/atools.cpp" line="929"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation>目录“%1”不可读。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="913"/>
+        <location filename="../src/atools.cpp" line="947"/>
         <source>Filepath is empty.</source>
         <translation>文件路径是空的。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="922"/>
+        <location filename="../src/atools.cpp" line="956"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation>文件“%1”不存在。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="930"/>
+        <location filename="../src/atools.cpp" line="964"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation>文件“%1”是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="935"/>
+        <location filename="../src/atools.cpp" line="969"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation>文件“%1”不可读。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="941"/>
+        <location filename="../src/atools.cpp" line="975"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation>文件“%1”是空的。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="1093"/>
+        <location filename="../src/atools.cpp" line="1127"/>
         <source> and </source>
         <comment>Used to replace character &quot;&amp;&quot; in file names, etc.</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="29"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="29"/>
         <source>ATC</source>
         <translation>空中交通管制</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="31"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="31"/>
         <source>Pilot</source>
         <translation>飞行员</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="33"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="33"/>
         <source>Follow me car</source>
         <translation>引导车</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="51"/>
-        <location filename="src/fs/online/onlinetypes.cpp" line="185"/>
-        <location filename="src/fs/online/onlinetypes.cpp" line="209"/>
-        <location filename="src/fs/online/onlinetypes.cpp" line="288"/>
-        <location filename="src/fs/online/onlinetypes.cpp" line="325"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="51"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="185"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="209"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="288"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="325"/>
         <source>Observer</source>
         <translation>观察者</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="54"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="54"/>
         <source>FIR</source>
         <translation>飞行情报区</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="57"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="57"/>
         <source>Delivery</source>
         <translation>放行</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="60"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="60"/>
         <source>Ground</source>
         <translation>地面</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="63"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="63"/>
         <source>Tower</source>
         <translation>塔台</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="66"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="66"/>
         <source>Approach</source>
         <translation>进近</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="69"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="69"/>
         <source>Area Control Center</source>
         <translation>区域管制中心</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="72"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="72"/>
         <source>Departure</source>
         <translation>离场</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="75"/>
-        <location filename="src/track/tracktypes.cpp" line="53"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="75"/>
+        <location filename="../src/track/tracktypes.cpp" line="53"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="182"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="182"/>
         <source>Suspended</source>
         <translation>中止</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="188"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="188"/>
         <source>User</source>
         <translation>用户</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="191"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="191"/>
         <source>Supervisor</source>
         <translation>监管者</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="194"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="194"/>
         <source>Administrator</source>
         <translation>管理员</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="212"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="212"/>
         <source>Basic flight student (FS1)</source>
         <translation>基础飞行学员（FS1）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="215"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="215"/>
         <source>Flight student (FS2)</source>
         <translation>飞行学员（FS2）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="218"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="218"/>
         <source>Advanced flight student (FS3)</source>
         <translation>高级飞行学员（FS3）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="221"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="221"/>
         <source>Private pilot (PP)</source>
         <translation>私用飞行员（PP）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="224"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="224"/>
         <source>Senior private pilot (SPP)</source>
         <translation>资深私用飞行员（SPP）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="227"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="227"/>
         <source>Commercial pilot (CP)</source>
         <translation>商用飞行员（CP）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="230"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="230"/>
         <source>Airline transport pilot (ATP)</source>
         <translation>航线运输飞行员（ATP）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="233"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="233"/>
         <source>Senior flight instructor (SFI)</source>
         <translation>资深飞行教员（FSI）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="236"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="236"/>
         <source>Chief flight instructor (CFI)</source>
         <translation>首席飞行教员（FSI）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="246"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="246"/>
         <source>OBS</source>
         <translation>OBS</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="249"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="249"/>
         <source>FS1</source>
         <translation>FS1</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="252"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="252"/>
         <source>FS2</source>
         <translation>FS2</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="255"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="255"/>
         <source>FS3</source>
         <translation>FS3</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="258"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="258"/>
         <source>PP</source>
         <translation>PP</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="261"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="261"/>
         <source>SPP</source>
         <translation>SPP</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="264"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="264"/>
         <source>CP</source>
         <translation>CP</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="267"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="267"/>
         <source>ATP</source>
         <translation>ATP</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="270"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="270"/>
         <source>SFI</source>
         <translation>SFI</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="273"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="273"/>
         <source>CFI</source>
         <translation>CFI</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="291"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="291"/>
         <source>ATC Applicant (AS1)</source>
         <translation>空管申请人（AS1）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="294"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="294"/>
         <source>ATC Trainee (AS2)</source>
         <translation>空管学员（AS2）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="297"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="297"/>
         <source>Advanced ATC Trainee (AS3)</source>
         <translation>资深空管学员（AS2）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="300"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="300"/>
         <source>Aerodrome Controller (ADC)</source>
         <translation>机场管制员（ADC）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="303"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="303"/>
         <source>Approach Controller (APC)</source>
         <translation>进近管制员（APC）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="306"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="306"/>
         <source>Center Controller (ACC)</source>
         <translation>区域管制员（ACC）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="309"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="309"/>
         <source>Senior Controller (SEC)</source>
         <translation>资深管制员（SEC）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="312"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="312"/>
         <source>Senior ATC Instructor (SAI)</source>
         <translation>资深空管教员（SAI）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="315"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="315"/>
         <source>Chief ATC Instructor (CAI)</source>
         <translation>首席空管教员（SAI）</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="328"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="328"/>
         <source>AS1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="331"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="331"/>
         <source>AS2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="334"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="334"/>
         <source>AS3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="337"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="337"/>
         <source>ADC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="340"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="340"/>
         <source>APC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="343"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="343"/>
         <source>ACC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="346"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="346"/>
         <source>SEC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="349"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="349"/>
         <source>SAI</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="352"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="352"/>
         <source>CAI</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="370"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="370"/>
         <source>FS95</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="373"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="373"/>
         <source>FS98</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="376"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="376"/>
         <source>CFS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="379"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="379"/>
         <source>FS2000</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="382"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="382"/>
         <source>CFS2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="385"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="385"/>
         <source>FS2002</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="388"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="388"/>
         <source>CFS3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="391"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="391"/>
         <source>FS2004</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="394"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="394"/>
         <source>FSX</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="397"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="397"/>
         <source>X-Plane</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="400"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="400"/>
         <source>X-Plane 8</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="403"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="403"/>
         <source>X-Plane 9</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="406"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="406"/>
         <source>X-Plane 10</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="409"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="409"/>
         <source>PS1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="412"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="412"/>
         <source>X-Plane 11</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="415"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="415"/>
         <source>X-Plane 12</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="418"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="418"/>
         <source>Fly</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="421"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="421"/>
         <source>Fly 2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="424"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="424"/>
         <source>FlightGear</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="427"/>
+        <location filename="../src/fs/online/onlinetypes.cpp" line="427"/>
         <source>P3D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/simconnectdatabase.cpp" line="42"/>
+        <location filename="../src/fs/sc/simconnectdatabase.cpp" line="42"/>
         <source>No Error</source>
         <translation>无错误</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/simconnectdatabase.cpp" line="45"/>
+        <location filename="../src/fs/sc/simconnectdatabase.cpp" line="45"/>
         <source>Invalid magic number</source>
         <translatorcomment>待查</translatorcomment>
         <translation>无效的幻数</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/simconnectdatabase.cpp" line="48"/>
+        <location filename="../src/fs/sc/simconnectdatabase.cpp" line="48"/>
         <source>Version mismatch</source>
         <translation>版本不匹配</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/simconnectdatabase.cpp" line="51"/>
+        <location filename="../src/fs/sc/simconnectdatabase.cpp" line="51"/>
         <source>Incomplete write</source>
         <translation>写入未完成</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/simconnectdatabase.cpp" line="54"/>
+        <location filename="../src/fs/sc/simconnectdatabase.cpp" line="54"/>
         <source>Write error</source>
         <translation>写入错误</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/simconnectdatabase.cpp" line="56"/>
+        <location filename="../src/fs/sc/simconnectdatabase.cpp" line="56"/>
         <source>Unknown Status</source>
         <translation>未知状态</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/weathertypes.cpp" line="81"/>
+        <location filename="../src/fs/weather/weathertypes.cpp" line="81"/>
         <source>Is not a file.</source>
         <translation>不是一个文件。</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/weathertypes.cpp" line="85"/>
+        <location filename="../src/fs/weather/weathertypes.cpp" line="85"/>
         <source>File does not exist</source>
         <translation>文件不存在</translation>
     </message>
@@ -2116,113 +2151,111 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation type="vanished">文件或目录“%1”不存在。</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="50"/>
+        <location filename="../src/gui/tools.cpp" line="82"/>
         <source>%1 pt</source>
         <translation>%1 点</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="52"/>
+        <location filename="../src/gui/tools.cpp" line="84"/>
         <source>%1 px</source>
         <translation>%1 像素</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="56"/>
+        <location filename="../src/gui/tools.cpp" line="111"/>
         <source>thin</source>
         <translation>细体</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="58"/>
+        <location filename="../src/gui/tools.cpp" line="113"/>
         <source>extra light</source>
         <translation>极细体</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="60"/>
+        <location filename="../src/gui/tools.cpp" line="115"/>
         <source>light</source>
         <translation>半细体</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="62"/>
+        <location filename="../src/gui/tools.cpp" line="117"/>
         <source>normal</source>
         <translation>正常</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="64"/>
+        <location filename="../src/gui/tools.cpp" line="119"/>
         <source>medium</source>
         <translation>中等</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="66"/>
+        <location filename="../src/gui/tools.cpp" line="121"/>
         <source>demi bold</source>
         <translation>半粗体</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="68"/>
+        <location filename="../src/gui/tools.cpp" line="123"/>
         <source>bold</source>
         <translation>粗体</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="70"/>
+        <location filename="../src/gui/tools.cpp" line="125"/>
         <source>extra bold</source>
         <translation>超粗体</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="72"/>
+        <location filename="../src/gui/tools.cpp" line="127"/>
         <source>black</source>
         <translation>黑体</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="75"/>
+        <location filename="../src/gui/tools.cpp" line="130"/>
         <source>italic</source>
         <translation>斜体</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="77"/>
+        <location filename="../src/gui/tools.cpp" line="133"/>
         <source>overline</source>
         <translation>上划线</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="79"/>
+        <location filename="../src/gui/tools.cpp" line="136"/>
         <source>underline</source>
         <translation>下划线</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="81"/>
+        <location filename="../src/gui/tools.cpp" line="139"/>
         <source>strike out</source>
         <translation>删除线</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="84"/>
+        <location filename="../src/gui/tools.cpp" line="142"/>
         <source>fixed pitch</source>
         <translation>固定桨叶</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="88"/>
         <source>System font: %1</source>
-        <translation>系统字体：%1</translation>
+        <translation type="vanished">系统字体：%1</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="90"/>
         <source>User selected font: %1</source>
-        <translation>用户选择的字体：%1</translation>
+        <translation type="vanished">用户选择的字体：%1</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="92"/>
+        <location filename="../src/gui/tools.cpp" line="144"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/logging/loggingguiabort.cpp" line="49"/>
+        <location filename="../src/logging/loggingguiabort.cpp" line="49"/>
         <source>&lt;b&gt;A fatal error has occurred.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <oldsource>&lt;b&gt;A fatal error has occured.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</oldsource>
         <translation>&lt;b&gt;发生了一个致命错误。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;点击 OK 以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="56"/>
+        <location filename="../src/track/tracktypes.cpp" line="56"/>
         <source>NAT</source>
         <translation>NAT</translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="59"/>
+        <location filename="../src/track/tracktypes.cpp" line="59"/>
         <source>PACOTS</source>
         <translation>PACOTS</translation>
     </message>
@@ -2231,28 +2264,32 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation type="vanished">AUSOTS</translation>
     </message>
     <message>
-        <location filename="src/gui/widgetutil.cpp" line="171"/>
+        <location filename="../src/gui/tools.cpp" line="480"/>
         <source> (changed)</source>
         <comment>Indication for search menu button items</comment>
         <translation> (已改变)</translation>
     </message>
     <message>
-        <location filename="src/gui/widgetutil.cpp" line="172"/>
+        <location filename="../src/gui/tools.cpp" line="481"/>
         <source> (changed, not used)</source>
         <comment>Indication for search menu button items</comment>
         <translatorcomment>触发过一次，步骤: 2.8.12 -&gt; 3.0.15rc1后在机场搜索表格选项卡的名称后显示 &quot;名称(changed, not used)&quot;</translatorcomment>
         <translation> (已改变，弃用)</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="504"/>
         <source>Version %5 (revision %6)</source>
-        <translation>版本 %5 (修订 %6)</translation>
+        <translation type="vanished">版本 %5 (修订 %6)</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/application.cpp" line="496"/>
+        <source>Version %5 (revision %6).</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>SceneryCfg</name>
     <message>
-        <location filename="src/fs/scenery/scenerycfg.cpp" line="50"/>
+        <location filename="../src/fs/scenery/scenerycfg.cpp" line="50"/>
         <source>No valid scenery areas found</source>
         <translation>没找到有有效的地景区域</translation>
     </message>
@@ -2260,64 +2297,64 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
 <context>
     <name>SimConnectLoader</name>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="576"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="576"/>
         <source>Loading airport count</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="583"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="583"/>
         <source>Loading airport facility numbers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="603"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="603"/>
         <source>Loading airport base information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="623"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="623"/>
         <source>Loading airport COM</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="628"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="628"/>
         <source>Loading airport helipads</source>
         <translation>加载机场直升机坪</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="634"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="634"/>
         <source>Loading airport runways</source>
         <translation>加载机场跑道</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="640"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="640"/>
         <source>Loading airport start positions</source>
         <translation>加载机场起始位置</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="646"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="646"/>
         <source>Loading airport procedures</source>
         <translation>加载机场程序</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="651"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="651"/>
         <source>Loading airport taxiways and parking</source>
         <translation>加载机场滑行道和停机位</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="669"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="669"/>
         <source>Loading waypoints, VOR, ILS, NDB and airways</source>
         <translation>加载航点, VOR, ILS, NDB 和航路</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="689"/>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="713"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="689"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="713"/>
         <source>Loading disconnected waypoints, VOR, ILS and NDB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="697"/>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="719"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="697"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="719"/>
         <source>Writing disconnected waypoints, VOR, ILS and NDB to database</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2330,12 +2367,12 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation type="vanished">读取导航数据时发生太多错误，停止。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="1210"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1210"/>
         <source> </source>
         <translation> </translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectloader.cpp" line="1210"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1210"/>
         <source>.</source>
         <translation>.</translation>
     </message>
@@ -2343,47 +2380,47 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
 <context>
     <name>SimConnectWriter</name>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="335"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="335"/>
         <source> </source>
         <translation> </translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="335"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="335"/>
         <source>.</source>
         <translation>.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="486"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="486"/>
         <source>Writing airport facilities to database</source>
         <translation>将机场设施写入数据库</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1230"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1230"/>
         <source>Caught exception writing airport %1. Error: %2</source>
         <translation>写入机场 %1 时捕获到异常，错误: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1237"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1237"/>
         <source>Caught unknown exception writing airport %1.</source>
         <translation>写入机场 %1 时捕获到未知异常。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1245"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1245"/>
         <source>Too many errors writing airport data. Stopping.</source>
         <translation>写入机场数据时发生太多错误，停止。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1259"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1259"/>
         <source>Writing NDB to database</source>
         <translation>将 NDB 写入数据库</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1311"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1311"/>
         <source>Writing VOR and ILS to database</source>
         <translation>将VOR和ILS 写入数据库</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/db/simconnectwriter.cpp" line="1455"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1455"/>
         <source>Writing waypoints and airways to database</source>
         <translation>将航点和航路写入数据库</translation>
     </message>
@@ -2391,7 +2428,7 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
 <context>
     <name>SimpleWaitDialog</name>
     <message>
-        <location filename="src/gui/simplewaitdialog.ui" line="14"/>
+        <location filename="../src/gui/simplewaitdialog.ui" line="14"/>
         <source>Dialog</source>
         <translation type="unfinished">对话</translation>
     </message>
@@ -2399,7 +2436,7 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
 <context>
     <name>SqlQueryDialog</name>
     <message>
-        <location filename="src/gui/sqlquerydialog.ui" line="14"/>
+        <location filename="../src/gui/sqlquerydialog.ui" line="14"/>
         <source>Little Navmap - </source>
         <translation>Little Navmap - </translation>
     </message>
@@ -2407,17 +2444,17 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
 <context>
     <name>TempFile</name>
     <message>
-        <location filename="src/io/tempfile.cpp" line="42"/>
+        <location filename="../src/io/tempfile.cpp" line="42"/>
         <source>Cannot read from &quot;%1&quot;. Error: %2</source>
         <translation>无法读取文件“%1”。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/io/tempfile.cpp" line="52"/>
+        <location filename="../src/io/tempfile.cpp" line="52"/>
         <source>Cannot open &quot;%1&quot; for reading. Error: %2</source>
         <translation>无法打开要读取的文件“%1”。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/io/tempfile.cpp" line="106"/>
+        <location filename="../src/io/tempfile.cpp" line="106"/>
         <source>Cannot open &quot;%1&quot; for writing. Error: %2</source>
         <translation>无法打开要写入的文件“%1”。原因是：%2</translation>
     </message>
@@ -2425,17 +2462,17 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
 <context>
     <name>TimeZone</name>
     <message>
-        <location filename="src/timezone/timezonemanager.cpp" line="41"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="41"/>
         <source>Error in timezone: %1 / %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/timezone/timezonemanager.cpp" line="70"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="70"/>
         <source>Cannot read %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/timezone/timezonemanager.cpp" line="74"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="74"/>
         <source>Cannot read %1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2443,7 +2480,7 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
 <context>
     <name>TrackReader</name>
     <message>
-        <location filename="src/track/trackreader.cpp" line="53"/>
+        <location filename="../src/track/trackreader.cpp" line="46"/>
         <source>Cannot open track file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开航迹文件 %1。原因是：%2</translation>
     </message>
@@ -2459,32 +2496,32 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
 <context>
     <name>TreeDialog</name>
     <message>
-        <location filename="src/gui/treedialog.ui" line="14"/>
+        <location filename="../src/gui/treedialog.ui" line="14"/>
         <source>Little Navmap - </source>
         <translation>Little Navmap - </translation>
     </message>
     <message>
-        <location filename="src/gui/treedialog.ui" line="70"/>
+        <location filename="../src/gui/treedialog.ui" line="70"/>
         <source>Text Display Options</source>
         <translation>文本显示选项</translation>
     </message>
     <message>
-        <location filename="src/gui/treedialog.ui" line="101"/>
+        <location filename="../src/gui/treedialog.ui" line="101"/>
         <source>&amp;Select All</source>
         <translation>选中所有(&amp;S)</translation>
     </message>
     <message>
-        <location filename="src/gui/treedialog.ui" line="108"/>
+        <location filename="../src/gui/treedialog.ui" line="108"/>
         <source>Select &amp;None</source>
         <translation>取消选中所有(&amp;N)</translation>
     </message>
     <message>
-        <location filename="src/gui/treedialog.ui" line="115"/>
+        <location filename="../src/gui/treedialog.ui" line="115"/>
         <source>&amp;Expand All</source>
         <translation>展开所有(&amp;E)</translation>
     </message>
     <message>
-        <location filename="src/gui/treedialog.ui" line="122"/>
+        <location filename="../src/gui/treedialog.ui" line="122"/>
         <source>&amp;Collapse All</source>
         <translation>折叠所有(&amp;C)</translation>
     </message>
@@ -2554,106 +2591,123 @@ Import stopped.</source>
 <context>
     <name>Version</name>
     <message>
-        <location filename="src/util/version.cpp" line="42"/>
+        <location filename="../src/util/version.cpp" line="42"/>
         <source>.%1</source>
         <comment>Patchlevel in version string</comment>
         <translation>.%1</translation>
     </message>
     <message>
-        <location filename="src/util/version.cpp" line="43"/>
+        <location filename="../src/util/version.cpp" line="43"/>
         <source>.%1</source>
         <comment>Name like &quot;beta&quot; in version string</comment>
         <translation>.%1</translation>
     </message>
 </context>
 <context>
-    <name>XmlTools</name>
+    <name>XmlStreamReader</name>
     <message>
-        <location filename="src/util/xmlstream.cpp" line="79"/>
+        <location filename="../src/util/xmlstreamreader.cpp" line="89"/>
         <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
-        <translation>读取文件“%1”第 %2 行第 %3 列时出现了错误：%4</translation>
+        <translation type="unfinished">读取文件“%1”第 %2 行第 %3 列时出现了错误：%4</translation>
     </message>
     <message>
-        <location filename="src/util/xmlstream.h" line="87"/>
+        <location filename="../src/util/xmlstreamreader.h" line="143"/>
+        <location filename="../src/util/xmlstreamwriter.h" line="180"/>
         <source>Cannot open file %1. Reason: %2</source>
-        <translation>无法打开文件 %1。原因是：%2</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/util/xmlstreamwriter.cpp" line="191"/>
+        <source>Error writing &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>XmlTools</name>
+    <message>
+        <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
+        <translation type="vanished">读取文件“%1”第 %2 行第 %3 列时出现了错误：%4</translation>
+    </message>
+    <message>
+        <source>Cannot open file %1. Reason: %2</source>
+        <translation type="vanished">无法打开文件 %1。原因是：%2</translation>
     </message>
 </context>
 <context>
     <name>XpDataCompiler</name>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="135"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="200"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="227"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="308"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="135"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="200"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="227"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="308"/>
         <source>Default file &quot;%1&quot; not found</source>
         <translation>默认文件“%1”未找到</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="208"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="208"/>
         <source>Post processing Airways</source>
         <oldsource>Post procecssing Airways</oldsource>
         <translatorcomment>后期处理航路</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="331"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="427"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="331"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="427"/>
         <source>Reading: %1</source>
         <translation>读取：%1</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="881"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="881"/>
         <source>Counting files for Resources ...</source>
         <translation>正在资源文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="888"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="888"/>
         <source>Counting files for Custom Scenery/Global Airports ...</source>
         <translation>正在自定义地景/全球机场文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="901"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="901"/>
         <source>Counting files for Global Scenery/Global Airports ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="912"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="912"/>
         <source>Counting files for Airspaces ...</source>
         <translation>正在空域文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="918"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="918"/>
         <source>Counting files for Custom Scenery ...</source>
         <translation>正在自定义地景文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="942"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="942"/>
         <source>Counting files for Custom Data ...</source>
         <translation>正在自定义数据文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="952"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="952"/>
         <source>Counting files for User Included Path ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1016"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="1016"/>
         <source>AIRAC cycle in file is empty.</source>
         <translation>文件里的 AIRAC 周期是空的。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1024"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="1024"/>
         <source>Found different AIRAC cycles across navdata files. %1 and %2</source>
         <translation>导航数据文件里找到了不同的 AIRAC 周期。 %1 及 %2</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1034"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="1034"/>
         <source>AIRAC cycle not found in file.</source>
         <translation>文件里没有找到 AIRAC 周期。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="1073"/>
+        <location filename="../src/fs/xp/xpdatacompiler.cpp" line="1073"/>
         <source>Cannot find valid files for X-Plane navdata in either
 &quot;%1&quot; or
 &quot;%2&quot;
@@ -2681,27 +2735,27 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <translation type="vanished">文件不存在</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="84"/>
+        <location filename="../src/fs/xp/scenerypacks.cpp" line="84"/>
         <source>Cannot open file &quot;%1&quot;. Not a scenery_packs.ini file. %2.</source>
         <translation>无法打开文件“%1”。%2 不是一个 scenery_packs.ini 文件。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="89"/>
+        <location filename="../src/fs/xp/scenerypacks.cpp" line="89"/>
         <source>Intital &quot;I&quot; or &quot;A&quot; missing</source>
         <translation>开头的“I”或者“A”丢失了</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="94"/>
+        <location filename="../src/fs/xp/scenerypacks.cpp" line="94"/>
         <source>&quot;Version&quot; missing</source>
         <translation>“version”丢失</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="99"/>
+        <location filename="../src/fs/xp/scenerypacks.cpp" line="99"/>
         <source>Version number not valid</source>
         <translation>版本号无效</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="104"/>
+        <location filename="../src/fs/xp/scenerypacks.cpp" line="104"/>
         <source>&quot;SCENERY&quot; missing</source>
         <translation>“SCENERY”丢失</translation>
     </message>
@@ -2710,27 +2764,27 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <translation type="vanished">“SCENERY”后的空行丢失</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="126"/>
+        <location filename="../src/fs/xp/scenerypacks.cpp" line="126"/>
         <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
         <translation>“%2”的第“%1”行是无效的条目。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="175"/>
+        <location filename="../src/fs/xp/scenerypacks.cpp" line="175"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
         <translation>“%3”里第“%2”行的“%1”不存在。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="178"/>
+        <location filename="../src/fs/xp/scenerypacks.cpp" line="178"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
         <translation>“%3”里第“%2”行的“%1”不是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="181"/>
+        <location filename="../src/fs/xp/scenerypacks.cpp" line="181"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
         <translation>“%3”里第“%2”行的“%1”不可读。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="207"/>
+        <location filename="../src/fs/xp/scenerypacks.cpp" line="207"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>无法打开文件“%1”。原因是：%2。</translation>
     </message>
@@ -2738,48 +2792,48 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
 <context>
     <name>atools::Exception</name>
     <message>
-        <location filename="src/sql/sqlexception.cpp" line="70"/>
+        <location filename="../src/sql/sqlexception.cpp" line="70"/>
         <source>Database name &quot;%1&quot;, &quot;%2&quot;</source>
         <translation>数据库名称 &quot;%1&quot;, &quot;%2&quot;</translation>
     </message>
     <message>
-        <location filename="src/sql/sqlexception.cpp" line="74"/>
+        <location filename="../src/sql/sqlexception.cpp" line="74"/>
         <source>Database is null</source>
         <translation>数据库为空</translation>
     </message>
     <message>
-        <location filename="src/sql/sqlexception.cpp" line="80"/>
+        <location filename="../src/sql/sqlexception.cpp" line="80"/>
         <source>Database message &quot;%1&quot;</source>
         <translation>数据库消息 &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/sql/sqlexception.cpp" line="83"/>
+        <location filename="../src/sql/sqlexception.cpp" line="83"/>
         <source>Driver message &quot;%1&quot;</source>
         <translatorcomment>sqlite driver ? sqlite驱动程序</translatorcomment>
         <translation>驱动程序信息 &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/sql/sqlexception.cpp" line="93"/>
+        <location filename="../src/sql/sqlexception.cpp" line="93"/>
         <source>Query &quot;%1&quot;</source>
         <translation>查询 &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/sql/sqlexception.cpp" line="95"/>
+        <location filename="../src/sql/sqlexception.cpp" line="95"/>
         <source>Query text is null</source>
         <translation>查询文本为空</translation>
     </message>
     <message>
-        <location filename="src/sql/sqlexception.cpp" line="100"/>
+        <location filename="../src/sql/sqlexception.cpp" line="100"/>
         <source>Query is null</source>
         <translation>查询为空</translation>
     </message>
     <message>
-        <location filename="src/sql/sqlexception.cpp" line="110"/>
+        <location filename="../src/sql/sqlexception.cpp" line="110"/>
         <source>Record query text is null</source>
         <translation>记录查询文本为空</translation>
     </message>
     <message>
-        <location filename="src/sql/sqlexception.cpp" line="115"/>
+        <location filename="../src/sql/sqlexception.cpp" line="115"/>
         <source>Record is null</source>
         <translation>记录为空</translation>
     </message>
@@ -2787,62 +2841,62 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
 <context>
     <name>atools::fs::ns::NavServer</name>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="144"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="144"/>
         <source>Server is listening on hostnames (IP-addresses) on port </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="146"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="146"/>
         <source>Server is listening on hostname (IP-address) on port </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="147"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="147"/>
         <source>:</source>
         <translation>:</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="157"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="157"/>
         <source>%1. IPv6 </source>
         <translation>%1. IPv6 </translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="159"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="159"/>
         <source>%1. IPv4 </source>
         <translation>%1. IPv4 </translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="162"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="162"/>
         <source>%1 </source>
         <translation>%1 </translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="165"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="165"/>
         <source> (%1)</source>
         <translation> (%1)</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="168"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="168"/>
         <source>Use the mouse to select a hostname or IP-address.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="169"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="169"/>
         <source>Then copy the selected text to the clipboard using the context menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="173"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="173"/>
         <source>Error: No network found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="176"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="176"/>
         <source>Unable to start the server: %1.</source>
         <translation>无法启动服务器：%1。</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="137"/>
+        <location filename="../src/fs/ns/navserver.cpp" line="137"/>
         <source>Server is listening.</source>
         <translation>服务器已在监听。</translation>
     </message>
@@ -2874,42 +2928,42 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
 <context>
     <name>atools::fs::ns::NavServerWorker</name>
     <message>
-        <location filename="src/fs/ns/navserverworker.cpp" line="56"/>
+        <location filename="../src/fs/ns/navserverworker.cpp" line="56"/>
         <source>Error creating network socket: %1.</source>
         <translation>创建网络套接字时出错：%1。</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserverworker.cpp" line="63"/>
+        <location filename="../src/fs/ns/navserverworker.cpp" line="63"/>
         <source>Connection from %1 (%2).</source>
         <translation>自 %1 (%2) 的连接。</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserverworker.cpp" line="71"/>
+        <location filename="../src/fs/ns/navserverworker.cpp" line="71"/>
         <source>Connection from %1 (%2) closed.</source>
         <translation>自 %1 (%2) 的连接已关闭。</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserverworker.cpp" line="94"/>
+        <location filename="../src/fs/ns/navserverworker.cpp" line="94"/>
         <source>Incomplete reply</source>
         <translation>响应不完整</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserverworker.cpp" line="99"/>
+        <location filename="../src/fs/ns/navserverworker.cpp" line="99"/>
         <source>Error reading reply: %1. Closing connection.</source>
         <translation>读取响应：%1 时出错。正在关闭连接。</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserverworker.cpp" line="147"/>
+        <location filename="../src/fs/ns/navserverworker.cpp" line="147"/>
         <source>Missing reply</source>
         <translation>响应丢失</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserverworker.cpp" line="164"/>
+        <location filename="../src/fs/ns/navserverworker.cpp" line="164"/>
         <source>Error writing data: %1.</source>
         <translation>写入数据错误：%1。</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserverworker.cpp" line="180"/>
+        <location filename="../src/fs/ns/navserverworker.cpp" line="180"/>
         <source>Dropped more than %1 packages. Reason: %2. Increase update time interval.</source>
         <translation>丢失了超过 %1 个数据包。 原因是：%2。 增加更新时间间隔。</translation>
     </message>
@@ -2917,94 +2971,94 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
 <context>
     <name>atools::fs::perf::AircraftPerfHandler</name>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="253"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="253"/>
         <source>on ground</source>
         <translation>在地面</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="255"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="255"/>
         <source>fuel flow</source>
         <translation>燃油流量</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="262"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="262"/>
         <source>climbing</source>
         <translation>正在爬升</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="264"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="264"/>
         <source>descending</source>
         <translation>正在下降</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="268"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="268"/>
         <source>at cruise altitude</source>
         <translation>在巡航高度</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="270"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="270"/>
         <source>below cruise altitude</source>
         <translation>低于巡航高度</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="272"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="272"/>
         <source>above cruise altitude</source>
         <translation>高于巡航高度</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="399"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="399"/>
         <source>Invalid</source>
         <translation>无效</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="402"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="402"/>
         <source>None</source>
         <translation>无</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="405"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="405"/>
         <source>Departure Parking</source>
         <translation>停机在离场机场</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="408"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="408"/>
         <source>Departure Taxi and Takeoff</source>
         <translation>在离场机场滑行并起飞</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="411"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="411"/>
         <source>Climb</source>
         <translation>爬升</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="414"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="414"/>
         <source>Cruise</source>
         <translation>巡航</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="417"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="417"/>
         <source>Descent</source>
         <translation>正在下降</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="420"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="420"/>
         <source>Destination Taxi</source>
         <translatorcomment>待查</translatorcomment>
         <translation>已到达滑行中</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="423"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="423"/>
         <source>Destination Parking</source>
         <translatorcomment>待查</translatorcomment>
         <translation>停机在到达机场</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="426"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="426"/>
         <source>Loaded from last session</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="429"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="429"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
@@ -3012,22 +3066,22 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
 <context>
     <name>atools::fs::sc::DataReaderThread</name>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="239"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="239"/>
         <source>No flight simulator installation found. SimConnect not loaded.</source>
         <translation>没有找到安装的飞行模拟器。SimConnect 未载入。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="245"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="245"/>
         <source>Not connected to the simulator. Waiting ...</source>
         <translation>没有连接到模拟器。等待中 ...</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="265"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="265"/>
         <source>Connected to simulator.</source>
         <translation>已连接到模拟器。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="369"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="369"/>
         <source>Error reading &quot;%1&quot;: %2.</source>
         <translation>读取“%1”时发生了错误：%2。</translation>
     </message>
@@ -3036,12 +3090,12 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <translation type="vanished">从模拟器读取时有太多错误。重启程序。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="63"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="63"/>
         <source>Writing to &quot;%1&quot; in VATSIM format every %2 seconds.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="402"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="402"/>
         <source>Too many errors reading from simulator. Disconnected.
 The simulator has probably crashed.
 
@@ -3053,7 +3107,7 @@ Restart %1 to try again.</source>
 重启 %1 来再次尝试。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="422"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="422"/>
         <source>Error reading from simulator: %1. Disconnected. Restart &lt;i&gt;%2&lt;/i&gt; to try again.</source>
         <translation>从模拟器 %1 读取时有太多错误。已断开。重启&lt;i&gt;%2&lt;/i&gt;再试。</translation>
     </message>
@@ -3066,43 +3120,43 @@ Restart %1 to try again.</source>
         <translation type="vanished">安装最新的 &lt;i&gt;Little Xpconnect&lt;/i&gt; 版本。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="429"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="429"/>
         <source>Your installed version of Little Xpconnect is not compatible with this version of %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="432"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="432"/>
         <source>Install the latest version of Little Xpconnect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="533"/>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="576"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="533"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="576"/>
         <source>Cannot open &quot;%1&quot;.</source>
         <translation>无法打开“%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="548"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="548"/>
         <source>Cannot open &quot;%1&quot;. Is not a replay file - wrong magic number.</source>
         <translation>无法打开“%1”。不是一个回放文件 - 幻数错误。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="555"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="555"/>
         <source>Cannot open &quot;%1&quot;. Wrong version.</source>
         <translation>无法打开“%1”。版本有误。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="560"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="560"/>
         <source>Replaying from &quot;%1&quot;.</source>
         <translation>正在从“%1”回放。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="566"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="566"/>
         <source>Cannot open &quot;%1&quot;. File is too small.</source>
         <translation>无法打开“%1”。文件太小。</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="582"/>
+        <location filename="../src/fs/sc/datareaderthread.cpp" line="582"/>
         <source>Saving replay to &quot;%1&quot;.</source>
         <translation>正在保存回放到“%1”。</translation>
     </message>
@@ -3110,12 +3164,12 @@ Restart %1 to try again.</source>
 <context>
     <name>atools::fs::scenery::IniReader</name>
     <message>
-        <location filename="src/io/abstractinireader.cpp" line="163"/>
+        <location filename="../src/io/abstractinireader.cpp" line="163"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>无法打开文件 %1。原因是： %2</translation>
     </message>
     <message>
-        <location filename="src/io/abstractinireader.cpp" line="206"/>
+        <location filename="../src/io/abstractinireader.cpp" line="206"/>
         <source>%1. File &quot;%2&quot;, line %3:&quot;%4&quot;</source>
         <translation>%1. 文件 &quot;%2&quot;, 行 %3:&quot;%4&quot;</translation>
     </message>
@@ -3144,7 +3198,7 @@ Restart %1 to try again.</source>
 <context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="207"/>
+        <location filename="../src/fs/userdata/logdatamanager.cpp" line="207"/>
         <source>File contains invalid data.
 &quot;%1&quot;
 Line %2.</source>
@@ -3153,7 +3207,7 @@ Line %2.</source>
 行 %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="210"/>
+        <location filename="../src/fs/userdata/logdatamanager.cpp" line="210"/>
         <source>File is not valid. Neither departure nor destination ident is set.
 &quot;%1&quot;
 Line %2.</source>
@@ -3162,14 +3216,14 @@ Line %2.</source>
 行 %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="315"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="498"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="567"/>
+        <location filename="../src/fs/userdata/logdatamanager.cpp" line="321"/>
+        <location filename="../src/fs/userdata/logdatamanager.cpp" line="504"/>
+        <location filename="../src/fs/userdata/logdatamanager.cpp" line="573"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>无法打开文件“%1”。原因是：%2。</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="469"/>
+        <location filename="../src/fs/userdata/logdatamanager.cpp" line="475"/>
         <source>Imported from X-Plane logbook %1
 Number of landings: %2
 Cross country time: %3
@@ -3190,7 +3244,7 @@ Night time: %5</source>
 <context>
     <name>atools::fs::userdata::UserdataManager</name>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="261"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="263"/>
         <source>File contains invalid data.
 &quot;%1&quot;
 Line %2.</source>
@@ -3199,21 +3253,21 @@ Line %2.</source>
 行 %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="311"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="401"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="480"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="551"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="591"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="594"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="674"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="717"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="313"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="405"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="485"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="556"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="596"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="599"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="679"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="722"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>无法打开文件“%1”。原因是：%2。</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="347"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="351"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="355"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="351"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="355"/>
+        <location filename="../src/fs/userdata/userdatamanager.cpp" line="359"/>
         <source>File is not an X-Plane user_fix.dat file.</source>
         <translation type="unfinished">文件不是一个 X-Plane user_fix.dat 文件.</translation>
     </message>
@@ -3221,7 +3275,7 @@ Line %2.</source>
 <context>
     <name>atools::fs::weather::WeatherNetDownload</name>
     <message>
-        <location filename="src/fs/weather/weathernetdownload.cpp" line="68"/>
+        <location filename="../src/fs/weather/weathernetdownload.cpp" line="68"/>
         <source>No METARs found in download.</source>
         <translation>未在下载中找到 METAR.</translation>
     </message>
@@ -3229,7 +3283,7 @@ Line %2.</source>
 <context>
     <name>atools::grib::GribDownloader</name>
     <message>
-        <location filename="src/grib/gribdownloader.cpp" line="165"/>
+        <location filename="../src/grib/gribdownloader.cpp" line="165"/>
         <source>Unknown error.</source>
         <translation>未知错误。</translation>
     </message>
@@ -3237,7 +3291,7 @@ Line %2.</source>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="714"/>
+        <location filename="../src/grib/windquery.cpp" line="718"/>
         <source>Unknown error.</source>
         <translation>未知错误。</translation>
     </message>
@@ -3245,17 +3299,17 @@ Line %2.</source>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="186"/>
+        <location filename="../src/gui/application.cpp" line="178"/>
         <source>&lt;p&gt;An issue report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You can send this file to the author of %2 to investigate a problem. This is a Zip-file and you can look into the contents if needed.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure you are using the latest version of %2 before reporting a problem,&lt;br/&gt;and if possible, describe all the steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;已生成问题报告，并将所有相关文件保存到一个 Zip 压缩包中。&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;（点击查看）&lt;/p&gt;&lt;p&gt;您可以将此文件发送给 %2 的作者以调查问题。这是一个 Zip 文件，您可以根据需要查看其内容。&lt;/p&gt;&lt;p&gt;&lt;b&gt;请在报告问题之前确保您使用的是 %2 的最新版本，&lt;br/&gt;并尽可能描述重现问题的所有步骤。&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;点击此处查看联系信息&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="224"/>
+        <location filename="../src/gui/application.cpp" line="216"/>
         <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %1 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %1 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%1 上次未正常退出。&lt;/b&gt;&lt;/p&gt;&lt;p&gt;这很可能是由于崩溃引起的。&lt;/p&gt;&lt;p&gt;已生成崩溃报告，并将所有相关文件保存到一个 Zip 压缩包中。&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;（点击查看）&lt;/p&gt;&lt;p&gt;您可以将此文件发送给 %1 的作者以调查崩溃原因。&lt;/p&gt;&lt;p&gt;&lt;b&gt;请在报告崩溃之前确保使用 %1 的最新版本，并描述重现问题的所有步骤。&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;点击此处查看联系信息&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;是否现在以安全模式启动？这将跳过加载所有可能导致上次崩溃的默认文件，如飞行计划、窗口布局和其他设置。&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="371"/>
+        <location filename="../src/gui/application.cpp" line="363"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach a text copy or a screenshot of this dialog, the log file and the configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation>&lt;b&gt;如在启动时此问题持续或再次发生，删除 %1 里的所有设置和数据库再试一次。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;如您希望报告这个错误，附上日志及配置文件到您的报告，以及其他信息一起发生到以下任意一个联系地址。&lt;/b&gt;&lt;br/&gt;</translation>
@@ -3265,73 +3319,86 @@ Line %2.</source>
         <translation type="vanished">&lt;b&gt;在文件“%1”第“%2”行捕获了一个异常。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;点击 OK 以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="397"/>
+        <location filename="../src/gui/application.cpp" line="389"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;Press OK to exit application.&lt;/b&gt;</source>
         <translation>&lt;b&gt;在文件“%1”第“%2”行捕获异常。&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;点击OK以退出此程序。&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="419"/>
+        <location filename="../src/gui/application.cpp" line="411"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;在文件“%1”第“%2”行捕获了一个未知异常。&lt;/b&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&lt;h3&gt;点击OK以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="440"/>
+        <location filename="../src/gui/application.cpp" line="432"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation>&lt;b&gt;联系:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - 联系与支持&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="446"/>
+        <location filename="../src/gui/application.cpp" line="438"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;联系:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="471"/>
+        <location filename="../src/gui/application.cpp" line="463"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="475"/>
+        <location filename="../src/gui/application.cpp" line="467"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="478"/>
+        <location filename="../src/gui/application.cpp" line="470"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="497"/>
+        <location filename="../src/gui/application.cpp" line="489"/>
         <source> 64-bit</source>
         <translation> 64位</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="499"/>
+        <location filename="../src/gui/application.cpp" line="491"/>
         <source> 32-bit</source>
         <translation> 32位</translation>
     </message>
 </context>
 <context>
+    <name>atools::gui::ComboBoxHandler</name>
+    <message>
+        <location filename="../src/gui/comboboxhandler.cpp" line="63"/>
+        <source>Delete &amp;current List Entry &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/comboboxhandler.cpp" line="68"/>
+        <source>Delete &amp;all List Entries</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="834"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="839"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="922"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="840"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="845"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="928"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>读取“%1”时发生了错误：%2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="860"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="865"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="866"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="871"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation>写入“%1”时发生了错误：%2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="883"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="889"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation>读取“%1”时发生了错误：无效的幻数。不是一个有效的窗口布局文件。</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="886"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="892"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation>读取“%1”时发生了错误：无效的版本。不兼容的窗口布局文件。</translation>
     </message>
@@ -3339,37 +3406,37 @@ Line %2.</source>
 <context>
     <name>atools::gui::HelpHandler</name>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="51"/>
+        <location filename="../src/gui/helphandler.cpp" line="51"/>
         <source>&lt;p&gt;%1 (build and library)&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1（构建及库）&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="53"/>
+        <location filename="../src/gui/helphandler.cpp" line="53"/>
         <source>&lt;p&gt;%1 (build)&lt;br/&gt;%2 (library)&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1（构建）&lt;br/&gt;%2（库）&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="58"/>
+        <location filename="../src/gui/helphandler.cpp" line="58"/>
         <source> 64-bit</source>
         <translation> 64位</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="60"/>
+        <location filename="../src/gui/helphandler.cpp" line="60"/>
         <source> 32-bit</source>
         <translation> 32位</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="66"/>
+        <location filename="../src/gui/helphandler.cpp" line="66"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="67"/>
+        <location filename="../src/gui/helphandler.cpp" line="67"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;版本 %3（修订版本 %4）&lt;/p&gt;&lt;p&gt;atools 版本 %5（修订版本 %6）&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="85"/>
+        <location filename="../src/gui/helphandler.cpp" line="85"/>
         <source>About Qt</source>
         <translation>关于 Qt</translation>
     </message>
@@ -3378,7 +3445,7 @@ Line %2.</source>
         <translation type="vanished">打开帮助URL“%1”时出错</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="104"/>
+        <location filename="../src/gui/helphandler.cpp" line="104"/>
         <source>Help file &quot;%1&quot; not found</source>
         <translation>帮助文件“%1”未找到</translation>
     </message>
@@ -3387,16 +3454,39 @@ Line %2.</source>
         <translation type="vanished">“%1”及锚 “%2”的URL是空的。</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="163"/>
-        <location filename="src/gui/helphandler.cpp" line="179"/>
+        <location filename="../src/gui/helphandler.cpp" line="163"/>
+        <location filename="../src/gui/helphandler.cpp" line="179"/>
         <source>URL is empty for &quot;%1&quot;.</source>
         <translation>“%1”的 URL 是空的。</translation>
     </message>
 </context>
 <context>
+    <name>atools::gui::LinkTooltipHandler</name>
+    <message>
+        <location filename="../src/gui/linktooltiphandler.cpp" line="49"/>
+        <source>Open the link in a web browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/linktooltiphandler.cpp" line="52"/>
+        <source>Show the file in Windows Explorer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/linktooltiphandler.cpp" line="54"/>
+        <source>Show the file in Apple Finder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/linktooltiphandler.cpp" line="56"/>
+        <source>Show the file in a file manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>atools::gui::SqlQueryDialog</name>
     <message>
-        <location filename="src/gui/sqlquerydialog.cpp" line="131"/>
+        <location filename="../src/gui/sqlquerydialog.cpp" line="131"/>
         <source>Nothing found to delete.</source>
         <translation>没有发现需要删除的东西。</translation>
     </message>
@@ -3404,18 +3494,18 @@ Line %2.</source>
 <context>
     <name>atools::gui::TabWidgetHandler</name>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="80"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="129"/>
         <source>&amp;Open all Tabs</source>
         <oldsource>&amp;Open All</oldsource>
         <translation>打开全部选项卡(&amp;O)</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="81"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="130"/>
         <source>Show all tabs</source>
         <translation>显示所有选项卡</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="87"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="136"/>
         <source>&amp;Close all Tabs except Current</source>
         <oldsource>&amp;Close All Except Current</oldsource>
         <translation>关闭除当前外的其他选项卡(&amp;C)</translation>
@@ -3425,42 +3515,42 @@ Line %2.</source>
         <translation type="vanished">关闭除当前页的所有页</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="88"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="137"/>
         <source>Close all tabs except the currently active tab</source>
         <translation>关闭除当前活动选项卡外的所有选项卡</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="94"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="143"/>
         <source>&amp;Reset Tab Layout</source>
         <translation>重设选项卡布局(&amp;R)</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="95"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="144"/>
         <source>Show all tabs and reset order back to default</source>
         <translation>显示所有的选项卡并将排序重置为默认值</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="102"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="151"/>
         <source>&amp;Lock Tab Layout</source>
         <translation>锁定选项卡布局(&amp;L)</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="103"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="152"/>
         <source>Hides close buttons and fixes tabs at current position</source>
         <translation>隐藏关闭按钮并将选项卡固定在当期位置</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="175"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="220"/>
         <source>&amp;Close tab %1</source>
         <translation>关闭选项卡 %1(&amp;C)</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="179"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="224"/>
         <source>Close tab</source>
         <translation>关闭选项卡</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="228"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="273"/>
         <source>Open or close tab %1</source>
         <translation>打开或关闭选项卡 %1</translation>
     </message>
@@ -3468,7 +3558,7 @@ Line %2.</source>
 <context>
     <name>atools::gui::TreeDialog</name>
     <message>
-        <location filename="src/gui/treedialog.cpp" line="179"/>
+        <location filename="../src/gui/treedialog.cpp" line="179"/>
         <source>Duplicate id %1 found while adding item in TreeDialog</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3476,14 +3566,14 @@ Line %2.</source>
 <context>
     <name>atools::sql::DataManagerBase</name>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="438"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="438"/>
         <source>
 Line number %1</source>
         <translation>
 行数 %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="441"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="441"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -3495,7 +3585,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="444"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="444"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -3507,7 +3597,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="447"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="447"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -3519,7 +3609,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="450"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="450"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -3531,7 +3621,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="453"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="453"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -3543,85 +3633,85 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="546"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="546"/>
         <source>preUndoBulkInsert() not called</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="650"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="650"/>
         <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="760"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="766"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="760"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="766"/>
         <source>&amp;%1</source>
         <translation>&amp;%1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="760"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="760"/>
         <source>&amp;Undo %1</source>
         <translation>撤销(&amp;U) %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="766"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="766"/>
         <source>&amp;Redo %1</source>
         <translation>重做(&amp;R) %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="852"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="852"/>
         <source>no %1</source>
         <translation>无 %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="854"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="854"/>
         <source>one %1</source>
         <translatorcomment>就是菜单里面记录表、用户航点操作那里的翻译。</translatorcomment>
         <translation>1个 %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="856"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="856"/>
         <source>two %1</source>
         <translation>2个 %1</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="858"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="858"/>
         <source>%1 %2</source>
         <translation>%1个 %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="860"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="860"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="860"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="860"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="865"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="865"/>
         <source>Invalid undo action</source>
         <translation>无效的撤销动作</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="869"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="869"/>
         <source>%1 adding of %2</source>
         <translation>%1 添加 %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="873"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="873"/>
         <source>%1 editing of %2</source>
         <translation>%1 编辑 %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="877"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="877"/>
         <source>%1 deleting of %2</source>
         <translation>%1 删除 %2</translation>
     </message>
     <message>
-        <location filename="src/sql/datamanagerbase.cpp" line="916"/>
-        <location filename="src/sql/datamanagerbase.cpp" line="928"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="916"/>
+        <location filename="../src/sql/datamanagerbase.cpp" line="928"/>
         <source>Table undo_current is empty.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3629,7 +3719,7 @@ Import stopped.</source>
 <context>
     <name>atools::util::UpdateCheck</name>
     <message>
-        <location filename="src/util/updatecheck.cpp" line="105"/>
+        <location filename="../src/util/updatecheck.cpp" line="105"/>
         <source>Unknown Error</source>
         <translation>未知错误</translation>
     </message>
