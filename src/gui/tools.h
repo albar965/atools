@@ -78,8 +78,8 @@ bool checked(const QAction *action);
 /* Returns indexes in reverse order so that items can be deleted from the end of the list. */
 const QList<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionModel);
 
-/* Changes the background color of the widget using stylesheets and adapts text color for readability */
-void changeWidgetColor(QWidget *widget, QColor backgroundColor);
+/* Changes the background color of the button using stylesheets and adapts text color for readability */
+void changeWidgetColor(QPushButton *button, QColor backgroundColor);
 
 /* Returns darker or lighter cell colors to indicate editable cells in tables */
 QBrush editableTableCellBrush(bool darkStyle, int row);

@@ -37,6 +37,7 @@
 #include <QScrollBar>
 #include <QSpinBox>
 #include <QComboBox>
+#include <QPushButton>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -503,21 +504,23 @@ void changeTabBarSize(QTabWidget *tabWidget, double factor)
   tabWidget->updateGeometry();
 }
 
-void changeWidgetColor(QWidget *widget, QColor backgroundColor)
+void changeWidgetColor(QPushButton *button, QColor backgroundColor)
 {
 #if !defined(Q_OS_MACOS)
-  if(widget->isEnabled())
-  {
-    QColor foregroundColor(backgroundColor.value() < 180 ? Qt::white : Qt::black);
-    widget->setStyleSheet(QStringLiteral("background-color: ") % backgroundColor.name() % QStringLiteral("; color: ") %
-                          foregroundColor.name());
-  }
+  if(button->isEnabled())
+    button->setStyleSheet(QStringLiteral("background-color: %1; color: %2;").
+                          arg(backgroundColor.name()).
+                          arg(QColor(backgroundColor.value() < 180 ? Qt::white : Qt::black).name()));
   else
-    widget->setStyleSheet(QStringLiteral());
+    button->setStyleSheet(QStringLiteral());
 #else
-  Q_UNUSED(backgroundColor)
-  Q_UNUSED(widget)
+  QPalette palette = button->palette();
+  palette.setColor(QPalette::Button, backgroundColor);
+  palette.setColor(QPalette::ButtonText, QColor(backgroundColor.value() < 180 ? Qt::white : Qt::black));
+  button->setPalette(palette);
+  button->update();
 #endif
+  button->update();
 }
 
 const QList<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionModel)
