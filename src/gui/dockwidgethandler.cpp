@@ -306,6 +306,38 @@ void DockWidgetHandler::connectDockWidget(QDockWidget *dockWidget)
   dockWidget->installEventFilter(dockEventFilter);
 }
 
+void DockWidgetHandler::closeDockWidget(QDockWidget *dockWidget)
+{
+  if(dockWidget->isVisible())
+  {
+    // Close the tabified buddies
+    toggledDockWindow(dockWidget, false);
+    dockWidget->close();
+  }
+}
+
+void DockWidgetHandler::dockViewToggled()
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
+
+  // Do not change dock stack order if the main window is minimized or unminimized
+  // State is still min if main window is unminimized
+  if(handleDockViews && !mainWindow->isMinimized())
+  {
+    QAction *action = dynamic_cast<QAction *>(sender());
+    if(action != nullptr)
+    {
+      bool checked = action->isChecked();
+      for(QDockWidget *dock : std::as_const(dockWidgets))
+      {
+        if(action == dock->toggleViewAction())
+          toggledDockWindow(dock, checked);
+      }
+    }
+  }
+}
+
 void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
 {
   bool handle = handleDockViews;
@@ -329,6 +361,8 @@ void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
         {
           if(verbose)
             qDebug() << Q_FUNC_INFO << dock->objectName();
+
+          // Show the tabified buddy - triggers dockViewToggled() but is ignored there
           dock->show();
         }
       }
@@ -344,6 +378,7 @@ void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
     // Even floating widgets can have tabified buddies - ignore floating
     if(!dockWidget->isFloating())
     {
+      // Get dock widgets that are tabified together with dockwidget
       const QList<QDockWidget *> docks = mainWindow->tabifiedDockWidgets(dockWidget);
       for(QDockWidget *dock : docks)
       {
@@ -351,6 +386,8 @@ void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
         {
           if(verbose)
             qDebug() << Q_FUNC_INFO << dock->objectName();
+
+          // Close the tabified buddy - triggers dockViewToggled() but is ignored there
           dock->close();
         }
       }
@@ -394,28 +431,6 @@ void DockWidgetHandler::updateDockTabStatus(QDockWidget *dockWidget)
       {
         tabified.append(dockWidget);
         dockStackList.append(tabified);
-      }
-    }
-  }
-}
-
-void DockWidgetHandler::dockViewToggled()
-{
-  if(verbose)
-    qDebug() << Q_FUNC_INFO;
-
-  // Do not change dock stack order if the main window is minimized or unminimized
-  // State is still min if main window is unminimized
-  if(handleDockViews && !mainWindow->isMinimized())
-  {
-    QAction *action = dynamic_cast<QAction *>(sender());
-    if(action != nullptr)
-    {
-      bool checked = action->isChecked();
-      for(QDockWidget *dock : std::as_const(dockWidgets))
-      {
-        if(action == dock->toggleViewAction())
-          toggledDockWindow(dock, checked);
       }
     }
   }
@@ -837,12 +852,12 @@ void DockWidgetHandler::resetWindowState(const QSize& size, const QString& filen
       fullscreenState->clear();
     }
     else
-      throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename).arg(file.errorString()));
+      throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename, file.errorString()));
 
     file.close();
   }
   else
-    throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename).arg(file.errorString()));
+    throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename, file.errorString()));
 }
 
 void DockWidgetHandler::saveWindowState(const QString& filename, bool allowUndockCentral)
@@ -863,12 +878,12 @@ void DockWidgetHandler::saveWindowState(const QString& filename, bool allowUndoc
     stream << FILE_MAGIC_NUMBER << FILE_VERSION << allowUndockCentral << fullscreen << *normalState << *fullscreenState;
 
     if(file.error() != QFileDevice::NoError)
-      throw atools::Exception(tr("Error writing \"%1\": %2").arg(filename).arg(file.errorString()));
+      throw atools::Exception(tr("Error writing \"%1\": %2").arg(filename, file.errorString()));
 
     file.close();
   }
   else
-    throw atools::Exception(tr("Error writing \"%1\": %2").arg(filename).arg(file.errorString()));
+    throw atools::Exception(tr("Error writing \"%1\": %2").arg(filename, file.errorString()));
 }
 
 bool DockWidgetHandler::loadWindowState(const QString& filename, bool allowUndockCentral,
@@ -925,7 +940,7 @@ bool DockWidgetHandler::loadWindowState(const QString& filename, bool allowUndoc
     }
   }
   else
-    throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename).arg(file.errorString()));
+    throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename, file.errorString()));
 
   // nothing to apply
   return false;

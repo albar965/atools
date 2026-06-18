@@ -73,6 +73,7 @@ public:
   /* Set current tab. Tab will be re-opened if was closed.
    *  left = true: left side of current otherwise to the right.*/
   void setCurrentTab(int id, bool left = false);
+  QWidget *getCurrentTabWidget();
 
   /* Open tab in background if it was closed. left = true: left side of current otherwise to the right. */
   void openTab(int id, bool left = false);

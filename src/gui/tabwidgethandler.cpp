@@ -393,6 +393,11 @@ void TabWidgetHandler::setCurrentTab(int id, bool left)
   }
 }
 
+QWidget *TabWidgetHandler::getCurrentTabWidget()
+{
+  return tabWidget->currentWidget();
+}
+
 void TabWidgetHandler::openTab(int id, bool left)
 {
   int index = getIndexForId(id);

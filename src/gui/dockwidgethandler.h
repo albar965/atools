@@ -240,9 +240,14 @@ public:
   /* Update title bar font for the given dock window using a stylesheet. */
   static void fontChangedWidget(QDockWidget *dock, const QFont& font);
 
+  /* Close widget and all tabified buddies */
+  void closeDockWidget(QDockWidget *dockWidget);
+
 private:
   /* One dock view was toggled by the accompanied action */
   void dockViewToggled();
+
+  /* Close or open the tabified buddies */
   void toggledDockWindow(QDockWidget *dockWidget, bool checked);
 
   /* Collect dockStackList with all stacked dock widgets */

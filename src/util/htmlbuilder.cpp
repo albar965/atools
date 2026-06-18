@@ -32,9 +32,9 @@
 namespace atools {
 namespace util {
 
-const QColor HtmlBuilder::COLOR_FOREGROUND_ERROR("#ffffff");
-const QColor HtmlBuilder::COLOR_BACKGROUND_ERROR("#ff0000");
-const QColor HtmlBuilder::COLOR_FOREGROUND_WARNING("#ff2000");
+const QColor HtmlBuilder::COLOR_FOREGROUND_ERROR(Qt::white);
+const QColor HtmlBuilder::COLOR_FOREGROUND_WARNING(255, 32, 0);
+const QColor HtmlBuilder::COLOR_BACKGROUND_ERROR(Qt::red);
 const QColor HtmlBuilder::COLOR_BACKGROUND_WARNING(Qt::transparent);
 
 const html::Flags HtmlBuilder::MSG_FLAGS = html::BOLD | html::NO_ENTITIES;
@@ -427,7 +427,7 @@ HtmlBuilder& HtmlBuilder::tdAtts(const QHash<QString, QString>& attributes)
 {
   QString atts;
   for(auto it = attributes.constBegin(); it != attributes.constEnd(); ++it)
-    atts.append(QStringLiteral(" %1=\"%2\" ").arg(it.key()).arg(it.value()));
+    atts.append(QStringLiteral(" %1=\"%2\" ").arg(it.key(), it.value()));
 
   htmlText.append(QStringLiteral("<td ") % atts % QStringLiteral(">"));
   return *this;
@@ -519,7 +519,7 @@ HtmlBuilder& HtmlBuilder::tableAtts(const QHash<QString, QString>& attributes)
 {
   QString atts;
   for(auto it = attributes.constBegin(); it != attributes.constEnd(); ++it)
-    atts.append(QStringLiteral(" %1=\"%2\" ").arg(it.key()).arg(it.value()));
+    atts.append(QStringLiteral(" %1=\"%2\" ").arg(it.key(), it.value()));
 
   htmlText.append(QStringLiteral("<table ") % atts % QStringLiteral(">\n<tbody>\n"));
   tableRowsCur = 0;

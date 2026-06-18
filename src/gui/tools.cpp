@@ -610,5 +610,15 @@ QBrush editableTableCellBrush(bool darkStyle, int row)
   return (row % 2) == 0 ? base : alternateBase;
 }
 
+bool hasAnyChildFocus(QWidget *widget)
+{
+  if(widget == nullptr)
+    return false;
+
+  const QWidget *focusWidget = QApplication::focusWidget();
+
+  return focusWidget != nullptr && widget->findChildren<QWidget *>().contains(focusWidget);
+}
+
 } // namespace gui
 } // namespace atools
