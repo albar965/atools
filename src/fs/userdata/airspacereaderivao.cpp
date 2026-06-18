@@ -224,7 +224,7 @@ bool AirspaceReaderIvao::readFile(const QString& filenameParam)
     file.close();
   }
   else
-    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2 (%3)").arg(filename).arg(file.errorString()).arg(file.error()));
+    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2 (%3)").arg(filename, file.errorString()).arg(file.error()));
 
   return numAirspacesRead > 0;
 }

@@ -99,7 +99,7 @@ const QStringList probeFile(const QString& file, int numLinesRead)
     testFile.close();
   }
   else
-    throw Exception(QObject::tr("Error reading \"%1\": %2").arg(file).arg(testFile.errorString()));
+    throw Exception(QObject::tr("Error reading \"%1\": %2").arg(file, testFile.errorString()));
 
   return lines;
 }
@@ -458,19 +458,15 @@ float calculateSteps(float range, float numSteps)
 QString programFileInfo()
 {
   return QObject::tr("Created by %1 Version %2 (revision %3) on %4").
-         arg(QCoreApplication::applicationName()).
-         arg(QCoreApplication::applicationVersion()).
-         arg(atools::gitRevision()).
-         arg(atools::currentIsoWithOffset(false /* milliseconds */)).
+         arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion(), atools::gitRevision(),
+             atools::currentIsoWithOffset(false /* milliseconds */)).
          replace(QStringLiteral("-"), QStringLiteral(" "));
 }
 
 QString programFileInfoNoDate()
 {
   return QObject::tr("Created by %1 Version %2 (revision %3)").
-         arg(QCoreApplication::applicationName()).
-         arg(QCoreApplication::applicationVersion()).
-         arg(atools::gitRevision()).
+         arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion(), atools::gitRevision()).
          replace(QStringLiteral("-"), QStringLiteral(" "));
 }
 
@@ -492,7 +488,7 @@ bool fileEndsWithEol(const QString& filepath)
     endsWithEol = lastChar == '\n' || lastChar == '\r';
   }
   else
-    throw atools::Exception(QObject::tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(tmp.errorString()));
+    throw atools::Exception(QObject::tr("Cannot open file \"%1\". Reason: %2.").arg(filepath, tmp.errorString()));
   return endsWithEol;
 }
 

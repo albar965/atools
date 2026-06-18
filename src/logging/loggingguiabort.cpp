@@ -52,8 +52,8 @@ void LoggingGuiAbortHandler::guiAbortFunction(const QString& msg)
                                              "<hr/>%3"
                                                "<hr/>%4<br/>"
                                                "<h3>Press OK to exit application.</h3>").
-                                 arg(msg).arg(atools::gui::Application::generalErrorMessage()).
-                                 arg(atools::gui::Application::getContactHtml()).arg(atools::gui::Application::getReportPathHtml()));
+                                 arg(msg, atools::gui::Application::generalErrorMessage(), atools::gui::Application::getContactHtml(),
+                                     atools::gui::Application::getReportPathHtml()));
 #else
   Q_UNUSED(msg)
 #endif

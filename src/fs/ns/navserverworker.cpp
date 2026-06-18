@@ -60,7 +60,7 @@ void NavServerWorker::threadStarted()
   peerAddr = socket->peerAddress().toString();
   hostInfo = QHostInfo::fromName(peerAddr);
 
-  qInfo(gui).noquote().nospace() << tr("Connection from %1 (%2).").arg(hostInfo.hostName()).arg(peerAddr);
+  qInfo(gui).noquote().nospace() << tr("Connection from %1 (%2).").arg(hostInfo.hostName(), peerAddr);
 
   qDebug() << "NavServerWorker Connection from " << hostInfo.hostName() << " (" << peerAddr << ") "
            << "port " << socket->peerPort();
@@ -69,7 +69,7 @@ void NavServerWorker::threadStarted()
 void NavServerWorker::socketDisconnected()
 {
   qInfo(gui).noquote().nospace() << tr("Connection from %1 (%2) closed.").
-    arg(hostInfo.hostName()).arg(peerAddr);
+    arg(hostInfo.hostName(), peerAddr);
 
   socket->deleteLater();
   socket = nullptr;

@@ -67,7 +67,7 @@ void TimeZoneManager::readFile(const QString& filename)
     p->library = file.readAll();
 
     if(file.error() != QFile::NoError)
-      throw atools::Exception(tr("Cannot read %1: %2").arg(filename).arg(file.errorString()));
+      throw atools::Exception(tr("Cannot read %1: %2").arg(filename, file.errorString()));
 
     p->timezoneDb = ZDOpenDatabaseFromMemory(p->library.data(), p->library.size());
     if(!p->timezoneDb)

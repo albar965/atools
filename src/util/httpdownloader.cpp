@@ -228,22 +228,15 @@ void HttpDownloader::setDefaultUserAgent(const QString& extension)
   // Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:59.0) Gecko/20100101 Firefox/59.0
   // Little Navmap/1.9.1.develop (Ubuntu 17.10; x86_64; de-DE) Qt 5.9.3 extension
   userAgent = QStringLiteral("%1/%2 (%3; %4; %5) Qt %6%7").
-              arg(QCoreApplication::applicationName()).
-              arg(QCoreApplication::applicationVersion()).
-              arg(QSysInfo::prettyProductName()).
-              arg(QSysInfo::buildCpuArchitecture()).
-              arg(QLocale().uiLanguages().join("; ")).
-              arg(QT_VERSION_STR).
-              arg(extension);
+              arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion(), QSysInfo::prettyProductName(),
+                  QSysInfo::buildCpuArchitecture(), QLocale().uiLanguages().join("; "), QT_VERSION_STR, extension);
 }
 
 void HttpDownloader::setDefaultUserAgentShort(const QString& extension)
 {
   // Little Navmap/1.9.1.develop extension
   userAgent = QStringLiteral("%1/%2%3").
-              arg(QCoreApplication::applicationName()).
-              arg(QCoreApplication::applicationVersion()).
-              arg(extension);
+              arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion(), extension);
 }
 
 void HttpDownloader::debugDumpContainerSizes() const

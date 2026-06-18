@@ -31,7 +31,7 @@ void ErrorHandler::handleException(const std::exception& e, const QString& messa
 {
   qCritical() << "Caught exception:" << e.what();
 
-  atools::gui::Dialog::critical(parent, tr("%1\nCaught exception\n\n%2").arg(message).arg(e.what()),
+  atools::gui::Dialog::critical(parent, tr("%1\nCaught exception\n\n%2").arg(message, e.what()),
                                 QMessageBox::Close, QMessageBox::NoButton);
 }
 
@@ -48,7 +48,7 @@ void ErrorHandler::handleSqlError(const QSqlError& error, const QString& message
 {
   qCritical() << "Sql error occured:" << error.text();
 
-  atools::gui::Dialog::critical(parent, tr("%1\nSql error occured\n\"%2\"").arg(message).arg(error.text()),
+  atools::gui::Dialog::critical(parent, tr("%1\nSql error occured\n\"%2\"").arg(message, error.text()),
                                 QMessageBox::Close, QMessageBox::NoButton);
 }
 
@@ -57,8 +57,9 @@ void ErrorHandler::handleIOError(const QFileDevice& device, const QString& messa
   qCritical().nospace() << "IO error occured: " << device.errorString() << " (" << device.error() << ") "
                         << " file: " << device.fileName();
 
-  atools::gui::Dialog::critical(parent, tr("%1\nIO error occured\nFile: \"%2\"\n\"%3\" (%4)").arg(message).
-                                arg(device.fileName()).arg(device.errorString()).arg(device.error()),
+  atools::gui::Dialog::critical(parent,
+                                tr("%1\nIO error occured\nFile: \"%2\"\n\"%3\" (%4)").
+                                arg(message, device.fileName(), device.errorString()).arg(device.error()),
                                 QMessageBox::Close, QMessageBox::NoButton);
 }
 

@@ -367,7 +367,7 @@ void DataReaderThread::run()
       {
         emit postStatus(data.getStatus(), data.getStatusText());
         emit postLogMessage(tr("Error reading \"%1\": %2.").
-                            arg(loadReplayFilepath).arg(data.getStatusText()), false, true);
+                            arg(loadReplayFilepath, data.getStatusText()), false, true);
         closeReplay();
       }
     } // if(loadReplayFile != nullptr)
@@ -421,8 +421,7 @@ void DataReaderThread::run()
 
         emit postLogMessage(tr("Error reading from simulator: %1. Disconnected. "
                                "Restart <i>%2</i> to try again.").
-                            arg(data.getStatusText()).
-                            arg(QCoreApplication::applicationName()), false, true);
+                            arg(data.getStatusText(), QCoreApplication::applicationName()), false, true);
 
         if(data.getStatus() == INVALID_MAGIC_NUMBER || data.getStatus() == VERSION_MISMATCH)
         {

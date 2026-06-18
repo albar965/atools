@@ -125,7 +125,7 @@ void GpxIO::saveGpx(const QString& filename, const atools::fs::gpx::GpxData& gpx
     gpxFile.close();
   }
   else
-    throw Exception(errorMsg.arg(filename).arg(gpxFile.errorString()));
+    throw Exception(errorMsg.arg(filename, gpxFile.errorString()));
 }
 
 void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::GpxData& gpxData)
@@ -282,7 +282,7 @@ void GpxIO::loadGpx(atools::fs::gpx::GpxData& gpxData, const QString& filename)
     gpxFile.close();
   }
   else
-    throw Exception(errorMsg.arg(filename).arg(gpxFile.errorString()));
+    throw Exception(errorMsg.arg(filename, gpxFile.errorString()));
 }
 
 void GpxIO::loadGpxInternal(atools::fs::gpx::GpxData& gpxData, atools::util::XmlStreamReader& xmlStream)

@@ -53,7 +53,7 @@ bool Marker::isValid() const
 QString Marker::getObjectName() const
 {
   return Record::getObjectName() + QStringLiteral("marker ident %1 region %2 position %3").
-         arg(ident).arg(region).arg(position.getPos().toString());
+         arg(ident, region, position.getPos().toString());
 }
 
 Marker::Marker(const NavDatabaseOptions *options, BinaryStream *stream)

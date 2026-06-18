@@ -123,12 +123,12 @@ QString Flightplan::getDescription() const
   if(departureIdent == departureName || departureName.isEmpty())
     depart = departureIdent;
   else
-    depart = QStringLiteral("%1 (%2)").arg(departureName).arg(departureIdent);
+    depart = QStringLiteral("%1 (%2)").arg(departureName, departureIdent);
 
   if(destinationIdent == destinationName || destinationName.isEmpty())
     dest = destinationIdent;
   else
-    dest = QStringLiteral("%1 (%2)").arg(destinationName).arg(destinationIdent);
+    dest = QStringLiteral("%1 (%2)").arg(destinationName, destinationIdent);
 
   text.append(atools::strJoin(QStringList({depart, dest}), " to "));
 
@@ -145,7 +145,7 @@ QString Flightplan::getDescription() const
 QString Flightplan::getDescr() const
 {
   return QStringLiteral("%1, %2 created by %3 %4").
-         arg(departureIdent).arg(destinationIdent).arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+         arg(departureIdent, destinationIdent, QCoreApplication::applicationName(), QCoreApplication::applicationVersion());
 }
 
 QString Flightplan::getFilenamePatternExample(const QString& pattern, const QString& suffix, bool html, QString *errorMessage)
@@ -163,7 +163,7 @@ QString Flightplan::getFilenamePatternExample(const QString& pattern, const QStr
       else if(patternSuffix.compare(defaultPatternSuffix, Qt::CaseInsensitive) != 0)
         // Pattern differs to given extension
         errorMessage->append(tr("File pattern uses a wrong extension \".%1\". It should end with \".%2\".").
-                             arg(patternSuffix).arg(defaultPatternSuffix));
+                             arg(patternSuffix, defaultPatternSuffix));
     }
 
     // Build an example filename
@@ -178,8 +178,7 @@ QString Flightplan::getFilenamePatternExample(const QString& pattern, const QStr
       *errorMessage = tr("Pattern contains invalid characters, double spaces or is longer than %1 characters.%2"
                          "Not allowed are: %3").
                       arg(atools::MAX_FILENAME_CHARS).
-                      arg(html ? "<br/>" : "\n").
-                      arg(atools::invalidFilenameCharacters(html));
+                      arg(html ? QStringLiteral("<br/>") : QStringLiteral("\n"), atools::invalidFilenameCharacters(html));
     return cleanExample;
   }
   else

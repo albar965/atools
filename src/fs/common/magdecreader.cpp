@@ -140,7 +140,7 @@ void MagDecReader::readFromBgl(const QString& filename)
     file.close();
   }
   else
-    throw atools::Exception(tr("Cannot read %1. Reason: %2").arg(file.fileName()).arg(file.errorString()));
+    throw atools::Exception(tr("Cannot read %1. Reason: %2").arg(file.fileName(), file.errorString()));
 }
 
 void MagDecReader::readFromBytes(const QByteArray& bytes)

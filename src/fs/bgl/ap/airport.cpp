@@ -536,7 +536,7 @@ bool Airport::isValid() const
 QString Airport::getObjectName() const
 {
   return Record::getObjectName() + QStringLiteral("airport ident %1 region %2 name %3 position %4").
-         arg(ident).arg(region).arg(name).arg(position.getPos().toString());
+         arg(ident, region, name, position.getPos().toString());
 }
 
 void Airport::extractMainComFrequencies(const QList<Com>& coms, int& towerFrequency, int& unicomFrequency,

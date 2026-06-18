@@ -142,7 +142,7 @@ void FileOperations::copyDirectoryInternal(const QString& from, const QString& t
           qDebug() << Q_FUNC_INFO << "link from" << toPath.filePath() << "to" << relativeLinkTarget;
 
         if(!QFile::link(relativeLinkTarget, toPath.filePath()))
-          errors.append(tr("Cannot create link \"%1\" to \"%2\".").arg(toPath.absoluteFilePath()).arg(relativeLinkTarget));
+          errors.append(tr("Cannot create link \"%1\" to \"%2\".").arg(toPath.absoluteFilePath(), relativeLinkTarget));
         else
           filesProcessed++;
       }
@@ -155,7 +155,7 @@ void FileOperations::copyDirectoryInternal(const QString& from, const QString& t
             qDebug() << Q_FUNC_INFO << "copy from" << fromPath.filePath() << "to" << toPath.filePath();
 
           if(!QFile::copy(fromPath.filePath(), toPath.filePath()))
-            errors.append(tr("Cannot copy file \"%1\" to \"%2\".").arg(fromPath.filePath()).arg(toPath.filePath()));
+            errors.append(tr("Cannot copy file \"%1\" to \"%2\".").arg(fromPath.filePath(), toPath.filePath()));
           else
             filesProcessed++;
         }

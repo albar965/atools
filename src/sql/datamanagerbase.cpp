@@ -866,15 +866,15 @@ QString DataManagerBase::undoRedoStepName(bool undo) const
           break;
 
         case atools::sql::DataManagerBase::UNDO_INSERT:
-          text = tr("%1 adding of %2").arg(undoRedoText).arg(numText);
+          text = tr("%1 adding of %2").arg(undoRedoText, numText);
           break;
 
         case atools::sql::DataManagerBase::UNDO_UPDATE:
-          text = tr("%1 editing of %2").arg(undoRedoText).arg(numText);
+          text = tr("%1 editing of %2").arg(undoRedoText, numText);
           break;
 
         case atools::sql::DataManagerBase::UNDO_DELETE:
-          text = tr("%1 deleting of %2").arg(undoRedoText).arg(numText);
+          text = tr("%1 deleting of %2").arg(undoRedoText, numText);
           break;
       }
     }

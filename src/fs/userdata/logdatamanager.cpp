@@ -318,7 +318,7 @@ int LogdataManager::importCsv(const QString& filepath)
     undoHandler.finish();
   } // if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   else
-    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath, file.errorString()));
 
   return numImported;
 }
@@ -501,7 +501,7 @@ int LogdataManager::importXplane(const QString& filepath,
     undoHandler.finish();
   } // if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   else
-    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath, file.errorString()));
 
   return numImported;
 
@@ -570,7 +570,7 @@ int LogdataManager::exportCsv(const QString& filepath, const QList<int>& ids, bo
     file.close();
   }
   else
-    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath, file.errorString()));
   return numExported;
 }
 

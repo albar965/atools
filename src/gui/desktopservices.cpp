@@ -143,7 +143,7 @@ void DesktopServices::runProcess(QWidget *parent, const QString& program, const 
   process.setArguments(arguments);
   if(!process.startDetached())
     atools::gui::Dialog::warning(parent, tr("Error running program \"%1\" with arguments %2.").
-                                 arg(program).arg(atools::strJoin("\"", arguments, "\"", "\"", "\"")));
+                                 arg(program, atools::strJoin("\"", arguments, "\"", "\"", "\"")));
 }
 
 QString DesktopServices::clean(QString pathOrUrl)

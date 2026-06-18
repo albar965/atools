@@ -310,7 +310,7 @@ int UserdataManager::importCsv(const QStringList& filepaths, atools::fs::userdat
       file.close();
     }
     else
-      throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+      throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath, file.errorString()));
 
   } // for(const QString& filepath : filepaths)
 
@@ -402,7 +402,7 @@ int UserdataManager::importXplane(const QString& filepath)
     undoHandler.finish();
   } // if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   else
-    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath, file.errorString()));
 
   return numImported;
 }
@@ -482,7 +482,7 @@ int UserdataManager::importGarmin(const QString& filepath)
     undoHandler.finish();
   } // if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   else
-    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath, file.errorString()));
   return numImported;
 }
 
@@ -553,7 +553,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QList<int>& ids, a
     file.close();
   }
   else
-    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath, file.errorString()));
   return numExported;
 }
 
@@ -593,10 +593,10 @@ int UserdataManager::exportXplane(const QString& filepath, const QList<int>& ids
         tempOutFile.rename(filepath);
       }
       else
-        throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(inFile.fileName()).arg(inFile.errorString()));
+        throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(inFile.fileName(), inFile.errorString()));
     }
     else
-      throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(tempOutFile.fileName()).arg(tempOutFile.errorString()));
+      throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(tempOutFile.fileName(), tempOutFile.errorString()));
   }
 
   int numExported = 0;
@@ -676,7 +676,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QList<int>& ids
     file.close();
   }
   else
-    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath, file.errorString()));
   return numExported;
 }
 
@@ -719,7 +719,7 @@ int UserdataManager::exportGarmin(const QString& filepath, const QList<int>& ids
     file.close();
   }
   else
-    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath, file.errorString()));
   return numExported;
 }
 

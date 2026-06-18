@@ -1227,7 +1227,7 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
     } // try
     catch(Exception& e)
     {
-      errors.append(tr("Caught exception writing airport %1. Error: %2").arg(airportIdent).arg(e.what()));
+      errors.append(tr("Caught exception writing airport %1. Error: %2").arg(airportIdent, e.what()));
       qWarning() << Q_FUNC_INFO << errors.constLast();
 
       clearAllBoundValues();

@@ -67,10 +67,10 @@ AddOnPackage::AddOnPackage(const QString& file)
         }
       }
       if(xmlReader->hasError())
-        throw Exception(tr("Cannot read file %1. Reason: %2").arg(file).arg(xmlReader->errorString()));
+        throw Exception(tr("Cannot read file %1. Reason: %2").arg(file, xmlReader->errorString()));
     }
     else
-      throw Exception(tr("Cannot open file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+      throw Exception(tr("Cannot open file %1. Reason: %2").arg(file, xmlFile.errorString()));
   }
 }
 

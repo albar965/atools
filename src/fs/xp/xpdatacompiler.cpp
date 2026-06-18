@@ -1022,7 +1022,7 @@ void XpDataCompiler::updateAiracCycleFromHeader(const QString& header, const QSt
       progress->reportError();
 
       QString msg = tr("Found different AIRAC cycles across navdata files. "
-                       "%1 and %2").arg(airacCycle).arg(c);
+                       "%1 and %2").arg(airacCycle, c);
       qWarning() << Q_FUNC_INFO << "Error in file" << filepath << "line" << lineNum << ": " << msg;
       errors->getSceneryErrors().first().appendFileError(SceneryFileError(filepath, msg, lineNum));
     }
@@ -1073,7 +1073,7 @@ QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts, const QStr
       throw atools::Exception(tr("Cannot find valid files for X-Plane navdata in either\n\"%1\" or\n\"%2\"\n\n"
                                  "Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat "
                                  "can be found in one of these paths.").
-                              arg(customPath).arg(defaultPath));
+                              arg(customPath, defaultPath));
   }
   else
   {

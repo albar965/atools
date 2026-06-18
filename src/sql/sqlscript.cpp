@@ -60,8 +60,7 @@ void SqlScript::executeScript(const QString& filename)
   }
   else
     throw SqlException(db,
-                       QStringLiteral("Cannot open script file \"%1\". Reason: %2.").arg(scriptFile.fileName()).arg(
-                         scriptFile.errorString()));
+                       QStringLiteral("Cannot open script file \"%1\". Reason: %2.").arg(scriptFile.fileName(), scriptFile.errorString()));
   scriptFile.close();
 }
 

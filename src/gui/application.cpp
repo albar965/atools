@@ -182,8 +182,8 @@ void Application::createReport(QWidget *parent, const QString& crashReportFile, 
                              "<p><b>Please make sure you are using the latest version of %2 before reporting a problem,<br/>"
                              "and if possible, describe all the steps to reproduce the problem.</b></p>"
                              "<p><a href=\"%3\"><b>Click here for contact information</b></a></p>").
-                    arg(atools::util::HtmlBuilder::aFilePath(crashReportFile, atools::util::html::NOBR_WHITESPACE)).
-                    arg(QCoreApplication::applicationName()).arg(contactUrl);
+                    arg(atools::util::HtmlBuilder::aFilePath(crashReportFile, atools::util::html::NOBR_WHITESPACE),
+                        QCoreApplication::applicationName(), contactUrl);
 
   atools::gui::MessageBox box(parent);
   box.setShowInFileManager();
@@ -225,9 +225,8 @@ void Application::recordStartAndDetectCrash(QWidget *parent, const QString& lock
                                        "<p><b>Start in safe mode now which means to skip loading of all default files like "
                                          "flight plans, window layout and other settings now which may have "
                                          "caused the previous crash?</b></p>").
-                      arg(applicationName()).
-                      arg(atools::util::HtmlBuilder::aFilePath(crashReportFile, atools::util::html::NOBR_WHITESPACE)).
-                      arg(contactUrl);
+                      arg(applicationName(), atools::util::HtmlBuilder::aFilePath(crashReportFile, atools::util::html::NOBR_WHITESPACE),
+                          contactUrl);
 
     atools::gui::MessageBox box(parent);
     box.setShowInFileManager();
@@ -394,10 +393,8 @@ void Application::handleException(const char *file, int line, const std::excepti
                                          "<b>Press OK to exit application.</b>").
                                   arg(file).
                                   arg(line).
-                                  arg(atools::strJoin("<ul><li>", QString(e.what()).split("\n"), "</li><li>", "</li><li>", "</li></ul>")).
-                                  arg(generalErrorMessage()).
-                                  arg(getContactHtml()).
-                                  arg(getReportPathHtml()));
+                                  arg(atools::strJoin("<ul><li>", QString(e.what()).split("\n"), "</li><li>", "</li><li>", "</li></ul>"),
+                                      generalErrorMessage(), getContactHtml(), getReportPathHtml()));
 
   std::abort();
 }
@@ -415,9 +412,7 @@ void Application::handleException(const char *file, int line)
                                        "<h3>Press OK to exit application.</h3>"
                                      ).
                                   arg(file).arg(line).
-                                  arg(generalErrorMessage()).
-                                  arg(getContactHtml()).
-                                  arg(getReportPathHtml()));
+                                  arg(generalErrorMessage(), getContactHtml(), getReportPathHtml()));
 
   std::abort();
 }
@@ -430,7 +425,7 @@ void Application::addReportPath(const QString& header, const QStringList& paths)
 QString Application::getContactHtml()
 {
   return tr("<b>Contact:</b><br/>"
-            "<a href=\"%1\">%2 - Contact and Support</a>").arg(contactUrl).arg(applicationName());
+            "<a href=\"%1\">%2 - Contact and Support</a>").arg(contactUrl, applicationName());
 }
 
 QString Application::getEmailHtml()
@@ -464,7 +459,7 @@ QString Application::getReportPathHtml()
     const QStringList paths = reportFiles.value(header);
 
     for(const QString& path : paths)
-      fileStr += tr("<a href=\"%1\">%2</a><br/>").arg(QUrl::fromLocalFile(path).toString()).arg(atools::elideTextShortLeft(path, 80));
+      fileStr += tr("<a href=\"%1\">%2</a><br/>").arg(QUrl::fromLocalFile(path).toString(), atools::elideTextShortLeft(path, 80));
 
     if(header != names.constLast())
       fileStr.append(tr("<br/>"));
@@ -493,7 +488,7 @@ void Application::initSplashScreen(const QString& imageFile, const QString& revi
     QString applicationVersion = QApplication::applicationVersion();
 #endif
 
-    splashScreenMessage = QObject::tr("Version %5 (revision %6).").arg(applicationVersion).arg(revision);
+    splashScreenMessage = QObject::tr("Version %5 (revision %6).").arg(applicationVersion, revision);
     splashScreen->showMessage(splashScreenMessage, Qt::AlignRight | Qt::AlignBottom, Qt::black);
     processEventsExtended();
   }

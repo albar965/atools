@@ -906,11 +906,8 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
 
   databaseMetadata.setDataSource(FsPaths::typeToShortName(sim));
   databaseMetadata.setCompilerVersion(QStringLiteral("atools %1 (revision %2) %3 %4 (%5)").
-                                      arg(atools::version()).
-                                      arg(atools::gitRevision()).
-                                      arg(QCoreApplication::applicationName()).
-                                      arg(QCoreApplication::applicationVersion()).
-                                      arg(gitRevision));
+                                      arg(atools::version(), atools::gitRevision(), QCoreApplication::applicationName(),
+                                          QCoreApplication::applicationVersion(), gitRevision));
 
   databaseMetadata.updateAll();
   db.commit();

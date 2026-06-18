@@ -67,7 +67,7 @@ void SqlException::messageDb(QStringList& msgList, const SqlDatabase *db)
 {
   if(db != nullptr)
   {
-    msgList.append(tr("Database name \"%1\", \"%2\"").arg(db->databaseName()).arg(db->getName()));
+    msgList.append(tr("Database name \"%1\", \"%2\"").arg(db->databaseName(), db->getName()));
     messageErr(msgList, db->lastError());
   }
   else

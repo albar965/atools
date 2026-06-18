@@ -43,7 +43,7 @@ void TrackReader::readTracks(const QString& filename, TrackType type)
     file.close();
   }
   else
-    throw atools::Exception(tr("Cannot open track file \"%1\". Reason: %2").arg(file.fileName()).arg(file.errorString()));
+    throw atools::Exception(tr("Cannot open track file \"%1\". Reason: %2").arg(file.fileName(), file.errorString()));
 }
 
 void TrackReader::readTracks(const QByteArray& data, TrackType type)

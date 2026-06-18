@@ -51,7 +51,7 @@ void HelpHandler::about()
       sslTxt = tr("<p>%1 (build and library)</p>").arg(QSslSocket::sslLibraryBuildVersionString());
     else
       sslTxt = tr("<p>%1 (build)<br/>%2 (library)</p>").
-               arg(QSslSocket::sslLibraryBuildVersionString()).arg(QSslSocket::sslLibraryVersionString());
+               arg(QSslSocket::sslLibraryBuildVersionString(), QSslSocket::sslLibraryVersionString());
   }
 
 #if defined(WINARCH64)
@@ -69,15 +69,8 @@ void HelpHandler::about()
                             "%7"
                             "<hr/>%8"
                               "<hr/>%9<br/>").
-                     arg(QCoreApplication::applicationName()).
-                     arg(message).
-                     arg(applicationVersion).
-                     arg(rev).
-                     arg(atools::version()).
-                     arg(atools::gitRevision()).
-                     arg(sslTxt).
-                     arg(atools::gui::Application::getContactHtml()).
-                     arg(atools::gui::Application::getReportPathHtml()));
+                     arg(QCoreApplication::applicationName(), message, applicationVersion, rev, atools::version(), atools::gitRevision(),
+                         sslTxt, atools::gui::Application::getContactHtml(), atools::gui::Application::getReportPathHtml()));
 }
 
 void HelpHandler::aboutQt()

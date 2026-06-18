@@ -110,7 +110,7 @@ bool atools::fs::bgl::Waypoint::isDisabled() const
 QString Waypoint::getObjectName() const
 {
   return Record::getObjectName() + QStringLiteral("waypoint ident %1 region %2 position %3").
-         arg(ident).arg(region).arg(position.getPos().toString());
+         arg(ident, region, position.getPos().toString());
 }
 
 Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *stream)

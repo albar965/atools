@@ -315,7 +315,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
                   // Example of malformed file UWLS.bgl
 
                   throw atools::Exception(tr("Multiple duplicate airport idents \"%1\" in file \"%2\". File is malformed.").
-                                          arg(ap->getIdent()).arg(getFilepath()));
+                                          arg(ap->getIdent(), getFilepath()));
                 }
                 else
                   // Already stored - increase counter

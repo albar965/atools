@@ -170,7 +170,7 @@ void AircraftPerf::saveXml(const QString& filename) const
     xmlFile.close();
   }
   else
-    throw Exception(tr("Cannot open file %1. Reason: %2").arg(filename).arg(xmlFile.errorString()));
+    throw Exception(tr("Cannot open file %1. Reason: %2").arg(filename, xmlFile.errorString()));
 }
 
 void AircraftPerf::saveXmlInternal(QXmlStreamWriter& writer) const
@@ -261,7 +261,7 @@ void AircraftPerf::loadXml(const QString& filename)
     xmlFile.close();
   }
   else
-    throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
+    throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename, xmlFile.errorString()));
 }
 
 void AircraftPerf::loadXmlStr(const QString& string)

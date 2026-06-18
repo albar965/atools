@@ -83,7 +83,7 @@ bool AirspaceReaderOpenAir::readFile(const QString& filenameParam)
   }
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2 (%3)").
-                            arg(filename).arg(file.errorString()).arg(file.error()));
+                            arg(filename, file.errorString()).arg(file.error()));
 
   // Always success
   return true;

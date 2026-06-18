@@ -160,7 +160,7 @@ void AbstractIniReader::read(const QString& iniFilename)
     sceneryCfgFile.close();
   }
   else
-    throw Exception(tr("Cannot open file %1. Reason: %2").arg(iniFilename).arg(sceneryCfgFile.errorString()));
+    throw Exception(tr("Cannot open file %1. Reason: %2").arg(iniFilename, sceneryCfgFile.errorString()));
 }
 
 void AbstractIniReader::onStartDocument(const QString& filename)
@@ -204,7 +204,7 @@ void AbstractIniReader::onKeyValue(const QString& section, const QString& key, c
 void AbstractIniReader::throwException(const QString& message)
 {
   throw Exception(tr("%1. File \"%2\", line %3:\"%4\"").
-                  arg(message).arg(filepath).arg(currentLineNum).arg(currentLine));
+                  arg(message, filepath).arg(currentLineNum).arg(currentLine));
 }
 
 bool AbstractIniReader::toBool(const QString& str)

@@ -39,7 +39,7 @@ TempFile::TempFile(const QString& filepathParam, const QString& suffix, bool del
     QByteArray bytes = src.readAll();
 
     if(bytes.isEmpty() && src.error() != QFileDevice::NoError)
-      throw atools::Exception(tr("Cannot read from \"%1\". Error: %2").arg(filepathParam).arg(src.errorString()));
+      throw atools::Exception(tr("Cannot read from \"%1\". Error: %2").arg(filepathParam, src.errorString()));
 
     if(bytes.isEmpty())
       qWarning() << Q_FUNC_INFO << "Empty file" << src.fileName();
@@ -49,7 +49,7 @@ TempFile::TempFile(const QString& filepathParam, const QString& suffix, bool del
     src.close();
   }
   else
-    throw atools::Exception(tr("Cannot open \"%1\" for reading. Error: %2").arg(filepathParam).arg(src.errorString()));
+    throw atools::Exception(tr("Cannot open \"%1\" for reading. Error: %2").arg(filepathParam, src.errorString()));
 }
 
 TempFile::TempFile(const QByteArray& bytes, const QString& suffix, bool deleteOnExitParam)
@@ -71,10 +71,9 @@ QString TempFile::getTempFilename(const QString& suffix)
 {
   // little_navmap_ef85eb54-a5b8-4a6a-890f-ee61a58f1ef9"suffix"
   return QDir::tempPath() + QStringLiteral("/%1-%2-%3%4").
-         arg(QCoreApplication::organizationName().replace(' ', '_').toLower()).
-         arg(QCoreApplication::applicationName().replace(' ', '_').toLower()).
-         arg(QUuid::createUuid().toString(QUuid::Id128)).
-         arg(suffix.isEmpty() ? ".temp" : suffix);
+         arg(QCoreApplication::organizationName().replace(' ', '_').toLower(),
+             QCoreApplication::applicationName().replace(' ', '_').toLower(), QUuid::createUuid().toString(QUuid::Id128),
+             suffix.isEmpty() ? ".temp" : suffix);
 }
 
 const QString& TempFile::getFilePath() const
@@ -103,7 +102,7 @@ void TempFile::init(const QByteArray& bytes, const QString& suffix)
     tempFile.close();
   }
   else
-    throw atools::Exception(tr("Cannot open \"%1\" for writing. Error: %2").arg(tempFile.fileName()).arg(tempFile.errorString()));
+    throw atools::Exception(tr("Cannot open \"%1\" for writing. Error: %2").arg(tempFile.fileName(), tempFile.errorString()));
 }
 
 } // namespace io

@@ -74,15 +74,15 @@ bool testUrl(QStringList& result, const QString& urlStr, const QString& airportI
         }
         else
           result.append(QObject::tr("Cannot open file \"%1\". Reason: %2.").
-                        arg(urlStr).arg(file.errorString()));
+                        arg(urlStr, file.errorString()));
       }
       else
         result.append(QObject::tr("Cannot open file \"%1\". Reason: %2.").
-                      arg(urlStr).arg(QObject::tr("Is not a file.")));
+                      arg(urlStr, QObject::tr("Is not a file.")));
     }
     else
       result.append(QObject::tr("Cannot open file \"%1\". Reason: %2.").
-                    arg(urlStr).arg(QObject::tr("File does not exist")));
+                    arg(urlStr, QObject::tr("File does not exist")));
   }
   return false;
 }
