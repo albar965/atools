@@ -577,7 +577,7 @@ QString adjustMsfsUserWpName(QString name, int length, int *number)
 QString adjustIdent(QString ident, int length, int id)
 {
   static const QRegularExpression IDENT_REGEXP("[^A-Z0-9]");
-  ident = ident.toUpper().replace(IDENT_REGEXP, "").left(length);
+  ident = ident.toUpper().replace(IDENT_REGEXP, QStringLiteral()).left(length);
   if(ident.isEmpty())
   {
     if(id != -1)
@@ -605,7 +605,7 @@ bool isValidIdent(const QString& ident)
 
 bool isValidRegion(const QString& region)
 {
-  static const QRegularExpression REGION_REGEXP("^[A-Z0-9]$");
+  static const QRegularExpression REGION_REGEXP("^[A-Z0-9][A-Z0-9]$");
   return REGION_REGEXP.match(region).hasMatch();
 }
 
