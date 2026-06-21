@@ -145,6 +145,10 @@ public:
   atools::sql::SqlRecord getRecord(int id) const;
   void getRecords(QList<atools::sql::SqlRecord>& records, const QSet<int>& ids) const;
 
+  /* Get rows by matching a field versus value */
+  void getRecords(QList<atools::sql::SqlRecord>& records, const QString& fieldName, const QVariant& value) const;
+  QList<atools::sql::SqlRecord> getRecords(const QString& fieldName, const QVariant& value) const;
+
   /* Get values with content for ids and one column */
   QVariant getValue(int id, const QString& colName) const;
   void getValues(QVariantList& values, const QSet<int>& ids, const QString& colName) const;

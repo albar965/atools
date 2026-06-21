@@ -417,6 +417,23 @@ bool DataManagerBase::hasRecord(int id) const
   return util->hasRows(tableName, QStringLiteral("%1 = %2").arg(idColumnName).arg(id));
 }
 
+QList<SqlRecord> DataManagerBase::getRecords(const QString& fieldName, const QVariant& value) const
+{
+  QList<SqlRecord> records;
+  getRecords(records, fieldName, value);
+  return records;
+}
+
+void DataManagerBase::getRecords(QList<SqlRecord>& records, const QString& fieldName, const QVariant& value) const
+{
+  atools::sql::SqlQuery query(db);
+  query.prepare(QStringLiteral("select * from %1 where %2 = ?").arg(tableName, fieldName));
+  query.bindValue(0, value);
+  query.exec();
+  while(query.next())
+    records.append(query.record());
+}
+
 void DataManagerBase::getEmptyRecord(SqlRecord& record) const
 {
   record = db->record(tableName);
