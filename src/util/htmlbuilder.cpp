@@ -33,6 +33,7 @@ namespace atools {
 namespace util {
 
 const QColor HtmlBuilder::COLOR_FOREGROUND_ERROR(Qt::white);
+
 const QColor HtmlBuilder::COLOR_FOREGROUND_WARNING(255, 32, 0);
 const QColor HtmlBuilder::COLOR_BACKGROUND_ERROR(Qt::red);
 const QColor HtmlBuilder::COLOR_BACKGROUND_WARNING(Qt::transparent);
@@ -243,7 +244,7 @@ HtmlBuilder& HtmlBuilder::note(const QString& str, html::Flags flags)
 QString HtmlBuilder::noteMessage(const QString& str, html::Flags flags)
 {
   if(!str.isEmpty())
-    return textMessage(str, flags, QColor(QStringLiteral("#00aa00")));
+    return textMessage(str, flags | html::BOLD);
 
   return str;
 }

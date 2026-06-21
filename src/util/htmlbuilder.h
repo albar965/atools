@@ -121,7 +121,7 @@ public:
   static QString warningMessage(const QString& str, html::Flags flags = MSG_FLAGS);
   static QString warningMessage(const QStringList& stringList, const QString& separator = "<br/>", html::Flags flags = MSG_FLAGS);
 
-  /* Hint message. Dark green bold text. */
+  /* Hint message. Bold text. */
   HtmlBuilder& note(const QString& str, html::Flags flags = MSG_FLAGS);
   static QString noteMessage(const QString& str, html::Flags flags = MSG_FLAGS);
   static QString noteMessage(const QStringList& stringList, const QString& separator = "<br/>", html::Flags flags = MSG_FLAGS);
