@@ -923,7 +923,7 @@ void DataManagerBase::truncateUndoIf()
 
 void DataManagerBase::syncCurrentUndoGroupToDb()
 {
-  if(undoActive)
+  if(undoActive && queryUndoCurrent != nullptr)
   {
     // Copy from field to table undo_current
     queryUndoCurrent->bindValue(0, currentUndoGroupId);

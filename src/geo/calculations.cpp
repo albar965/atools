@@ -499,7 +499,7 @@ float windCorrectedHeading(float windSpeed, float windDirectionDeg, float course
 
 float windCorrectedGroundSpeed(float windSpeed, float windDirectionDeg, float courseDeg, float trueAirspeed)
 {
-  float gs;
+  float gs = 0.f;
   windCorrectedHeading(gs, windSpeed, windDirectionDeg, courseDeg, trueAirspeed);
   return gs;
 }
@@ -511,7 +511,7 @@ float windCorrectedHeading(float& groundSpeed, float windSpeed, float windDirect
      !(windDirectionDeg < INVALID_FLOAT / 2.f))
     return INVALID_FLOAT;
 
-  double gs;
+  double gs = 0.;
   double heading = windCorrectedHeadingRad(gs, windSpeed, toRadians(windDirectionDeg), toRadians(
                                              courseDeg), trueAirspeed);
 
