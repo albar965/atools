@@ -70,7 +70,7 @@ class SpatialIndexPrivate
 /*
  * Spatial index wrapping the nanoflann library which uses KD-tree for nearest neighbor search.
  *
- * Changing the underlying vector needs a call of updateIndex() afterwards.
+ * Changing the underlying list needs a call of updateIndex() afterwards.
  *
  * Note that squared distance is used internally for lookup and resulting distances are therefore not accurate.
  *

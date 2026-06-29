@@ -60,7 +60,7 @@ public:
 
   /* Removes invalid tracks, reports as warning and returns removed number. */
   int removeInvalid();
-  static int removeInvalid(atools::track::TrackListType& trackVector);
+  static int removeInvalid(atools::track::TrackListType& trackList);
 
 private:
   /* Read all lines from stream into a list. Lines are simplified and empty ones are dropped. */
@@ -79,17 +79,17 @@ private:
   /* Convert e.g. "58/20" to "5820N" and "5530/20" to "H5530". */
   QStringList toNatWaypoints(const QStringList& str);
 
-  /* Extract all tracks into the track vector that begin with nameRegexp and end with a ")".
+  /* Extract all tracks into the track list that begin with nameRegexp and end with a ")".
    * nameRegexp needs to have a group returning the name. */
   void extractTracks(const QStringList& lines, const QRegularExpression& nameRegexp, TrackType type, bool removeEmpty);
 
-  /* Extract NAT tracks into the track vector. */
+  /* Extract NAT tracks into the track list. */
   void extractNatTracks(const QStringList& lines);
 
-  /* Extract PACOTS tracks into the track vector. */
+  /* Extract PACOTS tracks into the track list. */
   void extractPacotsTracks(const QStringList& lines);
 
-  /* Extract the PACOTS flex tracks into the track vector. */
+  /* Extract the PACOTS flex tracks into the track list. */
   void extractPacotsTracksFlex(const QStringList& text);
 
   atools::track::TrackListType tracks;

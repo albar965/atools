@@ -88,18 +88,18 @@ int TrackReader::removeInvalid()
   return TrackReader::removeInvalid(tracks);
 }
 
-int TrackReader::removeInvalid(TrackListType& trackVector)
+int TrackReader::removeInvalid(TrackListType& trackList)
 {
-  auto it = std::remove_if(trackVector.begin(), trackVector.end(), [](const Track& track) -> bool {
+  auto it = std::remove_if(trackList.begin(), trackList.end(), [](const Track& track) -> bool {
         bool valid = track.isFullyValid();
         if(!valid)
           qWarning() << "TrackReader: Invalid track " << track;
         return !valid;
       });
 
-  int num = static_cast<int>(std::distance(it, trackVector.end()));
-  if(it != trackVector.end())
-    trackVector.erase(it, trackVector.end());
+  int num = static_cast<int>(std::distance(it, trackList.end()));
+  if(it != trackList.end())
+    trackList.erase(it, trackList.end());
   return num;
 }
 

@@ -40,7 +40,7 @@ static QHash<atools::fs::FsPaths::SimulatorType, QString> basePathMap;
 static QHash<atools::fs::FsPaths::SimulatorType, QString> filesPathMap;
 static QHash<atools::fs::FsPaths::SimulatorType, QString> sceneryFilepathMap;
 
-/* All supported simulators. Order in this vector defines order of detection. */
+/* All supported simulators. Order in this list defines order of detection. */
 static const QList<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES({
       FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::P3D_V6,
       FsPaths::XPLANE_11, FsPaths::XPLANE_12, FsPaths::MSFS, FsPaths::MSFS_2024

@@ -110,7 +110,7 @@ public:
     return nodeIndex.getNearest(pos);
   }
 
-  /* Get nodes vector. The index parameter can be used to access nodes fast.*/
+  /* Get nodes list. The index parameter can be used to access nodes fast.*/
   const QList<atools::routing::Node>& getNodes() const
   {
     return nodeIndex;

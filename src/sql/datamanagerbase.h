@@ -112,7 +112,7 @@ public:
    */
   void insertOneRecord(SqlRecord record, int id = -1);
 
-  /* Add all records from vector into database. Ids are assigned automatically.
+  /* Add all records from list into database. Ids are assigned automatically.
    * Column order in record does not have to match column order in table.
    *
    * If id column is not given or id is 0 a generated id will be used.
@@ -275,9 +275,9 @@ protected:
    */
   struct QueryWrapper
   {
-    /* Returns records in order of id vector */
-    QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase * sqlDb, const QList<int>& idVector, const QString& idColName)
-      : query(sqlDb), ids(idVector), hasIds(!ids.isEmpty())
+    /* Returns records in order of id list */
+    QueryWrapper(const QString& queryStr, const atools::sql::SqlDatabase * sqlDb, const QList<int>& idList, const QString& idColName)
+      : query(sqlDb), ids(idList), hasIds(!ids.isEmpty())
     {
       query.prepare(queryStr + (hasIds ? QLatin1String(" where ") + idColName + QLatin1String(" = :id") : QString()));
     }

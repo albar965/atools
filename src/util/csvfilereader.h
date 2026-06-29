@@ -29,7 +29,7 @@ namespace util {
 class CsvReader;
 
 /*
- * Provides functionality to read a full CSV file including escaped lines with linefeeds and more into a string list vector.
+ * Provides functionality to read a full CSV file including escaped lines with linefeeds and more into a string list.
  */
 class CsvFileReader
 {

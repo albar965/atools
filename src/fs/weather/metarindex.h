@@ -149,12 +149,12 @@ private:
   atools::fs::util::AirportCoordFuncType airportCoordFunction = nullptr;
   void *airportCoordObject = nullptr;
 
-  /* Map containing all loaded METARs airport idents mapped to the position in metarVector */
+  /* Map containing all loaded METARs airport idents mapped to the position in metarList */
   QHash<QByteArray, int> identIndexMap;
 
   /* Index containing all stations which could be resolved to a coordinate. */
   atools::geo::SpatialIndex<PosIndex> *spatialIndex = nullptr, *spatialIndexInterpolated = nullptr;
-  QList<atools::fs::weather::Metar> metarVector, metarInterpolatedVector;
+  QList<atools::fs::weather::Metar> metarList, metarInterpolatedList;
 
   int maxInterpolatedCacheSize = 40000;
   float maxDistanceToleranceMeter = 100.f;

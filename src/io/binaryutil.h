@@ -25,10 +25,10 @@
 namespace atools {
 namespace io {
 
-/* Read vector with numeric types from byte array.
+/* Read list with numeric types from byte array.
  * Array of values of TYPE is prefixed with size SIZETYPE. */
 template<typename TYPE, typename SIZETYPE>
-QList<TYPE> readVector(QByteArray bytes)
+QList<TYPE> readList(QByteArray bytes)
 {
   QDataStream out(&bytes, QIODevice::ReadOnly);
   out.setVersion(QDataStream::Qt_5_5);
@@ -39,30 +39,30 @@ QList<TYPE> readVector(QByteArray bytes)
   out >> num;
 
   // Read values
-  QList<TYPE> vector;
+  QList<TYPE> list;
   for(SIZETYPE i = 0; i < num; i++)
   {
     TYPE value;
     out >> value;
-    vector.append(value);
+    list.append(value);
   }
 
-  return vector;
+  return list;
 }
 
-/* Write vector with numeric types to byte array.
+/* Write list with numeric types to byte array.
  * Array of values of TYPE is prefixed with size SIZETYPE.
  * Size is limited by max of SIZETYPE.
  * Values are sorted before writing. */
 template<typename TYPE, typename SIZETYPE>
-QByteArray writeVector(QList<TYPE> vector)
+QByteArray writeList(QList<TYPE> list)
 {
   QByteArray bytes;
   QDataStream out(&bytes, QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_5_5);
   out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-  int size = vector.size();
+  int size = list.size();
   if(size > std::numeric_limits<SIZETYPE>::max())
     size = std::numeric_limits<SIZETYPE>::max();
 
@@ -70,9 +70,9 @@ QByteArray writeVector(QList<TYPE> vector)
   out << static_cast<SIZETYPE>(size);
 
   // Sort values
-  std::sort(vector.begin(), vector.end());
+  std::sort(list.begin(), list.end());
 
-  for(TYPE value : vector)
+  for(TYPE value : list)
     out << static_cast<TYPE>(value);
   return bytes;
 }

@@ -130,13 +130,6 @@ void convertList(QList<TYPE1>& dest, const QList<TYPE2>& src)
     dest.append(type);
 }
 
-template<typename TYPE1, typename TYPE2>
-void convertVector(QList<TYPE1>& dest, const QList<TYPE2>& src)
-{
-  for(TYPE2 type : src)
-    dest.append(type);
-}
-
 /* Functions for safe insert that allow and index < 0 and > size + 1 */
 template<typename TYPE>
 void insertInto(QList<TYPE>& list, int index, const TYPE& type)
@@ -670,23 +663,23 @@ inline int wrapIndex(int index, int size)
   return (index + size) % size;
 }
 
-/* Functions to convert integer and float lists and vectors to string lists and back.
+/* Functions to convert integer and float lists to string lists and back.
  * Can be used to store configuration lists.
  * Uses the C locale for number conversion.
  * ok has the same meaning as in QString::toInt().
  *
  * TYPE is converted to int */
 template<typename TYPE>
-QStringList numVectorToStrList(const QList<TYPE>& vector)
+QStringList numListToStrList(const QList<TYPE>& list)
 {
   QStringList retval;
-  for(int value : vector)
+  for(int value : list)
     retval.append(QString::number(static_cast<int>(value)));
   return retval;
 }
 
 template<typename TYPE>
-QList<TYPE> strListToNumVector(const QStringList& strings, bool *ok = nullptr)
+QList<TYPE> strListToNumList(const QStringList& strings, bool *ok = nullptr)
 {
   if(ok != nullptr)
     *ok = true;

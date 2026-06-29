@@ -148,7 +148,7 @@ public:
   }
 
   /* Typed version of mid.
-   * Returns a sub-vector which contains elements from this vector, starting at position pos.
+   * Returns a sub-list which contains elements from this list, starting at position pos.
    * If length is -1 (the default), all elements after pos are included; otherwise length elements
    * (or all remaining elements if there are less than length elements) are included.*/
   const atools::geo::LineString mid(int pos, int len = -1) const

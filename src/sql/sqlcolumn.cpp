@@ -28,7 +28,7 @@ QString SqlColumn::getSelectStmt() const
   return getName() % " as \"" % getDisplayName() % "\"";
 }
 
-QString SqlColumn::getColumnList(const QVector<SqlColumn>& columns)
+QString SqlColumn::getColumnList(const QList<SqlColumn>& columns)
 {
   QStringList selectStmt;
   for(const SqlColumn& col : columns)

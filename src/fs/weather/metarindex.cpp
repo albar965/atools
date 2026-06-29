@@ -255,8 +255,8 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
     qDebug() << "spatialIndex->size()" << spatialIndex->size();
     qDebug() << "spatialIndexInterpolated->size()" << spatialIndexInterpolated->size();
     qDebug() << "identIndexMap.size()" << identIndexMap.size();
-    qDebug() << "metars.size()" << metarVector.size();
-    qDebug() << "metarsInterpolated.size()" << metarInterpolatedVector.size();
+    qDebug() << "metars.size()" << metarList.size();
+    qDebug() << "metarsInterpolated.size()" << metarInterpolatedList.size();
     qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
@@ -389,8 +389,8 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
     qDebug() << "spatialIndex->size()" << spatialIndex->size();
     qDebug() << "spatialIndexInterpolated->size()" << spatialIndexInterpolated->size();
     qDebug() << "identIndexMap.size()" << identIndexMap.size();
-    qDebug() << "metars.size()" << metarVector.size();
-    qDebug() << "metarsInterpolated.size()" << metarInterpolatedVector.size();
+    qDebug() << "metars.size()" << metarList.size();
+    qDebug() << "metarsInterpolated.size()" << metarInterpolatedList.size();
     qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
@@ -476,8 +476,8 @@ int MetarIndex::readJson(QTextStream& stream, const QString& fileOrUrl, bool mer
     qDebug() << "spatialIndex->size()" << spatialIndex->size();
     qDebug() << "spatialIndexInterpolated->size()" << spatialIndexInterpolated->size();
     qDebug() << "identIndexMap.size()" << identIndexMap.size();
-    qDebug() << "metars.size()" << metarVector.size();
-    qDebug() << "metarsInterpolated.size()" << metarInterpolatedVector.size();
+    qDebug() << "metars.size()" << metarList.size();
+    qDebug() << "metarsInterpolated.size()" << metarInterpolatedList.size();
     qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
@@ -495,7 +495,7 @@ void MetarIndex::updateOrInsert(const QByteArray& metarString, const QByteArray&
     if(idx != -1)
     {
       // Already in list - get writeable reference to entry
-      Metar& metar = metarVector[idx];
+      Metar& metar = metarList[idx];
       if((!metar.getTimestamp().isValid() || metar.getTimestamp() < lastTimestamp) && metar.getStationMetar() != metarString)
       {
         // This one is newer - update
@@ -513,12 +513,12 @@ void MetarIndex::updateOrInsert(const QByteArray& metarString, const QByteArray&
     Metar metar(ident, pos, lastTimestamp, metarString);
     metar.parseAll(false /* useTimestamp */);
 
-    metarVector.append(metar);
-    identIndexMap.insert(ident, metarVector.size() - 1);
+    metarList.append(metar);
+    identIndexMap.insert(ident, metarList.size() - 1);
 
     // Add only valid positions to spatial index
     if(pos.isValid())
-      spatialIndex->append(PosIndex(pos, metarVector.size() - 1));
+      spatialIndex->append(PosIndex(pos, metarList.size() - 1));
   }
 }
 
@@ -526,24 +526,24 @@ void MetarIndex::clear()
 {
   spatialIndex->clearIndex();
   identIndexMap.clear();
-  metarVector.clear();
+  metarList.clear();
   clearCache();
 }
 
 void MetarIndex::clearCache()
 {
   spatialIndexInterpolated->clearIndex();
-  metarInterpolatedVector.clear();
+  metarInterpolatedList.clear();
 }
 
 bool MetarIndex::isEmpty() const
 {
-  return metarVector.isEmpty();
+  return metarList.isEmpty();
 }
 
 int MetarIndex::numStationMetars() const
 {
-  return metarVector.size();
+  return metarList.size();
 }
 
 const atools::fs::weather::Metar& MetarIndex::getMetar(const QString& station, atools::geo::Pos pos)
@@ -567,7 +567,7 @@ const atools::fs::weather::Metar& MetarIndex::getMetar(const QString& station, a
         if(index != -1)
         {
           // Found one interpolated near position - return if close enough ======================
-          const Metar& metarInterpolated = metarInterpolatedVector.at(index);
+          const Metar& metarInterpolated = metarInterpolatedList.at(index);
           if(metarInterpolated.hasAnyMetar() && metarInterpolated.getRequestPos().distanceMeterTo(pos) < maxDistanceToleranceMeter)
             return metarInterpolated;
         }
@@ -579,7 +579,7 @@ const atools::fs::weather::Metar& MetarIndex::getMetar(const QString& station, a
         // Collect positions ====================
         atools::fs::weather::MetarPtrList metars;
         for(const PosIndex& posIndex : std::as_const(posIndexes))
-          metars.append(&metarVector.at(posIndex.index));
+          metars.append(&metarList.at(posIndex.index));
 
         // Sort by distance to request point ====================
         std::sort(metars.begin(), metars.end(), [&pos](const Metar *t1, const Metar *t2) -> bool {
@@ -597,13 +597,13 @@ const atools::fs::weather::Metar& MetarIndex::getMetar(const QString& station, a
         metarInterpolatedNew.parseAll(false /* useTimestamp */);
 
         // Clear full cache if too large
-        if(metarInterpolatedVector.size() > maxInterpolatedCacheSize)
+        if(metarInterpolatedList.size() > maxInterpolatedCacheSize)
           clearCache();
 
         // Add to cache and return reference =======================
-        metarInterpolatedVector.append(metarInterpolatedNew);
-        spatialIndexInterpolated->append(PosIndex(pos, metarInterpolatedVector.size() - 1));
-        return metarInterpolatedVector.constLast();
+        metarInterpolatedList.append(metarInterpolatedNew);
+        spatialIndexInterpolated->append(PosIndex(pos, metarInterpolatedList.size() - 1));
+        return metarInterpolatedList.constLast();
       }
       else
         qWarning() << Q_FUNC_INFO << "Cannot find METAR" << pos << stationBytes;
@@ -625,7 +625,7 @@ const Metar& MetarIndex::fetchMetar(const QByteArray& ident) const
     int idx = identIndexMap.value(ident, -1);
 
     if(idx != -1)
-      return metarVector.at(idx);
+      return metarList.at(idx);
   }
 
   return Metar::EMPTY;

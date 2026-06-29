@@ -47,7 +47,7 @@ public:
    * Call these before running calculate() */
   void addSector(float bearingDeg, float altitudeFt);
 
-  /* Add sectors from a vector with bearing/altitude pairs */
+  /* Add sectors from a list with bearing/altitude pairs */
   void addSectors(const QList<float>& bearingDegAltitudeFt);
 
   /* Calculate circle/arc geomentry, label points and bearing endpoints */

@@ -161,7 +161,7 @@ private:
   atools::fs::sc::SimConnectUserAircraft userAircraft;
   QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
 
-  // Maps objectId to index in vector aiAircraft - not transferred
+  // Maps objectId to index in list aiAircraft - not transferred
   QHash<int, int> aiAircraftIndex;
 
   atools::fs::weather::MetarList metars;

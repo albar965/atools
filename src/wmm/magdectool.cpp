@@ -122,7 +122,7 @@ void MagDecTool::init(int year, int month)
 
   MAG_FreeMagneticModelMemory(magneticModel);
 
-  // Create new plain float array and copy data before vector is destroyed
+  // Create new plain float array and copy data before list is destroyed
   magdecGrid = new float[static_cast<unsigned int>(declinations.size())];
   std::memcpy(magdecGrid, declinations.data(), static_cast<unsigned int>(declinations.size()) * sizeof(float));
 

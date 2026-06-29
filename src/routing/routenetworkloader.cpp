@@ -96,13 +96,13 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
     if(hasTracks)
       readEdgesAirway(nodeEdgeMap, true /* track */);
 
-    // Maps the database node id to index position in vector
+    // Maps the database node id to index position in list
     QHash<int, int> nodeIdIndexMap;
     nodeIdIndexMap.reserve(300000);
 
     // List of created nodes
-    QList<Node> nodeVector;
-    nodeVector.reserve(300000);
+    QList<Node> nodeList;
+    nodeList.reserve(300000);
 
     // Column order is important in the queries
 
@@ -111,7 +111,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
     // Named and unnamed waypoints without airways as well as degree confluence waypoints
     // RNAV and OA appear only in MSFS
     if(hasNav)
-      readNodesAirway(nodeVector, nodeIdIndexMap,
+      readNodesAirway(nodeList, nodeIdIndexMap,
                       "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty "
                       "from waypoint w "
                       "where w.type in ('WN', 'WU', 'RNAV', 'OA') and w.airport_id is null and "
@@ -122,7 +122,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
     // No filter - all waypoints are taken
     // RNAV appears only in MSFS
     if(hasNav)
-      readNodesAirway(nodeVector, nodeIdIndexMap,
+      readNodesAirway(nodeList, nodeIdIndexMap,
                       "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway "
                       "from waypoint w "
                       "where w.type in ('WN', 'WU', 'RNAV') and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
@@ -136,7 +136,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
                       (" where w.trackpoint_id >= " + QString::number(atools::track::TRACKPOINT_ID_OFFSET)) :
                       QStringLiteral();
 
-      readNodesAirway(nodeVector,
+      readNodesAirway(nodeList,
                       nodeIdIndexMap,
                       "select w.trackpoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway "
                       "from trackpoint w " + where,
@@ -145,7 +145,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
 
     // Airway VOR waypoints ====================
     if(hasNav)
-      readNodesAirway(nodeVector, nodeIdIndexMap,
+      readNodesAirway(nodeList, nodeIdIndexMap,
                       "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway, "
                       "v.range, v.type as radiotype, v.dme_altitude,  v.dme_only "
                       "from waypoint w join vor v on w.nav_id = v.vor_id "
@@ -154,7 +154,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
 
     // Airway NDB waypoints ====================
     if(hasNav)
-      readNodesAirway(nodeVector, nodeIdIndexMap,
+      readNodesAirway(nodeList, nodeIdIndexMap,
                       "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway, "
                       "n.range "
                       "from waypoint w join ndb n on w.nav_id = n.ndb_id "
@@ -162,8 +162,8 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
                       false, true /* NDB */, false, false);
 
     // Insert outgoing edges to each node and copy node to the index ========================
-    network->nodeIndex.reserve(nodeVector.size());
-    for(Node& node : nodeVector)
+    network->nodeIndex.reserve(nodeList.size());
+    for(Node& node : nodeList)
     {
       for(auto it = nodeEdgeMap.find(node.id); it != nodeEdgeMap.end() && it.key() == node.id; ++it)
         node.edges.append(it.value());
@@ -371,7 +371,7 @@ void RouteNetworkLoader::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap, boo
       {
         edge.hasAltLevels = true;
         network->altLevelsEast.insert(edge.id,
-                                      atools::io::readVector<quint16, quint16>(
+                                      atools::io::readList<quint16, quint16>(
                                         query.value(ALT_LEVELS_EAST).toByteArray()));
       }
 
@@ -379,7 +379,7 @@ void RouteNetworkLoader::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap, boo
       {
         edge.hasAltLevels = true;
         network->altLevelsWest.insert(edge.id,
-                                      atools::io::readVector<quint16, quint16>(
+                                      atools::io::readList<quint16, quint16>(
                                         query.value(ALT_LEVELS_WEST).toByteArray()));
       }
 

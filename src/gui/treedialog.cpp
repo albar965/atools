@@ -261,7 +261,7 @@ void TreeDialog::restoreState(bool restoreCheckState, bool restoreExpandState)
 
   if(restoreExpandState)
   {
-    const QList<int> expandedIndexes = atools::strListToNumVector<int>(
+    const QList<int> expandedIndexes = atools::strListToNumList<int>(
       atools::settings::Settings::instance().valueStrList(settingsPrefix + "TreeWidgetExpandedStates"));
 
     QTreeWidgetItem *root = ui->treeWidget->invisibleRootItem();

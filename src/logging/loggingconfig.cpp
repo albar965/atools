@@ -98,9 +98,9 @@ void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelMap& ch
     closeStreams(channels, it.value());
 }
 
-void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelList& channelVector)
+void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelList& channelList)
 {
-  for(Channel *channel : channelVector)
+  for(Channel *channel : channelList)
   {
     if(channel->stream != nullptr)
     {
@@ -164,9 +164,9 @@ void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelMap&
     collectFileNames(filenames, {it.value()});
 }
 
-void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelList& channelVector) const
+void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelList& channelList) const
 {
-  for(const Channel *channel : channelVector)
+  for(const Channel *channel : channelList)
   {
     if(channel->file != nullptr)
     {

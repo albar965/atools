@@ -104,7 +104,7 @@ bool MoraReader::readFromTable()
     if(dataVersion != DATA_VERSION)
       throw Exception("Invalid data version in MORA data");
 
-    // Read blob into vector
+    // Read blob into list
     quint16 value;
     while(!in.atEnd())
     {

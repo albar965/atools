@@ -100,10 +100,10 @@ private:
 
   void closeStreams(QSet<Channel *>& channels, const ChannelMap& channelMap);
 
-  void closeStreams(QSet<Channel *>& channels, const ChannelList& channelVector);
+  void closeStreams(QSet<Channel *>& channels, const ChannelList& channelList);
 
   /* Collects all log files names into set */
-  void collectFileNames(QSet<QString>& filenames, const ChannelList& channelVector) const;
+  void collectFileNames(QSet<QString>& filenames, const ChannelList& channelList) const;
   void collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap) const;
 
   /* Check if file size exceeds limit. Rolls files, creates a new one and replaces device in text stream */
