@@ -34,6 +34,8 @@
 #include <QTextDocumentFragment>
 #include <QTextEdit>
 #include <QStringBuilder>
+#include <QApplication>
+#include <QSplitter>
 
 namespace atools {
 namespace gui {
@@ -89,19 +91,29 @@ struct ListWidgetIndexMap
 };
 
 // =======================================================================================
-ListWidgetIndex::ListWidgetIndex(QListWidget *listWidgetParam, QStackedWidget *stackedWidgetParam)
-  : listWidget(listWidgetParam), stackedWidget(stackedWidgetParam), highlightColor(255, 255, 0, 200)
+ListWidgetIndex::ListWidgetIndex(QSplitter *splitterWidgetParam, QListWidget *listWidgetParam, QStackedWidget *stackedWidgetParam)
+  : listWidget(listWidgetParam), stackedWidget(stackedWidgetParam), splitterWidget(splitterWidgetParam), highlightColor(255, 255, 0, 200)
 {
   map = new ListWidgetIndexMap;
+
+  label = new QLabel();
+  label->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+
+  connect(listWidget, &QListWidget::currentRowChanged, this, &ListWidgetIndex::currentRowChanged);
 }
 
 ListWidgetIndex::~ListWidgetIndex()
 {
+  disconnect(listWidget, &QListWidget::currentRowChanged, this, &ListWidgetIndex::currentRowChanged);
+  setLabel(QStringLiteral());
+  delete label;
   delete map;
 }
 
 void ListWidgetIndex::resetView()
 {
+  setLabel(QStringLiteral());
+
   // Restore visibility
   for(int i = 0; i < listWidget->count(); i++)
     listWidget->item(i)->setHidden(false);
@@ -110,12 +122,16 @@ void ListWidgetIndex::resetView()
   for(auto it = savedStyles.begin(); it != savedStyles.end(); ++it)
     it.key()->setStyleSheet(*it);
   savedStyles.clear();
+
+  // Restore background color for list items
+  for(int i = 0; i < listWidget->count(); i++)
+    listWidget->item(i)->setBackground(QApplication::palette().color(QPalette::Normal, QPalette::Base));
 }
 
 void ListWidgetIndex::find(QString text)
 {
-  if(map->index.isEmpty() && text.isEmpty())
-    return;
+  // Avoid updates while changing index
+  changing = true;
 
   // Build index and load stopwords on demand
   buildIndex();
@@ -123,20 +139,31 @@ void ListWidgetIndex::find(QString text)
   // Clear all hightlights
   resetView();
 
-  // List of page indexes
-  QSet<int> foundStackedWidgetIndexes;
-  QSet<QWidget *> foundWidgets;
-  text = text.toUpper();
-
   if(text.size() >= MIN_STRING_SIZE)
   {
+    // Minimum size ok - do search
+    searchActive = true;
+
+    // List of page indexes
+    QSet<int> foundStackedWidgetIndexes, foundStackedWidgetIndexesText;
+
+    // Widgets matching texts for style change
+    QSet<QWidget *> foundWidgets;
+    text = text.toUpper();
+
     // Collect all widgets and page indexes =================================
+    // Internal index mapping texts to list indexes and widgets
     for(auto it = map->index.begin(); it != map->index.end(); ++it)
     {
       if(it.key().startsWith(text))
       {
         foundStackedWidgetIndexes.insert(it->getStackedWidgetIndex());
 
+        // Insert index of list for page text matches
+        if(it->getObject() == listWidget)
+          foundStackedWidgetIndexesText.insert(it->getStackedWidgetIndex());
+
+        // Child widgets
         QWidget *widget = dynamic_cast<QWidget *>(it->getObject());
         if(widget != nullptr && widget != listWidget)
           foundWidgets.insert(widget);
@@ -150,40 +177,102 @@ void ListWidgetIndex::find(QString text)
         listWidget->item(i)->setHidden(true);
     }
 
-    // Hilight all widgets in the list =================================
-    QString colorName = highlightColor.name(QColor::HexArgb);
-    for(QWidget *widget : foundWidgets)
-    {
-      savedStyles.insert(widget, widget->styleSheet());
+    // Highlight all page items where text matches  =================================
+    for(int i : foundStackedWidgetIndexesText)
+      listWidget->item(i)->setBackground(highlightColor);
 
-      if(dynamic_cast<const QAbstractItemView *>(widget) != nullptr)
+    // Highlight all widgets in the list =================================
+    QString colorName = highlightColor.name(QColor::HexArgb);
+    for(QWidget *foundWidget : foundWidgets)
+    {
+      savedStyles.insert(foundWidget, foundWidget->styleSheet());
+
+      if(dynamic_cast<const QAbstractItemView *>(foundWidget) != nullptr)
         // Border around view
-        widget->setStyleSheet(QStringLiteral("border: 3px solid %1").arg(colorName));
-      else if(dynamic_cast<const QGroupBox *>(widget) != nullptr)
+        foundWidget->setStyleSheet(QStringLiteral("border: 3px solid %1").arg(colorName));
+      else if(dynamic_cast<const QGroupBox *>(foundWidget) != nullptr)
         // Only title for group boxes
-        widget->setStyleSheet(QStringLiteral("QGroupBox::title {background: %1}").arg(colorName));
+        foundWidget->setStyleSheet(QStringLiteral("QGroupBox::title {background: %1}").arg(colorName));
       else
         // Background for other widgets
-        widget->setStyleSheet(QStringLiteral("background: %1").arg(colorName));
+        foundWidget->setStyleSheet(QStringLiteral("background: %1").arg(colorName));
     }
 
     // Set current page to first in list and remember current page index =================================
     if(!foundStackedWidgetIndexes.isEmpty())
     {
+      // Get a copy and sort it to get lowest visible index
       QList<int> indexes(foundStackedWidgetIndexes.constBegin(), foundStackedWidgetIndexes.constEnd());
       std::sort(indexes.begin(), indexes.end());
 
+      // Update row to restore later
       if(lastCurrentRow == -1)
         lastCurrentRow = listWidget->currentRow();
-      listWidget->setCurrentRow(indexes.constFirst());
+
+      // Select first in list if current is hidden
+      if(listWidget->currentItem()->isHidden())
+        listWidget->setCurrentRow(indexes.constFirst());
     }
+    else
+    {
+      // Nothing found - hide all items and show message
+      for(int i = 0; i < listWidget->count(); i++)
+        listWidget->item(i)->setHidden(true);
+
+      setLabel(tr("<b>No options found for \"%1\".</b>").arg(text));
+    }
+  }
+  else if(!text.isEmpty())
+  {
+    // Text too short - hide all items and show message
+    searchActive = true;
+
+    for(int i = 0; i < listWidget->count(); i++)
+      listWidget->item(i)->setHidden(true);
+
+    setLabel(tr("<b>Search text \"%1\" too short.</b>").arg(text));
   }
   else if(lastCurrentRow != -1)
   {
-    // Nothing found - restore last page
+    // No text given - restore last page
     listWidget->setCurrentRow(lastCurrentRow);
     lastCurrentRow = -1;
+    searchActive = false;
   }
+
+  changing = false;
+}
+
+void ListWidgetIndex::setLabel(const QString& text)
+{
+  if(!text.isEmpty())
+  {
+    // Show message label if text is not empty
+    label->setText(text);
+    if(splitterWidget->widget(1) != label)
+    {
+      // The splitter takes ownership of widget and sets the parent of the replaced widget to null.
+      splitterWidget->replaceWidget(1, label);
+      splitterWidget->updateGeometry();
+    }
+  }
+  else
+  {
+    // Hide mesage label and restore previous widget if text is empty
+    if(splitterWidget->widget(1) != stackedWidget)
+    {
+      // The splitter takes ownership of widget and sets the parent of the replaced widget to null.
+      splitterWidget->replaceWidget(1, stackedWidget);
+      splitterWidget->updateGeometry();
+    }
+  }
+}
+
+void ListWidgetIndex::currentRowChanged(int currentRow)
+{
+  // Update current if user clicked into the list while searching
+  if(!changing && searchActive)
+    lastCurrentRow = currentRow;
 }
 
 void ListWidgetIndex::reset()
@@ -211,19 +300,17 @@ void ListWidgetIndex::buildIndex()
       lang = QStringLiteral("en");
     currentStopwords = &stopwords[lang];
 
-    qDebug() << Q_FUNC_INFO << "Using stopwords language" << lang;
-
     // Search through app stacked widget pages
     for(int i = 0; i < stackedWidget->count(); i++)
     {
       // Add stacked widget to index
       QWidget *widget = stackedWidget->widget(i);
-      insertPhrases(cleanText({listWidget->item(i)->text()}), i, listWidget);
+      insertPhrases(cleanTextList({listWidget->item(i)->text()}), i, listWidget);
 
-      // Recurse to all page childre
+      // Recurse to all page children
       const QObjectList& children = widget->children();
       for(QObject *object : children)
-        processObject(i, object);
+        processObjects(i, object);
     }
 
 #ifdef DEBUG_INFORMATION_LISTINDEX
@@ -286,7 +373,7 @@ void ListWidgetIndex::loadStopwords()
   }
 }
 
-void ListWidgetIndex::processObject(int pageIndex, QObject *object)
+void ListWidgetIndex::processObjects(int pageIndex, QObject *object)
 {
   if(object == nullptr)
     return;
@@ -308,7 +395,7 @@ void ListWidgetIndex::processObject(int pageIndex, QObject *object)
     {
       const QObjectList& children = object->children();
       for(QObject *child : children)
-        processObject(pageIndex, child);
+        processObjects(pageIndex, child);
     }
   }
   else
@@ -318,29 +405,29 @@ void ListWidgetIndex::processObject(int pageIndex, QObject *object)
     if(layout != nullptr)
     {
       for(int i = 0; i < layout->count(); ++i)
-        processObject(pageIndex, layout->itemAt(i)->widget());
+        processObjects(pageIndex, layout->itemAt(i)->widget());
     }
   }
 }
 
 QStringList ListWidgetIndex::widgetText(const QObject *object, bool& recurse)
 {
-  QStringList widgetText;
+  QStringList widgetTexts;
   recurse = false;
 
   if(const QAbstractButton *button = dynamic_cast<const QAbstractButton *>(object))
-    widgetText.append(button->text());
+    widgetTexts.append(button->text());
   else if(const QLineEdit *lineEdit = dynamic_cast<const QLineEdit *>(object))
-    widgetText.append(lineEdit->placeholderText());
+    widgetTexts.append(lineEdit->placeholderText());
   else if(const QLabel *label = dynamic_cast<const QLabel *>(object))
-    widgetText.append(label->text());
+    widgetTexts.append(label->text());
   else if(const QTextEdit *textEdit = dynamic_cast<const QTextEdit *>(object))
-    widgetText.append(textEdit->placeholderText());
+    widgetTexts.append(textEdit->placeholderText());
   else if(const QComboBox *comboBox = dynamic_cast<const QComboBox *>(object))
   {
     // Get all texts from combo box
     for(int i = 0; i < comboBox->count(); i++)
-      widgetText.append(comboBox->itemText(i));
+      widgetTexts.append(comboBox->itemText(i));
   }
   else if(const QAbstractItemView *view = dynamic_cast<const QAbstractItemView *>(object))
   {
@@ -349,47 +436,56 @@ QStringList ListWidgetIndex::widgetText(const QObject *object, bool& recurse)
     if(model->columnCount() > 0)
     {
       for(int col = 0; col < model->columnCount(); col++)
-        widgetText.append(model->headerData(col, Qt::Horizontal).toString());
+      {
+        // Add header text
+        widgetTexts.append(model->headerData(col, Qt::Horizontal).toString());
 
-      for(int row = 0; row < model->rowCount(); row++)
-        widgetText.append(model->data(model->index(row, 0)).toString());
+        // Add data
+        for(int row = 0; row < model->rowCount(); row++)
+          widgetTexts.append(model->data(model->index(row, col)).toString());
+      }
     }
   }
   else if(const QGroupBox *groupBox = dynamic_cast<const QGroupBox *>(object))
   {
     // Get title but continue recursion
     recurse = true;
-    widgetText.append(groupBox->title());
+    widgetTexts.append(groupBox->title());
   }
   else if(const QTabBar *tabBar = dynamic_cast<const QTabBar *>(object))
   {
     // Tab texts
     for(int i = 0; i < tabBar->count(); i++)
-      widgetText.append(tabBar->tabText(i));
+      widgetTexts.append(tabBar->tabText(i));
   }
   else if(dynamic_cast<const QWidget *>(object) != nullptr)
     // No title or text but child widgets - dive deeper
     recurse = true;
 
-  widgetText = cleanText(widgetText);
+  widgetTexts = cleanTextList(widgetTexts);
 
-  return widgetText;
+  return widgetTexts;
 }
 
-QStringList ListWidgetIndex::cleanText(const QStringList& texts)
+QStringList ListWidgetIndex::cleanTextList(const QStringList& texts)
 {
   QStringList cleanTexts;
   if(!texts.isEmpty())
   {
     for(const QString& text : texts)
-      cleanTexts.append(QTextDocumentFragment::fromHtml(text).toPlainText().
-                        remove('&').replace('\n', ' ').replace('.', ' ').replace(',', ' ').replace('/', ' ').replace('\"', ' ').
-                        replace('(', ' ').replace(')', ' ').replace("...", " ").replace("->", " ").replace(" - ", " ").
-                        simplified().toUpper().split(' '));
+      cleanTexts.append(cleanText(text).split(' '));
 
     cleanTexts.removeAll(QStringLiteral());
   }
   return cleanTexts;
+}
+
+QString ListWidgetIndex::cleanText(const QString& text)
+{
+  return QTextDocumentFragment::fromHtml(text).toPlainText().
+         remove('&').replace('\n', ' ').replace('.', ' ').replace(',', ' ').replace('/', ' ').replace('\"', ' ').
+         replace('(', ' ').replace(')', ' ').replace("...", " ").replace("->", " ").replace(" - ", " ").
+         simplified().toUpper();
 }
 
 void ListWidgetIndex::insertPhrases(const QStringList& texts, int pageIndex, QObject *object)
