@@ -31,6 +31,8 @@ namespace fs {
 class ProgressHandler;
 namespace db {
 
+typedef std::pair<int, atools::geo::Pos> WaypointIdPos;
+
 /*
  * Reads from the tmp_airway_point table that was filled with waypoint record data and connects the
  * waypoint lists to airways that are stored in table airway.
@@ -86,9 +88,9 @@ private:
   /* Save airways to table airway */
   void saveAirway(QSet<AirwaySegment>& airway, const QString& currentAirway);
 
-  /* Fetch navaid id and position. Takes the nearest in case of disambiguities */
-  void fetchNavaid(int& id, atools::geo::Pos& pos, sql::SqlQuery& tmpAirwayPointQuery, sql::SqlQuery& tmpWaypointQuery,
-                   const QString& prefix, const atools::geo::Pos& lastPos);
+  /* Fetch navaid waypointList and position. Takes the nearest in case of disambiguities */
+  void fetchNavaids(QList<atools::fs::db::WaypointIdPos>& waypointList, sql::SqlQuery& airwayPointQuery, sql::SqlQuery& waypointQuery,
+                    int columnOffset, const QString& airwayName);
 
   atools::fs::ProgressHandler& progressHandler;
   int curAirwayId, numAirways;

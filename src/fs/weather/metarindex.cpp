@@ -582,8 +582,8 @@ const atools::fs::weather::Metar& MetarIndex::getMetar(const QString& station, a
           metars.append(&metarList.at(posIndex.index));
 
         // Sort by distance to request point ====================
-        std::sort(metars.begin(), metars.end(), [&pos](const Metar *t1, const Metar *t2) -> bool {
-                return t1->getPosition().distanceMeterTo(pos) < t2->getPosition().distanceMeterTo(pos);
+        std::sort(metars.begin(), metars.end(), [&pos](const Metar *metar1, const Metar *metar2) -> bool {
+                return metar1->getPosition().distanceMeterTo(pos) < metar2->getPosition().distanceMeterTo(pos);
               });
 
         // Truncate above maximum distance, not parsed and having errors ===================

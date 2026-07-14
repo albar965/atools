@@ -411,6 +411,15 @@ float LineString::getEndCourse() const
     return Pos::INVALID_VALUE;
 }
 
+void LineString::sortByDistanceTo(const Pos& pos, bool closeToFar)
+{
+  std::sort(begin(), end(), [&pos, closeToFar](const Pos& pos1, const Pos& pos2) -> bool {
+        return closeToFar ?
+               pos1.distanceMeterTo(pos) < pos2.distanceMeterTo(pos) :
+               pos1.distanceMeterTo(pos) > pos2.distanceMeterTo(pos);
+      });
+}
+
 QDataStream& operator<<(QDataStream& out, const LineString& obj)
 {
   out << static_cast<quint32>(obj.size());

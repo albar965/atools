@@ -220,6 +220,9 @@ public:
   /* Course from last to second last point or INVALID_VALUE if isPoint() == true */
   float getEndCourse() const;
 
+  /* Sort positions in linestring by distance to give pos */
+  void sortByDistanceTo(const atools::geo::Pos& pos, bool closeToFar = true);
+
 private:
   friend QDebug operator<<(QDebug out, const atools::geo::LineString& record);
   friend QDataStream& operator<<(QDataStream& out, const atools::geo::LineString& obj);
