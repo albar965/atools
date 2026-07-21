@@ -16,7 +16,7 @@
 -- ****************************************************************************/
 
 -- *************************************************************
--- Drop all tables used for navigation aids
+-- Drop all tables used for navigation aids before creating schema
 -- *************************************************************
 
 -- Order is important to avoid fk conflicts

@@ -20,6 +20,7 @@
 -- *************************************************************
 
 -- Drop temporary tables
+-- Can be disabled with "DropTempTables=false" in file "navdatareader.cfg"
 drop table if exists tmp_airway;
 drop table if exists tmp_airway_point;
 drop table if exists tmp_waypoint;
