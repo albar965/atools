@@ -292,10 +292,11 @@ public:
    *
    * See variable definitions in namespace atools::fs::pln::pattern.
    */
-  QString getFilenamePattern(const QString& pattern, const QString& suffix, bool metric) const;
+  QString getFilenamePattern(const QString& pattern, const QString& suffix, const QString& aircraftType, bool metric) const;
 
   static QString getFilenamePattern(QString pattern, const QString& type, const QString& departureName, const QString& departureIdent,
-                                    const QString& destName, const QString& destIdent, const QString& suffix, int altitudeLocal);
+                                    const QString& destName, const QString& destIdent, const QString& aircraftType, const QString& suffix,
+                                    int altitudeLocal);
 
   /* Return an example flight plan name for the given pattern plus optional error message in case of invalid characters.
    * Message can be formatted for HTML output. */

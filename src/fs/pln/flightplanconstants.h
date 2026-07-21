@@ -37,10 +37,13 @@ const QLatin1String DEPARTNAME("DEPARTNAME"); // Departure airport name
 const QLatin1String DESTIDENT("DESTIDENT"); // Destination airport ICAO code
 const QLatin1String DESTNAME("DESTNAME"); // Destination airport name
 const QLatin1String CRUISEALT("CRUISEALT"); // Cruise altitude
+const QLatin1String AIRCRAFTTYPE("AIRCRAFTTYPE"); // ICAO Type designator
 
 /* Default patterns */
 const QString SHORT(DEPARTIDENT + " " + DESTIDENT);
 const QString LONG(PLANTYPE + " " + DEPARTNAME + " (" + DEPARTIDENT + ") to " + DESTNAME + " (" + DESTIDENT + ")");
+const QString FULL(PLANTYPE + " " + DEPARTNAME + " (" + DEPARTIDENT + ") to " + DESTNAME + " (" + DESTIDENT + ") " +
+                   AIRCRAFTTYPE + " " + CRUISEALT);
 }
 
 const static float FLIGHTPLAN_ALTITUDE_FT_MIN = -2000.f;
