@@ -106,6 +106,38 @@ int SimConnectAircraft::getModelRadiusCorrected() const
   }
 }
 
+int SimConnectAircraft::getModelSize() const
+{
+  // Limit the size since some add-ons return invalid large values
+  int size = getWingSpan() > 0 ? getWingSpan() : getModelRadiusCorrected() * 2;
+  if(isHelicopter())
+    return std::min(size, 200);
+  else if(isAnyBoat())
+    return std::min(size, 1200);
+  else
+  {
+    switch(engineType)
+    {
+      case PISTON:
+      case NO_ENGINE:
+      case UNSUPPORTED:
+      case HELO_TURBINE:
+        return std::min(size, 120);
+        break;
+
+      case JET:
+        return std::min(size, 300);
+        break;
+
+      case TURBOPROP:
+        return std::min(size, 170);
+        break;
+    }
+  }
+
+  return size;
+}
+
 void SimConnectAircraft::write(QDataStream& out) const
 {
   out << objectId << static_cast<quint8>(dataFlags) << static_cast<quint16>(flags);

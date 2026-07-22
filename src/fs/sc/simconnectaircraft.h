@@ -307,10 +307,7 @@ public:
   /* Use an estimate based on engine type in ft - used for map display and not for HTML info */
   int getModelRadiusCorrected() const;
 
-  int getModelSize() const
-  {
-    return getWingSpan() > 0 ? getWingSpan() : getModelRadiusCorrected() * 2;
-  }
+  int getModelSize() const;
 
   int getWingSpan() const
   {
