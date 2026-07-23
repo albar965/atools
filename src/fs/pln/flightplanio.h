@@ -95,7 +95,7 @@ public:
   void savePln(const atools::fs::pln::Flightplan& plan, const QString& file) const;
 
   /* Microsoft Flight Simulator 2020 with star as degree separator */
-  void savePlnMsfs(const atools::fs::pln::Flightplan& plan, const QString& file) const;
+  void savePlnMsfs20(const atools::fs::pln::Flightplan& plan, const QString& file) const;
 
   /* Microsoft Flight Simulator 2024 */
   void savePlnMsfs24(const atools::fs::pln::Flightplan& plan, const QString& file) const;

@@ -2060,22 +2060,22 @@ void FlightplanIO::savePln(const Flightplan& plan, const QString& file) const
                   false /* starDeg */, 10 /* userWpLength */);
 }
 
-void FlightplanIO::savePlnMsfs(const Flightplan& plan, const QString& file) const
+void FlightplanIO::savePlnMsfs20(const Flightplan& plan, const QString& file) const
 {
   savePlnInternal(plan, file, true /* msfs */, false /* msfs24 */, false /* simavionics */, false /* pms50 */, false /* starDeg */,
-                  80 /* userWpLength */);
+                  7 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnMsfs24(const Flightplan& plan, const QString& file) const
 {
   savePlnInternal(plan, file, false /* msfs */, true /* msfs24 */, false /* simavionics */, false /* pms50 */, false /* starDeg */,
-                  80 /* userWpLength */);
+                  7 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnMsfsCompat(const Flightplan& plan, const QString& file) const
 {
   savePlnInternal(plan, file, true /* msfs */, false /* msfs24 */, false /* simavionics */, false /* pms50 */, true /* starDeg */,
-                  80 /* userWpLength */);
+                  7 /* userWpLength */);
 }
 
 void FlightplanIO::savePlnPms50(const Flightplan& plan, const QString& file) const
@@ -2289,18 +2289,23 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       {
         if(!userWaypoint)
           writeTextElementIf(writer, QStringLiteral("ICAORegion"), entry.getRegion());
+
         writeTextElementIf(writer, QStringLiteral("ICAOIdent"), ident);
+
         if(!userWaypoint)
           writeTextElementIf(writer, QStringLiteral("ICAOAirport"), entry.getAirport()); // Write airport for waypoint if available
       }
       else
       {
-        if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
+        if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT && !userWaypoint)
           // Avoid region since it is not reliable for airports in MSFS and
           // the sim garbles the flight plan when loading
           writeTextElementIf(writer, QStringLiteral("ICAORegion"), entry.getRegion());
+
         writeTextElementIf(writer, QStringLiteral("ICAOIdent"), ident);
-        writeTextElementIf(writer, QStringLiteral("ICAOAirport"), entry.getAirport()); // Write airport for waypoint if available
+
+        if(!userWaypoint)
+          writeTextElementIf(writer, QStringLiteral("ICAOAirport"), entry.getAirport()); // Write airport for waypoint if available
       }
 
       writer.writeEndElement(); // ICAO
