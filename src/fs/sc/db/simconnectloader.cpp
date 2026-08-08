@@ -140,7 +140,7 @@ public:
   bool loadNavaids();
 
   bool loadDisconnectedNavaidsFile();
-  bool loadDisconnectedNavaids(bool skipLoading);
+  bool loadDisconnectedNavaidsResource(bool skipLoading);
 
   // Add all facility definitions for airports and their children
   // The definitions have to match the structs in fs/sc/db/simconnectairport.h
@@ -677,7 +677,7 @@ bool SimConnectLoaderPrivate::loadNavaids()
   return aborted;
 }
 
-bool SimConnectLoaderPrivate::loadDisconnectedNavaids(bool skipLoading)
+bool SimConnectLoaderPrivate::loadDisconnectedNavaidsResource(bool skipLoading)
 {
   // Clear and then fill navaidIds and navaidIdSet avoiding duplicates
   if(!aborted && !skipLoading)
@@ -1040,19 +1040,6 @@ bool SimConnectLoaderPrivate::requestNavaids(bool fetchRoutes)
 
 void SimConnectLoaderPrivate::fetchDisconnectedNavaidsResource(const QString& typeFilter)
 {
-  /* *INDENT-OFF* */
-  /*
-sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs24.sqlite \
-"select ident, region, type from (select ident, region, 'V' as type from vor union \
-select ident, region, 'N' as type from ndb  union \
-select ident, region, 'V' as type from ils  union \
-select ident, region, 'W' as type from waypoint where artificial is null) \
-order by ident, region;" > $APROJECTS/atools/resources/navdata/navaids24.csv && \
-gzip -f $APROJECTS/atools/resources/navdata/navaids24.csv && \
-ls -lh $APROJECTS/atools/resources/navdata/navaids24.csv.gz
-  */
-  /* *INDENT-ON* */
-
   if(!aborted)
   {
     // Clear facilities but not the indexes of loaded navaids navaidIdSet and navaidIdsRequested to avoid loading duplicates
@@ -1127,17 +1114,6 @@ void SimConnectLoaderPrivate::readNavaidsFromFile(QTextStream& stream, const QSt
 
 void SimConnectLoaderPrivate::fetchDisconnectedNavaidsFile()
 {
-  // Query to generate navaids.csv.gz
-  /* *INDENT-OFF* */
-  /*
-sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs.sqlite \
-"select ident from (select ident from vor union select ident from ndb union select ident from ils union select ident from waypoint) \
-order by ident;" > ~/.config/ABarthel/navaids.csv && \
-gzip -f ~/.config/ABarthel/navaids.csv && \
-ls -lh ~/.config/ABarthel/navaids.csv.gz
-  */
-  /* *INDENT-ON* */
-
   if(!aborted)
   {
     // Clear facilities but not the indexes of loaded navaids navaidIdSet and navaidIdsRequested to avoid loading duplicates
@@ -1788,11 +1764,11 @@ bool SimConnectLoader::loadDisconnectedNavaidsFile(int fileId)
 #endif
 }
 
-bool SimConnectLoader::loadDisconnectedNavaids(int fileId, bool skipLoading)
+bool SimConnectLoader::loadDisconnectedNavaidsResource(int fileId, bool skipLoading)
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->fileId = fileId;
-  return p->loadDisconnectedNavaids(skipLoading);
+  return p->loadDisconnectedNavaidsResource(skipLoading);
 #else
   Q_UNUSED(fileId)
   return false;
