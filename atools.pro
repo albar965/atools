@@ -351,7 +351,6 @@ SOURCES += \
   src/fs/db/countryupdater.cpp \
   src/fs/gpx/gpxio.cpp \
   src/fs/gpx/gpxtypes.cpp \
-  src/fs/navdatabaseflags.cpp \
   src/fs/sc/db/simconnectairport.cpp \
   src/fs/sc/db/simconnectid.cpp \
   src/fs/sc/db/simconnectloader.cpp \
@@ -385,7 +384,6 @@ SOURCES += \
   src/gui/consoleapplication.cpp \
   src/io/abstractinireader.cpp \
   src/io/binarystream.cpp \
-  src/io/binaryutil.cpp \
   src/io/fileroller.cpp \
   src/io/inireader.cpp \
   src/io/tempfile.cpp \
@@ -401,17 +399,12 @@ SOURCES += \
   src/util/filechecker.cpp \
   src/util/fileoperations.cpp \
   src/util/filesystemwatcher.cpp \
-  src/util/heap.cpp \
   src/util/httpdownloader.cpp \
-  src/util/locker.cpp \
   src/util/properties.cpp \
   src/util/props.cpp \
   src/util/signalhandler.cpp \
   src/util/simplecrypt.cpp \
-  src/util/str.cpp \
-  src/util/timedcache.cpp \
   src/util/updatecheck.cpp \
-  src/util/updatechecktypes.cpp \
   src/util/version.cpp \
   src/util/xmlstreamreader.cpp \
   src/util/xmlstreamwriter.cpp \
@@ -615,8 +608,6 @@ SOURCES += \
   src/qrcode/qrcodegenerator.cpp \
   src/util/csvexporter.cpp \
   src/util/htmlbuilder.cpp \
-  src/util/htmlbuilderflags.cpp \
-  src/util/paintercontextsaver.cpp \
   src/util/polygontools.cpp \
   src/util/roundedpolygon.cpp
 } # ATOOLS_NO_GUI
@@ -912,7 +903,6 @@ SOURCES += \
   src/fs/bgl/sectiontype.cpp \
   src/fs/bgl/subsection.cpp \
   src/fs/bgl/surface.cpp \
-  src/fs/bgl/util.cpp \
   src/fs/common/airportindex.cpp \
   src/fs/common/binarygeometry.cpp \
   src/fs/common/binarymsageometry.cpp \
@@ -1005,7 +995,6 @@ SOURCES += \
   src/fs/xp/xpnavreader.cpp \
   src/fs/xp/xpreader.cpp \
   src/grib/windquery.cpp \
-  src/grib/windtypes.cpp \
   src/routing/routefinder.cpp
 } # ATOOLS_NO_FS
 
