@@ -58,23 +58,33 @@ TimeZoneManager::~TimeZoneManager()
 
 void TimeZoneManager::readFile(const QString& filename)
 {
-  ZDSetErrorHandler(TimeZonePrivate::onError);
-
-  // Read file here and open library from memory since it cannot deal with UTF-8 paths
-  QFile file(filename);
-  if(file.open(QIODevice::ReadOnly))
+  if(atools::checkFile(Q_FUNC_INFO, filename))
   {
-    p->library = file.readAll();
+    ZDSetErrorHandler(TimeZonePrivate::onError);
 
-    if(file.error() != QFile::NoError)
-      throw atools::Exception(tr("Cannot read %1: %2").arg(filename, file.errorString()));
+    // Read file here and open library from memory since it cannot deal with UTF-8 paths
+    QFile file(filename);
+    if(file.open(QIODevice::ReadOnly))
+    {
+      p->library = file.readAll();
 
-    p->timezoneDb = ZDOpenDatabaseFromMemory(p->library.data(), p->library.size());
-    if(!p->timezoneDb)
-      throw atools::Exception(tr("Cannot read %1.").arg(filename));
+      if(file.error() != QFile::NoError)
+        throw atools::Exception(tr("Cannot read %1: %2").arg(filename, file.errorString()));
+
+      if(p->library.isEmpty())
+        throw atools::Exception(tr("Library from file %1 is empty").arg(filename));
+
+      p->timezoneDb = ZDOpenDatabaseFromMemory(p->library.data(), p->library.size());
+
+      if(!p->timezoneDb)
+        throw atools::Exception(tr("Cannot read %1.").arg(filename));
+
+      qDebug() << Q_FUNC_INFO << "Opened" << filename << QString(ZDGetNotice(p->timezoneDb));
+      file.close();
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Cannot open" << filename << "reason" << file.errorString();
   }
-
-  qDebug() << Q_FUNC_INFO << "Opened" << filename << QString(ZDGetNotice(p->timezoneDb));
 }
 
 void TimeZoneManager::clear()
@@ -92,30 +102,58 @@ QTimeZone TimeZoneManager::getTimezone(const atools::geo::Pos& position) const
 
 QTimeZone TimeZoneManager::getTimezone(float lonX, float latY) const
 {
+  if(p->timezoneDb == nullptr)
+    return QTimeZone(); // Invalid
+
   QElapsedTimer timer;
   if(verbose)
     timer.start();
-  char *string = ZDHelperSimpleLookupString(p->timezoneDb, latY, lonX);
+
+  char *lookupString = ZDHelperSimpleLookupString(p->timezoneDb, latY, lonX);
+  QString timezoneStr(lookupString);
+  ZDHelperSimpleLookupStringFree(lookupString);
 
   // float safezone = 0;
-  // ZoneDetectResult *results = ZDLookup(cd, lat, lon, &safezone);
-  // ZDLookupResultToString
-  // ZDFreeResults
+  // ZoneDetectResult *results = ZDLookup(p->timezoneDb, latY, lonX, &safezone);
+  // const char *resultstr=ZDLookupResultToString(results->lookupResult);
+  // ZDFreeResults(results);
 
   if(verbose)
   {
     qDebug() << "Elapsed" << timer.nsecsElapsed() / 1000. << "us";
-    qDebug() << "Simple string is" << QString(string);
+    qDebug() << "Simple string is" << timezoneStr;
   }
 
-  QTimeZone zone(string);
-  if(verbose)
-    qDebug() << "Zone" << zone
-             << "standard offset" << zone.standardTimeOffset(QDateTime::currentDateTime()) / 3600.f << "hours"
-             << "UTC offset" << zone.offsetFromUtc(QDateTime::currentDateTime()) / 3600.f << "hours";
+  QTimeZone timezone(timezoneStr.toLatin1());
 
-  ZDHelperSimpleLookupStringFree(string);
-  return zone;
+#ifdef Q_OS_MAC
+  // Apply workaround to Qt bugs where QTimeZone fails to parse etc strings on macOS
+  if(!timezone.isValid() && timezoneStr.startsWith(QStringLiteral("Etc/GMT"), Qt::CaseInsensitive))
+  {
+    timezoneStr.remove(0, 7);
+
+    int offsetSeconds = 0;
+    if(timezoneStr.contains(':'))
+      // Hours : minutes
+      offsetSeconds = timezoneStr.section(':', 0, 0).toInt() * 3600 + timezoneStr.section(':', 1, 1).toInt() * 60;
+    else
+      // Hours
+      offsetSeconds = timezoneStr.toInt() * 3600;
+
+    // Polarity is wrong
+    offsetSeconds = -offsetSeconds;
+
+    timezone = QTimeZone(offsetSeconds);
+  }
+#endif
+
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "Zone" << timezone
+             << "timezoneStr" << timezoneStr
+             << "standard offset" << timezone.standardTimeOffset(QDateTime::currentDateTime()) / 3600.f << "hours"
+             << "UTC offset" << timezone.offsetFromUtc(QDateTime::currentDateTime()) / 3600.f << "hours";
+
+  return timezone;
 }
 
 void TimeZoneManager::correctDateLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int dayOfYearLocal, float secondsOfDayLocal,
