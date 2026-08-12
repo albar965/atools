@@ -105,7 +105,7 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
   airwayPostProcess = new XpAirwayPostProcess(db);
   metadataWriter = new MetadataWriter(db);
   magDecReader = new MagDecReader();
-  countryUpdater = new atools::fs::db::CountryUpdater(db, options.getTimeZoneDatabase(), options.isVerbose());
+  countryUpdater = new atools::fs::db::CountryUpdater(options.getTimeZoneDatabase(), options.isVerbose());
 
   initQueries();
 }

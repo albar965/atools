@@ -100,7 +100,7 @@ public:
     return station.hasMetarString();
   }
 
-  bool operator==(const atools::fs::weather::Metar& other)
+  bool operator==(const atools::fs::weather::Metar& other) const
   {
     return requestIdent == other.requestIdent &&
            requestPos.almostEqual(other.requestPos) &&
@@ -109,7 +109,7 @@ public:
            interpolated.getMetarString() == other.interpolated.getMetarString();
   }
 
-  bool operator!=(const atools::fs::weather::Metar& other)
+  bool operator!=(const atools::fs::weather::Metar& other) const
   {
     return !operator==(other);
   }

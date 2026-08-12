@@ -30,9 +30,6 @@ namespace timezone {
 class TimeZoneManager;
 }
 
-namespace sql {
-class SqlDatabase;
-}
 namespace fs {
 namespace db {
 
@@ -43,14 +40,13 @@ namespace db {
 class CountryUpdater
 {
 public:
-  CountryUpdater(atools::sql::SqlDatabase& sqlDb, const QString& timezoneFile, bool verboseParam);
+  CountryUpdater(const QString& timezoneFile, bool verboseParam);
   ~CountryUpdater();
 
   /* Fix broken country name. Needs coordinates for time zone lookup. */
   QString updateAirportCountry(const QString& country, const atools::geo::Pos& pos);
 
 private:
-  atools::sql::SqlDatabase& db;
   atools::timezone::TimeZoneManager *timezone = nullptr;
   const static QHash<QString, QString> countries, /* Wrong country names with replacements */
                                        country3To2; /* convert ISO 3166-1 alpha-3 to alpha-2 for QLocale::codeToTerritory() */

@@ -21,7 +21,6 @@
 #include "exception.h"
 #include "fs/common/metadatawriter.h"
 #include "fs/db/airwayresolver.h"
-#include "fs/db/countryupdater.h"
 #include "fs/db/databasemeta.h"
 #include "fs/db/datawriter.h"
 #include "fs/dfd/dfdcompiler.h"

@@ -395,7 +395,6 @@ SOURCES += \
   src/logging/loggingutil.cpp \
   src/settings/settings.cpp \
   src/util/average.cpp \
-  src/util/contextsaver.cpp \
   src/util/crashhandler.cpp \
   src/util/csvfilereader.cpp \
   src/util/csvreader.cpp \

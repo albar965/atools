@@ -15,10 +15,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "countryupdater.h"
+#include "fs/db/countryupdater.h"
+
+#include "atools.h"
 #include "fs/util/fsutil.h"
-#include "sql/sqldatabase.h"
-#include "sql/sqlquery.h"
+#include "geo/pos.h"
 #include "timezone/timezonemanager.h"
 
 #include <QHash>
@@ -463,8 +464,8 @@ const QHash<QString, QString> CountryUpdater::country3To2({
         {QStringLiteral("ZWE"), QStringLiteral("ZW")}
       });
 
-CountryUpdater::CountryUpdater(sql::SqlDatabase& sqlDb, const QString& timezoneFile, bool verboseParam)
-  : db(sqlDb), verbose(verboseParam)
+CountryUpdater::CountryUpdater(const QString& timezoneFile, bool verboseParam)
+  :  verbose(verboseParam)
 {
   if(atools::checkFile(Q_FUNC_INFO, timezoneFile))
   {
@@ -508,6 +509,9 @@ QString CountryUpdater::updateAirportCountry(const QString& country, const atool
 
   if(countryNew == QStringLiteral("Default")) // From territoryToString()
     countryNew.clear();
+
+  if(verbose && countryNew != country)
+    qDebug() << Q_FUNC_INFO << "Updated" << country << "to" << countryNew << "at" << pos.toString();
 
   return atools::fs::util::capAdminName(countryNew);
 }

@@ -110,7 +110,7 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, atool
   ndbWriter = new NdbWriter(db, *this);
   markerWriter = new MarkerWriter(db, *this);
   ilsWriter = new IlsWriter(db, *this);
-  countryUpdater = new atools::fs::db::CountryUpdater(db, options.getTimeZoneDatabase(), options.isVerbose());
+  countryUpdater = new atools::fs::db::CountryUpdater(options.getTimeZoneDatabase(), options.isVerbose());
 
   boundaryWriter = new BoundaryWriter(db, *this);
 

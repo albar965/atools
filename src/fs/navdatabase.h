@@ -51,8 +51,6 @@ class ManifestJson;
 }
 
 namespace db {
-
-class CountryUpdater;
 class DataWriter;
 }
 
@@ -222,7 +220,6 @@ private:
 
   atools::sql::SqlDatabase& db;
   atools::fs::NavDatabaseErrors *errors = nullptr;
-  atools::fs::db::CountryUpdater *countryUpdater = nullptr;
   const atools::fs::NavDatabaseOptions& options;
   bool aborted = false;
   QString gitRevision;

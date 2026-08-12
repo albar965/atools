@@ -87,6 +87,8 @@ void ComboBoxHandler::currentIndexChanged(int index)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << index << comboBox->currentIndex() << comboBox->currentText();
+#else
+  Q_UNUSED(index)
 #endif
 
   editingFinished();

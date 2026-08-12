@@ -145,7 +145,7 @@ SimConnectWriter::SimConnectWriter(sql::SqlDatabase& sqlDb, const atools::fs::Na
 {
   magDecReader = new atools::fs::common::MagDecReader;
   magDecReader->readFromWmm();
-  countryUpdater = new atools::fs::db::CountryUpdater(db, options.getTimeZoneDatabase(), options.isVerbose());
+  countryUpdater = new atools::fs::db::CountryUpdater(options.getTimeZoneDatabase(), options.isVerbose());
 }
 
 SimConnectWriter::~SimConnectWriter()
