@@ -84,15 +84,15 @@ public:
 
   /* Add an item to a branch or root. Has always a checkbox in the first column. */
   template<typename TYPE>
-  QTreeWidgetItem *addItem(QTreeWidgetItem *parent, TYPE id, const QStringList& text, const QString& tooltip, bool checked = true)
+  QTreeWidgetItem *addItem(QTreeWidgetItem *parent, TYPE id, const QStringList& texts, const QString& tooltip, bool checked = true)
   {
-    return addItemInt(parent, static_cast<int>(id), text, tooltip, checked);
+    return addItemInt(parent, static_cast<int>(id), texts, tooltip, checked);
   }
 
   template<typename TYPE>
-  QTreeWidgetItem *addItem(QTreeWidgetItem *parent, TYPE id, const QStringList& text, bool checked = true)
+  QTreeWidgetItem *addItem(QTreeWidgetItem *parent, TYPE id, const QStringList& texts, bool checked = true)
   {
-    return addItemInt(parent, static_cast<int>(id), text, QString(), checked);
+    return addItemInt(parent, static_cast<int>(id), texts, QString(), checked);
   }
 
   template<typename TYPE>
@@ -167,7 +167,7 @@ private:
   void dataChanged(const QModelIndex& topLeft, const QModelIndex&, const QList<int>& roles = QList<int>());
 
   /* Untyped methods used after converting an enum to int */
-  QTreeWidgetItem *addItemInt(QTreeWidgetItem *parent, int id, const QStringList& text, const QString& tooltip, bool checked);
+  QTreeWidgetItem *addItemInt(QTreeWidgetItem *parent, int id, const QStringList& texts, const QString& tooltip, bool checked);
   bool isCheckedInt(int id) const;
   void setCheckedInt(int id, bool checked);
 

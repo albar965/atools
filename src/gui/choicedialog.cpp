@@ -74,7 +74,7 @@ void ChoiceDialog::addCheckBoxHiddenById(ChoiceDialogIdType id)
 
 void ChoiceDialog::addWidgetById(ChoiceDialogIdType id, QWidget *widget)
 {
-  widget->setObjectName(QString(widget->metaObject()->className()) + '_' + QString::number(id));
+  widget->setObjectName(QString(widget->metaObject()->className()) % '_' % QString::number(id));
   widget->setProperty(ID_PROPERTY, id);
   index.insert(id, widget);
 
@@ -171,7 +171,7 @@ void ChoiceDialog::buttonBoxClicked(QAbstractButton *button)
   else if(buttonType == QDialogButtonBox::Help)
   {
     if(!helpBaseUrl.isEmpty())
-      atools::gui::HelpHandler::openHelpUrlWeb(this, helpOnlineUrl + helpBaseUrl, helpLanguageOnline);
+      atools::gui::HelpHandler::openHelpUrlWeb(this, helpOnlineUrl % helpBaseUrl, helpLanguageOnline);
   }
 }
 

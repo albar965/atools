@@ -173,12 +173,12 @@ void TreeDialog::setAllChecked(bool checked)
     it.value()->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
 }
 
-QTreeWidgetItem *TreeDialog::addItemInt(QTreeWidgetItem *parent, int id, const QStringList& text, const QString& tooltip, bool checked)
+QTreeWidgetItem *TreeDialog::addItemInt(QTreeWidgetItem *parent, int id, const QStringList& texts, const QString& tooltip, bool checked)
 {
   if(index.contains(id))
     throw atools::Exception(tr("Duplicate id %1 found while adding item in TreeDialog").arg(id));
 
-  QTreeWidgetItem *item = new QTreeWidgetItem(parent, text, id);
+  QTreeWidgetItem *item = new QTreeWidgetItem(parent, texts, id);
   item->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
 
   // Set tooltip on all colums
