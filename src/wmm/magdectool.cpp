@@ -15,14 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "magdectool.h"
-#include "io/tempfile.h"
+#include "wmm/magdectool.h"
+
 #include "exception.h"
 #include "geo/pos.h"
 
 extern "C" {
 #include <stdio.h>
-#include <string.h>
 #include <math.h>
 #include <stdlib.h>
 #include <locale.h>
@@ -83,8 +82,10 @@ void MagDecTool::init(int year, int month)
 
   referenceDate.setDate(year, month, 1);
 
-  // Put coeffizients file into a temporary, so that the C code can read it
-  atools::io::TempFile temp(QStringLiteral(":/atools/resources/wmm/WMM.COF"), "_wmm.cof");
+  QString filepath = QCoreApplication::applicationDirPath() % atools::SEP % "wmm" % atools::SEP % "WMM.COF";
+  QString message = atools::checkFileMsg(filepath);
+  if(!message.isEmpty())
+    throw atools::Exception(tr("Magnetic coeffizient file: %1.").arg(message));
 
   // Have to change locale to C since sscanf which is used in the geomagnetism library is locale dependent
   char *oldlocale = setlocale(LC_NUMERIC, nullptr);
@@ -92,19 +93,20 @@ void MagDecTool::init(int year, int month)
 
 #if defined(Q_OS_WIN32)
   // Windows fopen uses local charset for filename - convert UTF-8 to UTF-16 and use wfopen
-  wchar_t *path = new wchar_t[static_cast<unsigned int>(temp.getFilePath().size()) + 1];
-  temp.getFilePath().toWCharArray(path);
-  path[temp.getFilePath().size()] = L'\0';
+  wchar_t *path = new wchar_t[static_cast<unsigned int>(filepath.size()) + 1];
+  filepath.toWCharArray(path);
+  path[filepath.size()] = L'\0';
 
-  FILE *f = _wfopen(path, L"r");
+  FILE *file = _wfopen(path, L"r");
 #else
-  FILE *f = fopen(temp.getFilePathData(), "r");
+  QByteArray bytes = filepath.toUtf8();
+  FILE *file = fopen(bytes.constData(), "r");
 #endif
 
   // https://stackoverflow.com/questions/30470866/c-to-c-array-of-pointers-conversion-issue
   MAGtype_MagneticModel *magneticModel;
-  if(!MAG_robustReadMagModels(f, &magneticModel, 1))
-    throw atools::Exception(tr("Magnetic coeffizient file \"%1\" not found.").arg(temp.getFilePath()));
+  if(!MAG_robustReadMagModels(file, &magneticModel, 1))
+    throw atools::Exception(tr("Magnetic coeffizient file \"%1\" not found.").arg(filepath));
 
   MAGtype_Ellipsoid ellipsoid;
   MAGtype_Geoid geoid;
@@ -126,7 +128,7 @@ void MagDecTool::init(int year, int month)
   magdecGrid = new float[static_cast<unsigned int>(declinations.size())];
   std::memcpy(magdecGrid, declinations.data(), static_cast<unsigned int>(declinations.size()) * sizeof(float));
 
-  fclose(f);
+  fclose(file);
 
   // Reset locale to previous value
   setlocale(LC_NUMERIC, oldlocale);
@@ -134,9 +136,10 @@ void MagDecTool::init(int year, int month)
 #if defined(Q_OS_WIN32)
   delete[] path;
 #endif
+
+  qDebug() << Q_FUNC_INFO << "Read magnetic coeffizient file" << filepath;
 }
 
-// Only needed to write the cumbersome large 8MB EGM9615.h file into a plain file
 #ifdef WRITE_GEOID_BUFFER
 void MagDecTool::writeGeoidBuffer()
 {
@@ -195,18 +198,27 @@ void MagDecTool::clear()
 QList<float> MagDecTool::readGeoidBuffer()
 {
   QList<float> retval;
-  QFile file(":/atools/resources/wmm/EGM9615.buf");
+
+  QString filepath = QCoreApplication::applicationDirPath() % atools::SEP % "wmm" % atools::SEP % "EGM9615.buf";
+  QString message = atools::checkFileMsg(filepath);
+  if(!message.isEmpty())
+    throw atools::Exception(tr("Geoid buffer file file: %1.").arg(message));
+
+  QFile file(filepath);
   if(file.open(QIODevice::ReadOnly))
   {
-    QDataStream ds(&file);
-    ds.setFloatingPointPrecision(QDataStream::SinglePrecision);
+    QDataStream stream(&file);
+    stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-    while(!ds.atEnd())
+    while(!stream.atEnd())
     {
       float value;
-      ds >> value;
+      stream >> value;
       retval.append(value);
     }
+
+    qDebug() << Q_FUNC_INFO << "Read geoid buffer" << file.fileName();
+
     file.close();
   }
   else

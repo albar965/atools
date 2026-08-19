@@ -77,8 +77,8 @@ public:
   void clear();
 
 #ifdef WRITE_GEOID_BUFFER
+  /* Needed to write the large 8MB EGM9615.h file into a plain file */
   void writeGeoidBuffer();
-
 #endif
 
 private:

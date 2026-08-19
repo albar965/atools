@@ -28,7 +28,6 @@
 #include "fs/sc/simconnectapi.h"
 #include "settings/settings.h"
 #include "util/csvfilereader.h"
-#include "zip/gzip.h"
 
 #include <QString>
 #include <QStringBuilder>
@@ -1050,11 +1049,17 @@ void SimConnectLoaderPrivate::fetchDisconnectedNavaidsResource(const QString& ty
 
     // Load stock navdata from MSFS 2024 extract =========================================================
     // File contains all navaids from previous simulator versions
-    QFile file(":/atools/resources/navdata/navaids24.csv.gz");
+
+    QString filepath = QCoreApplication::applicationDirPath() % atools::SEP % "navdata" % atools::SEP % "navaids24.csv";
+    QString message = atools::checkFileMsg(filepath);
+    if(!message.isEmpty())
+      throw atools::Exception(SimConnectLoader::tr("Navaid file: %1.").arg(message));
+
+    QFile file(filepath);
     if(file.open(QIODevice::ReadOnly))
     {
       qDebug() << Q_FUNC_INFO << "Reading" << file.fileName();
-      QTextStream stream(atools::zip::gzipDecompress(file.readAll()), QIODevice::ReadOnly);
+      QTextStream stream(&file);
       readNavaidsFromFile(stream, typeFilter);
       file.close();
     }
@@ -1062,7 +1067,7 @@ void SimConnectLoaderPrivate::fetchDisconnectedNavaidsResource(const QString& ty
       qWarning() << Q_FUNC_INFO << "Cannot open" << file.fileName() << "error" << file.errorString();
 
     // Load additional navdata from included file =========================================================
-    QFile fileExtra(":/atools/resources/navdata/navaids_msfs2024_extra.csv");
+    QFile fileExtra(QCoreApplication::applicationDirPath() % atools::SEP % "navdata" % atools::SEP % "navaids_msfs2024_extra.csv");
     if(fileExtra.open(QIODevice::ReadOnly))
     {
       qDebug() << Q_FUNC_INFO << "Reading" << fileExtra.fileName();
@@ -1123,10 +1128,10 @@ void SimConnectLoaderPrivate::fetchDisconnectedNavaidsFile()
     navaidIds.clear();
 
     // File contains all navaids from previous simulator versions - regions are omitted since they are useless
-    QFile file(atools::settings::Settings::getPath() % atools::SEP % "navaids.csv.gz");
+    QFile file(atools::settings::Settings::getPath() % atools::SEP % "navaids.csv");
     if(file.open(QIODevice::ReadOnly))
     {
-      QTextStream stream(atools::zip::gzipDecompress(file.readAll()), QIODevice::ReadOnly);
+      QTextStream stream(&file);
 
       // CSV columns
       enum {IDENT};

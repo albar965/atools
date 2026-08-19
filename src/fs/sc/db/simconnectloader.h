@@ -88,22 +88,21 @@ public:
 
   /* Load waypints, VOR and NDB which are not connected to procedures or airways. Requires previous call to loadNavaids() to
    * avoid loading duplicates.
-   * Based on idents in file ".../ABarthel/navaids.csv.gz" if SimConnectLoadDisconnectedFile=false.
+   * Based on idents in file ".../ABarthel/navaids.csv" if SimConnectLoadDisconnectedFile=false.
    *
    * Runs optionally.
    *
-   * Query to generate navaids.csv.gz from MFSF 2020 database.
+   * Query to generate navaids.csv from MFSF 2020 database.
    *INDENT-OFF*
    sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs.sqlite \
    "select ident from (select ident from vor union select ident from ndb union select ident from ils union select ident from waypoint) \
    order by ident;" > ~/.config/ABarthel/navaids.csv && \
-   gzip -f ~/.config/ABarthel/navaids.csv && \
-   ls -lh ~/.config/ABarthel/navaids.csv.gz
+   ls -lh ~/.config/ABarthel/navaids.csv
   *INDENT-ON*
   *
   * - Steps to update ident file:
   * - Load MSFS 2020
-  * - Generate "navaids.csv.gz"
+  * - Generate "navaids.csv"
   * - Load MSFS 2024 with "SimConnectLoadDisconnectedFile=true"
   * - Use query to generate ":/atools/resources/navdata/navaids24.csv.gz"
   */
