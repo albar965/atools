@@ -117,7 +117,7 @@ public:
   -Use query to generate *
   "$APROJECTS/littlenavmap/navdata/navaids24.csv" and *
   "$APROJECTS/navdatareader/navdata/navaids24.csv" *
-  /
+  */
   bool loadDisconnectedNavaidsFile(int fileId);
 
   /* Load VOR and NDB which are not connected to procedures or airways. Requires previous call to loadNavaids() to
