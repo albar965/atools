@@ -1309,10 +1309,12 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
               aborted = simconnectLoader->loadNavaids(fileId);
 
             // Load navaids not connected to procedures or airways ======================================
+            // Flag is true for normal operation
             if(!aborted && options.getSimConnectLoadDisconnected())
               aborted = simconnectLoader->loadDisconnectedNavaidsResource(fileId, result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
 
             // Initial loading of MSFS 2020 navaids not connected to procedures or airways ======================================
+            // Flag is false for normal operation and only used to regenerate the navaids24.csv
             if(!aborted && options.getSimConnectLoadDisconnectedFile())
               // Only for inital load and export of 2020 navaids using loadDisconnectedNavaids20()
               // Read navaids.csv from settings folder when loading MSFS 2024

@@ -88,24 +88,36 @@ public:
 
   /* Load waypints, VOR and NDB which are not connected to procedures or airways. Requires previous call to loadNavaids() to
    * avoid loading duplicates.
-   * Based on idents in file ".../ABarthel/navaids.csv" if SimConnectLoadDisconnectedFile=false.
+   * Based on idents in file "~/.config/ABarthel/navaids.csv" if "SimConnectLoadDisconnectedFile=true".
    *
    * Runs optionally.
    *
-   * Query to generate navaids.csv from MFSF 2020 database.
+   * Query to generate navaids.csv from normally loaded MFSF 2020 database.
    *INDENT-OFF*
    sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs.sqlite \
-   "select ident from (select ident from vor union select ident from ndb union select ident from ils union select ident from waypoint) \
-   order by ident;" > ~/.config/ABarthel/navaids.csv && \
-   ls -lh ~/.config/ABarthel/navaids.csv
+   "select ident from (select ident from vor union select ident from ndb \
+    union select ident from ils union select ident from waypoint) \
+    order by ident;" > ~/.config/ABarthel/navaids.csv
+  *INDENT-ON*
+  * Query to generate navaids24.csv.gz from MFSF 2024 database.
+  *INDENT-OFF*
+  sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs24.sqlite \
+  "select ident, region, type from (select ident, region, 'V' as type from vor union \
+   select ident, region, 'N' as type from ndb  union \
+   select ident, region, 'V' as type from ils  union \
+   select ident, region, 'W' as type from waypoint where artificial is null) \
+   order by ident, region, type;" > $APROJECTS/littlenavmap/navdata/navaids24.csv && \
+  cp -vf $APROJECTS/littlenavmap/navdata/navaids24.csv $APROJECTS/navdatareader/navdata/navaids24.csv
   *INDENT-ON*
   *
-  * - Steps to update ident file:
-  * - Load MSFS 2020
-  * - Generate "navaids.csv"
-  * - Load MSFS 2024 with "SimConnectLoadDisconnectedFile=true"
-  * - Use query to generate ":/atools/resources/navdata/navaids24.csv.gz"
-  */
+  *Steps to update ident file:
+  *-Load MSFS 2020 *
+  -Generate "~/.config/ABarthel/navaids.csv" *
+  -Load MSFS 2024 with "SimConnectLoadDisconnectedFile=true" *
+  -Use query to generate *
+  "$APROJECTS/littlenavmap/navdata/navaids24.csv" and *
+  "$APROJECTS/navdatareader/navdata/navaids24.csv" *
+  /
   bool loadDisconnectedNavaidsFile(int fileId);
 
   /* Load VOR and NDB which are not connected to procedures or airways. Requires previous call to loadNavaids() to
@@ -114,19 +126,9 @@ public:
    *
    * Runs as default.
    *
-   * Loads idents from ":/atools/resources/navdata/navaids24.csv.gz" if SimConnectLoadDisconnected=true
-   *
-   * Query to generate navaids24.csv.gz from MFSF 2024 database.
-   *INDENT-OFF*
-   sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs24.sqlite \
-   "select ident, region, type from (select ident, region, 'V' as type from vor union \
-   select ident, region, 'N' as type from ndb  union \
-   select ident, region, 'V' as type from ils  union \
-   select ident, region, 'W' as type from waypoint where artificial is null) \
-   order by ident, region;" > $APROJECTS/atools/resources/navdata/navaids24.csv && \
-   gzip -f $APROJECTS/atools/resources/navdata/navaids24.csv && \
-   ls -lh $APROJECTS/atools/resources/navdata/navaids24.csv.gz
-   *INDENT-ON* */
+   * Loads idents from
+   * "$APROJECTS/littlenavmap/navdata/navaids24.csv" and
+   * "$APROJECTS/navdatareader/navdata/navaids24.csv" */
   bool loadDisconnectedNavaidsResource(int fileId, bool skipLoading);
 
   /* Progress callback returned true */

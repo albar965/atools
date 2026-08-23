@@ -1483,8 +1483,16 @@ bool SimConnectWriter::writeWaypointsAndAirwaysToDatabase(const QList<atools::fs
       waypointStmt->bindValue(QStringLiteral(":type"), enumToStr(bgl::Waypoint::waypointTypeToStr, type));
       waypointStmt->bindValue(QStringLiteral(":num_victor_airway"), waypoint.getNumVictorAirway());
       waypointStmt->bindValue(QStringLiteral(":num_jet_airway"), waypoint.getNumJetAirway());
-      bindPos(waypointStmt, waypointFacility.longitude, waypointFacility.latitude);
-      waypointStmt->exec();
+
+      if(valid(PosD(waypointFacility.longitude, waypointFacility.latitude)))
+      {
+        bindPos(waypointStmt, waypointFacility.longitude, waypointFacility.latitude);
+        waypointStmt->exec();
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "Invalid position for waypoint" << waypointFacility.icao << "/" << waypointFacility.region
+                   << "lon" << waypointFacility.longitude << "lat" << waypointFacility.latitude
+                   << "victor airway" << waypoint.getNumVictorAirway() << "jet airway" << waypoint.getNumJetAirway();
     }
 
     // Save routes to temporary table which are resolved later to keys ================================

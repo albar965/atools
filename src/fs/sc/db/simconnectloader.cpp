@@ -1131,9 +1131,11 @@ void SimConnectLoaderPrivate::fetchDisconnectedNavaidsFile()
     QFile file(atools::settings::Settings::getPath() % atools::SEP % "navaids.csv");
     if(file.open(QIODevice::ReadOnly))
     {
+      qDebug() << Q_FUNC_INFO << "Reading" << file.fileName();
+
       QTextStream stream(&file);
 
-      // CSV columns
+      // Only one CSV column
       enum {IDENT};
 
       atools::util::CsvFileReader csvReader;
