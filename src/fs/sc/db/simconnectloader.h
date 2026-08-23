@@ -99,7 +99,8 @@ public:
     union select ident from ils union select ident from waypoint) \
     order by ident;" > ~/.config/ABarthel/navaids.csv
   *INDENT-ON*
-  * Query to generate navaids24.csv.gz from MFSF 2024 database.
+  *
+  * Query to generate navaids24.csv from MFSF 2024 database loaded based on navaids.csv.
   *INDENT-OFF*
   sqlite3 -csv ~/.config/ABarthel/little_navmap_db/little_navmap_msfs24.sqlite \
   "select ident, region, type from (select ident, region, 'V' as type from vor union \
