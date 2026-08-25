@@ -141,9 +141,9 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
         // Header
         atools::util::HtmlBuilder html(false /* backgroundColorUsed */, false /* darkStyle */);
         if(hosts.size() > 1)
-          html.text(tr("Server is listening on hostnames (IP-addresses) on port "));
+          html.text(tr("Server is listening on hostnames / IP-addresses on port "));
         else
-          html.text(tr("Server is listening on hostname (IP-address) on port "));
+          html.text(tr("Server is listening on hostname / IP-address on port "));
         html.text(QString::number(serverPort()), atools::util::html::BOLD, QColor(Qt::red)).text(tr(":"));
         qInfo(gui).noquote().nospace() << html.getHtml();
 
@@ -161,11 +161,12 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
           // Name
           html.text(tr("%1 ").arg(host.name), atools::util::html::BOLD, QColor(Qt::blue));
 
-          // Address
-          html.text(tr(" (%1)").arg(host.ip), atools::util::html::SMALL, QColor(Qt::blue));
+          // Address if not equal to hostname
+          if(host.name != host.ip)
+            html.text(tr(" (%1)").arg(host.ip), atools::util::html::SMALL, QColor(Qt::blue));
           qInfo(gui).noquote().nospace() << html.getHtml();
         }
-        qInfo(gui).noquote().nospace() << tr("Use the mouse to select a hostname or IP-address.");
+        qInfo(gui).noquote().nospace() << tr("Use the mouse to select a hostname or an IP-address.");
         qInfo(gui).noquote().nospace() << tr("Then copy the selected text to the clipboard using the context menu.");
       }
     }
