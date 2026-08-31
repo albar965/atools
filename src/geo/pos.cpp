@@ -821,6 +821,16 @@ void Pos::toCartesian(double& x, double& y, double& z) const
     x = y = z = 0.;
 }
 
+PosD& PosD::toDeg()
+{
+  if(isValid())
+  {
+    lonX = toDegree(lonX);
+    latY = toDegree(latY);
+  }
+  return *this;
+}
+
 double PosD::distanceMeterTo(const PosD& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())

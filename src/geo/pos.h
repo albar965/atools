@@ -300,8 +300,7 @@ public:
   atools::geo::Pos interpolateRhumb(const atools::geo::Pos& otherPos, float fraction) const;
 
   /* Returns the point of intersection of two paths defined by point and bearing */
-  static atools::geo::Pos intersectingRadials(const atools::geo::Pos& p1, float brng1,
-                                              const atools::geo::Pos& p2, float brng2);
+  static atools::geo::Pos intersectingRadials(const atools::geo::Pos& p1, float bearing1, const atools::geo::Pos& p2, float bearing2);
 
   void setLonX(float value)
   {
@@ -455,6 +454,9 @@ public:
     return !(*this == other);
   }
 
+  /* Convert this position from rad to degree and return reference */
+  atools::geo::PosD& toDeg();
+
   /* Distance to other point for great circle route */
   double distanceMeterTo(const PosD& otherPos) const;
 
@@ -468,7 +470,7 @@ public:
 
   atools::geo::Pos asPos() const
   {
-    return isValid() ? atools::geo::Pos(lonX, latY, altitude) : atools::geo::Pos();
+    return isValid() ? atools::geo::Pos(lonX, latY, altitude) : EMPTY_POS;
   }
 
   double getLonX() const

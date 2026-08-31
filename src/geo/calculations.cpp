@@ -768,43 +768,43 @@ bool crossesAntiMeridian(const Pos& pos1, const Pos& pos2)
   return atools::geo::crossesAntiMeridian(pos1.getLonX(), pos2.getLonX());
 }
 
-const QList<Line> splitAtAntiMeridian(const Pos& pos1, const Pos& pos2, bool *crossed)
+const QList<Line> splitAtAntiMeridian(const Pos& pos1, const Pos& pos2)
 {
-  if(crossed != nullptr)
-    *crossed = false;
+  const static Pos ANTI_MERIDIAN_POS(180., 90.); // Define anti-meridian by a North position and bearing 180
+  const static float ANTI_MERIDIAN_BEARING_DEG = 180.;
+  const static float ANTI_MERIDIAN_BUFFER_DEG = 0.01;
 
   if(pos1.isValid() && pos2.isValid())
   {
     if(crossesAntiMeridian(pos1, pos2))
     {
-      if(crossed != nullptr)
-        *crossed = true;
-
-      // Check for intersection with anti-meridian
-      // Radial (endless from pos1) is sufficient here since crossing is already confirmed
-      Pos p = Pos::intersectingRadials(pos1, pos1.angleDegTo(pos2), Pos(180.f, 90.f), 180.f);
-
-      if(p.isValid())
+      if(!atools::almostEqual(std::abs(pos1.getLonX()), 180.f, ANTI_MERIDIAN_BUFFER_DEG) ||
+         !atools::almostEqual(std::abs(pos2.getLonX()), 180.f, ANTI_MERIDIAN_BUFFER_DEG))
       {
-        // Avoid 170 -> -180 and -170 -> 180 situation
-        float boundary = pos1.getLonX() > 0.f && pos2.getLonX() < 0.f ? 180.f : -180.f;
+        // Check for intersection with anti-meridian
+        // Radial (endless from pos1) is sufficient here since crossing is already confirmed
+        Pos intersectionPos;
 
-        // Return split line
-        return QList<Line>({Line(pos1.getLonX(), pos1.getLatY(), boundary, p.getLatY()),
-                            Line(-boundary, p.getLatY(), pos2.getLonX(), pos2.getLatY())});
+        // Try from the other side if one point is too close to the meridian
+        if(atools::almostEqual(std::abs(pos1.getLonX()), 180.f, ANTI_MERIDIAN_BUFFER_DEG))
+          intersectionPos = Pos::intersectingRadials(pos2, pos2.angleDegTo(pos1), ANTI_MERIDIAN_POS, ANTI_MERIDIAN_BEARING_DEG);
+        else
+          intersectionPos = Pos::intersectingRadials(pos1, pos1.angleDegTo(pos2), ANTI_MERIDIAN_POS, ANTI_MERIDIAN_BEARING_DEG);
+
+        if(intersectionPos.isValid())
+        {
+          // Avoid 170 -> -180 and -170 -> 180 situation
+          float boundary = pos1.getLonX() > 0.f && pos2.getLonX() < 0. ? 180.f : -180.f;
+
+          // Return split line
+          return QList<Line>({Line(pos1.getLonX(), pos1.getLatY(), boundary, intersectionPos.getLatY()),
+                              Line(-boundary, intersectionPos.getLatY(), pos2.getLonX(), pos2.getLatY())});
+        }
       }
-      // Result is invalid most likely because of points being close to anti-meridian - build line pair manually
-      else if(atools::almostEqual(pos1.getLonX(), 180.f, 0.01f) && atools::almostEqual(pos2.getLonX(), -180.f, 0.01f))
-        // East to west
-        return QList<Line>({Line(pos1.getLonX(), pos1.getLatY(), 180.f, pos1.getLatY()),
-                            Line(-180.f, pos2.getLatY(), pos2.getLonX(), pos2.getLatY())});
-      else if(atools::almostEqual(pos1.getLonX(), -180.f, 0.01f) && atools::almostEqual(pos2.getLonX(), 180.f, 0.01f))
-        // West to easts
-        return QList<Line>({Line(pos1.getLonX(), pos1.getLatY(), -180.f, pos1.getLatY()),
-                            Line(180.f, pos2.getLatY(), pos2.getLonX(), pos2.getLatY())});
     }
 
-    // Return a copy of this
+    // Return a copy of this - do not split
+    // Also used if both points are very close to the anti-meridian
     return QList<Line>({Line(pos1, pos2)});
   }
   else

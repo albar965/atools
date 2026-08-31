@@ -69,6 +69,7 @@ LineString::LineString(const Pos& origin, const Pos& start, const Pos& end, bool
       {
         for(float angle = startAngle; angle < 360.f; angle += step)
           angles.append(angle);
+
         for(float angle = 0.f; angle < endAngle; angle += step)
           angles.append(angle);
       }
@@ -88,6 +89,7 @@ LineString::LineString(const Pos& origin, const Pos& start, const Pos& end, bool
       {
         for(float angle = startAngle; angle > 0.f; angle -= step)
           angles.append(angle);
+
         for(float angle = 360.f; angle > endAngle; angle -= step)
           angles.append(angle);
       }

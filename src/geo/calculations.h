@@ -87,7 +87,7 @@ atools::geo::Rect bounding(const atools::geo::Pos& pos1, const atools::geo::Pos&
 /* true if longitude values cross the anti-meridian independent of direction but unreliable for large rectangles. */
 bool crossesAntiMeridian(float lonx1, float lonx2);
 bool crossesAntiMeridian(const Pos& pos1, const Pos& pos2);
-const QList<Line> splitAtAntiMeridian(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, bool *crossed = nullptr);
+const QList<Line> splitAtAntiMeridian(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2);
 
 bool isWestCourse(float lonx1, float lonx2);
 bool isEastCourse(float lonx1, float lonx2);

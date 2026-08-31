@@ -220,9 +220,9 @@ public:
   }
 
   /* Returns two lines if it crosses. Otherwise a copy of this or empty list if invalid. */
-  const QList<Line> splitAtAntiMeridian(bool *crossed = nullptr) const
+  const QList<Line> splitAtAntiMeridian() const
   {
-    return atools::geo::splitAtAntiMeridian(pos1, pos2, crossed);
+    return atools::geo::splitAtAntiMeridian(pos1, pos2);
   }
 
   /* true if heading of "from" to "to" is towards west or east. */
