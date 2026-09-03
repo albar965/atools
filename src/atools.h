@@ -55,6 +55,9 @@ QString programFileInfoNoDate();
  *  An Exception is thrown if the file cannot be opened */
 bool fileEndsWithEol(const QString& filepath);
 
+/* Converts globbing into regular expression. Escapes and converts characters. */
+QString regexpFromWildcard(const QString& filepath);
+
 /* Get the target of a symbolic link (all OS), a Windows shortcut (.lnk) or a Windows junction.
  * Returns a cleaned path with '/' as separators or an empty string if file is not link. */
 QString linkTarget(const QFileInfo& path);

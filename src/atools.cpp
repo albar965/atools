@@ -492,6 +492,18 @@ bool fileEndsWithEol(const QString& filepath)
   return endsWithEol;
 }
 
+QString regexpFromWildcard(const QString& filepath)
+{
+  // QRegularExpression::escape() escapes with a backslash all characters in str,
+  // except for the characters in the [A-Za-z0-9_] range
+  return QStringLiteral("^") % QRegularExpression::escape(filepath).
+         replace(QStringLiteral("\\*"), QStringLiteral(".*")).
+         replace(QStringLiteral("\\?"), QStringLiteral(".")).
+         replace(QStringLiteral("\\[!"), QStringLiteral("[^")).
+         replace(QStringLiteral("\\["), QStringLiteral("[")).
+         replace(QStringLiteral("\\]"), QStringLiteral("]"));
+}
+
 QString at(const QStringList& columns, int index, bool error)
 {
   if(index < columns.size())

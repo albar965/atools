@@ -41,7 +41,7 @@ void NavDatabaseOptions::setLanguage(const QString& lang)
 
     if(language.contains('-'))
       // Make second section upper case
-      language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
+      language = language.section('-', 0, 0) % '-' % language.section('-', 1, 1).toUpper();
   }
 }
 
@@ -297,9 +297,9 @@ bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegul
     return true;
 
   bool excludeMatched = false;
-  for(const QRegularExpression& iter : filterListExcl)
+  for(const QRegularExpression& regexp : filterListExcl)
   {
-    if(iter.match(string).hasMatch())
+    if(regexp.match(string).hasMatch())
     {
       excludeMatched = true;
       break;
@@ -312,9 +312,9 @@ bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegul
   else
   {
     bool includeMatched = false;
-    for(const QRegularExpression& iter : filterListInc)
+    for(const QRegularExpression& regexp : filterListInc)
     {
-      if(iter.match(string).hasMatch())
+      if(regexp.match(string).hasMatch())
       {
         includeMatched = true;
         break;
@@ -338,7 +338,7 @@ void NavDatabaseOptions::addToFilterList(const QStringList& filters, QList<QRegu
 void NavDatabaseOptions::addToFilter(const QString& filter, QList<QRegularExpression>& filterList)
 {
   if(!filter.isEmpty())
-    filterList.append(QRegularExpression::fromWildcard(filter.trimmed()));
+    filterList.append(QRegularExpression(atools::regexpFromWildcard(filter.trimmed()), QRegularExpression::CaseInsensitiveOption));
 }
 
 QString NavDatabaseOptions::adaptDir(const QString& filepath) const
@@ -363,7 +363,7 @@ QString patternStr(const QList<QRegularExpression>& list)
 {
   QStringList retval;
   for(const QRegularExpression& regexp : list)
-    retval.append(regexp.pattern());
+    retval.append('\"' % regexp.pattern() % '\"');
   return retval.join(", ");
 }
 
