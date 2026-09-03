@@ -728,24 +728,25 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
 
   QFileInfoList entries;
   if(!userInclude)
+    // No user defined path - read entries directly ====================
     entries = QDir(path, QStringLiteral(), QDir::Name, filters).entryInfoList();
   else
   {
     // Read entries recursively for user added folder ===================
     QQueue<QFileInfo> queue;
-    // Add intial path
-    queue.enqueue(QFileInfo(path));
+    queue.enqueue(QFileInfo(path)); // Add intial path
 
     while(!queue.isEmpty())
     {
-      const QFileInfoList entryInfoList = QDir(queue.dequeue().absoluteFilePath(), QStringLiteral(), QDir::Name, filters).entryInfoList();
-      for(const QFileInfo& fileinfo : entryInfoList)
+      const QFileInfo currentDir = queue.dequeue();
+      if(atools::checkFile(Q_FUNC_INFO, QFileInfo(buildPathNoCase({currentDir.absoluteFilePath(), "Earth nav data", "apt.dat"})), false))
+        // Folder contains airport - add to list and do not descent further
+        entries.append(currentDir);
+      else
       {
-        if(atools::checkFile(Q_FUNC_INFO, QFileInfo(buildPathNoCase({fileinfo.absoluteFilePath(), "Earth nav data", "apt.dat"})), false))
-          // Folder contains airport - add to list and do not descent further
-          entries.append(fileinfo);
-        else
-          // Folder does not contain airport - enqueue and descent further
+        // Folder does not contain airport - enqueue and descent further
+        const QFileInfoList entryInfoList = QDir(currentDir.absoluteFilePath(), QStringLiteral(), QDir::Name, filters).entryInfoList();
+        for(const QFileInfo& fileinfo : entryInfoList)
           queue.enqueue(fileinfo);
       }
     }
@@ -765,10 +766,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
       continue;
 #endif
 
-    // dir:
-    // KSEA Demo Area
-    // LFPG Paris - Charles de Gaulle
-
+    // Dir "KSEA Demo Area" or "LFPG Paris - Charles de Gaulle"
     if(name.compare("Global Airports", Qt::CaseInsensitive) == 0) // Should normally not appear here
       continue;
 
@@ -780,7 +778,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const QString& path, const ato
         continue;
     }
 
-    QFileInfo aptDat(buildPathNoCase({fileinfo.absoluteFilePath(), "Earth nav data", "apt.dat"}));
+    const QFileInfo aptDat(buildPathNoCase({fileinfo.absoluteFilePath(), "Earth nav data", "apt.dat"}));
 
     if(!includeFile(opts, aptDat))
       continue;

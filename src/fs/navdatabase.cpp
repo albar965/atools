@@ -1311,7 +1311,8 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
             // Load navaids not connected to procedures or airways ======================================
             // Flag is true for normal operation
             if(!aborted && options.getSimConnectLoadDisconnected())
-              aborted = simconnectLoader->loadDisconnectedNavaidsResource(fileId, result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
+              aborted = simconnectLoader->loadDisconnectedNavaidsResource(fileId,
+                                                                          result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
 
             // Initial loading of MSFS 2020 navaids not connected to procedures or airways ======================================
             // Flag is false for normal operation and only used to regenerate the navaids24.csv
@@ -1913,29 +1914,30 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
   {
     // Read entries recursively for user added folder ===================
     QQueue<QFileInfo> queue;
-    // Add intial path
-    queue.enqueue(QFileInfo(dirs.at(i)));
+    queue.enqueue(QFileInfo(dirs.at(i))); // Add intial path
 
-    QFileInfoList entries(QDir(dirs.at(i)).entryInfoList(filters));
+    QFileInfoList entries;
     while(!queue.isEmpty())
     {
-      const QFileInfoList entriesDir = QDir(queue.dequeue().absoluteFilePath(), QStringLiteral(), QDir::Name, filters).entryInfoList();
-      for(const QFileInfo& fileinfo : entriesDir)
-      {
-        bool ok = false;
-        if(options.getSimulatorType() == atools::fs::FsPaths::MSFS)
-          // Detect MSFS by looking for the two JSON files
-          ok = atools::checkFile(Q_FUNC_INFO, fileinfo.absoluteFilePath() % atools::SEP % "manifest.json") &&
-               atools::checkFile(Q_FUNC_INFO, fileinfo.absoluteFilePath() % atools::SEP % "layout.json");
-        else
-          // FSX and P3D scenery is detected by folder "scenery"
-          ok = atools::checkDir(Q_FUNC_INFO, fileinfo.absoluteFilePath() % atools::SEP % "scenery");
+      const QFileInfo currentDir = queue.dequeue();
 
-        // Folder contains airport - add to list and do not descent further
-        if(ok)
-          entries.append(fileinfo);
-        else
-          // Folder does not contain airport - enqueue and descent further
+      bool hasScenery = false;
+      if(options.getSimulatorType() == atools::fs::FsPaths::MSFS)
+        // Detect MSFS by looking for the two JSON files
+        hasScenery = atools::checkFile(Q_FUNC_INFO, currentDir.absoluteFilePath() % atools::SEP % "manifest.json", false /* warn */) &&
+                     atools::checkFile(Q_FUNC_INFO, currentDir.absoluteFilePath() % atools::SEP % "layout.json", false /* warn */);
+      else
+        // FSX and P3D scenery is detected by folder "scenery"
+        hasScenery = atools::checkDir(Q_FUNC_INFO, currentDir.absoluteFilePath() % atools::SEP % "scenery");
+
+      // Folder contains airport - add to list and do not descent further
+      if(hasScenery)
+        entries.append(currentDir);
+      else
+      {
+        // Folder does not contain airport - enqueue and descent further
+        const QFileInfoList entriesDir = QDir(currentDir.absoluteFilePath(), QStringLiteral(), QDir::Name, filters).entryInfoList();
+        for(const QFileInfo& fileinfo : entriesDir)
           queue.enqueue(fileinfo);
       }
     }
@@ -1949,9 +1951,7 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
     // Get all folders in the directory where each one is an add-on
     for(const QFileInfo& addonDir : std::as_const(entries))
     {
-      // The MSFS add-on dir needs two JSON files to be valid
-      bool msfsFiles = QDir(addonDir.canonicalFilePath()).entryList({"layout.json", "manifest.json"}, QDir::Files, QDir::Name).size() == 2;
-      if(options.getSimulatorType() == FsPaths::MSFS && msfsFiles)
+      if(options.getSimulatorType() == FsPaths::MSFS)
       {
         SceneryArea area(nextNum + i, tr("Custom scenery path %1").arg(num), addonDir.canonicalFilePath());
         area.setIncluded(true);
@@ -1961,7 +1961,7 @@ void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::S
         qDebug() << Q_FUNC_INFO << "Added custom include MSFS" << cfg.getAreas().last();
 #endif
       }
-      else if(!msfsFiles && !QDir(addonDir.canonicalFilePath() + SEP + "scenery").entryList({"*.bgl"}, QDir::Files, QDir::Name).isEmpty())
+      else if(!QDir(addonDir.canonicalFilePath() + SEP + "scenery").entryList({"*.bgl"}, QDir::Files).isEmpty())
       {
         // The FSX/P3D addon directory needs a sub-folder "scenery" with one or more BGL files
         SceneryArea area(nextNum + i, tr("Custom scenery path %1").arg(num), addonDir.canonicalFilePath());
