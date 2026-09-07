@@ -20,7 +20,6 @@
 #include "atools.h"
 #include "fs/bgl/util.h"
 #include "fs/db/datawriter.h"
-#include "fs/db/meta/bglfilewriter.h"
 #include "geo/calculations.h"
 
 namespace atools {
@@ -42,8 +41,7 @@ void LegBaseWriter::writeObject(const ApproachLeg *type)
   if(typeStr.isEmpty())
   {
     // Should not happen since this is filtered out before
-    qWarning() << Q_FUNC_INFO << "Invalid approach leg type. Skipping."
-               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    qWarning() << Q_FUNC_INFO << "Invalid approach leg type. Skipping." << getCurrentFilepath();
     return;
   }
 

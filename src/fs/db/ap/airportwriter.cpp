@@ -91,14 +91,14 @@ void AirportWriter::writeObject(const Airport *type)
   if(!getOptions().isIncludedAirportIdent(ident))
     return;
 
-  if(!type->isValid())
-  {
-    qWarning() << Q_FUNC_INFO << "Skipping invalid airport" << ident;
-    return;
-  }
-
   DataWriter& dw = getDataWriter();
   BglFileWriter *bglFileWriter = dw.getBglFileWriter();
+
+  if(!type->isValid())
+  {
+    qWarning() << Q_FUNC_INFO << "Skipping invalid airport" << ident << getCurrentFilepath();
+    return;
+  }
 
   // qDebug() << Q_FUNC_INFO << "===============================================================================";
   // qDebug() << Q_FUNC_INFO << bglFileWriter->getCurrentFilepath();
@@ -117,7 +117,7 @@ void AirportWriter::writeObject(const Airport *type)
   int predId = airportIdByIdent(ident, msfsNavdata /* warn */);
 
   if(ident.isEmpty())
-    throw atools::Exception("Found airport without ident");
+    throw atools::Exception(QStringLiteral("Found airport without ident \"%1\"").arg(getCurrentFilepath()));
 
   if(msfsNavdata)
   {
@@ -166,7 +166,7 @@ void AirportWriter::writeObject(const Airport *type)
       realAddon = options.isAddonLocalPath(sceneryAreaWriter->getCurrentSceneryLocalPath());
 
     // This is the shown add-on status - can be changed by filter in GUI
-    addon = options.isAddonGui(QFileInfo(bglFileWriter->getCurrentFilepath())) && realAddon;
+    addon = options.isAddonGui(QFileInfo(getCurrentFilepath())) && realAddon;
 
     // Third party navdata update or MSFS stock airport in official - not an addon
     if(currentArea.isMsfsNavigraphNavdata())

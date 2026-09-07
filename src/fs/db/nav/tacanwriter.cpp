@@ -41,8 +41,7 @@ void TacanWriter::writeObject(const bgl::Tacan *type)
 
   if(type->getIdent().isEmpty())
   {
-    qWarning() << Q_FUNC_INFO << "Found TACAN with empty ident in file"
-               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    qWarning() << Q_FUNC_INFO << "Found TACAN with empty ident in file" << getCurrentFilepath();
     return;
   }
 

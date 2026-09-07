@@ -16,10 +16,12 @@
 *****************************************************************************/
 
 #include "fs/db/writerbasebasic.h"
+
 #include "fs/db/datawriter.h"
+#include "fs/db/meta/bglfilewriter.h"
 #include "sql/sqldatabase.h"
-#include "sql/sqlutil.h"
 #include "sql/sqlexception.h"
+#include "sql/sqlutil.h"
 
 #include <QDataStream>
 
@@ -46,6 +48,11 @@ WriterBaseBasic::WriterBaseBasic(atools::sql::SqlDatabase& sqlDb,
 
 WriterBaseBasic::~WriterBaseBasic()
 {
+}
+
+const QString& WriterBaseBasic::getCurrentFilepath()
+{
+  return dataWriter.getBglFileWriter()->getCurrentFilepath();
 }
 
 const NavDatabaseOptions& WriterBaseBasic::getOptions()

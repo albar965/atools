@@ -31,13 +31,26 @@ using atools::fs::bgl::AirwaySegment;
 
 void AirwaySegmentWriter::writeObject(const AirwaySegment *type)
 {
+  const atools::fs::bgl::AirwayWaypoint& previousWaypoint = type->getPreviousWaypoint();
+  const atools::fs::bgl::AirwayWaypoint& midWaypoint = type->getMidWaypoint();
+  const atools::fs::bgl::AirwayWaypoint& nextWaypoint = type->getNextWaypoint();
+
+  if(type->getAirwayName().isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "Airway has no name" << getCurrentFilepath()
+               << previousWaypoint.getIdent() << "/" << previousWaypoint.getRegion() << "->"
+               << midWaypoint.getIdent() << "/" << midWaypoint.getRegion() << "->"
+               << nextWaypoint.getIdent() << "/" << nextWaypoint.getRegion();
+    return;
+  }
+
   bind(QStringLiteral(":airway_point_id"), getNextId());
   bind(QStringLiteral(":name"), type->getAirwayName());
   bind(QStringLiteral(":type"), AirwaySegment::airwayTypeToStr(type->getAirwayType()));
 
-  bind(QStringLiteral(":mid_ident"), type->getMidWaypoint().getIdent());
-  bind(QStringLiteral(":mid_region"), type->getMidWaypoint().getRegion());
-  bind(QStringLiteral(":mid_type"), bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr, type->getMidWaypoint().getType()));
+  bind(QStringLiteral(":mid_ident"), midWaypoint.getIdent());
+  bind(QStringLiteral(":mid_region"), midWaypoint.getRegion());
+  bind(QStringLiteral(":mid_type"), bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr, midWaypoint.getType()));
 
   if(type->hasNextWaypoint())
   {
@@ -45,11 +58,11 @@ void AirwaySegmentWriter::writeObject(const AirwaySegment *type)
     using namespace atools;
 
     bind(QStringLiteral(":next_type"),
-         bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr, type->getNextWaypoint().getType()));
-    bind(QStringLiteral(":next_ident"), type->getNextWaypoint().getIdent());
-    bind(QStringLiteral(":next_region"), type->getNextWaypoint().getRegion());
-    bind(QStringLiteral(":next_airport_ident"), type->getNextWaypoint().getAirportIdent());
-    bind(QStringLiteral(":next_minimum_altitude"), roundToPrecision(meterToFeet(type->getNextWaypoint().getMinimumAltitude()), 1));
+         bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr, nextWaypoint.getType()));
+    bind(QStringLiteral(":next_ident"), nextWaypoint.getIdent());
+    bind(QStringLiteral(":next_region"), nextWaypoint.getRegion());
+    bind(QStringLiteral(":next_airport_ident"), nextWaypoint.getAirportIdent());
+    bind(QStringLiteral(":next_minimum_altitude"), roundToPrecision(meterToFeet(nextWaypoint.getMinimumAltitude()), 1));
   }
   else
   {
@@ -65,11 +78,11 @@ void AirwaySegmentWriter::writeObject(const AirwaySegment *type)
     using namespace atools::geo;
 
     bind(QStringLiteral(":previous_type"),
-         bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr, type->getPreviousWaypoint().getType()));
-    bind(QStringLiteral(":previous_ident"), type->getPreviousWaypoint().getIdent());
-    bind(QStringLiteral(":previous_region"), type->getPreviousWaypoint().getRegion());
-    bind(QStringLiteral(":previous_airport_ident"), type->getPreviousWaypoint().getAirportIdent());
-    bind(QStringLiteral(":previous_minimum_altitude"), roundToPrecision(meterToFeet(type->getPreviousWaypoint().getMinimumAltitude()), 1));
+         bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr, previousWaypoint.getType()));
+    bind(QStringLiteral(":previous_ident"), previousWaypoint.getIdent());
+    bind(QStringLiteral(":previous_region"), previousWaypoint.getRegion());
+    bind(QStringLiteral(":previous_airport_ident"), previousWaypoint.getAirportIdent());
+    bind(QStringLiteral(":previous_minimum_altitude"), roundToPrecision(meterToFeet(previousWaypoint.getMinimumAltitude()), 1));
   }
   else
   {

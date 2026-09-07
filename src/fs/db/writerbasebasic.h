@@ -62,6 +62,8 @@ protected:
     return dataWriter;
   }
 
+  const QString& getCurrentFilepath();
+
   const atools::fs::NavDatabaseOptions& getOptions();
   atools::fs::db::RunwayIndex *getRunwayIndex();
 

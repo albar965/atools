@@ -49,7 +49,7 @@ void ApproachWriter::writeObject(const Approach *type)
   if(apptype.isEmpty())
   {
     qWarning() << Q_FUNC_INFO << "Skipping approach with invalid type" << type->getFixIdent() << type->getFixRegion()
-               << dataWriter.getAirportWriter()->getCurrentAirportIdent();
+               << dataWriter.getAirportWriter()->getCurrentAirportIdent() << getCurrentFilepath();
     return;
   }
 

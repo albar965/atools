@@ -40,8 +40,7 @@ void VorWriter::writeObject(const Vor *type)
 
   if(type->getIdent().isEmpty())
   {
-    qWarning() << Q_FUNC_INFO << "Found VOR with empty ident in file"
-               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    qWarning() << Q_FUNC_INFO << "Found VOR with empty ident in file" << getCurrentFilepath();
     return;
   }
 

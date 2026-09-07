@@ -22,7 +22,6 @@
 #include "fs/db/datawriter.h"
 #include "fs/util/fsutil.h"
 #include "fs/navdatabaseoptions.h"
-#include "fs/db/meta/bglfilewriter.h"
 #include "geo/calculations.h"
 #include "atools.h"
 
@@ -43,8 +42,7 @@ void IlsWriter::writeObject(const Ils *type)
 
   if(type->getIdent().isEmpty())
   {
-    qWarning() << Q_FUNC_INFO << "Found ILS with empty ident in file"
-               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    qWarning() << Q_FUNC_INFO << "Found ILS with empty ident in file" << getCurrentFilepath();
     return;
   }
 

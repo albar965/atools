@@ -16,11 +16,11 @@
 *****************************************************************************/
 
 #include "fs/db/nav/ndbwriter.h"
-#include "fs/db/meta/bglfilewriter.h"
-#include "fs/db/datawriter.h"
-#include "fs/bgl/util.h"
-#include "geo/calculations.h"
+
 #include "atools.h"
+#include "fs/db/datawriter.h"
+#include "fs/db/meta/bglfilewriter.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -35,8 +35,7 @@ void NdbWriter::writeObject(const Ndb *type)
 
   if(type->getIdent().isEmpty())
   {
-    qWarning() << Q_FUNC_INFO << "Found NDB with empty ident in file"
-               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    qWarning() << Q_FUNC_INFO << "Found NDB with empty ident in file" << getCurrentFilepath();
     return;
   }
 
