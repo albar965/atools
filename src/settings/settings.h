@@ -172,7 +172,7 @@ public:
     return qSettings->value(key, defaultValue).toInt();
   }
 
-  int valueLongLong(const QString& key, long long defaultValue = 0LL) const
+  long long valueLongLong(const QString& key, long long defaultValue = 0LL) const
   {
     return qSettings->value(key, defaultValue).toLongLong();
   }
