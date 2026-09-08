@@ -169,8 +169,18 @@ bool AirwayResolver::run(int numReportSteps)
   float longestAirwaySegmentMeter = 0.f;
   while(airwayPointQuery.next())
   {
-    QString airwayName = airwayPointQuery.value(QStringLiteral("name")).toString();
-    QString airwayType = airwayPointQuery.value(QStringLiteral("type")).toString();
+    const QString airwayName = airwayPointQuery.valueStr(NAME);
+    if(airwayName.isEmpty())
+    {
+      // Log and skip broken airways without name
+      qWarning() << Q_FUNC_INFO << "Airway has no name"
+                 << airwayPointQuery.valueStr(PREVIOUS_IDENT)
+                 << airwayPointQuery.valueStr(MID_IDENT)
+                 << airwayPointQuery.valueStr(NEXT_IDENT);
+      continue;
+    }
+
+    const QString airwayType = airwayPointQuery.valueStr(TYPE);
 
     if((row++ % rowsPerStep) == 0)
     {
