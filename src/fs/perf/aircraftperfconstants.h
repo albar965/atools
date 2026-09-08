@@ -27,7 +27,7 @@ namespace fs {
 namespace perf {
 
 /* Flight segment as detected by the AircraftPerfHandler for simulator events.
- *  Numeric order is important for comparing. */
+ * Numbers are saved and numeric order is important for comparing. */
 enum FlightSegment
 {
   NONE, /* No state, before flight */
@@ -38,7 +38,6 @@ enum FlightSegment
   DESCENT,
   DESTINATION_TAXI,
   DESTINATION_PARKING,
-  LOADED, /* Inactive and loaded from last session */
   INVALID
 };
 

@@ -91,38 +91,96 @@ bool AircraftPerf::isSpeedValid() const
 }
 
 AircraftPerf::AircraftPerf()
+  :  DEFAULT_NAME(tr("Example Performance Profile")), DEFAULT_TYPE(QLatin1String("C172"))
 {
-  defaultName = tr("Example Performance Profile");
-  defaultType = tr("C172");
+  resetToDefault(DEFAULT_SIMULATOR);
+}
 
-  name = defaultName;
-  type = defaultType;
+AircraftPerf& AircraftPerf::operator=(const AircraftPerf& other)
+{
+  name = other.name;
+  type = other.type;
+  simulator = other.simulator;
+  description = other.description;
 
-  volume = false;
-  jetFuel = false;
+  volume = other.volume;
+  jetFuel = other.jetFuel;
+
+  taxiFuel = other.taxiFuel;
+  reserveFuel = other.reserveFuel;
+  extraFuel = other.extraFuel;
+
+  climbVertSpeed = other.climbVertSpeed;
+  climbSpeed = other.climbSpeed;
+  climbFuelFlow = other.climbFuelFlow;
+
+  cruiseSpeed = other.cruiseSpeed;
+  cruiseFuelFlow = other.cruiseFuelFlow;
+  contingencyFuel = other.contingencyFuel;
+
+  descentSpeed = other.descentSpeed;
+  descentVertSpeed = other.descentVertSpeed;
+  descentFuelFlow = other.descentFuelFlow;
+
+  alternateSpeed = other.alternateSpeed;
+  alternateFuelFlow = other.alternateFuelFlow;
+
+  usableFuel = other.usableFuel;
+  minRunwayLength = other.minRunwayLength;
+  runwayType = other.runwayType;
+
+  return *this;
+}
+
+void AircraftPerf::resetToDefault(const QString& simulatorParam)
+{
+  name = DEFAULT_NAME;
+  type = DEFAULT_TYPE;
+  simulator = simulatorParam;
+  description = DEFAULT_DESCRIPTION;
+
+  volume = DEFAULT_VOLUME;
+  jetFuel = DEFAULT_JET_FUEL;
 
   // Default values for C172 give no fuel consumption, no reserve and about 3 NM per 1000 ft climb and descent
-  taxiFuel = 0.f;
-  reserveFuel = 60.f;
-  extraFuel = 0.f;
+  taxiFuel = DEFAULT_TAXI_FUEL;
+  reserveFuel = DEFAULT_RESERVE_FUEL;
+  extraFuel = DEFAULT_EXTRA_FUEL;
 
-  climbVertSpeed = 550.f;
-  climbSpeed = 100.f;
-  climbFuelFlow = 80.f;
+  climbVertSpeed = DEFAULT_CLIMB_VERT_SPEED;
+  climbSpeed = DEFAULT_CLIMB_SPEED;
+  climbFuelFlow = DEFAULT_CLIMB_FUEL_FLOW;
 
-  cruiseSpeed = 120.f;
-  cruiseFuelFlow = 60.f;
-  contingencyFuel = 0.f;
+  cruiseSpeed = DEFAULT_CRUISE_SPEED;
+  cruiseFuelFlow = DEFAULT_CRUISE_FUEL_FLOW;
+  contingencyFuel = DEFAULT_CONTINGENCY_FUEL;
 
-  descentSpeed = 100.f;
-  descentVertSpeed = 550.f;
-  descentFuelFlow = 40.f;
+  descentSpeed = DEFAULT_DESCENT_SPEED;
+  descentVertSpeed = DEFAULT_DESCENT_VERT_SPEED;
+  descentFuelFlow = DEFAULT_DESCENT_FUEL_FLOW;
 
-  alternateSpeed = 100.f;
-  alternateFuelFlow = 60.f;
+  alternateSpeed = DEFAULT_ALTERNATE_SPEED;
+  alternateFuelFlow = DEFAULT_ALTERNATE_FUEL_FLOW;
 
-  usableFuel = 260.f;
-  minRunwayLength = 0.f;
+  usableFuel = DEFAULT_USABLE_FUEL;
+  minRunwayLength = DEFAULT_MIN_RUNWAY_LENGTH;
+  runwayType = DEFAULT_RUNWAY_TYPE;
+}
+
+void AircraftPerf::setNull()
+{
+  resetToDefault(QStringLiteral());
+
+  // Set only relevant values back to null
+  taxiFuel = reserveFuel = extraFuel = contingencyFuel =
+    climbVertSpeed = climbSpeed = climbFuelFlow =
+      cruiseSpeed = cruiseFuelFlow =
+        descentSpeed = descentVertSpeed = descentFuelFlow =
+          alternateSpeed = alternateFuelFlow =
+            usableFuel = minRunwayLength = 0.f;
+  runwayType = SOFT;
+  name.clear();
+  type.clear();
 }
 
 void AircraftPerf::load(const QString& filename)
@@ -425,26 +483,6 @@ FileFormat AircraftPerf::detectFormat(const QString& filename)
     return FORMAT_NONE;
 }
 
-void AircraftPerf::resetToDefault(const QString& simulatorParam)
-{
-  *this = AircraftPerf();
-  simulator = simulatorParam;
-}
-
-void AircraftPerf::setNull()
-{
-  resetToDefault(QStringLiteral());
-  taxiFuel = reserveFuel = extraFuel =
-    contingencyFuel =
-      climbVertSpeed = climbSpeed = climbFuelFlow =
-        cruiseSpeed = cruiseFuelFlow =
-          descentSpeed = descentVertSpeed = descentFuelFlow =
-            alternateSpeed = alternateFuelFlow = usableFuel = minRunwayLength = 0.f;
-  runwayType = SOFT;
-  name.clear();
-  type.clear();
-}
-
 void AircraftPerf::fromGalToLbs()
 {
   using ageo::fromGalToLbs;
@@ -589,7 +627,25 @@ float AircraftPerf::toFuelLbs(float fuelGalLbs) const
 
 bool AircraftPerf::isDefault() const
 {
-  return name == defaultName && type == defaultType;
+  return type == DEFAULT_TYPE &&
+         atools::almostEqual(taxiFuel, DEFAULT_TAXI_FUEL, 1.f) &&
+         atools::almostEqual(reserveFuel, DEFAULT_RESERVE_FUEL, 1.f) &&
+         atools::almostEqual(extraFuel, DEFAULT_EXTRA_FUEL, 1.f) &&
+         atools::almostEqual(climbVertSpeed, DEFAULT_CLIMB_VERT_SPEED, 1.f) &&
+         atools::almostEqual(climbSpeed, DEFAULT_CLIMB_SPEED, 1.f) &&
+         atools::almostEqual(climbFuelFlow, DEFAULT_CLIMB_FUEL_FLOW, 1.f) &&
+         atools::almostEqual(cruiseSpeed, DEFAULT_CRUISE_SPEED, 1.f) &&
+         atools::almostEqual(cruiseFuelFlow, DEFAULT_CRUISE_FUEL_FLOW, 1.f) &&
+         atools::almostEqual(contingencyFuel, DEFAULT_CONTINGENCY_FUEL, 1.f) &&
+         atools::almostEqual(descentSpeed, DEFAULT_DESCENT_SPEED, 1.f) &&
+         atools::almostEqual(descentVertSpeed, DEFAULT_DESCENT_VERT_SPEED, 1.f) &&
+         atools::almostEqual(descentFuelFlow, DEFAULT_DESCENT_FUEL_FLOW, 1.f) &&
+         atools::almostEqual(alternateSpeed, DEFAULT_ALTERNATE_SPEED, 1.f) &&
+         atools::almostEqual(alternateFuelFlow, DEFAULT_ALTERNATE_FUEL_FLOW, 1.f) &&
+         atools::almostEqual(usableFuel, DEFAULT_USABLE_FUEL, 1.f) &&
+         atools::almostEqual(minRunwayLength, DEFAULT_MIN_RUNWAY_LENGTH, 1.f) &&
+         runwayType == DEFAULT_RUNWAY_TYPE &&
+         jetFuel == DEFAULT_JET_FUEL;
 }
 
 bool AircraftPerf::isNull() const

@@ -17,11 +17,12 @@
 
 #include "fs/perf/aircraftperfhandler.h"
 
+#include "atools.h"
 #include "fs/perf/aircraftperf.h"
 #include "fs/sc/simconnectdata.h"
-#include "atools.h"
-#include "geo/calculations.h"
 #include "fs/sc/simconnectuseraircraft.h"
+#include "geo/calculations.h"
+#include "settings/settings.h"
 
 #include <QFile>
 
@@ -29,10 +30,10 @@ namespace atools {
 namespace fs {
 namespace perf {
 
-using atools::fs::sc::SimConnectUserAircraft;
-using atools::fs::sc::SimConnectData;
-using atools::roundToInt;
 using atools::fs::perf::AircraftPerf;
+using atools::fs::sc::SimConnectData;
+using atools::fs::sc::SimConnectUserAircraft;
+using atools::roundToInt;
 
 AircraftPerfHandler::AircraftPerfHandler(QObject *parent)
   : QObject(parent)
@@ -53,6 +54,11 @@ AircraftPerfHandler::~AircraftPerfHandler()
 
 void AircraftPerfHandler::start()
 {
+  *curSimAircraft = SimConnectUserAircraft();
+}
+
+void AircraftPerfHandler::reset()
+{
   currentFlightSegment = NONE;
   startFuel = totalFuelConsumed = weightVolRatio = 0.f;
 
@@ -62,37 +68,54 @@ void AircraftPerfHandler::start()
   aircraftCruise = 0;
 
   perf->setNull();
-
-  active = true;
   *curSimAircraft = SimConnectUserAircraft();
 }
 
-void AircraftPerfHandler::reset()
+void AircraftPerfHandler::restoreState(const QString& filename, const QString& settingsKeyPrefix)
 {
-  start();
+  reset();
+
+  if(atools::checkFile(Q_FUNC_INFO, filename))
+    perf->loadXml(filename);
+
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  totalFuelConsumed = settings.valueFloat(settingsKeyPrefix % QStringLiteral("FuelConsumed"));
+  startFuel = settings.valueFloat(settingsKeyPrefix % QStringLiteral("StartFuel"));
+  currentFlightSegment = settings.valueEnum<FlightSegment>(settingsKeyPrefix % QStringLiteral("CurrentFlightSegment"), NONE);
+  lastClimbSampleTimeMs = settings.valueLongLong(settingsKeyPrefix % QStringLiteral("ClimbSampleTime"));
+  lastCruiseSampleTimeMs = settings.valueLongLong(settingsKeyPrefix % QStringLiteral("CruiseSampleTime"));
+  lastDescentSampleTimeMs = settings.valueLongLong(settingsKeyPrefix % QStringLiteral("DescentSampleTime"));
 }
 
-void AircraftPerfHandler::stop()
-{
-  active = false;
-}
-
-void AircraftPerfHandler::restoreCollected(const QString& filename)
-{
-  perf->setNull();
-  perf->loadXml(filename);
-  currentFlightSegment = LOADED;
-}
-
-void AircraftPerfHandler::saveCollected(const QString& filename) const
+void AircraftPerfHandler::saveState(const QString& filename, const QString& settingsKeyPrefix) const
 {
   perf->saveXml(filename);
+
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  settings.setValue(settingsKeyPrefix % QStringLiteral("FuelConsumed"), totalFuelConsumed);
+  settings.setValue(settingsKeyPrefix % QStringLiteral("StartFuel"), startFuel);
+  settings.setValue(settingsKeyPrefix % QStringLiteral("CurrentFlightSegment"), currentFlightSegment);
+  settings.setValue(settingsKeyPrefix % QStringLiteral("ClimbSampleTime"), lastClimbSampleTimeMs);
+  settings.setValue(settingsKeyPrefix % QStringLiteral("CruiseSampleTime"), lastCruiseSampleTimeMs);
+  settings.setValue(settingsKeyPrefix % QStringLiteral("DescentSampleTime"), lastDescentSampleTimeMs);
 }
 
 void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData, const QString& simulator)
 {
   *curSimAircraft = simulatorData.getUserAircraftConst();
-  if(!active || !curSimAircraft->isFullyValid() || curSimAircraft->isSimPaused() || curSimAircraft->isSimReplay())
+
+#ifdef DEBUG_INFORMATION_PERF_COLLECTION
+  qDebug() << Q_FUNC_INFO
+           << "curSimAircraft->isFullyValid()" << curSimAircraft->isFullyValid()
+           << "curSimAircraft->isSimPaused()" << curSimAircraft->isSimPaused()
+           << "curSimAircraft->isSimReplay()" << curSimAircraft->isSimReplay();
+
+  qDebug() << Q_FUNC_INFO << "lastClimbSampleTimeMs" << lastClimbSampleTimeMs << "lastCruiseSampleTimeMs" << lastCruiseSampleTimeMs
+           << "lastDescentSampleTimeMs" << lastDescentSampleTimeMs;
+#endif
+
+  // Bail out if aircraft is invalid or paused =====================
+  if(!curSimAircraft->isFullyValid() || curSimAircraft->isSimPaused() || curSimAircraft->isSimReplay())
     return;
 
   aircraftClimb = isClimbing();
@@ -102,53 +125,60 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
   aircraftGround = curSimAircraft->isOnGround();
   aircraftFlying = curSimAircraft->isFlying();
 
-  // Fill metadata if still empty
-  if(perf->getAircraftType().isEmpty())
-    perf->setAircraftType(curSimAircraft->getAirplaneModel());
-
-  if(perf->getName().isEmpty())
-    perf->setName(curSimAircraft->getAirplaneTitle());
-
-  if(perf->getSimulator().isEmpty())
-    perf->setSimulator(simulator);
-
-  // Determine fuel type ========================================================
-  if(atools::almostEqual(weightVolRatio, 0.f))
+  // Stop calculation at touchdown if collection has finished ================
+  if(!isFinished())
   {
-    bool jetfuel = atools::geo::isJetFuel(curSimAircraft->getFuelTotalWeightLbs(),
-                                          curSimAircraft->getFuelTotalQuantityGallons(), weightVolRatio);
+    // Fill metadata if still empty
+    if(perf->getAircraftType().isEmpty())
+      perf->setAircraftType(curSimAircraft->getAirplaneModel());
 
-    if(weightVolRatio > 0.f)
+    if(perf->getName().isEmpty())
+      perf->setName(curSimAircraft->getAirplaneTitle());
+
+    if(perf->getSimulator().isEmpty())
+      perf->setSimulator(simulator);
+
+    // Determine fuel type ========================================================
+    if(atools::almostEqual(weightVolRatio, 0.f))
     {
-      perf->setJetFuel(jetfuel);
-      qDebug() << Q_FUNC_INFO << "weightVolRatio" << weightVolRatio << "jetfuel" << perf->isJetFuel();
+      bool jetfuel = atools::geo::isJetFuel(curSimAircraft->getFuelTotalWeightLbs(),
+                                            curSimAircraft->getFuelTotalQuantityGallons(), weightVolRatio);
+
+      if(weightVolRatio > 0.f)
+      {
+        perf->setJetFuel(jetfuel);
+        qDebug() << Q_FUNC_INFO << "weightVolRatio" << weightVolRatio << "jetfuel" << perf->isJetFuel();
+      }
+      // else insufficient fuel amount
     }
-    // else insufficient fuel amount
-  }
 
-  // Remember fuel in tanks if not done already ========================================================
-  // Delay fuel calculation until there is fuel flow to avoid catching user changes
-  // in fuel amount before flight
-  if(startFuel < 0.1f && aircraftFuelFlow)
-  {
-    startFuel = curSimAircraft->getFuelTotalWeightLbs();
-    qDebug() << Q_FUNC_INFO << "startFuel" << startFuel;
-  }
+    // Remember fuel in tanks if not done already ========================================================
+    // Delay fuel calculation until there is fuel flow to avoid catching user changes
+    // in fuel amount before flight
+    if(startFuel < 0.1f && aircraftFuelFlow)
+    {
+      startFuel = curSimAircraft->getFuelTotalWeightLbs();
+      qDebug() << Q_FUNC_INFO << "startFuel" << startFuel;
+    }
 
-  if(aircraftFuelFlow)
-    totalFuelConsumed = startFuel - curSimAircraft->getFuelTotalWeightLbs();
+    if(aircraftFuelFlow)
+      totalFuelConsumed = startFuel - curSimAircraft->getFuelTotalWeightLbs();
+  }
 
   // Determine current flight sement ================================================================
+  // Continue even after touchdown for DESTINATION_PARKING
   FlightSegment flightSegment = currentFlightSegment;
   if(curSimAircraft->isFullyValid())
   {
+#ifdef DEBUG_INFORMATION_PERF_COLLECTION
+    qDebug() << Q_FUNC_INFO << "currentFlightSegment" << getFlightSegmentString(currentFlightSegment);
+#endif
     switch(currentFlightSegment)
     {
       case INVALID:
         break;
 
-      case NONE:
-        // Nothing sampled yet - start from scratch ==============
+      case NONE: // Nothing sampled yet - start from scratch ==============
         if(aircraftGround)
           flightSegment = aircraftFuelFlow ? DEPARTURE_TAXI : DEPARTURE_PARKING;
         else if(aircraftCruise >= 0)
@@ -200,49 +230,61 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
           flightSegment = DESTINATION_PARKING;
         break;
 
-      case LOADED:
-      // Loaded from last session - no inactive
       case DESTINATION_PARKING:
-        // Finish on engine shutdown - stop collecting
-        active = false;
+        // Finish on engine shutdown - stops collecting
         break;
     }
   }
 
-  // Remember segment dependent sample time to allow averaging =============
-  qint64 aircraftZuluTime = simulatorData.getUserAircraftConst().getZuluTime().toMSecsSinceEpoch();
-  if(flightSegment != currentFlightSegment)
+  // Stop sampling at touchdown if collection has finished ================
+  if(!isFinished())
   {
-    if(flightSegment == CLIMB)
-      lastClimbSampleTimeMs = aircraftZuluTime;
-    else if(flightSegment == CRUISE)
-      lastCruiseSampleTimeMs = aircraftZuluTime;
-    else if(flightSegment == DESCENT)
-      lastDescentSampleTimeMs = aircraftZuluTime;
+    // Remember segment dependent sample time to allow averaging =============
+    qint64 aircraftZuluTimeMs = simulatorData.getUserAircraftConst().getZuluTime().toMSecsSinceEpoch();
+    if(flightSegment != currentFlightSegment)
+    {
+#ifdef DEBUG_INFORMATION_PERF_COLLECTION
+      qDebug() << Q_FUNC_INFO << "currentFlightSegment" << getFlightSegmentString(currentFlightSegment);
+      qDebug() << Q_FUNC_INFO << "flightSegment" << getFlightSegmentString(flightSegment);
+#endif
+
+      if(flightSegment == CLIMB)
+        lastClimbSampleTimeMs = aircraftZuluTimeMs;
+      else if(flightSegment == CRUISE)
+        lastCruiseSampleTimeMs = aircraftZuluTimeMs;
+      else if(flightSegment == DESCENT)
+        lastDescentSampleTimeMs = aircraftZuluTimeMs;
+    }
+
+    // Sum up taxi fuel  ========================================================
+    if(currentFlightSegment == DEPARTURE_TAXI && aircraftFuelFlow)
+      perf->setTaxiFuel(startFuel - curSimAircraft->getFuelTotalWeightLbs());
+
+    // Sample every 500 ms ========================================
+    if(aircraftZuluTimeMs > lastSampleTimeMs + SAMPLE_TIME_MS)
+    {
+#ifdef DEBUG_INFORMATION_PERF_COLLECTION
+      qDebug() << Q_FUNC_INFO << "aircraftZuluTime - lastSampleTimeMs" << aircraftZuluTimeMs - lastSampleTimeMs;
+      qDebug() << Q_FUNC_INFO << "aircraftZuluTime" << aircraftZuluTimeMs;
+      qDebug() << Q_FUNC_INFO << "lastSampleTimeMs" << lastSampleTimeMs;
+#endif
+
+      samplePhase(flightSegment, aircraftZuluTimeMs, aircraftZuluTimeMs - lastSampleTimeMs);
+      lastSampleTimeMs = aircraftZuluTimeMs;
+    }
   }
 
-  // Sum up taxi fuel  ========================================================
-  if(currentFlightSegment == DEPARTURE_TAXI && aircraftFuelFlow)
-    perf->setTaxiFuel(startFuel - curSimAircraft->getFuelTotalWeightLbs());
-
-  // Sample every 500 ms ========================================
-  if(aircraftZuluTime > lastSampleTimeMs + SAMPLE_TIME_MS)
-  {
-    samplePhase(flightSegment, aircraftZuluTime, aircraftZuluTime - lastSampleTimeMs);
-    lastSampleTimeMs = aircraftZuluTime;
-  }
-
-  // Send message is flight segment has changed  ========================
+  // Send message is flight segment has changed also for DESTINATION_PARKING ========================
   if(flightSegment != currentFlightSegment)
   {
+#ifdef DEBUG_INFORMATION_PERF_COLLECTION
+    qDebug() << Q_FUNC_INFO << "currentFlightSegment" << getFlightSegmentString(currentFlightSegment);
+    qDebug() << Q_FUNC_INFO << "flightSegment" << getFlightSegmentString(flightSegment);
+#endif
+
     currentFlightSegment = flightSegment;
     emit flightSegmentChanged(currentFlightSegment);
   }
-}
-
-bool AircraftPerfHandler::isFinished() const
-{
-  return currentFlightSegment == DESTINATION_TAXI || currentFlightSegment == DESTINATION_PARKING || currentFlightSegment == LOADED;
 }
 
 QStringList AircraftPerfHandler::getAircraftStatusTexts()
@@ -273,6 +315,7 @@ QStringList AircraftPerfHandler::getAircraftStatusTexts()
     }
   }
 
+  // Make first character upper case
   if(!retval.isEmpty())
   {
     QString& first = retval.first();
@@ -284,12 +327,20 @@ QStringList AircraftPerfHandler::getAircraftStatusTexts()
     }
   }
 
+  // Add dash for empty list to avoid list formatting
+  if(retval.isEmpty())
+    retval.append(tr("—"));
+
   return retval;
 }
 
-float AircraftPerfHandler::sampleValue(qint64 lastSampleDuration, qint64 curSampleDuration, float lastValue,
-                                       float curValue)
+float AircraftPerfHandler::sampleValue(qint64 lastSampleDuration, qint64 curSampleDuration, float lastValue, float curValue)
 {
+#ifdef DEBUG_INFORMATION_PERF_COLLECTION
+  qDebug() << Q_FUNC_INFO << getCurrentFlightSegmentString() << "lastSampleDuration" << lastSampleDuration << "curSampleDuration"
+           << curSampleDuration << "lastValue" << lastValue << "curValue" << curValue;
+#endif
+
   if(lastSampleDuration == 0 || curSampleDuration == 0)
     return lastValue;
 
@@ -297,12 +348,17 @@ float AircraftPerfHandler::sampleValue(qint64 lastSampleDuration, qint64 curSamp
     return curValue;
 
   // Calculate weighted average
-  return static_cast<float>((lastValue * static_cast<double>(lastSampleDuration) +
-                             curValue * static_cast<double>(curSampleDuration)) /
-                            static_cast<double>(lastSampleDuration + curSampleDuration));
+  double value = (lastValue * static_cast<double>(lastSampleDuration) + curValue * static_cast<double>(curSampleDuration)) /
+                 static_cast<double>(lastSampleDuration + curSampleDuration);
+
+#ifdef DEBUG_INFORMATION_PERF_COLLECTION
+  qDebug() << Q_FUNC_INFO << "value" << value;
+#endif
+
+  return static_cast<float>(value);
 }
 
-void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, qint64 now, qint64 curSampleDuration)
+void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, qint64 aircraftZuluTime, qint64 curSampleDuration)
 {
   // Calculate all average values for each flight phase
   switch(flightSegment)
@@ -313,12 +369,11 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, qint64 now, q
     case DESTINATION_PARKING:
     case DESTINATION_TAXI:
     case DEPARTURE_TAXI:
-    case LOADED:
       break;
 
     case atools::fs::perf::CLIMB:
       {
-        qint64 lastSampleDuration = now - lastClimbSampleTimeMs;
+        qint64 lastSampleDuration = aircraftZuluTime - lastClimbSampleTimeMs;
         perf->setClimbSpeed(sampleValue(lastSampleDuration, curSampleDuration, perf->getClimbSpeed(),
                                         curSimAircraft->getTrueAirspeedKts()));
         perf->setClimbVertSpeed(sampleValue(lastSampleDuration, curSampleDuration, perf->getClimbVertSpeed(),
@@ -330,7 +385,7 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, qint64 now, q
 
     case atools::fs::perf::CRUISE:
       {
-        qint64 lastSampleDuration = now - lastCruiseSampleTimeMs;
+        qint64 lastSampleDuration = aircraftZuluTime - lastCruiseSampleTimeMs;
         perf->setCruiseSpeed(sampleValue(lastSampleDuration, curSampleDuration, perf->getCruiseSpeed(),
                                          curSimAircraft->getTrueAirspeedKts()));
         perf->setCruiseFuelFlow(sampleValue(lastSampleDuration, curSampleDuration, perf->getCruiseFuelFlow(),
@@ -344,11 +399,10 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, qint64 now, q
 
     case atools::fs::perf::DESCENT:
       {
-        qint64 lastSampleDuration = now - lastDescentSampleTimeMs;
+        qint64 lastSampleDuration = aircraftZuluTime - lastDescentSampleTimeMs;
         perf->setDescentSpeed(sampleValue(lastSampleDuration, curSampleDuration, perf->getDescentSpeed(),
                                           curSimAircraft->getTrueAirspeedKts()));
-        perf->setDescentVertSpeed(sampleValue(lastSampleDuration, curSampleDuration,
-                                              perf->getDescentVertSpeed(),
+        perf->setDescentVertSpeed(sampleValue(lastSampleDuration, curSampleDuration, perf->getDescentVertSpeed(),
                                               std::abs(curSimAircraft->getVerticalSpeedFeetPerMin())));
         perf->setDescentFuelFlow(sampleValue(lastSampleDuration, curSampleDuration, perf->getDescentFuelFlow(),
                                              curSimAircraft->getFuelFlowPPH()));
@@ -421,10 +475,6 @@ QString AircraftPerfHandler::getFlightSegmentString(atools::fs::perf::FlightSegm
 
     case DESTINATION_PARKING:
       return tr("Destination Parking");
-
-    case LOADED:
-      return tr("Loaded from last session");
-
   }
   return tr("Unknown");
 }

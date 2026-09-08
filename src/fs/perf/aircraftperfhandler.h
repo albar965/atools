@@ -36,6 +36,7 @@ namespace fs {
 namespace perf {
 
 class AircraftPerf;
+
 /*
  * Collects automatic performance information from a flight being fed by simulator events.
  *
@@ -63,14 +64,11 @@ public:
   void start();
   void reset();
 
-  /* Stops collection process */
-  void stop();
+  /* Save and restore to/from XML file as well as full state. */
+  void restoreState(const QString& filename, const QString& settingsKeyPrefix);
 
-  /* Save and restore to/from XML file. Restore sets currentFlightSegment to LOADED */
-  void restoreCollected(const QString& filename);
-
-  /* Save current collected performance to XML file. */
-  void saveCollected(const QString& filename) const;
+  /* Save current collected performance to XML file and options. */
+  void saveState(const QString& filename, const QString& settingsKeyPrefix) const;
 
   /* Flight plan cruise altitude. Value in ft */
   void setCruiseAltitude(float value)
@@ -103,12 +101,9 @@ public:
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData, const QString& simulator);
 
   /* Done after landing or engine shutdown */
-  bool isFinished() const;
-
-  /* Currently collecting */
-  bool isActive() const
+  bool isFinished() const
   {
-    return active;
+    return currentFlightSegment == DESTINATION_TAXI || currentFlightSegment == DESTINATION_PARKING;
   }
 
   /* Get latest updated performance. Fuel unit is always lbs. */
@@ -119,11 +114,6 @@ public:
 
   /* Get a list describing aircraft status, like cruise, fuel flow, etc */
   QStringList getAircraftStatusTexts();
-
-  const atools::fs::sc::SimConnectUserAircraft& getCurSimAircraft() const
-  {
-    return *curSimAircraft;
-  }
 
 signals:
   void flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment);
@@ -137,7 +127,7 @@ private:
   bool isDescending() const;
 
   /* Sample data for current flight phase, calculate averages */
-  void samplePhase(FlightSegment flightSegment, qint64 now, qint64 curSampleDuration);
+  void samplePhase(FlightSegment flightSegment, qint64 aircraftZuluTime, qint64 curSampleDuration);
 
   /* Samples a datum for current flight phase, calculate averages */
   float sampleValue(qint64 lastSampleDuration, qint64 curSampleDuration, float lastValue, float curValue);
@@ -156,18 +146,14 @@ private:
   /* Last detected aircraft status - aggregated and therefore never null */
   atools::fs::sc::SimConnectUserAircraft *curSimAircraft;
 
-  /* Collecting data if true. Set to false after landing. */
-  bool active = false;
-
-  bool aircraftClimb = false, aircraftDescent = false, aircraftFuelFlow = false, aircraftGround = false,
-       aircraftFlying = false;
+  bool aircraftClimb = false, aircraftDescent = false, aircraftFuelFlow = false, aircraftGround = false, aircraftFlying = false;
 
   /* -1 if below, 0 if at and 1 if above flight plan cruise altitude. Use below as default. */
   int aircraftCruise = -1;
 
   /* Last time of sample to allow calculation of averages */
   qint64 lastSampleTimeMs = 0L;
-  qint64 lastCruiseSampleTimeMs = 0L, lastClimbSampleTimeMs = 0L, lastDescentSampleTimeMs = 0L;
+  qint64 lastClimbSampleTimeMs = 0L, lastCruiseSampleTimeMs = 0L, lastDescentSampleTimeMs = 0L;
 };
 
 } // namespace perf

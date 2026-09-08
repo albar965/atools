@@ -56,8 +56,16 @@ class AircraftPerf
 
 public:
   AircraftPerf();
-  /* Load and save throw Exception in case of error */
 
+  AircraftPerf(const AircraftPerf& other)
+  {
+    this->operator=(other);
+  }
+
+  /* Copies all parameters */
+  AircraftPerf& operator=(const AircraftPerf& other);
+
+  /* Load and save throw Exception in case of error */
   /* Load old INI or new XML format. Format is detected automatically. */
   void load(const QString& filename);
 
@@ -425,10 +433,11 @@ public:
   float toFuelGal(float fuelGalLbs) const;
   float toFuelLbs(float fuelGalLbs) const;
 
-  /* true if this is the example performance after creating a new file */
+  /* true if this is the example performance after creating a new file.
+   * Checks all parameters except name since the default name can be translated. */
   bool isDefault() const;
 
-  /* True if all fuel flow and speed values are zero by performance collection. */
+  /* True if all fuel flow and speed values for climb, cruise and descent are zero by performance collection. */
   bool isNull() const;
 
   /* Version number to save into LNMPERF XML files */
@@ -443,11 +452,11 @@ private:
   void loadXmlInternal(atools::util::XmlStreamReader& xmlStream);
   void saveXmlInternal(QXmlStreamWriter& writer) const;
 
-  bool volume = false, jetFuel = false;
+  bool volume, jetFuel;
+  const bool DEFAULT_VOLUME = false, DEFAULT_JET_FUEL = false;
 
   QString name, type, simulator, description;
-
-  QString defaultName, defaultType;
+  const QString DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_SIMULATOR, DEFAULT_DESCRIPTION;
 
   /* Default values set in constructor give no fuel consumption, no reserve and about 3 NM per 1000 ft climb and descent */
   float taxiFuel, reserveFuel, extraFuel;
@@ -457,8 +466,26 @@ private:
   float alternateSpeed, alternateFuelFlow;
   float usableFuel, minRunwayLength;
 
-  /* Default is soft and hard */
-  atools::fs::perf::RunwayType runwayType = SOFT;
+  /* Defaults are needed to detect default example performance profile */
+  const float DEFAULT_TAXI_FUEL = 0.f,
+              DEFAULT_RESERVE_FUEL = 60.f,
+              DEFAULT_EXTRA_FUEL = 0.f,
+              DEFAULT_CLIMB_VERT_SPEED = 550.f,
+              DEFAULT_CLIMB_SPEED = 100.f,
+              DEFAULT_CLIMB_FUEL_FLOW = 80.f,
+              DEFAULT_CRUISE_SPEED = 120.f,
+              DEFAULT_CRUISE_FUEL_FLOW = 60.f,
+              DEFAULT_CONTINGENCY_FUEL = 0.f,
+              DEFAULT_DESCENT_SPEED = 100.f,
+              DEFAULT_DESCENT_VERT_SPEED = 550.f,
+              DEFAULT_DESCENT_FUEL_FLOW = 40.f,
+              DEFAULT_ALTERNATE_SPEED = 100.f,
+              DEFAULT_ALTERNATE_FUEL_FLOW = 60.f,
+              DEFAULT_USABLE_FUEL = 260.f,
+              DEFAULT_MIN_RUNWAY_LENGTH = 0.f;
+
+  atools::fs::perf::RunwayType runwayType;
+  const atools::fs::perf::RunwayType DEFAULT_RUNWAY_TYPE = atools::fs::perf::SOFT;
 };
 
 } // namespace perf
