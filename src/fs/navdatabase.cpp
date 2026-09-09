@@ -99,10 +99,9 @@ atools::fs::ResultFlags NavDatabase::compileDatabase()
 {
   qDebug() << Q_FUNC_INFO << options;
 
-  QString sceneryCfgCodec;
-
-  sceneryCfgCodec = (options.getSimulatorType() == FsPaths::P3D_V4 || options.getSimulatorType() == FsPaths::P3D_V5 ||
-                     options.getSimulatorType() == FsPaths::P3D_V6) ? "UTF-8" : QStringLiteral();
+  // Use UTF-8 for P3D and system codec for FSX
+  QString sceneryCfgCodec = (options.getSimulatorType() == FsPaths::P3D_V4 || options.getSimulatorType() == FsPaths::P3D_V5 ||
+                             options.getSimulatorType() == FsPaths::P3D_V6) ? "UTF-8" : QStringLiteral();
 
   atools::fs::ResultFlags result = createInternal(sceneryCfgCodec);
   if(aborted)

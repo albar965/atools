@@ -124,18 +124,26 @@ void AbstractIniReader::read(const QString& iniFilename)
 
 #ifdef QT_CORE5COMPAT_LIB
     QTextCodec *textCodec = nullptr;
-    if(!codec.isEmpty() && codec.compare(QStringLiteral("UTF-8"), Qt::CaseInsensitive) != 0)
+
+    if(codec.isEmpty())
+      textCodec = QTextCodec::codecForLocale();
+    else if(codec.compare(QStringLiteral("UTF-8"), Qt::CaseInsensitive) != 0)
       // Need to use compat module since Qt 6 removed the capability to use codecs
       textCodec = QTextCodec::codecForName(codec.toLatin1());
 
     if(textCodec != nullptr)
     {
+      qDebug() << Q_FUNC_INFO << "Codec" << textCodec->name();
+
       QByteArray bytes = sceneryCfgFile.readAll();
       QString string = textCodec->toUnicode(bytes);
       sceneryCfgPtr.reset(new QTextStream(&string));
     }
     else
+    {
+      qDebug() << Q_FUNC_INFO << "Using no codec";
       sceneryCfgPtr.reset(new QTextStream(&sceneryCfgFile));
+    }
 #else
     sceneryCfgPtr.reset(new QTextStream(&sceneryCfgFile));
 #endif
