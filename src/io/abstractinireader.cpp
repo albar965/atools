@@ -120,24 +120,30 @@ void AbstractIniReader::read(const QString& iniFilename)
 
   if(sceneryCfgFile.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    QByteArray bytes = sceneryCfgFile.readAll();
-    QString string;
+    std::unique_ptr<QTextStream> sceneryCfgPtr;
+
 #ifdef QT_CORE5COMPAT_LIB
-    // Need to use compat module since Qt 6 removed the capability to use codecs
-    QTextCodec *textCodec = QTextCodec::codecForName(codec.toLatin1());
+    QTextCodec *textCodec = nullptr;
+    if(!codec.isEmpty() && codec.compare(QStringLiteral("UTF-8"), Qt::CaseInsensitive) != 0)
+      // Need to use compat module since Qt 6 removed the capability to use codecs
+      textCodec = QTextCodec::codecForName(codec.toLatin1());
+
     if(textCodec != nullptr)
-      string = textCodec->toUnicode(bytes);
+    {
+      QByteArray bytes = sceneryCfgFile.readAll();
+      QString string = textCodec->toUnicode(bytes);
+      sceneryCfgPtr.reset(new QTextStream(&string));
+    }
     else
-      string = bytes;
+      sceneryCfgPtr.reset(new QTextStream(&sceneryCfgFile));
 #else
-    string = bytes;
+    sceneryCfgPtr.reset(new QTextStream(&sceneryCfgFile));
 #endif
 
-    QTextStream sceneryCfg(&string);
     onStartDocument(filepath);
 
     currentLine.clear();
-    while(sceneryCfg.readLineInto(&currentLine, 1024))
+    while(sceneryCfgPtr->readLineInto(&currentLine, 1024))
     {
       currentLine = currentLine.trimmed();
       currentLineNum++;
