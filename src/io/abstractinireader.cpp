@@ -122,6 +122,9 @@ void AbstractIniReader::read(const QString& iniFilename)
   {
     std::unique_ptr<QTextStream> sceneryCfgPtr;
 
+    // Bytes and string need to persists when reading from QTextStream
+    QString string;
+
 #ifdef QT_CORE5COMPAT_LIB
     QTextCodec *textCodec = nullptr;
 
@@ -135,8 +138,7 @@ void AbstractIniReader::read(const QString& iniFilename)
     {
       qDebug() << Q_FUNC_INFO << "Codec" << textCodec->name();
 
-      QByteArray bytes = sceneryCfgFile.readAll();
-      QString string = textCodec->toUnicode(bytes);
+      string = textCodec->toUnicode(sceneryCfgFile.readAll());
       sceneryCfgPtr.reset(new QTextStream(&string));
     }
     else
