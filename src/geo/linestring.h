@@ -202,10 +202,12 @@ public:
   bool crossesAntiMeridian() const;
 
   /* Returns a line with additional points added at the anti-meridian if it crosses.
-   * Otherwise a copy of this or empty list if invalid. */
+   * Otherwise a copy of this or empty list if invalid.
+   * Used for polygons. */
   const atools::geo::LineString splitAtAntiMeridian(bool *crossed = nullptr) const;
 
-  /* Returns a list of lines split at the anti-meridian if it crosses. List size is > 1 if crossed. */
+  /* Returns a list of lines split at the anti-meridian if it crosses. List size is > 1 if crossed.
+   * Used for polygons. */
   const QList<atools::geo::LineString> splitAtAntiMeridianList() const;
 
   /* Normalize all positions to -180 < lonx < 180 and -90 < laty < 90 and return reference */

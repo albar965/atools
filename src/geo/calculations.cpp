@@ -770,40 +770,52 @@ bool crossesAntiMeridian(const Pos& pos1, const Pos& pos2)
 
 const QList<Line> splitAtAntiMeridian(const Pos& pos1, const Pos& pos2)
 {
-  const static Pos ANTI_MERIDIAN_POS(180., 90.); // Define anti-meridian by a North position and bearing 180
-  const static float ANTI_MERIDIAN_BEARING_DEG = 180.;
-  const static float ANTI_MERIDIAN_BUFFER_DEG = 0.01;
+  const static Pos ANTI_MERIDIAN_POS(180.f, 90.f); // Define anti-meridian by a North position and bearing 180
+  const static float ANTI_MERIDIAN_BEARING_DEG = 180.f;
+  const static float ANTI_MERIDIAN_BUFFER_DEG = 0.1f;
 
   if(pos1.isValid() && pos2.isValid())
   {
     if(crossesAntiMeridian(pos1, pos2))
     {
-      if(!atools::almostEqual(std::abs(pos1.getLonX()), 180.f, ANTI_MERIDIAN_BUFFER_DEG) ||
-         !atools::almostEqual(std::abs(pos2.getLonX()), 180.f, ANTI_MERIDIAN_BUFFER_DEG))
+      Pos intersectionPosEast;
+      if(atools::almostEqual(std::abs(pos1.getLonX()), 180.f, ANTI_MERIDIAN_BUFFER_DEG) &&
+         atools::almostEqual(std::abs(pos2.getLonX()), 180.f, ANTI_MERIDIAN_BUFFER_DEG))
+      {
+        // Measurement line is short and near the anti-meridian
+        // Create moved points around X or 0 to calculate the intersection with a moved anti-meridian at 0
+        QPointF p1(pos1.getLonX(), pos1.getLatY()), p2(pos2.getLonX(), pos2.getLatY());
+        p1.setX(p1.x() < 0. ? p1.x() + 180. : p1.x() - 180.);
+        p2.setX(p2.x() < 0. ? p2.x() + 180. : p2.x() - 180.);
+
+        QPointF intersectionPoint;
+        if(QLineF(p1, p2).intersects(QLineF(0., 90., 0., -90.), &intersectionPoint) == QLineF::BoundedIntersection)
+          intersectionPosEast = Pos(180., intersectionPoint.y());
+      }
+
+      if(!intersectionPosEast.isValidRange())
       {
         // Check for intersection with anti-meridian
-        // Radial (endless from pos1) is sufficient here since crossing is already confirmed
-        Pos intersectionPos;
-
-        // Try from the other side if one point is too close to the meridian
-        if(atools::almostEqual(std::abs(pos1.getLonX()), 180.f, ANTI_MERIDIAN_BUFFER_DEG))
-          intersectionPos = Pos::intersectingRadials(pos2, pos2.angleDegTo(pos1), ANTI_MERIDIAN_POS, ANTI_MERIDIAN_BEARING_DEG);
+        // Radial (endless from start) is sufficient here since crossing is already confirmed
+        if(std::abs(pos1.getLonX()) < std::abs(pos2.getLonX()))
+          intersectionPosEast = Pos::intersectingRadials(pos1, pos1.angleDegTo(pos2), ANTI_MERIDIAN_POS, ANTI_MERIDIAN_BEARING_DEG);
         else
-          intersectionPos = Pos::intersectingRadials(pos1, pos1.angleDegTo(pos2), ANTI_MERIDIAN_POS, ANTI_MERIDIAN_BEARING_DEG);
+          // Try from the other side if one point is too close to the meridian
+          intersectionPosEast = Pos::intersectingRadials(pos2, pos2.angleDegTo(pos1), ANTI_MERIDIAN_POS, ANTI_MERIDIAN_BEARING_DEG);
+      }
 
-        if(intersectionPos.isValid())
-        {
-          // Avoid 170 -> -180 and -170 -> 180 situation
-          float boundary = pos1.getLonX() > 0.f && pos2.getLonX() < 0. ? 180.f : -180.f;
+      if(intersectionPosEast.isValidRange())
+      {
+        // Avoid 170 -> -180 and -170 -> 180 situation
+        intersectionPosEast.setLonX(pos1.getLonX() > 0.f && pos2.getLonX() < 0. ? 180.f : -180.f);
 
-          // Return split line
-          return QList<Line>({Line(pos1.getLonX(), pos1.getLatY(), boundary, intersectionPos.getLatY()),
-                              Line(-boundary, intersectionPos.getLatY(), pos2.getLonX(), pos2.getLatY())});
-        }
+        // Return split lines ending with East pos and starting with West pos
+        return QList<Line>({Line(pos1, intersectionPosEast),
+                            Line(Pos(-intersectionPosEast.getLonX(), intersectionPosEast.getLatY()), pos2)});
       }
     }
 
-    // Return a copy of this - do not split
+    // Return a copy of this - do not split. This should be good enough for painting
     // Also used if both points are very close to the anti-meridian
     return QList<Line>({Line(pos1, pos2)});
   }
