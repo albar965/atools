@@ -32,6 +32,10 @@ namespace db {
 // All possible country errors collected from X-Plane 11 and 12 community airports
 // Key is upper case
 const QHash<QString, QString> CountryUpdater::countries({
+        {QStringLiteral("- AZERBAIJAN"), QStringLiteral("Azerbaijan")},
+        {QStringLiteral("/ AZERBAIJAN"), QStringLiteral("Azerbaijan")},
+        {QStringLiteral("- DJIBOUTI"), QStringLiteral("Djibouti")},
+        {QStringLiteral("- SPAIN"), QStringLiteral("Spain")},
         {QStringLiteral("- NEW CALEDONIA"), QStringLiteral("New Caledonia")},
         {QStringLiteral("A CORUNA"), QStringLiteral("Spain")},
         {QStringLiteral("AGO"), QStringLiteral()},
@@ -479,13 +483,13 @@ CountryUpdater::~CountryUpdater()
   delete timezone;
 }
 
-QString CountryUpdater::updateAirportCountry(const QString& country, const atools::geo::Pos& pos)
+const QString CountryUpdater::updateAirportCountry(const QString& ident, const QString& country, const atools::geo::Pos& pos)
 {
   QString countryNew(country);
 
   if(!country.isEmpty())
   {
-    // Country given
+    // Country given - find replacement for mistakes and other wrong spellings
     const QString countryReplacement = countries.value(country.toUpper().simplified());
 
     if(!countryReplacement.isEmpty() && countryReplacement != country)
@@ -493,7 +497,7 @@ QString CountryUpdater::updateAirportCountry(const QString& country, const atool
       countryNew = countryReplacement;
     else if((country.size() == 2 || country.size() == 3) && country.isUpper())
     {
-      // A country code - lookup name
+      // A country code - lookup name for code
       QLocale::Territory territory = QLocale::codeToTerritory(country3To2.value(country.toUpper()));
       if(territory != QLocale::AnyTerritory)
         countryNew = QLocale::territoryToString(territory);
@@ -503,15 +507,19 @@ QString CountryUpdater::updateAirportCountry(const QString& country, const atool
   {
     // No country given - look up in time zone database
     QTimeZone zone = timezone->getTimezone(pos);
-    if(zone.isValid() && zone.territory() != QLocale::AnyTerritory)
-      countryNew = QLocale::territoryToString(zone.territory());
+    QLocale::Territory territory = zone.territory();
+    if(zone.isValid() && territory != QLocale::AnyTerritory)
+      countryNew = QLocale::territoryToString(territory);
+
+    if(countryNew.isEmpty() || countryNew == QStringLiteral("Default"))
+      qWarning() << Q_FUNC_INFO << "No country found for" << ident << pos << zone;
   }
 
   if(countryNew == QStringLiteral("Default")) // From territoryToString()
     countryNew.clear();
 
   if(verbose && countryNew != country)
-    qDebug() << Q_FUNC_INFO << "Updated" << country << "to" << countryNew << "at" << pos.toString();
+    qDebug() << Q_FUNC_INFO << "Updated" << ident << country << "to" << countryNew << "at" << pos.toString();
 
   return atools::fs::util::capAdminName(countryNew);
 }

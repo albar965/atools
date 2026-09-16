@@ -505,7 +505,9 @@ void AirportWriter::fetchAdmin(const Airport *type, QString& city, QString& stat
   {
     city = atools::fs::util::capAdminName(getDataWriter().getLanguage(nl->getCityName()));
     state = atools::fs::util::capAdminName(getDataWriter().getLanguage(nl->getStateName()));
-    country = getDataWriter().getCountryUpdater()->updateAirportCountry(getDataWriter().getLanguage(nl->getCountryName()), type->getPos());
+    country = getDataWriter().getCountryUpdater()->updateAirportCountry(type->getIdent(),
+                                                                        getDataWriter().getLanguage(nl->getCountryName()),
+                                                                        type->getPos());
 
     if(!type->getRegion().isEmpty())
       region = type->getRegion().simplified();

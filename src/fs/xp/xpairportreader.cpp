@@ -1728,7 +1728,7 @@ void XpAirportReader::finishAirport(const XpReaderContext& context)
 
     insertAirportQuery->bindValue(QStringLiteral(":mag_var"), context.magDecReader->getMagVar(center));
 
-    insertAirportQuery->bindValue(QStringLiteral(":country"), context.countryUpdater->updateAirportCountry(country, center));
+    insertAirportQuery->bindValue(QStringLiteral(":country"), context.countryUpdater->updateAirportCountry(airportIdent, country, center));
 
     insertAirportQuery->exec();
     if(insertAirportQuery->numRowsAffected() != 1)

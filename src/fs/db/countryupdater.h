@@ -44,7 +44,7 @@ public:
   ~CountryUpdater();
 
   /* Fix broken country name. Needs coordinates for time zone lookup. */
-  QString updateAirportCountry(const QString& country, const atools::geo::Pos& pos);
+  const QString updateAirportCountry(const QString& ident, const QString& country, const atools::geo::Pos& pos);
 
 private:
   atools::timezone::TimeZoneManager *timezone = nullptr;
