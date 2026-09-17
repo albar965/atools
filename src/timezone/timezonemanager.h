@@ -54,8 +54,8 @@ public:
   void clear();
 
   /* Looks up a time zone id and locates the related QTimeZone object from Qt. */
-  QTimeZone getTimezone(const atools::geo::Pos& position) const;
-  QTimeZone getTimezone(float lonX, float latY) const;
+  QTimeZone getTimezone(const atools::geo::Pos& position);
+  QTimeZone getTimezone(float lonX, float latY);
 
   /* Determines timezone offset by seconds of day and creates localDateTime time from incomplete values based on current year.
    * Time can be converted to UTC which might also roll over the date.
@@ -63,11 +63,12 @@ public:
    * Uses an inaccurate lookup if database file was not loaded.
    * Does not use DST. */
   void correctDateLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int dayOfYearLocal, float secondsOfDayLocal,
-                        float secondsOfDayUtc, float lonX, float latY) const;
+                        float secondsOfDayUtc, float lonX, float latY);
 
 private:
   bool verbose = false;
   TimeZonePrivate *p;
+  QSet<QString> warningTimezones;
 };
 
 } // namespace timezone

@@ -57,12 +57,13 @@ TimeZoneManager::~TimeZoneManager()
 }
 
 // Use synonym table to resolve biggest mismatches between timezone db and QTimeZone on Windows
+// Names are mostly city synonyms
 const static QHash<QString, QString> synonyms({
       {"Europe/Kyiv", "Europe/Kiev"},
       {"America/Indiana/Indianapolis", "America/Indianapolis"},
       {"Asia/Kolkata", "Asia/Calcutta"},
       {"Africa/Asmara", "Africa/Asmera"},
-      {"America/Nuuk", "America/Iqaluit"},
+      {"America/Nuuk", "America/Godthab"},
       {"America/Kentucky/Louisville", "America/Louisville"},
       {"America/Argentina/Buenos_Aires", "America/Argentina/La_Rioja"},
       {"America/Argentina/Catamarca", "America/Argentina/La_Rioja"},
@@ -70,7 +71,13 @@ const static QHash<QString, QString> synonyms({
       {"America/Argentina/Cordoba", "America/Argentina/La_Rioja"},
       {"America/Argentina/Jujuy", "America/Argentina/La_Rioja"},
       {"America/Argentina/Mendoza", "America/Argentina/La_Rioja"},
-      {"Chile/Continental", "America/Chile"}
+      {"Chile/Continental", "America/Chile"},
+      {"Asia/Yangon", "Asia/Rangoon"},
+      {"Asia/Ho_Chi_Minh", "Asia/Saigon"},
+      {"Pacific/Pohnpei", "Pacific/Ponape"},
+      {"Pacific/Chuuk", "Pacific/Truk"},
+      {"Pacific/Kanton", "Pacific/Tarawa"},
+      {"America/Atikokan", "America/Rainy_River"}
     });
 
 void TimeZoneManager::readFile(const QString& filename)
@@ -112,12 +119,12 @@ void TimeZoneManager::clear()
   qDebug() << Q_FUNC_INFO << "Closed timezone database";
 }
 
-QTimeZone TimeZoneManager::getTimezone(const atools::geo::Pos& position) const
+QTimeZone TimeZoneManager::getTimezone(const atools::geo::Pos& position)
 {
   return getTimezone(position.getLonX(), position.getLatY());
 }
 
-QTimeZone TimeZoneManager::getTimezone(float lonX, float latY) const
+QTimeZone TimeZoneManager::getTimezone(float lonX, float latY)
 {
   if(p->timezoneDb == nullptr)
     return QTimeZone(); // Invalid
@@ -141,10 +148,13 @@ QTimeZone TimeZoneManager::getTimezone(float lonX, float latY) const
     qDebug() << "Simple string is" << timezoneStr;
   }
 
+  if(timezoneStr.isEmpty())
+    return QTimeZone(); // Invalid
+
   QTimeZone timezone(timezoneStr.toLatin1());
 
   // Try a synonym if timezone did not resolve
-  if(!timezone.isValid() && synonyms.contains(timezoneStr))
+  if(!timezone.isValid() && synonyms.contains(timezoneStr) && !synonyms.value(timezoneStr).isEmpty())
     timezone = QTimeZone(synonyms.value(timezoneStr).toLatin1());
 
 #ifdef Q_OS_MAC
@@ -168,6 +178,12 @@ QTimeZone TimeZoneManager::getTimezone(float lonX, float latY) const
   }
 #endif
 
+  if(!timezone.isValid() && !warningTimezones.contains(timezoneStr))
+  {
+    warningTimezones.insert(timezoneStr);
+    qWarning() << Q_FUNC_INFO << "Timezone not found for" << timezoneStr;
+  }
+
   if(verbose)
     qDebug() << Q_FUNC_INFO << "Zone" << timezone
              << "timezoneStr" << timezoneStr
@@ -178,7 +194,7 @@ QTimeZone TimeZoneManager::getTimezone(float lonX, float latY) const
 }
 
 void TimeZoneManager::correctDateLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int dayOfYearLocal, float secondsOfDayLocal,
-                                       float secondsOfDayUtc, float lonX, float latY) const
+                                       float secondsOfDayUtc, float lonX, float latY)
 {
   if(p->timezoneDb != nullptr)
   {
