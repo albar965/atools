@@ -515,8 +515,13 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
       airportStmt->bindValue(QStringLiteral(":file_id"), fileId);
       airportStmt->bindValue(QStringLiteral(":ident"), airportIdent);
       airportStmt->bindValue(QStringLiteral(":name"), airportFacility.name);
-      airportStmt->bindValue(QStringLiteral(":country"),
-                             countryUpdater->updateAirportCountry(airportIdent, QStringLiteral(), airportPos.asPos()));
+
+      const QString country = countryUpdater->updateAirportCountry(airportIdent, QStringLiteral(), airportPos.asPos());
+      if(country.isEmpty())
+        airportStmt->bindNullStr(QStringLiteral(":country"));
+      else
+        airportStmt->bindValue(QStringLiteral(":country"), country);
+
       airportStmt->bindValue(QStringLiteral(":region"), airportRegion);
       airportStmt->bindValue(QStringLiteral(":tower_frequency"), airport.getTowerFrequency());
       airportStmt->bindValue(QStringLiteral(":atis_frequency"), airport.getAtisFrequency());
