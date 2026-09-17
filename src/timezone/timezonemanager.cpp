@@ -56,6 +56,23 @@ TimeZoneManager::~TimeZoneManager()
   delete p;
 }
 
+// Use synonym table to resolve biggest mismatches between timezone db and QTimeZone on Windows
+const static QHash<QString, QString> synonyms({
+      {"Europe/Kyiv", "Europe/Kiev"},
+      {"America/Indiana/Indianapolis", "America/Indianapolis"},
+      {"Asia/Kolkata", "Asia/Calcutta"},
+      {"Africa/Asmara", "Africa/Asmera"},
+      {"America/Nuuk", "America/Iqaluit"},
+      {"America/Kentucky/Louisville", "America/Louisville"},
+      {"America/Argentina/Buenos_Aires", "America/Argentina/La_Rioja"},
+      {"America/Argentina/Catamarca", "America/Argentina/La_Rioja"},
+      {"America/Argentina/ComodRivadavia", "America/Argentina/La_Rioja"},
+      {"America/Argentina/Cordoba", "America/Argentina/La_Rioja"},
+      {"America/Argentina/Jujuy", "America/Argentina/La_Rioja"},
+      {"America/Argentina/Mendoza", "America/Argentina/La_Rioja"},
+      {"Chile/Continental", "America/Chile"}
+    });
+
 void TimeZoneManager::readFile(const QString& filename)
 {
   if(atools::checkFile(Q_FUNC_INFO, filename))
@@ -125,6 +142,10 @@ QTimeZone TimeZoneManager::getTimezone(float lonX, float latY) const
   }
 
   QTimeZone timezone(timezoneStr.toLatin1());
+
+  // Try a synonym if timezone did not resolve
+  if(!timezone.isValid() && synonyms.contains(timezoneStr))
+    timezone = QTimeZone(synonyms.value(timezoneStr).toLatin1());
 
 #ifdef Q_OS_MAC
   // Apply workaround to Qt bugs where QTimeZone fails to parse etc strings on macOS
