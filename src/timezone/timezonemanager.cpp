@@ -48,6 +48,40 @@ TimeZoneManager::TimeZoneManager(bool verboseParam)
   :verbose(verboseParam)
 {
   p = new TimeZonePrivate;
+
+  // Use synonym table to resolve biggest mismatches between timezone db and QTimeZone on Windows
+  // Names are mostly city synonyms
+  const static QList<std::pair<QString, QString> > TIMEZONE_ID_SYNONYMS({
+        {"Africa/Asmara", "Africa/Asmera"},
+        {"America/Argentina/Buenos_Aires", "America/Argentina/La_Rioja"},
+        {"America/Argentina/Catamarca", "America/Argentina/La_Rioja"},
+        {"America/Argentina/ComodRivadavia", "America/Argentina/La_Rioja"},
+        {"America/Argentina/Cordoba", "America/Argentina/La_Rioja"},
+        {"America/Argentina/Jujuy", "America/Argentina/La_Rioja"},
+        {"America/Argentina/Mendoza", "America/Argentina/La_Rioja"},
+        {"America/Atikokan", "America/Rainy_River"},
+        {"America/Coyhaique", "America/Argentina/Ushuaia"},
+        {"America/Indiana/Indianapolis", "America/Indianapolis"},
+        {"America/Kentucky/Louisville", "America/Louisville"},
+        {"America/Nuuk", "America/Godthab"},
+        {"Asia/Ho_Chi_Minh", "Asia/Saigon"},
+        {"Asia/Kathmandu", "Asia/Katmandu"},
+        {"Asia/Kolkata", "Asia/Calcutta"},
+        {"Asia/Yangon", "Asia/Rangoon"},
+        {"Atlantic/Faroe", "Atlantic/Faeroe"},
+        {"Chile/Continental", "America/Chile"},
+        {"Europe/Kyiv", "Europe/Kiev"},
+        {"Pacific/Chuuk", "Pacific/Truk"},
+        {"Pacific/Kanton", "Pacific/Tarawa"},
+        {"Pacific/Pohnpei", "Pacific/Ponape"},
+      });
+
+  // Initialize synonyms and add from/to and to/from pairs
+  for(const std::pair<QString, QString>& synonym : TIMEZONE_ID_SYNONYMS)
+  {
+    timezoneSynonyms.insert(synonym.first, synonym.second);
+    timezoneSynonyms.insert(synonym.second, synonym.first);
+  }
 }
 
 TimeZoneManager::~TimeZoneManager()
@@ -55,30 +89,6 @@ TimeZoneManager::~TimeZoneManager()
   clear();
   delete p;
 }
-
-// Use synonym table to resolve biggest mismatches between timezone db and QTimeZone on Windows
-// Names are mostly city synonyms
-const static QHash<QString, QString> synonyms({
-      {"Europe/Kyiv", "Europe/Kiev"},
-      {"America/Indiana/Indianapolis", "America/Indianapolis"},
-      {"Asia/Kolkata", "Asia/Calcutta"},
-      {"Africa/Asmara", "Africa/Asmera"},
-      {"America/Nuuk", "America/Godthab"},
-      {"America/Kentucky/Louisville", "America/Louisville"},
-      {"America/Argentina/Buenos_Aires", "America/Argentina/La_Rioja"},
-      {"America/Argentina/Catamarca", "America/Argentina/La_Rioja"},
-      {"America/Argentina/ComodRivadavia", "America/Argentina/La_Rioja"},
-      {"America/Argentina/Cordoba", "America/Argentina/La_Rioja"},
-      {"America/Argentina/Jujuy", "America/Argentina/La_Rioja"},
-      {"America/Argentina/Mendoza", "America/Argentina/La_Rioja"},
-      {"Chile/Continental", "America/Chile"},
-      {"Asia/Yangon", "Asia/Rangoon"},
-      {"Asia/Ho_Chi_Minh", "Asia/Saigon"},
-      {"Pacific/Pohnpei", "Pacific/Ponape"},
-      {"Pacific/Chuuk", "Pacific/Truk"},
-      {"Pacific/Kanton", "Pacific/Tarawa"},
-      {"America/Atikokan", "America/Rainy_River"}
-    });
 
 void TimeZoneManager::readFile(const QString& filename)
 {
@@ -154,8 +164,12 @@ QTimeZone TimeZoneManager::getTimezone(float lonX, float latY)
   QTimeZone timezone(timezoneStr.toLatin1());
 
   // Try a synonym if timezone did not resolve
-  if(!timezone.isValid() && synonyms.contains(timezoneStr) && !synonyms.value(timezoneStr).isEmpty())
-    timezone = QTimeZone(synonyms.value(timezoneStr).toLatin1());
+  if(!timezone.isValid())
+  {
+    const QString synonym = timezoneSynonyms.value(timezoneStr);
+    if(!synonym.isEmpty())
+      timezone = QTimeZone(timezoneSynonyms.value(timezoneStr).toLatin1());
+  }
 
 #ifdef Q_OS_MAC
   // Apply workaround to Qt bugs where QTimeZone fails to parse etc strings on macOS

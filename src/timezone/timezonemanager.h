@@ -69,6 +69,7 @@ private:
   bool verbose = false;
   TimeZonePrivate *p;
   QSet<QString> warningTimezones;
+  QHash<QString, QString> timezoneSynonyms;
 };
 
 } // namespace timezone
