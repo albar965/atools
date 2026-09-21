@@ -4,6 +4,229 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
+# Version 4.2.1.beta
+
+* Updated translation files.
+* Fixed line splitting near anti-meridian
+  Now calculating intersection with anti-merdian in flat space not using GC lines if the line is too
+  short albar965/littlenavmap#1381
+* P3D Scenery configuration files with broken encoding are not supported anymore. If you see issues about this correct these yourself or contact the add-on author.
+* More logging about airways having no name. Also skipping such airways in AirwayResolver
+* Fixed aircraft performance handler
+  A saved performance collection is now continued once LNM is restarted. Once a session is finished
+  it won't be changed when doing a new flight. The session has to be reset manually. Fuel counter
+  now stops after touchdown.
+* Better error reporting in logs when reading BGL files
+  Reporting issues when airway has no valid name now
+* Fixed wrong return value in settings truncating numbers
+* Loading airports from given path in UI is now working again for XP, MSFS and FSX
+  Now checking for folders containing scenery and bgl files
+* Fixed issue where scenery library exclude and include did not work.
+  Added conversion from globbing pattern to regexp.
+* Fixed function splitAtAntiMeridian
+  Improved behavior if line points are close to anti-meridian Problems can still appear near the
+  poles due to rounding errors. Short measurement lines crossing the anti-meridian can appear
+  squiggly albar965/littlenavmap#1381
+* Omitting hostname for listening display if it is equal to the IP-address
+* Fixed comment in database generation instructions
+* Workaround for null waypoint positions in MSFS 2024
+* Moved WMM and navdata files out of resources
+  Removed Gzip compression and adapted loading for WMM and navdata
+* Small variable changes
+* Apply workaround to Qt bugs where QTimeZone fails to parse etc strings on macOS
+  Fixed crash if timezone file is not loaded.
+* Removed unneeded signal connection from dialog boxes
+* Documentation on MSFS 2024 navaid collection.
+* Fixed crash when disconnecting navserver connection
+* Updated image dialog to QR code dialog
+  Added scaling for image keeping aspect ratio Added combo box for code selection
+* Reduced waypoint name to 7 characters for MSFS
+  Otherwise the magenta line does not show up Now omitting region and airport from userpoints in
+  MSFS export
+* Limiting size of aircraft since some add-ons return invalid large values
+* Added parameter AIRCRAFTTYPE to flight plan file name pattern
+* Clarification for temp table dropping
+* Fixed issue when calculating airways for X-Plane and other simulators
+  Example H84 starts wrongly at IM/ZM at ZMUB while the correct IM/ZM at ZMKD
+  albar965/littlenavmap#1332
+* Better list widget index behavior
+  List items now highlighted for matches. Selection now restored. Now showing message if nothing
+  matches or if search string is too short.
+* Added getRecords by field value in DataManagerBase
+  albar965/littlenavmap#1288
+* Changed default color in HtmlBuilder note method
+* DockWidgetHandler: closeDockWidget added and more
+  TabWidgetHandler::getCurrentTabWidget hasAnyChildFocus Small optimizations in HtmlBuilder
+* Attempt to fix color buttons for macOS
+* Moved translations to sub-folder
+* Updated translator for additional translation module names
+* Added image dialog
+* Added QR code generator by Alex Spataru
+* Removed unneeded stuff from paintercontextsaver
+* Now allowing more than one undo/redo action in DataManagerBase
+* Fixed HTML formatting issue when using row2 with empty fields in HtmlBuilder
+* Fixed issue with trailing zeros in numbers when saving XML
+  Now using C-locale to save numbers to avoid strange formatting
+* Added ellipsis functions to ActionTool
+* XmlStreamWriter now uses HexARGB format for colors
+* Added debug output operator help macros to flags
+* Optimizations and cleanup in flags
+* Reworked HtmlBuilder
+  Table background calculation now based on UI style dark/light Fixed issues with table background
+  color Removed unneeded code.
+* Option for div tags around img tag to avoid unwanted line breaks.
+* Workaround for misplaced hr after img tag in HTML
+  Removed textBar for hr
+* Moved context menu position to avoid accidental selection
+* Work on action tools
+  Added atPtrOrNull Added saving of icons to action tool Added action icon saver
+* Added fire department acronyms for better capitalization
+* Merge pull request #49 from MortyMars/work
+  fix missing include statement
+* Added callback function for LinkTooltipHandler
+* Adapted NAT track download for new URL
+* Fixes for capitalization functions
+  Words like 1ABC and ABC1 are now kept upper case. Optimization: removed regular expression. Added
+  all airport upper case words (military acronyms) to navaid caps function Removed more regular
+  expressions for optimization
+* Added disable option flag for HTML anchors
+* Removed warnings
+* Updated zlib to 1.3.2
+* Merge pull request #48 from MortyMars/work
+  Fix zutil.h for modern masOS versions
+* Made formatting for lambdas more consistent
+* explicit in ContextSaver to avoid type conversions
+* Added PR #47 change
+  albar965/littlenavmap#47
+* Added TableEditDelegate
+  albar965/littlenavmap#1350 and albar965/littlenavmap#1349
+* Added WidgetTool to avoid boiler plate code for bulk changes.
+* Removed unused and incomplete operator== from FlightplanEntry
+* More functions for CsvExporter
+  More code cleanup and option to skip columns albar965/littlenavmap#1345
+* TabWidgetHandler::getCurrentTabText added
+* Added CsvExporter
+  Removed obsolete code albar965/littlenavmap#1345
+* Fixed wrong usage of WidgetState::clearWidget
+  Conversion from byte array to string
+* Limiting characters in combo box context menu to avoid overflow
+* normalStateToWindowInitial
+* Added style application to dock handler
+* Added font option and startup messages to splash screen
+* Better font display for edit fields
+* Added resetWindowLayout to application
+* Added testAnyFlags
+* Changes in application and data exchange regarding restart process
+  Moved flags to separate header file to minimize dependencies. Restart has to be done by the
+  application now. Added option to disable data exchange.
+* Fixed issue where helipads and other small airports got a too large bounding rectangle.
+* Optimizations in settings
+  String builder, inline and string literals Better logging
+* Added  clear cache function to GlobeReader
+  Max cost for cache is now file size
+* Optimization and cleanup in GlobeReader
+  Now caching file content instead of seeking in files Keeping max eight files in cache (around 1 GB
+  RAM) Removed data stream usage Added precision flag and increased resolution / accuracy
+* Made methods inline in PainterContextSaver
+* Corrected constructors in HtmlBuilder
+  Added joinHr
+* Added default tooltip texts
+* Added white star for star rating to avoid confusion about dashes
+* Added link fall back in tooltip handler
+* More fixes to system font changes
+  Add setWidgetAndIconSize and tab handler now changes the size of additional widgets
+* Fixed tab widget handler not resizing additional widgets on font change
+* Fix for unneeded wind queries with disable wind source
+* Fixed several issues with font change in user interface
+  Need several workarounds for Qt buggy font change propagation.
+* Optimization: decleared flags as primitive type
+* Added flag to string helper macros
+* Added handler to show tooltips on links
+* Disabled copying of objects
+* Fixed issues when changing application font.
+  Now updating geometry after changing font to avoid too large combo boxes
+* Moved widgetutil functions to tools
+* Added combo box handler for sorting and saving list entries
+* Cleanup in atools
+  Added double list conversion functions
+* Added double floating point to XML stream reader and writer
+* Corrected airport procedure display
+  Airport XZ001I/ZSQD (XP12 no Navigraph used) did not show procedures since Qingdao Liuting was
+  wrongly detected
+  albar965/littlenavmap#1337
+* Fixed captures of lambda expressions
+* Fixed compilation issues for Xpconnect
+* Cleanup and optmizations in dialog
+* Changed property in data exchange
+* Changed choice dialog id type
+  Changed to long long to allow flags as ids
+* Optimizations and better file probing
+  Renamed str functions in atools.cpp for more clarity More string optimizations Adapted probe
+  function calls for better file type detection
+* Optimizations when reading JSON files
+* Fixed regression in GPX loading and reading of content.xml
+* Added XmlStreamWriter and XmlStreamReader
+  Both avoid boiler plate coding and ease XML file operations.
+* Updated translation files
+* QStringLiteral for empty strings
+* Renamed ItemViewZoomHandler to WidgetZoomHandler
+  Made zoom handler more generic for all widgets like labels Fixed font handling for tree views
+* Renamed methods in DockWidgetHandler
+  Added synchronization for registered dialog windows
+* Added exception list for updateAllFonts and add updateAllPalette
+* Fixed compilation issues with Qt 6.6
+* Fixed issue where an application font change fired multiple events
+* Optimizations for weather loading and parsing
+  Replaced std functions with raw function pointer to fetch airport coordinates. Speed up reading of
+  timestamps by replacing with own parsing Replaced strings with byte arrays in METAR index
+* Udated hash functions for Qt 6
+* Corrected time zone loading for Windows
+  UTF-8 paths can now be used
+* Fix for static assert in Flags
+* processEventsExtended no optionally excludes input events
+* Added static assert to Flags to check conversion to long long
+* Added long long datatype to settings
+  Added saving and loading for enum variables.
+* Fixed WidgetState saving and loading
+  Saving widget visibility did not work and is now off as default Added saving and loading of QLabel
+  visibility More string optimizations
+* Changed startup indication methods in Application
+* Added properties for X-Plane date und time datarefs
+  Fixed wrong time zone and UTC time when using X-Plane albar965/littlenavmap#1125
+* Adjusted border for tree settings control
+* Now filling and correcting all country names where missing or misspelled
+* Fixed issue where empty BGL fields were not saved as empty strings or null
+* Added time zone management
+  Fixed wrong time zone and UTC time when using X-Plane albar965/littlenavmap#1125
+* Updated ChoiceDialog for line styling
+* Fixed METAR parser and date correction
+* Function ensureVisibility to put windows into screen center if off screen
+* Increased position accuracy
+  Now using double coordinates for MSFS 2020 and 2024 for taxiways, start positions, helipads and
+  more.
+* Replaced showSimpleProgressDialog
+  Using SimpleWaitDialog now Shows a simple message box for showing action instead of progress. The
+  box has no close button and does not close on Esc. Also sets wait cursor.
+* Added options to load runway taxipaths and omit navaids for MSFS 2024 and 2020.
+  NAVAIDS: MSFS 2024 and MSFS 2020 only - disables complete navaid loading. Will skip waypoints,
+  VOR, NDB and ILS to speed up loading. Add `NAVAIDS` to `ExcludeBglObjectFilter` to skip navaid
+  loading.
+  TAXIWAYRUNWAY: MSFS 2024 and MSFS 2020 only - excludes or includes taxiways of type runway. Remove
+  `TAXIWAYRUNWAY` from `ExcludeBglObjectFilter` to include these.
+* Fixed problem where strings were not read correctly from BGL
+* More Qt 6 porting
+  Disabled all deprecated before qt 6.5 Added version check for Qt version Replaced QScopedPointer
+  with std::unique_ptr Fixed types not registered Added font change signal to Application Removed
+  QStringLiteral from headers to avoid code bloat Disable copying of SqlQuery
+* Updated to standard c++20 to allow compilation with Qt 6.10
+* Fixes for build on macOS and cleared warnings. Minmum OS is now 11. Now building Intel and Arm architectures.
+* Updated NAT download address for change on FAA page.
+* Merge branch 'cmake_builder' of https://github.com/mbr1376/atools into mbr1376-cmake_builder
+  Fixed deleted program parts in signal handler. Addedd atools.pro back. Replaced QVector with QList
+  Replaced qAsConst with std::as_const
+
+===============================================================================
+
 # Version 4.0.18
 
 * Removed PACOTS tracks. albar965/littlenavmap#1298
