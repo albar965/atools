@@ -167,7 +167,7 @@ const QHash<QString, QString> CountryUpdater::countries({
         {QStringLiteral("RUS"), QStringLiteral("Russia")},
         {QStringLiteral("RUSSIAN FEDERATION"), QStringLiteral("Russia")},
         {QStringLiteral("RUSSIN FEDERATION"), QStringLiteral("Russia")},
-        {QStringLiteral("SANAA INTL"), QStringLiteral("Yemen")}
+        {QStringLiteral("SANAA INTL"), QStringLiteral("Yemen")},
         {QStringLiteral("SAU"), QStringLiteral()},
         {QStringLiteral("SEN"), QStringLiteral()},
         {QStringLiteral("SLB"), QStringLiteral()},
