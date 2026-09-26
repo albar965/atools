@@ -2464,32 +2464,32 @@ Période nocturne : %5</translation>
         <translation type="unfinished">Inscription des installations aéroportuaires dans la base de données</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1230"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1236"/>
         <source>Caught exception writing airport %1. Error: %2</source>
         <translation type="unfinished">Une exception a été détectée lors de l&apos;écriture de l&apos;aéroport %1. Erreur : %2</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1237"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1243"/>
         <source>Caught unknown exception writing airport %1.</source>
         <translation type="unfinished">Une exception inconnue a été détectée lors de l&apos;écriture de l&apos;aéroport %1.</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1245"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1251"/>
         <source>Too many errors writing airport data. Stopping.</source>
         <translation type="unfinished">Trop d&apos;erreurs dans l&apos;écriture des données de l&apos;aéroport. Arrêt.</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1259"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1265"/>
         <source>Writing NDB to database</source>
         <translation type="unfinished">Enregistrement de la BDN dans la base de données</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1311"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1317"/>
         <source>Writing VOR and ILS to database</source>
         <translation type="unfinished">Enregistrement des VOR et ILS dans la base de données</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1455"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1461"/>
         <source>Writing waypoints and airways to database</source>
         <translation type="unfinished">Enregistrement des waypoints et des voies aériennes dans la base de données</translation>
     </message>
@@ -2536,17 +2536,17 @@ Période nocturne : %5</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/timezone/timezonemanager.cpp" line="72"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="106"/>
         <source>Cannot read %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/timezone/timezonemanager.cpp" line="75"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="109"/>
         <source>Library from file %1 is empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/timezone/timezonemanager.cpp" line="80"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="114"/>
         <source>Cannot read %1.</source>
         <translation type="unfinished"></translation>
     </message>

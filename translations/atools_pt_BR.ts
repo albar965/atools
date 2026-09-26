@@ -2453,32 +2453,32 @@ Tempo Noturno: %5</translation>
         <translation>Gravando instalações aeroportuárias no banco de dados</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1230"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1236"/>
         <source>Caught exception writing airport %1. Error: %2</source>
         <translation>Exceção capturada ao gravar aeroporto %1. Erro: %2</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1237"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1243"/>
         <source>Caught unknown exception writing airport %1.</source>
         <translation>Exceção desconhecida capturada ao gravar aeroporto %1.</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1245"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1251"/>
         <source>Too many errors writing airport data. Stopping.</source>
         <translation>Erros excessivos ao gravar dados do aeroporto. Parando.</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1259"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1265"/>
         <source>Writing NDB to database</source>
         <translation>Gravando NDB no banco de dados</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1311"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1317"/>
         <source>Writing VOR and ILS to database</source>
         <translation>Gravando VOR e ILS no banco de dados</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1455"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1461"/>
         <source>Writing waypoints and airways to database</source>
         <translation>Gravando waypoints e aerovias no banco de dados</translation>
     </message>
@@ -2525,17 +2525,17 @@ Tempo Noturno: %5</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/timezone/timezonemanager.cpp" line="72"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="106"/>
         <source>Cannot read %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/timezone/timezonemanager.cpp" line="75"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="109"/>
         <source>Library from file %1 is empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/timezone/timezonemanager.cpp" line="80"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="114"/>
         <source>Cannot read %1.</source>
         <translation type="unfinished"></translation>
     </message>

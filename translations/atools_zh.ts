@@ -2416,32 +2416,32 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation>将机场设施写入数据库</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1230"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1236"/>
         <source>Caught exception writing airport %1. Error: %2</source>
         <translation>写入机场 %1 时捕获到异常，错误: %2</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1237"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1243"/>
         <source>Caught unknown exception writing airport %1.</source>
         <translation>写入机场 %1 时捕获到未知异常。</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1245"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1251"/>
         <source>Too many errors writing airport data. Stopping.</source>
         <translation>写入机场数据时发生太多错误，停止。</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1259"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1265"/>
         <source>Writing NDB to database</source>
         <translation>将 NDB 写入数据库</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1311"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1317"/>
         <source>Writing VOR and ILS to database</source>
         <translation>将VOR和ILS 写入数据库</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1455"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1461"/>
         <source>Writing waypoints and airways to database</source>
         <translation>将航点和航路写入数据库</translation>
     </message>
@@ -2488,17 +2488,17 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/timezone/timezonemanager.cpp" line="72"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="106"/>
         <source>Cannot read %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/timezone/timezonemanager.cpp" line="75"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="109"/>
         <source>Library from file %1 is empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/timezone/timezonemanager.cpp" line="80"/>
+        <location filename="../src/timezone/timezonemanager.cpp" line="114"/>
         <source>Cannot read %1.</source>
         <translation type="unfinished"></translation>
     </message>
