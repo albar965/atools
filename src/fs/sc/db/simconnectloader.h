@@ -78,13 +78,13 @@ public:
    * fileId is used to fill airport.file_id field for all airports.
    * Also catches navaids from procedure references.
    * A globbing filter can be set in setAirportIdents() to limit number of airports loaded. */
-  bool loadAirports(int fileId);
+  bool loadAirports(int fileId, bool skipLoadingNavdata);
 
   /* Load all navaids (VOR, NDB, waypoints, airways and ILS) that were refernced from loading airport procedures and
    * write VOR, NDB, waypoints, airways and ILS to the database.
    * Traverses airway network to load more navaids. Navaids catched in loadAirports() are used as starting point
    * to traverse airway network. */
-  bool loadNavaids(int fileId);
+  bool loadNavaids(int fileId, bool skipLoading);
 
   /* Load waypints, VOR and NDB which are not connected to procedures or airways. Requires previous call to loadNavaids() to
    * avoid loading duplicates.

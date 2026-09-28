@@ -133,10 +133,10 @@ public:
   bool requestAirportList();
 
   // Load all airport details for idents in airportIds and write to database in callback after loading
-  bool loadAirports();
+  bool loadAirports(bool skipLoadingNavdata);
 
   // Traverse airway network and write navaids loaded from above
-  bool loadNavaids();
+  bool loadNavaids(bool skipLoading);
 
   bool loadDisconnectedNavaidsFile();
   bool loadDisconnectedNavaidsResource(bool skipLoading);
@@ -570,7 +570,7 @@ void SimConnectLoaderPrivate::addAirportTaxiFacilityDefinition()
   close("AIRPORT");
 }
 
-bool SimConnectLoaderPrivate::loadAirports()
+bool SimConnectLoaderPrivate::loadAirports(bool skipLoadingNavdata)
 {
   aborted = callProgress(SimConnectLoader::tr("Loading airport count"));
 
@@ -643,8 +643,11 @@ bool SimConnectLoaderPrivate::loadAirports()
   // Fetch approaches, SID, STAR and legs and fill into the respective airport facility structure in the hash airportFacilities
   // Also adds all navaid references from fixes and recommended fixes to navaidIds
   aborted = callProgress(SimConnectLoader::tr("Loading airport procedures"));
-  if((aborted = requestAirports(FACILITY_DATA_AIRPORT_PROC_DEFINITION_ID)))
-    return true;
+  if(!skipLoadingNavdata)
+  {
+    if((aborted = requestAirports(FACILITY_DATA_AIRPORT_PROC_DEFINITION_ID)))
+      return true;
+  }
 
   // Fetch taxiway and parking and fill into the respective airport facility structure in the hash airportFacilities
   aborted = callProgress(SimConnectLoader::tr("Loading airport taxiways and parking"));
@@ -661,15 +664,15 @@ bool SimConnectLoaderPrivate::loadAirports()
   return aborted;
 }
 
-bool SimConnectLoaderPrivate::loadNavaids()
+bool SimConnectLoaderPrivate::loadNavaids(bool skipLoading)
 {
   // Consume navaidIds and insert navaids found on routes into the list for further fetching
   // Breadth-first search through network
   aborted = callProgress(SimConnectLoader::tr("Loading waypoints, VOR, ILS, NDB and airways"));
-  if(!aborted)
+  if(!aborted && !skipLoading)
     aborted = requestNavaids(true /* fetchRoutes */);
 
-  if(!aborted)
+  if(!aborted && !skipLoading)
     // Write all into the database - clears facility lists when done
     aborted = writeNavaidsToDatabase();
 
@@ -1738,22 +1741,22 @@ SimConnectLoader::~SimConnectLoader()
 #endif
 }
 
-bool SimConnectLoader::loadAirports(int fileId)
+bool SimConnectLoader::loadAirports(int fileId, bool skipLoadingNavdata)
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->fileId = fileId;
-  return p->loadAirports();
+  return p->loadAirports(skipLoadingNavdata);
 #else
   Q_UNUSED(fileId)
   return false;
 #endif
 }
 
-bool SimConnectLoader::loadNavaids(int fileId)
+bool SimConnectLoader::loadNavaids(int fileId, bool skipLoading)
 {
 #if !defined(SIMCONNECT_BUILD_WIN32)
   p->fileId = fileId;
-  return p->loadNavaids();
+  return p->loadNavaids(skipLoading);
 #else
   Q_UNUSED(fileId)
   return false;

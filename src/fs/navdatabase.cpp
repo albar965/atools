@@ -1273,6 +1273,9 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
           int fileId = fsDataWriter->getNextFileId();
           int sceneryId = fsDataWriter->getNextSceneryId();
 
+          // Called methods will  invoke the progress callback but skip loading of navaids
+          bool skipLoadingNavdata = result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND);
+
           atools::fs::common::MetadataWriter metadataWriter(db);
           metadataWriter.writeSceneryArea(QStringLiteral(), "SimConnect", sceneryId);
           metadataWriter.writeFile(QStringLiteral(), "Airports", sceneryId, fileId);
@@ -1298,20 +1301,19 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
 
           // Load airports ======================================
           if(!aborted)
-            aborted = simconnectLoader->loadAirports(fileId);
+            aborted = simconnectLoader->loadAirports(fileId, skipLoadingNavdata);
 
           // Load navaids - waypoints, VOR, NDB and ILS ======================================
           if(options.isIncludedNavDbObject(type::NAVAIDS))
           {
             // Load navaids connected to procedures and airways ======================================
             if(!aborted)
-              aborted = simconnectLoader->loadNavaids(fileId);
+              aborted = simconnectLoader->loadNavaids(fileId, skipLoadingNavdata);
 
             // Load navaids not connected to procedures or airways ======================================
             // Flag is true for normal operation
             if(!aborted && options.getSimConnectLoadDisconnected())
-              aborted = simconnectLoader->loadDisconnectedNavaidsResource(fileId,
-                                                                          result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
+              aborted = simconnectLoader->loadDisconnectedNavaidsResource(fileId, skipLoadingNavdata);
 
             // Initial loading of MSFS 2020 navaids not connected to procedures or airways ======================================
             // Flag is false for normal operation and only used to regenerate the navaids24.csv

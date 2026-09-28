@@ -6,6 +6,11 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 # Version 4.2.1.beta
 
+* Now skipping the loading of all navdata and all procedures if a Navigraph update is detected in
+  the scenery library. This is done by checking for the files `navigraph-navdata/manifest.json` and
+  `navigraph-navdata-base/manifest.json` in `Community` for creator and other attributes.
+  This speeds up loading significantly but requires the installation of the Navigraph update
+  in Little Navmap.
 * Fixed splitting of short lines near anti-meridian. Now calculating intersection with
   anti-meridian in flat space not using Great Circle lines if the line is too close to the meridian
   and too short. Note that artifacts like steps can still appear depending on position. #1381
