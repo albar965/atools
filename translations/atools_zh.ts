@@ -1496,7 +1496,7 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <location filename="../src/fs/navdatabase.cpp" line="1017"/>
         <location filename="../src/fs/navdatabase.cpp" line="1045"/>
         <location filename="../src/fs/navdatabase.cpp" line="1151"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1394"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1396"/>
         <source>Creating indexes</source>
         <translation>正在创建索引</translation>
     </message>
@@ -1504,14 +1504,14 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <location filename="../src/fs/navdatabase.cpp" line="1020"/>
         <location filename="../src/fs/navdatabase.cpp" line="1050"/>
         <location filename="../src/fs/navdatabase.cpp" line="1154"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1397"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1399"/>
         <source>Creating boundary indexes</source>
         <translation>正在创建边界索引</translation>
     </message>
     <message>
         <location filename="../src/fs/navdatabase.cpp" line="1026"/>
         <location filename="../src/fs/navdatabase.cpp" line="1167"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1413"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1415"/>
         <source>Clean up</source>
         <translation>清理</translation>
     </message>
@@ -1531,32 +1531,32 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation>正在准备航路</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1421"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1423"/>
         <source>Basic Validation</source>
         <translation>基础验证</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1529"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1531"/>
         <source>Creating table statistics</source>
         <translation>正在创建表格统计</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1535"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1537"/>
         <source>Creating report on values</source>
         <translation>正在创建数值的报告</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1541"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1543"/>
         <source>Creating report on duplicates</source>
         <translation>正在创建重复项的报告</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1579"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1581"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>正在创建重复坐标的报告</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1696"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1698"/>
         <source>Base</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1565,40 +1565,40 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation type="vanished">基地机场</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1707"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1709"/>
         <source>Generic Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1724"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1726"/>
         <source>SimConnect Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1735"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1737"/>
         <source>Base Navigation</source>
         <translatorcomment>基地导航？</translatorcomment>
         <translation type="unfinished">基地导航</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1785"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1834"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1787"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1836"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1830"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1832"/>
         <source>Community</source>
         <translation>社区</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1955"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1966"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1957"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1968"/>
         <source>Custom scenery path %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="2251"/>
+        <location filename="../src/fs/navdatabase.cpp" line="2253"/>
         <source>Counting files for %1 ...</source>
         <translation>正在为 %1 计数文件...</translation>
     </message>
@@ -2353,29 +2353,29 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation>加载机场程序</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="650"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="653"/>
         <source>Loading airport taxiways and parking</source>
         <translation>加载机场滑行道和停机位</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="668"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="671"/>
         <source>Loading waypoints, VOR, ILS, NDB and airways</source>
         <translation>加载航点, VOR, ILS, NDB 和航路</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="688"/>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="712"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="691"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="715"/>
         <source>Loading disconnected waypoints, VOR, ILS and NDB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="696"/>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="718"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="699"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="721"/>
         <source>Writing disconnected waypoints, VOR, ILS and NDB to database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1056"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1059"/>
         <source>Navaid file: %1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2388,12 +2388,12 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation type="vanished">读取导航数据时发生太多错误，停止。</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1193"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1196"/>
         <source> </source>
         <translation> </translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1193"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1196"/>
         <source>.</source>
         <translation>.</translation>
     </message>

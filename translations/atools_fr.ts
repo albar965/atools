@@ -1442,7 +1442,7 @@ Période nocturne : %5</translation>
         <location filename="../src/fs/navdatabase.cpp" line="1020"/>
         <location filename="../src/fs/navdatabase.cpp" line="1050"/>
         <location filename="../src/fs/navdatabase.cpp" line="1154"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1397"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1399"/>
         <source>Creating boundary indexes</source>
         <translation type="unfinished">Création d&apos;index des limites</translation>
     </message>
@@ -1465,7 +1465,7 @@ Période nocturne : %5</translation>
         <location filename="../src/fs/navdatabase.cpp" line="1017"/>
         <location filename="../src/fs/navdatabase.cpp" line="1045"/>
         <location filename="../src/fs/navdatabase.cpp" line="1151"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1394"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1396"/>
         <source>Creating indexes</source>
         <translation>Création d&apos;index</translation>
     </message>
@@ -1477,7 +1477,7 @@ Période nocturne : %5</translation>
     <message>
         <location filename="../src/fs/navdatabase.cpp" line="1026"/>
         <location filename="../src/fs/navdatabase.cpp" line="1167"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1413"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1415"/>
         <source>Clean up</source>
         <translation>Nettoyage</translation>
     </message>
@@ -1566,32 +1566,32 @@ Période nocturne : %5</translation>
         <translation type="unfinished">Chargement des traductions</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1421"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1423"/>
         <source>Basic Validation</source>
         <translation>Validation de base</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1529"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1531"/>
         <source>Creating table statistics</source>
         <translation>Création de statistiques de table</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1535"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1537"/>
         <source>Creating report on values</source>
         <translation>Création d&apos;un rapport sur les valeurs</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1541"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1543"/>
         <source>Creating report on duplicates</source>
         <translation>Création d&apos;un rapport sur les doublons</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1579"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1581"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Création d&apos;un rapport sur les doublons de coordonnées</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1696"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1698"/>
         <source>Base</source>
         <translation type="unfinished">Base</translation>
     </message>
@@ -1600,39 +1600,39 @@ Période nocturne : %5</translation>
         <translation type="obsolete">Aéroports de base</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1707"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1709"/>
         <source>Generic Airports</source>
         <translation type="unfinished">Aéroports génériques</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1724"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1726"/>
         <source>SimConnect Airports</source>
         <translation type="unfinished">Aéroports SimConnect</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1735"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1737"/>
         <source>Base Navigation</source>
         <translation type="unfinished">Navigation de base</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1785"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1834"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1787"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1836"/>
         <source>Encrypted add-on &quot;%1&quot; found. Add-on might not show up correctly.</source>
         <translation type="unfinished">L&apos;add-on crypté &quot;%1&quot; a été trouvé. Le module complémentaire peut ne pas s&apos;afficher correctement.</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1830"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1832"/>
         <source>Community</source>
         <translation type="unfinished">Communauté</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1955"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1966"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1957"/>
+        <location filename="../src/fs/navdatabase.cpp" line="1968"/>
         <source>Custom scenery path %1</source>
         <translation type="unfinished">Chemin d&apos;accès personnalisé à la scène %1</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="2251"/>
+        <location filename="../src/fs/navdatabase.cpp" line="2253"/>
         <source>Counting files for %1 ...</source>
         <translation type="unfinished">Comptage des fichiers pour %1 ...</translation>
     </message>
@@ -2401,29 +2401,29 @@ Période nocturne : %5</translation>
         <translation type="unfinished">Chargement des procédures d&apos;aéroport</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="650"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="653"/>
         <source>Loading airport taxiways and parking</source>
         <translation type="unfinished">Chargement des taxiways et des parkings des aéroports</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="668"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="671"/>
         <source>Loading waypoints, VOR, ILS, NDB and airways</source>
         <translation type="unfinished">Chargement des waypoints, VOR, ILS, NDB et voies aériennes</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="688"/>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="712"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="691"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="715"/>
         <source>Loading disconnected waypoints, VOR, ILS and NDB</source>
         <translation type="unfinished">Chargement des waypoints déconnectés, VOR, ILS et NDB</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="696"/>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="718"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="699"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="721"/>
         <source>Writing disconnected waypoints, VOR, ILS and NDB to database</source>
         <translation type="unfinished">Enregistrement dans la base de données des waypoints, VOR, ILS et NDB déconnectés</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1056"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1059"/>
         <source>Navaid file: %1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2436,12 +2436,12 @@ Période nocturne : %5</translation>
         <translation type="obsolete">Trop d&apos;erreurs dans la lecture des navaids. Arrêt.</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1193"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1196"/>
         <source> </source>
         <translation type="unfinished"> </translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1193"/>
+        <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1196"/>
         <source>.</source>
         <translation type="unfinished">.</translation>
     </message>
