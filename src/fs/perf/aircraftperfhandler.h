@@ -120,7 +120,7 @@ signals:
 
 private:
   /* -1 if below, 0 if at and 1 if above flight plan cruise altitude. Uses a altitude dependent buffer to avoid jitters. */
-  int isAtCruise() const;
+  int isAtCruise(float altitude) const;
 
   /* True if speed below or above 200 ft/min */
   bool isClimbing() const;

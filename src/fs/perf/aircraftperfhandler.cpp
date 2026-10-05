@@ -120,7 +120,7 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
 
   aircraftClimb = isClimbing();
   aircraftDescent = isDescending();
-  aircraftCruise = isAtCruise();
+  aircraftCruise = isAtCruise(curSimAircraft->getIndicatedAltitudeFt()) || isAtCruise(curSimAircraft->getActualAltitudeFt());
   aircraftFuelFlow = curSimAircraft->hasFuelFlow();
   aircraftGround = curSimAircraft->isOnGround();
   aircraftFlying = curSimAircraft->isFlying();
@@ -421,20 +421,19 @@ bool AircraftPerfHandler::isDescending() const
   return curSimAircraft->getVerticalSpeedFeetPerMin() < -150.f;
 }
 
-int AircraftPerfHandler::isAtCruise() const
+int AircraftPerfHandler::isAtCruise(float altitude) const
 {
   float buffer = std::max(cruiseAltitude * 0.01f, 200.f);
-  int result = !(curSimAircraft->getIndicatedAltitudeFt() > cruiseAltitude - buffer &&
-                 curSimAircraft->getIndicatedAltitudeFt() < cruiseAltitude + buffer);
+  int result = !(altitude > cruiseAltitude - buffer && altitude < cruiseAltitude + buffer);
 
   if(result == 1)
   {
     // Use a larger buffer for deviations
     float buffer2 = std::max(cruiseAltitude * 0.02f, 200.f);
-    if(curSimAircraft->getIndicatedAltitudeFt() < cruiseAltitude - buffer2)
+    if(altitude < cruiseAltitude - buffer2)
       result = -1;
 
-    if(curSimAircraft->getIndicatedAltitudeFt() > cruiseAltitude + buffer2)
+    if(altitude > cruiseAltitude + buffer2)
       result = 1;
   }
   return result;
