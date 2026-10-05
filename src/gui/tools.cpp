@@ -508,8 +508,14 @@ void changeWidgetColor(QPushButton *button, QColor backgroundColor)
 {
 #if !defined(Q_OS_MACOS)
   if(button->isEnabled())
+  {
     button->setStyleSheet(QStringLiteral("background-color: %1; color: %2;").
                           arg(backgroundColor.name(), QColor(backgroundColor.value() < 180 ? Qt::white : Qt::black).name()));
+    QPalette palette = button->palette();
+    palette.setColor(QPalette::Button, backgroundColor);
+    palette.setColor(QPalette::ButtonText, QColor(backgroundColor.value() < 180 ? Qt::white : Qt::black));
+    button->setPalette(palette);
+  }
   else
     button->setStyleSheet(QStringLiteral());
 #else
