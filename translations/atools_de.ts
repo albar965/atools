@@ -3148,52 +3148,52 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="453"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="452"/>
         <source>Invalid</source>
         <translation>Ungültig</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="456"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="455"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="459"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="458"/>
         <source>Departure Parking</source>
         <translation>Parken</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="462"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="461"/>
         <source>Departure Taxi and Takeoff</source>
         <translation>Abreise Rollen und Start</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="465"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="464"/>
         <source>Climb</source>
         <translation>Steigflug</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="468"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="467"/>
         <source>Cruise</source>
         <translation>Reiseflug</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="471"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="470"/>
         <source>Descent</source>
         <translation>Sinkflug</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="474"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="473"/>
         <source>Destination Taxi</source>
         <translation>Ziel Rollen</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="477"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="476"/>
         <source>Destination Parking</source>
         <translation>Ziel Parken</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="479"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="478"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>

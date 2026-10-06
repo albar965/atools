@@ -3123,47 +3123,47 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="453"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="452"/>
         <source>Invalid</source>
         <translation>Inválido</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="456"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="455"/>
         <source>None</source>
         <translation>Nenhum</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="459"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="458"/>
         <source>Departure Parking</source>
         <translation>Partida de estacionamento</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="462"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="461"/>
         <source>Departure Taxi and Takeoff</source>
         <translation>Táxi e Partida</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="465"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="464"/>
         <source>Climb</source>
         <translation>Subir</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="468"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="467"/>
         <source>Cruise</source>
         <translation>Cruzeiro</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="471"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="470"/>
         <source>Descent</source>
         <translation>Descida</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="474"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="473"/>
         <source>Destination Taxi</source>
         <translation>Táxi de Destino</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="477"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="476"/>
         <source>Destination Parking</source>
         <translation>Estacionamento de destino</translation>
     </message>
@@ -3172,7 +3172,7 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <translation type="vanished">Carregado da última sessão</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="479"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="478"/>
         <source>Unknown</source>
         <translation>Desconhecido</translation>
     </message>

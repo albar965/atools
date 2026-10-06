@@ -3037,54 +3037,54 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="453"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="452"/>
         <source>Invalid</source>
         <translation>无效</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="456"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="455"/>
         <source>None</source>
         <translation>无</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="459"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="458"/>
         <source>Departure Parking</source>
         <translation>停机在离场机场</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="462"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="461"/>
         <source>Departure Taxi and Takeoff</source>
         <translation>在离场机场滑行并起飞</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="465"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="464"/>
         <source>Climb</source>
         <translation>爬升</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="468"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="467"/>
         <source>Cruise</source>
         <translation>巡航</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="471"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="470"/>
         <source>Descent</source>
         <translation>正在下降</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="474"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="473"/>
         <source>Destination Taxi</source>
         <translatorcomment>待查</translatorcomment>
         <translation>已到达滑行中</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="477"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="476"/>
         <source>Destination Parking</source>
         <translatorcomment>待查</translatorcomment>
         <translation>停机在到达机场</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="479"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="478"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
