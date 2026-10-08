@@ -93,6 +93,9 @@ public:
   /* true if settings file contains the widget */
   bool contains(const QObject *widget) const;
 
+  /* true if settings file contains visibility state of the widget */
+  bool containsVisible(const QObject *widget) const;
+
   /* Get prefix and widget name as stored in the file */
   QString getSettingsKey(const QObject *widget) const;
 
@@ -159,6 +162,7 @@ private:
   QVariant loadWidget(atools::settings::Settings& settings, QObject *object,
                       const QString& objectName = QString()) const;
   bool containsWidget(atools::settings::Settings& settings, const QObject *widget, const QString& objectName = QString()) const;
+  bool containsWidgetVisible(atools::settings::Settings& settings, const QObject *widget, const QString& objectName = QString()) const;
 
   void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *widget) const;
   void clearWidgetVisible(atools::settings::Settings& settings, const QWidget *widget) const;

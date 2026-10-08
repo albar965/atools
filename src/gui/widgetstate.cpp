@@ -620,6 +620,11 @@ bool WidgetState::contains(const QObject *widget) const
   return containsWidget(Settings::instance(), widget);
 }
 
+bool WidgetState::containsVisible(const QObject *widget) const
+{
+  return containsWidgetVisible(Settings::instance(), widget);
+}
+
 QString WidgetState::getSettingsKey(const QObject *widget) const
 {
   return keyPrefix % QStringLiteral("_") % widget->objectName();
@@ -697,6 +702,16 @@ bool WidgetState::containsWidget(Settings& settings, const QObject *object, cons
     else
       return settings.contains(keyPrefix % QStringLiteral("_") % objName);
   }
+  else
+    qWarning() << Q_FUNC_INFO << "Found widget with empty name";
+  return false;
+}
+
+bool WidgetState::containsWidgetVisible(Settings& settings, const QObject *object, const QString& objectName) const
+{
+  const QString objName = objectName.isEmpty() ? object->objectName() : objectName;
+  if(!objName.isEmpty())
+    return settings.contains(keyPrefix % QStringLiteral("_visible_") % objName);
   else
     qWarning() << Q_FUNC_INFO << "Found widget with empty name";
   return false;
