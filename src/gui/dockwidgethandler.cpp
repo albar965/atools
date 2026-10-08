@@ -729,7 +729,6 @@ void DockWidgetHandler::setFullScreenOn(atools::gui::DockFlags flags)
     fullscreenState->toWindow(mainWindow, &normalState->mainWindowPosition);
 
     fullscreen = true;
-    delayedFullscreen = false;
   }
   else
     qWarning() << Q_FUNC_INFO << "Already fullscreen";
@@ -749,7 +748,6 @@ void DockWidgetHandler::setFullScreenOff()
     normalState->toWindow(mainWindow, &fullscreenState->mainWindowPosition);
 
     fullscreen = false;
-    delayedFullscreen = false;
   }
   else
     qWarning() << Q_FUNC_INFO << "Already no fullscreen";
@@ -777,7 +775,6 @@ void DockWidgetHandler::restoreState(QByteArray data)
 {
   QDataStream stream(&data, QIODevice::ReadOnly);
   stream >> fullscreen >> *normalState >> *fullscreenState;
-  delayedFullscreen = false;
 
   qDebug() << Q_FUNC_INFO << "normalState" << *normalState;
   qDebug() << Q_FUNC_INFO << "fullscreenState" << *fullscreenState;
@@ -797,7 +794,6 @@ void DockWidgetHandler::currentStateToWindow()
 void DockWidgetHandler::normalStateToWindow()
 {
   normalState->toWindow(mainWindow, nullptr);
-  delayedFullscreen = fullscreen; // Set flag to allow switch to fullscreen later after showing windows
   fullscreen = false;
 }
 
@@ -810,7 +806,6 @@ void DockWidgetHandler::fullscreenStateToWindow()
 {
   fullscreenState->toWindow(mainWindow, nullptr);
   fullscreen = true;
-  delayedFullscreen = false;
 }
 
 void DockWidgetHandler::resetWindowState(const QSize& size, const QString& filename)

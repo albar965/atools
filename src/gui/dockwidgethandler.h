@@ -202,13 +202,6 @@ public:
   /* True if files exists, is readable and magic number matches */
   static bool isWindowLayoutFile(const QString& filename);
 
-  /* true after calling normalStateToWindow() while using fullscreen mode. Can be used to delay the switch to
-   * fullscreen to avoid a distorted layout */
-  bool isDelayedFullscreen() const
-  {
-    return delayedFullscreen;
-  }
-
   /* Extra non-modal dialogs which are used for auto raise. Thread safe. */
   void registerDialog(QDialog *dialog);
   void unregisterDialog(QDialog *dialog);
@@ -295,7 +288,7 @@ private:
   /* Saved state of main window including dock widgets and toolbars */
   MainWindowState *normalState, *fullscreenState;
 
-  bool fullscreen = false, delayedFullscreen = false, verbose = false, hideTitle = false, windowFrame = false;
+  bool fullscreen = false, verbose = false, hideTitle = false, windowFrame = false;
 
   static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x2D6A9C2F;
   static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 2;
