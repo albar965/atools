@@ -522,7 +522,7 @@ const QString CountryUpdater::updateAirportCountry(const QString& ident, const Q
     if(zone.isValid() && territory != QLocale::AnyTerritory)
       countryNew = QLocale::territoryToString(territory);
 
-    if(countryNew.isEmpty() || countryNew == QStringLiteral("Default"))
+    if(verbose && (countryNew.isEmpty() || countryNew == QStringLiteral("Default")))
       qWarning() << Q_FUNC_INFO << "No country found for" << ident << pos << zone;
   }
 
