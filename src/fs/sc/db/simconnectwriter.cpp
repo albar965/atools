@@ -934,6 +934,12 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
         // multi-runway definitions like "23B" or "ALL"
         for(const RunwayTransition& runwayTransition : arrival.getRunwayTransitions())
         {
+          if(runwayTransition.getLegFacilities().isEmpty())
+          {
+            qWarning() << Q_FUNC_INFO << "Runway transition for arrival missing legs at" << airportIdent;
+            continue;
+          }
+
           approachStmt->bindValue(QStringLiteral(":approach_id"), ++approachId);
           approachStmt->bindValue(QStringLiteral(":airport_id"), airportId);
 
@@ -973,6 +979,12 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
           // Enroute transition is saved separately as transition ===================================
           for(const EnrouteTransition& enrouteTransition : arrival.getEnrouteTransitions())
           {
+            if(enrouteTransition.getLegFacilities().isEmpty())
+            {
+              qWarning() << Q_FUNC_INFO << "Enroute transition for arrival missing legs at" << airportIdent;
+              continue;
+            }
+
             transitionStmt->bindValue(QStringLiteral(":transition_id"), ++transitionId);
             transitionStmt->bindValue(QStringLiteral(":approach_id"), approachId);
             transitionStmt->bindValue(QStringLiteral(":type"), enumToStr(bgl::Transition::transitionTypeToStr, bgl::ap::FULL));
@@ -999,6 +1011,12 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
       {
         for(const RunwayTransition& runwayTransition : departure.getRunwayTransitions())
         {
+          if(runwayTransition.getLegFacilities().isEmpty())
+          {
+            qWarning() << Q_FUNC_INFO << "Runway transition for departure missing legs at" << airportIdent;
+            continue;
+          }
+
           approachStmt->bindValue(QStringLiteral(":approach_id"), ++approachId);
           approachStmt->bindValue(QStringLiteral(":airport_id"), airportId);
           bindRunway(approachStmt, runwayIndex, airportIdent, runwayTransition,
@@ -1037,6 +1055,12 @@ bool SimConnectWriter::writeAirportsToDatabase(QHash<atools::fs::sc::db::IcaoId,
           // Enroute transition is saved separately as transition ===================================
           for(const EnrouteTransition& enrouteTransition : departure.getEnrouteTransitions())
           {
+            if(enrouteTransition.getLegFacilities().isEmpty())
+            {
+              qWarning() << Q_FUNC_INFO << "Enroute transition for departure missing legs at" << airportIdent;
+              continue;
+            }
+
             transitionStmt->bindValue(QStringLiteral(":transition_id"), ++transitionId);
             transitionStmt->bindValue(QStringLiteral(":approach_id"), approachId);
             transitionStmt->bindValue(QStringLiteral(":type"), enumToStr(bgl::Transition::transitionTypeToStr, bgl::ap::FULL));
