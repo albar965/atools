@@ -2416,32 +2416,32 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation>将机场设施写入数据库</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1236"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1260"/>
         <source>Caught exception writing airport %1. Error: %2</source>
         <translation>写入机场 %1 时捕获到异常，错误: %2</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1243"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1267"/>
         <source>Caught unknown exception writing airport %1.</source>
         <translation>写入机场 %1 时捕获到未知异常。</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1251"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1275"/>
         <source>Too many errors writing airport data. Stopping.</source>
         <translation>写入机场数据时发生太多错误，停止。</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1265"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1289"/>
         <source>Writing NDB to database</source>
         <translation>将 NDB 写入数据库</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1317"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1341"/>
         <source>Writing VOR and ILS to database</source>
         <translation>将VOR和ILS 写入数据库</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1461"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1485"/>
         <source>Writing waypoints and airways to database</source>
         <translation>将航点和航路写入数据库</translation>
     </message>
@@ -2997,94 +2997,94 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
 <context>
     <name>atools::fs::perf::AircraftPerfHandler</name>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="295"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="302"/>
         <source>on ground</source>
         <translation>在地面</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="297"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="304"/>
         <source>fuel flow</source>
         <translation>燃油流量</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="304"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="311"/>
         <source>climbing</source>
         <translation>正在爬升</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="306"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="313"/>
         <source>descending</source>
         <translation>正在下降</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="310"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="317"/>
         <source>at cruise altitude</source>
         <translation>在巡航高度</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="312"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="319"/>
         <source>below cruise altitude</source>
         <translation>低于巡航高度</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="314"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="321"/>
         <source>above cruise altitude</source>
         <translation>高于巡航高度</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="332"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="339"/>
         <source>—</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="452"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="459"/>
         <source>Invalid</source>
         <translation>无效</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="455"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="462"/>
         <source>None</source>
         <translation>无</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="458"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="465"/>
         <source>Departure Parking</source>
         <translation>停机在离场机场</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="461"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="468"/>
         <source>Departure Taxi and Takeoff</source>
         <translation>在离场机场滑行并起飞</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="464"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="471"/>
         <source>Climb</source>
         <translation>爬升</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="467"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="474"/>
         <source>Cruise</source>
         <translation>巡航</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="470"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="477"/>
         <source>Descent</source>
         <translation>正在下降</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="473"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="480"/>
         <source>Destination Taxi</source>
         <translatorcomment>待查</translatorcomment>
         <translation>已到达滑行中</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="476"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="483"/>
         <source>Destination Parking</source>
         <translatorcomment>待查</translatorcomment>
         <translation>停机在到达机场</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="478"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="485"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
@@ -3406,25 +3406,25 @@ Line %2.</source>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="850"/>
         <location filename="../src/gui/dockwidgethandler.cpp" line="855"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="860"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="943"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="938"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>读取“%1”时发生了错误：%2</translation>
     </message>
     <message>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="876"/>
         <location filename="../src/gui/dockwidgethandler.cpp" line="881"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="886"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation>写入“%1”时发生了错误：%2</translation>
     </message>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="904"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="899"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation>读取“%1”时发生了错误：无效的幻数。不是一个有效的窗口布局文件。</translation>
     </message>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="907"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="902"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation>读取“%1”时发生了错误：无效的版本。不兼容的窗口布局文件。</translation>
     </message>

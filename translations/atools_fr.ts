@@ -2464,32 +2464,32 @@ Période nocturne : %5</translation>
         <translation type="unfinished">Inscription des installations aéroportuaires dans la base de données</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1236"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1260"/>
         <source>Caught exception writing airport %1. Error: %2</source>
         <translation type="unfinished">Une exception a été détectée lors de l&apos;écriture de l&apos;aéroport %1. Erreur : %2</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1243"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1267"/>
         <source>Caught unknown exception writing airport %1.</source>
         <translation type="unfinished">Une exception inconnue a été détectée lors de l&apos;écriture de l&apos;aéroport %1.</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1251"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1275"/>
         <source>Too many errors writing airport data. Stopping.</source>
         <translation type="unfinished">Trop d&apos;erreurs dans l&apos;écriture des données de l&apos;aéroport. Arrêt.</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1265"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1289"/>
         <source>Writing NDB to database</source>
         <translation type="unfinished">Enregistrement de la BDN dans la base de données</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1317"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1341"/>
         <source>Writing VOR and ILS to database</source>
         <translation type="unfinished">Enregistrement des VOR et ILS dans la base de données</translation>
     </message>
     <message>
-        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1461"/>
+        <location filename="../src/fs/sc/db/simconnectwriter.cpp" line="1485"/>
         <source>Writing waypoints and airways to database</source>
         <translation type="unfinished">Enregistrement des waypoints et des voies aériennes dans la base de données</translation>
     </message>
@@ -3089,87 +3089,87 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
 <context>
     <name>atools::fs::perf::AircraftPerfHandler</name>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="295"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="302"/>
         <source>on ground</source>
         <translation type="unfinished">au sol</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="297"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="304"/>
         <source>fuel flow</source>
         <translation type="unfinished">débit de carburant</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="304"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="311"/>
         <source>climbing</source>
         <translation type="unfinished">montée</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="306"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="313"/>
         <source>descending</source>
         <translation type="unfinished">descente</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="310"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="317"/>
         <source>at cruise altitude</source>
         <translation type="unfinished">à l&apos;altitude de croisière</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="312"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="319"/>
         <source>below cruise altitude</source>
         <translation type="unfinished">au-dessous de l&apos;altitude de croisière</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="314"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="321"/>
         <source>above cruise altitude</source>
         <translation type="unfinished">au-dessus de l&apos;altitude de croisière</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="332"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="339"/>
         <source>—</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="452"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="459"/>
         <source>Invalid</source>
         <translation type="unfinished">Invalide</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="455"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="462"/>
         <source>None</source>
         <translation type="unfinished">Aucun</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="458"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="465"/>
         <source>Departure Parking</source>
         <translation type="unfinished">Parking de départ</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="461"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="468"/>
         <source>Departure Taxi and Takeoff</source>
         <translation type="unfinished">Départ | Taxi et Décollage</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="464"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="471"/>
         <source>Climb</source>
         <translation type="unfinished">Montée</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="467"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="474"/>
         <source>Cruise</source>
         <translation type="unfinished">Croisière</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="470"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="477"/>
         <source>Descent</source>
         <translation type="unfinished">Descente</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="473"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="480"/>
         <source>Destination Taxi</source>
         <translation type="unfinished">Taxi à destination</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="476"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="483"/>
         <source>Destination Parking</source>
         <translation type="unfinished">Parking de destination</translation>
     </message>
@@ -3178,7 +3178,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
         <translation type="obsolete">Chargé lors de la dernière session</translation>
     </message>
     <message>
-        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="478"/>
+        <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="485"/>
         <source>Unknown</source>
         <translation type="unfinished">Inconnu</translation>
     </message>
@@ -3513,25 +3513,25 @@ Ligne %2.</translation>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="850"/>
         <location filename="../src/gui/dockwidgethandler.cpp" line="855"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="860"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="943"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="938"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation type="unfinished">Error reading &quot;%1&quot;: %2</translation>
     </message>
     <message>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="876"/>
         <location filename="../src/gui/dockwidgethandler.cpp" line="881"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="886"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation type="unfinished">Erreur d&apos;écriture &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="904"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="899"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot;: Nombre magique non valide. Pas un fichier de disposition de fenêtre.</translation>
     </message>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="907"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="902"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot;: Version non valable. Fichier de disposition des fenêtres incompatible.</translation>
     </message>
