@@ -120,7 +120,14 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
 
   aircraftClimb = isClimbing();
   aircraftDescent = isDescending();
-  aircraftCruise = isAtCruise(curSimAircraft->getIndicatedAltitudeFt()) || isAtCruise(curSimAircraft->getActualAltitudeFt());
+
+  // Try both indicated and actual altitude to detect cruise
+  int cruiseIndicated = isAtCruise(curSimAircraft->getIndicatedAltitudeFt());
+  int cruiseActual = isAtCruise(curSimAircraft->getActualAltitudeFt());
+
+  // Try indicated if actual altitude did not detect cruise
+  aircraftCruise = cruiseActual == 0 ? cruiseActual : cruiseIndicated;
+
   aircraftFuelFlow = curSimAircraft->hasFuelFlow();
   aircraftGround = curSimAircraft->isOnGround();
   aircraftFlying = curSimAircraft->isFlying();
