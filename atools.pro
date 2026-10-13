@@ -1128,7 +1128,7 @@ unix:!macx {
   deploy.commands += echo $$GIT_REVISION_FULL > $$DEPLOY_DIR/revision.txt &&
   deploy.commands += $$copyHeaderFilesCommands($$DEPLOY_DIR_INCLUDE)
   deploy.commands += mkdir -p $$OUT_PWD/translations &&
-  deploy.commands += cp -avfu $$PWD/translations/*.qm $$OUT_PWD/translations &&
+  deploy.commands += cp -avf $$PWD/translations/*.qm $$OUT_PWD/translations &&
   deploy.commands += cp -Rvf $$OUT_PWD/libatools.a $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vf $$PWD/CHANGELOG.txt $$DEPLOY_DIR &&
   deploy.commands += cp -vf $$PWD/README.txt $$DEPLOY_DIR &&
