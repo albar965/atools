@@ -34,8 +34,6 @@ class ProgressHandler;
 class NavDatabaseProgress
 {
 public:
-  NavDatabaseProgress();
-
   /*
    * @return Currently processed scenery area title
    */
@@ -217,6 +215,11 @@ public:
     return numErrors;
   }
 
+  bool isNavigraphDetected() const
+  {
+    return navigraphDetected;
+  }
+
 private:
   friend atools::fs::ProgressHandler;
 
@@ -224,7 +227,7 @@ private:
       numBoundaries = 0, numWaypoints = 0, numObjectsWritten = 0, numErrors = 0;
 
   int total = 0, current = 0, lastCurrent = 0;
-  bool newFile = false, newSceneryArea = false, newOther = false, firstCall = true, lastCall = false;
+  bool newFile = false, newSceneryArea = false, newOther = false, firstCall = true, lastCall = false, navigraphDetected = false;
   QString filepath, otherAction;
   const atools::fs::scenery::SceneryArea *sceneryArea = nullptr;
 

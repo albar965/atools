@@ -136,6 +136,7 @@ void ProgressHandler::reset()
   info.newOther = false;
   info.firstCall = true;
   info.lastCall = false;
+  info.navigraphDetected = false;
 }
 
 bool ProgressHandler::reportSceneryArea(const scenery::SceneryArea *sceneryArea)

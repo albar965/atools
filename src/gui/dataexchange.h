@@ -71,9 +71,6 @@ signals:
    * Properties contain all command line options excluding application name. */
   void dataFetched(atools::util::Properties properties);
 
-  /* Activate and raise main window */
-  void activateMain();
-
 private:
   /* Found other instance if true. This one can exit now. */
   bool exit = false;

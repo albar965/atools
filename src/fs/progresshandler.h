@@ -187,6 +187,11 @@ public:
     info.numObjectsWritten += value;
   }
 
+  void setNavigraphDetected(bool value = true)
+  {
+    info.navigraphDetected = value;
+  }
+
 private:
   bool callDefaultCallback = true;
   void defaultProgressCallback();

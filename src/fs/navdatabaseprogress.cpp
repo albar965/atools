@@ -23,11 +23,6 @@
 namespace atools {
 namespace fs {
 
-NavDatabaseProgress::NavDatabaseProgress()
-{
-
-}
-
 const QString& NavDatabaseProgress::getSceneryTitle() const
 {
   return sceneryArea->getTitle();

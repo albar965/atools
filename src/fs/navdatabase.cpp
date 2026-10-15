@@ -633,7 +633,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
         {
           if(options.isIncludedGui(QFileInfo(area.getLocalPath())))
           {
-            result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
+            result.setFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND);
             qDebug() << Q_FUNC_INFO << "Found Navigraph navdata update in" << area;
             break;
           }
@@ -649,17 +649,14 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
 
       for(const QFileInfo& info : dirCommunity.entryInfoList())
       {
-        if(atools::checkFile(Q_FUNC_INFO, info.filePath() % atools::SEP % "layout.json"))
+        if(atools::checkFile(Q_FUNC_INFO, info.filePath() % atools::SEP % QStringLiteral("layout.json")))
         {
-          result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
+          result.setFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND);
           qDebug() << Q_FUNC_INFO << "Found Navigraph navdata update in" << info.filePath();
           break;
         }
       }
     }
-
-    if(!result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
-      qDebug() << Q_FUNC_INFO << "Navigraph navdata update not found";
   }
   else // FSX and P3D
   {
@@ -674,8 +671,12 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
 
   qDebug() << "=P=== Total Progress" << total;
 
+  // Reset progress =======================
   progress.reset();
   progress.setTotal(total);
+
+  // Pass detection status to progress callback
+  progress.setNavigraphDetected(result.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND));
 
   createSchemaInternal(&progress);
   if(aborted)
@@ -735,23 +736,25 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     {
       QString packageBase = options.getMsfsOfficialPath();
       // Load the language index for lookup for airport names and more - first from fs-base
-      QFileInfo langFile(buildPathNoCase({packageBase, "fs-base", options.getLanguage() % ".locPak"}));
+      QFileInfo langFile(buildPathNoCase({packageBase, QStringLiteral("fs-base"), options.getLanguage() % QStringLiteral(".locPak")}));
       if(!atools::checkFile(Q_FUNC_INFO, langFile, true /* warn */))
-        langFile = QFileInfo(buildPathNoCase({packageBase, "fs-base", "en-US.locPak"}));
+        langFile = QFileInfo(buildPathNoCase({packageBase, QStringLiteral("fs-base"), QStringLiteral("en-US.locPak")}));
 
       QFileInfo langFileGeneric;
       // Load the language index for lookup for airport names from fs-base-genericairports
-      langFileGeneric = QFileInfo(buildPathNoCase({packageBase, "fs-base-genericairports", options.getLanguage() % ".locPak"}));
+      langFileGeneric = QFileInfo(buildPathNoCase({packageBase, QStringLiteral("fs-base-genericairports"),
+                                                   options.getLanguage() % QStringLiteral(".locPak")}));
       if(!atools::checkFile(Q_FUNC_INFO, langFileGeneric, true /* warn */))
-        langFileGeneric = QFileInfo(buildPathNoCase({packageBase, "fs-base-genericairports", "en-US.locPak"}));
+        langFileGeneric = QFileInfo(buildPathNoCase({packageBase, QStringLiteral("fs-base-genericairports"),
+                                                     QStringLiteral("en-US.locPak")}));
 
       // Load translation file in current language for airport names ====================================
       languageIndex.reset(new scenery::LanguageJson());
       languageIndex->clear();
       if(langFile.exists() && langFile.isFile())
-        languageIndex->readFromFile(langFile.filePath(), {"AIRPORT"});
+        languageIndex->readFromFile(langFile.filePath(), {QStringLiteral("AIRPORT")});
       if(langFileGeneric.exists() && langFileGeneric.isFile())
-        languageIndex->readFromFile(langFileGeneric.filePath(), {"AIRPORT"});
+        languageIndex->readFromFile(langFileGeneric.filePath(), {QStringLiteral("AIRPORT")});
       fsDataWriter->setLanguageIndex(languageIndex.data());
 
       // Load the two official material libraries ================================
