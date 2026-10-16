@@ -170,7 +170,7 @@ atools::geo::PosD SimConnectAircraft::getPositionD() const
     return atools::geo::PosD(position);
 }
 
-void SimConnectAircraft::getXPlaneDate(int& localDateDays, float& localTimeSec, float& zuluTimeSec)
+void SimConnectAircraft::getXPlaneDate(int& localDateDays, float& localTimeSec, float& zuluTimeSec) const
 {
   if(properties.contains(PROP_LOCAL_DATE_DAYS) && properties.contains(PROP_LOCAL_TIME_SEC) && properties.contains(PROP_ZULU_TIME_SEC))
   {
@@ -183,6 +183,30 @@ void SimConnectAircraft::getXPlaneDate(int& localDateDays, float& localTimeSec, 
     localDateDays = SC_INVALID_INT;
     localTimeSec = zuluTimeSec = SC_INVALID_FLOAT;
   }
+}
+
+atools::fs::sc::WeatherChangeMode SimConnectAircraft::getXPlaneWeatherChangeMode() const
+{
+  if(properties.contains(atools::fs::sc::PROP_WEATHER_CHANGE_MODE))
+    return static_cast<atools::fs::sc::WeatherChangeMode>(properties.value(atools::fs::sc::PROP_WEATHER_CHANGE_MODE).getValueInt());
+  else
+    return atools::fs::sc::WEATHER_CHANGE_MODE_INVALID;
+}
+
+atools::fs::sc::WeatherTimeSource SimConnectAircraft::getXPlaneWeatherTimeSource() const
+{
+  if(properties.contains(atools::fs::sc::PROP_WEATHER_TIME_SRC))
+    return static_cast<atools::fs::sc::WeatherTimeSource>(properties.value(atools::fs::sc::PROP_WEATHER_TIME_SRC).getValueInt());
+  else
+    return atools::fs::sc::WEATHER_TIME_SRC_INVALID;
+}
+
+atools::fs::sc::WeatherSource SimConnectAircraft::getXPlaneWeatherSource() const
+{
+  if(properties.contains(atools::fs::sc::PROP_WEATHER_SRC))
+    return static_cast<atools::fs::sc::WeatherSource>(properties.value(atools::fs::sc::PROP_WEATHER_SRC).getValueInt());
+  else
+    return atools::fs::sc::WEATHER_SRC_INVALID;
 }
 
 int SimConnectAircraft::getId() const

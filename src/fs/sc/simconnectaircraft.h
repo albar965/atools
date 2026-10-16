@@ -83,7 +83,42 @@ enum SimConnectAircraftPropTypes
   PROP_XPCONNECT_VERSION,
   PROP_LOCAL_DATE_DAYS,
   PROP_LOCAL_TIME_SEC,
-  PROP_ZULU_TIME_SEC
+  PROP_ZULU_TIME_SEC,
+  PROP_WEATHER_CHANGE_MODE, /* X-Plane */
+  PROP_WEATHER_TIME_SRC, /* X-Plane */
+  PROP_WEATHER_SRC /* X-Plane */
+};
+
+/* How the weather is changing. X-Plane. */
+enum WeatherChangeMode: quint8
+{
+  WEATHER_CHANGE_MODE_RAPIDLY_IMPROVING = 0,
+  WEATHER_CHANGE_MODE_IMPROVING = 1,
+  WEATHER_CHANGE_MODE_GRADUALLY_IMPROVING = 2,
+  WEATHER_CHANGE_MODE_STATIC = 3,
+  WEATHER_CHANGE_MODE_GRADUALLY_DETERIORATING = 4,
+  WEATHER_CHANGE_MODE_DETERIORATING = 5,
+  WEATHER_CHANGE_MODE_RAPIDLY_DETERIORATING = 6,
+  WEATHER_CHANGE_MODE_USING_REAL_WEATHER = 7,
+  WEATHER_CHANGE_MODE_INVALID = 255
+};
+
+/* What time-source to use for downloading real-world weather. X-Plane. */
+enum WeatherTimeSource: quint8
+{
+  WEATHER_TIME_SRC_REAL_TIME = 0,
+  WEATHER_TIME_SRC_SIMULATOR_TIME = 1,
+  WEATHER_TIME_SRC_INVALID = 255
+};
+
+/* What system is currently controlling the weather. X-Plane. */
+enum WeatherSource: quint8
+{
+  WEATHER_SRC_PRESET = 0,
+  WEATHER_SRC_REAL_WEATHER = 1,
+  WEATHER_SRC_CONTROLPAD = 2,
+  WEATHER_SRC_PLUGIN = 3,
+  WEATHER_SRC_INVALID = 255
 };
 
 /*
@@ -102,6 +137,11 @@ public:
   bool isAnyXplane() const
   {
     return flags.testFlag(atools::fs::sc::SIM_XPLANE11) || flags.testFlag(atools::fs::sc::SIM_XPLANE12);
+  }
+
+  bool isXplane12() const
+  {
+    return flags.testFlag(atools::fs::sc::SIM_XPLANE12);
   }
 
   bool isAnyMsfs() const
@@ -179,7 +219,16 @@ public:
   atools::geo::PosD getPositionD() const;
 
   /* Get raw X-Plane date variables and use a real timezone database to calculate local and UTC values. */
-  void getXPlaneDate(int& localDateDays, float& localTimeSec, float& zuluTimeSec);
+  void getXPlaneDate(int& localDateDays, float& localTimeSec, float& zuluTimeSec) const;
+
+  /* How the weather is changing.  */
+  atools::fs::sc::WeatherChangeMode getXPlaneWeatherChangeMode() const;
+
+  /* What time-source to use for downloading real-world weather. */
+  atools::fs::sc::WeatherTimeSource getXPlaneWeatherTimeSource() const;
+
+  /* What system is currently controlling the weather. */
+  atools::fs::sc::WeatherSource getXPlaneWeatherSource() const;
 
   /* Leaves altitude intact */
   void setCoordinates(atools::geo::Pos value)
