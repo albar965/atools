@@ -45,6 +45,9 @@ using atools::geo::windDirectionFromUV;
 namespace atools {
 namespace grib {
 
+// Allow five minutes tolerance before trying to reload weather files
+const qint64 WEATHER_TIME_EPSILON = 300LL;
+
 /* Internal data structure for wind U/V components */
 struct WindData
 {
@@ -233,13 +236,15 @@ void WindQuery::initFromUrl(const QString& baseUrl)
     qWarning() << Q_FUNC_INFO << "URL is empty. Wind download suspended.";
 }
 
-void WindQuery::initFromPath(const QString& path, atools::fs::weather::XpWeatherType type)
+void WindQuery::initFromPathInternal(const QString& path, atools::fs::weather::XpWeatherType type, const QDateTime& datetime,
+                                     bool collectFiles)
 {
-  deinit();
-
+  weatherDatetime = datetime;
   weatherPath = path;
   weatherType = type;
-  currentGribFile = collectGribFiles();
+
+  if(collectFiles)
+    currentGribFile = collectGribFile();
 
   if(verbose)
     qDebug() << Q_FUNC_INFO << weatherPath << currentGribFile;
@@ -255,38 +260,49 @@ void WindQuery::initFromPath(const QString& path, atools::fs::weather::XpWeather
     fileWatcher->setFilenameAndStart(currentGribFile);
 }
 
-QString WindQuery::collectGribFiles()
+QString WindQuery::collectGribFile()
 {
-  QFileInfoList gribFiles;
+  QStringList files;
+
   if(weatherType == atools::fs::weather::WEATHER_XP11)
     // global_winds.grib
-    gribFiles.append(QFileInfo(weatherPath));
+    files.append(QFileInfo(weatherPath).absoluteFilePath());
   else if(weatherType == atools::fs::weather::WEATHER_XP12)
   {
-    // GRIB-2022-9-6-21.00-ZULU-wind.grib
-    // GRIB-2023-02-22-18.00-ZULU-wind-v2.grib
-    QDir weatherDir(weatherPath);
-    weatherDir.setSorting(QDir::Unsorted);
-    weatherDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
-    weatherDir.setNameFilters({"GRIB-*-wind-v*.grib", "GRIB-*-wind.grib"});
+    // Collect all files sorted from old to new ========================
+    QMap<qint64, QFileInfo> gribFiles;
+    qint64 weatherDatetimeSecs = weatherDatetime./*addSecs(3 * 3600).*/ toSecsSinceEpoch();
 
+    // GRIB-2026-10-17-15.00-ZULU-wind.grib
+    const QDir weatherDir(weatherPath, "GRIB-*-wind.grib", QDir::Unsorted, QDir::Files | QDir::NoDotAndDotDot);
     const QFileInfoList entries = weatherDir.entryInfoList();
     for(const QFileInfo& entry : entries)
-      gribFiles.append(entry);
+      gribFiles.insert(atools::fs::util::xpGribFilenameToDateTime(entry.fileName()).toSecsSinceEpoch(), entry);
 
-    // Sort by timestamp - put latest at begin of list
-    if(gribFiles.size() > 1)
-      std::sort(gribFiles.begin(), gribFiles.end(), [](const QFileInfo& file1, const QFileInfo& file2) -> bool {
-            return atools::fs::util::xpGribFilenameToDate(file1.fileName()) > atools::fs::util::xpGribFilenameToDate(file2.fileName());
-          });
+    if(!gribFiles.isEmpty())
+    {
+      // Get file which matches given date
+      const QList<qint64> keys = gribFiles.keys();
+      for(int i = keys.size() - 1; i >= 0; i--)
+      {
+        if(keys.at(i) <= weatherDatetimeSecs)
+        {
+          files.append(gribFiles.value(keys.at(i)).absoluteFilePath());
+          break;
+        }
+      }
+
+      // Nothing found since time is too early - add oldest file
+      if(files.isEmpty() && weatherDatetimeSecs < keys.constFirst())
+        files.append(gribFiles.value(keys.constFirst()).absoluteFilePath());
+    }
   }
 
   if(verbose)
-    qDebug() << Q_FUNC_INFO << gribFiles;
+    qDebug() << Q_FUNC_INFO << files;
 
-  // Return first and latest file since GRIB cannot be merged like METAR
-  if(!gribFiles.isEmpty())
-    return gribFiles.constFirst().absoluteFilePath();
+  if(!files.isEmpty())
+    return files.constFirst();
   else
     return QStringLiteral();
 }
@@ -327,8 +343,50 @@ void WindQuery::deinit()
   currentGribFile.clear();
 }
 
-Wind WindQuery::getWindForPos(atools::geo::Pos pos, bool interpolateValue) const
+void WindQuery::simulatorTimeUpdated(const QDateTime& datetime)
 {
+  if(isAnyXPlane())
+  {
+    if(needsLoading() || atools::almostNotEqual(weatherDatetime.toSecsSinceEpoch(), datetime.toSecsSinceEpoch(), WEATHER_TIME_EPSILON))
+    {
+      weatherDatetime = datetime;
+      load();
+    }
+  }
+}
+
+bool WindQuery::needsLoading() const
+{
+  return isAnyXPlane() && fileWatcher == nullptr && !weatherPath.isEmpty();
+}
+
+void WindQuery::prepareLoad()
+{
+  if(!weatherDatetime.isValid())
+    weatherDatetime = QDateTime::currentDateTimeUtc();
+
+  if(needsLoading())
+    load();
+}
+
+void WindQuery::load()
+{
+  const QString gribFile = collectGribFile();
+  if(gribFile != currentGribFile)
+  {
+    currentGribFile = gribFile;
+
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << weatherPath << currentGribFile;
+
+    initFromPathInternal(weatherPath, weatherType, weatherDatetime, false /* collectFiles */);
+  }
+}
+
+Wind WindQuery::getWindForPos(atools::geo::Pos pos)
+{
+  prepareLoad();
+
   if(hasWindData())
   {
     pos.normalize();
@@ -348,7 +406,7 @@ Wind WindQuery::getWindForPos(atools::geo::Pos pos, bool interpolateValue) const
     WindAltLayer lower, upper;
     layersByAlt(lower, upper, pos.getAltitude());
 
-    if(!interpolateValue || pos.nearGrid(1.f, atools::geo::Pos::POS_EPSILON_500M))
+    if(pos.nearGrid(1.f, atools::geo::Pos::POS_EPSILON_500M))
     {
       // No need to interpolate within grid - use position as is
       WindData lW = windForLayer(lower, gPos);
@@ -389,15 +447,17 @@ Wind WindQuery::getWindForPos(atools::geo::Pos pos, bool interpolateValue) const
   return Wind();
 }
 
-WindPosList WindQuery::getWindForRect(const atools::geo::Rect& rect, float altFeet) const
+WindPosList WindQuery::getWindForRect(const atools::geo::Rect& rect, float altFeet)
 {
   WindPosList result;
   getWindForRect(result, rect, altFeet, 1);
   return result;
 }
 
-void WindQuery::getWindForRect(WindPosList& result, atools::geo::Rect rect, float altFeet, int gridSpacing) const
+void WindQuery::getWindForRect(WindPosList& result, atools::geo::Rect rect, float altFeet, int gridSpacing)
 {
+  prepareLoad();
+
   if(p->windLayers.isEmpty())
     return;
 
@@ -449,7 +509,7 @@ void WindQuery::getWindForRect(WindPosList& result, atools::geo::Rect rect, floa
   }
 }
 
-Wind WindQuery::getWindAverageForLineString(const geo::LineString& linestring) const
+Wind WindQuery::getWindAverageForLineString(const geo::LineString& linestring)
 {
   if(linestring.size() == 1)
     // Only one position
@@ -512,7 +572,13 @@ void WindQuery::setIgnoreSslErrors(bool value)
 void WindQuery::getValidity(QDateTime& from, QDateTime& to) const
 {
   from = analyisTime;
-  to = analyisTime.addSecs(3600 * 6);
+
+  if(weatherType == fs::weather::WEATHER_XP12)
+    // X-Plane 12 has every three hours
+    to = analyisTime.addSecs(3600 * 3);
+  else
+    // NOAA provides a six hour forecast
+    to = analyisTime.addSecs(3600 * 6);
 }
 
 void WindQuery::debugDumpContainerSizes() const
@@ -526,12 +592,12 @@ WindData WindQuery::windForLayer(const WindAltLayer& layer, const QPoint& point)
   return layer.isValid() ? layer.winds.at(point.x() + point.y() * 360) : EMPTY_WIND_DATA;
 }
 
-Wind WindQuery::getWindAverageForLine(const Line& line) const
+Wind WindQuery::getWindAverageForLine(const Line& line)
 {
   return getWindAverageForLine(line.getPos1(), line.getPos2());
 }
 
-Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2) const
+Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2)
 {
   return windAverageForLine(pos1, pos2).toWind();
 }
@@ -684,7 +750,7 @@ void WindQuery::gribDirUpdated(const QString& dir)
   if(verbose)
     qDebug() << Q_FUNC_INFO << dir;
 
-  QString gribFile = collectGribFiles();
+  QString gribFile = collectGribFile();
   if(gribFile != currentGribFile)
   {
     // Read file(s) again if updated and the list has changed
@@ -702,6 +768,7 @@ void WindQuery::gribFileUpdated(const QStringList& filenames)
 
   if(!filename.isEmpty())
   {
+    qInfo() << Q_FUNC_INFO << "Loading GRIB file" << filename;
     try
     {
       GribReader reader(verbose);
@@ -718,6 +785,10 @@ void WindQuery::gribFileUpdated(const QStringList& filenames)
       emit windDownloadFailed(tr("Unknown error."), 0);
       return;
     }
+
+    QDateTime from, to;
+    getValidity(from, to);
+    qInfo() << Q_FUNC_INFO << "Dataset is valid" << from << "to" << to;
 
     emit windDataUpdated();
   }

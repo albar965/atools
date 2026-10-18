@@ -2135,7 +2135,7 @@ void MetarVisibility::adjustDistance()
 
 QDateTime atools::fs::weather::MetarParser::getTimestamp() const
 {
-  return QDateTime(QDate(getYear(), getMonth(), getDay()), QTime(getHour(), getMinute()), QTimeZone::utc());
+  return QDateTime(QDate(getYear(), getMonth(), getDay()), QTime(getHour(), getMinute()), QTimeZone::UTC);
 }
 
 } // namespace weather

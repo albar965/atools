@@ -106,8 +106,7 @@ static const QList<QRegularExpression> REGEXP_MIL({
 #define AIRPORT_WORDS "AAC", "AAF", "AB", "AS", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CFB", "CGS", "DGAC", \
         "FAA", "FBO", "GTS", "HSC", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK", \
         "NOLF", "NRC", "NRC", "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RLA", "RNAS", \
-        "USFS", "CGAS", "TV", "NVC", "USAF", "PCFD", "VFD", "RFD", "FD", "FDA" \
-        "I", "II", "III", "IV", "V", "VI", "VII"
+        "USFS", "CGAS", "TV", "NVC", "USAF", "PCFD", "VFD", "RFD", "FD", "FDA", "I", "II", "III", "IV", "V", "VI", "VII"
 
 const static QSet<QString> FORCE_UPPER_AIRPORT_WORDS({AIRPORT_WORDS});
 
@@ -1148,48 +1147,69 @@ void calculateIlsGeometryD(const atools::geo::PosD& pos, double headingTrue, dou
   pmid = pos.endpoint(lengthMeter - featherWidth / 2., hdg);
 }
 
-QDateTime xpGribFilenameToDate(const QString& filename)
+QDateTime filenameToDate(const QString& dateStr)
 {
-  // XP 11 and 12
-  // GRIB-2022-11-25-00.00-ZULU-wind.grib
-  // GRIB-2022-9-6-21.00-ZULU-wind.grib
-  // GRIB-2023-02-22-18.00-ZULU-wind-v2.grib
-  const static QRegularExpression GRIB_REGEXP("^GRIB-(\\d+)-(\\d+)-(\\d+)-(\\d+).(\\d+)(-ZULU)?-wind(-v\\d+)?\\.grib$",
-                                              QRegularExpression::CaseInsensitiveOption);
-  QRegularExpressionMatch match = GRIB_REGEXP.match(filename);
-
-  if(match.hasMatch())
+  // "2022-9-6-19.00-ZULU.TXT" / "2026-10-01-09.00.TXT"
+  const QStringList dateTimeStr = dateStr.split('-');
+  if(dateTimeStr.size() >= 4)
   {
-#ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "Match for" << filename << match.capturedTexts();
-#endif
+    // "2022", "9", "6", "19.00-ZULU.TXT" /  "2026", "10", "01", "09.00.TXT"
+    int year = dateTimeStr.at(0).toInt();
+    int month = dateTimeStr.at(1).toInt();
+    int day = dateTimeStr.at(2).toInt();
 
-    return QDateTime(QDate(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt()),
-                     QTime(match.captured(4).toInt(), match.captured(5).toInt()), QTimeZone::UTC);
+    if(year > 0 && month > 0 && day > 0)
+    {
+      const QStringList timeStr = dateTimeStr.at(3).split('.');
+      if(timeStr.size() >= 2)
+      {
+        bool ok;
+        // "19", "00-ZULU", "TXT" / "09", "00", "TXT"
+        int hour = timeStr.at(0).toInt(&ok);
+
+        if(ok)
+        {
+          int min = timeStr.at(1).mid(0, 2).toInt(&ok);
+          if(ok)
+            return QDateTime(QDate(year, month, day), QTime(hour, min, 0), QTimeZone::UTC);
+          else
+            qWarning() << Q_FUNC_INFO << "Invalid minute value in filename" << dateStr;
+        }
+        else
+          qWarning() << Q_FUNC_INFO << "Invalid hour value in filename" << dateStr;
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "Invalid time in filename" << dateStr;
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Invalid date values in filename" << dateStr;
   }
   else
-  {
-#ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "No match for" << filename;
-#endif
-    return QDateTime();
-  }
+    qWarning() << Q_FUNC_INFO << "Invalid filename" << dateStr;
+
+  return QDateTime();
 }
 
-QDateTime xpMetarFilenameToDate(const QString& filename)
+QDateTime xpGribFilenameToDateTime(const QString& filename)
 {
-  // XP 12
-  // Metar-2022-9-6-20.00.txt
-  // metar-2022-10-2-22.00.txt
-  const static QRegularExpression METAR_REGEXP("METAR-(\\d+)-(\\d+)-(\\d+)-(\\d+).(\\d+)(-ZULU)?\\.txt$",
-                                               QRegularExpression::CaseInsensitiveOption);
-  QRegularExpressionMatch match = METAR_REGEXP.match(filename);
-
-  if(match.hasMatch())
-    return QDateTime(QDate(match.captured(1).toInt(), match.captured(2).toInt(), match.captured(3).toInt()),
-                     QTime(match.captured(4).toInt(), match.captured(5).toInt()), QTimeZone::UTC);
+  // GRIB-2026-10-17-15.00-ZULU-wind.grib
+  if(filename.startsWith(QStringLiteral("GRIB-"), Qt::CaseInsensitive) && filename.endsWith(QStringLiteral(".grib"), Qt::CaseInsensitive))
+    return filenameToDate(filename.toUpper().mid(5));
   else
-    return QDateTime();
+    qWarning() << Q_FUNC_INFO << "Invalid GRIB filename" << filename;
+
+  return QDateTime();
+}
+
+QDateTime xpMetarFilenameToDateTime(const QString& filename)
+{
+  // METAR-2022-9-6-19.00-ZULU.txt / metar-2026-10-01-09.00.txt
+  if(filename.startsWith(QStringLiteral("METAR-"), Qt::CaseInsensitive) && filename.endsWith(QStringLiteral(".txt"), Qt::CaseInsensitive))
+    return filenameToDate(filename.toUpper().mid(6));
+  else
+    qWarning() << Q_FUNC_INFO << "Invalid METAR filename" << filename;
+
+  return QDateTime();
 }
 
 bool isAircraftTypeDesignatorValid(const QString& type)

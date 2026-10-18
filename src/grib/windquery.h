@@ -91,7 +91,11 @@ public:
   void initFromUrl(const QString& baseUrl = QString());
 
   /* Read data from file and start watching for changes - terminates downloads */
-  void initFromPath(const QString& filenames, atools::fs::weather::XpWeatherType type);
+  void initFromPath(const QString& filenames, atools::fs::weather::XpWeatherType type)
+  {
+    deinit();
+    initFromPathInternal(filenames, type, QDateTime::currentDateTimeUtc(), true /* collectFiles */);
+  }
 
   /* Create a fixed model assuming zero wind at 0 altitude and given values at given altitude.
    *  Dir in degrees true, speed in knots and altutude in feet. */
@@ -105,20 +109,23 @@ public:
   /* Clear data, stop periodic downloads and file watching */
   void deinit();
 
+  /* Try to reload X-Plane 12 files for historical weather */
+  void simulatorTimeUpdated(const QDateTime& datetime);
+
   /* Get interpolated wind data for single position. Altitude in feet is used from position. */
-  Wind getWindForPos(atools::geo::Pos pos, bool interpolateValue = true) const;
+  Wind getWindForPos(atools::geo::Pos pos);
 
   /* Get an array of wind data for the given rectangle at the given altitude from the data grid.
    * Data is only interpolated between layers. Result is sorted by y and x coordinates. */
-  void getWindForRect(atools::grib::WindPosList& result, atools::geo::Rect rect, float altFeet, int gridSpacing) const;
-  atools::grib::WindPosList getWindForRect(const atools::geo::Rect& rect, float altFeet) const;
+  void getWindForRect(atools::grib::WindPosList& result, atools::geo::Rect rect, float altFeet, int gridSpacing);
+  atools::grib::WindPosList getWindForRect(const atools::geo::Rect& rect, float altFeet);
 
   /* Get average wind for the great circle line between the two given positions at the given altitude.
    *  Wind data is fetched for a certain number of spots along the line and thus not perfectly accurate.
    * Uses altitude from positions and interpolates between altitudes too if they are different. */
-  Wind getWindAverageForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
-  Wind getWindAverageForLine(const atools::geo::Line& line) const;
-  Wind getWindAverageForLineString(const atools::geo::LineString& linestring) const;
+  Wind getWindAverageForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2);
+  Wind getWindAverageForLine(const atools::geo::Line& line);
+  Wind getWindAverageForLineString(const atools::geo::LineString& linestring);
 
   bool hasWindData() const;
 
@@ -146,6 +153,11 @@ public:
   /* Print the size of all container classes to detect overflow or memory leak conditions */
   void debugDumpContainerSizes() const;
 
+  const QString& getCurrentGribFile() const
+  {
+    return currentGribFile;
+  }
+
 signals:
   /* Download successfully finished. Emitted for all init methods. */
   void windDataUpdated();
@@ -159,6 +171,10 @@ signals:
   void windDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl);
 
 private:
+  /* Read data from file and start watching for changes - terminates downloads */
+  void initFromPathInternal(const QString& filenames, atools::fs::weather::XpWeatherType type, const QDateTime& datetime,
+                            bool collectFiles);
+
   /* Wind for grid position */
   WindData windForLayer(const WindAltLayer& layer, const QPoint& point) const;
 
@@ -188,7 +204,21 @@ private:
    *  Normalizes positions to avoid overflow on grid access */
   WindData windAverageForLine(atools::geo::Pos pos1, atools::geo::Pos pos2) const;
 
-  QString collectGribFiles();
+  QString collectGribFile();
+
+  void load();
+  bool needsLoading() const;
+  void prepareLoad();
+
+  bool isAnyXPlane() const
+  {
+    return weatherType == fs::weather::WEATHER_XP11 || weatherType == fs::weather::WEATHER_XP12;
+  }
+
+  bool isXPlane12() const
+  {
+    return weatherType == fs::weather::WEATHER_XP12;
+  }
 
   /* Surfaces to download from NOAA. Negative value denotes AGL in ft and positive is millibar level.
    *
@@ -230,6 +260,9 @@ private:
   QString currentGribFile; // Latest from a collected list from folder (XP12)
 
   atools::fs::weather::XpWeatherType weatherType = atools::fs::weather::WEATHER_XP_UNKNOWN;
+
+  /* Date and time to select X-Plane current real or historical weather */
+  QDateTime weatherDatetime;
 };
 
 QDebug operator<<(QDebug out, const atools::grib::Wind& wind);

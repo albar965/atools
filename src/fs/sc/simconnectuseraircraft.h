@@ -240,6 +240,9 @@ public:
   float getAverageFuelFlowGPH(const SimConnectUserAircraft& past) const;
   int getTravelingTimeMinutes(const SimConnectUserAircraft& past) const;
 
+  /* Get X-Plane simulator time for historical weather or real time depending on flags. */
+  QDateTime getXPlaneWeatherTime() const;
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectData;

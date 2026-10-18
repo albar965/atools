@@ -201,10 +201,10 @@ QString waypointFlagsToXplane(QString flags, const QString& defaultValue = QStri
 QString waypointFlagsFromXplane(const QString& flags, const QString& defaultValue = QString());
 
 /* Extract date from filenames like GRIB-2022-11-25-00.00-ZULU-wind.grib or GRIB-2022-9-6-21.00-wind.grib */
-QDateTime xpGribFilenameToDate(const QString& filename);
+QDateTime xpGribFilenameToDateTime(const QString& filename);
 
 /* Extract date from filenames like Metar-2022-9-6-20.00.txt or metar-2022-11-24-21.00-ZULU.txt */
-QDateTime xpMetarFilenameToDate(const QString& filename);
+QDateTime xpMetarFilenameToDateTime(const QString& filename);
 
 } // namespace util
 } // namespace fs

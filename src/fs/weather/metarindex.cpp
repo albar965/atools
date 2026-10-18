@@ -144,6 +144,8 @@ int MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
 // KADS 301847Z 06005G14KT 13SM SKC 32/19 A3007
 int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bool merge)
 {
+  const static QByteArray DEG("DEG "), MDEG("MDEG ");
+
   if(!merge)
     clear();
   else
@@ -153,13 +155,12 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
   QByteArray latestIdent, oldestIdent;
 
   int lineNum = 1;
-  QByteArray line;
   QDateTime lastTimestamp, now = QDateTime::currentDateTimeUtc();
   int futureDates = 0, invalidDates = 0, found = 0;
 
   while(!stream.atEnd())
   {
-    line = stream.readLine().toLatin1().simplified().toUpper();
+    const QByteArray line = stream.readLine().toLatin1().simplified().toUpper();
 
     if(line.isEmpty() || line.size() > 256)
     {
@@ -167,7 +168,7 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
       continue;
     }
 
-    if(format == XPLANE && (line.startsWith("MDEG ") || line.startsWith("DEG ")))
+    if(format == XPLANE && (line.startsWith(MDEG) || line.startsWith(DEG)))
     {
       lineNum++;
       // Ignore X-Plane's special coordinate format
@@ -190,7 +191,7 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
         // Found line containing date like "2017/10/29 11:45"
         // ................................ 0123 56 89 12 45
         lastTimestamp = QDateTime(QDate(line.sliced(0, 4).toInt(), line.sliced(5, 2).toInt(), line.sliced(8, 2).toInt()),
-                                  QTime(line.sliced(11, 2).toInt(), line.sliced(14, 2).toInt()), QTimeZone::utc());
+                                  QTime(line.sliced(11, 2).toInt(), line.sliced(14, 2).toInt()), QTimeZone::UTC);
         lineNum++;
         continue;
       }
@@ -508,7 +509,7 @@ void MetarIndex::updateOrInsert(const QByteArray& metarString, const QByteArray&
   else
   {
     // Insert new record
-    atools::geo::Pos pos = airportCoordFunction(ident, airportCoordObject);
+    const atools::geo::Pos pos = airportCoordFunction(ident, airportCoordObject);
 
     Metar metar(ident, pos, lastTimestamp, metarString);
     metar.parseAll(false /* useTimestamp */);

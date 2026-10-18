@@ -17,12 +17,11 @@
 
 #include "fs/weather/xpweatherreader.h"
 
+#include "atools.h"
 #include "fs/weather/metar.h"
 #include "util/filesystemwatcher.h"
 #include "fs/weather/metarindex.h"
 #include "fs/util/fsutil.h"
-
-#include <algorithm>
 
 #include <QDir>
 #include <QFileInfo>
@@ -32,6 +31,9 @@
 namespace atools {
 namespace fs {
 namespace weather {
+
+// Allow five minutes tolerance before trying to reload weather files
+const qint64 WEATHER_TIME_EPSILON = 300LL;
 
 using atools::util::FileSystemWatcher;
 
@@ -47,6 +49,21 @@ XpWeatherReader::~XpWeatherReader()
   delete metarIndex;
 }
 
+const atools::fs::weather::Metar& XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
+{
+  prepareLoad();
+  return metarIndex->getMetar(station, pos);
+}
+
+void XpWeatherReader::simulatorTimeUpdated(const QDateTime& datetime)
+{
+  if(needsLoading() || atools::almostNotEqual(weatherDatetime.toSecsSinceEpoch(), datetime.toSecsSinceEpoch(), WEATHER_TIME_EPSILON))
+  {
+    weatherDatetime = datetime;
+    load();
+  }
+}
+
 void XpWeatherReader::setWeatherPath(const QString& path, XpWeatherType type)
 {
   clear();
@@ -54,31 +71,33 @@ void XpWeatherReader::setWeatherPath(const QString& path, XpWeatherType type)
   weatherType = type;
 }
 
-bool XpWeatherReader::needsLoading()
+bool XpWeatherReader::needsLoading() const
 {
   return fileWatcher == nullptr && !weatherPath.isEmpty();
 }
 
+void XpWeatherReader::prepareLoad()
+{
+  if(!weatherDatetime.isValid())
+    weatherDatetime = QDateTime::currentDateTimeUtc();
+
+  if(needsLoading())
+    load();
+}
+
 void XpWeatherReader::load()
 {
-  if(fileWatcher == nullptr && !weatherPath.isEmpty())
+  const QStringList metarFiles = collectWeatherFiles();
+  if(metarFiles != currentMetarFiles)
   {
+    currentMetarFiles = metarFiles;
     metarIndex->clear();
-    currentMetarFiles = collectWeatherFiles();
 
     if(verbose)
       qDebug() << Q_FUNC_INFO << weatherPath << currentMetarFiles;
 
     createFsWatcher();
   }
-}
-
-const atools::fs::weather::Metar& XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
-{
-  if(needsLoading())
-    load();
-
-  return metarIndex->getMetar(station, pos);
 }
 
 void XpWeatherReader::clear()
@@ -101,6 +120,8 @@ bool XpWeatherReader::read(const QStringList& filenames)
   // Read and merge all changed filenames into the METAR index
   for(const QString& filename : filenames)
   {
+    qInfo() << Q_FUNC_INFO << "Loading METAR file" << filename;
+
     QFile file(filename);
     if(file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -143,36 +164,45 @@ void XpWeatherReader::filesUpdated(const QStringList& filenames)
     qDebug() << Q_FUNC_INFO << "File not changed";
 }
 
-QStringList XpWeatherReader::collectWeatherFiles()
+QStringList XpWeatherReader::collectWeatherFiles() const
 {
-  QFileInfoList metarFiles;
+  QStringList files;
 
   if(weatherType == atools::fs::weather::WEATHER_XP11)
     // METAR.rwx
-    metarFiles.append(QFileInfo(weatherPath));
+    files.append(QFileInfo(weatherPath).absoluteFilePath());
   else if(weatherType == atools::fs::weather::WEATHER_XP12)
   {
+    // Collect all files sorted from old to new ========================
+    QMap<qint64, QFileInfo> metarFiles;
+    qint64 weatherDatetimeSecs = weatherDatetime.toSecsSinceEpoch();
+
     // METAR-2022-9-6-19.00-ZULU.txt, METAR-2022-9-6-20.00-ZULU.txt
     // METAR-2022-9-6-19.00.txt, METAR-2022-9-6-20.00.txt
-    QDir weatherDir(weatherPath, "METAR-*.txt", QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
+    const QDir weatherDir(weatherPath, "METAR-*.txt", QDir::Unsorted, QDir::Files | QDir::NoDotAndDotDot);
     const QFileInfoList entries = weatherDir.entryInfoList();
     for(const QFileInfo& entry : entries)
-      metarFiles.append(entry);
+      metarFiles.insert(atools::fs::util::xpMetarFilenameToDateTime(entry.fileName()).toSecsSinceEpoch(), entry);
 
-    // Sort by timestamp - put latest at begin of list
-    if(metarFiles.size() > 1)
-      std::sort(metarFiles.begin(), metarFiles.end(), [](const QFileInfo& file1, const QFileInfo& file2) -> bool {
-              return atools::fs::util::xpMetarFilenameToDate(file1.fileName()) > atools::fs::util::xpMetarFilenameToDate(file2.fileName());
-            });
+    if(!metarFiles.isEmpty())
+    {
+      // Get three files which match given date
+      const QList<qint64> keys = metarFiles.keys();
+      for(int i = keys.size() - 1; i >= 0; i--)
+      {
+        if(keys.at(i) <= weatherDatetimeSecs)
+        {
+          files.append(metarFiles.value(keys.at(i)).absoluteFilePath());
+          if(files.size() >= 3)
+            break;
+        }
+      }
+
+      // Nothing found since time is too early - add oldest file
+      if(files.isEmpty() && weatherDatetimeSecs < keys.constFirst())
+        files.append(metarFiles.value(keys.constFirst()).absoluteFilePath());
+    }
   }
-
-  if(verbose)
-    qDebug() << Q_FUNC_INFO << metarFiles;
-
-  // Return only latest three files
-  QStringList files;
-  for(int i = 0; i < std::min(3, static_cast < int > (metarFiles.size())); i++)
-    files.append(metarFiles.at(i).absoluteFilePath());
 
   if(verbose)
     qDebug() << Q_FUNC_INFO << files;

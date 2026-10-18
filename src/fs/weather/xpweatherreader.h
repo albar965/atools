@@ -21,7 +21,7 @@
 #include "fs/util/airportcoordtypes.h"
 #include "fs/weather/weathertypes.h"
 
-#include <QObject>
+#include <QDateTime>
 
 namespace atools {
 namespace geo {
@@ -56,6 +56,9 @@ public:
    * Get station and/or nearest METAR */
   const atools::fs::weather::Metar& getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
 
+  /* Try to reload X-Plane 12 files from folder for historical weather. Reloads only if there is a more than five minutes difference */
+  void simulatorTimeUpdated(const QDateTime& datetime);
+
   /* File is loaded on demand on first call here. X-Plane 11 uses a file and X-Plane 12 a folder. */
   void setWeatherPath(const QString& path, atools::fs::weather::XpWeatherType type);
 
@@ -69,10 +72,7 @@ public:
   void debugDumpContainerSizes() const;
 
   /* true if empty */
-  bool needsLoading();
-
-  /* load all METAR files */
-  void load();
+  bool needsLoading() const;
 
   atools::fs::weather::XpWeatherType getWeatherType() const
   {
@@ -88,6 +88,10 @@ signals:
   void weatherUpdated();
 
 private:
+  /* load all METAR files */
+  void load();
+  void prepareLoad();
+
   void deleteFsWatcher();
   void createFsWatcher();
   bool read(const QStringList& filenames);
@@ -97,13 +101,19 @@ private:
   void dirUpdated(const QString& dir);
 
   /* Get all METAR files from parent folder */
-  QStringList collectWeatherFiles();
+  QStringList collectWeatherFiles() const;
 
   atools::fs::weather::MetarIndex *metarIndex = nullptr;
   atools::util::FileSystemWatcher *fileWatcher = nullptr;
 
-  QString weatherPath; // Folder or file depending on simulator
-  QStringList currentMetarFiles; // Set file or collected files from folder
+  /* Folder ".../X-Plane 12/Output/real weather" or file METAR.rwx depending on simulator */
+  QString weatherPath;
+
+  /* Set file or collected files from folder. Maximum of three files. */
+  QStringList currentMetarFiles;
+
+  /* Date and time to select X-Plane 12 current real or historical weather */
+  QDateTime weatherDatetime;
 
   bool verbose;
 

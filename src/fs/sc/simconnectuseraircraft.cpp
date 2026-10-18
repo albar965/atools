@@ -98,6 +98,21 @@ int SimConnectUserAircraft::getTravelingTimeMinutes(const SimConnectUserAircraft
   return static_cast<int>((getZuluTime().toSecsSinceEpoch() - past.getZuluTime().toSecsSinceEpoch()) / 60L);
 }
 
+QDateTime SimConnectUserAircraft::getXPlaneWeatherTime() const
+{
+  if(isValid() && isXplane12())
+  {
+    if(getXPlaneWeatherTimeSource() == atools::fs::sc::WEATHER_TIME_SRC_SIMULATOR_TIME)
+      // Use simulator time for weather
+      return getZuluTime();
+    // Otherwise use real time for weather
+    // else if(aircraft.getXPlaneWeatherTimeSource() == atools::fs::sc::WEATHER_TIME_SRC_REAL_TIME)
+    // return QDateTime::currentDateTimeUtc();
+  }
+
+  return QDateTime::currentDateTimeUtc();
+}
+
 } // namespace sc
 } // namespace fs
 } // namespace atools
