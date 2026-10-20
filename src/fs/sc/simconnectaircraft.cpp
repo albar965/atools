@@ -195,10 +195,14 @@ atools::fs::sc::WeatherChangeMode SimConnectAircraft::getXPlaneWeatherChangeMode
 
 atools::fs::sc::WeatherTimeSource SimConnectAircraft::getXPlaneWeatherTimeSource() const
 {
+#ifdef DEBUG_AIRCAFT_WEATHER_DATETIME
+  return atools::fs::sc::WEATHER_TIME_SRC_SIMULATOR_TIME;
+#else
   if(properties.contains(atools::fs::sc::PROP_WEATHER_TIME_SRC))
     return static_cast<atools::fs::sc::WeatherTimeSource>(properties.value(atools::fs::sc::PROP_WEATHER_TIME_SRC).getValueInt());
   else
     return atools::fs::sc::WEATHER_TIME_SRC_INVALID;
+#endif
 }
 
 atools::fs::sc::WeatherSource SimConnectAircraft::getXPlaneWeatherSource() const

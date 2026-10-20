@@ -187,10 +187,19 @@ public:
   }
 
   /* Accuracy one second max limited by simulators */
+#ifdef DEBUG_AIRCAFT_WEATHER_DATETIME
+  const QDateTime getZuluTime() const
+  {
+    return QDateTime::currentDateTimeUtc().addDays(-1);
+  }
+
+#else
   const QDateTime& getZuluTime() const
   {
     return zuluDateTime;
   }
+
+#endif
 
   void setDateTime(const QDateTime& localDateTimeParam, const QDateTime& utcDateTimeParam)
   {
