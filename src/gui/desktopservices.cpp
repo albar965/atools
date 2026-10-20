@@ -120,8 +120,26 @@ void DesktopServices::openUrl(QWidget *parent, const QUrl& url, bool showInFileM
     openFile(parent, atools::nativeCleanPath(url.toLocalFile()), showInFileManager);
   else
   {
-    if(!QDesktopServices::openUrl(url))
-      atools::gui::Dialog::warning(parent, tr("Error opening URL \"%1\".").arg(url.toDisplayString()));
+    QString program;
+    QStringList arguments;
+
+#if defined(Q_OS_LINUX)
+    // Use xdg-open to open on linux
+    if(QFile::exists("/usr/bin/xdg-open"))
+    {
+      program = "/usr/bin/xdg-open";
+      arguments << url.toString();
+    }
+#endif
+
+    if(!program.isEmpty())
+      // Start process - otherwise fall back to QDesktopServices
+      runProcess(parent, program, arguments);
+    else
+    {
+      if(!QDesktopServices::openUrl(url))
+        atools::gui::Dialog::warning(parent, tr("Error opening URL \"%1\".").arg(url.toDisplayString()));
+    }
   }
 }
 
