@@ -38,7 +38,8 @@ class ComboBoxHandler
   Q_OBJECT
 
 public:
-  explicit ComboBoxHandler(QComboBox *comboBoxParam, QPushButton *deleteButtonParam = nullptr, const QString& settingsKeyParam = QString());
+  explicit ComboBoxHandler(QComboBox *comboBoxParam, QPushButton *deleteButtonParam, const QString& placeholder,
+                           const QString& settingsKeyParam);
   virtual ~ComboBoxHandler() override
   {
 

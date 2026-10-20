@@ -30,7 +30,8 @@ namespace gui {
 const static int MAX_CHARACTERS_MENU = 20;
 using atools::settings::Settings;
 
-ComboBoxHandler::ComboBoxHandler(QComboBox *comboBoxParam, QPushButton *deleteButtonParam, const QString& settingsKeyParam)
+ComboBoxHandler::ComboBoxHandler(QComboBox *comboBoxParam, QPushButton *deleteButtonParam, const QString& placeholder,
+                                 const QString& settingsKeyParam)
   : QObject(comboBoxParam), comboBox(comboBoxParam), deleteButton((deleteButtonParam)), settingsKey(settingsKeyParam)
 {
   // Cannot be set in designer
@@ -49,6 +50,8 @@ ComboBoxHandler::ComboBoxHandler(QComboBox *comboBoxParam, QPushButton *deleteBu
 
   if(deleteButton != nullptr)
     connect(deleteButton, &QPushButton::clicked, this, &ComboBoxHandler::deleteClicked);
+
+  comboBox->lineEdit()->setPlaceholderText(placeholder);
 }
 
 void ComboBoxHandler::showContextMenu(const QPoint& point)
