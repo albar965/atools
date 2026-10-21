@@ -4,9 +4,20 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ===============================================================================
 
-# Version 4.2.2.beta
+# Version 4.2.3.beta
 
-## Changes from 4.2.1.beta to 4.2.2.beta
+* Option to set placeholder text in ComboBoxHandler.
+* Added debugging options for X-Plane historical weather.
+* Changed desktop services to use program `xdg-open` on Linux to avoid issues with library search
+  path.
+* Adapted METAR reader and GRIB reader for X-Plane historical weather.
+* Optimizations when reading METAR files.
+* Added X-Plane weather source flags to SimConnectAircraft.
+* Now passing detection of navdata updates in MSFS to progress callback.
+
+===============================================================================
+
+# Version 4.2.2.beta
 
 * Adjusted performance collection to use indicated or actual altitude altitude to detect cruise
   phase.
