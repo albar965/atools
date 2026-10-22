@@ -170,19 +170,21 @@ atools::geo::PosD SimConnectAircraft::getPositionD() const
     return atools::geo::PosD(position);
 }
 
-void SimConnectAircraft::getXPlaneDate(int& localDateDays, float& localTimeSec, float& zuluTimeSec) const
+void SimConnectAircraft::getXPlaneDate(int& localDateDays, float& localTimeSec, int& zuluDateDays, float& zuluTimeSec) const
 {
-  if(properties.contains(PROP_LOCAL_DATE_DAYS) && properties.contains(PROP_LOCAL_TIME_SEC) && properties.contains(PROP_ZULU_TIME_SEC))
-  {
+  localDateDays = SC_INVALID_INT;
+  localTimeSec = zuluTimeSec = SC_INVALID_FLOAT;
+  zuluDateDays = SC_INVALID_INT;
+  zuluTimeSec = zuluTimeSec = SC_INVALID_FLOAT;
+
+  if(properties.contains(PROP_LOCAL_DATE_DAYS))
     localDateDays = properties.value(PROP_LOCAL_DATE_DAYS).getValueInt();
+  if(properties.contains(PROP_LOCAL_TIME_SEC))
     localTimeSec = properties.value(PROP_LOCAL_TIME_SEC).getValueFloat();
+  if(properties.contains(PROP_ZULU_DATE_DAYS))
+    zuluDateDays = properties.value(PROP_ZULU_DATE_DAYS).getValueInt();
+  if(properties.contains(PROP_ZULU_TIME_SEC))
     zuluTimeSec = properties.value(PROP_ZULU_TIME_SEC).getValueFloat();
-  }
-  else
-  {
-    localDateDays = SC_INVALID_INT;
-    localTimeSec = zuluTimeSec = SC_INVALID_FLOAT;
-  }
 }
 
 atools::fs::sc::WeatherChangeMode SimConnectAircraft::getXPlaneWeatherChangeMode() const

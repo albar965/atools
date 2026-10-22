@@ -1184,6 +1184,27 @@ QDateTime correctDate(int day, int hour, int minute, const QDateTime& dateTimeRe
   return dateTime;
 }
 
+void buidDateUtcAndLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int localDateDays, float localTimeSec, int utcDateDays,
+                         float utcTimeSec, float lonX)
+{
+  const float SECONDS_PER_HOUR = 3600.f;
+  const float SECONDS_PER_DAY = SECONDS_PER_HOUR * 24.f;
+
+  if(utcDateDays <= 366)
+  {
+    utcDateTime = QDateTime(QDate(QDate::currentDate().year(), 1, 1).addDays(utcDateDays - 1),
+                            QTime::fromMSecsSinceStartOfDay(atools::roundToInt(utcTimeSec * 1000.f)), QTimeZone::UTC);
+
+    const float offsetSeconds = (localDateDays * SECONDS_PER_DAY + localTimeSec) - (utcDateDays * SECONDS_PER_DAY + utcTimeSec);
+    localDateTime = QDateTime(QDate(QDate::currentDate().year(), 1, 1).addDays(localDateDays - 1),
+                              QTime::fromMSecsSinceStartOfDay(atools::roundToInt(localTimeSec * 1000.f)),
+                              QTimeZone::fromSecondsAheadOfUtc(atools::roundToInt(offsetSeconds)));
+  }
+  else
+    // Use inaccurate method if database is not opened
+    atools::correctDateLocal(localDateTime, utcDateTime, localDateDays, localTimeSec, utcTimeSec, lonX);
+}
+
 void correctDateLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int dayOfYearLocal, float secondsOfDayLocal,
                       float secondsOfDayUtc, float lonX)
 {

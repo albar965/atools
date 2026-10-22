@@ -57,14 +57,6 @@ public:
   QTimeZone getTimezone(const atools::geo::Pos& position);
   QTimeZone getTimezone(float lonX, float latY);
 
-  /* Determines timezone offset by seconds of day and creates localDateTime time from incomplete values based on current year.
-   * Time can be converted to UTC which might also roll over the date.
-   * Used to create a complete timedata from the cumbersome X-Plane time and date datarefs.
-   * Uses an inaccurate lookup if database file was not loaded.
-   * Does not use DST. */
-  void correctDateLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int dayOfYearLocal, float secondsOfDayLocal,
-                        float secondsOfDayUtc, float lonX, float latY);
-
 private:
   bool verbose = false;
   TimeZonePrivate *p;

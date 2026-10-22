@@ -75,18 +75,22 @@ enum DataFlags : quint8
                          // and are only transferred every tenth packets - currenty not used
 };
 
+/* Property numbers. Do not reshuffle to keep compatibility. */
 enum SimConnectAircraftPropTypes
 {
-  PROP_AIRCRAFT_CFG,
-  PROP_AIRCRAFT_LONX,
-  PROP_AIRCRAFT_LATY,
-  PROP_XPCONNECT_VERSION,
-  PROP_LOCAL_DATE_DAYS,
-  PROP_LOCAL_TIME_SEC,
-  PROP_ZULU_TIME_SEC,
-  PROP_WEATHER_CHANGE_MODE, /* X-Plane */
-  PROP_WEATHER_TIME_SRC, /* X-Plane */
-  PROP_WEATHER_SRC /* X-Plane */
+  PROP_AIRCRAFT_CFG = 0,
+  PROP_AIRCRAFT_LONX = 1,
+  PROP_AIRCRAFT_LATY = 2,
+  PROP_XPCONNECT_VERSION = 3,
+  PROP_LOCAL_DATE_DAYS = 4,
+  PROP_LOCAL_TIME_SEC = 5,
+  PROP_ZULU_DATE_DAYS = 10, /* X-Plane 12. Since v12.4.1 */
+  PROP_ZULU_TIME_SEC = 6,
+  PROP_WEATHER_CHANGE_MODE = 7, /* X-Plane 12 */
+  PROP_WEATHER_TIME_SRC = 8, /* X-Plane 12 */
+  PROP_WEATHER_SRC = 9 /* X-Plane 12 */
+
+                     // Next is 11
 };
 
 /* How the weather is changing. X-Plane. */
@@ -219,7 +223,7 @@ public:
   atools::geo::PosD getPositionD() const;
 
   /* Get raw X-Plane date variables and use a real timezone database to calculate local and UTC values. */
-  void getXPlaneDate(int& localDateDays, float& localTimeSec, float& zuluTimeSec) const;
+  void getXPlaneDate(int& localDateDays, float& localTimeSec, int& zuluDateDays, float& zuluTimeSec) const;
 
   /* How the weather is changing.  */
   atools::fs::sc::WeatherChangeMode getXPlaneWeatherChangeMode() const;

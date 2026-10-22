@@ -207,22 +207,5 @@ QTimeZone TimeZoneManager::getTimezone(float lonX, float latY)
   return timezone;
 }
 
-void TimeZoneManager::correctDateLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int dayOfYearLocal, float secondsOfDayLocal,
-                                       float secondsOfDayUtc, float lonX, float latY)
-{
-  if(p->timezoneDb != nullptr)
-  {
-    const QDate localDate = QDate(QDate::currentDate().year(), 1, 1).addDays(dayOfYearLocal - 1);
-
-    localDateTime = QDateTime(localDate,
-                              QTime::fromMSecsSinceStartOfDay(atools::roundToInt(secondsOfDayLocal * 1000.f)),
-                              QTimeZone(getTimezone(lonX, latY).standardTimeOffset(QDateTime(localDate, QTime(0, 0)))));
-    utcDateTime = localDateTime.toOffsetFromUtc(0);
-  }
-  else
-    // Use inaccurate method if database is not opened
-    atools::correctDateLocal(localDateTime, utcDateTime, dayOfYearLocal, secondsOfDayLocal, secondsOfDayUtc, lonX);
-}
-
 } // namespace timezone
 } // namespace atools

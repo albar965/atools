@@ -513,6 +513,10 @@ QDateTime correctDate(int day, int hour, int minute, const QDateTime& dateTimeRe
 void correctDateLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int dayOfYearLocal, float secondsOfDayLocal,
                       float secondsOfDayUtc, float lonX);
 
+/* Build date and time from given day and seconds, Does not consider end of year overrun. */
+void buidDateUtcAndLocal(QDateTime& localDateTime, QDateTime& utcDateTime, int localDateDays, float localTimeSec, int utcDateDays,
+                         float utcTimeSec, float lonX);
+
 template<typename TYPE>
 constexpr int sign(TYPE t)
 {
