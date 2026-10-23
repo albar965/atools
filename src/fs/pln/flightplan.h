@@ -292,7 +292,7 @@ public:
    *
    * See variable definitions in namespace atools::fs::pln::pattern.
    */
-  QString getFilenamePattern(const QString& pattern, const QString& suffix, const QString& aircraftType, bool metric) const;
+  QString getFilenamePattern(const QString& pattern, const QString& suffix, const QString& emptyText, const QString& aircraftType, bool metric) const;
 
   static QString getFilenamePattern(QString pattern, const QString& type, const QString& departureName, const QString& departureIdent,
                                     const QString& destName, const QString& destIdent, const QString& aircraftType, const QString& suffix,

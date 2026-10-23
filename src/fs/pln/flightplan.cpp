@@ -235,10 +235,11 @@ void Flightplan::setDepartureParkingPosition(const geo::Pos& value, float altitu
   departureParkingHeading = headingTrue;
 }
 
-QString Flightplan::getFilenamePattern(const QString& pattern, const QString& suffix, const QString& aircraftType, bool metric) const
+QString Flightplan::getFilenamePattern(const QString& pattern, const QString& suffix, const QString& emptyText, const QString& aircraftType,
+                                       bool metric) const
 {
   if(isEmpty())
-    return tr("Empty Flight Plan") + suffix;
+    return emptyText + suffix;
 
   QString type;
   if(getFlightplanType() == atools::fs::pln::IFR)
