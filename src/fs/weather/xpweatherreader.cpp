@@ -186,13 +186,15 @@ QStringList XpWeatherReader::collectWeatherFiles() const
 
     if(!metarFiles.isEmpty())
     {
-      // Get three files which match given date
       const QList<qint64> keys = metarFiles.keys();
+
+      // Count backwards from future to past
       for(int i = keys.size() - 1; i >= 0; i--)
       {
         if(keys.at(i) <= weatherDatetimeSecs)
         {
-          files.append(metarFiles.value(keys.at(i)).absoluteFilePath());
+          // Time is equal or earlier than current - add and maintain list from late to early for merging
+          files.prepend(metarFiles.value(keys.at(i)).absoluteFilePath());
           if(files.size() >= 3)
             break;
         }
