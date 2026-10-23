@@ -173,9 +173,9 @@ atools::geo::PosD SimConnectAircraft::getPositionD() const
 void SimConnectAircraft::getXPlaneDate(int& localDateDays, float& localTimeSec, int& zuluDateDays, float& zuluTimeSec) const
 {
   localDateDays = SC_INVALID_INT;
-  localTimeSec = zuluTimeSec = SC_INVALID_FLOAT;
+  localTimeSec = SC_INVALID_FLOAT;
   zuluDateDays = SC_INVALID_INT;
-  zuluTimeSec = zuluTimeSec = SC_INVALID_FLOAT;
+  zuluTimeSec = SC_INVALID_FLOAT;
 
   if(properties.contains(PROP_LOCAL_DATE_DAYS))
     localDateDays = properties.value(PROP_LOCAL_DATE_DAYS).getValueInt();
