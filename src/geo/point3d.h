@@ -20,6 +20,7 @@
 
 #include <QTypeInfo>
 #include <cmath>
+#include <algorithm>
 
 namespace atools {
 namespace geo {
