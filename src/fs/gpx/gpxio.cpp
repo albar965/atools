@@ -233,17 +233,17 @@ void GpxIO::saveGpxInternal(QXmlStreamWriter& writer, const atools::fs::gpx::Gpx
       {
         writer.writeStartElement(QStringLiteral("trkpt"));
 
-        writer.writeAttribute(QStringLiteral("lon"), QString::number(pos.pos.getLonX(), 'f', 6));
-        writer.writeAttribute(QStringLiteral("lat"), QString::number(pos.pos.getLatY(), 'f', 6));
-        writer.writeTextElement(QStringLiteral("ele"), QString::number(atools::geo::feetToMeter(pos.pos.getAltitude())));
+        writer.writeAttribute(QStringLiteral("lon"), QString::number(pos.getLonX(), 'f', 6));
+        writer.writeAttribute(QStringLiteral("lat"), QString::number(pos.getLatY(), 'f', 6));
+        writer.writeTextElement(QStringLiteral("ele"), QString::number(atools::geo::feetToMeter(pos.getAltitude())));
 
-        if(pos.timestampMs > 0)
+        if(pos.getTimestampMs() > 0)
         {
           // (UTC/Zulu) in ISO 8601 format: "yyyy-mm-ddThh:mm:ssZ" or "yyyy-MM-ddTHH:mm:ss.zzzZ"
           // <time>2011-01-16T23:59:01Z</time>
           // Changes time number to local if Qt::UTC is omitted
           writer.writeTextElement(QStringLiteral("time"),
-                                  QDateTime::fromMSecsSinceEpoch(pos.timestampMs, QTimeZone::UTC).toString(Qt::ISODateWithMs));
+                                  QDateTime::fromMSecsSinceEpoch(pos.getTimestampMs(), QTimeZone::UTC).toString(Qt::ISODateWithMs));
         }
 
         writer.writeEndElement(); // trkpt

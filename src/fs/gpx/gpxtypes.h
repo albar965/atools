@@ -26,17 +26,51 @@ namespace fs {
 
 namespace gpx {
 
-struct TrailPoint
+class TrailPoint
 {
-  TrailPoint(const atools::geo::PosD& posParam, qint64 timestampParam)
-    : pos(posParam), timestampMs(timestampParam)
-  {
-  }
-
+public:
   TrailPoint()
     : timestampMs(0L)
   {
   }
+
+  explicit TrailPoint(const atools::geo::PosD& posParam, qint64 timestampParam)
+    : pos(posParam), timestampMs(timestampParam)
+  {
+  }
+
+  const atools::geo::PosD& getPosD() const
+  {
+    return pos;
+  }
+
+  const atools::geo::Pos getPos() const
+  {
+    return pos.asPos();
+  }
+
+  qint64 getTimestampMs() const
+  {
+    return timestampMs;
+  }
+
+  double getLonX() const
+  {
+    return pos.getLonX();
+  }
+
+  double getLatY() const
+  {
+    return pos.getLatY();
+  }
+
+  double getAltitude() const
+  {
+    return pos.getAltitude();
+  }
+
+private:
+  friend class GpxData;
 
   atools::geo::PosD pos;
   qint64 timestampMs;
@@ -73,6 +107,9 @@ public:
   {
     return trailRect;
   }
+
+  /* Get last number of points */
+  const atools::geo::Rect getTrailRect(int numPoints) const;
 
   float getMaxTrailAltitude() const
   {

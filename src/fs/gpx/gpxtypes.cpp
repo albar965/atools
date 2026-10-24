@@ -21,6 +21,26 @@ namespace atools {
 namespace fs {
 namespace gpx {
 
+const geo::Rect GpxData::getTrailRect(int numPoints) const
+{
+  atools::geo::Rect rect;
+
+  int numPts = 0;
+  for(int i = trails.size() - 1; i >= 0; i--)
+  {
+    const TrailPoints& points = trails.at(i);
+    for(int j = points.size() - 1; j >= 0; j--)
+    {
+      rect.extend(points.at(j).getPos());
+
+      if(++numPts > numPoints)
+        return rect;
+    }
+  }
+
+  return rect;
+}
+
 void GpxData::clear()
 {
   trails.clear();
