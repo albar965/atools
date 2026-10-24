@@ -204,7 +204,7 @@ public:
 
   /* Defines the data to fetch. Called after receiving open event */
   void fillDataDefinition();
-  void fillDataDefinitionAicraft(DataDefinitionId definitionId);
+  void fillDataDefinitionAircraft(DataDefinitionId definitionId);
 
   void copyToSimConnectAircraft(const SimDataAircraft& simDataAircraft, atools::fs::sc::SimConnectAircraft& aircraft);
 
@@ -594,10 +594,10 @@ bool SimConnectHandlerPrivate::callDispatch(bool& dataFetched, const QString& me
 
 void SimConnectHandlerPrivate::fillDataDefinition()
 {
-  fillDataDefinitionAicraft(DATA_DEFINITION_AI_AIRCRAFT);
-  fillDataDefinitionAicraft(DATA_DEFINITION_AI_HELICOPTER);
-  fillDataDefinitionAicraft(DATA_DEFINITION_AI_BOAT);
-  fillDataDefinitionAicraft(DATA_DEFINITION_USER_AIRCRAFT);
+  fillDataDefinitionAircraft(DATA_DEFINITION_AI_AIRCRAFT);
+  fillDataDefinitionAircraft(DATA_DEFINITION_AI_HELICOPTER);
+  fillDataDefinitionAircraft(DATA_DEFINITION_AI_BOAT);
+  fillDataDefinitionAircraft(DATA_DEFINITION_USER_AIRCRAFT);
 
   api->AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Magvar", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
 
@@ -662,7 +662,7 @@ void SimConnectHandlerPrivate::fillDataDefinition()
   state = sc::STATEOK;
 }
 
-void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId definitionId)
+void SimConnectHandlerPrivate::fillDataDefinitionAircraft(DataDefinitionId definitionId)
 {
   // Set up the data definition, but do not yet do anything with it
   api->AddToDataDefinition(definitionId, "Title", nullptr, SIMCONNECT_DATATYPE_STRING256);
