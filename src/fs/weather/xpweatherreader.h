@@ -22,6 +22,7 @@
 #include "fs/weather/weathertypes.h"
 
 #include <QDateTime>
+#include <QFileInfo>
 
 namespace atools {
 namespace geo {
@@ -56,8 +57,15 @@ public:
    * Get station and/or nearest METAR */
   const atools::fs::weather::Metar& getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
 
-  /* Try to reload X-Plane 12 files from folder for historical weather. Reloads only if there is a more than five minutes difference */
-  void simulatorTimeUpdated(const QDateTime& datetime);
+  /* Try to reload X-Plane 12 files from folder for historical weather.
+   * Tries to reload only if there is a more than one minute difference */
+  void simulatorTimeUpdated();
+
+  /* Update constantly for every simulator message */
+  void setWeatherDatetimeCurrent(const QDateTime& weatherDatetimeParam)
+  {
+    weatherDatetimeCurrent = weatherDatetimeParam;
+  }
 
   /* File is loaded on demand on first call here. X-Plane 11 uses a file and X-Plane 12 a folder. */
   void setWeatherPath(const QString& path, atools::fs::weather::XpWeatherType type);
@@ -101,7 +109,53 @@ private:
   void dirUpdated(const QString& dir);
 
   /* Get all METAR files from parent folder */
-  QStringList collectWeatherFiles() const;
+  class MetarFile;
+  QList<MetarFile> collectWeatherFiles() const;
+
+  class MetarFile
+  {
+public:
+    explicit MetarFile(const QFileInfo& fileinfo)
+      : filename(fileinfo.absoluteFilePath()), timestamp(fileinfo.lastModified().toSecsSinceEpoch()),
+      size(fileinfo.size())
+    {
+    }
+
+    explicit MetarFile(const QString& filename)
+      : MetarFile(QFileInfo(filename))
+    {
+    }
+
+    const QString& getFilename() const
+    {
+      return filename;
+    }
+
+    qint64 getTimestamp() const
+    {
+      return timestamp;
+    }
+
+    qint64 getSize() const
+    {
+      return size;
+    }
+
+    bool operator==(const MetarFile& other) const
+    {
+      return filename == other.filename && timestamp == other.timestamp && size == other.size;
+    }
+
+    bool operator!=(const MetarFile& other) const
+    {
+      return !operator==(other);
+    }
+
+private:
+    QString filename;
+    qint64 timestamp = 0LL;
+    qint64 size = 0LL;
+  };
 
   atools::fs::weather::MetarIndex *metarIndex = nullptr;
   atools::util::FileSystemWatcher *fileWatcher = nullptr;
@@ -109,11 +163,11 @@ private:
   /* Folder ".../X-Plane 12/Output/real weather" or file METAR.rwx depending on simulator */
   QString weatherPath;
 
-  /* Set file or collected files from folder. Maximum of three files. */
-  QStringList currentMetarFiles;
+  QList<MetarFile> currentMetarFiles;
 
   /* Date and time to select X-Plane 12 current real or historical weather */
-  QDateTime weatherDatetime;
+  QDateTime weatherDatetimeCurrent, /* Constantly updated with every simulator message */
+            weatherDatetimeLastLoadTry; /* Update for each loading retry (fetching directory ) */
 
   bool verbose;
 

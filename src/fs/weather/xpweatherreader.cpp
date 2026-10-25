@@ -32,8 +32,8 @@ namespace atools {
 namespace fs {
 namespace weather {
 
-// Allow five minutes tolerance before trying to reload weather files
-const qint64 WEATHER_TIME_EPSILON = 300LL;
+// Allow one minute tolerance before trying to reload weather files
+const qint64 WEATHER_TIME_EPSILON = 60LL;
 
 using atools::util::FileSystemWatcher;
 
@@ -55,13 +55,12 @@ const atools::fs::weather::Metar& XpWeatherReader::getXplaneMetar(const QString&
   return metarIndex->getMetar(station, pos);
 }
 
-void XpWeatherReader::simulatorTimeUpdated(const QDateTime& datetime)
+void XpWeatherReader::simulatorTimeUpdated()
 {
-  if(needsLoading() || atools::almostNotEqual(weatherDatetime.toSecsSinceEpoch(), datetime.toSecsSinceEpoch(), WEATHER_TIME_EPSILON))
-  {
-    weatherDatetime = datetime;
+  // Call load if not initialized yet or on timeout of WEATHER_TIME_EPSILON
+  if(needsLoading() ||
+     atools::almostNotEqual(weatherDatetimeLastLoadTry.toSecsSinceEpoch(), weatherDatetimeCurrent.toSecsSinceEpoch(), WEATHER_TIME_EPSILON))
     load();
-  }
 }
 
 void XpWeatherReader::setWeatherPath(const QString& path, XpWeatherType type)
@@ -78,8 +77,11 @@ bool XpWeatherReader::needsLoading() const
 
 void XpWeatherReader::prepareLoad()
 {
-  if(!weatherDatetime.isValid())
-    weatherDatetime = QDateTime::currentDateTimeUtc();
+  if(!weatherDatetimeCurrent.isValid())
+    weatherDatetimeCurrent = QDateTime::currentDateTimeUtc();
+
+  if(!weatherDatetimeLastLoadTry.isValid())
+    weatherDatetimeLastLoadTry = QDateTime::currentDateTimeUtc();
 
   if(needsLoading())
     load();
@@ -87,14 +89,16 @@ void XpWeatherReader::prepareLoad()
 
 void XpWeatherReader::load()
 {
-  const QStringList metarFiles = collectWeatherFiles();
+  // Remember time when *trying* to load
+  weatherDatetimeLastLoadTry = weatherDatetimeCurrent;
+  const QList<MetarFile> metarFiles = collectWeatherFiles();
   if(metarFiles != currentMetarFiles)
   {
     currentMetarFiles = metarFiles;
     metarIndex->clear();
 
     if(verbose)
-      qDebug() << Q_FUNC_INFO << weatherPath << currentMetarFiles;
+      qDebug() << Q_FUNC_INFO << weatherPath;
 
     createFsWatcher();
   }
@@ -145,7 +149,7 @@ void XpWeatherReader::dirUpdated(const QString& dir)
     qDebug() << Q_FUNC_INFO << dir;
 
   // Update list of files and reload weather if this has changed
-  QStringList metarFiles = collectWeatherFiles();
+  const QList<MetarFile> metarFiles = collectWeatherFiles();
   if(metarFiles != currentMetarFiles)
   {
     currentMetarFiles = metarFiles;
@@ -164,18 +168,18 @@ void XpWeatherReader::filesUpdated(const QStringList& filenames)
     qDebug() << Q_FUNC_INFO << "File not changed";
 }
 
-QStringList XpWeatherReader::collectWeatherFiles() const
+QList<XpWeatherReader::MetarFile> XpWeatherReader::collectWeatherFiles() const
 {
-  QStringList files;
+  QList<MetarFile> files;
 
   if(weatherType == atools::fs::weather::WEATHER_XP11)
     // METAR.rwx
-    files.append(QFileInfo(weatherPath).absoluteFilePath());
+    files.append(MetarFile(weatherPath));
   else if(weatherType == atools::fs::weather::WEATHER_XP12)
   {
     // Collect all files sorted from old to new ========================
     QMap<qint64, QFileInfo> metarFiles;
-    qint64 weatherDatetimeSecs = weatherDatetime.toSecsSinceEpoch();
+    qint64 weatherDatetimeSecs = weatherDatetimeCurrent.toSecsSinceEpoch();
 
     // METAR-2022-9-6-19.00-ZULU.txt, METAR-2022-9-6-20.00-ZULU.txt
     // METAR-2022-9-6-19.00.txt, METAR-2022-9-6-20.00.txt
@@ -194,7 +198,7 @@ QStringList XpWeatherReader::collectWeatherFiles() const
         if(keys.at(i) <= weatherDatetimeSecs)
         {
           // Time is equal or earlier than current - add and maintain list from late to early for merging
-          files.prepend(metarFiles.value(keys.at(i)).absoluteFilePath());
+          files.prepend(MetarFile(metarFiles.value(keys.at(i))));
           if(files.size() >= 3)
             break;
         }
@@ -202,12 +206,9 @@ QStringList XpWeatherReader::collectWeatherFiles() const
 
       // Nothing found since time is too early - add oldest file
       if(files.isEmpty() && weatherDatetimeSecs < keys.constFirst())
-        files.append(metarFiles.value(keys.constFirst()).absoluteFilePath());
+        files.append(MetarFile(metarFiles.value(keys.constFirst())));
     }
   }
-
-  if(verbose)
-    qDebug() << Q_FUNC_INFO << files;
 
   return files;
 }
@@ -237,14 +238,18 @@ void XpWeatherReader::createFsWatcher()
   }
 
   // Load initially
-  filesUpdated(currentMetarFiles);
+  QStringList files;
+  for(const MetarFile& file : std::as_const(currentMetarFiles))
+    files.append(file.getFilename());
+
+  filesUpdated(files);
 
   if(currentMetarFiles.isEmpty() && weatherType == WEATHER_XP12)
     // Watch at least folder if file list is empty
     fileWatcher->setFilenamesAndStart({weatherPath});
-  else
+  else if(!currentMetarFiles.isEmpty())
     // Start watching for changes
-    fileWatcher->setFilenamesAndStart(currentMetarFiles);
+    fileWatcher->setFilenamesAndStart({currentMetarFiles.constFirst().getFilename()});
 }
 
 void XpWeatherReader::debugDumpContainerSizes() const
