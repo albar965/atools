@@ -1665,6 +1665,7 @@ void CALLBACK SimConnectLoaderPrivate::dispatchProcedure(SIMCONNECT_RECV *pData)
               case SIMCONNECT_FACILITY_DATA_ROUTE:
               case SIMCONNECT_FACILITY_DATA_VDGS:
               case SIMCONNECT_FACILITY_DATA_HOLDING_PATTERN:
+              case SIMCONNECT_FACILITY_DATA_TAXI_PARKING_AIRLINE:
                 break;
             } // switch(facilityType)
           } // if(curAirport != nullptr)
