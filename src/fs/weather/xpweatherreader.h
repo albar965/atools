@@ -67,6 +67,12 @@ public:
     weatherDatetimeCurrent = weatherDatetimeParam;
   }
 
+  /* Emitted when a connection was established */
+  void connectedToSimulator();
+
+  /* Emitted when disconnected manually or due to error */
+  void disconnectedFromSimulator();
+
   /* File is loaded on demand on first call here. X-Plane 11 uses a file and X-Plane 12 a folder. */
   void setWeatherPath(const QString& path, atools::fs::weather::XpWeatherType type);
 
@@ -112,6 +118,7 @@ private:
   class MetarFile;
   QList<MetarFile> collectWeatherFiles() const;
 
+  /*  Combines relevant information about files without the performance issues of file info. Comparable. */
   class MetarFile
   {
 public:
@@ -163,6 +170,7 @@ private:
   /* Folder ".../X-Plane 12/Output/real weather" or file METAR.rwx depending on simulator */
   QString weatherPath;
 
+  /* Currently loaded files plus timestamp and size */
   QList<MetarFile> currentMetarFiles;
 
   /* Date and time to select X-Plane 12 current real or historical weather */
@@ -171,8 +179,8 @@ private:
 
   bool verbose;
 
+  /* XP11 or XP12 */
   atools::fs::weather::XpWeatherType weatherType = atools::fs::weather::WEATHER_XP_UNKNOWN;
-
 };
 
 } // namespace weather

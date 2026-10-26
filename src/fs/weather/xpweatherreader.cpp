@@ -63,6 +63,17 @@ void XpWeatherReader::simulatorTimeUpdated()
     load();
 }
 
+void XpWeatherReader::connectedToSimulator()
+{
+
+}
+
+void XpWeatherReader::disconnectedFromSimulator()
+{
+  weatherDatetimeCurrent = weatherDatetimeLastLoadTry = QDateTime::currentDateTimeUtc();
+  load();
+}
+
 void XpWeatherReader::setWeatherPath(const QString& path, XpWeatherType type)
 {
   clear();
