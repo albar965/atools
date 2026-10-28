@@ -253,15 +253,19 @@ constexpr int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
   return std::abs(x1 - x2) + std::abs(y1 - y2);
 }
 
-template<>
-constexpr int manhattanDistance<int>(int x1, int y1, int x2, int y2)
+template<typename TYPE>
+constexpr int manhattanDistance(const TYPE& p1, const TYPE& p2)
 {
-  return absInt(x1 - x2) + absInt(y1 - y2);
+  return manhattanDistance(p1.x(), p1.y(), p2.x(), p2.y());
 }
 
-inline float manhattanDistanceF(float x1, float y1, float x2, float y2)
+template<typename TYPE>
+inline int manhattanLength(const TYPE& polygon)
 {
-  return std::abs(x1 - x2) + std::abs(y1 - y2);
+  int distance = 0;
+  for(int i = 0; i < polygon.size() - 1; i++)
+    distance += atools::geo::manhattanDistance(polygon.at(i), polygon.at(i + 1));
+  return distance;
 }
 
 /* Euclidian distance between points rounded to int */
