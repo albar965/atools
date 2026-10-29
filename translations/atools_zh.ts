@@ -332,19 +332,18 @@ File: &quot;%2&quot;
 <context>
     <name>Flightplan</name>
     <message>
-        <location filename="../src/fs/pln/flightplan.cpp" line="241"/>
         <source>Empty Flight Plan</source>
-        <translation>空飞行计划</translation>
+        <translation type="vanished">空飞行计划</translation>
     </message>
     <message>
         <location filename="../src/fs/pln/flightplan.cpp" line="68"/>
-        <location filename="../src/fs/pln/flightplan.cpp" line="245"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="246"/>
         <source>IFR</source>
         <translation>IFR</translation>
     </message>
     <message>
         <location filename="../src/fs/pln/flightplan.cpp" line="70"/>
-        <location filename="../src/fs/pln/flightplan.cpp" line="247"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="248"/>
         <source>VFR</source>
         <translation>VFR</translation>
     </message>

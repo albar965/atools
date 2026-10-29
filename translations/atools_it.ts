@@ -398,19 +398,18 @@ File: &quot;%2&quot;
         <translation type="vanished">Creato da %1 Versione %2 (revisione %3) il %4</translation>
     </message>
     <message>
-        <location filename="../src/fs/pln/flightplan.cpp" line="241"/>
         <source>Empty Flight Plan</source>
-        <translation>Piano di volo Vuoto</translation>
+        <translation type="vanished">Piano di volo Vuoto</translation>
     </message>
     <message>
         <location filename="../src/fs/pln/flightplan.cpp" line="68"/>
-        <location filename="../src/fs/pln/flightplan.cpp" line="245"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="246"/>
         <source>IFR</source>
         <translation>IFR</translation>
     </message>
     <message>
         <location filename="../src/fs/pln/flightplan.cpp" line="70"/>
-        <location filename="../src/fs/pln/flightplan.cpp" line="247"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="248"/>
         <source>VFR</source>
         <translation>VFR</translation>
     </message>

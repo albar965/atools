@@ -341,13 +341,13 @@ Fichier: &quot;%2&quot;
     </message>
     <message>
         <location filename="../src/fs/pln/flightplan.cpp" line="68"/>
-        <location filename="../src/fs/pln/flightplan.cpp" line="245"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="246"/>
         <source>IFR</source>
         <translation type="unfinished">IFR</translation>
     </message>
     <message>
         <location filename="../src/fs/pln/flightplan.cpp" line="70"/>
-        <location filename="../src/fs/pln/flightplan.cpp" line="247"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="248"/>
         <source>VFR</source>
         <translation type="unfinished">VFR</translation>
     </message>
@@ -372,9 +372,8 @@ Fichier: &quot;%2&quot;
         <translation type="unfinished">Le modèle est vide.</translation>
     </message>
     <message>
-        <location filename="../src/fs/pln/flightplan.cpp" line="241"/>
         <source>Empty Flight Plan</source>
-        <translation type="unfinished">Plan de vol à vide</translation>
+        <translation type="obsolete">Plan de vol à vide</translation>
     </message>
 </context>
 <context>

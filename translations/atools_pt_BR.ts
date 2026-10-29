@@ -328,19 +328,18 @@ Ocorreu um erro no Sql
 <context>
     <name>Flightplan</name>
     <message>
-        <location filename="../src/fs/pln/flightplan.cpp" line="241"/>
         <source>Empty Flight Plan</source>
-        <translation>Plano de voo Vazio</translation>
+        <translation type="vanished">Plano de voo Vazio</translation>
     </message>
     <message>
         <location filename="../src/fs/pln/flightplan.cpp" line="68"/>
-        <location filename="../src/fs/pln/flightplan.cpp" line="245"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="246"/>
         <source>IFR</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../src/fs/pln/flightplan.cpp" line="70"/>
-        <location filename="../src/fs/pln/flightplan.cpp" line="247"/>
+        <location filename="../src/fs/pln/flightplan.cpp" line="248"/>
         <source>VFR</source>
         <translation></translation>
     </message>
