@@ -144,6 +144,11 @@ public:
     pos1.interpolatePoints(pos2, distanceMeter, numPoints, positions);
   }
 
+  void interpolatePoints(int numPoints, atools::geo::LineString& positions) const
+  {
+    pos1.interpolatePoints(pos2, lengthMeter(), numPoints, positions);
+  }
+
   void interpolatePointsRhumb(float distanceMeter, int numPoints, atools::geo::LineString& positions) const
   {
     pos1.interpolatePointsRhumb(pos2, distanceMeter, numPoints, positions);

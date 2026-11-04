@@ -288,6 +288,12 @@ public:
 
   /* positions includes this if numPoints > 0 but not otherPos  */
   void interpolatePoints(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints, atools::geo::LineString& positions) const;
+
+  void interpolatePoints(const atools::geo::Pos& otherPos, int numPoints, atools::geo::LineString& positions) const
+  {
+    return interpolatePoints(otherPos, distanceMeterTo(otherPos), numPoints, positions);
+  }
+
   void interpolatePointsRhumb(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
                               atools::geo::LineString& positions) const;
 

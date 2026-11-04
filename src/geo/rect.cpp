@@ -148,30 +148,30 @@ bool Rect::overlaps(const Rect& other) const
     return *this == other;
 
   float north = getNorth(), south = getSouth(), east = getEast(), west = getWest();
-  float north2 = other.getNorth(), south2 = other.getSouth(), east2 = other.getEast(), west2 = other.getWest();
+  float northOther = other.getNorth(), southOther = other.getSouth(), eastOther = other.getEast(), westOther = other.getWest();
 
-  // check the intersection criterion for the latitude first
-  if((north >= north2 && south <= north2) || // Case 1: northern boundary of other box intersects
-     (north2 >= north && south2 <= north) || // Case 2: northern boundary of this box intersects
-     (north >= south2 && south <= south2) || // Case 3: southern boundary of other box intersects
-     (north2 >= south && south2 <= south)) // Case 4: southern boundary of this box intersects
+  // Check the intersection criterion for the latitude first
+  if((north >= northOther && south <= northOther) || // Northern boundary of other box intersects
+     (northOther >= north && southOther <= north) || // Northern boundary of this box intersects
+     (north >= southOther && south <= southOther) || // Southern boundary of other box intersects
+     (northOther >= south && southOther <= south)) // Southern boundary of this box intersects
   {
     if(!crossesAntiMeridian())
     {
       if(!other.crossesAntiMeridian())
       {
-        // "Normal" case: both bounding boxes don't cross the date line
-        if((east >= east2 && west <= east2) || // Case 1: eastern boundary of other box intersects
-           (east2 >= east && west2 <= east) || // Case 2: eastern boundary of this box intersects
-           (east >= west2 && west <= west2) || // Case 3: western boundary of other box intersects
-           (east2 >= west && west2 <= west)) // Case 4: western boundary of this box intersects
+        // Both bounding boxes don't cross the date line
+        if((east >= eastOther && west <= eastOther) || // Eastern boundary of other box intersects
+           (eastOther >= east && westOther <= east) || // Eastern boundary of this box intersects
+           (east >= westOther && west <= westOther) || // Western boundary of other box intersects
+           (eastOther >= west && westOther <= west)) // Western boundary of this box intersects
           return true;
       }
       else
       {
         // The other bounding box crosses the date line, "this" one does not:
         // So the date line splits the other bounding box in two parts.
-        if(west <= east2 || east >= west2)
+        if(west <= eastOther || east >= westOther)
           return true;
       }
     }
@@ -187,7 +187,7 @@ bool Rect::overlaps(const Rect& other) const
         //
         // This also covers the case where this bounding box covers the whole
         // longitude range ( -180 <= lon <= + 180 ).
-        if(west2 <= east || east2 >= west)
+        if(westOther <= east || eastOther >= west)
           return true;
       }
     }
