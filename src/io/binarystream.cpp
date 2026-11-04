@@ -261,7 +261,7 @@ void BinaryStream::checkStream(const QString& what) const
         statusText = tr("Write failed");
         break;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
       case QDataStream::SizeLimitExceeded:
         statusText = tr("Size limit exceeded");
         break;
