@@ -644,7 +644,7 @@ atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfig
     {
       // ...\Packages\Microsoft.Limitless_8wekyb3d8bbwe\LocalCache\Packages\Community\!!!navigraph-nav-base\layout.json
       // ...\Packages\Microsoft.Limitless_8wekyb3d8bbwe\LocalCache\Packages\Community\}}}navigraph-nav-jepp\layout.json
-      const QDir dirCommunity(FsPaths::getMsfs24CommunityPath(), "*navigraph-nav-*",
+      const QDir dirCommunity(FsPaths::getMsfs24CommunityPath(), "*navigraph-nav*",
                               QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
       for(const QFileInfo& info : dirCommunity.entryInfoList())
@@ -1796,7 +1796,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
           addonArea.setAddOn(true);
 
           // Detect Navigraph navdata update packages for special handling
-          addonArea.setMsfsNavigraphNavdata(isNavigraphNavdata(manifest));
+          addonArea.setMsfsNavigraphNavdata(isNavigraphNavdata(manifest, name));
 
           cfg.getAreas().append(addonArea);
         }
@@ -1842,7 +1842,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
           if(!layout.getBglPaths().isEmpty())
           {
             // Detect Navigraph navdata update packages for special handling
-            addonArea.setMsfsNavigraphNavdata(isNavigraphNavdata(manifest));
+            addonArea.setMsfsNavigraphNavdata(isNavigraphNavdata(manifest, name));
 
             cfg.getAreas().append(addonArea);
           }
@@ -1855,8 +1855,9 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   cfg.sortAreas();
 }
 
-bool NavDatabase::isNavigraphNavdata(atools::fs::scenery::ManifestJson& manifest)
+bool NavDatabase::isNavigraphNavdata(atools::fs::scenery::ManifestJson& manifest, const QString& path)
 {
+  Q_UNUSED(manifest)
   // navigraph-navdata
   // Procedures and airport centers
   // .../Community/navigraph-navdata/scenery/fs-base-jep/scenery/1107/NAX92590.bgl
@@ -1902,8 +1903,52 @@ bool NavDatabase::isNavigraphNavdata(atools::fs::scenery::ManifestJson& manifest
   // .   }
   // . }
 
-  return manifest.isScenery() && manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
-         manifest.getTitle().contains("AIRAC Cycle", Qt::CaseInsensitive);
+  // New since cycle 2611 =======================================================
+
+  // . .../Community/navigraph-navdata-base/
+  // . {
+  // .   "dependencies": [],
+  // .   "content_type": "SCENERY",
+  // .   "title": "AIRAC Cycle 2611 rev.3",
+  // .   "manufacturer": "Jeppesen ForeFlight",
+  // .   "creator": "Navigraph",
+  // .   "package_version": "0.1.0",
+  // .   "minimum_game_version": "1.39.12",
+  // .   "release_notes": {
+  // .     "neutral": {
+  // .       "LastUpdate": "",
+  // .       "OlderHistory": ""
+  // .     }
+  // .   }
+  // . }
+
+  // .../Community/navigraph-navdata-fixedwing/
+  // . {
+  // .   "dependencies": [
+  // .     {
+  // .       "name": "navigraph-navdata-base",
+  // .       "package_version": "0.1.0"
+  // .     }
+  // .   ],
+  // .   "content_type": "SCENERY",
+  // .   "title": "Fixedwing",
+  // .   "manufacturer": "Jeppesen ForeFlight",
+  // .   "creator": "Navigraph",
+  // .   "package_version": "26.11.3",
+  // .   "minimum_game_version": "1.39.12",
+  // .   "release_notes": {
+  // .     "neutral": {
+  // .       "LastUpdate": "",
+  // .       "OlderHistory": ""
+  // .     }
+  // .   }
+  // . }
+  // return manifest.isScenery() &&
+  // manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
+  // manifest.getTitle().contains("AIRAC Cycle", Qt::CaseInsensitive) &&
+  // manifest.getManufacturer().contains("Jeppesen", Qt::CaseInsensitive);
+
+  return path.startsWith(QStringLiteral("navigraph-navdata"));
 }
 
 void NavDatabase::readSceneryConfigIncludePathsFsxP3dMsfs(atools::fs::scenery::SceneryCfg& cfg)

@@ -212,7 +212,7 @@ private:
   void calculateRating(atools::fs::FsPaths::SimulatorType sim);
 
   /* Detect Navigraph navdata update packages for special handling. */
-  bool isNavigraphNavdata(atools::fs::scenery::ManifestJson& manifest);
+  bool isNavigraphNavdata(atools::fs::scenery::ManifestJson& manifest, const QString& path);
 
   atools::fs::sc::db::SimConnectLoader *simconnectLoader = nullptr;
   const atools::win::ActivationContext *activationContext = nullptr;
