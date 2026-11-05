@@ -257,9 +257,9 @@ void Application::recordExit()
 {
 #ifndef DEBUG_DISABLE_CRASH_REPORT
   if(lockFile.isEmpty())
-    qInfo() << Q_FUNC_INFO << "No lock file found";
+    qInfo() << Q_FUNC_INFO << "Lock file not found";
   else if(QFile::remove(lockFile))
-    qInfo() << Q_FUNC_INFO << "Success removing lock file" << lockFile;
+    qInfo() << Q_FUNC_INFO << "Lock file deleted" << lockFile;
   else
     qWarning() << Q_FUNC_INFO << "Failed removing lock file" << lockFile;
 
