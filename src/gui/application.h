@@ -68,6 +68,9 @@ public:
   /* Removes lock file. Has to be called by application. */
   static void recordExit();
 
+  /* Remember lock file and write PID into it (PID not used yet) */
+  static void recordStartup(const QString& lockFileParam);
+
   /* Record files and pack them into a zip for a crash report */
   static void buildCrashReport(const QString& crashReportFile, const QStringList& filenames);
 
@@ -216,6 +219,12 @@ public:
     return startingUp;
   }
 
+  /* Disable splash screen */
+  static void setShowSplash(bool showSplashParam)
+  {
+    showSplash = showSplashParam;
+  }
+
 signals:
   /* Called by queued connection from QGuiApplication::commitDataRequest */
   void applicationAboutToQuit();
@@ -247,7 +256,6 @@ private:
   static QElapsedTimer timer;
   static QFont lastFontChanged; /* Remember font to avoid multiple change events sent */
   static QPalette lastPaletteChanged;
-
 };
 
 } // namespace gui

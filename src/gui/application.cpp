@@ -202,7 +202,9 @@ void Application::recordStartAndDetectCrash(QWidget *parent, const QString& lock
 
   // Check if lock file exists - no for last clean exit and yes for crash
   int result = QMessageBox::No;
+#ifndef DEBUG_INFORMATION_ALWAYS_DETECT_CRASH
   if(QFile::exists(lockFileParam))
+#endif
   {
     qWarning() << Q_FUNC_INFO << "Found previous crash";
 
@@ -222,9 +224,8 @@ void Application::recordStartAndDetectCrash(QWidget *parent, const QString& lock
                                      "describe all steps to reproduce the problem.</b></p>"
                                      "<p><a href=\"%3\"><b>Click here for contact information</b></a></p>"
                                        "<hr/>"
-                                       "<p><b>Start in safe mode now which means to skip loading of all default files like "
-                                         "flight plans, window layout and other settings now which may have "
-                                         "caused the previous crash?</b></p>").
+                                       "<p><b>Start in safe mode now which means to skip loading of all default files and "
+                                         "other settings now which may have caused the previous crash?</b></p>").
                       arg(applicationName(), atools::util::HtmlBuilder::aFilePath(crashReportFile, atools::util::html::NOBR_WHITESPACE),
                           contactUrl);
 
@@ -266,6 +267,12 @@ void Application::recordExit()
 #else
   qInfo() << Q_FUNC_INFO << "Lock file disabled";
 #endif
+}
+
+void Application::recordStartup(const QString& lockFileParam)
+{
+  lockFile = lockFileParam;
+  atools::strToFile(lockFile, QString::number(applicationPid()));
 }
 
 void Application::buildCrashReport(const QString& crashReportFile, const QStringList& filenames)
