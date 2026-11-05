@@ -151,6 +151,10 @@ public:
     helpLanguageOnline = value;
   }
 
+  void setOkButtonText(const QString& text);
+  void setCancelButtonText(const QString& text);
+  void setHelpButtonText(const QString& text);
+
 signals:
   /* Emitted when a button is toggled */
   void buttonToggled(ChoiceDialogIdType id, bool checked);

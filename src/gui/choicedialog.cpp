@@ -204,6 +204,21 @@ void ChoiceDialog::restoreState()
   }
 }
 
+void ChoiceDialog::setOkButtonText(const QString& text)
+{
+  ui->buttonBoxChoice->button(QDialogButtonBox::Ok)->setText(text);
+}
+
+void ChoiceDialog::setCancelButtonText(const QString& text)
+{
+  ui->buttonBoxChoice->button(QDialogButtonBox::Cancel)->setText(text);
+}
+
+void ChoiceDialog::setHelpButtonText(const QString& text)
+{
+  ui->buttonBoxChoice->button(QDialogButtonBox::Help)->setText(text);
+}
+
 void ChoiceDialog::saveState() const
 {
   QList<const QObject *> widgets({this});
