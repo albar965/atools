@@ -87,10 +87,10 @@ enum SimConnectAircraftPropTypes
   PROP_ZULU_DATE_DAYS = 10, /* X-Plane 12. Since v12.4.1 */
   PROP_ZULU_TIME_SEC = 6,
   PROP_WEATHER_CHANGE_MODE = 7, /* X-Plane 12 */
-  PROP_WEATHER_TIME_SRC = 8, /* X-Plane 12 */
-  PROP_WEATHER_SRC = 9 /* X-Plane 12 */
+  PROP_WEATHER_TIME_SOURCE = 8, /* X-Plane 12 */
+  PROP_WEATHER_SOURCE = 9 /* X-Plane 12 */
 
-                     // Next is 11
+                        // Next is 11
 };
 
 /* How the weather is changing. X-Plane. */
@@ -110,19 +110,19 @@ enum WeatherChangeMode: quint8
 /* What time-source to use for downloading real-world weather. X-Plane. */
 enum WeatherTimeSource: quint8
 {
-  WEATHER_TIME_SRC_REAL_TIME = 0,
-  WEATHER_TIME_SRC_SIMULATOR_TIME = 1,
-  WEATHER_TIME_SRC_INVALID = 255
+  WEATHER_TIME_SOURCE_REAL_TIME = 0,
+  WEATHER_TIME_SOURCE_SIMULATOR_TIME = 1,
+  WEATHER_TIME_SOURCE_INVALID = 255
 };
 
 /* What system is currently controlling the weather. X-Plane. */
 enum WeatherSource: quint8
 {
-  WEATHER_SRC_PRESET = 0,
-  WEATHER_SRC_REAL_WEATHER = 1,
-  WEATHER_SRC_CONTROLPAD = 2,
-  WEATHER_SRC_PLUGIN = 3,
-  WEATHER_SRC_INVALID = 255
+  WEATHER_SOURCE_PRESET = 0,
+  WEATHER_SOURCE_REAL_WEATHER = 1,
+  WEATHER_SOURCE_CONTROLPAD = 2,
+  WEATHER_SOURCE_PLUGIN = 3,
+  WEATHER_SOURCE_INVALID = 255
 };
 
 /*
@@ -138,20 +138,9 @@ public:
   virtual void read(QDataStream& in);
   virtual void write(QDataStream& out) const;
 
-  bool isAnyXplane() const
-  {
-    return flags.testFlag(atools::fs::sc::SIM_XPLANE11) || flags.testFlag(atools::fs::sc::SIM_XPLANE12);
-  }
-
-  bool isXplane12() const
-  {
-    return flags.testFlag(atools::fs::sc::SIM_XPLANE12);
-  }
-
-  bool isAnyMsfs() const
-  {
-    return flags.testFlag(atools::fs::sc::SIM_MSFS_2020) || flags.testFlag(atools::fs::sc::SIM_MSFS_2024);
-  }
+  bool isAnyXplane() const;
+  bool isXplane12() const;
+  bool isAnyMsfs() const;
 
   // fs data ----------------------------------------------------
 

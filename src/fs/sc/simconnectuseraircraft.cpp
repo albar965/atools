@@ -60,6 +60,15 @@ void SimConnectUserAircraft::write(QDataStream& out) const
       << trackTrueDeg << localDateTime << zuluDateTime;
 }
 
+const QDateTime SimConnectUserAircraft::getZuluTime() const
+{
+#ifdef DEBUG_AIRCAFT_WEATHER_DATETIME
+  return QDateTime::currentDateTimeUtc().addDays(-1);
+#else
+  return zuluDateTime;
+#endif
+}
+
 bool SimConnectUserAircraft::isJetfuel(float& weightVolRatio) const
 {
   return atools::geo::isJetFuel(fuelTotalWeightLbs, fuelTotalQuantityGallons, weightVolRatio);
@@ -102,7 +111,7 @@ QDateTime SimConnectUserAircraft::getXPlaneWeatherTime() const
 {
   if(isValid() && isXplane12())
   {
-    if(getXPlaneWeatherTimeSource() == atools::fs::sc::WEATHER_TIME_SRC_SIMULATOR_TIME)
+    if(getXPlaneWeatherTimeSource() == atools::fs::sc::WEATHER_TIME_SOURCE_SIMULATOR_TIME)
       // Use simulator time for weather
       return getZuluTime();
     // Otherwise use real time for weather

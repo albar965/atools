@@ -161,6 +161,21 @@ void SimConnectAircraft::write(QDataStream& out) const
       << static_cast<quint8>(category) << static_cast<quint8>(engineType) << transponderCode << properties;
 }
 
+bool SimConnectAircraft::isAnyXplane() const
+{
+  return flags.testFlag(atools::fs::sc::SIM_XPLANE11) || flags.testFlag(atools::fs::sc::SIM_XPLANE12);
+}
+
+bool SimConnectAircraft::isXplane12() const
+{
+  return flags.testFlag(atools::fs::sc::SIM_XPLANE12);
+}
+
+bool SimConnectAircraft::isAnyMsfs() const
+{
+  return flags.testFlag(atools::fs::sc::SIM_MSFS_2020) || flags.testFlag(atools::fs::sc::SIM_MSFS_2024);
+}
+
 atools::geo::PosD SimConnectAircraft::getPositionD() const
 {
   if(properties.contains(PROP_AIRCRAFT_LONX) && properties.contains(PROP_AIRCRAFT_LATY))
@@ -189,30 +204,45 @@ void SimConnectAircraft::getXPlaneDate(int& localDateDays, float& localTimeSec, 
 
 atools::fs::sc::WeatherChangeMode SimConnectAircraft::getXPlaneWeatherChangeMode() const
 {
+#ifdef DEBUG_AIRCAFT_WEATHER_DATETIME
+  if(isValid() && isXplane12())
+    return atools::fs::sc::WEATHER_CHANGE_MODE_STATIC;
+#else
   if(properties.contains(atools::fs::sc::PROP_WEATHER_CHANGE_MODE))
     return static_cast<atools::fs::sc::WeatherChangeMode>(properties.value(atools::fs::sc::PROP_WEATHER_CHANGE_MODE).getValueInt());
-  else
-    return atools::fs::sc::WEATHER_CHANGE_MODE_INVALID;
+#endif
+
+  return atools::fs::sc::WEATHER_CHANGE_MODE_INVALID;
 }
 
 atools::fs::sc::WeatherTimeSource SimConnectAircraft::getXPlaneWeatherTimeSource() const
 {
+  if(getXPlaneWeatherSource() == atools::fs::sc::WEATHER_SOURCE_REAL_WEATHER)
+  {
 #ifdef DEBUG_AIRCAFT_WEATHER_DATETIME
-  return atools::fs::sc::WEATHER_TIME_SRC_SIMULATOR_TIME;
+    if(isValid() && isXplane12())
+      // return atools::fs::sc::WEATHER_TIME_SOURCE_REAL_TIME;
+    return atools::fs::sc::WEATHER_TIME_SOURCE_SIMULATOR_TIME;
 #else
-  if(properties.contains(atools::fs::sc::PROP_WEATHER_TIME_SRC))
-    return static_cast<atools::fs::sc::WeatherTimeSource>(properties.value(atools::fs::sc::PROP_WEATHER_TIME_SRC).getValueInt());
-  else
-    return atools::fs::sc::WEATHER_TIME_SRC_INVALID;
+    if(properties.contains(atools::fs::sc::PROP_WEATHER_TIME_SOURCE))
+      return static_cast<atools::fs::sc::WeatherTimeSource>(properties.value(atools::fs::sc::PROP_WEATHER_TIME_SOURCE).getValueInt());
 #endif
+  }
+
+  return atools::fs::sc::WEATHER_TIME_SOURCE_INVALID;
 }
 
 atools::fs::sc::WeatherSource SimConnectAircraft::getXPlaneWeatherSource() const
 {
-  if(properties.contains(atools::fs::sc::PROP_WEATHER_SRC))
-    return static_cast<atools::fs::sc::WeatherSource>(properties.value(atools::fs::sc::PROP_WEATHER_SRC).getValueInt());
-  else
-    return atools::fs::sc::WEATHER_SRC_INVALID;
+#ifdef DEBUG_AIRCAFT_WEATHER_DATETIME
+  if(isValid() && isXplane12())
+    return atools::fs::sc::WEATHER_SOURCE_REAL_WEATHER;
+  // return atools::fs::sc::WEATHER_SOURCE_PRESET;
+#else
+  if(properties.contains(atools::fs::sc::PROP_WEATHER_SOURCE))
+    return static_cast<atools::fs::sc::WeatherSource>(properties.value(atools::fs::sc::PROP_WEATHER_SOURCE).getValueInt());
+#endif
+  return atools::fs::sc::WEATHER_SOURCE_INVALID;
 }
 
 int SimConnectAircraft::getId() const
