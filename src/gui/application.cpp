@@ -275,6 +275,11 @@ void Application::recordStartup(const QString& lockFileParam)
   atools::strToFile(lockFile, QString::number(applicationPid()));
 }
 
+bool Application::hasLockFile()
+{
+  return atools::checkFile(Q_FUNC_INFO, lockFile, false /* warn */);
+}
+
 void Application::buildCrashReport(const QString& crashReportFile, const QStringList& filenames)
 {
   // Create path if missing

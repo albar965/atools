@@ -71,6 +71,9 @@ public:
   /* Remember lock file and write PID into it (PID not used yet) */
   static void recordStartup(const QString& lockFileParam);
 
+  /* true if lock exists, i.e. other application is running */
+  static bool hasLockFile();
+
   /* Record files and pack them into a zip for a crash report */
   static void buildCrashReport(const QString& crashReportFile, const QStringList& filenames);
 
