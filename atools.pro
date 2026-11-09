@@ -296,6 +296,7 @@ HEADERS += \
   src/io/abstractinireader.h \
   src/io/binarystream.h \
   src/io/binaryutil.h \
+  src/io/fileinfo.h \
   src/io/fileroller.h \
   src/io/inireader.h \
   src/io/tempfile.h \

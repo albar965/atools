@@ -869,7 +869,7 @@ QString checkDirMsg(const QString& dir, int maxLength = 80, bool warn = true);
 QString checkFileMsg(const QString& file, int maxLength = 80, bool warn = true);
 
 /* Same as above but prints warnings into the log if flag is set and returns false if something is not ok.
- *  Use the Q_FUNC_INFO macro as parameter for funcInfo. */
+ * Use the Q_FUNC_INFO macro as parameter for funcInfo. */
 bool checkFile(const QString& funcInfo, const QFileInfo& file, bool warn = true);
 bool checkDir(const QString& funcInfo, const QFileInfo& dir, bool warn = true);
 bool checkFile(const QString& funcInfo, const QString& file, bool warn = true);
