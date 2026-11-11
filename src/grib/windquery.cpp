@@ -191,7 +191,7 @@ inline GridRect gridRect(const atools::geo::Rect& rect)
   return retval;
 }
 
-// ===============================================================
+// =========================================================================================================
 WindQuery::WindQuery(QObject *parentObject, bool logVerbose)
   : QObject(parentObject), verbose(logVerbose)
 {
@@ -236,42 +236,44 @@ void WindQuery::initFromUrl(const QString& baseUrl)
     qWarning() << Q_FUNC_INFO << "URL is empty. Wind download suspended.";
 }
 
-void WindQuery::initFromPathInternal(const QString& path, atools::fs::weather::XpWeatherType type, const QDateTime& datetime,
-                                     bool collectFiles)
+void WindQuery::initFromPath(const QString& filename, fs::weather::XpWeatherType type)
 {
-  weatherDatetime = datetime;
-  weatherPath = path;
+  deinit();
+
+  weatherPath = filename;
   weatherType = type;
+  currentGribFile = collectGribFile();
+  initFromPathInternal();
+}
 
-  if(collectFiles)
-    currentGribFile = collectGribFile();
-
+void WindQuery::initFromPathInternal()
+{
   if(verbose)
-    qDebug() << Q_FUNC_INFO << weatherPath << currentGribFile;
+    qDebug() << Q_FUNC_INFO << weatherPath << currentGribFile << weatherType;
 
   // Inital load
-  gribFileUpdated({currentGribFile});
+  gribFileUpdated({currentGribFile.getFilename()});
 
   if(currentGribFile.isEmpty() && weatherType == atools::fs::weather::WEATHER_XP12)
     // Watch folder if file not given
     fileWatcher->setFilenameAndStart(weatherPath);
   else
     // Start checking file and parent folder for changes
-    fileWatcher->setFilenameAndStart(currentGribFile);
+    fileWatcher->setFilenameAndStart(currentGribFile.getFilename());
 }
 
-QString WindQuery::collectGribFile()
+atools::io::FileInfo WindQuery::collectGribFile()
 {
-  QStringList files;
+  QList<atools::io::FileInfo> files;
 
   if(weatherType == atools::fs::weather::WEATHER_XP11)
     // global_winds.grib
-    files.append(QFileInfo(weatherPath).absoluteFilePath());
+    files.append(atools::io::FileInfo(weatherPath));
   else if(weatherType == atools::fs::weather::WEATHER_XP12)
   {
     // Collect all files sorted from old to new ========================
     QMap<qint64, QFileInfo> gribFiles;
-    qint64 weatherDatetimeSecs = weatherDatetime./*addSecs(3 * 3600).*/ toSecsSinceEpoch();
+    qint64 weatherDatetimeSecs = weatherDatetimeCurrent.toSecsSinceEpoch();
 
     // GRIB-2026-10-17-15.00-ZULU-wind.grib
     const QDir weatherDir(weatherPath, "GRIB-*-wind.grib", QDir::Unsorted, QDir::Files | QDir::NoDotAndDotDot);
@@ -281,30 +283,29 @@ QString WindQuery::collectGribFile()
 
     if(!gribFiles.isEmpty())
     {
-      // Get file which matches given date
       const QList<qint64> keys = gribFiles.keys();
+
+      // Count backwards from future to past
       for(int i = keys.size() - 1; i >= 0; i--)
       {
         if(keys.at(i) <= weatherDatetimeSecs)
         {
-          files.append(gribFiles.value(keys.at(i)).absoluteFilePath());
+          // Time is equal or earlier than current - add
+          files.prepend(atools::io::FileInfo(gribFiles.value(keys.at(i))));
           break;
         }
       }
 
       // Nothing found since time is too early - add oldest file
       if(files.isEmpty() && weatherDatetimeSecs < keys.constFirst())
-        files.append(gribFiles.value(keys.constFirst()).absoluteFilePath());
+        files.append(atools::io::FileInfo(gribFiles.value(keys.constFirst())));
     }
   }
-
-  if(verbose)
-    qDebug() << Q_FUNC_INFO << files;
 
   if(!files.isEmpty())
     return files.constFirst();
   else
-    return QStringLiteral();
+    return atools::io::FileInfo();
 }
 
 void WindQuery::initFromFixedModel(float dir, float speed, float altitude)
@@ -341,17 +342,33 @@ void WindQuery::deinit()
   fileWatcher->stopWatching();
   weatherPath.clear();
   currentGribFile.clear();
+  weatherType = atools::fs::weather::WEATHER_XP_UNKNOWN;
+  weatherDatetimeCurrent = weatherDatetimeLastLoadTry = QDateTime::currentDateTimeUtc();
 }
 
-void WindQuery::simulatorTimeUpdated(const QDateTime& datetime)
+void WindQuery::simulatorTimeUpdated()
 {
   if(isAnyXPlane())
   {
-    if(needsLoading() || atools::almostNotEqual(weatherDatetime.toSecsSinceEpoch(), datetime.toSecsSinceEpoch(), WEATHER_TIME_EPSILON))
-    {
-      weatherDatetime = datetime;
+    // Call load if not initialized yet or on timeout of WEATHER_TIME_EPSILON
+    if(needsLoading() ||
+       atools::almostNotEqual(weatherDatetimeLastLoadTry.toSecsSinceEpoch(), weatherDatetimeCurrent.toSecsSinceEpoch(),
+                              WEATHER_TIME_EPSILON))
       load();
-    }
+  }
+}
+
+void WindQuery::connectedToSimulator()
+{
+
+}
+
+void WindQuery::disconnectedFromSimulator()
+{
+  if(isAnyXPlane())
+  {
+    weatherDatetimeCurrent = weatherDatetimeLastLoadTry = QDateTime::currentDateTimeUtc();
+    load();
   }
 }
 
@@ -362,8 +379,11 @@ bool WindQuery::needsLoading() const
 
 void WindQuery::prepareLoad()
 {
-  if(!weatherDatetime.isValid())
-    weatherDatetime = QDateTime::currentDateTimeUtc();
+  if(!weatherDatetimeCurrent.isValid())
+    weatherDatetimeCurrent = QDateTime::currentDateTimeUtc();
+
+  if(!weatherDatetimeLastLoadTry.isValid())
+    weatherDatetimeLastLoadTry = QDateTime::currentDateTimeUtc();
 
   if(needsLoading())
     load();
@@ -371,15 +391,17 @@ void WindQuery::prepareLoad()
 
 void WindQuery::load()
 {
-  const QString gribFile = collectGribFile();
+  // Remember time when *trying* to load
+  weatherDatetimeLastLoadTry = weatherDatetimeCurrent;
+  const atools::io::FileInfo gribFile = collectGribFile();
   if(gribFile != currentGribFile)
   {
     currentGribFile = gribFile;
 
     if(verbose)
-      qDebug() << Q_FUNC_INFO << weatherPath << currentGribFile;
+      qDebug() << Q_FUNC_INFO << weatherPath;
 
-    initFromPathInternal(weatherPath, weatherType, weatherDatetime, false /* collectFiles */);
+    initFromPathInternal();
   }
 }
 
@@ -602,8 +624,10 @@ Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2)
   return windAverageForLine(pos1, pos2).toWind();
 }
 
-WindData WindQuery::windAverageForLine(geo::Pos pos1, geo::Pos pos2) const
+WindData WindQuery::windAverageForLine(geo::Pos pos1, geo::Pos pos2)
 {
+  prepareLoad();
+
   WindData windData = EMPTY_WIND_DATA;
 
   if(!pos1.isValid())
@@ -750,12 +774,12 @@ void WindQuery::gribDirUpdated(const QString& dir)
   if(verbose)
     qDebug() << Q_FUNC_INFO << dir;
 
-  QString gribFile = collectGribFile();
+  // Update list of files and reload weather if this has changed
+  const atools::io::FileInfo gribFile = collectGribFile();
   if(gribFile != currentGribFile)
   {
-    // Read file(s) again if updated and the list has changed
     currentGribFile = gribFile;
-    gribFileUpdated({currentGribFile});
+    initFromPathInternal();
   }
 }
 

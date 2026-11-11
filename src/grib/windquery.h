@@ -18,10 +18,11 @@
 #ifndef ATOOLS_GRIB_WINDQUERY_H
 #define ATOOLS_GRIB_WINDQUERY_H
 
+#include "fs/weather/weathertypes.h"
 #include "geo/calculations.h"
 #include "grib/gribcommon.h"
 #include "grib/windtypes.h"
-#include "fs/weather/weathertypes.h"
+#include "io/fileinfo.h"
 
 #include <QObject>
 #include <QMap>
@@ -88,14 +89,10 @@ public:
 
   /* Initialize download from https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl if baseUrl is empty
    *  Will download and update every 30 minutes and terminate any file watching. */
-  void initFromUrl(const QString& baseUrl = QString());
+  void initFromUrl(const QString& baseUrl);
 
   /* Read data from file and start watching for changes - terminates downloads */
-  void initFromPath(const QString& filenames, atools::fs::weather::XpWeatherType type)
-  {
-    deinit();
-    initFromPathInternal(filenames, type, QDateTime::currentDateTimeUtc(), true /* collectFiles */);
-  }
+  void initFromPath(const QString& filename, atools::fs::weather::XpWeatherType type);
 
   /* Create a fixed model assuming zero wind at 0 altitude and given values at given altitude.
    *  Dir in degrees true, speed in knots and altutude in feet. */
@@ -108,6 +105,25 @@ public:
 
   /* Clear data, stop periodic downloads and file watching */
   void deinit();
+
+  /* Try to reload X-Plane 12 files from folder for historical weather.
+   * Tries to reload only if there is a more than one minute difference */
+  void simulatorTimeUpdated();
+
+  /* Update constantly for every simulator message */
+  void setWeatherDatetimeCurrent(const QDateTime& weatherDatetimeParam)
+  {
+    weatherDatetimeCurrent = weatherDatetimeParam;
+  }
+
+  /* A connection was established */
+  void connectedToSimulator();
+
+  /* Disconnected manually or due to error */
+  void disconnectedFromSimulator();
+
+  /* true if empty */
+  bool needsLoading() const;
 
   /* Try to reload X-Plane 12 files for historical weather */
   void simulatorTimeUpdated(const QDateTime& datetime);
@@ -155,7 +171,7 @@ public:
 
   const QString& getCurrentGribFile() const
   {
-    return currentGribFile;
+    return currentGribFile.getFilename();
   }
 
 signals:
@@ -172,8 +188,7 @@ signals:
 
 private:
   /* Read data from file and start watching for changes - terminates downloads */
-  void initFromPathInternal(const QString& filenames, atools::fs::weather::XpWeatherType type, const QDateTime& datetime,
-                            bool collectFiles);
+  void initFromPathInternal();
 
   /* Wind for grid position */
   WindData windForLayer(const WindAltLayer& layer, const QPoint& point) const;
@@ -202,12 +217,11 @@ private:
 
   /* Get average wind for a line between two points. Uses only U and V components.
    *  Normalizes positions to avoid overflow on grid access */
-  WindData windAverageForLine(atools::geo::Pos pos1, atools::geo::Pos pos2) const;
+  WindData windAverageForLine(atools::geo::Pos pos1, atools::geo::Pos pos2);
 
-  QString collectGribFile();
+  io::FileInfo collectGribFile();
 
   void load();
-  bool needsLoading() const;
   void prepareLoad();
 
   bool isAnyXPlane() const
@@ -257,12 +271,15 @@ private:
   QDateTime analyisTime;
 
   QString weatherPath; // Folder or file depending on simulator
-  QString currentGribFile; // Latest from a collected list from folder (XP12)
 
   atools::fs::weather::XpWeatherType weatherType = atools::fs::weather::WEATHER_XP_UNKNOWN;
 
-  /* Date and time to select X-Plane current real or historical weather */
-  QDateTime weatherDatetime;
+  /* Currently loaded files plus timestamp and size. Either three recent METAR files for XP12 or the single file for XP11 */
+  atools::io::FileInfo currentGribFile;
+
+  /* Date and time to select X-Plane 12 current real or historical weather */
+  QDateTime weatherDatetimeCurrent, /* Constantly updated with every simulator message */
+            weatherDatetimeLastLoadTry; /* Update for each loading retry (fetching directory ) */
 };
 
 QDebug operator<<(QDebug out, const atools::grib::Wind& wind);

@@ -102,7 +102,7 @@ void XpWeatherReader::load()
 {
   // Remember time when *trying* to load
   weatherDatetimeLastLoadTry = weatherDatetimeCurrent;
-  const QList<MetarFile> metarFiles = collectWeatherFiles();
+  const QList<atools::io::FileInfo> metarFiles = collectWeatherFiles();
   if(metarFiles != currentMetarFiles)
   {
     currentMetarFiles = metarFiles;
@@ -160,7 +160,7 @@ void XpWeatherReader::dirUpdated(const QString& dir)
     qDebug() << Q_FUNC_INFO << dir;
 
   // Update list of files and reload weather if this has changed
-  const QList<MetarFile> metarFiles = collectWeatherFiles();
+  const QList<atools::io::FileInfo> metarFiles = collectWeatherFiles();
   if(metarFiles != currentMetarFiles)
   {
     currentMetarFiles = metarFiles;
@@ -179,13 +179,13 @@ void XpWeatherReader::filesUpdated(const QStringList& filenames)
     qDebug() << Q_FUNC_INFO << "File not changed";
 }
 
-QList<XpWeatherReader::MetarFile> XpWeatherReader::collectWeatherFiles() const
+QList<atools::io::FileInfo> XpWeatherReader::collectWeatherFiles() const
 {
-  QList<MetarFile> files;
+  QList<atools::io::FileInfo> files;
 
   if(weatherType == atools::fs::weather::WEATHER_XP11)
     // METAR.rwx
-    files.append(MetarFile(weatherPath));
+    files.append(atools::io::FileInfo(weatherPath));
   else if(weatherType == atools::fs::weather::WEATHER_XP12)
   {
     // Collect all files sorted from old to new ========================
@@ -209,7 +209,7 @@ QList<XpWeatherReader::MetarFile> XpWeatherReader::collectWeatherFiles() const
         if(keys.at(i) <= weatherDatetimeSecs)
         {
           // Time is equal or earlier than current - add and maintain list from late to early for merging
-          files.prepend(MetarFile(metarFiles.value(keys.at(i))));
+          files.prepend(atools::io::FileInfo(metarFiles.value(keys.at(i))));
           if(files.size() >= 3)
             break;
         }
@@ -217,7 +217,7 @@ QList<XpWeatherReader::MetarFile> XpWeatherReader::collectWeatherFiles() const
 
       // Nothing found since time is too early - add oldest file
       if(files.isEmpty() && weatherDatetimeSecs < keys.constFirst())
-        files.append(MetarFile(metarFiles.value(keys.constFirst())));
+        files.append(atools::io::FileInfo(metarFiles.value(keys.constFirst())));
     }
   }
 
@@ -250,7 +250,7 @@ void XpWeatherReader::createFsWatcher()
 
   // Load initially
   QStringList files;
-  for(const MetarFile& file : std::as_const(currentMetarFiles))
+  for(const atools::io::FileInfo& file : std::as_const(currentMetarFiles))
     files.append(file.getFilename());
 
   filesUpdated(files);

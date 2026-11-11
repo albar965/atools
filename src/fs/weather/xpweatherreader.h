@@ -20,6 +20,7 @@
 
 #include "fs/util/airportcoordtypes.h"
 #include "fs/weather/weathertypes.h"
+#include "io/fileinfo.h"
 
 #include <QDateTime>
 #include <QFileInfo>
@@ -67,10 +68,10 @@ public:
     weatherDatetimeCurrent = weatherDatetimeParam;
   }
 
-  /* Emitted when a connection was established */
+  /* A connection was established */
   void connectedToSimulator();
 
-  /* Emitted when disconnected manually or due to error */
+  /* Disconnected manually or due to error */
   void disconnectedFromSimulator();
 
   /* File is loaded on demand on first call here. X-Plane 11 uses a file and X-Plane 12 a folder. */
@@ -115,54 +116,7 @@ private:
   void dirUpdated(const QString& dir);
 
   /* Get all METAR files from parent folder */
-  class MetarFile;
-  QList<MetarFile> collectWeatherFiles() const;
-
-  /*  Combines relevant information about files without the performance issues of file info. Comparable. */
-  class MetarFile
-  {
-public:
-    explicit MetarFile(const QFileInfo& fileinfo)
-      : filename(fileinfo.absoluteFilePath()), timestamp(fileinfo.lastModified().toSecsSinceEpoch()),
-      size(fileinfo.size())
-    {
-    }
-
-    explicit MetarFile(const QString& filename)
-      : MetarFile(QFileInfo(filename))
-    {
-    }
-
-    const QString& getFilename() const
-    {
-      return filename;
-    }
-
-    qint64 getTimestamp() const
-    {
-      return timestamp;
-    }
-
-    qint64 getSize() const
-    {
-      return size;
-    }
-
-    bool operator==(const MetarFile& other) const
-    {
-      return filename == other.filename && timestamp == other.timestamp && size == other.size;
-    }
-
-    bool operator!=(const MetarFile& other) const
-    {
-      return !operator==(other);
-    }
-
-private:
-    QString filename;
-    qint64 timestamp = 0LL;
-    qint64 size = 0LL;
-  };
+  QList<atools::io::FileInfo> collectWeatherFiles() const;
 
   atools::fs::weather::MetarIndex *metarIndex = nullptr;
   atools::util::FileSystemWatcher *fileWatcher = nullptr;
@@ -171,7 +125,7 @@ private:
   QString weatherPath;
 
   /* Currently loaded files plus timestamp and size */
-  QList<MetarFile> currentMetarFiles;
+  QList<atools::io::FileInfo> currentMetarFiles;
 
   /* Date and time to select X-Plane 12 current real or historical weather */
   QDateTime weatherDatetimeCurrent, /* Constantly updated with every simulator message */
