@@ -170,7 +170,7 @@ public:
   /* Closes all docks, toolbars and menu bar depending on flags and sets the mainwindow to full screen.
    * Window will only be maximized depending on flags.
    * Configuration like docks is stored separately for fullscreen mode. */
-  void setFullScreenOn(atools::gui::DockFlags flags);
+  void setFullScreenOn(atools::gui::DockFlags flags, const QDockWidget *centerWidget);
 
   /* Ends fullscreen mode and restores all windows, toolbars, status bar and menu bar again */
   void setFullScreenOff();

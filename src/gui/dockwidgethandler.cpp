@@ -697,7 +697,7 @@ void DockWidgetHandler::raiseWindows()
 // ==========================================================================
 // Fullscreen methods
 
-void DockWidgetHandler::setFullScreenOn(atools::gui::DockFlags flags)
+void DockWidgetHandler::setFullScreenOn(atools::gui::DockFlags flags, const QDockWidget *centerWidget)
 {
   if(!fullscreen)
   {
