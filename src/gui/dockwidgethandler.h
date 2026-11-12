@@ -211,6 +211,12 @@ public:
   /* Closes all widgets and removes them from the list afterwards */
   void closeAllDialogs();
 
+  /* Hide all floating and visible dock windows and save them in an internal list */
+  void hideVisibleFloating();
+
+  /* Make docks from closeFloating() visible again */
+  void restoreHiddenFloating();
+
   /* Get all registered dock widgets */
   const QList<QDockWidget *>& getDockWidgets() const
   {
@@ -261,6 +267,8 @@ private:
 
   /* Stacks are only rememberd if this is true */
   bool handleDockViews = false;
+
+  QList<QDockWidget *> floatingDocks;
 
   /* A list of stacked widgets */
   QList<QList<QDockWidget *> > dockStackList;

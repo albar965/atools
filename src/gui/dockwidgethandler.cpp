@@ -1007,6 +1007,30 @@ void DockWidgetHandler::closeAllDialogs()
   dialogs.clear();
 }
 
+void DockWidgetHandler::hideVisibleFloating()
+{
+  for(QDockWidget *dock : getDockWidgets())
+  {
+    qDebug() << Q_FUNC_INFO << dock->objectName() << "floating" << dock->isFloating() << "visible" << dock->isVisible();
+    if(dock->isFloating() && dock->isVisible())
+    {
+      qDebug() << Q_FUNC_INFO << "Hiding floating" << dock->objectName();
+      dock->setVisible(false);
+      floatingDocks.append(dock);
+    }
+  }
+}
+
+void DockWidgetHandler::restoreHiddenFloating()
+{
+  for(QDockWidget *dock : std::as_const(floatingDocks))
+  {
+    qDebug() << Q_FUNC_INFO << "Restoring floating" << dock->objectName();
+    dock->setVisible(true);
+  }
+  floatingDocks.clear();
+}
+
 void DockWidgetHandler::fontChanged(const QFont& font)
 {
   for(QDockWidget *dock : std::as_const(dockWidgets))
