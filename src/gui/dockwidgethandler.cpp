@@ -721,7 +721,10 @@ void DockWidgetHandler::setFullScreenOn(atools::gui::DockFlags flags, const QDoc
       if(flags.testFlag(HIDE_DOCKS))
       {
         for(QDockWidget *dockWidget : std::as_const(dockWidgets))
-          dockWidget->setVisible(false);
+        {
+          if(dockWidget != centerWidget)
+            dockWidget->setVisible(false);
+        }
       }
     }
 
