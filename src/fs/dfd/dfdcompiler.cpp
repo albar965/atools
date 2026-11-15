@@ -651,7 +651,7 @@ void DfdCompiler::writeAirspaces()
 
   // Controlled airspaces =================================================================
   QStringList newCols;
-  sql::SqlRecord rec = db.record("src.tbl_controlled_airspace");
+  sql::SqlRecord rec = db.record("tbl_controlled_airspace");
   if(rec.contains("multiple_code"))
     newCols.append("multiple_code");
   if(rec.contains("time_code"))
@@ -674,11 +674,11 @@ void DfdCompiler::writeAirspaces()
                       "lower_limit, "
                       "unit_indicator_upper_limit, "
                       "upper_limit "
-                      "from src.tbl_controlled_airspace", db);
+                      "from tbl_controlled_airspace", db);
   writeAirspace(controlled, &DfdCompiler::beginControlledAirspace);
 
   // Restricted airspaces =================================================================
-  rec = db.record("src.tbl_restrictive_airspace");
+  rec = db.record("tbl_restrictive_airspace");
   newCols.clear();
   if(rec.contains("multiple_code"))
     newCols.append("multiple_code");
@@ -701,7 +701,7 @@ void DfdCompiler::writeAirspaces()
                        "lower_limit, "
                        "unit_indicator_upper_limit, "
                        "upper_limit "
-                       "from src.tbl_restrictive_airspace", db);
+                       "from tbl_restrictive_airspace", db);
   writeAirspace(restrictive, &DfdCompiler::beginRestrictiveAirspace);
 
   // FIR / UIR regions =================================================================
@@ -715,7 +715,7 @@ void DfdCompiler::writeAirspaces()
                "0 as lower_limit, "
                "'M' as unit_indicator_upper_limit, "
                "fir_upper_limit as upper_limit "
-               "from src.tbl_fir_uir where fir_uir_indicator = 'F'", db);
+               "from tbl_fir_uir where fir_uir_indicator = 'F'", db);
   writeAirspace(fir, &DfdCompiler::beginFirUirAirspaceCenter); // Old center
   writeAirspace(fir, &DfdCompiler::beginFirUirAirspaceNew); // new FIR/UIR type
 
@@ -726,7 +726,7 @@ void DfdCompiler::writeAirspaces()
                "uir_lower_limit as lower_limit, "
                "'M' as unit_indicator_upper_limit, "
                "uir_upper_limit as upper_limit "
-               "from src.tbl_fir_uir where fir_uir_indicator = 'U'", db);
+               "from tbl_fir_uir where fir_uir_indicator = 'U'", db);
   writeAirspace(uir, &DfdCompiler::beginFirUirAirspaceCenter); // Old center
   writeAirspace(uir, &DfdCompiler::beginFirUirAirspaceNew); // new FIR/UIR type
 
@@ -739,7 +739,7 @@ void DfdCompiler::writeAirspaces()
                 "0 as lower_limit, "
                 "'M' as unit_indicator_upper_limit, "
                 "fir_upper_limit as upper_limit "
-                "from src.tbl_fir_uir where fir_uir_indicator = 'B'", db);
+                "from tbl_fir_uir where fir_uir_indicator = 'B'", db);
   writeAirspace(fir2, &DfdCompiler::beginFirUirAirspaceCenter); // Old center
   writeAirspace(fir2, &DfdCompiler::beginFirUirAirspaceNew); // new FIR/UIR type
 
@@ -751,7 +751,7 @@ void DfdCompiler::writeAirspaces()
                 "uir_lower_limit as lower_limit, "
                 "'M' as unit_indicator_upper_limit, "
                 "uir_upper_limit as upper_limit "
-                "from src.tbl_fir_uir where fir_uir_indicator = 'B'", db);
+                "from tbl_fir_uir where fir_uir_indicator = 'B'", db);
   writeAirspace(uir2, &DfdCompiler::beginFirUirAirspaceCenter); // Old center
   writeAirspace(uir2, &DfdCompiler::beginFirUirAirspaceNew); // new FIR/UIR type
 
@@ -1185,7 +1185,7 @@ void DfdCompiler::writeAirways()
     "select  a.route_identifier, a.seqno, a.flightlevel, a.waypoint_description_code, w.waypoint_id, "
     "  a.direction_restriction, a.route_type, a.minimum_altitude1, a.minimum_altitude2, a.maximum_altitude, "
     "  w.lonx, w.laty "
-    "from src.tbl_enroute_airways a "
+    "from tbl_enroute_airways a "
     "join waypoint w on "
     "  a.waypoint_identifier = w.ident and a.icao_code = w.region and a.waypoint_longitude = w.lonx and "
     "  a.waypoint_latitude = w.laty "
@@ -1289,13 +1289,13 @@ void DfdCompiler::writeAirways()
 void DfdCompiler::writeProcedures()
 {
   progress->reportOther("Writing approaches and transitions");
-  writeProcedure("src.tbl_iaps", "APPCH");
+  writeProcedure("tbl_iaps", "APPCH");
 
   progress->reportOther("Writing SIDs");
-  writeProcedure("src.tbl_sids", "SID");
+  writeProcedure("tbl_sids", "SID");
 
   progress->reportOther("Writing STARs");
-  writeProcedure("src.tbl_stars", "STAR");
+  writeProcedure("tbl_stars", "STAR");
 }
 
 void DfdCompiler::writeMora()
@@ -1703,7 +1703,7 @@ void DfdCompiler::updateTreeLetterAirportCodes()
 {
   progress->reportOther("Updating airport idents");
 
-  SqlRecord rec = db.record("src.tbl_airports");
+  SqlRecord rec = db.record("tbl_airports");
   if(!rec.contains("airport_identifier_3letter"))
   {
     qWarning() << Q_FUNC_INFO << "tbl_airports.airport_identifier_3letter not found - skipping";
@@ -1712,7 +1712,7 @@ void DfdCompiler::updateTreeLetterAirportCodes()
 
   QHash<QString, QString> codeMap;
   SqlQuery codeQuery("select airport_identifier, airport_identifier_3letter "
-                     "from src.tbl_airports where airport_identifier_3letter is not null", db);
+                     "from tbl_airports where airport_identifier_3letter is not null", db);
   codeQuery.exec();
   while(codeQuery.next())
     codeMap.insert(codeQuery.valueStr("airport_identifier"), codeQuery.valueStr("airport_identifier_3letter"));
@@ -1757,7 +1757,7 @@ void DfdCompiler::initQueries()
     metadataWriter->initQueries();
 
   airportQuery = new SqlQuery(db);
-  airportQuery->prepare("select * from src.tbl_airports order by airport_identifier");
+  airportQuery->prepare("select * from tbl_airports order by airport_identifier");
 
   airportWriteQuery = new SqlQuery(db);
   airportWriteQuery->prepare(
@@ -1774,7 +1774,7 @@ void DfdCompiler::initQueries()
   airportFileWriteQuery->prepare(QStringLiteral("insert into airport_file (file_id, ident) values(%1, :ident)").arg(FILE_ID));
 
   runwayQuery = new SqlQuery(db);
-  runwayQuery->prepare("select * from src.tbl_runways order by icao_code, airport_identifier, runway_identifier");
+  runwayQuery->prepare("select * from tbl_runways order by icao_code, airport_identifier, runway_identifier");
 
   runwayWriteQuery = new SqlQuery(db);
   runwayWriteQuery->prepare(SqlUtil(db).buildInsertStatement("runway", QStringLiteral(),
@@ -1800,7 +1800,7 @@ void DfdCompiler::initQueries()
                               "bottom_laty = :bottom_laty where airport_id = :aptid");
 
   metadataQuery = new SqlQuery(db);
-  metadataQuery->prepare(SqlUtil(db).buildSelectStatement("src.tbl_header"));
+  metadataQuery->prepare(SqlUtil(db).buildSelectStatement("tbl_header"));
 
   airspaceWriteQuery = new SqlQuery(db);
   airspaceWriteQuery->prepare(SqlUtil(db).buildInsertStatement("boundary", QStringLiteral(), {
@@ -1808,7 +1808,7 @@ void DfdCompiler::initQueries()
         }));
 
   moraQuery = new SqlQuery(db);
-  moraQuery->prepare("select * from src.tbl_grid_mora order by rowid");
+  moraQuery->prepare("select * from tbl_grid_mora order by rowid");
 }
 
 void DfdCompiler::deInitQueries()

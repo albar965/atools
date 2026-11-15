@@ -25,7 +25,7 @@ drop table if exists tmp_waypoint_ap;
 
 create table tmp_waypoint_ap as
 select distinct a.airport_id, w.waypoint_id
-from waypoint w join src.tbl_terminal_waypoints tw on
+from waypoint w join tbl_terminal_waypoints tw on
   w.ident = tw.waypoint_identifier and
   w.region = tw.icao_code and
   w.lonx = tw.waypoint_longitude and w.laty = tw.waypoint_latitude
@@ -45,7 +45,7 @@ drop table if exists tmp_ndb_ap;
 
 create table tmp_ndb_ap as
 select distinct a.airport_id, n.ndb_id
-from ndb n join src.tbl_terminal_ndbnavaids tn on
+from ndb n join tbl_terminal_ndbnavaids tn on
   n.ident = tn.ndb_identifier and
   n.region = tn.icao_code and
   n.lonx = tn.ndb_longitude and
@@ -66,7 +66,7 @@ drop table if exists tmp_vor_ap;
 
 create table tmp_vor_ap as
 select distinct a.airport_id, v.vor_id
-from vor v join src.tbl_vhfnavaids tv on
+from vor v join tbl_vhfnavaids tv on
   v.ident = tv.vor_identifier and
   v.region = tv.icao_code and
   v.lonx = tv.vor_longitude and
