@@ -20,8 +20,6 @@
 #ifndef ATOOLS_ZIP_GZIP_H
 #define ATOOLS_ZIP_GZIP_H
 
-#include <zlib.h>
-
 class QByteArray;
 class QString;
 

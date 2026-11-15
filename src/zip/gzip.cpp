@@ -19,6 +19,7 @@
 
 #include "zip/gzip.h"
 
+#include <zlib.h>
 #include <QByteArray>
 #include <QFile>
 #include <QDebug>
