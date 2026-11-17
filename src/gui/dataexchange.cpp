@@ -53,7 +53,10 @@ DataExchangeFetcher::DataExchangeFetcher(bool verboseParam)
 DataExchangeFetcher::~DataExchangeFetcher()
 {
   if(timer != nullptr)
+  {
+    disconnect(timer);
     timer->stop();
+  }
 
   ATOOLS_DELETE_LOG(timer);
 }
@@ -84,27 +87,36 @@ void DataExchangeFetcher::fetchSharedMemory()
         qDebug() << Q_FUNC_INFO << "locked";
 
       // Read size only for now
-      quint32 size;
-      // Create a view on the shared memory for reading - does not copy
-      QByteArray sizeBytes = QByteArray::fromRawData(static_cast<const char *>(sharedMemory->constData()), SHARED_MEMORY_SIZE);
-      QDataStream in(&sizeBytes, QIODevice::ReadOnly);
-      in >> size;
+      const char *data = static_cast<const char *>(sharedMemory->constData());
+      qsizetype dataSize = sharedMemory->size();
 
-      if(size > 0)
+      if(data != nullptr && dataSize > 0)
       {
-        // Read properties if size is given - skip timestamp
-        in.skipRawData(sizeof(qint64));
-        in >> properties;
+        // Create a view on the shared memory for reading - does not copy
+        QByteArray sizeBytes = QByteArray::fromRawData(data, dataSize);
+
+        quint32 size;
+        QDataStream in(&sizeBytes, QIODevice::ReadOnly);
+        in >> size;
+
+        if(size > 0)
+        {
+          // Read properties if size is given - skip timestamp
+          in.skipRawData(sizeof(qint64));
+          in >> properties;
+        }
+
+        // Write back a null size and update timestamp to allow the other process detect a crash
+        QByteArray bytesEmpty;
+        QDataStream out(&bytesEmpty, QIODevice::WriteOnly);
+        out << static_cast<quint32>(0) << QDateTime::currentMSecsSinceEpoch();
+        memcpy(sharedMemory->data(), bytesEmpty.constData(), static_cast<size_t>(bytesEmpty.size()));
+
+        if(verbose)
+          qDebug() << Q_FUNC_INFO << "Updating timestamp" << QDateTime::currentMSecsSinceEpoch();
       }
-
-      if(verbose)
-        qDebug() << Q_FUNC_INFO << "Updating timestamp" << QDateTime::currentMSecsSinceEpoch();
-
-      // Write back a null size and update timestamp to allow the other process detect a crash
-      QByteArray bytesEmpty;
-      QDataStream out(&bytesEmpty, QIODevice::WriteOnly);
-      out << static_cast<quint32>(0) << QDateTime::currentMSecsSinceEpoch();
-      memcpy(sharedMemory->data(), bytesEmpty.constData(), static_cast<size_t>(bytesEmpty.size()));
+      else
+        qWarning() << Q_FUNC_INFO << "sharedMemory data or size is null";
 
       sharedMemory->unlock();
     }
@@ -237,8 +249,12 @@ DataExchange::~DataExchange()
 
 void DataExchange::disable()
 {
+  if(dataFetcher != nullptr)
+    disconnect(dataFetcher);
+
   if(dataFetcherThread != nullptr)
   {
+    disconnect(dataFetcherThread);
     dataFetcherThread->quit();
     dataFetcherThread->wait();
   }
