@@ -36,6 +36,7 @@
 #include <QStringBuilder>
 #include <QApplication>
 #include <QSplitter>
+#include <QToolTip>
 
 namespace atools {
 namespace gui {
@@ -96,17 +97,33 @@ ListWidgetIndex::ListWidgetIndex(QSplitter *splitterWidgetParam, QListWidget *li
 {
   map = new ListWidgetIndexMap;
 
-  label = new QLabel();
-  label->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-
   connect(listWidget, &QListWidget::currentRowChanged, this, &ListWidgetIndex::currentRowChanged);
+
+  // Use a label as top level window styled as a tooltip ====================
+  tooltipLabel = new QLabel(listWidget, Qt::FramelessWindowHint);
+
+  // Keep inactive
+  tooltipLabel->setAttribute(Qt::WA_ShowWithoutActivating);
+  tooltipLabel->setAutoFillBackground(true);
+  tooltipLabel->setFrameShape(QFrame::Box); // Black border
+  tooltipLabel->setMargin(0);
+  tooltipLabel->setWordWrap(true);
+  tooltipLabel->setAlignment(Qt::AlignCenter);
+
+  // Use tooltip palette
+  tooltipLabel->setPalette(QToolTip::palette());
+#ifndef Q_OS_MACOS
+  tooltipLabel->setForegroundRole(QPalette::ToolTipText);
+  tooltipLabel->setBackgroundRole(QPalette::ToolTipBase);
+#endif
+  tooltipLabel->hide();
 }
 
 ListWidgetIndex::~ListWidgetIndex()
 {
-  disconnect(listWidget, &QListWidget::currentRowChanged, this, &ListWidgetIndex::currentRowChanged);
+  disconnect(listWidget);
   setLabel(QStringLiteral());
-  delete label;
+  delete tooltipLabel;
   delete map;
 }
 
@@ -128,19 +145,19 @@ void ListWidgetIndex::resetView()
     listWidget->item(i)->setBackground(QApplication::palette().color(QPalette::Normal, QPalette::Base));
 }
 
-void ListWidgetIndex::find(QString text)
+void ListWidgetIndex::find(const QString& text)
 {
   // Avoid updates while changing index
   changing = true;
-
-  // Build index and load stopwords on demand
-  buildIndex();
 
   // Clear all hightlights
   resetView();
 
   if(text.size() >= MIN_STRING_SIZE)
   {
+    // Build index and load stopwords on demand
+    buildIndex();
+
     // Minimum size ok - do search
     searchActive = true;
 
@@ -149,13 +166,13 @@ void ListWidgetIndex::find(QString text)
 
     // Widgets matching texts for style change
     QSet<QWidget *> foundWidgets;
-    text = text.toUpper();
+    const QString searchText = text.toUpper();
 
     // Collect all widgets and page indexes =================================
     // Internal index mapping texts to list indexes and widgets
     for(auto it = map->index.begin(); it != map->index.end(); ++it)
     {
-      if(it.key().startsWith(text))
+      if(it.key().startsWith(searchText))
       {
         foundStackedWidgetIndexes.insert(it->getStackedWidgetIndex());
 
@@ -182,7 +199,7 @@ void ListWidgetIndex::find(QString text)
       listWidget->item(i)->setBackground(highlightColor);
 
     // Highlight all widgets in the list =================================
-    QString colorName = highlightColor.name(QColor::HexArgb);
+    const QString colorName = highlightColor.name(QColor::HexArgb);
     for(QWidget *foundWidget : foundWidgets)
     {
       savedStyles.insert(foundWidget, foundWidget->styleSheet());
@@ -219,7 +236,7 @@ void ListWidgetIndex::find(QString text)
       for(int i = 0; i < listWidget->count(); i++)
         listWidget->item(i)->setHidden(true);
 
-      setLabel(tr("<b>No options found for \"%1\".</b>").arg(text));
+      setLabel(tr("No options found for \"%1\".").arg(text));
     }
   }
   else if(!text.isEmpty())
@@ -230,7 +247,7 @@ void ListWidgetIndex::find(QString text)
     for(int i = 0; i < listWidget->count(); i++)
       listWidget->item(i)->setHidden(true);
 
-    setLabel(tr("<b>Search text \"%1\" too short.</b>").arg(text));
+    setLabel(tr("Search text \"%1\" too short.").arg(text));
   }
   else if(lastCurrentRow != -1)
   {
@@ -245,27 +262,12 @@ void ListWidgetIndex::find(QString text)
 
 void ListWidgetIndex::setLabel(const QString& text)
 {
-  if(!text.isEmpty())
-  {
-    // Show message label if text is not empty
-    label->setText(text);
-    if(splitterWidget->widget(1) != label)
-    {
-      // The splitter takes ownership of widget and sets the parent of the replaced widget to null.
-      splitterWidget->replaceWidget(1, label);
-      splitterWidget->updateGeometry();
-    }
-  }
-  else
-  {
-    // Hide mesage label and restore previous widget if text is empty
-    if(splitterWidget->widget(1) != stackedWidget)
-    {
-      // The splitter takes ownership of widget and sets the parent of the replaced widget to null.
-      splitterWidget->replaceWidget(1, stackedWidget);
-      splitterWidget->updateGeometry();
-    }
-  }
+  tooltipLabel->setText(text);
+  tooltipLabel->resize(QSize(listWidget->width(), tooltipLabel->fontMetrics().height() * 2));
+
+  tooltipLabel->setVisible(!text.isEmpty());
+  listWidget->setDisabled(!text.isEmpty());
+  splitterWidget->widget(1)->setDisabled(!text.isEmpty());
 }
 
 void ListWidgetIndex::currentRowChanged(int currentRow)

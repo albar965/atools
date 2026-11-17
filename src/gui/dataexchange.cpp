@@ -115,8 +115,10 @@ void DataExchangeFetcher::fetchSharedMemory()
         if(verbose)
           qDebug() << Q_FUNC_INFO << "Updating timestamp" << QDateTime::currentMSecsSinceEpoch();
       }
+#ifdef DEBUG_INFORMATION
       else
         qWarning() << Q_FUNC_INFO << "sharedMemory data or size is null";
+#endif
 
       sharedMemory->unlock();
     }

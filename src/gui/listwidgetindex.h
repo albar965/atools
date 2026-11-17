@@ -62,7 +62,7 @@ public:
    * Not matching list widget elements are hidden when searching and child widgets are highlighted using
    * the set color including alpha channnel.
    * Word size has to be two or more characters. */
-  void find(QString text);
+  void find(const QString& text);
 
   /* Reset all widgets, hightlights and clears index to be reloaded on next use of find() */
   void reset();
@@ -106,9 +106,6 @@ private:
   QStackedWidget *stackedWidget;
   QSplitter *splitterWidget;
 
-  /* Label to show errors */
-  QLabel *label;
-
   /* Stopwords. Key is two letter language code having a set of stopwords */
   QHash<QString, QSet<QString> > stopwords;
 
@@ -126,6 +123,9 @@ private:
 
   /* Color used as frame or background for highlighted widgets */
   QColor highlightColor;
+
+  /* Frameless label widget  */
+  QLabel *tooltipLabel = nullptr;
 
   /* Last user selected row / page index in index widget before searching */
   int lastCurrentRow = -1;
