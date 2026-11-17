@@ -73,6 +73,9 @@ public:
   /* Raise all dock windows having floating state as well as non-modal dialogs */
   void raiseWindows();
 
+  /* Hide all dock windows having floating state as well as non-modal dialogs and the main window */
+  void hideAllWindows();
+
   /* Raise on dock widget */
   void raiseFloatingDockWidget(QDockWidget *dockWidget) const;
 

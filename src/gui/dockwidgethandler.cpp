@@ -694,6 +694,25 @@ void DockWidgetHandler::raiseWindows()
   }
 }
 
+void DockWidgetHandler::hideAllWindows()
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
+
+  hideVisibleFloating();
+
+  {
+    QMutexLocker locker(&dialogsMutex);
+    for(QDialog *dialog : std::as_const(dialogs))
+    {
+      if(dialog->isVisible())
+        dialog->hide();
+    }
+  }
+
+  mainWindow->hide();
+}
+
 // ==========================================================================
 // Fullscreen methods
 
