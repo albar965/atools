@@ -32,18 +32,7 @@ SimpleWaitDialog::SimpleWaitDialog(QWidget *parent, const QString& message)
   ui->setupUi(this);
 
   setWindowTitle(QCoreApplication::applicationName());
-  setWindowModality(Qt::ApplicationModal);
-  setWindowFlags(Qt::CustomizeWindowHint);
-  setWindowFlag(Qt::WindowTitleHint, true);
-  setWindowFlag(Qt::WindowSystemMenuHint, false);
-  setWindowFlag(Qt::WindowMinimizeButtonHint, false);
-  setWindowFlag(Qt::WindowMaximizeButtonHint, false);
-  setWindowFlag(Qt::WindowCloseButtonHint, false);
-  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-  setWindowFlag(Qt::WindowShadeButtonHint, false);
-  setWindowFlag(Qt::WindowStaysOnTopHint, false);
-  setWindowFlag(Qt::WindowStaysOnBottomHint, false);
-  setWindowFlag(Qt::WindowFullscreenButtonHint, false);
+  setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
   setLabelText(message);
 
   show();
