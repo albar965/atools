@@ -818,7 +818,12 @@ QString HtmlBuilder::aFileName(const QString& filepath, html::Flags flags, QColo
   return aUrl(info.fileName(), QUrl::fromLocalFile(info.absoluteFilePath()).toString(), flags, color, elideText);
 }
 
-HtmlBuilder& HtmlBuilder::img(const QIcon& icon, const QString& alt, const QString& style, QSize size, bool divEnclose)
+HtmlBuilder& HtmlBuilder::img(const QIcon& icon, QSize size)
+{
+  return img(icon, QStringLiteral(), QStringLiteral(), size);
+}
+
+HtmlBuilder& HtmlBuilder::img(const QIcon& icon, const QString& alt, const QString& style, QSize size)
 {
   // Square size if one dimension is zero
   QSize pixmapSize(size);
@@ -828,15 +833,20 @@ HtmlBuilder& HtmlBuilder::img(const QIcon& icon, const QString& alt, const QStri
     pixmapSize.setHeight(pixmapSize.width());
 
   // Resulting pixmap might be smaller
-  QByteArray data;
-  QBuffer buffer(&data);
+  QByteArray pixmapData;
+  QBuffer buffer(&pixmapData);
   icon.pixmap(pixmapSize).save(&buffer, "PNG", 100);
 
-  img(QStringLiteral("data:image/png;base64, %1").arg(QString(data.toBase64())), alt, style, size, divEnclose);
+  img(QStringLiteral("data:image/png;base64, %1").arg(QString(pixmapData.toBase64())), alt, style, size);
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::img(const QString& src, const QString& alt, const QString& style, QSize size, bool divEnclose)
+HtmlBuilder& HtmlBuilder::img(const QString& src, QSize size)
+{
+  return img(src, QStringLiteral(), QStringLiteral(), size);
+}
+
+HtmlBuilder& HtmlBuilder::img(const QString& src, const QString& alt, const QString& style, QSize size)
 {
   QString widthAtt = size.width() > 0 ?
                      QStringLiteral(" width=\"") % QString::number(size.width()) % QStringLiteral("\"") : QStringLiteral();
@@ -845,14 +855,41 @@ HtmlBuilder& HtmlBuilder::img(const QString& src, const QString& alt, const QStr
   QString altAtt = alt.isEmpty() ? QStringLiteral() : QStringLiteral(" alt=\"") % alt % QStringLiteral("\"");
   QString styleAtt = style.isEmpty() ? QStringLiteral() : QStringLiteral(" style=\"") % style % QStringLiteral("\"");
 
-  // Pack image in div to avoid wrong formatting with hr
-  if(divEnclose)
-    htmlText.append(QStringLiteral("<div>"));
   htmlText.append(QStringLiteral("<img src='") % src %
                   QStringLiteral("'") % styleAtt % altAtt % widthAtt % heightAtt % QStringLiteral("/>"));
-  if(divEnclose)
-    htmlText.append(QStringLiteral("</div>"));
 
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::imgText(const QString& src, QSize size, const QString& label, html::Flags flags, QColor color)
+{
+  return imgText(src, QStringLiteral(), QStringLiteral(), size, label, flags, color);
+}
+
+HtmlBuilder& HtmlBuilder::imgText(const QString& src, const QString& alt, const QString& style, QSize size, const QString& label,
+                                  html::Flags flags, QColor color)
+{
+  return imgText(QIcon(src), alt, style, size, label, flags, color);
+}
+
+HtmlBuilder& HtmlBuilder::imgText(const QIcon& icon, QSize size, const QString& label, html::Flags flags, QColor color)
+{
+  return imgText(icon, QStringLiteral(), QStringLiteral(), size, label, flags, color);
+}
+
+HtmlBuilder& HtmlBuilder::imgText(const QIcon& icon, const QString& alt, const QString& style, QSize size, const QString& label,
+                                  html::Flags flags, QColor color)
+{
+  // Put image and trailing text into a table
+  table(0, 0).tr();
+
+  if(!icon.isNull())
+    td().img(icon, alt, style, size).nbsp().nbsp().tdEnd();
+
+  if(!label.isEmpty())
+    td().text(label, flags, color).tdEnd();
+
+  trEnd().tableEnd();
   return *this;
 }
 

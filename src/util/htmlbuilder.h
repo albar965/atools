@@ -202,9 +202,23 @@ public:
    * Creates a "<div>" if a style NOBR_WHITESPACE or LINK_NO_UL is given. */
   static QString aFileName(const QString& filepath, html::Flags flags = html::NONE, QColor color = QColor(), int elideText = 60);
 
+  /* Add image from path. */
+  HtmlBuilder& img(const QString& src, QSize size);
+  HtmlBuilder& img(const QString& src, const QString& alt, const QString& style, QSize size);
+
   /* Add inline base64 encoded image */
-  HtmlBuilder& img(const QIcon& icon, const QString& alt = QString(), const QString& style = QString(), QSize size = QSize(),
-                   bool divEnclose = true);
+  HtmlBuilder& img(const QIcon& icon, QSize size);
+  HtmlBuilder& img(const QIcon& icon, const QString& alt, const QString& style, QSize size);
+
+  /* Add image from path and a label embedded into a table to avoid formatting issues.. */
+  HtmlBuilder& imgText(const QString& src, QSize size, const QString& label, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& imgText(const QString& src, const QString& alt, const QString& style, QSize size, const QString& label,
+                       html::Flags flags = html::NONE, QColor color = QColor());
+
+  /* Add image from path and a label embedded into a table to avoid formatting issues.. */
+  HtmlBuilder& imgText(const QIcon& icon, QSize size, const QString& label, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& imgText(const QIcon& icon, const QString& alt, const QString& style, QSize size, const QString& label,
+                       html::Flags flags = html::NONE, QColor color = QColor());
 
   /* List functions */
   HtmlBuilder& ol();
@@ -534,9 +548,6 @@ private:
   // const QString& alt(const QStringList& list) const;
   static QString txt(QString str, html::Flags flags, QColor foreground, QColor background);
   static QString anchor(const QString& text, const QString& href, html::Flags flags, QColor color, int elideText);
-
-  /* Add image. Optionally surround by divEnclose tags to avoid issues with hr. */
-  HtmlBuilder& img(const QString& src, const QString& alt, const QString& style, QSize size, bool divEnclose);
 
   void initColors(const QColor& rowColor, const QColor& rowColorAlt)
   {
