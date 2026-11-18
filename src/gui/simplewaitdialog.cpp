@@ -33,7 +33,7 @@ SimpleWaitDialog::SimpleWaitDialog(QWidget *parent, const QString& message)
 
   setWindowTitle(QCoreApplication::applicationName());
   setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-  setLabelText(message);
+  setLabelText("<big><b>" % message % "</b></big>");
 
   show();
   adjustSize();
