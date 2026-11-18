@@ -80,38 +80,44 @@ bool XpConnectHandler::fetchData(fs::sc::SimConnectData& data, int radiusKm, fs:
     quint32 size;
     quint32 terminate;
     int prefixSize = sizeof(size) + sizeof(terminate);
-    QDataStream stream(QByteArray(static_cast<const char *>(sharedMemory.data()), prefixSize));
-    stream >> size;
 
-    if(size > static_cast<quint32>(prefixSize))
+    const char *shmData = static_cast<const char *>(sharedMemory.data());
+
+    if(shmData != nullptr)
     {
-      stream >> terminate;
+      QDataStream stream(QByteArray(shmData, prefixSize));
+      stream >> size;
 
-      QBuffer buffer;
-      buffer.setData(static_cast<const char *>(sharedMemory.data()), static_cast<int>(size));
-      buffer.open(QIODevice::ReadOnly);
-
-      buffer.seek(sizeof(size) + sizeof(terminate));
-      data.read(&buffer);
-      sharedMemory.unlock();
-
-      if(terminate)
+      if(size > static_cast<quint32>(prefixSize))
       {
-        disconnect();
-        return false;
-      }
+        stream >> terminate;
 
-      if(data.isUserAircraftValid() && data.getStatus() == OK)
-      {
-        if(!(options & atools::fs::sc::FETCH_AI_AIRCRAFT))
-          // Have to clear this here since the X-Plane plugin has no configuration option
-          data.clearAiAircraft();
+        QBuffer buffer;
+        buffer.setData(static_cast<const char *>(sharedMemory.data()), static_cast<int>(size));
+        buffer.open(QIODevice::ReadOnly);
 
-        return true;
+        buffer.seek(sizeof(size) + sizeof(terminate));
+        data.read(&buffer);
+        sharedMemory.unlock();
+
+        if(terminate)
+        {
+          disconnect();
+          return false;
+        }
+
+        if(data.isUserAircraftValid() && data.getStatus() == OK)
+        {
+          if(!(options & atools::fs::sc::FETCH_AI_AIRCRAFT))
+            // Have to clear this here since the X-Plane plugin has no configuration option
+            data.clearAiAircraft();
+
+          return true;
+        }
       }
     }
-    else
-      sharedMemory.unlock();
+
+    sharedMemory.unlock();
   }
   else
     qInfo() << Q_FUNC_INFO << "Cannot lock" << sharedMemory.key() << "native" << sharedMemory.nativeKey();
