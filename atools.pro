@@ -85,20 +85,24 @@ DEPLOY_BASE=$$(DEPLOY_BASE)D
 QUIET=$$(ATOOLS_QUIET)
 
 # Disables files
-ATOOLS_NO_USERDATA=$$(ATOOLS_NO_USERDATA)
-ATOOLS_NO_SQL=$$(ATOOLS_NO_SQL)
-ATOOLS_NO_WEATHER=$$(ATOOLS_NO_WEATHER)
-ATOOLS_NO_TRACK=$$(ATOOLS_NO_TRACK)
-ATOOLS_NO_GUI=$$(ATOOLS_NO_GUI)
-ATOOLS_NO_ROUTING=$$(ATOOLS_NO_ROUTING)
-ATOOLS_NO_WEB=$$(ATOOLS_NO_WEB)
+ATOOLS_NO_CRASHHANDLER=$$(ATOOLS_NO_CRASHHANDLER)
 ATOOLS_NO_FS=$$(ATOOLS_NO_FS)
 ATOOLS_NO_GRIB=$$(ATOOLS_NO_GRIB)
-ATOOLS_NO_WMM=$$(ATOOLS_NO_WMM)
-ATOOLS_NO_TIMEZONE=$$(ATOOLS_NO_TIMEZONE)
+ATOOLS_NO_GUI=$$(ATOOLS_NO_GUI)
 ATOOLS_NO_NAVSERVER=$$(ATOOLS_NO_NAVSERVER)
-ATOOLS_NO_CRASHHANDLER=$$(ATOOLS_NO_CRASHHANDLER)
+ATOOLS_NO_NETWORK=$$(ATOOLS_NO_NETWORK)
+ATOOLS_NO_ONLINE=$$(ATOOLS_NO_ONLINE)
 ATOOLS_NO_QT5COMPAT=$$(ATOOLS_NO_QT5COMPAT)
+ATOOLS_NO_ROUTING=$$(ATOOLS_NO_ROUTING)
+ATOOLS_NO_SQL=$$(ATOOLS_NO_SQL)
+ATOOLS_NO_TIMEZONE=$$(ATOOLS_NO_TIMEZONE)
+ATOOLS_NO_TRACK=$$(ATOOLS_NO_TRACK)
+ATOOLS_NO_USERDATA=$$(ATOOLS_NO_USERDATA)
+ATOOLS_NO_WEATHER=$$(ATOOLS_NO_WEATHER)
+ATOOLS_NO_WEATHER_BASE=$$(ATOOLS_NO_WEATHER_BASE)
+ATOOLS_NO_WEB=$$(ATOOLS_NO_WEB)
+ATOOLS_NO_WMM=$$(ATOOLS_NO_WMM)
+ATOOLS_NO_ZIP=$$(ATOOLS_NO_ZIP)
 
 !isEqual(ATOOLS_NO_GUI, "true"): QT += svg widgets
 isEqual(ATOOLS_NO_GUI, "true"): QT -= gui
@@ -204,20 +208,24 @@ message(GIT_REVISION: $$GIT_REVISION)
 message(GIT_REVISION_FULL: $$GIT_REVISION_FULL)
 message(GIT_PATH: $$GIT_PATH)
 message(WINARCH: $$WINARCH)
-message(ATOOLS_NO_USERDATA: $$ATOOLS_NO_USERDATA)
-message(ATOOLS_NO_SQL: $$ATOOLS_NO_SQL)
-message(ATOOLS_NO_WEATHER: $$ATOOLS_NO_WEATHER)
-message(ATOOLS_NO_TRACK: $$ATOOLS_NO_TRACK)
-message(ATOOLS_NO_GUI: $$ATOOLS_NO_GUI)
-message(ATOOLS_NO_ROUTING: $$ATOOLS_NO_ROUTING)
-message(ATOOLS_NO_WEB: $$ATOOLS_NO_WEB)
+message(ATOOLS_NO_CRASHHANDLER: $$ATOOLS_NO_CRASHHANDLER)
 message(ATOOLS_NO_FS: $$ATOOLS_NO_FS)
 message(ATOOLS_NO_GRIB: $$ATOOLS_NO_GRIB)
-message(ATOOLS_NO_WMM: $$ATOOLS_NO_WMM)
-message(ATOOLS_NO_TIMEZONE: $$ATOOLS_NO_TIMEZONE)
+message(ATOOLS_NO_GUI: $$ATOOLS_NO_GUI)
 message(ATOOLS_NO_NAVSERVER: $$ATOOLS_NO_NAVSERVER)
-message(ATOOLS_NO_CRASHHANDLER: $$ATOOLS_NO_CRASHHANDLER)
+message(ATOOLS_NO_NETWORK: $$ATOOLS_NO_NETWORK)
+message(ATOOLS_NO_ONLINE: $$ATOOLS_NO_ONLINE)
 message(ATOOLS_NO_QT5COMPAT: $$ATOOLS_NO_QT5COMPAT)
+message(ATOOLS_NO_ROUTING: $$ATOOLS_NO_ROUTING)
+message(ATOOLS_NO_SQL: $$ATOOLS_NO_SQL)
+message(ATOOLS_NO_TIMEZONE: $$ATOOLS_NO_TIMEZONE)
+message(ATOOLS_NO_TRACK: $$ATOOLS_NO_TRACK)
+message(ATOOLS_NO_USERDATA: $$ATOOLS_NO_USERDATA)
+message(ATOOLS_NO_WEATHER: $$ATOOLS_NO_WEATHER)
+message(ATOOLS_NO_WEATHER_BASE: $$ATOOLS_NO_WEATHER_BASE)
+message(ATOOLS_NO_WEB: $$ATOOLS_NO_WEB)
+message(ATOOLS_NO_WMM: $$ATOOLS_NO_WMM)
+message(ATOOLS_NO_ZIP: $$ATOOLS_NO_ZIP)
 message(SIMCONNECT_PATH_WIN32: $$SIMCONNECT_PATH_WIN32)
 message(ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2020: $$ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2020)
 message(ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024: $$ATOOLS_SIMCONNECT_PATH_WIN64_MSFS_2024)
@@ -317,7 +325,6 @@ HEADERS += \
   src/util/filesystemwatcher.h \
   src/util/flags.h \
   src/util/heap.h \
-  src/util/httpdownloader.h \
   src/util/locker.h \
   src/util/properties.h \
   src/util/props.h \
@@ -325,25 +332,10 @@ HEADERS += \
   src/util/simplecrypt.h \
   src/util/str.h \
   src/util/timedcache.h \
-  src/util/updatecheck.h \
-  src/util/updatechecktypes.h \
   src/util/version.h \
   src/util/xmlstreamreader.h \
   src/util/xmlstreamwriter.h \
-  src/win/activationcontext.h \
-  src/zip/gzip.h \
-  src/zip/zipreader.h \
-  src/zip/zipwriter.h \
-  src/zlib/crc32.h \
-  src/zlib/deflate.h \
-  src/zlib/gzguts.h \
-  src/zlib/inffast.h \
-  src/zlib/inffixed.h \
-  src/zlib/inflate.h \
-  src/zlib/inftrees.h \
-  src/zlib/trees.h \
-  src/zlib/zlib.h \
-  src/zlib/zutil.h
+  src/win/activationcontext.h
 
 SOURCES += \
   src/atools.cpp \
@@ -399,16 +391,66 @@ SOURCES += \
   src/util/filechecker.cpp \
   src/util/fileoperations.cpp \
   src/util/filesystemwatcher.cpp \
-  src/util/httpdownloader.cpp \
   src/util/properties.cpp \
   src/util/props.cpp \
   src/util/signalhandler.cpp \
   src/util/simplecrypt.cpp \
-  src/util/updatecheck.cpp \
   src/util/version.cpp \
   src/util/xmlstreamreader.cpp \
   src/util/xmlstreamwriter.cpp \
-  src/win/activationcontext.cpp \
+  src/win/activationcontext.cpp
+
+# =====================================================================
+# Network
+
+!isEqual(ATOOLS_NO_ONLINE, "true") {
+HEADERS += \
+  src/fs/online/onlinedatamanager.h \
+  src/fs/online/onlinetypes.h \
+  src/fs/online/statustextparser.h \
+  src/fs/online/whazzuptextparser.h
+
+SOURCES += \
+  src/fs/online/onlinedatamanager.cpp \
+  src/fs/online/onlinetypes.cpp \
+  src/fs/online/statustextparser.cpp \
+  src/fs/online/whazzuptextparser.cpp
+} # ATOOLS_NO_NETWORK
+
+# =====================================================================
+# Network
+
+!isEqual(ATOOLS_NO_NETWORK, "true") {
+HEADERS += \
+  src/util/updatecheck.h \
+  src/util/updatechecktypes.h \
+  src/util/httpdownloader.h
+
+SOURCES += \
+    src/util/updatecheck.cpp \
+    src/util/httpdownloader.cpp
+} # ATOOLS_NO_NETWORK
+
+# =====================================================================
+# Zip
+
+!isEqual(ATOOLS_NO_ZIP, "true") {
+HEADERS += \
+  src/zip/gzip.h \
+  src/zip/zipreader.h \
+  src/zip/zipwriter.h \
+  src/zlib/crc32.h \
+  src/zlib/deflate.h \
+  src/zlib/gzguts.h \
+  src/zlib/inffast.h \
+  src/zlib/inffixed.h \
+  src/zlib/inflate.h \
+  src/zlib/inftrees.h \
+  src/zlib/trees.h \
+  src/zlib/zlib.h \
+  src/zlib/zutil.h
+
+SOURCES += \
   src/zip/gzip.cpp \
   src/zip/zip.cpp \
   src/zlib/adler32.c \
@@ -426,6 +468,7 @@ SOURCES += \
   src/zlib/trees.c \
   src/zlib/uncompr.c \
   src/zlib/zutil.c
+} # ATOOLS_NO_ZIP
 
 # =====================================================================
 # Userdata
@@ -806,10 +849,6 @@ HEADERS += \
   src/fs/navdatabaseerrors.h \
   src/fs/navdatabaseoptions.h \
   src/fs/navdatabaseprogress.h \
-  src/fs/online/onlinedatamanager.h \
-  src/fs/online/onlinetypes.h \
-  src/fs/online/statustextparser.h \
-  src/fs/online/whazzuptextparser.h \
   src/fs/perf/aircraftperf.h \
   src/fs/perf/aircraftperfconstants.h \
   src/fs/perf/aircraftperfhandler.h \
@@ -953,10 +992,6 @@ SOURCES += \
   src/fs/navdatabaseerrors.cpp \
   src/fs/navdatabaseoptions.cpp \
   src/fs/navdatabaseprogress.cpp \
-  src/fs/online/onlinedatamanager.cpp \
-  src/fs/online/onlinetypes.cpp \
-  src/fs/online/statustextparser.cpp \
-  src/fs/online/whazzuptextparser.cpp \
   src/fs/perf/aircraftperf.cpp \
   src/fs/perf/aircraftperfconstants.cpp \
   src/fs/perf/aircraftperfhandler.cpp \
