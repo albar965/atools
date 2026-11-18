@@ -126,10 +126,11 @@ void DataExchangeFetcher::fetchSharedMemory()
   else
     qWarning() << Q_FUNC_INFO << "sharedMemory is null";
 
-  if(!properties.isEmpty())
+  if(!properties.isEmpty() && !Application::isShuttingDown())
   {
     // Found properties, i.e. a message - send signal
     qInfo() << Q_FUNC_INFO << properties;
+
     emit dataFetched(properties);
   }
 
