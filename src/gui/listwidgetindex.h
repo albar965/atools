@@ -73,9 +73,13 @@ public:
     highlightColor = value;
   }
 
+  void styleChanged();
+
 private:
   /* Recurses through all child widgets of the stacked widget and collects text in index */
   void processObjects(int pageIndex, QObject *object);
+
+  void updateLabelStyle();
 
   /* Extracts relevant widget texts and returns an upper case cleaned up list. */
   QStringList widgetText(const QObject *object, bool& recurse);

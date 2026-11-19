@@ -109,14 +109,9 @@ ListWidgetIndex::ListWidgetIndex(QSplitter *splitterWidgetParam, QListWidget *li
   tooltipLabel->setMargin(0);
   tooltipLabel->setWordWrap(true);
   tooltipLabel->setAlignment(Qt::AlignCenter);
-
-  // Use tooltip palette
-  tooltipLabel->setPalette(QToolTip::palette());
-#ifndef Q_OS_MACOS
-  tooltipLabel->setForegroundRole(QPalette::ToolTipText);
-  tooltipLabel->setBackgroundRole(QPalette::ToolTipBase);
-#endif
   tooltipLabel->hide();
+
+  updateLabelStyle();
 }
 
 ListWidgetIndex::~ListWidgetIndex()
@@ -125,6 +120,16 @@ ListWidgetIndex::~ListWidgetIndex()
   setLabel(QStringLiteral());
   delete tooltipLabel;
   delete map;
+}
+
+void ListWidgetIndex::updateLabelStyle()
+{
+#ifndef Q_OS_MACOS
+  if(tooltipLabel != nullptr)
+    tooltipLabel->setStyleSheet(QStringLiteral("QLabel {color: %1; background: %2; }").
+                                arg(QApplication::palette().color(QPalette::Inactive, QPalette::ToolTipText).name(QColor::HexRgb),
+                                    QApplication::palette().color(QPalette::Inactive, QPalette::ToolTipBase).name(QColor::HexRgb)));
+#endif
 }
 
 void ListWidgetIndex::resetView()
@@ -284,6 +289,11 @@ void ListWidgetIndex::reset()
   currentStopwords = nullptr;
   processedObjects.clear();
   map->index.clear();
+}
+
+void ListWidgetIndex::styleChanged()
+{
+  updateLabelStyle();
 }
 
 void ListWidgetIndex::buildIndex()
