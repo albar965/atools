@@ -98,12 +98,13 @@ TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QList<QWidg
   connect(tabWidget, &QTabWidget::currentChanged, this, &TabWidgetHandler::currentChanged);
 
   // Create tool button =================================================
-  toolButtonCorner = new QToolButton(tabWidget);
-  toolButtonCorner->setIcon(icon);
-  toolButtonCorner->setToolTip(toolButtonTooltip);
-  toolButtonCorner->setStatusTip(toolButtonTooltip);
-  toolButtonCorner->setPopupMode(QToolButton::InstantPopup);
-  toolButtonCorner->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+  toolButtonTabCorner = new QToolButton(tabWidget);
+  toolButtonTabCorner->setObjectName(QStringLiteral("toolButtonTabCorner"));
+  toolButtonTabCorner->setIcon(icon);
+  toolButtonTabCorner->setToolTip(toolButtonTooltip);
+  toolButtonTabCorner->setStatusTip(toolButtonTooltip);
+  toolButtonTabCorner->setPopupMode(QToolButton::InstantPopup);
+  toolButtonTabCorner->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
   // Container widget and layout for tool button and additional widgets
   QWidget *widget = new QWidget(tabWidget);
@@ -116,13 +117,13 @@ TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QList<QWidg
     layout->addWidget(additionalWidget, 0, Qt::AlignRight);
 
   // Add toolbutton at the right
-  layout->addWidget(toolButtonCorner, 0, Qt::AlignRight); // Add button to the right
+  layout->addWidget(toolButtonTabCorner, 0, Qt::AlignRight); // Add button to the right
 
   tabWidget->setCornerWidget(widget);
 
   // Add menu =======
-  toolButtonCorner->setMenu(new QMenu(toolButtonCorner));
-  QMenu *buttonMenu = toolButtonCorner->menu();
+  toolButtonTabCorner->setMenu(new QMenu(toolButtonTabCorner));
+  QMenu *buttonMenu = toolButtonTabCorner->menu();
   buttonMenu->setToolTipsVisible(true);
 
   // Create and add select all action =====================================
@@ -171,14 +172,14 @@ TabWidgetHandler::~TabWidgetHandler()
   delete actionResetLayout;
   delete actionCloseExcept;
   delete actionOpenAll;
-  delete toolButtonCorner;
+  delete toolButtonTabCorner;
 }
 
 void TabWidgetHandler::clear()
 {
   for(const Tab& tab : std::as_const(tabs))
   {
-    toolButtonCorner->menu()->removeAction(tab.getAction());
+    toolButtonTabCorner->menu()->removeAction(tab.getAction());
     delete tab.getAction();
   }
   tabs.clear();
@@ -267,14 +268,14 @@ void TabWidgetHandler::init(const QList<int>& tabIdsParam, const QString& settin
       name = QStringLiteral("&") % name;
 
     // Create and fill action
-    QAction *action = new QAction(name, toolButtonCorner->menu());
+    QAction *action = new QAction(name, toolButtonTabCorner->menu());
     action->setCheckable(true);
     action->setChecked(true);
     QString tooltip = tr("Open or close tab %1").arg(name).remove(QChar('&'));
     action->setToolTip(tooltip);
     action->setStatusTip(tooltip);
     action->setData(id);
-    toolButtonCorner->menu()->addAction(action);
+    toolButtonTabCorner->menu()->addAction(action);
     connect(action, &QAction::toggled, this, &TabWidgetHandler::toolbarActionTriggered);
 
     tabs.append(Tab(widget, tabWidget->tabText(index), tabWidget->tabToolTip(index), action));
@@ -331,7 +332,7 @@ void TabWidgetHandler::restoreState()
 
 void TabWidgetHandler::fontChanged(const QFont&, const QSize& minButtonSize)
 {
-  atools::gui::setWidgetAndIconSize({toolButtonCorner}, minButtonSize);
+  atools::gui::setWidgetAndIconSize({toolButtonTabCorner}, minButtonSize);
 
   for(QWidget *widget : std::as_const(additionalWidgets))
   {

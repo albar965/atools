@@ -161,7 +161,7 @@ private:
           *actionLockLayout = nullptr;
 
   QTabWidget *tabWidget;
-  QToolButton *toolButtonCorner = nullptr;
+  QToolButton *toolButtonTabCorner = nullptr;
 
   QList<QWidget *> additionalWidgets;
 
