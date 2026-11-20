@@ -241,7 +241,9 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
     menu.addAction(tab.getAction());
 
   // Open menu
-  QAction *action = menu.exec(pos + QPoint(3, 3));
+  if(styleSheetCallback)
+    styleSheetCallback(&menu);
+  QAction *action = menu.exec(tabWidget->mapToGlobal(pos) + QPoint(3, 3));
   if(action == closeAction)
     // Use internal which does not check locked status
     tabCloseRequestedInternal(index);

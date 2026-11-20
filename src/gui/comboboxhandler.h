@@ -23,6 +23,7 @@
 class QPushButton;
 class QComboBox;
 
+class QMenu;
 namespace atools {
 namespace gui {
 
@@ -60,6 +61,12 @@ public:
     menuTooltipsVisible = newMenuTooltipsVisible;
   }
 
+  typedef std::function<void (QMenu *)> StyleSheetCallback;
+  void setStyleCallback(StyleSheetCallback callback)
+  {
+    styleSheetCallback = callback;
+  }
+
 private:
   /* Custom context menu of line edit */
   void showContextMenu(const QPoint& point);
@@ -80,6 +87,7 @@ private:
   QPushButton *deleteButton = nullptr;
   QString settingsKey;
   bool menuTooltipsVisible = false;
+  StyleSheetCallback styleSheetCallback;
 };
 
 } // namespace gui

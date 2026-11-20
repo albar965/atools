@@ -27,6 +27,7 @@ class QAction;
 
 class Tab;
 
+class QMenu;
 namespace atools {
 namespace gui {
 
@@ -96,6 +97,12 @@ public:
 
   /* Adjust tab button and additional widgets */
   void fontChanged(const QFont&, const QSize& minButtonSize);
+
+  typedef std::function<void (QMenu *)> StyleSheetCallback;
+  void setStyleCallback(StyleSheetCallback callback)
+  {
+    styleSheetCallback = callback;
+  }
 
 signals:
   /* Current tab has changed */
@@ -167,6 +174,8 @@ private:
 
   /* Prefix used when saving settings */
   QString settingsPrefix;
+
+  StyleSheetCallback styleSheetCallback;
 };
 
 } // namespace gui

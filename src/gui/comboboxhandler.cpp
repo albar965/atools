@@ -76,6 +76,8 @@ void ComboBoxHandler::showContextMenu(const QPoint& point)
   menu->addAction(deleteAllAction);
 
   // Show menu
+  if(styleSheetCallback)
+    styleSheetCallback(menu);
   QAction *action = menu->exec(comboBox->lineEdit()->mapToGlobal(point + QPoint(3, 3)));
   if(action == deleteCurrentAction)
     comboBox->removeItem(comboBox->currentIndex());
