@@ -30,24 +30,71 @@ namespace gui {
 /* Show a simple message box for showing action instead of progress.
 * The box has no close button and does not close on Esc.
 * Also sets wait cursor. */
-class SimpleWaitDialog :
+class SimpleWaitDialogWidget :
   public QDialog
 {
   Q_OBJECT
 
 public:
-  explicit SimpleWaitDialog(QWidget *parent, const QString& message);
-  virtual ~SimpleWaitDialog() override;
+  explicit SimpleWaitDialogWidget(QWidget *parent, const QString& labelText);
+  virtual ~SimpleWaitDialogWidget() override;
 
   /* Do not allow copying */
-  SimpleWaitDialog(const SimpleWaitDialog& other) = delete;
-  SimpleWaitDialog& operator=(const SimpleWaitDialog& other) = delete;
+  SimpleWaitDialogWidget(const SimpleWaitDialogWidget& other) = delete;
+  SimpleWaitDialogWidget& operator=(const SimpleWaitDialogWidget& other) = delete;
 
   /* Set label text inside box, refresh and update dialog size */
   void setLabelText(const QString& labelText);
 
 private:
   Ui::SimpleWaitDialog *ui;
+};
+
+/*
+ * Closes the dialog automatically when leaving scope.
+ */
+class SimpleWaitDialog
+{
+public:
+  explicit SimpleWaitDialog(QWidget *parent, const QString& labelText)
+    :  dialog(new SimpleWaitDialogWidget(parent, labelText))
+  {
+  }
+
+  SimpleWaitDialog()
+    : dialog(nullptr)
+  {
+  }
+
+  ~SimpleWaitDialog()
+  {
+    close();
+  }
+
+  /* Do not allow copying */
+  SimpleWaitDialog(const SimpleWaitDialog& other) = delete;
+  SimpleWaitDialog& operator=(const SimpleWaitDialog& other) = delete;
+
+  void init(QWidget *parent, const QString& labelText)
+  {
+    dialog = new SimpleWaitDialogWidget(parent, labelText);
+  }
+
+  /* Set label text inside box, refresh and update dialog size */
+  void setLabelText(const QString& labelText)
+  {
+    dialog->setLabelText(labelText);
+  }
+
+  void close()
+  {
+    delete dialog;
+    dialog = nullptr;
+  }
+
+private:
+  SimpleWaitDialogWidget *dialog;
+
 };
 
 } // namespace gui

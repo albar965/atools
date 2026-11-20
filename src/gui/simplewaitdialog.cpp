@@ -22,7 +22,7 @@
 namespace atools {
 namespace gui {
 
-SimpleWaitDialog::SimpleWaitDialog(QWidget *parent, const QString& message)
+SimpleWaitDialogWidget::SimpleWaitDialogWidget(QWidget *parent, const QString& labelText)
   : QDialog(parent), ui(new Ui::SimpleWaitDialog)
 {
   Application::closeSplashScreen();
@@ -33,7 +33,7 @@ SimpleWaitDialog::SimpleWaitDialog(QWidget *parent, const QString& message)
 
   setWindowTitle(QCoreApplication::applicationName());
   setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-  setLabelText("<big><b>" % message % "</b></big>");
+  setLabelText(QStringLiteral("<big><b>") % labelText % QStringLiteral("</b></big>"));
 
   show();
   adjustSize();
@@ -44,19 +44,19 @@ SimpleWaitDialog::SimpleWaitDialog(QWidget *parent, const QString& message)
   atools::gui::Application::processEventsExtended();
 }
 
-SimpleWaitDialog::~SimpleWaitDialog()
+SimpleWaitDialogWidget::~SimpleWaitDialogWidget()
 {
   delete ui;
 
   QGuiApplication::restoreOverrideCursor();
 }
 
-void SimpleWaitDialog::setLabelText(const QString& labelText)
+void SimpleWaitDialogWidget::setLabelText(const QString& labelText)
 {
   ui->labelSimpleWaitDialog->setText(labelText);
   adjustSize();
 
-  // Required - otherwise wwon't update text
+  // Required - otherwise won't update text
   atools::gui::Application::processEventsExtended();
   repaint();
   atools::gui::Application::processEventsExtended();
