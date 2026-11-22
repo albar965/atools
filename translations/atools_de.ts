@@ -7,7 +7,7 @@
         <location filename="../src/gui/actiontool.cpp" line="45"/>
         <source> ...</source>
         <comment>Ending ellipsis for menu items</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -130,7 +130,7 @@
     <message>
         <location filename="../src/io/binarystream.cpp" line="266"/>
         <source>Size limit exceeded</source>
-        <translation type="unfinished"></translation>
+        <translation>Größenbeschränkung überschritten</translation>
     </message>
     <message>
         <location filename="../src/io/binarystream.cpp" line="271"/>
@@ -219,7 +219,7 @@
     <message>
         <location filename="../src/gui/dialog.cpp" line="45"/>
         <source> - </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -723,7 +723,7 @@ Nachtzeit: %5</translation>
         <location filename="../src/fs/common/magdecreader.cpp" line="164"/>
         <location filename="../src/fs/common/magdecreader.cpp" line="246"/>
         <source>MagDecReader is invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>MagDecReader ist ungültig</translation>
     </message>
     <message>
         <location filename="../src/fs/common/magdecreader.cpp" line="198"/>
@@ -733,7 +733,7 @@ Nachtzeit: %5</translation>
     <message>
         <location filename="../src/fs/common/magdecreader.cpp" line="229"/>
         <source>Magnetic declination values are invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Deklinationswerte sind ungültig</translation>
     </message>
 </context>
 <context>
@@ -741,7 +741,7 @@ Nachtzeit: %5</translation>
     <message>
         <location filename="../src/wmm/magdectool.cpp" line="88"/>
         <source>Magnetic coeffizient file: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei für magnetische Koeffizienten: %1.</translation>
     </message>
     <message>
         <location filename="../src/wmm/magdectool.cpp" line="109"/>
@@ -761,7 +761,7 @@ Nachtzeit: %5</translation>
     <message>
         <location filename="../src/wmm/magdectool.cpp" line="205"/>
         <source>Geoid buffer file file: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei für Geoidpuffer: %1.</translation>
     </message>
     <message>
         <location filename="../src/wmm/magdectool.cpp" line="225"/>
@@ -1618,7 +1618,7 @@ Nachtzeit: %5</translation>
         <translation>Bereinige Wegpunkte</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="2256"/>
+        <location filename="../src/fs/navdatabase.cpp" line="2301"/>
         <source>Counting files for %1 ...</source>
         <translation>Zähle Dateien für %1 ...</translation>
     </message>
@@ -1653,8 +1653,8 @@ Nachtzeit: %5</translation>
         <translation type="vanished">Erstelle große und mittlere Flugplatztabellen</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1960"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1971"/>
+        <location filename="../src/fs/navdatabase.cpp" line="2005"/>
+        <location filename="../src/fs/navdatabase.cpp" line="2016"/>
         <source>Custom scenery path %1</source>
         <translation>Benutzerdefinierter Szeneriepfad %1</translation>
     </message>
@@ -2325,7 +2325,7 @@ Nachtzeit: %5</translation>
         <location filename="../src/atools.cpp" line="183"/>
         <source>☆</source>
         <comment>For empty rating</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/atools.cpp" line="955"/>
@@ -2376,9 +2376,9 @@ Nachtzeit: %5</translation>
         <translation> und </translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="491"/>
+        <location filename="../src/gui/application.cpp" line="503"/>
         <source>Version %5 (revision %6).</source>
-        <translation type="unfinished"></translation>
+        <translation>Version %5 (Revision %6).</translation>
     </message>
 </context>
 <context>
@@ -2386,12 +2386,12 @@ Nachtzeit: %5</translation>
     <message>
         <location filename="../src/gui/qrcodedialog.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <location filename="../src/gui/qrcodedialog.ui" line="42"/>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschriftung</translation>
     </message>
 </context>
 <context>
@@ -2457,7 +2457,7 @@ Nachtzeit: %5</translation>
     <message>
         <location filename="../src/fs/sc/db/simconnectloader.cpp" line="1059"/>
         <source>Navaid file: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei für Navigationshilfen: %1.</translation>
     </message>
     <message>
         <source>Too many errors reading airport data. Stopping.</source>
@@ -2543,7 +2543,7 @@ Nachtzeit: %5</translation>
     <message>
         <location filename="../src/gui/simplewaitdialog.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
 </context>
 <context>
@@ -2577,22 +2577,22 @@ Nachtzeit: %5</translation>
     <message>
         <location filename="../src/timezone/timezonemanager.cpp" line="41"/>
         <source>Error in timezone: %1 / %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler in Zeitzone: %1 / %2.</translation>
     </message>
     <message>
         <location filename="../src/timezone/timezonemanager.cpp" line="106"/>
         <source>Cannot read %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann %1 nicht lesen: %2</translation>
     </message>
     <message>
         <location filename="../src/timezone/timezonemanager.cpp" line="109"/>
         <source>Library from file %1 is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Bibliothek aus Datei %1 ist leer</translation>
     </message>
     <message>
         <location filename="../src/timezone/timezonemanager.cpp" line="114"/>
         <source>Cannot read %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann %1 nicht lesen.</translation>
     </message>
 </context>
 <context>
@@ -2747,18 +2747,18 @@ Importieren gestoppt.</translation>
     <message>
         <location filename="../src/util/xmlstreamreader.cpp" line="89"/>
         <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
-        <translation type="unfinished">Fehler beim Lesen von &quot;%1&quot; in Zeile %2, Spalte %3: %4</translation>
+        <translation>Fehler beim Lesen von &quot;%1&quot; in Zeile %2, Spalte %3: %4</translation>
     </message>
     <message>
         <location filename="../src/util/xmlstreamreader.h" line="143"/>
         <location filename="../src/util/xmlstreamwriter.h" line="180"/>
         <source>Cannot open file %1. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
     <message>
         <location filename="../src/util/xmlstreamwriter.cpp" line="191"/>
         <source>Error writing &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Schreiben von &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -3044,12 +3044,12 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <message>
         <location filename="../src/fs/ns/navserver.cpp" line="144"/>
         <source>Server is listening on hostnames / IP addresses on port </source>
-        <translation type="unfinished"></translation>
+        <translation>Server wartet auf Computernamen bzw. IP-Adressen an Port </translation>
     </message>
     <message>
         <location filename="../src/fs/ns/navserver.cpp" line="146"/>
         <source>Server is listening on hostname / IP address on port </source>
-        <translation type="unfinished"></translation>
+        <translation>Server wartet auf Computername bzw. IP-Adresse an Port </translation>
     </message>
     <message>
         <location filename="../src/fs/ns/navserver.cpp" line="147"/>
@@ -3079,7 +3079,7 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <message>
         <location filename="../src/fs/ns/navserver.cpp" line="169"/>
         <source>Use the mouse to select a hostname or an IP address.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verwenden Sie die Maus, um einen Computernamen oder eine IP-Adresse auszuwählen.</translation>
     </message>
     <message>
         <source>Use the mouse to select a hostname or IP-address.</source>
@@ -3144,7 +3144,7 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <message>
         <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="339"/>
         <source>—</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/fs/perf/aircraftperfhandler.cpp" line="459"/>
@@ -3471,7 +3471,7 @@ Zeile %2.</translation>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="../src/grib/windquery.cpp" line="785"/>
+        <location filename="../src/grib/windquery.cpp" line="809"/>
         <source>Unknown error.</source>
         <translation>Unbekannter Fehler.</translation>
     </message>
@@ -3487,27 +3487,27 @@ Zeile %2.</translation>
         <translation type="vanished">&lt;b&gt;Ausnahmefehler in der Datei %1 Zeile %2 aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Klicken Sie OK, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="408"/>
+        <location filename="../src/gui/application.cpp" line="420"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Ausnahmefehler in der Datei %1 Zeile %2 aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Klicken Sie OK, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="433"/>
+        <location filename="../src/gui/application.cpp" line="445"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Kontakt:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="458"/>
+        <location filename="../src/gui/application.cpp" line="470"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="462"/>
+        <location filename="../src/gui/application.cpp" line="474"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="465"/>
+        <location filename="../src/gui/application.cpp" line="477"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
@@ -3536,7 +3536,7 @@ Zeile %2.</translation>
         <translation type="vanished">&lt;p style=&quot;white-space:pre&quot;&gt;&lt;b&gt;%1 wurde beim letzten Mal nicht sauber beendet.&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Dies wurde wahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Ein Absturzbericht wurde erstellt und mit allen zugehörigen Dateien in einem Zip-Archiv gespeichert.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%2&quot;&gt;&lt;b&gt;Hier klicken, um das Verzeichnis zu öffnen, das den Bericht &quot;%3&quot; enthält&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;Sie sollten diese Datei an den Autor von %4 senden, um den Absturz zu untersuchen.&lt;/p&gt;&lt;p style=&quot;white-space:pre&quot;&gt;&lt;a href=&quot;%5&quot;&gt;&lt;b&gt;Hier für Kontaktinformationen klicken&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im abgesicherten Modus starten, was bedeutet, dass das Laden aller Standarddateien wie Flugpläne, Fensteranordnung und andere Einstellungen, die den vorherigen Absturz verursacht haben könnten, jetzt übersprungen werden?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="427"/>
+        <location filename="../src/gui/application.cpp" line="439"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation>&lt;b&gt;Kontakt:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Kontakt und Unterstützung&lt;/a&gt;</translation>
     </message>
@@ -3570,27 +3570,31 @@ Zeile %2.</translation>
         <translation>&lt;p&gt;Ein Fehlerbericht wurde mit allen relevanten Dateien in ein Zip-Archiv gespeichert.&lt;/p&gt;&lt;p&gt;%1 (zum Anzeigen klicken)&lt;/p&gt;&lt;p&gt;Sie können diese Datei an den Autor von %2 senden, um ein Problem zu untersuchen. Dies ist eine Zip-Datei und Sie können den Inhalt bei Bedarf einsehen.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Bitte stellen Sie sicher, dass Sie die neueste Version von %2 verwenden, bevor Sie ein Problem melden,&lt;br/&gt;und wenn möglich, beschreiben Sie alle Schritte, um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Klicken Sie hier für Kontaktinformationen&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="216"/>
         <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %1 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %1 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;%1 wurde das letzte Mal nicht sauber beendet.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Dies wurde wahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p&gt;Ein Fehlerbericht wurde mit allen relevanten Dateien in ein Zip-Archiv gespeichert.&lt;/p&gt;&lt;p&gt;%2 (zum Anzeigen klicken)&lt;/p&gt;&lt;p&gt;Sie können diese Datei an den Autor von %1 senden, damit er den Absturz zu untersuchen kann.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Bitte achten Sie darauf, die neueste Version von %1 zu verwenden, bevor Sie einen Crash melden. Bitte alle Schritte beschreiben, die nötig sind um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Klicken Sie hier für Kontaktinformationen&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im sicheren Modus starten, was bedeutet, das Laden aller Standarddateien wie Flugpläne, Fensteranordnung und andere Einstellungen zu überspringen, die den vorherigen Abstrurz verursacht haben können?&lt;/b&gt;&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;&lt;b&gt;%1 wurde das letzte Mal nicht sauber beendet.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Dies wurde wahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p&gt;Ein Fehlerbericht wurde mit allen relevanten Dateien in ein Zip-Archiv gespeichert.&lt;/p&gt;&lt;p&gt;%2 (zum Anzeigen klicken)&lt;/p&gt;&lt;p&gt;Sie können diese Datei an den Autor von %1 senden, damit er den Absturz zu untersuchen kann.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Bitte achten Sie darauf, die neueste Version von %1 zu verwenden, bevor Sie einen Crash melden. Bitte alle Schritte beschreiben, die nötig sind um das Problem zu reproduzieren.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Klicken Sie hier für Kontaktinformationen&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im sicheren Modus starten, was bedeutet, das Laden aller Standarddateien wie Flugpläne, Fensteranordnung und andere Einstellungen zu überspringen, die den vorherigen Abstrurz verursacht haben können?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="484"/>
+        <location filename="../src/gui/application.cpp" line="496"/>
         <source> 64-bit</source>
         <translation> 64-Bit</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="486"/>
+        <location filename="../src/gui/application.cpp" line="498"/>
         <source> 32-bit</source>
         <translation> 32-Bit</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="362"/>
+        <location filename="../src/gui/application.cpp" line="374"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach a text copy or a screenshot of this dialog, the log file and the configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Wenn der Fehler weiterhin besteht oder während des Programmstarts auftritt, löschen Sie alle Einstellungen und Datenbankdateien von %1 und versuchen Sie es erneut.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Wenn Sie diesen Fehler melden wollen, hängen Sie die Log- und Konfigurationsdateien an Ihren Bericht an, fügen alle anderen verfügbaren Informationen hinzu und senden alles an die unten genannte Kontaktadresse.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="388"/>
+        <location filename="../src/gui/application.cpp" line="218"/>
+        <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %1 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %1 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;b&gt;%1 wurde beim letzten Mal nicht ordnungsgemäß beendet.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Dies wurde höchstwahrscheinlich durch einen Absturz verursacht.&lt;/p&gt;&lt;p&gt;Es wurde ein Absturzbericht erstellt und zusammen mit allen zugehörigen Dateien in einem ZIP-Archiv gespeichert.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(zum Anzeigen anklicken)&lt;/p&gt;&lt;p&gt;Sie sollten diese Datei an den Autor von %1 senden, damit dieser den Absturz untersuchen kann. &lt;/p&gt;&lt;p&gt;&lt;b&gt;Bitte sicherstellen, dass die neueste Version von %1 verwendet wird, bevor Sie einen Absturz melden, und beschreiben Sie alle Schritte, mit denen sich das Problem reproduzieren lässt.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Klicken Sie hier für Kontaktinformationen&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Jetzt im abgesicherten Modus starten, d.&#x202f;h. das Laden aller Standarddateien und anderer Einstellungen überspringen, die den vorherigen Absturz verursacht haben könnten?&lt;/b&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/application.cpp" line="400"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;Press OK to exit application.&lt;/b&gt;</source>
         <translation>&lt;b&gt;Ausnahmefehler in der Datei %1 in Zeile %2 aufgetreten.&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;Klicken Sie OK, um die Anwendung zu beenden.&lt;/b&gt;</translation>
     </message>
@@ -3600,36 +3604,36 @@ Zeile %2.</translation>
     <message>
         <location filename="../src/gui/comboboxhandler.cpp" line="66"/>
         <source>Delete &amp;current List Entry &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuellen &amp;Eintrag löschen &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../src/gui/comboboxhandler.cpp" line="71"/>
         <source>Delete &amp;all List Entries</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle &amp;Einträge löschen</translation>
     </message>
 </context>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="850"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="855"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="938"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="872"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="877"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="960"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>Fehler beim Lesen von &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="876"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="881"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="898"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="903"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation>Fehler beim Schreiben von &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="899"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="921"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation>Fehler beim Lesen von &quot;%1&quot;: Ungültige magische Zahl. Keine Fensterlayout-Datei.</translation>
     </message>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="902"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="924"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation>Fehler beim Schreiben von &quot;%1&quot;: Ungültige Version. Inkompatible Fensterlayout-Datei.</translation>
     </message>
@@ -3716,35 +3720,35 @@ Zeile %2.</translation>
     <message>
         <location filename="../src/gui/linktooltiphandler.cpp" line="49"/>
         <source>Open the link in a web browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Verknüpfung im Webbrowser öffnen</translation>
     </message>
     <message>
         <location filename="../src/gui/linktooltiphandler.cpp" line="52"/>
         <source>Show the file in Windows Explorer</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei im Windows Explorer öffnen</translation>
     </message>
     <message>
         <location filename="../src/gui/linktooltiphandler.cpp" line="54"/>
         <source>Show the file in Apple Finder</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei im Apple Finder öffnen</translation>
     </message>
     <message>
         <location filename="../src/gui/linktooltiphandler.cpp" line="56"/>
         <source>Show the file in a file manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei im Dateimanager öffnen</translation>
     </message>
 </context>
 <context>
     <name>atools::gui::ListWidgetIndex</name>
     <message>
-        <location filename="../src/gui/listwidgetindex.cpp" line="222"/>
-        <source>&lt;b&gt;No options found for &quot;%1&quot;.&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/gui/listwidgetindex.cpp" line="244"/>
+        <source>No options found for &quot;%1&quot;.</source>
+        <translation>Keine Einstellungen für &quot;%1&quot; gefunden.</translation>
     </message>
     <message>
-        <location filename="../src/gui/listwidgetindex.cpp" line="233"/>
-        <source>&lt;b&gt;Search text &quot;%1&quot; too short.&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="../src/gui/listwidgetindex.cpp" line="255"/>
+        <source>Search text &quot;%1&quot; too short.</source>
+        <translation>Suchtext &quot;%1&quot; zu kurz.</translation>
     </message>
 </context>
 <context>
@@ -3762,7 +3766,7 @@ Zeile %2.</translation>
         <translation type="vanished">&amp;Alle Öffnen</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="130"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="131"/>
         <source>Show all tabs</source>
         <translation>Alle Reiter zeigen</translation>
     </message>
@@ -3775,52 +3779,52 @@ Zeile %2.</translation>
         <translation type="vanished">Schließe alle Reiter außer den aktiven</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="143"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="144"/>
         <source>&amp;Reset Tab Layout</source>
         <translation>&amp;Reiteranordnung zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="144"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="145"/>
         <source>Show all tabs and reset order back to default</source>
         <translation>Zeige alle Reiter und setze die Reihenfolge auf den Standard zurück</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="151"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="152"/>
         <source>&amp;Lock Tab Layout</source>
         <translation>&amp;Sperre Anordnung der Reiter</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="152"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="153"/>
         <source>Hides close buttons and fixes tabs at current position</source>
         <translation>Versteckt die Schließen-Schaltflächen und fixiert Reiter an der aktuellen Position</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="220"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="221"/>
         <source>&amp;Close tab %1</source>
         <translation>&amp;Reiter %1 schließen</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="224"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="225"/>
         <source>Close tab</source>
         <translation>Reiter schließen</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="273"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="276"/>
         <source>Open or close tab %1</source>
         <translation>Reiter %1 öffnen oder schließen</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="137"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="138"/>
         <source>Close all tabs except the currently active tab</source>
         <translation>Schließe alle Reiter außer dem aktiven</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="129"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="130"/>
         <source>&amp;Open all Tabs</source>
         <translation>&amp;Alle Reiter öffnen</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="136"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="137"/>
         <source>&amp;Close all Tabs except Current</source>
         <translation>Schließe alle &amp;Reiter außer dem aktiven</translation>
     </message>

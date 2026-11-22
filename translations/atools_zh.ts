@@ -1591,13 +1591,13 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation>社区</translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="1960"/>
-        <location filename="../src/fs/navdatabase.cpp" line="1971"/>
+        <location filename="../src/fs/navdatabase.cpp" line="2005"/>
+        <location filename="../src/fs/navdatabase.cpp" line="2016"/>
         <source>Custom scenery path %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/fs/navdatabase.cpp" line="2256"/>
+        <location filename="../src/fs/navdatabase.cpp" line="2301"/>
         <source>Counting files for %1 ...</source>
         <translation>正在为 %1 计数文件...</translation>
     </message>
@@ -2283,7 +2283,7 @@ Eyderoe: 应该是sqlite指令vacuum</translatorcomment>
         <translation type="vanished">版本 %5 (修订 %6)</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="491"/>
+        <location filename="../src/gui/application.cpp" line="503"/>
         <source>Version %5 (revision %6).</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3316,7 +3316,7 @@ Line %2.</source>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="../src/grib/windquery.cpp" line="785"/>
+        <location filename="../src/grib/windquery.cpp" line="809"/>
         <source>Unknown error.</source>
         <translation>未知错误。</translation>
     </message>
@@ -3329,12 +3329,11 @@ Line %2.</source>
         <translation>&lt;p&gt;已生成问题报告，并将所有相关文件保存到一个 Zip 压缩包中。&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;（点击查看）&lt;/p&gt;&lt;p&gt;您可以将此文件发送给 %2 的作者以调查问题。这是一个 Zip 文件，您可以根据需要查看其内容。&lt;/p&gt;&lt;p&gt;&lt;b&gt;请在报告问题之前确保您使用的是 %2 的最新版本，&lt;br/&gt;并尽可能描述重现问题的所有步骤。&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;点击此处查看联系信息&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="216"/>
         <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %1 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %1 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files like flight plans, window layout and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;%1 上次未正常退出。&lt;/b&gt;&lt;/p&gt;&lt;p&gt;这很可能是由于崩溃引起的。&lt;/p&gt;&lt;p&gt;已生成崩溃报告，并将所有相关文件保存到一个 Zip 压缩包中。&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;（点击查看）&lt;/p&gt;&lt;p&gt;您可以将此文件发送给 %1 的作者以调查崩溃原因。&lt;/p&gt;&lt;p&gt;&lt;b&gt;请在报告崩溃之前确保使用 %1 的最新版本，并描述重现问题的所有步骤。&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;点击此处查看联系信息&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;是否现在以安全模式启动？这将跳过加载所有可能导致上次崩溃的默认文件，如飞行计划、窗口布局和其他设置。&lt;/b&gt;&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;&lt;b&gt;%1 上次未正常退出。&lt;/b&gt;&lt;/p&gt;&lt;p&gt;这很可能是由于崩溃引起的。&lt;/p&gt;&lt;p&gt;已生成崩溃报告，并将所有相关文件保存到一个 Zip 压缩包中。&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;（点击查看）&lt;/p&gt;&lt;p&gt;您可以将此文件发送给 %1 的作者以调查崩溃原因。&lt;/p&gt;&lt;p&gt;&lt;b&gt;请在报告崩溃之前确保使用 %1 的最新版本，并描述重现问题的所有步骤。&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;点击此处查看联系信息&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;是否现在以安全模式启动？这将跳过加载所有可能导致上次崩溃的默认文件，如飞行计划、窗口布局和其他设置。&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="362"/>
+        <location filename="../src/gui/application.cpp" line="374"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach a text copy or a screenshot of this dialog, the log file and the configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %1 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation>&lt;b&gt;如在启动时此问题持续或再次发生，删除 %1 里的所有设置和数据库再试一次。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;如您希望报告这个错误，附上日志及配置文件到您的报告，以及其他信息一起发生到以下任意一个联系地址。&lt;/b&gt;&lt;br/&gt;</translation>
@@ -3344,47 +3343,52 @@ Line %2.</source>
         <translation type="vanished">&lt;b&gt;在文件“%1”第“%2”行捕获了一个异常。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;点击 OK 以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="388"/>
+        <location filename="../src/gui/application.cpp" line="218"/>
+        <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report was generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %1 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %1 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%3&quot;&gt;&lt;b&gt;Click here for contact information&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;hr/&gt;&lt;p&gt;&lt;b&gt;Start in safe mode now which means to skip loading of all default files and other settings now which may have caused the previous crash?&lt;/b&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/application.cpp" line="400"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;Press OK to exit application.&lt;/b&gt;</source>
         <translation>&lt;b&gt;在文件“%1”第“%2”行捕获异常。&lt;/b&gt;%3%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;b&gt;点击OK以退出此程序。&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="408"/>
+        <location filename="../src/gui/application.cpp" line="420"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;在文件“%1”第“%2”行捕获了一个未知异常。&lt;/b&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&lt;h3&gt;点击OK以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="427"/>
+        <location filename="../src/gui/application.cpp" line="439"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - Contact and Support&lt;/a&gt;</source>
         <translation>&lt;b&gt;联系:&lt;/b&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%2 - 联系与支持&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="433"/>
+        <location filename="../src/gui/application.cpp" line="445"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;联系:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="458"/>
+        <location filename="../src/gui/application.cpp" line="470"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="462"/>
+        <location filename="../src/gui/application.cpp" line="474"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="465"/>
+        <location filename="../src/gui/application.cpp" line="477"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="484"/>
+        <location filename="../src/gui/application.cpp" line="496"/>
         <source> 64-bit</source>
         <translation> 64位</translation>
     </message>
     <message>
-        <location filename="../src/gui/application.cpp" line="486"/>
+        <location filename="../src/gui/application.cpp" line="498"/>
         <source> 32-bit</source>
         <translation> 32位</translation>
     </message>
@@ -3405,25 +3409,25 @@ Line %2.</source>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="850"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="855"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="938"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="872"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="877"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="960"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>读取“%1”时发生了错误：%2</translation>
     </message>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="876"/>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="881"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="898"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="903"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation>写入“%1”时发生了错误：%2</translation>
     </message>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="899"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="921"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation>读取“%1”时发生了错误：无效的幻数。不是一个有效的窗口布局文件。</translation>
     </message>
     <message>
-        <location filename="../src/gui/dockwidgethandler.cpp" line="902"/>
+        <location filename="../src/gui/dockwidgethandler.cpp" line="924"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation>读取“%1”时发生了错误：无效的版本。不兼容的窗口布局文件。</translation>
     </message>
@@ -3511,13 +3515,13 @@ Line %2.</source>
 <context>
     <name>atools::gui::ListWidgetIndex</name>
     <message>
-        <location filename="../src/gui/listwidgetindex.cpp" line="222"/>
-        <source>&lt;b&gt;No options found for &quot;%1&quot;.&lt;/b&gt;</source>
+        <location filename="../src/gui/listwidgetindex.cpp" line="244"/>
+        <source>No options found for &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/listwidgetindex.cpp" line="233"/>
-        <source>&lt;b&gt;Search text &quot;%1&quot; too short.&lt;/b&gt;</source>
+        <location filename="../src/gui/listwidgetindex.cpp" line="255"/>
+        <source>Search text &quot;%1&quot; too short.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3532,18 +3536,18 @@ Line %2.</source>
 <context>
     <name>atools::gui::TabWidgetHandler</name>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="129"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="130"/>
         <source>&amp;Open all Tabs</source>
         <oldsource>&amp;Open All</oldsource>
         <translation>打开全部选项卡(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="130"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="131"/>
         <source>Show all tabs</source>
         <translation>显示所有选项卡</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="136"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="137"/>
         <source>&amp;Close all Tabs except Current</source>
         <oldsource>&amp;Close All Except Current</oldsource>
         <translation>关闭除当前外的其他选项卡(&amp;C)</translation>
@@ -3553,42 +3557,42 @@ Line %2.</source>
         <translation type="vanished">关闭除当前页的所有页</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="137"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="138"/>
         <source>Close all tabs except the currently active tab</source>
         <translation>关闭除当前活动选项卡外的所有选项卡</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="143"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="144"/>
         <source>&amp;Reset Tab Layout</source>
         <translation>重设选项卡布局(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="144"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="145"/>
         <source>Show all tabs and reset order back to default</source>
         <translation>显示所有的选项卡并将排序重置为默认值</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="151"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="152"/>
         <source>&amp;Lock Tab Layout</source>
         <translation>锁定选项卡布局(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="152"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="153"/>
         <source>Hides close buttons and fixes tabs at current position</source>
         <translation>隐藏关闭按钮并将选项卡固定在当期位置</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="220"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="221"/>
         <source>&amp;Close tab %1</source>
         <translation>关闭选项卡 %1(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="224"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="225"/>
         <source>Close tab</source>
         <translation>关闭选项卡</translation>
     </message>
     <message>
-        <location filename="../src/gui/tabwidgethandler.cpp" line="273"/>
+        <location filename="../src/gui/tabwidgethandler.cpp" line="276"/>
         <source>Open or close tab %1</source>
         <translation>打开或关闭选项卡 %1</translation>
     </message>

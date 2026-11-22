@@ -26,7 +26,7 @@ typedef qintptr tSocketDescriptor;
 #endif
 
 /**
- *  The connection handler accepts incoming connections and dispatches incoming requests to to a
+ *  The connection handler accepts incoming connections and dispatches incoming requests to a
  *  request mapper. Since HTTP clients can send multiple requests before waiting for the response,
  *  the incoming requests are queued and processed one after the other.
  *  <p>
