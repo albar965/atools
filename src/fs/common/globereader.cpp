@@ -352,7 +352,7 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
 
 void GlobeReader::setCacheMaxBytes(qsizetype maxBytes)
 {
-  fileCache.setMaxCost(std::min(maxBytes, FILE_SIZE_LARGE * 2L));
+  fileCache.setMaxCost(std::max(maxBytes, FILE_SIZE_LARGE * 2L));
 }
 
 void GlobeReader::clearCache()
@@ -377,12 +377,7 @@ inline float fileBytesToElevation(QByteArray *fileBytes, int fileOffset)
 
 float GlobeReader::elevationFromIndexAndOffset(int fileIndex, int fileOffset)
 {
-  float elevation = ELEVATION_INVALID;
-  QByteArray *fileBytes = fileCache.object(fileIndex);
-  if(fileBytes != nullptr)
-    // File found in cache
-    elevation = fileBytesToElevation(fileBytes, fileOffset);
-  else
+  if(!fileCache.contains(fileIndex))
   {
     // File not in cache
     openFile(fileIndex);
@@ -390,30 +385,37 @@ float GlobeReader::elevationFromIndexAndOffset(int fileIndex, int fileOffset)
 
     if(dataFile != nullptr)
     {
-      fileBytes = new QByteArray;
+      // File exists
+      QByteArray *fileBytes = new QByteArray;
       *fileBytes = dataFile->readAll();
-      if(!dataFile->atEnd() || dataFile->error() != QFileDevice::NoError)
-      {
-        // Add empty entry to indicate error reading file
-        fileCache.insert(fileIndex, new QByteArray());
-        qWarning() << Q_FUNC_INFO << "Error reading" << dataFile->fileName() << dataFile->errorString();
-      }
+
+      if(dataFile->error() == QFileDevice::NoError)
+        // Insert file into cache - cost is bytes
+        fileCache.insert(fileIndex, fileBytes, fileBytes->size());
       else
       {
-        // Insert into cache and return elevation - cost is bytes
-        fileCache.insert(fileIndex, fileBytes, fileBytes->size());
-        elevation = fileBytesToElevation(fileBytes, fileOffset);
+        qWarning() << Q_FUNC_INFO << "Error reading" << dataFile->fileName() << dataFile->errorString();
+
+        delete fileBytes;
+
+        // Add empty entry to indicate error reading file
+        fileCache.insert(fileIndex, new QByteArray());
       }
     }
     else
+    {
+      qWarning() << Q_FUNC_INFO << "Error missing file" << dataFilenames.at(fileIndex);
+
       // Add empty entry to indicate missing file
       fileCache.insert(fileIndex, new QByteArray());
+    }
 
 #ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << "totalCost" << fileCache.totalCost() << "maxCost" << fileCache.maxCost();
 #endif
   }
-  return elevation;
+
+  return fileBytesToElevation(fileCache.object(fileIndex), fileOffset);
 }
 
 } // namespace common

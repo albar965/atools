@@ -112,8 +112,8 @@ private:
   float elevationFromIndexAndOffset(int fileIndex, int fileOffset);
   float elevationMax(const atools::geo::Pos& pos, float sampleRadiusMeter);
 
-  /* Use max 1 Gb as default */
-  const qsizetype CACHE_MAX_BYTES_DEFAULT = 1'000'000'000;
+  /* Use max 2 Gb as default */
+  const qsizetype CACHE_MAX_BYTES_DEFAULT = 2'000'000'000;
   QCache<int, QByteArray> fileCache;
 
   QString dataDir;
