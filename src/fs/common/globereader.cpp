@@ -116,16 +116,14 @@ int GlobeReader::calcFileOffsetTest(double lonx, double laty, int& fileIndex)
 
 // =========================================================
 GlobeReader::GlobeReader(const QString& dataDirParam)
-  : fileCache(CACHE_MAX_BYTES_DEFAULT), dataDir(dataDirParam)
+  : dataCache(CACHE_MAX_BYTES_DEFAULT), dataDir(dataDirParam)
 {
   // Fill lists with empty values
-  dataFiles.fill(nullptr, NUM_DATAFILES);
   dataFilenames.fill(QStringLiteral(), NUM_DATAFILES);
 }
 
 GlobeReader::~GlobeReader()
 {
-  closeFiles();
 }
 
 bool GlobeReader::isDirValid(const QString& path)
@@ -148,9 +146,8 @@ bool GlobeReader::fileEntryValid(const QFileInfo& fileEntry)
          (fileEntry.size() == FILE_SIZE_LARGE || fileEntry.size() == FILE_SIZE_SMALL);
 }
 
-bool GlobeReader::openFiles()
+bool GlobeReader::collectFileNames()
 {
-  closeFiles();
   valid = false;
 
   if(!isDirValid(dataDir))
@@ -172,45 +169,6 @@ bool GlobeReader::openFiles()
       qWarning() << "Found invalid file" << fileEntry.filePath();
   }
   return true;
-}
-
-void GlobeReader::openFile(int i)
-{
-  if(atools::inRange(dataFilenames, i))
-  {
-    const QString& name = dataFilenames.at(i);
-    if(!name.isEmpty() && dataFiles[i] == nullptr)
-    {
-      qDebug() << Q_FUNC_INFO << name;
-      dataFiles[i] = new QFile(name);
-      if(!dataFiles[i]->open(QIODevice::ReadOnly))
-      {
-        closeFile(i);
-
-        // Clear filename to avoid reopening
-        dataFilenames[i].clear();
-        qWarning() << "Cannot open file" << name;
-      }
-    }
-  }
-  else
-    qWarning() << Q_FUNC_INFO << "Filename index" << i << "out of range";
-}
-
-void GlobeReader::closeFile(int i)
-{
-  if(dataFiles[i] != nullptr)
-  {
-    dataFiles[i]->close();
-    delete dataFiles[i];
-    dataFiles[i] = nullptr;
-  }
-}
-
-void GlobeReader::closeFiles()
-{
-  for(int i = 0; i < NUM_DATAFILES; i++)
-    closeFile(i);
 }
 
 float GlobeReader::getElevation(const atools::geo::Pos& pos, float sampleRadiusMeter)
@@ -352,15 +310,17 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
 
 void GlobeReader::setCacheMaxBytes(qsizetype maxBytes)
 {
-  fileCache.setMaxCost(std::max(maxBytes, FILE_SIZE_LARGE * 2L));
+  dataCache.setMaxCost(std::max(maxBytes, FILE_SIZE_LARGE * 2L));
+
+  qDebug() << Q_FUNC_INFO << "Cache size" << dataCache.maxCost();
 }
 
 void GlobeReader::clearCache()
 {
-  fileCache.clear();
+  dataCache.clear();
 }
 
-inline float fileBytesToElevation(QByteArray *fileBytes, int fileOffset)
+inline float fileBytesToElevation(const QByteArray *fileBytes, int fileOffset)
 {
   if(fileBytes != nullptr && !fileBytes->isEmpty())
   {
@@ -377,45 +337,56 @@ inline float fileBytesToElevation(QByteArray *fileBytes, int fileOffset)
 
 float GlobeReader::elevationFromIndexAndOffset(int fileIndex, int fileOffset)
 {
-  if(!fileCache.contains(fileIndex))
+  if(!dataCache.contains(fileIndex))
   {
+    bool success = false;
+    QByteArray *fileBytes = new QByteArray;
+
     // File not in cache
-    openFile(fileIndex);
-    QFile *dataFile = dataFiles[fileIndex];
-
-    if(dataFile != nullptr)
+    // Open, read and close file in the same thread
+    const QString filename = dataFilenames.value(fileIndex);
+    if(!filename.isEmpty())
     {
-      // File exists
-      QByteArray *fileBytes = new QByteArray;
-      *fileBytes = dataFile->readAll();
+      QFile dataFile(dataFilenames.value(fileIndex));
 
-      if(dataFile->error() == QFileDevice::NoError)
-        // Insert file into cache - cost is bytes
-        fileCache.insert(fileIndex, fileBytes, fileBytes->size());
-      else
+      if(dataFile.open(QIODevice::ReadOnly))
       {
-        qWarning() << Q_FUNC_INFO << "Error reading" << dataFile->fileName() << dataFile->errorString();
+        // File exists
+        *fileBytes = dataFile.readAll();
 
-        delete fileBytes;
+        if(dataFile.error() == QFileDevice::NoError && !fileBytes->isEmpty())
+        {
+          success = true;
 
-        // Add empty entry to indicate error reading file
-        fileCache.insert(fileIndex, new QByteArray());
+#ifdef DEBUG_INFORMATION_GLOBE_CACHE
+          qDebug() << Q_FUNC_INFO << "Reading file. TotalCost" << dataCache.totalCost() << "maxCost" << dataCache.maxCost()
+                   << dataFile.fileName();
+#endif
+        }
+        dataFile.close();
       }
     }
-    else
-    {
-      qWarning() << Q_FUNC_INFO << "Error missing file" << dataFilenames.at(fileIndex);
 
-      // Add empty entry to indicate missing file
-      fileCache.insert(fileIndex, new QByteArray());
-    }
+    if(!success)
+      qWarning() << Q_FUNC_INFO << "Error opening or reading file" << dataFilenames.at(fileIndex);
 
-#ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "totalCost" << fileCache.totalCost() << "maxCost" << fileCache.maxCost();
-#endif
+    // Insert file into cache - cost is bytes - also insert empty file bytes to indicate missing file
+    dataCache.insert(fileIndex, fileBytes, fileBytes->size());
   }
 
-  return fileBytesToElevation(fileCache.object(fileIndex), fileOffset);
+  if(!dataCache.contains(fileIndex))
+    qWarning() << Q_FUNC_INFO << "Missing object" << dataFilenames.at(fileIndex);
+
+  const QByteArray *bytes = dataCache.object(fileIndex);
+  if(bytes == nullptr || bytes->isEmpty())
+    qWarning() << Q_FUNC_INFO << "Empty object" << dataFilenames.at(fileIndex);
+
+  float elevation = fileBytesToElevation(bytes, fileOffset);
+
+  if(elevation == ELEVATION_INVALID)
+    qWarning() << Q_FUNC_INFO << "Invalid elevation" << dataFilenames.at(fileIndex);
+
+  return elevation;
 }
 
 } // namespace common

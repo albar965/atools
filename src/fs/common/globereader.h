@@ -19,7 +19,6 @@
 #define ATOOLS_DTM_GLOBEREADER_H
 
 #include <QCache>
-#include <QFile>
 #include <QList>
 
 class DtmTest;
@@ -61,9 +60,8 @@ public:
   /* Valid if at least one file with matching name and size was found. */
   static bool isDirValid(const QString& path);
 
-  /* Collect file names (up to 16). Files are opened on demand */
-  bool openFiles();
-  void closeFiles();
+  /* Collect file names (up to 16). Files are opened, read and closed on demand in the accessing thread */
+  bool collectFileNames();
 
   /* Elevation in meter. If "distanceMeter" is > 0 then the center and four points around will be checked too.
    * "sampleRadiusMeter" defines a rectangle where five points are sampled and the maximum is used.*/
@@ -107,18 +105,15 @@ private:
   const static int GRID_ROWS = 2 * 6000 + 2 * 4800;
 
   static bool fileEntryValid(const QFileInfo& fileEntry);
-  void closeFile(int i);
-  void openFile(int i);
   float elevationFromIndexAndOffset(int fileIndex, int fileOffset);
   float elevationMax(const atools::geo::Pos& pos, float sampleRadiusMeter);
 
   /* Use max 2 Gb as default */
   const qsizetype CACHE_MAX_BYTES_DEFAULT = 2'000'000'000;
-  QCache<int, QByteArray> fileCache;
+  QCache<int, QByteArray> dataCache;
 
   QString dataDir;
   QList<QString> dataFilenames;
-  QList<QFile *> dataFiles;
 
   bool valid = false;
 };
