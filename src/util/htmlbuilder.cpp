@@ -698,9 +698,9 @@ HtmlBuilder& HtmlBuilder::codeEnd()
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::nobr(const QString& str)
+HtmlBuilder& HtmlBuilder::nobr(const QString& str, html::Flags flags, QColor color)
 {
-  text(str, html::NOBR);
+  text(str, html::NOBR | flags, color);
   return *this;
 }
 

@@ -182,7 +182,7 @@ public:
   HtmlBuilder& codeEnd();
 
   /* Add text with no break attribute */
-  HtmlBuilder& nobr(const QString& str);
+  HtmlBuilder& nobr(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Add horizontal ruler */
   HtmlBuilder& hr(int size = 1, int widthPercent = 100);
